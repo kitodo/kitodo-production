@@ -8,7 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals removeFilter, updateSuggestions, submitFilters, filterKeydownEvents */
+/* globals removeFilter, removeFilterForEdit, updateSuggestions, submitFilters, filterKeydownEvents */
 
 /* Define identifiers used to select elements */
 const FILTER_INPUT_FORM = "#filterInputForm";
@@ -131,6 +131,7 @@ function handleKeydown(event) {
             }
             break;
         case "Enter":
+        case "NumpadEnter":
             if ($(FILTER_OPTIONS_FORM_WRAPPER).is(':visible') && $(SELECTED_SUGGESTION_ITEM).length === 1) {
                 selectConfirm();
             } else {
@@ -191,7 +192,7 @@ $(document).ready(function () {
             let filter = target.siblings(".plainFilter").length ? target.siblings(".plainFilter").first().text()
                 : target.find(".plainFilter").first().text();
             $(FILTER_INPUT).val(filter);
-            removeFilter([{name: "plainFilter", value: filter}]);
+            removeFilterForEdit([{name: "plainFilter", value: filter}]);
             $(FILTER_INPUT).focus();
         }
     });

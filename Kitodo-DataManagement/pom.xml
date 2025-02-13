@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.9.0-SNAPSHOT</version>
     </parent>
 
     <name>Kitodo - Data Management</name>
@@ -50,6 +50,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>
@@ -72,8 +73,24 @@
             <artifactId>myfaces-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <groupId>org.opensearch</groupId>
+            <artifactId>opensearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch</groupId>
+            <artifactId>opensearch-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-rest-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-rest-high-level-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch.plugin</groupId>
+            <artifactId>transport-netty4-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -119,10 +136,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.plugin</groupId>
-            <artifactId>transport-netty4-client</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -132,7 +145,10 @@
               that means first entry will be added as last resource and may override other resources -->
             <resource>
                 <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
-                <directory>../config-local</directory>
+                <!-- See also:
+                       • https://github.com/apache/maven/pull/840
+                       • https://github.com/apache/maven/pull/1061          -->
+                <directory>${maven.multiModuleProjectDirectory}/config-local</directory>
             </resource>
             <resource>
                 <directory>src/main/java</directory>

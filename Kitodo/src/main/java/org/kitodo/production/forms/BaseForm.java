@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms;
 
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -364,7 +366,7 @@ public class BaseForm implements Serializable {
      */
     public String getFormattedDate(Date date) {
         if (Objects.nonNull(date)) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
             return dateFormat.format(date);
         }
         return "";

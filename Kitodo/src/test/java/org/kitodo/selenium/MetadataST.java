@@ -14,6 +14,7 @@ package org.kitodo.selenium;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -40,6 +42,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -55,15 +58,18 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
+    private static final String TEST_LINK_PAGE_TO_NEXT_DIVISION_MEDIA_FILE = "testLinkPageToNextDivisionMeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
     private static int renamingMediaProcessId = -1;
     private static int dragndropProcessId = -1;
     private static int createStructureProcessId = -1;
+    private static int linkPageToNextDivisionProcessId = -1;
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
     private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
+    private static final String LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE = "Link page to next division";
     private static final String TEST_PARENT_PROCESS_METADATA_FILE = "testParentProcessMeta.xml";
     private static final String FIRST_CHILD_ID = "FIRST_CHILD_ID";
     private static final String SECOND_CHILD_ID = "SECOND_CHILD_ID";
@@ -102,6 +108,11 @@ public class MetadataST extends BaseTestSelenium {
         copyTestFilesForCreateStructure();
     }
 
+    private static void prepareLinkPageToNextDivision() throws DAOException, DataException, IOException {
+        linkPageToNextDivisionProcessId = MockDatabase.insertTestProcessIntoSecondProject(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
+        ProcessTestUtils.copyTestFiles(linkPageToNextDivisionProcessId, TEST_LINK_PAGE_TO_NEXT_DIVISION_MEDIA_FILE);
+    }
+
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
@@ -117,6 +128,7 @@ public class MetadataST extends BaseTestSelenium {
         prepareMediaRenamingProcess();
         prepareDragNDropProcess();
         prepareCreateStructureProcess();
+        prepareLinkPageToNextDivision();
     }
 
     /**
@@ -203,9 +215,14 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
         Pages.getMetadataEditorPage().closeEditor();
-        Pages.getUserEditPage().setPaginationToShowByDefault();
+        Pages.getUserEditPage().togglePaginationToShowByDefault();
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertTrue(Pages.getMetadataEditorPage().isPaginationPanelVisible());
+        // disable pagination again to prevent conflicts with other tests (when interacting with metadata table)
+        Pages.getMetadataEditorPage().closeEditor();
+        Pages.getUserEditPage().togglePaginationToShowByDefault();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
     }
 
     /**
@@ -331,6 +348,268 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Tests that column layout can be saved to database and is loaded into hidden form inputs.
+     * Does not test whether column layout is actually applied via Javascript (see resize.js).
+     */
+    @Test
+    public void saveLayoutTest() throws Exception {
+        login("kowal");
+
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        
+        String structureWithId = "metadataEditorLayoutForm:structureWidth";
+        String metadataWidthId = "metadataEditorLayoutForm:metadataWidth";
+        String galleryWithId = "metadataEditorLayoutForm:galleryWidth";
+
+        Function<String, String> getValue = 
+            (id) -> Browser.getDriver().findElement(By.id(id)).getAttribute("value");
+        
+        // by default, layout settings are all 0
+        assertEquals("0.0", getValue.apply(structureWithId));
+        assertEquals("0.0", getValue.apply(metadataWidthId));
+        assertEquals("0.0", getValue.apply(galleryWithId));
+
+        // open layout menu
+        Browser.getDriver().findElement(By.id("metadataEditorLayoutButtonForm:open")).click();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(Browser.getDriver().findElement(By.id("metadataEditorLayoutForm:saveDefault"))::isDisplayed);
+        // save layout
+        Browser.getDriver().findElement(By.id("metadataEditorLayoutForm:saveDefault")).click();
+
+        // wait until success message is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+            .until(Browser.getDriver().findElement(By.id("dataEditorSavingResultDialog_content"))::isDisplayed);
+        
+        // confirm success message
+        Browser.getDriver().findElement(By.id("dataEditorSavingResultForm:reload")).click();
+
+        // close metadata editor, wait until closed, and re-open
+        Pages.getMetadataEditorPage().closeEditor();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+            .until(() -> Pages.getProcessesPage().isAt());
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // verify that layout was saved
+        assertNotEquals("0.0", getValue.apply(structureWithId));
+        assertNotEquals("0.0", getValue.apply(metadataWidthId));
+        assertNotEquals("0.0", getValue.apply(galleryWithId));
+    }
+
+    /**
+     * Verifies that turning the "show physical page number below thumbnail switch" on in the user settings
+     * results in thumbnail banner being displayed in the gallery of the metadata editor.
+     */
+    @Test
+    public void showPhysicalPageNumberBelowThumbnailTest() throws Exception {
+        login("kowal");
+       
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        
+        // verify that physical page number is not shown below thumbnail by default
+        assertEquals(0, Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).size());
+
+        // change user setting
+        Pages.getMetadataEditorPage().closeEditor();
+        Pages.getUserEditPage().toggleShowPhysicalPageNumberBelowThumbnail();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // verify physical page number is now shown below thumbnail
+        assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).isEmpty());
+    }
+
+    /** 
+     * Verifies that the label of a node in the logical structure tree changes according to the 
+     * "structureTreeTitle" option from the ruleset after switching to the "title" display option. 
+     */
+    @Test
+    public void selectStructureTreeTitleTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until logical tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // check that first tree node label shows type label "Band"
+        assertEquals("Band", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0 .ui-treenode-label")).getText());
+
+        // open select menu
+        Browser.getDriver().findElement(By.id("logicalStructureTitle")).click();
+
+        // wait until select menu is open
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalStructureTitle_panel")).isDisplayed());
+
+        // click on title menu entry
+        Browser.getDriver().findElement(By.id("logicalStructureTitle_1")).click();
+
+        // wait until menu disappears
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> !Browser.getDriver().findElement(By.id("logicalStructureTitle_panel")).isDisplayed());
+        
+        // check that node title has changed to metadata value of "HauptTitel"
+        assertEquals("Der Titel des Bandes", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0 .ui-treenode-label")).getText());
+    }
+    
+    @Test
+    public void linkPageToNextDivision() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
+
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+
+        // wait until structure tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(metaDataEditor::isLogicalTreeVisible);       
+
+        // check page "2" is not marked as "linked"
+        assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
+
+        // open context menu for page "2"
+        metaDataEditor.openContextMenuForStructureTreeNode("0_0_0_0");
+
+        // click on 2nd menu entry "assign to next element"
+        metaDataEditor.clickStructureTreeContextMenuEntry("assignToNextElement");
+
+        // verify page "2" is now marked as "linked"
+        assertTrue(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
+
+        // verify linked page "2" was created at correct tree position
+        assertTrue(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_1_0_0"));
+
+        // check page "3" was moved to be 2nd sibling
+        assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_1_0_1"));
+
+        // open context menu for linked page "2"
+        metaDataEditor.openContextMenuForStructureTreeNode("0_1_0_0");
+
+        // click on 2nd menu entry "remove assignment"
+        metaDataEditor.clickStructureTreeContextMenuEntry("unassign");
+
+        // check page "2" is not marked as "linked" any more
+        assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
+
+        // check page "3" is now only child of folder again
+        assertTrue(Browser.getDriver().findElements(By.cssSelector("#logicalTree\\:0_1_0_1")).isEmpty());
+    }
+
+    /**
+     * Tests that a metadata row of the metadata table is highlighted as soon as a user adds a new
+     * row via the add metadata dialog.
+     */
+    @Test
+    public void focusRecentlyAddedMetadataRowTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until metadata table is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("metadataAccordion:metadata:metadataTable")).isDisplayed()
+        );
+
+        // verify no metadata row is focused yet
+        assertTrue(Browser.getDriver().findElements(
+            By.cssSelector("#metadataAccordion\\:metadata\\:metadataTable tr.focusedRow")).isEmpty()
+        );
+
+        // click on add metadata button
+        Browser.getDriver().findElement(By.id("metadataAccordion:addMetadataButton")).click();
+        
+        // wait until dialog is visible
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("addMetadataDialog")).isDisplayed()
+        );
+
+        // open select menu
+        Browser.getDriver().findElement(By.id("addMetadataForm:metadataTypeSelection")).click();
+
+        // wait until selection menu list is visible
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("addMetadataForm:metadataTypeSelection_items")).isDisplayed()
+        );
+        
+        // select Person as new metadata row
+        Browser.getDriver().findElement(By.cssSelector(
+            "#addMetadataForm\\:metadataTypeSelection_items li[data-label='Person'].ui-selectonemenu-item"
+        )).click();
+
+        // confirm dialog
+        Browser.getDriver().findElement(By.id("addMetadataForm:apply")).click();
+
+        // wait until dialog disappears
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> !Browser.getDriver().findElement(By.id("addMetadataDialog")).isDisplayed()
+        );
+
+        // verify metadata row with name "Person" is selected
+        assertEquals("Person:", Browser.getDriver().findElement(
+            By.cssSelector("#metadataAccordion\\:metadata\\:metadataTable tr.focusedRow label")
+        ).getText());
+
+        // verify accordion was scrolled down
+        assertTrue(0 < (Long)Browser.getDriver().executeScript(
+            "return document.getElementById('metadataAccordion:metadata:metadataTable').scrollTop;"
+        ));
+    }
+
+    /*
+     * Verifies that an image can be openend in a separate window by clicking on the corresponding 
+     * context menu item of the first logical tree node.
+     */
+    @Test
+    public void openPageInSeparateWindowTest() throws Exception {
+        login("kowal");
+
+        // remember current window handle
+        String firstWindowHandle = Browser.getDriver().getWindowHandle();
+       
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+         // wait until structure tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // open context menu for linked page "2"
+        Pages.getMetadataEditorPage().openContextMenuForStructureTreeNode("0_0");
+
+        // click second menu entry to open new tab
+        Browser.getDriver().findElement(By.cssSelector("#contextMenuLogicalTree .viewPageInNewWindow")).click();
+
+        // find handle of new tab window
+        String newWindowHandle = Browser.getDriver().getWindowHandles().stream()
+            .filter((h) -> !h.equals(firstWindowHandle)).findFirst().get();
+
+        // switch to new window
+        Browser.getDriver().switchTo().window(newWindowHandle);
+
+        // wait until preview image is found
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> !Browser.getDriver().findElements(By.id("imagePreviewForm:mediaPreviewGraphicImage")).isEmpty());
+
+        // check that title contains image number
+        assertEquals("Bild 2", Browser.getDriver().findElement(By.id("externalViewTitle")).getText());
+
+        // check that canvas is visible
+        assertTrue(Browser.getDriver().findElement(By.cssSelector("#map canvas")).isDisplayed());
+
+        // close tab
+        Browser.getDriver().close();
+
+        // switch back to previous window
+        Browser.getDriver().switchTo().window(firstWindowHandle);
+    }
+
+    /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */
@@ -357,6 +636,7 @@ public class MetadataST extends BaseTestSelenium {
         ProcessService.deleteProcess(renamingMediaProcessId);
         ProcessService.deleteProcess(dragndropProcessId);
         ProcessService.deleteProcess(createStructureProcessId);
+        ProcessService.deleteProcess(linkPageToNextDivisionProcessId);
     }
 
     private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {

@@ -499,7 +499,7 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to upload media in metadataeditor.
      *
-     * @return true if the current user has the authority to to upload media in metadataeditor
+     * @return true if the current user has the authority to upload media in metadataeditor
      */
     public boolean hasAuthorityToUploadMedia() {
         return securityAccessService.hasAuthorityToUploadMedia();
@@ -957,6 +957,24 @@ public class SecurityAccessController {
     }
 
     /**
+     * Checks if current user has global authority for editing roles.
+     *
+     * @return true if current user has global authority for editing roles
+     */
+    public boolean hasAuthorityGlobalToEditRole() {
+        return securityAccessService.hasAuthorityGlobalToEditRole();
+    }
+
+    /**
+     * Checks if current user has global authority for viewing a role.
+     *
+     * @return true if current user has global authority for editing a role
+     */
+    public boolean hasAuthorityGlobalToViewRole() {
+        return securityAccessService.hasAuthorityGlobalToViewRole();
+    }
+
+    /**
      * Checks if current user has authority to configure displayed columns in list
      * views.
      *
@@ -1067,7 +1085,7 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to delete media in metadata editor.
      *
-     * @return true if the current user has the authority to to delete media in metadata editor
+     * @return true if the current user has the authority to delete media in metadata editor
      */
     public boolean hasAuthorityToDeleteMedia() {
         return securityAccessService.hasAuthorityToDeleteMedia();
@@ -1116,5 +1134,32 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToLinkToProcessesOfUnassignedProjects() {
         return securityAccessService.hasAuthorityToLinkToProcessesOfUnassignedProjects();
+    }
+
+    /**
+     * Check if the current user has the permission to create processes and use the mass import feature.
+     *
+     * @return true if the current user has the permission to create processes and use the mass import feature.
+     */
+    public boolean hasAuthorityToMassImportProcesses() {
+        return securityAccessService.hasAuthorityToUseMassImport() && securityAccessService.hasAuthorityToAddProcess();
+    }
+
+    /**
+     * Check if the current user has the permission to set import configurations for processes.
+     *
+     * @return true if the current user has the permission to set import configurations for processes.
+     */
+    public boolean hasAuthorityToSetImportConfiguration() {
+        return securityAccessService.hasAuthorityToSetImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the permission to re-import metadata in the metadata editor.
+     *
+     * @return true if the current user has the permission to re-import metadata in the metadata editor.
+     */
+    public boolean hasAuthorityToReimportMetadata() {
+        return securityAccessService.hasAuthorityToReimportMetadata();
     }
 }

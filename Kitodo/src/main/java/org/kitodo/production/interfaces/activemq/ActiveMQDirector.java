@@ -53,10 +53,11 @@ public class ActiveMQDirector implements Runnable {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
     // When implementing new services, add them to this list
-    private static Collection<? extends ActiveMQProcessor> services;
+    private static Collection<ActiveMQProcessor> services;
 
     static {
-        services = Arrays.asList(new FinalizeStepProcessor(), new TaskActionProcessor());
+        services = Arrays.asList(new FinalizeStepProcessor(), new TaskActionProcessor(),
+            new CreateNewProcessesProcessor(), new KitodoScriptProcessor());
     }
 
     private static Connection connection = null;

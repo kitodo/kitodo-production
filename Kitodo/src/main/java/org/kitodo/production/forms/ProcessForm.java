@@ -11,12 +11,12 @@
 
 package org.kitodo.production.forms;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -87,6 +88,7 @@ public class ProcessForm extends TemplateBaseForm {
     private Property property;
     private final FilterMenu filterMenu = new FilterMenu(this);
     private final transient FileService fileService = ServiceManager.getFileService();
+    private final transient ProcessService processService = ServiceManager.getProcessService();
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
@@ -100,6 +102,8 @@ public class ProcessForm extends TemplateBaseForm {
     private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
     private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
+    private String settingImportConfigurationResultMessage;
+    private boolean importConfigurationsSetSuccessfully = false;
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -274,71 +278,16 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
             return false;
         } else {
-            renamePropertiesValuesForProcessTitle(this.process.getProperties());
-            renamePropertiesValuesForProcessTitle(this.process.getTemplates());
-            removePropertiesWithEmptyTitle(this.process.getWorkpieces());
-
             try {
-                renameImageDirectories();
-                renameOcrDirectories();
-                renameDefinedDirectories();
+                processService.renameProcess(this.process, this.newProcessTitle);
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage("errorRenaming", new Object[] {Helper.getTranslation("directory") }, logger, e);
             }
-
-            this.process.setTitle(this.newProcessTitle);
 
             // remove Tiffwriter file
             ServiceManager.getKitodoScriptService().deleteTiffHeaderFile(List.of(process));
         }
         return true;
-    }
-
-    private void renamePropertiesValuesForProcessTitle(List<Property> properties) {
-        for (Property property : properties) {
-            if (Objects.nonNull(property.getValue()) && property.getValue().contains(this.process.getTitle())) {
-                property.setValue(property.getValue().replaceAll(this.process.getTitle(), this.newProcessTitle));
-            }
-        }
-    }
-
-    private void renameImageDirectories() throws IOException {
-        URI imageDirectory = fileService.getImagesDirectory(process);
-        renameDirectories(imageDirectory);
-    }
-
-    private void renameOcrDirectories() throws IOException {
-        URI ocrDirectory = fileService.getOcrDirectory(process);
-        renameDirectories(ocrDirectory);
-    }
-
-    private void renameDirectories(URI directory) throws IOException {
-        if (fileService.isDirectory(directory)) {
-            List<URI> subDirs = fileService.getSubUris(directory);
-            for (URI imageDir : subDirs) {
-                if (fileService.isDirectory(imageDir)) {
-                    fileService.renameFile(imageDir, imageDir.toString().replace(process.getTitle(), newProcessTitle));
-                }
-            }
-        }
-    }
-
-    private void renameDefinedDirectories() {
-        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        for (String processDir : processDirs) {
-            // TODO: check it out
-            URI processDirAbsolute = ServiceManager.getProcessService().getProcessDataDirectory(process)
-                    .resolve(processDir.replace("(processtitle)", process.getTitle()));
-
-            File dir = new File(processDirAbsolute);
-            boolean renamed;
-            if (dir.isDirectory()) {
-                renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
-                if (!renamed) {
-                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName() });
-                }
-            }
-        }
     }
 
     /**
@@ -411,7 +360,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), ServiceManager.getTaskService());
+        saveTask(this.task);
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
@@ -742,7 +691,7 @@ public class ProcessForm extends TemplateBaseForm {
         this.process.getProperties().remove(this.property);
 
         List<Property> propertiesToFilterTitle = this.process.getProperties();
-        removePropertiesWithEmptyTitle(propertiesToFilterTitle);
+        processService.removePropertiesWithEmptyTitle(propertiesToFilterTitle, this.process);
         loadProcessProperties();
     }
 
@@ -754,16 +703,6 @@ public class ProcessForm extends TemplateBaseForm {
         newProperty.getProcesses().add(this.process);
         this.process.getProperties().add(newProperty);
         loadProcessProperties();
-    }
-
-    // TODO: is it really a case that title is empty?
-    private void removePropertiesWithEmptyTitle(List<Property> properties) {
-        for (Property processProperty : properties) {
-            if (Objects.isNull(processProperty.getTitle()) || processProperty.getTitle().isEmpty()) {
-                processProperty.getProcesses().clear();
-                this.process.getProperties().remove(processProperty);
-            }
-        }
     }
 
     /**
@@ -832,6 +771,20 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public List<Ruleset> getRulesets() {
         return ServiceManager.getRulesetService().getAllForSelectedClient();
+    }
+
+    /**
+     * Get list of all import configurations.
+     *
+     * @return list of all import configurations.
+     */
+    public List<ImportConfiguration> getImportConfigurations() {
+        try {
+            return ServiceManager.getImportConfigurationService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -1198,5 +1151,51 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public boolean showLastComment() {
         return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT);
+    }
+
+    /**
+     * Display dialog to set import configuration for selected processes.
+     */
+    public void setImportConfiguration() {
+        PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').show();");
+    }
+
+    /**
+     * Assign import configuration with given ID 'importConfigurationId' to all selected processes.
+     *
+     * @param importConfigurationId ID of import configuration to assign to selected processes
+     */
+    public void startSettingImportConfigurations(int importConfigurationId) {
+        PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').hide();");
+        try {
+            String configName = ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(
+                    getSelectedProcesses(), importConfigurationId);
+            settingImportConfigurationResultMessage = Helper.getTranslation("setImportConfigurationSuccessfulDescription",
+                    configName, String.valueOf(selectedProcessesOrProcessDTOs.size()));
+            importConfigurationsSetSuccessfully = true;
+        } catch (DAOException e) {
+            settingImportConfigurationResultMessage = e.getLocalizedMessage();
+            importConfigurationsSetSuccessfully = false;
+        }
+        Ajax.update("importConfigurationsSelectedDialog");
+        PrimeFaces.current().executeScript("PF('importConfigurationsSelectedDialog').show();");
+    }
+
+    /**
+     * Get value of 'settingImportConfigurationResultMessage'.
+     *
+     * @return value of 'settingImportConfigurationResultMessage'
+     */
+    public String getSettingImportConfigurationResultMessage() {
+        return settingImportConfigurationResultMessage;
+    }
+
+    /**
+     * Get value of 'importConfigurationsSetSuccessfully'.
+     *
+     * @return value of 'importConfigurationsSetSuccessfully'
+     */
+    public boolean isImportConfigurationsSetSuccessfully() {
+        return importConfigurationsSetSuccessfully;
     }
 }

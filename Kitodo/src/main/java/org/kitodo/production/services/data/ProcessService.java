@@ -11,12 +11,13 @@
 
 package org.kitodo.production.services.data;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
+import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
+import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -77,23 +78,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.join.ScoreMode;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.NestedQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.WildcardQueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -111,6 +100,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -162,6 +152,16 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.NestedQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.WildcardQueryBuilder;
+import org.opensearch.search.sort.SortBuilder;
+import org.opensearch.search.sort.SortBuilders;
+import org.opensearch.search.sort.SortOrder;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.bar.BarChartOptions;
@@ -314,10 +314,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Find all parent processes for a process ordered such that the root parent comes first.
      * 
      * @param process the process whose parents are to be found
-     * @return the list of parent processes (direct parents and grand parents, and more)
+     * @return the list of parent processes (direct parents and grandparents, and more)
      */
     public List<Process> findParentProcesses(Process process) {
-        List<Process> parents = new ArrayList<Process>();
+        List<Process> parents = new ArrayList<>();
         Process current = process;
         while (Objects.nonNull(current.getParent())) {
             current = current.getParent();
@@ -956,18 +956,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             convertLastProcessingDates(jsonObject, processDTO);
             convertTaskProgress(jsonObject, processDTO);
 
-            List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
-            List<PropertyDTO> properties = new ArrayList<>();
-            for (Map<String, Object> stringObjectMap : jsonArray) {
-                PropertyDTO propertyDTO = new PropertyDTO();
-                Object title = stringObjectMap.get(JSON_TITLE);
-                Object value = stringObjectMap.get(JSON_VALUE);
-                if (Objects.nonNull(title)) {
-                    propertyDTO.setTitle(title.toString());
-                    propertyDTO.setValue(Objects.nonNull(value) ? value.toString() : "");
-                    properties.add(propertyDTO);
-                }
-            }
+            List<PropertyDTO> properties = getProperties(jsonObject);
             processDTO.setProperties(properties);
 
             if (!related) {
@@ -981,6 +970,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return processDTO;
+    }
+
+    private List<PropertyDTO> getProperties(Map<String, Object> jsonObject) throws DataException {
+        List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
+        List<PropertyDTO> properties = new ArrayList<>();
+        for (Map<String, Object> stringObjectMap : jsonArray) {
+            PropertyDTO propertyDTO = new PropertyDTO();
+            Object title = stringObjectMap.get(JSON_TITLE);
+            Object value = stringObjectMap.get(JSON_VALUE);
+            if (Objects.nonNull(title)) {
+                propertyDTO.setTitle(title.toString());
+                propertyDTO.setValue(Objects.nonNull(value) ? value.toString() : "");
+                properties.add(propertyDTO);
+            }
+        }
+        return properties;
     }
 
 
@@ -1554,16 +1559,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                HSSFWorkbook wb = sr.getResult();
-                List<List<HSSFCell>> rowList = new ArrayList<>();
-                HSSFSheet mySheet = wb.getSheetAt(0);
+                SXSSFWorkbook wb = sr.getResult();
+                List<List<Cell>> rowList = new ArrayList<>();
+                Sheet mySheet = wb.getSheetAt(0);
                 Iterator<Row> rowIter = mySheet.rowIterator();
                 while (rowIter.hasNext()) {
-                    HSSFRow myRow = (HSSFRow) rowIter.next();
+                    Row myRow = (Row) rowIter.next();
                     Iterator<Cell> cellIter = myRow.cellIterator();
-                    List<HSSFCell> row = new ArrayList<>();
+                    List<Cell> row = new ArrayList<>();
                     while (cellIter.hasNext()) {
-                        HSSFCell myCell = (HSSFCell) cellIter.next();
+                        Cell myCell = (Cell) cellIter.next();
                         row.add(myCell);
                     }
                     rowList.add(row);
@@ -1580,6 +1585,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 }
 
                 document.close();
+                wb.close();
                 out.flush();
                 facesContext.responseComplete();
             }
@@ -1596,12 +1602,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
+            ExternalContext response = prepareHeaderInformation(facesContext, "search.xlsx");
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                HSSFWorkbook wb = sr.getResult();
+                SXSSFWorkbook wb = sr.getResult();
                 wb.write(out);
+                wb.close();
                 out.flush();
                 facesContext.responseComplete();
             }
@@ -1642,15 +1649,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return externalContext;
     }
 
-    private PdfPTable getPdfTable(List<List<HSSFCell>> rowList) throws DocumentException {
+    private PdfPTable getPdfTable(List<List<Cell>> rowList) throws DocumentException {
         // create formatter for cells with default locale
         DataFormatter formatter = new DataFormatter();
 
         PdfPTable table = new PdfPTable(8);
         table.setSpacingBefore(20);
         table.setWidths(new int[] {4, 1, 2, 1, 1, 1, 2, 2 });
-        for (List<HSSFCell> row : rowList) {
-            for (HSSFCell hssfCell : row) {
+        for (List<Cell> row : rowList) {
+            for (Cell hssfCell : row) {
                 String stringCellValue = formatter.formatCellValue(hssfCell);
                 table.addCell(stringCellValue);
             }
@@ -1731,6 +1738,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Retrieves a mapping of process IDs to their corresponding base types.
+     *
+     * @param processIds
+     *            list of document IDs to retrieve and process.
+     * @return a map where the keys are document IDs and the values are their associated base types
+     */
+    public Map<Integer, String> getIdBaseTypeMap(List<Integer> processIds) throws DataException {
+        return fetchIdToBaseTypeMap(processIds);
+    }
+
+    /**
      * Filter for correction / solution messages.
      *
      * @param lpe
@@ -1764,7 +1782,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return amount as Long
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
-        return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND));
+        return countDocumentsAcrossProjects(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true,
+                Operator.AND));
     }
 
     /**
@@ -2212,7 +2231,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public static String getProcessDuration(ProcessDTO process) {
         String creationDateTimeString = process.getCreationDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
         return String.format("%sd; %sh", duration.toDays(),
@@ -2587,6 +2606,95 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Renames a process.
+     * 
+     * @param process
+     *            process to be renamed
+     * @param newProcessTitle
+     *            new process name
+     * @throws IOException
+     *             if an error occurs while accessing the file system
+     */
+    public void renameProcess(Process process, String newProcessTitle) throws IOException {
+        renamePropertiesValuesForProcessTitle(process.getProperties(), process.getTitle(), newProcessTitle);
+        renamePropertiesValuesForProcessTitle(process.getTemplates(), process.getTitle(), newProcessTitle);
+        removePropertiesWithEmptyTitle(process.getWorkpieces(), process);
+
+        renameImageDirectories(process, newProcessTitle);
+        renameOcrDirectories(process, newProcessTitle);
+        renameDefinedDirectories(process, newProcessTitle);
+
+        process.setTitle(newProcessTitle);
+    }
+
+    private void renamePropertiesValuesForProcessTitle(List<Property> properties, String processTitle, String newProcessTitle) {
+        for (Property property : properties) {
+            if (Objects.nonNull(property.getValue()) && property.getValue().contains(processTitle)) {
+                property.setValue(property.getValue().replaceAll(processTitle, newProcessTitle));
+            }
+        }
+    }
+
+    /**
+     * Removes properties with empty title.
+     * 
+     * <p>
+     * TODO: Is it really a case that title is empty?
+     * 
+     * @param properties
+     *            property list to be checked
+     * @param process
+     *            process from which the properties are to be deleted
+     */
+    public void removePropertiesWithEmptyTitle(List<Property> properties, Process process) {
+        for (Property processProperty : properties) {
+            if (Objects.isNull(processProperty.getTitle()) || processProperty.getTitle().isEmpty()) {
+                processProperty.getProcesses().clear();
+                process.getProperties().remove(processProperty);
+            }
+        }
+    }
+
+    private void renameImageDirectories(Process process, String newProcessTitle) throws IOException {
+        URI imageDirectory = fileService.getImagesDirectory(process);
+        renameDirectories(imageDirectory, process, newProcessTitle);
+    }
+
+    private void renameOcrDirectories(Process process, String newProcessTitle) throws IOException {
+        URI ocrDirectory = fileService.getOcrDirectory(process);
+        renameDirectories(ocrDirectory, process, newProcessTitle);
+    }
+
+    private void renameDirectories(URI directory, Process process, String newProcessTitle) throws IOException {
+        if (fileService.isDirectory(directory)) {
+            List<URI> subDirs = fileService.getSubUris(directory);
+            for (URI imageDir : subDirs) {
+                if (fileService.isDirectory(imageDir)) {
+                    fileService.renameFile(imageDir, imageDir.toString().replace(process.getTitle(), newProcessTitle));
+                }
+            }
+        }
+    }
+
+    private void renameDefinedDirectories(Process process, String newProcessTitle) {
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
+        for (String processDir : processDirs) {
+            // TODO: check it out
+            URI processDirAbsolute = ServiceManager.getProcessService().getProcessDataDirectory(process)
+                    .resolve(processDir.replace("(processtitle)", process.getTitle()));
+
+            File dir = new File(processDirAbsolute);
+            boolean renamed;
+            if (dir.isDirectory()) {
+                renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                if (!renamed) {
+                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName() });
+                }
+            }
+        }
+    }
+
+    /**
      * Create and return PieChartModel for given process values.
      *
      * @param processValues Map containing process values
@@ -2763,5 +2871,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public SortBuilder sortById(SortOrder order) {
         return SortBuilders.fieldSort(ProcessTypeField.ID.getKey()).order(order);
+    }
+
+    /**
+     * Set import configuration of given processes.
+     * @param processes list of processes for which import configuration is set
+     * @param configurationId ID of import configuration to assign to processes
+     * @return name of ImportConfiguration
+     * @throws DAOException when loading import configuration by ID or saving updated processes fails
+     */
+    public String setImportConfigurationForMultipleProcesses(List<Process> processes, int configurationId)
+            throws DAOException {
+        ImportConfiguration configuration = ServiceManager.getImportConfigurationService().getById(configurationId);
+        for (Process process : processes) {
+            process.setImportConfiguration(configuration);
+            saveToDatabase(process);
+        }
+        return configuration.getTitle();
     }
 }

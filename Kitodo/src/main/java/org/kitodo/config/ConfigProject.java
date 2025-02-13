@@ -11,6 +11,8 @@
 
 package org.kitodo.config;
 
+import static org.kitodo.constants.StringConstants.KITODO;
+
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.IOException;
@@ -29,7 +31,6 @@ import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
 import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
-import org.apache.commons.configuration2.event.EventListener;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -142,7 +143,7 @@ public class ConfigProject {
      * @return tif definition as String
      */
     public String getTifDefinition() throws DoctypeMissingException {
-        return getParamString("tifheader." + getDocType(), "kitodo");
+        return getParamString("tifheader." + getDocType(), KITODO);
     }
 
     /**

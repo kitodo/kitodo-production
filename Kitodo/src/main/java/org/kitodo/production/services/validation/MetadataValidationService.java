@@ -132,7 +132,7 @@ public class MetadataValidationService {
             Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
         }
-        return validate(gdzfile, prefs, process);
+        return validate(gdzfile, prefs);
     }
 
     /**
@@ -142,14 +142,12 @@ public class MetadataValidationService {
      *            Fileformat object
      * @param prefs
      *            Prefs object
-     * @param process
-     *            object
      * @return boolean
      * @deprecated This validation is a work-around to keep legacy code
      *             functional. It should not be used anymore.
      */
     @Deprecated
-    public boolean validate(LegacyMetsModsDigitalDocumentHelper gdzfile, LegacyPrefsHelper prefs, Process process) {
+    public boolean validate(LegacyMetsModsDigitalDocumentHelper gdzfile, LegacyPrefsHelper prefs) {
         try {
             return !State.ERROR.equals(validate(gdzfile.getWorkpiece(), prefs.getRuleset()).getState());
         } catch (DAOException e) {

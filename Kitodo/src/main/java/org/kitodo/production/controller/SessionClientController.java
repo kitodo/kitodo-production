@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
@@ -80,10 +81,14 @@ public class SessionClientController {
      * Display client selection dialog if user is logged in and has multiple clients.
      */
     public void showClientSelectDialog() {
-        if (Objects.isNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
-            PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        Client defaultClient = currentUser.getDefaultClient();
+        if (Objects.nonNull(defaultClient)) {
+            setSessionClient(defaultClient);
         } else if (userHasOnlyOneClient()) {
             setSessionClient(getFirstClientOfCurrentUser());
+        } else if (Objects.isNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
+            PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
         }
     }
 
@@ -163,11 +168,45 @@ public class SessionClientController {
     }
 
     /**
+     * Get default client of current user.
+     *
+     * @return default client of current user
+     */
+    public Client getDefaultClientOfCurrentUser() {
+        return ServiceManager.getUserService().getCurrentUser().getDefaultClient();
+    }
+
+    /**
      * Get list of available clients of current user sorted by name.
      * @return list of available clients of current user sorted by name
      */
     public List<Client> getAvailableClientsOfCurrentUserSortedByName() {
         return getAvailableClientsOfCurrentUser().stream().sorted(Comparator.comparing(Client::getName))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get amount of time that warning message is displayed to inform user that he will be logged
+     * out of the system automatically due to inactivity. Value returned in seconds.
+     * If the session HTTP session timeout configured in the 'web.xml' file is 60 seconds or less,
+     * the message will be shown 30 seconds before logout. If the timeout is between 1 and 5 minutes,
+     * the message will appear 60 seconds before logout. For any session timeout larger than 5 Minutes,
+     * it will be shown 300 seconds in advance.
+     * @return number of seconds the warning message is displayed to the user before automatic logout
+     */
+    public int getAutomaticLogoutWarningSeconds() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (Objects.nonNull(facesContext)) {
+            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+            int maxInactiveInterval = session.getMaxInactiveInterval();
+            if (maxInactiveInterval <= 60) {
+                return 30;
+            } else if (maxInactiveInterval < 300) {
+                return 60;
+            } else {
+                return 300;
+            }
+        }
+        return 60;
     }
 }

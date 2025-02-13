@@ -890,6 +890,25 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Checks if current user has global authority for editing a role.
+     *
+     * @return true if current user has global authority for editing a role
+     */
+    public boolean hasAuthorityGlobalToEditRole() {
+        return hasAnyAuthorityGlobal("editRole");
+    }
+
+    /**
+     * Checks if current user has global authority for viewing a role.
+     * Having the authority to edit a role also grants permission to view it inherently.
+     *
+     * @return true if current user has global authority for editing a role
+     */
+    public boolean hasAuthorityGlobalToViewRole() {
+        return hasAnyAuthorityGlobal("viewRole, editRole");
+    }
+
+    /**
      * Check if current user has global authority to view role list. It returns true
      * if user has "viewAllRoles" authority globally.
      *
@@ -1103,5 +1122,32 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToLinkToProcessesOfUnassignedProjects() {
         return hasAnyAuthorityForClient("linkToProcessesOfUnassignedProjects");
+    }
+
+    /**
+     * Check if the current user has the permission to use the mass import feature.
+     *
+     * @return true if the current use has the permission to use the mass import feature
+     */
+    public boolean hasAuthorityToUseMassImport() {
+        return hasAnyAuthorityForClient("useMassImport");
+    }
+
+    /**
+     * Check if the current user has the permission to set import configurations for processes.
+     *
+     * @return true if the current user has the permission to set import configurations for processes.
+     */
+    public boolean hasAuthorityToSetImportConfiguration() {
+        return hasAuthorityForClient("setImportConfiguration");
+    }
+
+    /**
+     * Check if the current user has the permission to re-import metadata in the metadata editor.
+     *
+     * @return true if the current user has the permission to re-import metadata in the metadata editor.
+     */
+    public boolean hasAuthorityToReimportMetadata() {
+        return hasAuthorityForClient("reimportMetadata");
     }
 }

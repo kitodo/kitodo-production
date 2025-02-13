@@ -2,7 +2,7 @@
 name: Task for the development fund
 about: A working package which may be sponsored by the Kitodo e.V. development fund.
 title: ''
-labels: development fund 2024
+labels: development fund 2025
 assignees: ''
 
 ---
@@ -10,7 +10,7 @@ assignees: ''
 ---
 name: Task for the development fund
 about: A working package which may be sponsored by the Kitodo e.V. development fund.
-labels: development fund 2023
+labels: development fund 2025
 assignees: ''
 
 ---

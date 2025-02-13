@@ -22,16 +22,16 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.SearchHit;
+import org.opensearch.search.SearchHits;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.Aggregations;
+import org.opensearch.search.sort.SortBuilder;
 
 /**
  * Implementation of ElasticSearch Searcher for Kitodo - Data Management
@@ -102,6 +102,19 @@ public class Searcher extends Index {
             throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
         return restClient.aggregateDocuments(this.type, query, aggregation);
+    }
+
+    /**
+     * Retrieves a mapping of document IDs to their corresponding base type for the given list of IDs.
+     * Delegates to the `SearchRestClient`.
+     *
+     * @param ids
+     *            the list of document IDs to search for.
+     * @return a map where each key is a document ID and the value is the corresponding base type of the document.
+     */
+    public Map<Integer, String> fetchIdToBaseTypeMap(List<Integer> ids) throws CustomResponseException, DataException {
+        SearchRestClient restClient = initiateRestClient();
+        return restClient.fetchIdToBaseTypeMap(this.type,ids);
     }
 
     /**

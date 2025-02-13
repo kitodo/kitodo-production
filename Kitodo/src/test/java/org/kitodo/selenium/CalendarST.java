@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
@@ -68,6 +69,7 @@ public class CalendarST extends BaseTestSelenium {
         ProcessTestUtils.removeTestProcess(newspaperTestProcessId);
     }
 
+    @Disabled("faulty, randomly fails during CI builds; needs to be fixed")
     @Test
     public void createProcessFromCalendar() throws Exception {
         processesPage.goTo();

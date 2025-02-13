@@ -33,10 +33,10 @@
                 <p:commandButton action="#{CreateProcessForm.fillCreateProcessForm(processAncestor)}"
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
                                  process="@this"
-                                 styleClass="#{CreateProcessForm.currentProcess.equals(processAncestor) ? 'selected' : ''}"
+                                 styleClass="carousel-button #{CreateProcessForm.currentProcess.equals(processAncestor) ? 'selected' : ''}"
                                  value="#{CreateProcessForm.getCatalogId(processAncestor)}"
                                  update="editForm:processFromTemplateTabView:processData
-                                         editForm:processFromTemplateTabView:processHierarchy"/>
+                                         @(.carousel-button)"/>
             </p:dataList>
 
             <p:carousel id="processChildren"
@@ -44,15 +44,15 @@
                         rendered="#{not empty CreateProcessForm.processChildren}"
                         value="#{CreateProcessForm.processChildren}"
                         var="childProcess"
-                        numVisible="3"
+                        numVisible="5"
                         responsive="true">
                 <p:commandButton action="#{CreateProcessForm.fillCreateProcessForm(childProcess)}"
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
                                  process="@this"
-                                 styleClass="#{CreateProcessForm.currentProcess.equals(childProcess) ? 'selected' : ''}"
+                                 styleClass="carousel-button #{CreateProcessForm.currentProcess.equals(childProcess) ? 'selected' : ''}"
                                  value="#{CreateProcessForm.getCatalogId(childProcess)}"
                                  update="editForm:processFromTemplateTabView:processData
-                                         editForm:processFromTemplateTabView:processHierarchy"/>
+                                         @(.carousel-button)"/>
             </p:carousel>
         </h:panelGroup>
     </p:panel>
@@ -164,7 +164,7 @@
                                      update="addMetadataDialog"
                                      disabled="#{not CreateProcessForm.addMetadataDialog.metadataAddableToStructureElement()}"
                                      action="#{CreateProcessForm.addMetadataDialog.prepareAddableMetadataForStructure()}"
-                                     oncomplete="PF('addMetadataDialog').show();">
+                                     oncomplete="PF('addMetadataDialog').show();metadataTable.focusMetadataRow.remember(this.source);">
                     </p:commandButton>
                 </h:panelGroup>
             </div>

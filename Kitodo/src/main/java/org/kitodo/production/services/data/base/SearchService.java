@@ -11,11 +11,11 @@
 
 package org.kitodo.production.services.data.base;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import static org.opensearch.index.query.QueryBuilders.matchAllQuery;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
+import static org.opensearch.index.query.QueryBuilders.queryStringQuery;
+import static org.opensearch.index.query.QueryBuilders.rangeQuery;
+import static org.opensearch.index.query.QueryBuilders.termsQuery;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,17 +31,6 @@ import javax.ws.rs.HttpMethod;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.BucketOrder;
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.enums.IndexAction;
@@ -56,6 +45,17 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.ProjectService;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.Aggregations;
+import org.opensearch.search.aggregations.BucketOrder;
+import org.opensearch.search.aggregations.bucket.terms.ParsedStringTerms;
+import org.opensearch.search.aggregations.bucket.terms.Terms;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.opensearch.search.sort.SortBuilder;
+import org.opensearch.search.sort.SortBuilders;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -459,6 +459,21 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
+     * Retrieves a mapping of document IDs to their corresponding base types for the given list of IDs.
+     *
+     * @param ids
+     *            list of document IDs to retrieve and process.
+     * @return a map where the keys are document IDs and the values are their associated base types.
+     */
+    public Map<Integer, String> fetchIdToBaseTypeMap(List<Integer> ids) throws DataException {
+        try {
+            return searcher.fetchIdToBaseTypeMap(ids);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
+    }
+
+    /**
      * Find list of DTO objects by query.
      *
      * @param query
@@ -616,7 +631,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return query
      */
     protected QueryBuilder createSetQuery(String key, Set<?> values, boolean contains) {
-        if (contains && !values.isEmpty()) {
+        if (contains && Objects.nonNull(values) && !values.isEmpty()) {
             return termsQuery(key, values);
         } else if (!contains && Objects.nonNull(values)) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
@@ -919,9 +934,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     protected SortBuilder getSortBuilder(String sortField, SortOrder sortOrder) {
         if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
-            return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.ASC);
+            return SortBuilders.fieldSort(sortField).order(org.opensearch.search.sort.SortOrder.ASC);
         } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
-            return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.DESC);
+            return SortBuilders.fieldSort(sortField).order(org.opensearch.search.sort.SortOrder.DESC);
         } else {
             return null;
         }

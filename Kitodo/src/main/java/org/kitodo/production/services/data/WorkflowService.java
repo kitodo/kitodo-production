@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -31,6 +29,8 @@ import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 import org.primefaces.model.SortOrder;
 
 public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, WorkflowDAO> {
@@ -146,5 +146,29 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
      */
     public List<Workflow> getAllActiveWorkflows() {
         return dao.getAllActive();
+    }
+
+    private List<Workflow> getByTitle(String title) {
+        return dao.getByQuery("FROM Workflow WHERE title = :title", Collections.singletonMap("title", title));
+    }
+
+    /**
+     * Save given workflow if it is an existing workflow (e.g. if it does have an ID)
+     * or if it is a new workflow and no workflow with the same name exists.
+     *
+     * @param workflow the object to save
+     *
+     * @throws DataException if the given workflow is a new workflow and a workflow with the same name already exists
+     */
+    public void saveWorkflow(Workflow workflow) throws DataException {
+        if (Objects.nonNull(workflow.getId())) {
+            save(workflow, true);
+        } else {
+            if (getByTitle(workflow.getTitle()).isEmpty()) {
+                save(workflow, true);
+            } else {
+                throw new DataException(Helper.getTranslation("duplicateWorkflowTitle", workflow.getTitle()));
+            }
+        }
     }
 }

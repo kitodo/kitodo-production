@@ -384,8 +384,10 @@ public class Course extends ArrayList<Block> {
             metadata.setMetadataType(metaDatum.getMetadataType());
             metadata.setStartValue(metaDatum.getValue());
             metadata.setStepSize(metaDatum.getStepSize());
-            foundBlock.addMetadata(metadata);
-            last.put(Pair.of(foundBlock, metaDatum.getMetadataType()), metadata);
+            if (Objects.nonNull(foundBlock)) {
+                foundBlock.addMetadata(metadata);
+                last.put(Pair.of(foundBlock, metaDatum.getMetadataType()), metadata);
+            }
         }
     }
 

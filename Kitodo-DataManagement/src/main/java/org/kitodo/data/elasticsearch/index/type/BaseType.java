@@ -11,6 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -138,7 +140,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      */
     String getFormattedDate(Date date) {
         if (Objects.nonNull(date)) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
             return dateFormat.format(date);
         }
         return "";

@@ -43,17 +43,12 @@ import javax.json.JsonReader;
 
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.InternalSettingsPreparer;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.transport.Netty4Plugin;
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -106,6 +101,11 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.kitodo.test.utils.TestConstants;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.node.InternalSettingsPreparer;
+import org.opensearch.node.Node;
+import org.opensearch.plugins.Plugin;
+import org.opensearch.transport.Netty4Plugin;
 
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Condition.get;
@@ -293,7 +293,7 @@ public class MockDatabase {
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {
         File dataDir = new File(dataDirectory);
         if (dataDir.exists()) {
-            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
+            FileUtils.deleteDirectory(dataDir);
         }
     }
 
@@ -451,6 +451,9 @@ public class MockDatabase {
 
         // Assign import configurations to clients
         authorities.add(new Authority("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE));
+
+        // Use mass import
+        authorities.add(new Authority("useMassImport" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
             ServiceManager.getAuthorityService().saveToDatabase(authority);
@@ -745,6 +748,97 @@ public class MockDatabase {
         ProcessTestUtils.logTestProcessInfo(seventhProcess);
         testProcesses.put(seventhProcess.getTitle(), seventhProcess.getId());
         return testProcesses;
+    }
+
+    private static ImportConfiguration insertEadImportConfiguration() throws DAOException, DataException {
+        // EAD mapping files (for "file" and "collection" level)
+        MappingFile eadMappingFile = new MappingFile();
+        eadMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
+        eadMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        eadMappingFile.setFile("ead2kitodo.xsl");
+        eadMappingFile.setTitle("EAD to Kitodo");
+        ServiceManager.getMappingFileService().saveToDatabase(eadMappingFile);
+
+        MappingFile eadParentMappingFile = new MappingFile();
+        eadParentMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
+        eadParentMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        eadParentMappingFile.setFile("eadParent2kitodo.xsl");
+        eadParentMappingFile.setTitle("EAD Parent to Kitodo");
+        ServiceManager.getMappingFileService().saveToDatabase(eadParentMappingFile);
+
+        // EAD upload import configuration
+        ImportConfiguration eadUploadConfiguration = new ImportConfiguration();
+        eadUploadConfiguration.setTitle("EAD upload configuration");
+        eadUploadConfiguration.setConfigurationType(ImportConfigurationType.FILE_UPLOAD.name());
+        eadUploadConfiguration.setMetadataFormat(MetadataFormat.EAD.name());
+        eadUploadConfiguration.setReturnFormat(FileFormat.XML.name());
+        eadUploadConfiguration.setMappingFiles(Collections.singletonList(eadMappingFile));
+        eadUploadConfiguration.setParentMappingFile(eadParentMappingFile);
+        ServiceManager.getImportConfigurationService().saveToDatabase(eadUploadConfiguration);
+        return eadUploadConfiguration;
+    }
+
+    private static Template insertEadTemplate(Ruleset eadRuleset, Project eadImportProject, Client client)
+            throws DAOException, DataException {
+        Task firstTask = new Task();
+        firstTask.setTitle("Open");
+        firstTask.setOrdering(1);
+        firstTask.setRepeatOnCorrection(true);
+        firstTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        firstTask.setProcessingStatus(TaskStatus.OPEN);
+
+        Task secondTask = new Task();
+        secondTask.setTitle("Locked");
+        secondTask.setOrdering(2);
+        secondTask.setRepeatOnCorrection(true);
+        secondTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        secondTask.setTypeImagesWrite(true);
+        secondTask.setProcessingStatus(TaskStatus.LOCKED);
+
+        List<Task> tasks = Arrays.asList(firstTask, secondTask);
+
+        // EAD template
+        Template eadTemplate = new Template();
+        eadTemplate.setTitle("EAD template");
+        eadTemplate.setRuleset(eadRuleset);
+        eadTemplate.getProjects().add(eadImportProject);
+        eadTemplate.setClient(client);
+        ServiceManager.getTemplateService().save(eadTemplate);
+        eadTemplate.setTasks(tasks);
+        Role role = ServiceManager.getRoleService().getById(1);
+        for (Task task : eadTemplate.getTasks()) {
+            task.setTemplate(eadTemplate);
+            task.getRoles().add(role);
+            role.getTasks().add(task);
+            ServiceManager.getTaskService().save(task);
+        }
+        return eadTemplate;
+    }
+
+    public static Project insertProjectForEadImport(User user, Client client) throws DAOException, DataException {
+
+        // EAD ruleset
+        Ruleset eadRuleset = new Ruleset();
+        eadRuleset.setTitle("EAD ruleset");
+        eadRuleset.setFile("ruleset_ead.xml");
+        eadRuleset.setClient(client);
+        ServiceManager.getRulesetService().save(eadRuleset);
+
+        ImportConfiguration eadUploadConfiguration = insertEadImportConfiguration();
+
+        // EAD project
+        Project eadImportProject = new Project();
+        eadImportProject.setTitle("EAD test project");
+        eadImportProject.getUsers().add(user);
+        eadImportProject.setClient(client);
+        eadImportProject.setDefaultImportConfiguration(eadUploadConfiguration);
+        ServiceManager.getProjectService().save(eadImportProject);
+
+        Template eadTemplate = insertEadTemplate(eadRuleset, eadImportProject, client);
+
+        eadImportProject.getTemplates().add(eadTemplate);
+        ServiceManager.getProjectService().save(eadImportProject);
+        return eadImportProject;
     }
 
     /**
@@ -1539,6 +1633,9 @@ public class MockDatabase {
         for (int i = 0; i < 34; i++) {
             firstRole.getAuthorities().add(allAuthorities.get(i));
         }
+
+        firstRole.getAuthorities().add(ServiceManager.getAuthorityService()
+                .getByTitle("useMassImport" + CLIENT_ASSIGNABLE));
 
         ServiceManager.getRoleService().saveToDatabase(firstRole);
 

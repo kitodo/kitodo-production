@@ -859,7 +859,7 @@ public class GalleryPanel {
         String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
             PrimeFaces.current().executeScript(
-                    "checkScrollPosition();initializeImage();metadataEditor.gallery.mediaView.update();" + scrollScripts);
+                    "checkScrollPosition();metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();" + scrollScripts);
         } else {
             PrimeFaces.current().executeScript(scrollScripts);
         }
@@ -1047,5 +1047,53 @@ public class GalleryPanel {
      */
     public MediaPartialsPanel getMediaPartialsPanel() {
         return mediaPartialsPanel;
+    }
+
+    /**
+     * Return true if the currently selected media (that is shown in the detail view) is the  
+     * first media of all available media.
+     * @return boolean true if selected media is first media
+     */
+    public boolean isSelectedMediaFirst() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.isNull(lastSelection)) {
+            return false;
+        }
+
+        List<GalleryMediaContent> medias = getMedias();
+        if (medias.isEmpty()) {
+            return false;
+        }
+
+        PhysicalDivision firstPhysicalDivision = medias.get(0).getView().getPhysicalDivision();
+        if (Objects.isNull(firstPhysicalDivision)) {
+            return false;
+        }
+
+        return firstPhysicalDivision.equals(lastSelection.getKey());
+    }
+
+    /**
+     * Return true if the currently selected media (that is shown in the detail view) is the  
+     * last media of all available media.
+     * @return boolean true if selected media is last media
+     */
+    public boolean isSelectedMediaLast() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.isNull(lastSelection)) {
+            return false;
+        }
+
+        List<GalleryMediaContent> medias = getMedias();
+        if (medias.isEmpty()) {
+            return false;
+        }
+
+        PhysicalDivision lastPhysicalDivision = medias.get(medias.size() - 1).getView().getPhysicalDivision();
+        if (Objects.isNull(lastPhysicalDivision)) {
+            return false;
+        }
+
+        return lastPhysicalDivision.equals(lastSelection.getKey());
     }
 }

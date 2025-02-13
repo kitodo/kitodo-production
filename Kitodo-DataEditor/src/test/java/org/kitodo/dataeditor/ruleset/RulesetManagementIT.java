@@ -11,6 +11,9 @@
 
 package org.kitodo.dataeditor.ruleset;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+import static org.kitodo.constants.StringConstants.EDIT;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.contains;
@@ -768,6 +771,9 @@ public class RulesetManagementIT {
         assertThat("Periodical was not found!",
                 rulesetManagement.getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT),
                 contains("Periodical"));
+        assertThat("structureTreeTitle was not found!", 
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.STRUCTURE_TREE_TITLE),
+            contains("LABEL"));
 
         // not existing uses
         assertThat("Something was found!",
@@ -1098,7 +1104,7 @@ public class RulesetManagementIT {
         imported.add(newMetadataEntry("metadataToKeepExceptInEditing", "value not to replace")); // 0
         imported.add(newMetadataEntry("metadataThatIsNew", "new value")); // 1
 
-        int numAdded = underTest.updateMetadata("division", metadata, "create", imported);
+        int numAdded = underTest.updateMetadata("division", metadata, CREATE, imported);
         assertEquals(5, numAdded);
 
         List<Metadata> defaultReplace = metadata.stream()
@@ -1160,7 +1166,7 @@ public class RulesetManagementIT {
         imported.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value not to replace")); // 0
         imported.add(newMetadataEntry("metadataToKeepExceptInEditing", "replaced value")); // -1
 
-        int numAdded = underTest.updateMetadata("division", metadata, "edit", imported);
+        int numAdded = underTest.updateMetadata("division", metadata, EDIT, imported);
         assertEquals(-1, numAdded);
 
         List<Metadata> keepLater = metadata.stream()

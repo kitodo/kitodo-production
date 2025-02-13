@@ -11,7 +11,10 @@
 
 package org.kitodo.production.helper;
 
+import static org.kitodo.constants.StringConstants.EDIT;
+
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -22,13 +25,18 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -36,6 +44,7 @@ import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
@@ -153,9 +162,38 @@ public class ProcessHelper {
             String acquisitionStage, boolean force)
             throws ProcessGenerationException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             IOException {
+        List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
+        generateAtstslFields(tempProcess, parentTempProcesses, acquisitionStage, priorityList, force);
+    }
+
+    /**
+     * Generates TSL/ATS dependent fields for given language list 'priorityList'.
+     *
+     * @param tempProcess
+     *         the temp process to generate TSL/ATS dependent fields
+     * @param parentTempProcesses
+     *         the parent temp processes
+     * @param acquisitionStage
+     *         current acquisition stage
+     * @param priorityList
+     *         language list
+     * @param force
+     *         force regeneration atstsl fields if process title already exists
+     * @throws ProcessGenerationException
+     *         thrown if process title cannot be created
+     * @throws InvalidMetadataValueException
+     *         thrown if process workpiece contains invalid metadata
+     * @throws NoSuchMetadataFieldException
+     *         thrown if process workpiece contains undefined metadata
+     * @throws IOException
+     *         thrown if ruleset file cannot be loaded
+     */
+    public static void generateAtstslFields(TempProcess tempProcess, List<TempProcess> parentTempProcesses,
+                                            String acquisitionStage, List<Locale.LanguageRange> priorityList, boolean force)
+            throws ProcessGenerationException, InvalidMetadataValueException, NoSuchMetadataFieldException,
+            IOException {
         RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
                 .openRuleset(tempProcess.getProcess().getRuleset());
-        List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
         List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, rulesetManagement,
                 acquisitionStage, priorityList);
@@ -248,11 +286,11 @@ public class ProcessHelper {
      *
      * @param nodes
      *            node list to convert to metadata
-     * @param domain
-     *            domain of metadata
+     * @param ruleset
+     *            ruleset of process
      * @return metadata from node list
      */
-    public static HashSet<Metadata> convertMetadata(NodeList nodes, MdSec domain) {
+    public static HashSet<Metadata> convertMetadata(NodeList nodes, RulesetManagementInterface ruleset) {
         HashSet<Metadata> allMetadata = new HashSet<>();
         if (Objects.nonNull(nodes)) {
             for (int index = 0; index < nodes.getLength(); index++) {
@@ -270,19 +308,113 @@ public class ProcessHelper {
                         break;
                     case "metadataGroup": {
                         MetadataGroup group = new MetadataGroup();
-                        group.setMetadata(convertMetadata(element.getChildNodes(), null));
+                        group.setMetadata(convertMetadata(element.getChildNodes(), ruleset));
                         metadata = group;
                         break;
                     }
                     default:
                         continue;
                 }
-                metadata.setKey(element.getAttribute("name"));
-                metadata.setDomain(domain);
+                String metadataKey = element.getAttribute("name");
+                metadata.setKey(metadataKey);
+                setMetadataDomain(metadata, ruleset);
                 allMetadata.add(metadata);
             }
         }
         return allMetadata;
+    }
+
+    /**
+     * Sets the domain of the given metadata. This method uses a side effect. It doesn't return a new instance of
+     * metadata but changes the given metadata object.
+     *
+     * @param metadata Metadata instance for which the
+     * @param ruleset RulesetManagementInterface from which domain information about given metadata is retrieved
+     */
+    public static void setMetadataDomain(Metadata metadata, RulesetManagementInterface ruleset) {
+        MetadataViewInterface viewInterface = ruleset.getMetadataView(metadata.getKey(), EDIT, ServiceManager
+                .getUserService().getCurrentMetadataLanguage());
+        if (viewInterface.getDomain().isPresent()) {
+            Domain domain = viewInterface.getDomain().get();
+            // skip domain 'METS_DIV' because it has no equivalent 'MdSec'
+            if (!Domain.METS_DIV.equals(domain)) {
+                metadata.setDomain(MetadataEditor.domainToMdSec(domain));
+            }
+        }
+    }
+
+    /**
+     * Add allowed metadata to given division.
+     *
+     * @param division
+     *          division to which allowed metadata is added
+     * @param keys
+     *          metadata keys to consider
+     * @param value
+     *          String to be set as value of metadata
+     * @param rulesetManagement
+     *          RulesetManagementInterface containing metadata rules
+     * @param acquisitionStage
+     *          current acquisition stage
+     * @param priorityList
+     *          list of languages
+     */
+    public static void addAllowedMetadataRecursive(Division<?> division, Collection<String> keys, String value,
+                                                   RulesetManagementInterface rulesetManagement, String acquisitionStage,
+                                                   List<Locale.LanguageRange> priorityList) {
+        StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(division.getType(),
+                acquisitionStage, priorityList);
+        for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {
+            if (metadataView instanceof SimpleMetadataViewInterface && keys.contains(metadataView.getId())
+                    && division.getMetadata().parallelStream()
+                    .filter(metadata -> metadataView.getId().equals(metadata.getKey()))
+                    .count() < metadataView.getMaxOccurs()) {
+                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) metadataView, value);
+            }
+        }
+        for (Division<?> child : division.getChildren()) {
+            addAllowedMetadataRecursive(child, keys, value, rulesetManagement, acquisitionStage, priorityList);
+        }
+    }
+
+    /**
+     * Save metadata of given tempProcesses process to meta.xml file.
+     *
+     * @param tempProcess
+     *          TempProcess whose Process metadata is saved to a meta.xml file
+     * @param rulesetManagement
+     *          RulesetManagementInterface containing metadata rules
+     * @param acquisitionStage
+     *          current acquisition stage
+     * @param priorityList
+     *          list of languages
+     */
+    public static void saveTempProcessMetadata(TempProcess tempProcess, RulesetManagementInterface rulesetManagement,
+                                        String acquisitionStage, List<Locale.LanguageRange> priorityList) {
+        try (OutputStream out = ServiceManager.getFileService()
+                .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()))) {
+            Workpiece workpiece = tempProcess.getWorkpiece();
+            workpiece.setId(tempProcess.getProcess().getId().toString());
+            if (Objects.nonNull(rulesetManagement)) {
+                setProcessTitleMetadata(workpiece, tempProcess.getProcess().getTitle(), rulesetManagement,
+                        acquisitionStage, priorityList);
+            }
+            ServiceManager.getMetsService().save(workpiece, out);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private static void setProcessTitleMetadata(Workpiece workpiece, String processTitle,
+                                         RulesetManagementInterface rulesetManagement, String acquisitionStage,
+                                         List<Locale.LanguageRange> priorityList) {
+        Collection<String> processTitleKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        if (!processTitleKeys.isEmpty()) {
+            ProcessHelper.addAllowedMetadataRecursive(workpiece.getLogicalStructure(), processTitleKeys, processTitle,
+                    rulesetManagement, acquisitionStage, priorityList);
+            ProcessHelper.addAllowedMetadataRecursive(workpiece.getPhysicalStructure(), processTitleKeys, processTitle,
+                    rulesetManagement, acquisitionStage, priorityList);
+        }
     }
 
     /**
@@ -355,7 +487,7 @@ public class ProcessHelper {
             List<Locale.LanguageRange> priorityList) {
         ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
                 rulesetManagement, acquisitionStage, priorityList);
-        metadata.setMetadata(convertMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
+        metadata.setMetadata(convertMetadata(tempProcess.getMetadataNodes(), rulesetManagement));
         return metadata;
     }
 

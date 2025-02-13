@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,8 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,7 +49,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -126,7 +124,11 @@ public class StructurePanel implements Serializable {
      */
     private String activeTabs;
 
-    private String titleMetadata = "type";
+    /**
+     * Stores the users choice of the drop down selection above the logical structure tree. Can be either "type" 
+     * (default), "title" (uses metadata key annotated with "structureTreeTitle" in ruleset) or "type+title".
+     */
+    private String nodeLabelOption = "type";
 
     /**
      * Determines whether the logical tree is built as a combination of physical media nodes and
@@ -536,12 +538,14 @@ public class StructurePanel implements Serializable {
 
     private void restoreSelection(String rowKey, TreeNode parentNode) {
         for (TreeNode childNode : parentNode.getChildren()) {
-            if (Objects.nonNull(childNode) && rowKey.equals(childNode.getRowKey())) {
-                childNode.setSelected(true);
-                break;
-            } else {
-                childNode.setSelected(false);
-                restoreSelection(rowKey, childNode);
+            if (Objects.nonNull(childNode)) {
+                if (rowKey.equals(childNode.getRowKey())) {
+                    childNode.setSelected(true);
+                    break;
+                } else {
+                    childNode.setSelected(false);
+                    restoreSelection(rowKey, childNode);
+                }
             }
         }
     }
@@ -558,8 +562,27 @@ public class StructurePanel implements Serializable {
         invisibleRootNode.setExpanded(true);
         invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
-        buildStructureTreeRecursively(structure, invisibleRootNode);
+        List<Integer> processIds = getAllLinkedProcessIds(structure);
+        Map<Integer, String> processTypeMap = processIds.isEmpty() ? Collections.emptyMap() : fetchProcessTypes(processIds);
+        Map<String, StructuralElementViewInterface> viewCache = new HashMap<>();
+        buildStructureTreeRecursively(structure, invisibleRootNode, processTypeMap, viewCache);
         return invisibleRootNode;
+    }
+
+    private List<Integer> getAllLinkedProcessIds(LogicalDivision structure) {
+        return structure.getAllChildren().stream()
+                .filter(division -> division.getLink() != null)
+                .map(division -> ServiceManager.getProcessService().processIdFromUri(division.getLink().getUri()))
+                .collect(Collectors.toList());
+    }
+
+    private Map<Integer, String> fetchProcessTypes(List<Integer> processIds) {
+        try {
+            return ServiceManager.getProcessService().getIdBaseTypeMap(processIds);
+        } catch (DataException e) {
+            Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -582,14 +605,19 @@ public class StructurePanel implements Serializable {
     /**
      * Build a StructureTreeNode for a logical division, which is then visualized in the logical structure tree.
      *
-     * @param structure the logical division
-     * @return the StructureTreeNode instance
+     * @param structure the logical division for which the tree node is being constructed
+     * @param idTypeMap the mapping of process id to basetype
+     * @param viewCache a cache for storing and retrieving already processed StructuralElementViews
+     * @return the constructed {@link StructureTreeNode} instance representing the given logical division
      */
-    private StructureTreeNode buildStructureTreeNode(LogicalDivision structure) {
+    private StructureTreeNode buildStructureTreeNode(LogicalDivision structure,  Map<Integer, String> idTypeMap,
+                                                     Map<String, StructuralElementViewInterface> viewCache) {
         StructureTreeNode node;
         if (Objects.isNull(structure.getLink())) {
-            StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            StructuralElementViewInterface divisionView = viewCache.computeIfAbsent(structure.getType(), key ->
+                    dataEditor.getRulesetManagement().getStructuralElementView(
+                            key, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
+            );
             String label = divisionView.getLabel();
             String pageRange = buildPageRangeFromLogicalDivision(structure);
             boolean undefined = divisionView.isUndefined() && Objects.nonNull(structure.getType());
@@ -597,18 +625,15 @@ public class StructurePanel implements Serializable {
         } else {
             node = new StructureTreeNode(structure.getLink().getUri().toString(), null, true, true, structure);
             for (Process child : dataEditor.getCurrentChildren()) {
-                try {
-                    String type = ServiceManager.getProcessService().getBaseType(child.getId());
-                    if (child.getId() == ServiceManager.getProcessService()
-                            .processIdFromUri(structure.getLink().getUri())) {
-                        StructuralElementViewInterface view = dataEditor.getRulesetManagement().getStructuralElementView(
-                            type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                        node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
-                                + child.getTitle(), null, view.isUndefined(), true, structure);
-                    }
-                } catch (DataException e) {
-                    Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-                    node = new StructureTreeNode(child.getTitle(), null, true, true, child);
+                if (child.getId() == ServiceManager.getProcessService().processIdFromUri(structure.getLink().getUri())) {
+                    String type = idTypeMap.get(child.getId());
+                    // Retrieve the view from cache if it exists, otherwise compute and cache it
+                    StructuralElementViewInterface view = viewCache.computeIfAbsent(type, key ->
+                            dataEditor.getRulesetManagement().getStructuralElementView(
+                                    key, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
+                    );
+                    node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
+                            + child.getTitle(), null, view.isUndefined(), true, structure);
                 }
             }
         }
@@ -620,10 +645,13 @@ public class StructurePanel implements Serializable {
      *
      * @param structure the current logical structure
      * @param result the current corresponding primefaces tree node
+     * @param processTypeMap the mapping of process id to basetype
+     * @param viewCache a cache for storing and retrieving already processed StructuralElementViews
      * @return a collection of views that contains all views of the full sub-tree
      */
-    private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result) {
-        StructureTreeNode node = buildStructureTreeNode(structure);
+    private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result, Map<Integer,
+            String> processTypeMap, Map<String, StructuralElementViewInterface> viewCache) {
+        StructureTreeNode node = buildStructureTreeNode(structure, processTypeMap, viewCache);
         /*
          * Creating the tree node by handing over the parent node automatically
          * appends it to the parent as a child. That’s the logic of the JSF
@@ -637,7 +665,7 @@ public class StructurePanel implements Serializable {
         Set<View> viewsShowingOnAChild = new HashSet<>();
         if (!this.logicalStructureTreeContainsMedia()) {
             for (LogicalDivision child : structure.getChildren()) {
-                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
+                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent, processTypeMap, viewCache));
             }
         } else {
             // iterate through children and views ordered by the ORDER attribute
@@ -645,7 +673,8 @@ public class StructurePanel implements Serializable {
             for (Pair<View, LogicalDivision> pair : merged) {
                 if (Objects.nonNull(pair.getRight())) {
                     // add child and their views
-                    viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent));
+                    viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent,
+                            processTypeMap, viewCache));
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
                     DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
@@ -1659,7 +1688,7 @@ public class StructurePanel implements Serializable {
     }
 
     private LogicalDivision getTreeNodeStructuralElement(TreeNode treeNode) {
-        if (treeNode.getData() instanceof StructureTreeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
                 return (LogicalDivision) structureTreeNode.getDataObject();
@@ -1669,10 +1698,20 @@ public class StructurePanel implements Serializable {
     }
 
     private PhysicalDivision getTreeNodePhysicalDivision(TreeNode treeNode) {
-        if (treeNode.getData() instanceof StructureTreeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
                 return (PhysicalDivision) structureTreeNode.getDataObject();
+            }
+        }
+        return null;
+    }
+
+    private View getTreeNodeView(TreeNode treeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                return (View) structureTreeNode.getDataObject();
             }
         }
         return null;
@@ -1740,28 +1779,101 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Check if the selected Node's PhysicalDivision can be assigned to the next logical element in addition to the current assignment.
+     * Find the next logical structure node that can be used to create a new link to the currently selected node. 
+     * The node needs to be the last node amongst its siblings.
+     * 
+     * @param node the tree node of the currently selected physical devision node
+     * @return the next logical tree node 
+     */
+    private TreeNode findNextLogicalNodeForViewAssignment(TreeNode node) {
+        if (Objects.isNull(getTreeNodeView(node))) {
+            // node is not a view
+            return null;
+        }
+
+        List<TreeNode> viewSiblings = node.getParent().getChildren();
+        if (viewSiblings.indexOf(node) != viewSiblings.size() - 1) {
+            // view is not last view amongst siblings
+            return null;
+        }
+
+        // pseudo-recursively find next logical node
+        return findNextLogicalNodeForViewAssignmentRecursive(node.getParent());
+    }
+
+    /**
+     * Find the next logical structure node that can be used to create a link by pseudo-recursively iterating over 
+     * logical parent and logical children nodes. 
+     * 
+     * @param node the tree node of the logical division
+     * @return the tree node of the next logical division
+     */
+    private TreeNode findNextLogicalNodeForViewAssignmentRecursive(TreeNode node) {
+        TreeNode current = node;
+
+        while (Objects.nonNull(current)) {
+            if (Objects.isNull(getTreeNodeStructuralElement(current))) {
+                // node is not a logical node
+                return null;
+            }
+
+            // check whether next sibling is a logical node as well
+            List<TreeNode> currentSiblings = current.getParent().getChildren();
+            int currentIndex = currentSiblings.indexOf(current);
+
+            if (currentSiblings.size() > currentIndex + 1) {
+                TreeNode nextSibling = currentSiblings.get(currentIndex + 1);
+                if (Objects.isNull(getTreeNodeStructuralElement(nextSibling))) {
+                    // next sibling is not a logical node
+                    return null;
+                }
+
+                // next sibling is a logical node and potential valid result, unless there are children
+                TreeNode nextLogical = nextSibling;
+
+                // check sibling has children (with first child being another logical node)
+                while (!nextLogical.getChildren().isEmpty()) {
+                    TreeNode firstChild = nextLogical.getChildren().get(0);
+                    if (Objects.isNull(getTreeNodeStructuralElement(firstChild))) {
+                        // first child is not a logical node
+                        return nextLogical;
+                    }
+                    // iterate to child node
+                    nextLogical = firstChild;
+                }
+                return nextLogical;
+            }
+
+            // node is last amongst siblings
+            // iterate to parent node
+            current = current.getParent();
+        }
+        return null;
+    }
+
+    /**
+     * Check if the selected Node's PhysicalDivision can be assigned to the next logical element in addition to the 
+     * current assignment.
+     * 
      * @return {@code true} if the PhysicalDivision can be assigned to the next LogicalDivision
      */
     public boolean isAssignableSeveralTimes() {
-        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof  StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-            if (structureTreeNode.getDataObject() instanceof View) {
-                List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
-                int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
-                List<TreeNode> viewSiblings = selectedLogicalNode.getParent().getChildren();
-                // check for selected node's positions and siblings after selected node's parent
-                if (viewSiblings.indexOf(selectedLogicalNode) == viewSiblings.size() - 1
-                        && logicalNodeSiblings.size() > logicalNodeIndex + 1) {
-                    TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
-                    if (nextSibling.getData() instanceof StructureTreeNode) {
-                        StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
-                        return structureTreeNodeSibling.getDataObject() instanceof LogicalDivision;
+        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(selectedLogicalNode);
+        if (Objects.nonNull(nextLogical)) {
+            // check whether first child is already view of current node (too avoid adding views multiple times)
+            if (!nextLogical.getChildren().isEmpty()) {
+                TreeNode childNode = nextLogical.getChildren().get(0);
+                View childNodeView = getTreeNodeView(childNode);
+                View selectedView = getTreeNodeView(selectedLogicalNode);
+                if (Objects.nonNull(childNodeView) && Objects.nonNull(selectedView)) {
+                    if (childNodeView.equals(selectedView)) {
+                        // first child is already a view for the currently selected node
+                        return false;
                     }
                 }
             }
+            return true;
         }
-
         return false;
     }
 
@@ -1769,14 +1881,12 @@ public class StructurePanel implements Serializable {
      * Assign selected Node's PhysicalDivision to the next LogicalDivision.
      */
     public void assign() {
-        if (isAssignableSeveralTimes()) {
+        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(selectedLogicalNode);
+        if (Objects.nonNull(nextLogical)) {
             View view = (View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject();
             View viewToAssign = new View();
             viewToAssign.setPhysicalDivision(view.getPhysicalDivision());
-            List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
-            int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
-            TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
-            StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
+            StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextLogical.getData();
             LogicalDivision logicalDivision = (LogicalDivision) structureTreeNodeSibling.getDataObject();
             dataEditor.assignView(logicalDivision, viewToAssign, 0);
             severalAssignments.add(viewToAssign.getPhysicalDivision());
@@ -1811,31 +1921,22 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Get title metadata.
-     * @return value of titleMetadata
+     * Get the node label option (either "type", "title" or "type+title").
+     * @return value of node label option
      */
-    public String getTitleMetadata() {
-        return titleMetadata;
+    public String getNodeLabelOption() {
+        return nodeLabelOption;
     }
 
     /**
-     * Set title metadata.
-     * @param titleMetadata as java.lang.String
+     * Set node label option.
+     * @param nodeLabelOption as java.lang.String
      */
-    public void setTitleMetadata(String titleMetadata) {
-        this.titleMetadata = titleMetadata;
-    }
-
-    /**
-     * Get list of metadata keys that are used for displaying title information from the Kitodo configuration file.
-     * @return list of title metadata keys
-     */
-    public List<SelectItem> getTitleMetadataItems() {
-        return DataEditorService.getTitleKeys()
-                .stream()
-                .map(key -> new SelectItem(key,dataEditor.getRulesetManagement().getTranslationForKey(
-                        key,dataEditor.getPriorityList()).orElse(key)))
-                .collect(Collectors.toList());
+    public void setNodeLabelOption(String nodeLabelOption) {
+        if (!Arrays.asList("type", "title", "type+title").contains(nodeLabelOption)) {
+            throw new IllegalArgumentException("node label option must be either type, title or type+title");
+        }
+        this.nodeLabelOption = nodeLabelOption;
     }
 
     /**

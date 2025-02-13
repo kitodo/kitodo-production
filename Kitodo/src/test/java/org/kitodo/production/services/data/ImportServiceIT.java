@@ -11,6 +11,9 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+import static org.kitodo.constants.StringConstants.KITODO;
+
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.kitodo.constants.StringConstants.COLLECTION;
+import static org.kitodo.constants.StringConstants.FILE;
 
 import com.xebialabs.restito.server.StubServer;
 
@@ -59,8 +64,10 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
@@ -73,12 +80,14 @@ import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
+import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.thread.ImportEadProcessesThread;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.kitodo.test.utils.TestConstants;
 import org.w3c.dom.Document;
@@ -94,6 +103,7 @@ public class ImportServiceIT {
     private static final ImportService importService = ServiceManager.getImportService();
     private static StubServer server;
     private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
+    private static final String EAD_COLLECTION_FILE = "importRecords/eadCollection.xml";
     private static final String TEST_FILE_PATH_NUMBER_OF_HITS = "src/test/resources/importRecords/sruResponseNumberOfHits.xml";
     private static final String TEST_FILE_SUCCESS_RESPONSE_PATH = "src/test/resources/customInterfaceSuccessResponse.xml";
     private static final String TEST_FILE_ERROR_RESPONSE_PATH = "src/test/resources/customInterfaceErrorResponse.xml";
@@ -124,7 +134,6 @@ public class ImportServiceIT {
     private static final String PICA_PARENT_ID = "pica.parentId";
     private static final String firstProcess = "First process";
     private static final String TEST_PROCESS_TITLE = "Testtitel";
-    private static final String KITODO = "kitodo";
     private static final String METADATA = "metadata";
     private static final String EXPECTED_AUTHOR = "HansMeier";
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
@@ -296,12 +305,11 @@ public class ImportServiceIT {
      * Tests whether parent process with provided process ID exists and created parent TempProcess from it.
      *
      * @throws DAOException when test ruleset cannot be loaded from database
-     * @throws ProcessGenerationException when checking for parent process fails
      * @throws IOException when checking for parent process fails
      * @throws DataException when copying test metadata file fails
      */
     @Test
-    public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException, DataException {
+    public void shouldCheckForParent() throws DAOException, IOException, DataException {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
@@ -428,9 +436,8 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            ImportService.processTempProcess(tempProcess, managementInterface,
-                    ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
-                            .getCurrentMetadataLanguage(), null);
+            ImportService.processTempProcess(tempProcess, managementInterface, CREATE,
+                    ServiceManager.getUserService().getCurrentMetadataLanguage(), null);
             assertFalse(tempProcess.getProcess().getProperties().isEmpty(), "Process should have some properties");
             assertTrue(StringUtils.isNotBlank(tempProcess.getProcess().getTitle()), "Process title should not be empty");
         }
@@ -553,6 +560,55 @@ public class ImportServiceIT {
         }
     }
 
+    /**
+     * Test EAD import.
+     *
+     * @throws Exception when something goes wrong
+     */
+    @Test
+    public void shouldImportEadCollection() throws Exception {
+        User user = ServiceManager.getUserService().getById(1);
+        Client client = ServiceManager.getClientService().getById(1);
+        Project eadProject = MockDatabase.insertProjectForEadImport(user, client);
+        Template eadTemplate = eadProject.getTemplates().get(0);
+        CreateProcessForm createProcessForm = new CreateProcessForm();
+        createProcessForm.setProject(eadProject);
+        createProcessForm.setTemplate(eadTemplate);
+        createProcessForm.setSelectedEadLevel(FILE);
+        createProcessForm.setSelectedParentEadLevel(COLLECTION);
+        createProcessForm.setCurrentImportConfiguration(eadProject.getDefaultImportConfiguration());
+        createProcessForm.updateRulesetAndDocType(eadTemplate.getRuleset());
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        List<Integer> allIds = ServiceManager.getProcessService().findAllIDs();
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(EAD_COLLECTION_FILE)) {
+            if (Objects.nonNull(inputStream)) {
+                String xmlString = IOUtils.toString(inputStream, Charset.defaultCharset());
+                createProcessForm.setXmlString(xmlString);
+                ImportEadProcessesThread eadProcessesThread = new ImportEadProcessesThread(createProcessForm, user, client);
+                eadProcessesThread.start();
+                assertTrue(eadProcessesThread.isAlive(), "Process should have been started");
+                eadProcessesThread.join(3000);
+                assertFalse(eadProcessesThread.isAlive(), "Process should have been stopped");
+            }
+        }
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+        List<Integer> allIdsWithEad = ServiceManager.getProcessService().findAllIDs();
+        // EAD test file contains one collection and 5 files, so the system should contain 6 new processes altogether
+        assertEquals(allIds.size() + 6, allIdsWithEad.size(),
+                "Database does not contain the correct number of processes after EAD import");
+        if (allIdsWithEad.removeAll(allIds)) {
+            for (int processId : allIdsWithEad) {
+                ProcessTestUtils.removeTestProcess(processId);
+            }
+        }
+    }
+
     private String getProcessDetailByMetadataId(String metadataId, List<ProcessDetail> processDetails) {
         for (ProcessDetail processDetail : processDetails) {
             if (Objects.equals(processDetail.getMetadataID(), metadataId) && processDetail instanceof ProcessTextMetadata) {
@@ -573,9 +629,8 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            return ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
-                    ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
-                            .getCurrentMetadataLanguage());
+            return ProcessHelper.transformToProcessDetails(tempProcess, managementInterface, CREATE,
+                    ServiceManager.getUserService().getCurrentMetadataLanguage());
         }
     }
 

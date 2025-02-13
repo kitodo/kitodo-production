@@ -14,6 +14,8 @@ package org.kitodo.data.elasticsearch.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -23,23 +25,27 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
+import org.opensearch.action.get.GetRequest;
+import org.opensearch.action.get.GetResponse;
+import org.opensearch.action.get.MultiGetItemResponse;
+import org.opensearch.action.get.MultiGetRequest;
+import org.opensearch.action.get.MultiGetResponse;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.Request;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.Response;
+import org.opensearch.client.ResponseException;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.SearchHits;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.Aggregations;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.fetch.subphase.FetchSourceContext;
+import org.opensearch.search.sort.SortBuilder;
 
 /**
  * Extension of KitodoRestClient for search package.
@@ -191,6 +197,42 @@ public class SearchRestClient extends KitodoRestClient {
         } catch (IOException e) {
             throw new DataException(e);
         }
+    }
+
+    /**
+     * Retrieves a map of document IDs to their corresponding base type for the given list of IDs.
+     *
+     * @param type the type of documents being requested, used to determine the index.
+     * @param ids  the list of document IDs to search for.
+     * @return a map where each key is a document ID and the value is the corresponding base type of the document.
+     */
+    public Map<Integer, String> fetchIdToBaseTypeMap(String type, List<Integer> ids) throws CustomResponseException, DataException {
+        Map<Integer, String> idToBaseTypeMap = new HashMap<>();
+
+        try {
+            // Create a MultiGetRequest to fetch multiple documents with only baseType field
+            MultiGetRequest multiGetRequest = new MultiGetRequest();
+            for (Integer id : ids) {
+                MultiGetRequest.Item item = new MultiGetRequest.Item(this.indexBase + "_" + type, String.valueOf(id));
+                // Only fetch baseType field
+                item.fetchSourceContext(new FetchSourceContext(true, new String[]{"baseType"}, null));
+                multiGetRequest.add(item);
+            }
+            MultiGetResponse multiGetResponse = highLevelClient.mget(multiGetRequest, RequestOptions.DEFAULT);
+            for (MultiGetItemResponse itemResponse : multiGetResponse.getResponses()) {
+                if (!itemResponse.isFailed() && itemResponse.getResponse().isExists()) {
+                    String baseType = (String) itemResponse.getResponse().getSourceAsMap().get("baseType");
+                    Integer id = Integer.parseInt(itemResponse.getResponse().getId());
+                    idToBaseTypeMap.put(id, baseType);
+                }
+            }
+        } catch (ResponseException e) {
+            handleResponseException(e);
+        } catch (IOException | NumberFormatException e) {
+            throw new DataException(e);
+        }
+
+        return idToBaseTypeMap;
     }
 
     private String performRequest(String type, HttpEntity entity, String httpMethod, String urlRequest)

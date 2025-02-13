@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.kitodo.api.Metadata;
-import org.kitodo.dataeditor.ruleset.xml.Reimport;
+import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
 
 /**
  * Determines the result of re-importing metadata for a single metadata key.

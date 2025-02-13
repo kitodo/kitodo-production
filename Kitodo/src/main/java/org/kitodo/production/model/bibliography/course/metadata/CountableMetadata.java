@@ -259,7 +259,8 @@ public class CountableMetadata {
                         && (Objects.isNull(delete) || new IssueComparator(block).compare(issue, delete) < 0)
                         || Boolean.TRUE.equals(create) && Pair.of(this.create.getLeft(), this.create.getMiddle()).equals(issue)
                         || Boolean.FALSE.equals(create)
-                        && (Objects.isNull(issue) && Objects.isNull(this.delete) || issue.equals(this.delete)));
+                        && (Objects.isNull(issue) && Objects.isNull(this.delete)
+                            || (Objects.nonNull(issue) && issue.equals(this.delete))));
             }
         }
         return false;
@@ -342,7 +343,7 @@ public class CountableMetadata {
                 Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
             }
         }
-        if (Objects.nonNull(metadataDetail)) {
+        if (Objects.nonNull(metadataDetail) && Objects.nonNull(allMetadataTypes)) {
             for (int i = 0; i < allMetadataTypes.size(); i++) {
                 if (allMetadataTypes.get(i).getMetadataID().equals(metadataDetail.getMetadataID())) {
                     allMetadataTypes.set(i, metadataDetail);

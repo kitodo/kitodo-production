@@ -11,8 +11,9 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -30,24 +31,26 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.constants.StringConstants;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
@@ -60,7 +63,10 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -69,6 +75,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
+import org.kitodo.production.thread.ImportEadProcessesThread;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
 
@@ -87,7 +94,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     private RulesetManagementInterface rulesetManagement;
     private final List<Locale.LanguageRange> priorityList;
-    private final String acquisitionStage = "create";
     private Project project;
     private Template template;
     private LinkedList<TempProcess> processes = new LinkedList<>();
@@ -97,8 +103,17 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private int progress;
     private TempProcess currentProcess;
     private Boolean rulesetConfigurationForOpacImportComplete = null;
-    private String defaultConfigurationType;
+    private ImportConfiguration currentImportConfiguration;
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
+
+    private final List<String> eadLevels = Arrays.asList(StringConstants.FILE, StringConstants.ITEM);
+    private final List<String> eadParentLevels = Arrays.asList(StringConstants.COLLECTION, StringConstants.CLASS,
+            StringConstants.SERIES);
+    private String selectedEadLevel = StringConstants.FILE;
+    private String selectedParentEadLevel = StringConstants.COLLECTION;
+    private String xmlString;
+    private String filename;
+    protected int numberOfEadElements;
 
     public CreateProcessForm() {
         priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
@@ -106,6 +121,16 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     CreateProcessForm(List<Locale.LanguageRange> priorityList) {
         this.priorityList = priorityList;
+    }
+
+    /**
+     * Calculate number of EAD elements of selected level (e.g. "item", "file" etc.) from "xmlString", containing
+     * content of currently imported XML file.
+     *
+     * @throws XMLStreamException when retrieving EAD from XML data fails
+     */
+    public void calculateNumberOfEadElements() throws XMLStreamException {
+        numberOfEadElements = XMLUtils.getNumberOfEADElements(xmlString, selectedEadLevel);
     }
 
     /**
@@ -150,7 +175,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     @Override
     public String getAcquisitionStage() {
-        return acquisitionStage;
+        return CREATE;
     }
 
     /**
@@ -395,7 +420,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             } else {
                 String parentType = logicalDivision.getType();
                 StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType,
-                    acquisitionStage, priorityList);
+                    CREATE, priorityList);
                 if (divisionView.getAllowedSubstructuralElements().containsKey(processDataTab.getDocType())) {
                     return null;
                 } else {
@@ -429,10 +454,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
-                if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
-                    setDefaultImportConfiguration(project.getDefaultImportConfiguration());
-                } else {
-                    defaultConfigurationType = null;
+                if (Objects.nonNull(project)) {
+                    setCurrentImportConfiguration(project.getDefaultImportConfiguration());
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
@@ -447,44 +470,31 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
-                    if (Objects.nonNull(project.getDefaultChildProcessImportConfiguration())) {
-                        setDefaultImportConfiguration(project.getDefaultChildProcessImportConfiguration());
-                    } else {
-                        defaultConfigurationType = null;
+                    if (Objects.nonNull(project) && Objects.nonNull(project
+                            .getDefaultChildProcessImportConfiguration())) {
+                        setCurrentImportConfiguration(project.getDefaultChildProcessImportConfiguration());
                     }
                     if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
                         updateRulesetAndDocType(getMainProcess().getRuleset());
                     }
                 }
                 processDataTab.prepare();
-                showDefaultImportConfigurationDialog();
+                showDialogForImportConfiguration(currentImportConfiguration);
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
-    private void showDefaultImportConfigurationDialog() {
-        if (ImportConfigurationType.OPAC_SEARCH.name().equals(defaultConfigurationType)) {
-            checkRulesetConfiguration();
-        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(defaultConfigurationType)) {
-            PrimeFaces.current().executeScript("PF('fileUploadDialog').show()");
-        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(defaultConfigurationType)) {
-            PrimeFaces.current().executeScript("PF('searchEditDialog').show()");
-        }
-    }
-
-    private void setDefaultImportConfiguration(ImportConfiguration importConfiguration) {
-        defaultConfigurationType = importConfiguration.getConfigurationType();
-        if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
-            catalogImportDialog.getHitModel().setImportConfiguration(importConfiguration);
-            PrimeFaces.current().ajax().update("catalogSearchDialog");
-        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {
-            searchDialog.setOriginalProcess(importConfiguration.getDefaultTemplateProcess());
-            PrimeFaces.current().ajax().update("searchEditDialog");
-        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(importConfiguration.getConfigurationType())) {
-            fileUploadDialog.setImportConfiguration(importConfiguration);
-            PrimeFaces.current().ajax().update("fileUploadDialog");
+    private void showDialogForImportConfiguration(ImportConfiguration importConfiguration) {
+        if (Objects.nonNull(importConfiguration)) {
+            if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
+                PrimeFaces.current().executeScript("PF('catalogSearchDialog').show();");
+            } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {
+                PrimeFaces.current().executeScript("PF('searchEditDialog').show();");
+            } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(importConfiguration.getConfigurationType())) {
+                PrimeFaces.current().executeScript("PF('fileUploadDialog').show();");
+            }
         }
     }
 
@@ -506,7 +516,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     /**
      * Create process hierarchy.
      */
-    private void createProcessHierarchy()
+    public void createProcessHierarchy()
             throws DataException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
@@ -515,7 +525,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
         }
-        ProcessService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
+        processTempProcess(this.processes.get(0));
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved, so they have IDs before creating their process directories
@@ -524,7 +534,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             throw new IOException("Unable to create directories for process hierarchy!");
         }
 
-        if (this.catalogImportDialog.isImportChildren() && !createProcessesLocation(this.childProcesses)) {
+        if (saveChildProcesses() && !createProcessesLocation(this.childProcesses)) {
             throw new IOException("Unable to create directories for child processes!");
         }
         saveProcessHierarchyMetadata();
@@ -587,8 +597,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private void processChildren() {
         // set parent relations between main process and its imported child processes!
         try {
-            ImportService.processProcessChildren(getMainProcess(), childProcesses, rulesetManagement,
-                    acquisitionStage, priorityList);
+            ImportService.processProcessChildren(getMainProcess(), childProcesses, rulesetManagement, CREATE,
+                    priorityList);
         } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
@@ -604,18 +614,22 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 ProcessService.setParentRelations(processes.get(index + 1).getProcess(), process);
             }
             if (Objects.nonNull(tempProcess.getMetadataNodes())) {
-                try {
-                    tempProcess.getProcessMetadata().preserve();
-                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
-                } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
-                    throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
-                } catch (RulesetNotFoundException e) {
-                    throw new ProcessGenerationException(
-                            "Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
-                } catch (IOException e) {
-                    throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
-                }
+                processTempProcess(tempProcess);
             }
+        }
+    }
+
+    private void processTempProcess(TempProcess tempProcess) throws ProcessGenerationException {
+        try {
+            tempProcess.getProcessMetadata().preserve();
+            ImportService.processTempProcess(tempProcess, rulesetManagement, CREATE, priorityList, null);
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
+        } catch (RulesetNotFoundException e) {
+            throw new ProcessGenerationException(
+                    "Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
+        } catch (IOException e) {
+            throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
         }
     }
 
@@ -625,49 +639,11 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (this.processes.indexOf(tempProcess) == 0) {
                 tempProcess.getProcessMetadata().preserve();
             }
-            saveTempProcessMetadata(tempProcess);
+            ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
         }
         // save child processes meta.xml files
         for (TempProcess tempProcess : this.childProcesses) {
-            saveTempProcessMetadata(tempProcess);
-        }
-    }
-
-    private void saveTempProcessMetadata(TempProcess tempProcess) {
-        try (OutputStream out = ServiceManager.getFileService()
-                .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()))) {
-            Workpiece workpiece = tempProcess.getWorkpiece();
-            workpiece.setId(tempProcess.getProcess().getId().toString());
-            if (Objects.nonNull(rulesetManagement)) {
-                setProcessTitleMetadata(workpiece, tempProcess.getProcess().getTitle());
-            }
-            ServiceManager.getMetsService().save(workpiece, out);
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    private void setProcessTitleMetadata(Workpiece workpiece, String processTitle) {
-        Collection<String> keysForProcessTitle = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
-        if (!keysForProcessTitle.isEmpty()) {
-            addAllowedMetadataRecursive(workpiece.getLogicalStructure(), keysForProcessTitle, processTitle);
-            addAllowedMetadataRecursive(workpiece.getPhysicalStructure(), keysForProcessTitle, processTitle);
-        }
-    }
-
-    private void addAllowedMetadataRecursive(Division<?> division, Collection<String> keys, String value) {
-        StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(division.getType(),
-            acquisitionStage, priorityList);
-        for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {
-            if (metadataView instanceof SimpleMetadataViewInterface && keys.contains(metadataView.getId())
-                    && division.getMetadata().parallelStream()
-                            .filter(metadata -> metadataView.getId().equals(metadata.getKey()))
-                            .count() < metadataView.getMaxOccurs()) {
-                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) metadataView, value);
-            }
-        }
-        for (Division<?> child : division.getChildren()) {
-            addAllowedMetadataRecursive(child, keys, value);
+            ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
         }
     }
 
@@ -713,6 +689,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
+    @Override
     public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
         if (Objects.isNull(treeNode.getParent().getParent())) {
             if (Objects.nonNull(currentProcess.getProcessMetadata().getSelectedMetadataTreeNode())
@@ -746,6 +723,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param metadataNode TreeNode for which the check is performed
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
+    @Override
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
             return !(DataEditorService.getAddableMetadataForGroup(getMainProcess().getRuleset(), metadataNode).isEmpty());
@@ -757,6 +735,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Prepare addable metadata for metadata group.
      * @param treeNode metadataGroup treeNode
      */
+    @Override
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(getMainProcess().getRuleset(), treeNode);
     }
@@ -846,15 +825,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
         }
     }
-
-    /**
-     * Get defaultConfigurationType.
-     *
-     * @return value of defaultConfigurationType
-     */
-    public String getDefaultConfigurationType() {
-        return defaultConfigurationType;
-    }
     
     /**
      * Returns the details of the missing record identifier error.
@@ -863,5 +833,160 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
         return ServiceManager.getImportService().getDetailsOfRecordIdentifierMissingError();
+    }
+
+    /**
+     * Set the current import configuration.
+     *
+     * @param currentImportConfiguration current import configuration
+     */
+    public void setCurrentImportConfiguration(ImportConfiguration currentImportConfiguration) {
+        this.currentImportConfiguration = currentImportConfiguration;
+        if (Objects.nonNull(currentImportConfiguration)) {
+            if (ImportConfigurationType.OPAC_SEARCH.name().equals(currentImportConfiguration.getConfigurationType())) {
+                catalogImportDialog.setImportDepth(ImportService.getDefaultImportDepth(currentImportConfiguration));
+                catalogImportDialog.setSelectedField(ImportService.getDefaultSearchField(currentImportConfiguration));
+            }
+            else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(currentImportConfiguration.getConfigurationType())) {
+                searchDialog.setOriginalProcess(currentImportConfiguration.getDefaultTemplateProcess());
+            }
+        }
+    }
+
+    /**
+     * Get the current ImportConfiguration.
+     *
+     * @return current ImportConfiguration
+     */
+    public ImportConfiguration getCurrentImportConfiguration() {
+        return currentImportConfiguration;
+    }
+
+    private boolean saveChildProcesses() {
+        return ((Objects.nonNull(currentImportConfiguration)
+                && MetadataFormat.EAD.name().equals(currentImportConfiguration.getMetadataFormat()))
+                || catalogImportDialog.isImportChildren());
+    }
+
+    /**
+     * Get selected ead level.
+     *
+     * @return selected ead level
+     */
+    public String getSelectedEadLevel() {
+        return selectedEadLevel;
+    }
+
+    /**
+     * Set selected ead level.
+     *
+     * @param selectedEadLevel as String
+     */
+    public void setSelectedEadLevel(String selectedEadLevel) {
+        this.selectedEadLevel = selectedEadLevel;
+    }
+
+    /**
+     * Get selected parent ead level.
+     *
+     * @return selected parent ead level
+     */
+    public String getSelectedParentEadLevel() {
+        return selectedParentEadLevel;
+    }
+
+    /**
+     * Set selected parent ead level.
+     *
+     * @param selectedParentEadLevel as String
+     */
+    public void setSelectedParentEadLevel(String selectedParentEadLevel) {
+        this.selectedParentEadLevel = selectedParentEadLevel;
+    }
+
+    /**
+     * Get ead levels.
+     *
+     * @return ead levels
+     */
+    public List<String> getEadLevels() {
+        return eadLevels;
+    }
+
+    /**
+     * Get parent ead levels.
+     *
+     * @return parent ead levels
+     */
+    public List<String> getEadParentLevels() {
+        return eadParentLevels;
+    }
+
+    /**
+     * Get xmlString.
+     *
+     * @return xmlString
+     */
+    public String getXmlString() {
+        return xmlString;
+    }
+
+    /**
+     * Set xmlString.
+     *
+     * @param xmlString as String
+     */
+    public void setXmlString(String xmlString) {
+        this.xmlString = xmlString;
+    }
+
+    /**
+     * Get filename.
+     *
+     * @return filename
+     */
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * Set filename.
+     *
+     * @param filename as String
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    protected boolean limitExceeded(String xmlString) throws XMLStreamException {
+        return MetadataFormat.EAD.name().equals(currentImportConfiguration.getMetadataFormat())
+                && ServiceManager.getImportService().isMaxNumberOfRecordsExceeded(xmlString, selectedEadLevel);
+    }
+
+    /**
+     * Get and return message that informs the user that the maximum number of records that can be processed in the GUI
+     * has been exceeded.
+     *
+     * @return maximum number exceeded message
+     */
+    public String getMaxNumberOfRecordsExceededMessage() {
+        return ImportService.getMaximumNumberOfRecordsExceededMessage(selectedEadLevel, numberOfEadElements);
+    }
+
+    /**
+     * Start background task importing processes from uploaded XML file and redirect either to task manager or desktop,
+     * depending on user permissions.
+     *
+     * @return String containing URL of either task manager or desktop page, depending on user permissions
+     */
+    public String importRecordsInBackground() {
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
+        Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        TaskManager.addTask(new ImportEadProcessesThread(this, user, client));
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
+            return "system.jsf?tabIndex=0&faces-redirect=true";
+        } else {
+            return "desktop.jsf?faces-redirect=true";
+        }
     }
 }
