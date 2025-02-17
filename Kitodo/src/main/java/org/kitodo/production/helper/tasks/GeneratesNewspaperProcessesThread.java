@@ -17,6 +17,7 @@ import javax.naming.ConfigurationException;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
@@ -86,7 +87,7 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
             }
             super.setProgress(100);
         } catch (ConfigurationException | DAOException | DataException | DoctypeMissingException | IOException
-                | ProcessGenerationException | CommandException e) {
+                 | ProcessGenerationException | CommandException | CustomResponseException e) {
             setException(e);
         }
     }
