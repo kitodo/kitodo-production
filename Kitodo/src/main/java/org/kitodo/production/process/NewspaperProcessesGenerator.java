@@ -787,7 +787,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         createdChild.setType(childType);
         MetadataEditor.writeMetadataEntry(createdChild, identifierMetadata, identifierMetadataValue);
         logicalDivision.getChildren().add(createdChild);
-        logicalDivision.getChildren().sort(Comparator.comparing(LogicalDivision::getOrderlabel));
+        logicalDivision.getChildren().sort(Comparator.comparing(LogicalDivision::getOrderlabel,
+                Comparator.nullsLast(Comparator.naturalOrder())));
         return createdChild;
     }
 
