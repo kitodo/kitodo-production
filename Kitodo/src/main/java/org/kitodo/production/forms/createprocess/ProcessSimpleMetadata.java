@@ -23,7 +23,7 @@ import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 
-abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
+public abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
 
     static final List<Class<? extends Division<?>>> PARENT_CLASSES = Arrays.asList(LogicalDivision.class,
         PhysicalDivision.class);
@@ -50,7 +50,7 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      *
      * @return an independently mutable copy
      */
-    abstract ProcessSimpleMetadata getClone();
+    public abstract ProcessSimpleMetadata getClone();
 
     /**
      * Returns a simpler string representation of the Metadata.
@@ -92,4 +92,12 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     public int getMinOccurs() {
         return settings.getMinOccurs();
     }
+    
+    /**
+     * Sets the contents of the input field of this process metadata.
+     *
+     * @param value
+     *            value to be set
+     */
+    public abstract void setValue(String value);
 }
