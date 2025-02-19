@@ -51,6 +51,7 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
@@ -288,7 +289,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             but its value cannot be evaluated to an integer
      */
     public boolean nextStep() throws ConfigurationException, DAOException, DataException, IOException,
-            ProcessGenerationException, DoctypeMissingException, CommandException {
+            ProcessGenerationException, DoctypeMissingException, CommandException, CustomResponseException {
 
         if (currentStep == 0) {
             initialize();
@@ -502,7 +503,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
-            CommandException {
+            CommandException, CustomResponseException {
         final long begin = System.nanoTime();
 
         List<IndividualIssue> individualIssuesForProcess = processesToCreate.get(index);
@@ -523,6 +524,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         yearProcess.getChildren().add(getGeneratedProcess());
         processService.save(getGeneratedProcess(), true);
         createMetadataFileForProcess(individualIssuesForProcess, title);
+        processService.saveToIndex(getGeneratedProcess(), false);
 
         if (logger.isTraceEnabled()) {
             logger.trace("Creating newspaper process {} took {} ms", title,
@@ -578,6 +580,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             processDay.getChildren().add(processIssue);
 
             LogicalDivision yearIssue = new LogicalDivision();
+            yearIssue.setType(issueDivisionView.getId());
             LinkedMetsResource linkToProcess = new LinkedMetsResource();
             linkToProcess.setLoctype("Kitodo.Production");
             linkToProcess.setUri(processService.getProcessURI(getGeneratedProcess()));
