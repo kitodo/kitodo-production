@@ -48,6 +48,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessSimpleMetadata;
@@ -637,6 +638,8 @@ public class CalendarForm implements Serializable {
             Helper.setErrorMessage(UPLOAD_ERROR, "calendar.upload.missingMandatoryElement", logger, e);
         } catch (NullPointerException e) {
             Helper.setErrorMessage("calendar.upload.missingMandatoryValue", logger, e);
+        } catch (InvalidMetadataValueException e) {
+            Helper.setErrorMessage("calendar.upload.invalidMetadata", logger, e);
         } finally {
             uploadedFile = null;
         }

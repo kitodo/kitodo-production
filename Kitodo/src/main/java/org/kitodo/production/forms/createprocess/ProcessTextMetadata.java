@@ -122,12 +122,6 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         return getValue();
     }
 
-    /**
-     * Sets the contents of the text input field of this process metadata.
-     *
-     * @param value
-     *            value to be set
-     */
     public void setValue(String value) {
         this.value = addLeadingZeros(value);
     }

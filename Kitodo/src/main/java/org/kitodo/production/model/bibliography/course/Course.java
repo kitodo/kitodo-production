@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.forms.createprocess.ProcessSimpleMetadata;
 import org.kitodo.production.helper.XMLUtils;
@@ -283,6 +284,8 @@ public class Course extends ArrayList<Block> {
      *            XML document data structure
      * @param possibleProcessDetails
      *            possible process details from the process creation form
+     * @throws InvalidMetadataValueException
+     *             if an invalid value was given for a select-type metadata
      * @throws NoSuchElementException
      *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
      * @throws IllegalArgumentException
@@ -290,7 +293,7 @@ public class Course extends ArrayList<Block> {
      * @throws NullPointerException
      *             if a mandatory element is absent
      */
-    public Course(Document xml, Map<String, ProcessSimpleMetadata> possibleProcessDetails) {
+    public Course(Document xml, Map<String, ProcessSimpleMetadata> possibleProcessDetails) throws InvalidMetadataValueException {
         super();
         processesAreVolatile = false;
         Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
@@ -367,7 +370,7 @@ public class Course extends ArrayList<Block> {
     }
 
     private void processRecoveredMetadata(List<RecoveredMetadata> recoveredMetadata,
-            Map<String, ProcessSimpleMetadata> possibleProcessDetails) {
+            Map<String, ProcessSimpleMetadata> possibleProcessDetails) throws InvalidMetadataValueException {
         Map<Pair<Block, String>, CountableMetadata> last = new HashMap<>();
         for (RecoveredMetadata metaDatum : recoveredMetadata) {
             Block foundBlock = null;
