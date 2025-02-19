@@ -40,10 +40,6 @@ import org.kitodo.config.enums.ParameterCore;
  * The Active MQ services are intended to be run in case that
  * {@code activeMQ.hostURL} is configured in the kitodo_config.properties file.
  * To disable the service, the entry there should be commented out.
- *
- * <p>
- * The class ActiveMQDirector also provides a basic ExceptionListener
- * implementation as required for the connection.
  */
 public class ActiveMQDirector implements Runnable {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
