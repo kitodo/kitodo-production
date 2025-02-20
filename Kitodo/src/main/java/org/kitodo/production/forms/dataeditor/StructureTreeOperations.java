@@ -108,7 +108,7 @@ public class StructureTreeOperations {
     }
 
     /**
-     * Return physical divison for a tree node if the tree node represents a physical division.
+     * Return physical division for a tree node if the tree node represents a physical division.
      * 
      * @param node the tree node
      * @return the physical division or null
@@ -132,7 +132,7 @@ public class StructureTreeOperations {
     }
 
     /**
-     * Return pair of physical divison and its parent logical division for a tree node if the tree node represents a 
+     * Return pair of physical division and its parent logical division for a tree node if the tree node represents a 
      * physical division.
      * 
      * @param node the tree node
@@ -177,7 +177,7 @@ public class StructureTreeOperations {
      * Return the logical division of a tree node if the tree node represents a logical division.
      * 
      * @param node the tree node
-     * @return the logical divison or null
+     * @return the logical division or null
      */
     public static LogicalDivision getLogicalDivisionFromTreeNode(TreeNode node) {
         if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode) {
@@ -190,7 +190,7 @@ public class StructureTreeOperations {
     }
 
     /**
-     * Return all tree nodes that match the physical divisions and logical divisons.
+     * Return all tree nodes that match the physical divisions and logical divisions.
      * 
      * @param root the root tree node
      * @param physicalDivisions the physical divisions (as pair with their respective parent logical divisions)
@@ -243,7 +243,7 @@ public class StructureTreeOperations {
     }
 
     /**
-     * Return the logical parent tree node of a node if it is a physical divison node, or 
+     * Return the logical parent tree node of a node if it is a physical division node, or 
      * itself if it is a logical node.
      */
     public static TreeNode getTreeNodeLogicalParentOrSelf(TreeNode node) {
@@ -258,7 +258,7 @@ public class StructureTreeOperations {
                     return node.getParent();
                 }
             } else if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
-                // node is a logical divison, return self
+                // node is a logical division, return self
                 return node;
             }
         }

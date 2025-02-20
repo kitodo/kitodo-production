@@ -116,8 +116,8 @@ public class PaginationPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         
         List<Pair<PhysicalDivision, LogicalDivision>> selection = selectedItems.stream()
-            .map((i) -> physicalDivisions.get(i))
-            .map((p) -> new ImmutablePair<PhysicalDivision, LogicalDivision>(p, p.getLogicalDivisions().get(0)))
+            .map(physicalDivisions::get)
+            .map((p) -> new ImmutablePair<>(p, p.getLogicalDivisions().get(0)))
             .collect(Collectors.toList());
 
         try {
@@ -125,7 +125,6 @@ public class PaginationPanel {
         }  catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        
 
         this.paginationSelectionSelectedItems = selectedItems;
     }

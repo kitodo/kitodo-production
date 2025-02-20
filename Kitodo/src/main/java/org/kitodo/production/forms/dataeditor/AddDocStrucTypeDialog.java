@@ -616,7 +616,7 @@ public class AddDocStrucTypeDialog {
         selectFirstPageOnAddNode = null;
         selectLastPageOnAddNode = null;
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
-            dataEditor.getStructurePanel().setSelectedLogicalNodes(Arrays.asList(previouslySelectedLogicalNode));
+            dataEditor.getStructurePanel().setSelectedLogicalNodes(Collections.singletonList(previouslySelectedLogicalNode));
             previouslySelectedLogicalNode = null;
         }
     }
