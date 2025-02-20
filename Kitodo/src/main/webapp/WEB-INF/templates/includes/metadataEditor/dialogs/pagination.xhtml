@@ -64,7 +64,7 @@
                                                var="type"
                                                itemValue="#{type.key}"
                                                itemLabel="#{HelperForm.getTranslated(type.value)}"/>
-                                <p:ajax event="itemSelect" update="paginationForm:paginationWrapperPanel"/>
+                                <p:ajax event="itemSelect" update="paginationForm:advandedPaginationControls"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
@@ -79,7 +79,7 @@
                                            class="input"
                                            requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
                         </div>
-                        <div>
+                        <h:panelGroup layout="block" id="advandedPaginationControls">
                             <!-- Advanced pagination -->
                             <script type="text/javascript">
                                 function writeToPaginationStartValue(before, after) {
@@ -161,7 +161,7 @@
                                 title="#{msgs.paginationVersoUseHint}"
                                 onclick="return writeToPaginationStartValue('\277','')"
                             />
-                        </div>
+                        </h:panelGroup>
                         <div>
                             <p:outputLabel value="#{msgs.paginationScope}:"
                                            for="selectPaginationScope"/>

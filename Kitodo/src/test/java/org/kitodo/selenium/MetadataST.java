@@ -47,8 +47,6 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Tests for functions in the metadata editor.
@@ -226,6 +224,37 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verifies that changing the pagination type does not reset the selected pagination scope.
+     * @throws Exception when page navigation fails
+     */
+    @Test
+    public void keepPaginationScopeOnPaginationTypeChangeTest() throws Exception {
+        String paginationTogglerId = "secondSectionSecondColumnToggler";
+        String paginationScopeId = "paginationForm:selectPaginationScope";
+        String paginationTypeId = "paginationForm:paginationTypeSelect";
+        String secondTypeCssSelector = "#paginationForm\\:paginationTypeSelect_items li:nth-child(2)";
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        Browser.getDriver().findElement(By.id(paginationTogglerId)).click();
+        // get current scope value
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(paginationScopeId))::isDisplayed);
+        String scope = Browser.getDriver().findElement(By.id(paginationScopeId)).getText();
+        // change pagination type
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(paginationTypeId))::isDisplayed);
+        Browser.getDriver().findElement(By.id(paginationTypeId)).click();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector))::isDisplayed);
+        Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector)).click();
+        // verify that scope value did not change
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(paginationScopeId))::isDisplayed);
+        String scopeUpdated = Browser.getDriver().findElement(By.id(paginationScopeId)).getText();
+        assertEquals(scope, scopeUpdated, "Pagination scope changed after changing pagination type");
+    }
+
+    /**
      * Verifies that changing process images on file system triggers information/warning dialog.
      * @throws Exception when page navigation fails
      */
@@ -331,7 +360,7 @@ public class MetadataST extends BaseTestSelenium {
             "imagePreviewForm:unstructuredMediaList:0:unstructuredMediaPanel",
             "Bild 3, Seite -",
             "First thumbnail has wrong overlay after multi-select drag'n'drop action"
-        );    
+        );
     }
 
     /**
@@ -342,41 +371,27 @@ public class MetadataST extends BaseTestSelenium {
     public void createStructureElementTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_PROCESS_TITLE);
-        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-                .until(Browser.getDriver().findElement(By.id("logicalTree"))::isDisplayed);
-        WebElement structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
-        WebElement logicalRoot = structureTree.findElement(By.className("ui-tree-selectable"));
-        logicalRoot.click();
-        await().ignoreExceptions().pollDelay(1000, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS).until(logicalRoot::isDisplayed);
-        // right click action
-        Actions rightClickAction = new Actions(Browser.getDriver());
-        rightClickAction.contextClick(logicalRoot).build().perform();
-        // wait for loading screen to disappear
-        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).pollInterval(300, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS).until(Browser.getDriver()
-                        .findElement(By.id("buttonForm:saveExit"))::isDisplayed);
-        WebElement contextMenu = Browser.getDriver().findElement(By.id("contextMenuLogicalTree"));
-        List<WebElement> menuItems = contextMenu.findElements(By.className("ui-menuitem"));
-        assertEquals(3, menuItems.size(), "Wrong number of context menu items");
-        // click "add element" option
-        menuItems.get(0).click();
-        // open "structure element type selection" menu
-        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection"), 1000, 1000, 5);
-        // click first option
-        WebElement firstOption = Browser.getDriver().findElement(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"));
-        String structureType = firstOption.getText();
-        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"), 1000, 500, 3);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 3);
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1")));
-        // add structure element with selected type by clicking "accept"/"apply" button
-        Thread.sleep(1000);
-        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:addDocStruc"), 500, 500, 5);
-        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-                .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
-        structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
-        WebElement firstChild = structureTree.findElement(By.id("logicalTree:0_0"));
-        assertEquals(structureType, firstChild.getText(), "Added structure element has wrong type!");
+        WebElement createdStructure = Pages.getMetadataEditorPage().createStructureElement();
+        assertEquals("Band", createdStructure.getText(), "Added structure element has wrong type!");
+    }
+
+    /**
+     * Verifies that moving media to newly created, but unsaved structure element in the gallery using drag'n'drop works
+     * as expected.
+     *
+     * @throws Exception when page nagivation fails
+     */
+    @Test
+    public void movePagesToUnsavedStructureTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        Pages.getMetadataEditorPage().createStructureElement();
+        String dropId = "imagePreviewForm:structuredPages:1:structureElementDataList_content";
+        String targetId = "imagePreviewForm:structuredPages:1:structureElementDataList:0:structuredPagePanel";
+        String expectedOverlay = "Bild 2, Seite -";
+        WebElement target = Pages.getMetadataEditorPage().performDragAndDrop(dropId, targetId, expectedOverlay);
+        assertEquals("Bild 1, Seite -", target.getText().strip(),
+                "Last thumbnail has wrong overlay after drag'n'drop action");
     }
 
     /**
@@ -801,11 +816,5 @@ public class MetadataST extends BaseTestSelenium {
         xmlContent = xmlContent.replaceAll(FIRST_CHILD_ID, String.valueOf(firstChildId));
         xmlContent = xmlContent.replaceAll(SECOND_CHILD_ID, String.valueOf(secondChildId));
         Files.write(metaXml, xmlContent.getBytes());
-    }
-
-    private void clickItemWhenDisplayed(By selector, long delay, long intervall, long timeout) {
-        await().ignoreExceptions().pollDelay(delay, TimeUnit.MILLISECONDS).pollInterval(intervall, TimeUnit.MILLISECONDS)
-                .atMost(timeout, TimeUnit.SECONDS).until(Browser.getDriver().findElement(selector)::isDisplayed);
-        Browser.getDriver().findElement(selector).click();
     }
 }
