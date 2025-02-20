@@ -1222,6 +1222,38 @@ public class StructurePanel implements Serializable {
             logger.error(exception.getLocalizedMessage(), exception);
         } finally {
             show(true);
+            updateSelectionAfterDragDrop(event);
+        }
+    }
+
+    /**
+     * Update the selection by extracting the currently selected nodes from the Primefaces drag and drop event.
+     * 
+     * @param event the Primefaces drag and drop event
+     */
+    private void updateSelectionAfterDragDrop(TreeDragDropEvent event) {
+        // find new parent logical division
+        LogicalDivision targetLogicalDivision = StructureTreeOperations.getLogicalDivisionFromTreeNode(
+            StructureTreeOperations.getTreeNodeLogicalParentOrSelf(event.getDropNode())
+        );
+
+        // update selected physical divisions with new parent logical division
+        List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = Arrays.stream(event.getDragNodes())
+            .map(StructureTreeOperations::getPhysicalDivisionPairFromTreeNode)
+            .filter(Objects::nonNull)
+            .map(Pair::getLeft)
+            .map((p) -> new ImmutablePair<>(p, targetLogicalDivision))
+            .collect(Collectors.toList());
+
+        List<LogicalDivision> selectedLogicalDivisions = Arrays.stream(event.getDragNodes())
+            .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        try {
+            this.dataEditor.updateSelection(selectedPhysicalDivisions, selectedLogicalDivisions);
+        } catch (NoSuchMetadataFieldException e) {
+            logger.error("exception updating selection after structure tree drag & drop", e);
         }
     }
 

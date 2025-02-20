@@ -19,7 +19,6 @@ import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CUR
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -188,7 +187,6 @@ public class AddDocStrucTypeDialog {
             } catch (NoSuchMetadataFieldException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-            dataEditor.refreshStructurePanel();
             
             List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
                     .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))

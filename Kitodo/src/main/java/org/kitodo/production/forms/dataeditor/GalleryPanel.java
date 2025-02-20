@@ -223,12 +223,19 @@ public class GalleryPanel {
         dataEditor.getSelectedMedia().clear();
 
         // mark previously selected thumbnail in new stripe as selected
+        toStripe = stripes.get(toStripeIndex);
         List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
         for (GalleryMediaContent toStripeMedia : toStripe.getMedias()) {
             if (movedViews.contains(toStripeMedia.getView())) {
                 select(toStripeMedia, toStripe, "multi");
             }
         }
+
+        try {
+            dataEditor.updateSelection(new ArrayList<>(dataEditor.getSelectedMedia()), Collections.emptyList());
+        }  catch (NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }        
     }
 
     /**
@@ -819,6 +826,12 @@ public class GalleryPanel {
         GalleryMediaContent currentSelection = getGalleryMediaContent(selectedPhysicalDivision);
         select(currentSelection, parentStripe, selectionType);
 
+        try {
+            dataEditor.updateSelection(new ArrayList<>(dataEditor.getSelectedMedia()), Collections.emptyList());
+        }  catch (NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+
         String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
             PrimeFaces.current().executeScript(
@@ -901,13 +914,6 @@ public class GalleryPanel {
                 defaultSelect(currentSelection, parentStripe);
                 break;
         }
-
-        try {
-            dataEditor.updateSelection(new ArrayList<>(dataEditor.getSelectedMedia()), Collections.emptyList());
-        }  catch (NoSuchMetadataFieldException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-
     }
 
     private void defaultSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
