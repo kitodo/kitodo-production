@@ -881,17 +881,6 @@ metadataEditor.logicalTree = {
     },
 
     /**
-     * Return true if a node is a media node.
-     * 
-     * @param node the jquery object of a node
-     * @returns true if a node is a media node
-     */
-    _isMediaNode(node) {
-        return node.hasClass("ui-treenode-leaf")
-            && node.find("> .ui-treenode-content > .ui-icon-document,> .ui-treenode-content > .ui-icon-media-partial").length > 0;
-    },
-
-    /**
      * Adds one node to the selection.
      * 
      * @param node the jquery node object that is added to the selection
@@ -1023,16 +1012,6 @@ metadataEditor.physicalTree = {
      */
     _findSelectedNodes() {
         return $("#physicalTree .ui-treenode.ui-treenode-selected");
-    },
-
-    /**
-     * Return true if the node is a media node.
-     * 
-     * @param node jquery object of a tree node
-     * @returns true if the node is a media node
-     */
-    _isMediaNode(node) {
-        return node.find("> .ui-treenode-content > .ui-icon-document,> .ui-treenode-content > .ui-icon-media-partial").length > 0;
     },
 
     /**
