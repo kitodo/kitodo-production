@@ -766,10 +766,10 @@ metadataEditor.logicalTree = {
                 this._addNodeToSelection(node);
             }
             // remember node for shift selection
-            lastSelectedTreeNodeId = currentTreeNodeId;
+            this.lastSelectedTreeNodeId = currentTreeNodeId;
         } else {
             // range select between lastSelectedTreeNodeId and currentTreeNodeId
-            let fromNode = this._getNodeFromTreeNodeId(lastSelectedTreeNodeId);
+            let fromNode = this._getNodeFromTreeNodeId(this.lastSelectedTreeNodeId);
             let toNode = this._getNodeFromTreeNodeId(currentTreeNodeId);
             this._addNodeToSelection(toNode);
             if (fromNode.parent().is(toNode.parent())) {
@@ -798,16 +798,16 @@ metadataEditor.logicalTree = {
         });
         
         metadataEditor.gallery.stripes.markManyAsSelected(treeNodeIds);
-        metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, mode == "add" ? currentTreeNodeId: null);
+        metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, mode === "add" ? currentTreeNodeId: null);
         metadataEditor.pagination.markManyAsSelected(treeNodeIds);
         
-        if (this == metadataEditor.logicalTree) {
+        if (this === metadataEditor.logicalTree) {
             // update physical tree if this method was invoked from a logical tree event
             if (metadataEditor.physicalTree.isAvailable()) {
                 metadataEditor.physicalTree.markManyAsSelected(treeNodeIds);
             }
         }
-        if (this == metadataEditor.physicalTree) {
+        if (this === metadataEditor.physicalTree) {
             // update logical tree selection if this method was invoked from a physical tree event
             metadataEditor.logicalTree.markManyAsSelected(treeNodeIds);
         }

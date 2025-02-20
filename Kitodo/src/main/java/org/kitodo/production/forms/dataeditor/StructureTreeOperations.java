@@ -21,8 +21,6 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
@@ -32,8 +30,6 @@ import org.primefaces.model.TreeNode;
  * Common operations when working with Primefaces trees.
  */
 public class StructureTreeOperations {
-
-    private static final Logger logger = LogManager.getLogger(StructureTreeOperations.class);
     
     /** 
      * Set all tree nodes to unselected in a tree.

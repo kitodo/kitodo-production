@@ -220,10 +220,19 @@ public class GalleryPanel {
         dataEditor.getStructurePanel().show();
         dataEditor.getPaginationPanel().show();
         this.updateStripes();
-        dataEditor.getSelectedMedia().clear();
+        updateSelectionAfterDragDrop(viewsToBeMoved, toStripeIndex);
+    }
 
-        // mark previously selected thumbnail in new stripe as selected
-        toStripe = stripes.get(toStripeIndex);
+    /**
+     * Mark moved thumbnails as selected in new stripe.
+     * 
+     * @param viewsToBeMoved the views that were dragged
+     * @param toStripeIndex the stripe index where the thumbnails were dropped
+     */
+    private void updateSelectionAfterDragDrop(List<Pair<View, LogicalDivision>> viewsToBeMoved, int toStripeIndex) {
+        
+        dataEditor.getSelectedMedia().clear();
+        GalleryStripe toStripe = stripes.get(toStripeIndex);
         List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
         for (GalleryMediaContent toStripeMedia : toStripe.getMedias()) {
             if (movedViews.contains(toStripeMedia.getView())) {
@@ -235,7 +244,7 @@ public class GalleryPanel {
             dataEditor.updateSelection(new ArrayList<>(dataEditor.getSelectedMedia()), Collections.emptyList());
         }  catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }        
+        }
     }
 
     /**
@@ -809,11 +818,6 @@ public class GalleryPanel {
             this.dataEditor.getMetadataPanel().preserveLogical();
         } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        if (Objects.nonNull(selectedPhysicalDivision)) {
-            this.dataEditor.getMetadataPanel().showPageInLogical(selectedPhysicalDivision);
-        } else {
-            Helper.setErrorMessage("Selected PhysicalDivision is null!");
         }
 
         GalleryStripe parentStripe;
