@@ -56,7 +56,7 @@ public class AddPhysicalDivisionDialog {
                     selectedPosition);
             dataEditor.refreshStructurePanel();
             dataEditor.getStructurePanel().updateNodeSelection(
-                Arrays.asList(new ImmutablePair<>(physicalDivision, null)),
+                List.of(new ImmutablePair<>(physicalDivision, null)),
                 Collections.emptyList()
             );
         } else {

@@ -876,7 +876,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Select first logical divison when opening data editor.
+     * Select first logical division when opening data editor.
      */
     public void updateToDefaultSelection() {
         TreeNode firstSelectedLogicalNode = getStructurePanel().getLogicalTree().getChildren().get(
@@ -893,12 +893,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Update the current selection in the meta data editor by dispatching update events to structure trees,
+     * Update the current selection in the metadata editor by dispatching update events to structure trees,
      * gallery and pagination panel.
      * 
      * @param selectedPhysicalDivisions the list of selected physical divisions (and their parent logical divisions)
      * @param selectedLogicalDivisions the list of selected logical divisions
-     * @throws NoSuchMetadataFieldException exception in case meta data can not be saved correctly
+     * @throws NoSuchMetadataFieldException exception in case metadata can not be saved correctly
      */
     public void updateSelection(
         List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions,
@@ -915,26 +915,26 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         getSelectedMedia().clear();
         getSelectedMedia().addAll(selectedPhysicalDivisions);
 
-        // update logical meta data panel
+        // update logical metadata panel
         if (!getStructurePanel().isSeparateMedia() && selectedPhysicalDivisions.size() == 1 
                 && selectedLogicalDivisions.isEmpty()) {
-            // show physical division in logical meta data panel in combined meta data mode
+            // show physical division in logical metadata panel in combined meta data mode
             getMetadataPanel().showPageInLogical(selectedPhysicalDivisions.get(0).getLeft());
         } else if (selectedLogicalDivisions.size() == 1 && selectedPhysicalDivisions.isEmpty()) {
-            // show logical division in logical meta data panel
+            // show logical division in logical metadata panel
             getMetadataPanel().showLogical(Optional.of(selectedLogicalDivisions.get(0)));
         } else {
-            // show nothing in logical meta data panel
+            // show nothing in logical metadata panel
             getMetadataPanel().showPageInLogical(null);
         }
 
         // update physical metadata panel
         if (getStructurePanel().isSeparateMedia()) {
             if (selectedPhysicalDivisions.size() == 1) {
-                // show physical division in physical meta data panel
+                // show physical division in physical metadata panel
                 getMetadataPanel().showPhysical(Optional.of(selectedPhysicalDivisions.get(0).getLeft()));
             } else {
-                // show nothing in physical meta data panel
+                // show nothing in physical metadata panel
                 getMetadataPanel().showPhysical(Optional.empty());
             }
         }

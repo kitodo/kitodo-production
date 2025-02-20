@@ -369,7 +369,7 @@ public class StructurePanel implements Serializable {
      */
     public void setSelectedLogicalNodes(List<TreeNode> selected) {
         if (Objects.nonNull(selected)) {
-            this.setSelectedLogicalNodesAsArray((TreeNode[])selected.toArray(new TreeNode[selected.size()]));
+            this.setSelectedLogicalNodesAsArray(selected.toArray(new TreeNode[selected.size()]));
         }        
     }
 
@@ -431,13 +431,13 @@ public class StructurePanel implements Serializable {
      */
     public void setSelectedPhysicalNodes(List<TreeNode> selected) {
         if (Objects.nonNull(selected)) {
-            this.setSelectedPhysicalNodesAsArray((TreeNode[])selected.toArray(new TreeNode[selected.size()]));
+            this.setSelectedPhysicalNodesAsArray(selected.toArray(new TreeNode[selected.size()]));
         }        
     }
 
     /**
-     * Return the currently selected logical divison if it is the only selected structure element.
-     * @return LogicalDivison as Optional instance
+     * Return the currently selected logical division if it is the only selected structure element.
+     * @return LogicalDivision as Optional instance
      */
     Optional<LogicalDivision> getSelectedStructure() {
         TreeNode selectedLogicalNode = getSelectedLogicalNodeIfSingle();
@@ -1038,7 +1038,7 @@ public class StructurePanel implements Serializable {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-            // update selection throughout meta data editor
+            // update selection throughout metadata editor
             dataEditor.updateSelection(selectedPhysicalDivisions, selectedLogicalDivisions);
 
             previouslySelectedLogicalNodes = getSelectedLogicalNodes();
@@ -1067,7 +1067,7 @@ public class StructurePanel implements Serializable {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-            // update selection throughout meta data editor
+            // update selection throughout metadata editor
             dataEditor.updateSelection(selectedPhysicalDivisions, Collections.emptyList());
 
             previouslySelectedPhysicalNodes = getSelectedPhysicalNodes();
