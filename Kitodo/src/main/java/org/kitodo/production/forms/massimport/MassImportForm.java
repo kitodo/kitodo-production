@@ -83,9 +83,9 @@ public class MassImportForm extends BaseForm {
             Template template = ServiceManager.getTemplateService().getById(templateId);
             templateTitle = template.getTitle();
             ruleset = template.getRuleset();
-            RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(template.getRuleset());
-            addMetadataDialog.setRulesetManagement(ruleset);
-            checkRecordIdentifierConfigured(ruleset);
+            RulesetManagementInterface rulesetInterface = ServiceManager.getRulesetService().openRuleset(template.getRuleset());
+            addMetadataDialog.setRulesetManagement(rulesetInterface);
+            checkRecordIdentifierConfigured(rulesetInterface);
         } catch (DAOException | IOException e) {
             Helper.setErrorMessage(e);
         }
