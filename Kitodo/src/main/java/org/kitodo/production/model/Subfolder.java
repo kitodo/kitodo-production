@@ -312,6 +312,7 @@ public class Subfolder {
      * It stops checking as soon as the first file is found.
      *
      * @return true if the folder is empty, false if it contains at least one file
+     * @throws IOException if an I/O error occurs when accessing the directory
      */
     public boolean isFolderEmpty() throws IOException {
         Pair<URI, Pattern> query = determineDirectoryAndFileNamePattern();
