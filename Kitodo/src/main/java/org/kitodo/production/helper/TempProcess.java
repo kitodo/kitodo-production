@@ -13,6 +13,8 @@ package org.kitodo.production.helper;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -83,6 +85,25 @@ public class TempProcess {
             this.workpiece.getLogicalStructure().getMetadata().addAll(
                     ProcessHelper.convertMetadata(this.metadataNodes, rulesetManagementInterface));
         }
+        this.processMetadata = new ProcessMetadata();
+    }
+
+    /**
+     * Constructor that creates an instance of TempProcess with given document type and metadata map.
+     * @param process Process of this TempProcess
+     * @param documentType document type of process
+     * @param metadata map containing metadata
+     * @param rulesetManagementInterface RulesetManagementInterface of process
+     * @param separator character String used to parse metadata groups from Strings
+     * @throws IOException when opening ruleset fails
+     */
+    public TempProcess(Process process, String documentType, Map<String, List<String>> metadata,
+                       RulesetManagementInterface rulesetManagementInterface, String separator) throws IOException {
+        this.process = process;
+        this.workpiece = new Workpiece();
+        this.workpiece.getLogicalStructure().setType(documentType);
+        this.workpiece.getLogicalStructure().getMetadata().addAll(
+                ProcessHelper.convertMetadata(metadata, rulesetManagementInterface, separator));
         this.processMetadata = new ProcessMetadata();
     }
 

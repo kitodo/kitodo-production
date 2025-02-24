@@ -36,6 +36,27 @@ public class LoginForm implements Serializable {
     private static final String INDEXING_PAGE = "system.jsf?tabIndex=";
     private static final String DESKTOP_VIEW = "desktop.jsf";
     private final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
+    private boolean hideMassImportExplanationDialog = false;
+
+    /**
+     * Get value of 'hideMassImportExplanationDialog', indicating whether the explanation dialog for the mass import
+     * should be shown during this session or not.
+     *
+     * @return value of 'hideMassImportExplanationDialog'
+     */
+    public boolean isHideMassImportExplanationDialog() {
+        return hideMassImportExplanationDialog;
+    }
+
+    /**
+     * Set value of 'hideMassImportExplanationDialog', indicating whether the explanation dialog for the mass import
+     * should be shown during this session or not.
+     *
+     * @param hideMassImportExplanationDialog whether explanation dialog should be shown or not
+     */
+    public void setHideMassImportExplanationDialog(boolean hideMassImportExplanationDialog) {
+        this.hideMassImportExplanationDialog = hideMassImportExplanationDialog;
+    }
 
     /**
      * Gets current authenticated User.

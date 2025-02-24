@@ -573,7 +573,12 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-fileupload-files,
 .select-box {
     border: solid var(--default-border-width) var(--blue);
+    border-collapse: separate;
     border-radius: var(--default-border-radius);
+}
+
+.ui-fileupload-files {
+    display: block;
 }
 
 .ui-inputfield.ui-state-default {
@@ -1283,6 +1288,7 @@ Popup dialogs
 .ui-fileupload-content {
     float: right;
     padding: 0;
+    width: inherit;
 }
 
 .ui-fileupload-buttonbar > button.ui-button {
