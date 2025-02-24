@@ -70,6 +70,15 @@ public class AddMetadataDialog {
     }
 
     /**
+     * Get rulesetManagement.
+     *
+     * @return the rulesetManagement instance of this dialog.
+     */
+    public RulesetManagementInterface getRulesetManagement() {
+        return rulesetManagement;
+    }
+
+    /**
      * Returns the list of selectable metadata types.
      *
      * @return the list of metadata types

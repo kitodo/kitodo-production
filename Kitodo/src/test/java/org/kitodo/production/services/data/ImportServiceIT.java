@@ -35,6 +35,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -80,6 +80,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -129,6 +130,7 @@ public class ImportServiceIT {
     private static final String TITLE = "Title";
     private static final String PLACE = "Place";
     private static final String LABEL = "LABEL";
+    private static final String CATALOG_ID = "CatalogIDDigital";
     private static final String ORDERLABEL = "ORDERLABEL";
     private static final int EXPECTED_NR_OF_CHILDREN = 23;
     private static final String PICA_XML = "picaxml";
@@ -200,7 +202,8 @@ public class ImportServiceIT {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
-        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+        presetMetadata.put(CATALOG_ID, List.of(RECORD_ID));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(
                 MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
         Workpiece workpiece = ServiceManager.getMetsService()
                 .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
@@ -229,7 +232,8 @@ public class ImportServiceIT {
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
         presetMetadata.put(LABEL, List.of("TEST-LABEL"));
         presetMetadata.put(ORDERLABEL, List.of("TEST-ORDERLABEL"));
-        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+        presetMetadata.put(CATALOG_ID, List.of(RECORD_ID));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(
                 MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
         Workpiece workpiece = ServiceManager.getMetsService()
                 .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
@@ -616,6 +620,69 @@ public class ImportServiceIT {
         }
     }
 
+    @Test
+    public void shouldGetRecordId() throws Exception {
+        // verify that config exception is thrown when 'getRecordId' is called with metadata lacking a 'recordIdentifier'
+        Map<String, List<String>> metadataWithoutId = createExampleMetadataMap(false, true);
+        Exception exception = assertThrows(ConfigException.class,
+                () -> ServiceManager.getImportService().getRecordId(metadataWithoutId, TEMPLATE_ID),
+                "Expected ConfigException was not thrown");
+        assertEquals("No record identifier found in given metadata!", exception.getMessage());
+
+        // verify 'getRecordId' returns the correct value when called with a map containing a 'recordIdentifier' metadata
+        Map<String, List<String>> metadataWithId = createExampleMetadataMap(true, true);
+        String recordId = ServiceManager.getImportService().getRecordId(metadataWithId, TEMPLATE_ID);
+        assertEquals("123",  recordId, "Wrong record identifier");
+    }
+
+    @Test
+    public void shouldGetDocType() throws Exception {
+        // verify that config exception is thrown when 'getDocType' is called with metadata lacking a 'docType'
+        Map<String, List<String>> metadataWithoutDocType = createExampleMetadataMap(true, false);
+        Exception exception = assertThrows(ConfigException.class,
+                () -> ServiceManager.getImportService().getDocType(metadataWithoutDocType, TEMPLATE_ID),
+                "Expected ConfigException was not thrown");
+        assertEquals("No document type found in given metadata!", exception.getMessage());
+
+        // verify 'getDocType' returns the correct value when called with a map containing a 'docType' metadata
+        Map<String, List<String>> metadataWithDocType = createExampleMetadataMap(true, true);
+        String docType = ServiceManager.getImportService().getDocType(metadataWithDocType, TEMPLATE_ID);
+        assertEquals("Monograph",  docType, "Wrong document type");
+    }
+
+    @Test
+    public void shouldCreateProcessFromData() throws Exception {
+        File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
+
+        Map<String, List<String>> metadata = createExampleMetadataMap(true, true);
+        Process process = ServiceManager.getImportService().createProcessFromData(PROJECT_ID, TEMPLATE_ID, metadata, "");
+        assertNotNull(process, "Process should not be null");
+        URI processUri = ServiceManager.getProcessService().getMetadataFileUri(process);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
+        HashSet<Metadata> processMetadata = workpiece.getLogicalStructure().getMetadata();
+        assertTrue(processMetadata.stream().map(Metadata::getKey).anyMatch(key -> key.equals("TitleDocMain")),
+                "Process does not contain title");
+        assertTrue(processMetadata.stream().map(Metadata::getKey).anyMatch(key -> key.equals("TSL_ATS")),
+                "Process does not contain TSL_ATS");
+        ProcessTestUtils.removeTestProcess(process.getId());
+
+        ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
+    }
+
+    private Map<String, List<String>> createExampleMetadataMap(boolean withRecordIdentifier, boolean withDocType) {
+        Map<String, List<String>> metadata = new  HashMap<>();
+        metadata.put("TitleDocMain", List.of("My Little Book"));
+        metadata.put("TSL_ATS", List.of("MustMy"));
+        if (withRecordIdentifier) {
+            metadata.put("CatalogIDDigital", List.of("123"));
+        }
+        if (withDocType) {
+            metadata.put("document_type", List.of("Monograph"));
+        }
+        return metadata;
+    }
+
     private String getProcessDetailByMetadataId(String metadataId, List<ProcessDetail> processDetails) {
         for (ProcessDetail processDetail : processDetails) {
             if (Objects.equals(processDetail.getMetadataID(), metadataId) && processDetail instanceof ProcessTextMetadata) {
@@ -661,27 +728,36 @@ public class ImportServiceIT {
     }
 
     private Process importProcess(String recordId, ImportConfiguration importConfiguration)
-            throws IOException, ImportException {
+            throws IOException, ImportException, DAOException {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }
-        Process importedProcess = importService.importProcess(recordId, 1, 1,
-                importConfiguration, new HashMap<>());
+        Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
+        List<String> recordIdentifierMetadata = new ArrayList<>(ImportService.getRecordIdentifierMetadata(ruleset));
+        if (recordIdentifierMetadata.isEmpty()) {
+            throw new ImportException("Functional metadata 'recordIdentifier' is not defined in ruleset");
+        }
+        String recordIdMetadataKey = recordIdentifierMetadata.get(0);
+        List<String> ids = Collections.singletonList(recordId);
+        Process importedProcess = importService.importProcess(PROJECT_ID, TEMPLATE_ID, importConfiguration,
+                Collections.singletonMap(recordIdMetadataKey, ids));
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
         return importedProcess;
     }
 
-    private Process importProcessWithAdditionalMetadata(String recordId, ImportConfiguration importConfiguration,
+    private Process importProcessWithAdditionalMetadata(ImportConfiguration importConfiguration,
                                                         Map<String, List<String>> presetMetadata)
             throws IOException, ImportException {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }
-        Process importedProcess = importService.importProcess(recordId, 1, 1,
+        List<String> ids = Collections.singletonList(RECORD_ID);
+        presetMetadata.put(importConfiguration.getIdSearchField().getValue(), ids);
+        Process importedProcess = importService.importProcess(1, 1,
                 importConfiguration, presetMetadata);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);

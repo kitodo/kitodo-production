@@ -71,6 +71,11 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
+    public Optional<String> getTranslationForKey(List<String> keys, List<LanguageRange> priorityList) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void load(File rulesetFile) throws IOException {
         throw new UnsupportedOperationException();
     }
