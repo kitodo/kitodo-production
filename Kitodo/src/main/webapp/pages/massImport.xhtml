@@ -27,7 +27,7 @@
 
     <ui:define name="contentHeader">
         <h3 id="headerText">
-            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}')"
+            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}', #{msgs.ruleset}: '#{MassImportForm.rulesetTitle}')"
                           styleClass="shortable" />
         </h3>
         <p:button id="cancel"
@@ -39,7 +39,7 @@
                   styleClass="secondary"/>
         <p:commandButton id="importButton"
                          value="#{msgs.massImport}"
-                         disabled="#{empty MassImportForm.records or not MassImportForm.getRulesetConfigurationForOpacImportComplete()}"
+                         disabled="#{empty MassImportForm.records or not MassImportForm.getRulesetConfigurationForOpacImportComplete() or not MassImportForm.firstColumnContainsRecordIdentifierOrDocType()}"
                          actionListener="#{MassImportForm.prepare()}"
                          action="#{MassImportForm.startMassImport()}"
                          icon="fa fa-download fa-lg"
@@ -71,6 +71,7 @@
         <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/massImportProgress.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/massImportResults.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/configError.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/explanationDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/recordIdentifierMissingDialog.xhtml"/>
     </ui:define>
 

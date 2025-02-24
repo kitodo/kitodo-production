@@ -20,7 +20,6 @@ import com.xebialabs.restito.server.StubServer;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
@@ -245,13 +244,5 @@ public class ImportingST extends BaseTestSelenium {
         List<String> childProcessIds = processesPage.getProcessIds();
         assertEquals(3, childProcessIds.size(), "Wrong number of child processes");
         ProcessTestUtils.removeTestProcess(processId);
-    }
-
-    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
-        await().ignoreExceptions()
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(100, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS)
-                .until(conditionEvaluator);
     }
 }

@@ -20,11 +20,10 @@ import static org.awaitility.Awaitility.await;
 
 public class MassImportPage extends Page<MassImportPage> {
     private static final String CATALOG_SELECTION = "editForm:catalogueSelect";
-    private static final String RECORDS_TABLE = "editForm:recordsTable";
     private static final String SELECT_FILE_BUTTON_BAR = ".ui-fileupload-buttonbar .ui-button";
     private static final String UPLOAD_FILE_INPUT = "editForm:csvFileUpload_input";
     private static final String GBV = "GBV";
-    private static final String CSV_SEPARATOR = "editForm:csvSeparator";
+    private static final String OK_BUTTON_ID = "buttonForm:okButton";
 
     public MassImportPage() {
         super("pages/massImport.jsf");
@@ -35,9 +34,19 @@ public class MassImportPage extends Page<MassImportPage> {
         return null;
     }
 
+    /**
+     * Click 'OK' on popup dialog to acknowledge given explanation about mass import.
+     */
+    public void acknowledgeExplanationDialog() {
+        clickElement(Browser.getDriver().findElement(By.id(OK_BUTTON_ID)));
+    }
+
+    /**
+     * Upload CSV test file.
+     *
+     * @param filepath file path of CSV test file
+     */
     public void uploadTestCsvFile(String filepath) {
-        clickElement(Browser.getDriver().findElement(By.id(CATALOG_SELECTION)));
-        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='" + GBV + "']")));
         Browser.getDriver().findElement(By.id(UPLOAD_FILE_INPUT)).sendKeys(filepath);
         await("Wait for 'Upload' button to become displayed").pollDelay(300, TimeUnit.MILLISECONDS)
                         .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> Browser.getDriver()
@@ -45,17 +54,11 @@ public class MassImportPage extends Page<MassImportPage> {
         Browser.getDriver().findElements(By.cssSelector(SELECT_FILE_BUTTON_BAR)).get(1).click();
     }
 
-    public void updateSeparator(String separator) {
-        await("Wait for CSV separator menu to be displayed").pollDelay(300, TimeUnit.MILLISECONDS)
-                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> Browser.getDriver()
-                        .findElement(By.id(CSV_SEPARATOR)).isDisplayed());
-        Browser.getDriver().findElement(By.id(CSV_SEPARATOR)).click();
-        await("Wait for CSV separator menu option to be displayed").pollDelay(300, TimeUnit.MILLISECONDS)
-                        .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> Browser.getDriver()
-                        .findElement(By.cssSelector("li[data-label='" + separator + "']")).isDisplayed());
-        Browser.getDriver().findElement(By.cssSelector("li[data-label='" + separator + "']")).click();
-        await("Wait for records table to update").pollDelay(300, TimeUnit.MILLISECONDS)
-                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> Browser.getDriver()
-                        .findElement(By.id(RECORDS_TABLE)).isDisplayed());
+    /**
+     * Select GBV option from catalogue select menu.
+     */
+    public void selectCatalogueGbv() {
+        clickElement(Browser.getDriver().findElement(By.id(CATALOG_SELECTION)));
+        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='" + GBV + "']")));
     }
 }

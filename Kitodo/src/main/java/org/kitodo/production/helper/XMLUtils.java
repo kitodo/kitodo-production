@@ -42,6 +42,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -202,7 +203,7 @@ public class XMLUtils {
      * @return xml String without BOM character
      */
     public static String removeBom(String xmlStringWithBom) {
-        if (Objects.equals(xmlStringWithBom.charAt(0), ByteOrderMark.UTF_BOM)) {
+        if (StringUtils.isNotBlank(xmlStringWithBom) && Objects.equals(xmlStringWithBom.charAt(0), ByteOrderMark.UTF_BOM)) {
             return xmlStringWithBom.substring(1);
         }
         return xmlStringWithBom;

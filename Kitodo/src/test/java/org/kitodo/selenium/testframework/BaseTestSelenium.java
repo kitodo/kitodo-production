@@ -12,6 +12,8 @@
 package org.kitodo.selenium.testframework;
 
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +25,8 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+
+import static org.awaitility.Awaitility.await;
 
 public class BaseTestSelenium {
 
@@ -73,5 +77,13 @@ public class BaseTestSelenium {
         MockDatabase.stopNode();
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
+    }
+
+    protected void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
+        await().ignoreExceptions()
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(conditionEvaluator);
     }
 }

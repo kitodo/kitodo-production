@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -150,7 +151,7 @@ public class RulesetManagement implements RulesetManagementInterface {
      * Returns a translated list of divisions available in the ruleset. The map
      * maps from ID to label.
      *
-     * @return the list of divisions
+     * @return the map of divisions
      */
     @Override
     public Map<String, String> getStructuralElements(List<LanguageRange> priorityList) {
@@ -191,11 +192,16 @@ public class RulesetManagement implements RulesetManagementInterface {
      * @return a view on a metadata
      */
     @Override
-    public NestedKeyView<KeyDeclaration> getMetadataView(String keyId, String acquisitionStage, List<LanguageRange> priorityList) {
+    public MetadataViewInterface getMetadataView(String keyId, String acquisitionStage, List<LanguageRange> priorityList) {
         Optional<Key> key = ruleset.getKey(keyId);
-        KeyDeclaration keyDeclaration = key.isPresent() ? new KeyDeclaration(ruleset, key.get()) : new KeyDeclaration(ruleset, keyId);
+        KeyDeclaration keyDeclaration = key.map(value -> new KeyDeclaration(ruleset, value))
+                .orElseGet(() -> new KeyDeclaration(ruleset, keyId));
         Rule rule = ruleset.getRuleForKey(keyId);
-        return new NestedKeyView<>(ruleset, keyDeclaration, rule, ruleset.getSettings(acquisitionStage), priorityList);
+        if (keyDeclaration.isComplex()) {
+            return new NestedKeyView<>(ruleset, keyDeclaration, rule, ruleset.getSettings(acquisitionStage), priorityList);
+        } else {
+            return new KeyView(keyDeclaration, rule, ruleset.getSettings(acquisitionStage), priorityList);
+        }
     }
 
     /**
@@ -210,9 +216,17 @@ public class RulesetManagement implements RulesetManagementInterface {
      */
     @Override
     public Optional<String> getTranslationForKey(String key, List<LanguageRange> priorityList) {
-        Optional<Key> optionalKey = ruleset.getKey(key);
+        return getTranslationForKey(Collections.singletonList(key), priorityList);
+    }
+
+    @Override
+    public Optional<String> getTranslationForKey(List<String> keys, List<LanguageRange> priorityList) {
+        Optional<Key> optionalKey = ruleset.getKey(keys.get(0));
         if (optionalKey.isPresent()) {
             KeyDeclaration keyDeclaration = new KeyDeclaration(ruleset, optionalKey.get());
+            for (int i = 1; i < keys.size(); i++) {
+                keyDeclaration = keyDeclaration.getSubkeyDeclaration(keys.get(i));
+            }
             String label = keyDeclaration.getLabel(priorityList);
             return Optional.of(label);
         } else {
