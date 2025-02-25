@@ -340,26 +340,53 @@ public class MetadataST extends BaseTestSelenium {
             "Second thumbnail has wrong overlay after drag'n'drop action"
         );
 
-        // select page 1 and 2 in structure tree
-        metaDataEditor.selectStructureTreeNode("0_0", false, false);
-        metaDataEditor.selectStructureTreeNode("0_1", true, false);
+        // select page 2 and 3 in structure tree
+        metaDataEditor.selectStructureTreeNode("0_1", false, false);
+        metaDataEditor.selectStructureTreeNode("0_2", true, false);
 
-        // drag and drop them to last drop
+        // verify two images are selected in gallery and pagination panel
+        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkGallerySelection(2);
+
+        // drag and drop them to first drop position inside structure tree
         WebElement dragElement = Browser.getDriver()
-            .findElement(By.cssSelector("#logicalTree\\:0_0 .ui-treenode-content"));
+            .findElement(By.cssSelector("#logicalTree\\:0_1 .ui-treenode-content"));
         dropPosition = Browser.getDriver()
-                .findElement(By.cssSelector("#logicalTree\\:0_2 + li.ui-tree-droppoint"));
+                .findElement(By.cssSelector("li.ui-tree-droppoint:has(+ #logicalTree\\:0_0)"));
         new Actions(Browser.getDriver()).dragAndDrop(dragElement, dropPosition).build().perform();
 
-        // page order should now be 3-1-2
+        // verify selection in gallery and pagination panel remains active after drag and drop
+        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkGallerySelection(2);
+
+        // page order should now be 2-3-1
 
         // save process
         Pages.getMetadataEditorPage().saveAndExit();
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
         metaDataEditor.checkGalleryThumbnailOverlayText(
-            "imagePreviewForm:unstructuredMediaList:0:unstructuredMediaPanel",
+            "imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel",
             "Bild 3, Seite -",
-            "First thumbnail has wrong overlay after multi-select drag'n'drop action"
+            "Second thumbnail has wrong overlay after multi-select drag'n'drop action"
+        );
+
+        // revert page order to original order such that test is idempotent
+        metaDataEditor.selectStructureTreeNode("0_1", false, false);
+
+        // drag and drop page 3 to last drop position
+        dragElement = Browser.getDriver()
+            .findElement(By.cssSelector("#logicalTree\\:0_1 .ui-treenode-content"));
+        dropPosition = Browser.getDriver()
+                .findElement(By.cssSelector("#logicalTree\\:0_2 + li.ui-tree-droppoint"));
+        new Actions(Browser.getDriver()).dragAndDrop(dragElement, dropPosition).build().perform();
+
+        // save process
+        Pages.getMetadataEditorPage().saveAndExit();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        metaDataEditor.checkGalleryThumbnailOverlayText(
+            "imagePreviewForm:unstructuredMediaList:2:unstructuredMediaPanel",
+            "Bild 3, Seite -",
+            "Last thumbnail has wrong overlay after reverting drag'n'drop actions"
         );
     }
 
@@ -388,10 +415,10 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getMetadataEditorPage().createStructureElement();
         String dropId = "imagePreviewForm:structuredPages:1:structureElementDataList_content";
         String targetId = "imagePreviewForm:structuredPages:1:structureElementDataList:0:structuredPagePanel";
-        String expectedOverlay = "Bild 2, Seite -";
+        String expectedOverlay = "Bild 1, Seite -";
         WebElement target = Pages.getMetadataEditorPage().performDragAndDrop(dropId, targetId, expectedOverlay);
-        assertEquals("Bild 1, Seite -", target.getText().strip(),
-                "Last thumbnail has wrong overlay after drag'n'drop action");
+        assertEquals("Bild 2, Seite -", target.getText().strip(),
+                "Dragged thumbnail in new structure has wrong overlay after drag'n'drop action");
     }
 
     /**
