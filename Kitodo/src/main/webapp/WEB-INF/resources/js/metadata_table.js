@@ -75,13 +75,13 @@ class FocusMetadataRow {
                 row.addClass("focusedRow");
                 let tableContainer = $("div[id$='metadataTable']");
                 let rowPosition = row.offset().top - tableContainer.offset().top + tableContainer.scrollTop();
-                tableContainer.animate({ scrollTop: rowPosition }, 300);
+                tableContainer.animate({ scrollTop: rowPosition }, 0);
                 let input = row.find("input:enabled:visible,textarea:enabled:visible").first();
                 if (input.length) {
                     input.focus();
                 }
             }
-        }, 150)
+        }, 150);
     }
 
 }
