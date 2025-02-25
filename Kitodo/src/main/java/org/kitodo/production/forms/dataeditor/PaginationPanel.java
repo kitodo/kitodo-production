@@ -287,7 +287,6 @@ public class PaginationPanel {
                 PhysicalDivision physicalDivision = physicalDivisions.get(i);
                 if (physicalDivision.equals(selectedElement.getKey())) {
                     paginationSelectionSelectedItems.add(i);
-                    break;
                 }
             }
         }
@@ -356,10 +355,9 @@ public class PaginationPanel {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage("paginationFormatError", new Object[] { paginationStartValue });
         }
-        paginationSelectionSelectedItems = new ArrayList<>();
-        preparePaginationSelectionItems();
         dataEditor.refreshStructurePanel();
-        dataEditor.updateToDefaultSelection();
+        preparePaginationSelectionItems();
+        preparePaginationSelectionSelectedItems();
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
     }
