@@ -47,14 +47,11 @@
                                  icon="fa fa-arrow-left"
                                  update="editForm:calendarTabView:calendarDetailsLayout"/>
                 <p:inputNumber id="yearInput"
-
                                value="#{CalendarForm.year}"
                                maxValue="2025"
                                decimalPlaces="0"
                                thousandSeparator="">
-                    <p:ajax event="blur"
-                            update="editForm:calendarTabView:calendarDetailsLayout"/>
-
+                    <p:ajax update="editForm:calendarTabView:calendarDetailsLayout"/>
                 </p:inputNumber>
                 <p:commandButton title="#{msgs['calendar.year.next']}"
                                  action="#{CalendarForm.nextYear}"
