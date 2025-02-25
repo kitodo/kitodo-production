@@ -62,20 +62,26 @@ class FocusMetadataRow {
      */
     focus() {
         this.#removeHighlights();
+        setTimeout(() => {
+            // find last metadata row matching currently selected metadata type
+            let row = $(
+                "div[id$='metadataTable'] " + // metadata table selector
+                "tr[data-prk='" + this.#lastSelectedRowKey + "'] " + // remembered metadata group
+                "label[data-metadataid='" + this.#getSelectedMetadataType() + "']" // selected metadata type
+            ).last().closest("tr");
 
-        // find last metadata row matching currently selected metadata type
-        let row = $(
-            "div[id$='metadataTable'] " + // metadata table selector
-            "tr[data-prk='" + this.#lastSelectedRowKey + "'] " + // remembered metadata group
-            "label[data-metadataid='" + this.#getSelectedMetadataType() + "']" // selected metadata type
-        ).last().closest("tr");
-        
-        // if found, focus row
-        if (row.length === 1) {
-            row.addClass("focusedRow");
-            row.get(0).scrollIntoView();
-            row.find("input:enabled:visible,textarea:enabled:visible").first().focus();
-        }
+            // if found, focus row
+            if (row.length === 1 && row.is(":visible")) {
+                row.addClass("focusedRow");
+                let tableContainer = $("div[id$='metadataTable']");
+                let rowPosition = row.offset().top - tableContainer.offset().top + tableContainer.scrollTop();
+                tableContainer.animate({ scrollTop: rowPosition }, 300);
+                let input = row.find("input:enabled:visible,textarea:enabled:visible").first();
+                if (input.length) {
+                    input.focus();
+                }
+            }
+        }, 150)
     }
 
 }
