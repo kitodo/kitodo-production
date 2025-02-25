@@ -138,8 +138,7 @@
                     <f:selectItems value="#{UserForm.userObject.clients}"
                                    var="client"
                                    itemLabel="#{client.name}"/>
-                    <p:ajax event="change"
-                            oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </h:panelGroup>
             <div>
@@ -157,7 +156,7 @@
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{LanguageForm.supportedLocales}" var="language"
                                    itemLabel="#{language.displayLanguageSelf}" itemValue="#{language.id}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
             <div>
@@ -167,7 +166,7 @@
                     <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                     <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
                                    itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
+                    <p:ajax oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
                 </p:selectOneMenu>
             </div>
             <div>
