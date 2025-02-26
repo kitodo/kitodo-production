@@ -752,7 +752,10 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         link.setLoctype("Kitodo.Production");
         link.setUri(processService.getProcessURI(getGeneratedProcess()));
         newYearChild.setLink(link);
+        newYearChild.setOrderlabel(yearMark);
         overallWorkpiece.getLogicalStructure().getChildren().add(newYearChild);
+        overallWorkpiece.getLogicalStructure().getChildren().sort(Comparator.comparing(LogicalDivision::getOrderlabel,
+                Comparator.nullsLast(Comparator.naturalOrder())));
 
         LogicalDivision logicalStructure = new LogicalDivision();
         logicalStructure.setType(yearType);
