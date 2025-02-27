@@ -50,6 +50,12 @@
                                      onstart="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"/>
                 </h:panelGroup>
+                <h:panelGroup id="importMetadataButtonWrapper">
+                    <p:commandButton id="importMetadataButton" 
+                                     icon="fa fa-download" 
+                                     styleClass="secondary"
+                                     action="#{ImportMetadataDialogSequence.importMetadata()}"/>
+                </h:panelGroup>
             </p:row>
         </p:panelGrid>
     </p:outputPanel>
