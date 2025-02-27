@@ -619,7 +619,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 
 .ui-inputfield::placeholder {
-    color: var(--blue);
+    color: var(--light-blue);
 }
 
 .ui-inputfield.ui-state-hover::placeholder {
