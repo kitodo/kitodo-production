@@ -49,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
@@ -1328,8 +1329,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * Perform metadata update for current process.
      */
     public void applyMetadataUpdate() {
-        DataEditorService.updateMetadataWithNewValues(workpiece, updateMetadataDialog.getMetadataComparisons());
-        metadataPanel.update();
+        Division<?> division = metadataPanel.getLogicalMetadataTable().getDivision();
+        if (Objects.nonNull(division) && division instanceof LogicalDivision) {
+            DataEditorService.updateMetadataWithNewValues((LogicalDivision) division, updateMetadataDialog.getMetadataComparisons());
+            metadataPanel.update();
+        } else {
+            Helper.setErrorMessage("cannot update metadata of non-logical division");
+        }        
     }
 
     /**

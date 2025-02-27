@@ -467,19 +467,42 @@ public class DataEditorService {
         return null;
     }
 
-    private static List<MetadataComparison> initializeMetadataComparisons(Process process,
+    /**
+     * Collect list of metadata comparisons (old vs new) that is shown to the user in a table.
+     * 
+     * @param process the process whose ruleset is used to check which metadata is allowed
+     * @param oldMetadata the old metadata
+     * @param newMetadata the new metadata
+     * @param languages weighted list of user-preferred display languages
+     * @param logicalDivisionType the type of the structural element
+     * @return the list of comparisons between old and new metadata
+     * @throws IOException in case the ruleset can not be read
+     */
+    public static List<MetadataComparison> initializeMetadataComparisons(Process process,
                                                                           HashSet<Metadata> oldMetadata,
                                                                           HashSet<Metadata> newMetadata,
                                                                           List<Locale.LanguageRange> languages,
                                                                           String logicalDivisionType)
             throws IOException {
+        // find combined metadata keys that are present in old and new metadata
+        HashSet<String> metadataKeyCollection = oldMetadata.stream()
+            .map(Metadata::getKey)
+            .collect(Collectors.toCollection(HashSet::new));
+        metadataKeyCollection.addAll(
+            newMetadata.stream()
+            .map(Metadata::getKey)
+            .collect(Collectors.toCollection(HashSet::new))
+        );
+
+        // load which metadata is allowed from ruleset
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
-        List<MetadataComparison> metadataComparisons = new LinkedList<>();
-        HashSet<String> metadataKeyCollection = oldMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new));
-        metadataKeyCollection.addAll(newMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new)));
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(logicalDivisionType, EDIT, languages);
         Map<String, MetadataViewInterface> allowedMetadata = divisionView.getAllowedMetadata().stream()
                 .collect(Collectors.toMap(MetadataViewInterface::getId, item -> item));
+
+
+        // collect table of metadata comparisons
+        List<MetadataComparison> metadataComparisons = new LinkedList<>();
         for (String metadataKey : metadataKeyCollection) {
             // determine default mode for metadata from ruleset! (e.g. "keep", "replace", etc.)
             Reimport selectionMode = ruleset.getMetadataReimport(metadataKey, EDIT);
@@ -535,22 +558,23 @@ public class DataEditorService {
     }
 
     /**
-     * Update metadata of logical root element in given Workpiece by applying given metadata comparisons and selections
+     * Update metadata of a logical division by applying given metadata comparisons and selections
      * old and new values therein.
-     * @param workpiece Workpiece to which metadata update is applied
+     * 
+     * @param logicalDivision logical division to which metadata update is applied
      * @param comparisons list of metadata comparisons used for the update
      */
-    public static void updateMetadataWithNewValues(Workpiece workpiece, List<MetadataComparison> comparisons) {
+    public static void updateMetadataWithNewValues(LogicalDivision logicalDivision, List<MetadataComparison> comparisons) {
         for (MetadataComparison comparison : comparisons) {
             switch (comparison.getSelection()) {
                 case ADD:
                     // extend existing values with new values
-                    workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
+                    logicalDivision.getMetadata().addAll(comparison.getNewValues());
                     break;
                 case REPLACE:
                     // replace existing values with new values
-                    workpiece.getLogicalStructure().getMetadata().removeAll(comparison.getOldValues());
-                    workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
+                    logicalDivision.getMetadata().removeAll(comparison.getOldValues());
+                    logicalDivision.getMetadata().addAll(comparison.getNewValues());
                     break;
                 default:
                     // keep existing values and discard new values
