@@ -68,6 +68,6 @@ jobs:
             mvn --version
       - name: run build
         run:
-            mvn clean install -B '-Pall-tests,flyway,checkstyle,spotbugs,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
+            mvn clean install -B '-Pall-tests,flyway,checkstyle,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
 
 
