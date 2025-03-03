@@ -927,4 +927,14 @@ public class Course extends ArrayList<Block> {
     public void setYearStart(MonthDay yearStart) {
         this.yearStart = yearStart;
     }
+
+    /**
+     * Returns a shallow copy of this Course instance.
+     *
+     * @return a clone of this Course instance
+     */
+    @Override
+    public Course clone() {
+        return (Course) super.clone();
+    }
 }
