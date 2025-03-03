@@ -122,10 +122,7 @@ public class DataEditorService {
                 .map(MetadataEntry::getValue)
                 .filter(value -> !value.isEmpty())
                 .findFirst();
-        if (metadataTitle.isPresent()) {
-            return metadataTitle.get();
-        }
-        return " - ";
+        return metadataTitle.orElse(" - ");
     }
 
     /**
