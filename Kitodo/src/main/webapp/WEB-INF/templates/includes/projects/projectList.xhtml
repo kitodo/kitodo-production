@@ -78,10 +78,10 @@
             <h:form id="projectActionForm">
 
                 <h:panelGroup styleClass="action"
-                              title="#{item.activeTemplates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
+                              title="#{item.isActive() and item.activeTemplates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="createProcessFromTemplate"
                                    action="#{SelectTemplateDialogView.createProcessForProject()}"
-                                   disabled="#{item.activeTemplates.size() lt 1}"
+                                   disabled="#{item.activeTemplates.size() lt 1 or not item.active}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{item}"/>
@@ -133,10 +133,10 @@
                 </h:commandLink>
 
                 <h:panelGroup styleClass="action"
-                              title="#{item.activeTemplates.size() gt 0 ? msgs['massImport'] : msgs['noTemplatesConfigured']}">
+                              title="#{item.isActive() and item.activeTemplates.size() gt 0 ? msgs['massImport'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="massImport"
                                    action="#{SelectTemplateDialogView.openMassImportForProject()}"
-                                   disabled="#{item.activeTemplates.size() lt 1}"
+                                   disabled="#{item.activeTemplates.size() lt 1 or not item.active}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{item}"/>

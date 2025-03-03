@@ -87,7 +87,7 @@ public class SelectProjectDialogView implements Serializable {
         try {
             Template template = ServiceManager.getTemplateService().getById(this.template.getId());
             return template.getProjects().stream().sorted(Comparator.comparing(Project::getTitle))
-                    .collect(Collectors.toList());
+                    .filter(Project::isActive).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(),
                     this.template.getId()}, logger, e);
