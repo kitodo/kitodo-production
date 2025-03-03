@@ -31,6 +31,7 @@ import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.helper.metadata.MediaPartialHelper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -177,6 +178,19 @@ public class MediaPartialFormTest {
 
         when(mediaPartialForm.getBegin()).thenReturn("00:00:45.000");
         assertTrue(mediaPartialForm.valid());
+    }
+
+    /**
+     * Test time to formatted time conversion.
+     */
+    @Test
+    public void testTimeToFormattedTimeConversion() {
+        assertEquals("00:00:01.000", MediaPartialHelper.convertTimeToFormattedTime("1"));
+        assertEquals("00:01:01.000", MediaPartialHelper.convertTimeToFormattedTime("1:1"));
+        assertEquals("01:01:01.000", MediaPartialHelper.convertTimeToFormattedTime("1:1:1"));
+        assertEquals("00:00:01.100", MediaPartialHelper.convertTimeToFormattedTime("1.1"));
+        assertEquals("00:01:01.110", MediaPartialHelper.convertTimeToFormattedTime("1:1.11"));
+        assertEquals("01:01:01.111", MediaPartialHelper.convertTimeToFormattedTime("1:1:1.111"));
     }
 
     private static String getValidationError(MediaPartialForm mediaPartialForm)
