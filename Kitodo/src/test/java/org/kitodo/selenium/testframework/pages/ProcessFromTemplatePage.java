@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.test.utils.TestConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -28,6 +29,8 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
     private static final String OPAC_SEARCH_FORM = "catalogSearchForm";
+    private static final String HIERARCHY_PANEL = "editForm:processFromTemplateTabView:processHierarchyContent";
+    private static final String IMPORT_CHILD_PROCESSES_SWITCH = "#catalogSearchForm\\:importChildren .ui-chkbox-box";
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW)
@@ -90,7 +93,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement searchTermInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":performCatalogSearch")
+    @FindBy(id = OPAC_SEARCH_FORM + ":performCatalogSearch")
     private WebElement performCatalogSearchButton;
 
     @SuppressWarnings("unused")
@@ -137,14 +140,26 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         return Browser.getDriver().findElementById("searchEditForm:processSelect_input");
     }
 
+    private void selectCatalog(String catalogName) throws InterruptedException {
+        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='" + catalogName + "']")));
+        Thread.sleep(Browser.getDelayAfterCatalogSelection());
+    }
+
     /**
      * Select GBV catalog.
      * @throws InterruptedException when thread is interrupted
      */
     public void selectGBV() throws InterruptedException {
-        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_1")));
-        Thread.sleep(Browser.getDelayAfterCatalogSelection());
+        selectCatalog(TestConstants.GBV);
+    }
+
+    /**
+     * Select Kalliope catalog.
+     * @throws InterruptedException when thread is interrupted
+     */
+    public void selectKalliope() throws InterruptedException {
+        selectCatalog(TestConstants.KALLIOPE);
     }
 
     /**
@@ -177,7 +192,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
-        String generatedTitle = processTitleInput.getAttribute("value");
+        String generatedTitle = processTitleInput.getAttribute(TestConstants.VALUE);
         save();
         return generatedTitle;
     }
@@ -207,7 +222,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
-        final String generatedTitle = processTitleInput.getAttribute("value");
+        final String generatedTitle = processTitleInput.getAttribute(TestConstants.VALUE);
 
         switchToTabByIndex(1);
         searchForParentInput.sendKeys(parentProcessTitle);
@@ -262,35 +277,80 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         }
     }
 
+    /**
+     * Tests importing metadata from a simulated OPAC and saving it as a process in Kitodo.Production.
+     * @return title of the created process as String.
+     * @throws Exception when saving the imported process fails.
+     */
     public String createProcessFromCatalog() throws Exception {
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_2")));
-
+        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='K10Plus']")));
         clickElement(fieldSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(fieldSelect.getAttribute("id") + "_1")));
-
+        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='PPN']")));
+        await("Wait for 'searchInput' field to become active").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> searchTermInput.isEnabled());
         searchTermInput.sendKeys("test");
+        await("Wait for 'performSearch' button to become active").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> performCatalogSearchButton.isEnabled());
         performCatalogSearchButton.click();
-        selectRecord.click();
-
-        Thread.sleep(Browser.getDelayAfterPickListClick());
+        await("Wait for popup dialog and loading screen to disappear").pollDelay(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS).ignoreExceptions().until(() -> !Browser.getDriver()
+                        .findElement(By.id("loadingScreen")).isDisplayed());
         titleSortInput.sendKeys("Test");
         ppnAnalogInput.sendKeys("12345");
-
+        ppnDigitalInput.sendKeys("67890");
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
-        String generatedTitle = processTitleInput.getAttribute("value");
+        String generatedTitle = processTitleInput.getAttribute(TestConstants.VALUE);
         save();
         return generatedTitle;
     }
 
     /**
+     * Get process title from corresponding "CreateProcessForm" input field.
+     * @return process title input field value
+     */
+    public String getProcessTitle() {
+        return processTitleInput.getAttribute(TestConstants.VALUE);
+    }
+
+    /**
+     * Check and return whether hierarchy panel is visible or not after triggering catalog import.
+     * @return whether hierarchy panel is visible
+     */
+    public boolean isHierarchyPanelVisible() {
+        WebElement hierarchyPanel = Browser.getDriver().findElement(By.id(HIERARCHY_PANEL));
+        return hierarchyPanel.isDisplayed();
+    }
+
+    /**
+     * Activate automatic import of child records by clicking on the switch labeled "Import child processes"
+     */
+    public void activateChildProcessImport() {
+        // activate child process search
+        WebElement childProcessSwitch = Browser.getDriver().findElement(By.cssSelector(IMPORT_CHILD_PROCESSES_SWITCH));
+        await("Wait for 'childProcessImport' switch to become active").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(childProcessSwitch::isEnabled);
+        clickElement(childProcessSwitch);
+    }
+
+    /**
+     * Decrease the import depth for the catalog by clicking on the chevron-down arrow in the corresponding input field.
+     * @throws InterruptedException when putting the thread to sleep fails
+     */
+    public void decreaseImportDepth() throws InterruptedException {
+        WebElement spinnerDown = Browser.getDriver().findElement(By.cssSelector("#catalogSearchForm .ui-spinner-down"));
+        spinnerDown.click();
+        Thread.sleep(Browser.getDelayAfterCatalogSelection());
+    }
+
+    /**
      * Enter test value into search term field.
      */
-    public void enterTestSearchValue() {
-        searchTermInput.sendKeys("12345");
+    public void enterTestSearchValue(String searchTerm) {
+        searchTermInput.sendKeys(searchTerm);
     }
 
     public ProcessesPage save() throws IllegalAccessException, InstantiationException {

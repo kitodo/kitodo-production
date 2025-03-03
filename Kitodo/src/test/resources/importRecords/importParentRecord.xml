@@ -23,13 +23,16 @@
                       xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
                     <identifier type="uri">http://www.test.id</identifier>
                     <recordInfo>
-                        <recordIdentifier source="1">2</recordIdentifier>
+                        <recordIdentifier source="1">DE-1234-BE-56-7890</recordIdentifier>
                         <recordCreationDate encoding="marc">2019-11-09</recordCreationDate>
                         <recordChangeDate encoding="iso8601">2019-11-09</recordChangeDate>
                     </recordInfo>
                     <titleInfo>
                         <title>Elternvorgang</title>
                     </titleInfo>
+                    <originInfo>
+                        <issuance>multipart monograph</issuance>
+                    </originInfo>
                 </mods>
             </srw:recordData>
         </srw:record>

@@ -29,6 +29,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.openqa.selenium.By;
 
 public class ConfigConversionST extends BaseTestSelenium {
 
@@ -61,7 +62,12 @@ public class ConfigConversionST extends BaseTestSelenium {
         assertEquals(MODS_2_KITODO, importConfigurationsTab.getMappingFileTitle());
         importConfigurationsTab.selectInputFormatMods();
         importConfigurationsTab.selectOutputFormatKitodo();
-        importConfigurationsTab.clickMappingFileOkButton();
+        await("Wait for 'confirm mapping' button to be enabled")
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                        .atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                        .until(() -> Browser.getDriver().findElement(By.id("mappingFileFormatsForm:ok")).isEnabled());
+        Browser.getDriver().findElement(By.id("mappingFileFormatsForm:ok")).click();
 
         await("Wait for 'Results' dialog to be displayed")
                 .atMost(5, TimeUnit.SECONDS)

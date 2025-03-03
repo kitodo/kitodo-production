@@ -27,7 +27,7 @@
                 <kitodo:kitodo>
                     <xsl:apply-templates select="@*|node()"/>
                     <!-- ### DocType ### -->
-                    <kitodo:metadata name="docType">
+                    <kitodo:metadata name="document_type">
                         <xsl:variable name="genre" select="mods:genre[@authority='gnd-content']"/>
                         <xsl:choose>
                             <xsl:when test="(mods:originInfo/mods:issuance[.='continuing'])

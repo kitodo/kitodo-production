@@ -99,6 +99,7 @@ import org.opensearch.env.Environment;
 import org.opensearch.node.Node;
 import org.opensearch.transport.Netty4Plugin;
 import java.nio.file.Path;
+import org.kitodo.test.utils.TestConstants;
 
 /**
  * Insert data to test database.
@@ -124,6 +125,7 @@ public class MockDatabase {
     public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
     public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
     public static final String HIERARCHY_CHILD_TO_ADD = "HierarchyChildToAdd";
+    public static final int PORT = 8888;
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -1625,7 +1627,7 @@ public class MockDatabase {
 
         // add GBV import configuration, including id and default search fields
         ImportConfiguration gbvConfiguration = new ImportConfiguration();
-        gbvConfiguration.setTitle("GBV");
+        gbvConfiguration.setTitle(TestConstants.GBV);
         gbvConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         gbvConfiguration.setSruVersion("1.2");
@@ -1649,7 +1651,7 @@ public class MockDatabase {
 
         // add Kalliope import configuration, including id search field
         ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
-        kalliopeConfiguration.setTitle("Kalliope");
+        kalliopeConfiguration.setTitle(TestConstants.KALLIOPE);
         kalliopeConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         kalliopeConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         kalliopeConfiguration.setSruVersion("1.2");
@@ -1657,7 +1659,7 @@ public class MockDatabase {
         kalliopeConfiguration.setHost("localhost");
         kalliopeConfiguration.setScheme("http");
         kalliopeConfiguration.setPath("/sru");
-        kalliopeConfiguration.setPort(8888);
+        kalliopeConfiguration.setPort(PORT);
         kalliopeConfiguration.setPrestructuredImport(false);
         kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
         kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
@@ -1665,12 +1667,12 @@ public class MockDatabase {
                 .getById(1)));
 
         SearchField idSearchFieldKalliope = new SearchField();
-        idSearchFieldKalliope.setValue("ead.id");
+        idSearchFieldKalliope.setValue(TestConstants.EAD_ID);
         idSearchFieldKalliope.setLabel("Identifier");
         idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
         SearchField parentIdSearchFieldKalliope = new SearchField();
-        parentIdSearchFieldKalliope.setValue("context.ead.id");
+        parentIdSearchFieldKalliope.setValue(TestConstants.EAD_PARENT_ID);
         parentIdSearchFieldKalliope.setLabel("Parent ID");
         parentIdSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
@@ -1687,7 +1689,7 @@ public class MockDatabase {
 
         // add K10Plus import configuration, including id search field
         ImportConfiguration k10plusConfiguration = new ImportConfiguration();
-        k10plusConfiguration.setTitle("K10Plus");
+        k10plusConfiguration.setTitle(TestConstants.K10PLUS);
         k10plusConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         k10plusConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         k10plusConfiguration.setSruVersion("1.1");
@@ -1695,7 +1697,8 @@ public class MockDatabase {
         k10plusConfiguration.setHost("localhost");
         k10plusConfiguration.setScheme("http");
         k10plusConfiguration.setPath("/sru");
-        k10plusConfiguration.setPort(8888);
+        k10plusConfiguration.setPort(PORT);
+        k10plusConfiguration.setDefaultImportDepth(1);
         k10plusConfiguration.setPrestructuredImport(false);
         k10plusConfiguration.setReturnFormat(FileFormat.XML.name());
         k10plusConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
@@ -1747,7 +1750,7 @@ public class MockDatabase {
         customConfiguration.setHost("localhost");
         customConfiguration.setScheme("http");
         customConfiguration.setPath("/custom");
-        customConfiguration.setPort(8888);
+        customConfiguration.setPort(PORT);
         customConfiguration.setPrestructuredImport(false);
         customConfiguration.setReturnFormat(FileFormat.XML.name());
         customConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
@@ -2105,6 +2108,23 @@ public class MockDatabase {
      * @param numberOfRecords URL parameter containing maximum number of records associated with this endpoint
      * @throws IOException when reading the response file fails
      */
+    public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
+                                             int startRecord, int numberOfRecords)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/sru"),
+                            parameter("operation", "searchRetrieve"),
+                            parameter("recordSchema", format),
+                            parameter("startRecord", String.valueOf(startRecord)),
+                            parameter("maximumRecords", String.valueOf(numberOfRecords)),
+                            parameter("query", query))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
+
+    }
+
     public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
                                              int numberOfRecords)
             throws IOException {
