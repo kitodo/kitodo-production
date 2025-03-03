@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -155,7 +156,7 @@ public class XmlSchemaConverterTest {
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,
             IOException, SAXException {
-        try (InputStream inputStream = new ByteArrayInputStream(inputString.getBytes())) {
+        try (InputStream inputStream = new ByteArrayInputStream(inputString.getBytes(StandardCharsets.UTF_8))) {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             return documentBuilderFactory.newDocumentBuilder().parse(inputStream);
         }

@@ -101,7 +101,7 @@ public class QueryURLImportTest {
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,
             IOException, SAXException {
-        try (InputStream inputStream = new ByteArrayInputStream(inputString.getBytes())) {
+        try (InputStream inputStream = new ByteArrayInputStream(inputString.getBytes(StandardCharsets.UTF_8))) {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             return documentBuilderFactory.newDocumentBuilder().parse(inputStream);
         }

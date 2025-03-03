@@ -26,6 +26,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 public class XMLUtilsTest {
@@ -69,7 +70,7 @@ public class XMLUtilsTest {
 
     @Test
     public void shouldLoadInputStream() {
-        InputStream inputStream = new ByteArrayInputStream(XML_STRING.getBytes());
+        InputStream inputStream = new ByteArrayInputStream(XML_STRING.getBytes(StandardCharsets.UTF_8));
         Assertions.assertDoesNotThrow(() -> XMLUtils.load(inputStream));
     }
 

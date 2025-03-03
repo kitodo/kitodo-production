@@ -13,6 +13,7 @@ package org.kitodo.production.editor;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class LegalTextEditor implements Serializable {
         String filePath = ConfigCore.getKitodoConfigDirectory() + "legal_" + this.currentLegalTextTitle + "_"
                 + this.currentLanguage + ".html";
         try {
-            Files.write(Paths.get(filePath), this.currentLegalTextContent.getBytes());
+            Files.write(Paths.get(filePath), this.currentLegalTextContent.getBytes(StandardCharsets.UTF_8));
             LegalTexts.updateTexts(this.currentLanguage);
         } catch (IOException e) {
             Helper.setErrorMessage("ERROR: unable to save file '" + filePath + "'!");
