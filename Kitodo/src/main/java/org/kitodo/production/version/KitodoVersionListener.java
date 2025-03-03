@@ -34,7 +34,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
  * startup.
  */
 @WebListener
-public class KitodoVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
+public class KitodoVersionListener implements ServletContextListener, HttpSessionListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -73,20 +73,4 @@ public class KitodoVersionListener implements ServletContextListener, HttpSessio
             }
         }
     }
-
-    @Override
-    public void attributeAdded(HttpSessionBindingEvent sbe) {
-        // nothing is done here
-    }
-
-    @Override
-    public void attributeRemoved(HttpSessionBindingEvent sbe) {
-        // nothing is done here
-    }
-
-    @Override
-    public void attributeReplaced(HttpSessionBindingEvent sbe) {
-        // nothing is done here
-    }
-
 }
