@@ -11,7 +11,8 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.apache.commons.configuration.ConfigurationException;
+
+import org.kitodo.exceptions.ConfigurationException;
 
 /**
  * A DataSelector is useful to access a data object. There are different

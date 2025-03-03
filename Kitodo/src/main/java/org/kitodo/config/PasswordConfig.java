@@ -11,8 +11,8 @@
 
 package org.kitodo.config;
 
-import org.apache.commons.configuration.ConversionException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConversionException;
 
 public class PasswordConfig extends Config {
 

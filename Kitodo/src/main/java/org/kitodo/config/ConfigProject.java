@@ -24,9 +24,13 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.event.EventListener;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,13 +65,20 @@ public class ConfigProject {
             throw new IOException("File not found: " + configFile.getAbsolutePath());
         }
         try {
-            this.config = new XMLConfiguration(configFile.getAbsolutePath());
+            // Create and initialize the builder
+            ReloadingFileBasedConfigurationBuilder<XMLConfiguration> builder =
+                new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class)
+                    .configure(new Parameters().xml()
+                        .setFile(configFile.getFile())
+                        .setListDelimiterHandler(new DefaultListDelimiterHandler('&')));
+            // Register an event listener for triggering reloading checks
+            builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
+                event -> builder.getReloadingController().checkForReloading(null));
+            this.config = builder.getConfiguration();
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             this.config = new XMLConfiguration();
         }
-        this.config.setListDelimiter('&');
-        this.config.setReloadingStrategy(new FileChangedReloadingStrategy());
 
         int countProjects = this.config.getMaxIndex("project");
         for (int i = 0; i <= countProjects; i++) {
@@ -231,7 +242,6 @@ public class ConfigProject {
      */
     public String getParamString(String inParameter) {
         try {
-            this.config.setListDelimiter('&');
             String paramString = this.config.getString(this.projectTitle + inParameter);
             return cleanXmlFormattedString(paramString);
         } catch (RuntimeException e) {
@@ -248,7 +258,6 @@ public class ConfigProject {
      */
     public String getParamString(String parameter, String defaultIfNull) {
         try {
-            this.config.setListDelimiter('&');
             String myParam = this.projectTitle + parameter;
             String paramString = this.config.getString(myParam, defaultIfNull);
             return cleanXmlFormattedString(paramString);

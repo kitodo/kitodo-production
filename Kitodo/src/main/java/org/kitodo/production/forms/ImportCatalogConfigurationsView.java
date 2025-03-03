@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.data.database.beans.MappingFile;
