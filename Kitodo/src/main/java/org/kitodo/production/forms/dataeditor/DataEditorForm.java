@@ -18,10 +18,12 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -62,6 +64,7 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
@@ -212,6 +215,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private String renamingError = "";
     private String metadataFileLoadingError = "";
 
+    static final String GROWL_MESSAGE =
+            "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
+
     /**
      * Public constructor.
      */
@@ -296,11 +302,25 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
+            if (Objects.nonNull(this.dataEditorSetting) && Objects.nonNull(dataEditorSetting.getId())) {
+                showDataEditorSettingsLoadedMessage();
+            }
         } catch (FileNotFoundException e) {
             metadataFileLoadingError = e.getLocalizedMessage();
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    private void showDataEditorSettingsLoadedMessage() throws DAOException {
+        String task = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
+        Locale locale = LocaleHelper.getCurrentLocale();
+        String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
+        String text = MessageFormat.format(Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyText"), task);
+        String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
+                .replace("SEVERITY", "info");
+        PrimeFaces.current().executeScript("PF('notifications').removeAll();");
+        PrimeFaces.current().executeScript(script);
     }
 
     private void checkProjectFolderConfiguration() {
