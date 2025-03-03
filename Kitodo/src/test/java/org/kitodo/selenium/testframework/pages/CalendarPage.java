@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 
 public class CalendarPage extends Page<CalendarPage> {
 
@@ -52,82 +51,6 @@ public class CalendarPage extends Page<CalendarPage> {
     private static final String CALENDAR_ISSUES = ".issue.match";
 
 
-    @SuppressWarnings("unused")
-    @FindBy(id = BUTTON_ADD_BLOCK)
-    private WebElement buttonAddBlock;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = BUTTON_CANCEL)
-    private WebElement buttonCancel;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = DATEPICKER_FROM)
-    private WebElement datepickerFrom;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = DATEPICKER_TO)
-    private WebElement datepickerTo;
-
-    @SuppressWarnings("unused")
-    @FindBy(xpath = DATEPICKER_TO_LINK)
-    private WebElement datepickerToLink;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = BUTTON_ADD_ISSUE)
-    private WebElement buttonAddIssue;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = INPUT_ISSUE)
-    private WebElement inputIssueName;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = HEADER_TEXT)
-    private WebElement headerText;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = CHECKBOX_MONDAY)
-    private WebElement checkboxMonday;
-
-    @SuppressWarnings("unused")
-    @FindBy(css = CHECKBOX_TUESDAY)
-    private WebElement checkboxTuesday;
-
-    @SuppressWarnings("unused")
-    @FindBy(xpath = CALENDAR_ENTRY)
-    private WebElement calendarEntry;
-
-    @SuppressWarnings("unused")
-    @FindBy(xpath = CALENDAR_ENTRY_BUTTON)
-    private WebElement calendarEntryButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = BUTTON_ADD_METADATA_TO_THIS)
-    private WebElement buttonAddMetadataToThis;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = BUTTON_ADD_METADATA_TO_ALL)
-    private WebElement buttonAddMetadataToAll;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = METADATA_TYPE)
-    private WebElement metadataType;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = METADATA_TYPE_PANEL)
-    private WebElement metadataTypePanel;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = METADATA_VALUE)
-    private WebElement metadataValue;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = CALENDAR_DIALOG_CLOSE_BUTTON)
-    private WebElement calendarDialogCloseButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = CALENDAR)
-    private WebElement calendar;
-
     public CalendarPage() {
         super("pages/calendar.jsf");
     }
@@ -142,35 +65,35 @@ public class CalendarPage extends Page<CalendarPage> {
      */
     public void addBlock() {
         await("Wait for button to be displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(buttonAddBlock.isEnabled()));
-        buttonAddBlock.click();
+                .untilAsserted(() -> assertTrue(getById(BUTTON_ADD_BLOCK).isEnabled()));
+        getById(BUTTON_ADD_BLOCK).click();
 
         await("Wait for datepicker from being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(datepickerFrom.isEnabled()));
-        datepickerFrom.click();
-        datepickerFrom.sendKeys("01.02.2023");
+                .untilAsserted(() -> assertTrue(getByCSS(DATEPICKER_FROM).isEnabled()));
+        getByCSS(DATEPICKER_FROM).click();
+        getByCSS(DATEPICKER_FROM).sendKeys("01.02.2023");
         getPageHeader().click();
 
         await("Wait for datepicker to being displayed")
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(200, TimeUnit.MILLISECONDS)
+                .pollDelay(2, TimeUnit.SECONDS)
+                .pollInterval(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(datepickerToLink.isEnabled()));
-        datepickerTo.click();
+                .untilAsserted(() -> assertTrue(getByXPath(DATEPICKER_TO_LINK).isEnabled()));
+        getByCSS(DATEPICKER_TO).click();
         await("Wait for datepicker to being displayed")
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(200, TimeUnit.MILLISECONDS)
+                .pollDelay(2, TimeUnit.SECONDS)
+                .pollInterval(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(datepickerToLink.isEnabled()));
-        datepickerToLink.click();
+                .untilAsserted(() -> assertTrue(getByXPath(DATEPICKER_TO_LINK).isEnabled()));
+        getByXPath(DATEPICKER_TO_LINK).click();
     }
 
     /**
@@ -179,47 +102,47 @@ public class CalendarPage extends Page<CalendarPage> {
      */
     public void addIssue(String title) {
         await("Wait for issue button being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(buttonAddIssue.isEnabled()));
-        buttonAddIssue.click();
+                .untilAsserted(() -> assertTrue(getByCSS(BUTTON_ADD_ISSUE).isEnabled()));
+        getByCSS(BUTTON_ADD_ISSUE).click();
 
         await("Wait for issue input being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(inputIssueName.isEnabled()));
-        inputIssueName.click();
-        inputIssueName.sendKeys(title);
-        headerText.click();
+                .untilAsserted(() -> assertTrue(getByCSS(INPUT_ISSUE).isEnabled()));
+        getByCSS(INPUT_ISSUE).click();
+        getByCSS(INPUT_ISSUE).sendKeys(title);
+        getById(HEADER_TEXT).click();
 
         await("Wait for checkbox being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(checkboxMonday.isDisplayed()));
-        checkboxMonday.click();
+                .untilAsserted(() -> assertTrue(getByCSS(CHECKBOX_MONDAY).isDisplayed()));
+        getByCSS(CHECKBOX_MONDAY).click();
         await("Wait for checkbox being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(checkboxMonday.isDisplayed()));
-        checkboxTuesday.click();
+                .untilAsserted(() -> assertTrue(getByCSS(CHECKBOX_MONDAY).isDisplayed()));
+        getByCSS(CHECKBOX_TUESDAY).click();
     }
 
     /**
      * Add metadata to this issue. Type "Process title" and value "Test" will be inserted.
      */
     public void addMetadataToThis() {
-        addMetadata("Process title", "Test", buttonAddMetadataToThis);
+        addMetadata("Process title", "Test", BUTTON_ADD_METADATA_TO_THIS);
     }
 
     /**
      * Add metadata to this and all following issues. Type "Signatur" and value "1234" will be used.
      */
     public void addMetadataToAll() {
-        addMetadata("Signatur", "1234", buttonAddMetadataToAll);
+        addMetadata("Signatur", "1234", BUTTON_ADD_METADATA_TO_ALL);
     }
 
     /**
@@ -229,22 +152,22 @@ public class CalendarPage extends Page<CalendarPage> {
      */
     public List<String> getMetadata(String issueName) {
         await("Wait for calendar entry being displayed")
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(200, TimeUnit.MILLISECONDS)
+                .pollDelay(2, TimeUnit.SECONDS)
+                .pollInterval(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue( calendarEntry.isDisplayed()));
-        calendarEntryButton.click();
+                .untilAsserted(() -> assertTrue(getByXPath(CALENDAR_ENTRY).isDisplayed()));
+        getByXPath(CALENDAR_ENTRY_BUTTON).click();
 
         await("Wait for issue '" + issueName + "' being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(getIssue(issueName).isDisplayed()));
         if (Objects.equals(getIssue(issueName).getAttribute("aria-expanded"), "false")) {
-            Browser.getDriver().findElementByXPath("//div[@aria-expanded='true']").click();
+            getByXPath("//div[@aria-expanded='true']").click();
             await("Wait for issue '" + issueName + "' being displayed")
-                    .pollDelay(200, TimeUnit.MILLISECONDS)
+                    .pollDelay(400, TimeUnit.MILLISECONDS)
                     .atMost(10, TimeUnit.SECONDS)
                     .ignoreExceptions()
                     .untilAsserted(() -> assertTrue(getIssue(issueName).isDisplayed()));
@@ -252,13 +175,13 @@ public class CalendarPage extends Page<CalendarPage> {
         }
 
         await("Wait for issue content for '" + issueName + "' being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(getIssueContent(issueName).isDisplayed()));
 
         List<String> metadataList = readMetadataTypes(issueName);
-        calendarDialogCloseButton.click();
+        getById(CALENDAR_DIALOG_CLOSE_BUTTON).click();
 
         return metadataList;
     }
@@ -267,57 +190,69 @@ public class CalendarPage extends Page<CalendarPage> {
      * Click cancel button and leave calendar.
      */
     public void closePage() {
-        buttonCancel.click();
+        getById(BUTTON_CANCEL).click();
     }
 
     public int countIssues() {
         await("Wait for calendar issues to be displayed")
-                .untilAsserted(() -> assertTrue(calendar.isDisplayed()));
-        return calendar.findElements(By.cssSelector(CALENDAR_ISSUES)).size();
+                .untilAsserted(() -> assertTrue(getById(CALENDAR).isDisplayed()));
+        return getById(CALENDAR).findElements(By.cssSelector(CALENDAR_ISSUES)).size();
     }
 
-    private void addMetadata(String type, String value, WebElement addButton) {
+    private void addMetadata(String type, String value, String addButton) {
         await("Wait for calendar entry being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(calendarEntry.isDisplayed()));
-        calendarEntryButton.click();
+                .untilAsserted(() -> assertTrue(getByXPath(CALENDAR_ENTRY).isDisplayed()));
+        getByXPath(CALENDAR_ENTRY_BUTTON).click();
         await("Wait for button to add metadata to this issue being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(addButton.isEnabled()));
-        addButton.click();
+                .untilAsserted(() -> assertTrue(getById(addButton).isEnabled()));
+        getById(addButton).click();
 
         await("Wait for button to add metadata to this issue being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(metadataType.isEnabled()));
-        metadataType.click();
-        metadataTypePanel.findElement(By.xpath("//li[text()='" + type + "']")).click();
+                .untilAsserted(() -> assertTrue(getById(METADATA_TYPE).isEnabled()));
+        getById(METADATA_TYPE).click();
+        getById(METADATA_TYPE_PANEL).findElement(By.xpath("//li[text()='" + type + "']")).click();
 
         await("Wait for metadata input being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .untilAsserted(() -> assertTrue(metadataValue.isEnabled()));
-        metadataValue.sendKeys(value);
-        calendarDialogCloseButton.click();
+                .untilAsserted(() -> assertTrue(getById(METADATA_VALUE).isEnabled()));
+        getById(METADATA_VALUE).sendKeys(value);
+        getById(CALENDAR_DIALOG_CLOSE_BUTTON).click();
     }
     
     private WebElement getIssue(String name) {
-        return Browser.getDriver().findElementByXPath( "//div[text()='" + name + " erschien']");
+        return getByXPath( "//div[text()='" + name + " erschien']");
     }
 
     private WebElement getIssueContent(String name) {
-        return Browser.getDriver().findElementByXPath("//div[text()='" + name + " erschien']/following-sibling::div");
+        return getByXPath("//div[text()='" + name + " erschien']/following-sibling::div");
     }
 
     private List<String> readMetadataTypes(String issueName) {
         List<WebElement> metadataTypeLabels = Browser.getDriver().findElementsByXPath("//div[text()='" + issueName
                 + " erschien']/following-sibling::div[@aria-hidden='false']//div[@title='Art']/label");
         return metadataTypeLabels.stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+
+    private WebElement getById(String id) {
+        return Browser.getDriver().findElementById(id);
+    }
+
+    private WebElement getByCSS(String cssSelector) {
+        return Browser.getDriver().findElementByCssSelector(cssSelector);
+    }
+
+    private WebElement getByXPath(String xpath) {
+        return Browser.getDriver().findElementByXPath(xpath);
     }
 }
