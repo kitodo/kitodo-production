@@ -43,6 +43,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 
 
 public class MetadataEditorIT {
@@ -125,7 +126,7 @@ public class MetadataEditorIT {
     public void shouldAddMultipleStructuresWithMetadataGroup() throws Exception {
 
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File("src/test/resources/rulesets/ruleset_test.xml"));
+        ruleset.load(new File(TestConstants.TEST_RULESET));
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("Monograph", "edit",
             Locale.LanguageRange.parse("en"));
         String metadataKey = "TitleDocMain";
@@ -160,7 +161,7 @@ public class MetadataEditorIT {
     @Test
     public void shouldAddMultipleStructuresWithMetadataEntry() throws Exception {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File("src/test/resources/rulesets/ruleset_test.xml"));
+        ruleset.load(new File(TestConstants.TEST_RULESET));
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("Monograph", "edit",
             Locale.LanguageRange.parse("en"));
         String metadataKey = "Person";

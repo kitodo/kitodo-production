@@ -31,4 +31,5 @@ public final class TestConstants {
     public static final String KALLIOPE_PARENT_ID = "DE-1234-BE-56-7890";
     public static final String IDENTIFIER = "Identifier";
     public static final String VALUE = "value";
+    public static final String TEST_RULESET = "src/test/resources/rulesets/ruleset_test.xml";
 }

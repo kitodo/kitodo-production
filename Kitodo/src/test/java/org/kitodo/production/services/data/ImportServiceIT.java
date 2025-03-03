@@ -95,7 +95,6 @@ public class ImportServiceIT {
     private static final String PARENT_PROCESS_TEST_FILE = "testMetadataForKalliopeParentProcess.xml";
     private static final String CHILD_RECORDS_PATH = "src/test/resources/importRecords/importMultipleChildRecords.xml";
     private static final String MODS_TEST_RECORD_PATH = "src/test/resources/importRecords/modsTestRecord.xml";
-    private static final String TEST_RULESET = "src/test/resources/rulesets/ruleset_test.xml";
     private static final String TEST_KITODO_METADATA_FILE = "testMetadataFileTempProcess.xml";
     private static final String TEST_METADATA_WITH_AUTHOR_FILE = "testMetadataWithAuthor.xml";
     private static final String TEST_KITODO_METADATA_FILE_PATH = "src/test/resources/metadata/metadataFiles/"
@@ -236,7 +235,7 @@ public class ImportServiceIT {
     public void shouldTestWhetherRecordIdentifierMetadataIsConfigured() throws IOException {
         RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
-        rulesetManagement.load(new File(TEST_RULESET));
+        rulesetManagement.load(new File(TestConstants.TEST_RULESET));
         Assert.assertTrue("Should determine that recordIdentifier is configured for all document types",
                 ServiceManager.getImportService().isRecordIdentifierMetadataConfigured(rulesetManagement));
     }
