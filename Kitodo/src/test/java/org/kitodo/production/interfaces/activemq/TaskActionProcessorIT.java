@@ -16,6 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,8 +26,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -37,6 +41,11 @@ import org.kitodo.production.services.data.TaskService;
 public class TaskActionProcessorIT {
 
     private static final TaskService taskService = ServiceManager.getTaskService();
+
+    private static final File scriptDeleteSymLink = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
+    private static final File scriptCreateDirMeta = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
 
     /**
      * Prepare the data for every test.
@@ -49,6 +58,8 @@ public class TaskActionProcessorIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+        ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
+        ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
     }
 
     /**
@@ -62,6 +73,8 @@ public class TaskActionProcessorIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
+        ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
+        ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
     }
 
     @Test(expected = ProcessorException.class)
