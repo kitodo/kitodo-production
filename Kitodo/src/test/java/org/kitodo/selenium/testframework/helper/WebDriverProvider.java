@@ -122,13 +122,13 @@ public class WebDriverProvider {
     public static void provideChromeDriver(String downloadFolder, String extractFolder)
             throws IOException {
         String chromeDriverVersion = fetchLatestStableChromeDriverVersion();
-        String chromeDriverUrl = CHROME_FOR_TESTING_URL + chromeDriverVersion + File.separator;
+        String chromeDriverUrl = CHROME_FOR_TESTING_URL + chromeDriverVersion + '/';
         String driverFilename = CHROME_DRIVER;
         File chromeDriverFile;
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFilename = driverFilename + EXE;
             File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_WIN_SUBDIR + File.separator + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + File.separator
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + '/'
                     + CHROME_DRIVER_WIN_SUBDIR + ZIP), chromeDriverZipFile);
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_WIN_SUBDIR);
