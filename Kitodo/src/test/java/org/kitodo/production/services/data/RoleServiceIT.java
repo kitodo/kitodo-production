@@ -35,7 +35,7 @@ public class RoleServiceIT {
 
     private static final RoleService roleService = ServiceManager.getRoleService();
 
-    private static final int EXPECTED_ROLES_COUNT = 8;
+    private static final int EXPECTED_ROLES_COUNT = 9;
 
     private static final String WRONG_NUMBER_OF_ROLES = "Amount of roles assigned to client is incorrect!";
 
@@ -78,7 +78,7 @@ public class RoleServiceIT {
     @Test
     public void shouldGetAllRolesInGivenRange() throws Exception {
         List<Role> roles = roleService.getAll(1, 10);
-        assertEquals("Not all user's roles were found in database!", 7, roles.size());
+        assertEquals("Not all user's roles were found in database!", 8, roles.size());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class RoleServiceIT {
         assertEquals(WRONG_NUMBER_OF_ROLES, 7, roles.size());
 
         roles = roleService.getAllRolesByClientId(2);
-        assertEquals(WRONG_NUMBER_OF_ROLES, 1, roles.size());
+        assertEquals(WRONG_NUMBER_OF_ROLES, 2, roles.size());
     }
 
     @Test
@@ -185,6 +185,6 @@ public class RoleServiceIT {
 
         user = ServiceManager.getUserService().getById(2);
         roles = roleService.getAllAvailableForAssignToUser(user);
-        assertEquals(WRONG_NUMBER_OF_ROLES, 6, roles.size());
+        assertEquals(WRONG_NUMBER_OF_ROLES, 7, roles.size());
     }
 }

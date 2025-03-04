@@ -1099,4 +1099,13 @@ public class SecurityAccessController {
     public boolean hasAuthorityToRenameMediaFiles() {
         return securityAccessService.hasAuthorityToRenameMediaFiles();
     }
+
+    /**
+     * Check if the current user has the permission to assign import configurations to clients.
+     *
+     * @return true if the current user has the permission to assign import configurations to clients.
+     */
+    public boolean hasAuthorityToAssignImportConfigurationToClient() {
+        return securityAccessService.hasAuthorityToAssignImportConfigurationToClient();
+    }
 }

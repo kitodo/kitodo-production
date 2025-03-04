@@ -47,6 +47,8 @@ public class Client extends BaseBean {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
+    private List<ImportConfiguration> importConfigurations;
+
     /**
      * Returns the name of the client.
      *
@@ -147,5 +149,27 @@ public class Client extends BaseBean {
      */
     public void setProjects(List<Project> projects) {
         this.projects = (List<Project>) projects;
+    }
+
+    /**
+     * Get import configuration.
+     *
+     * @return import configurations
+     */
+    public List<ImportConfiguration> getImportConfigurations() {
+        initialize(new ClientDAO(), this.importConfigurations);
+        if (Objects.isNull(this.importConfigurations)) {
+            this.importConfigurations = new ArrayList<>();
+        }
+        return importConfigurations;
+    }
+
+    /**
+     * Set import configurations.
+     *
+     * @param configurations import configurations
+     */
+    public void setImportConfigurations(List<ImportConfiguration> configurations) {
+        this.importConfigurations = configurations;
     }
 }

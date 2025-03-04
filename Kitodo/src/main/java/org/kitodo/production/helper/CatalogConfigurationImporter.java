@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +106,8 @@ public class CatalogConfigurationImporter {
             }
             importConfiguration.setMappingFiles(getMappingFiles(importConfiguration));
             importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(catalogName));
+            importConfiguration.setClients(Collections.singletonList(ServiceManager.getUserService()
+                    .getSessionClientOfAuthenticatedUser()));
         }
         ServiceManager.getImportConfigurationService().save(importConfiguration);
     }
