@@ -536,7 +536,18 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * exactMatch is always true here.
      */
     public List<Process> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DAOException {
-        throw new DAOException("index currently not available");
+        BeanQuery query = new BeanQuery(Process.class);
+        if (!exactMatch) {
+            query.setIndexFiltersAsAlternatives();
+        }
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
+            Project::isActive).map(Project::getId).collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
+                .getValue() + '"').collect(Collectors.joining(" ")));
+        query.setUnordered();
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
     /**
@@ -557,10 +568,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *            key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
-    @Deprecated
     public List<Process> findByMetadataInAllProjects(Map<String, String> metadata, boolean exactMatch) throws DataException {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
+        BeanQuery query = new BeanQuery(Process.class);
+        if (!exactMatch) {
+            query.setIndexFiltersAsAlternatives();
+        }
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
+                .getValue() + '"').collect(Collectors.joining(" ")));
+        query.setUnordered();
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
     /**
@@ -695,23 +712,28 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *
      * @param searchInput
      *            user input
-     * @param projectId
-     *            the id of the allowed project
      * @param rulesetId
      *            the id of the allowed ruleset
      * @return found processes
      * @throws DAOException
      *             if the search engine fails
+     * @throws DataException if the search engine fails
+     * @throws DAOException when loading ruleset from database fails
+     * @throws IOException when opening ruleset file fails
      */
-    public List<Process> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
-            throws DAOException {
-
+    public List<Process> findLinkableParentProcesses(String searchInput, int rulesetId) throws DAOException,
+            IOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        query.addIntegerRestriction("project.id", projectId);
         query.addIntegerRestriction("ruleset.id", rulesetId);
         query.forIdOrInTitle(searchInput);
-        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
+        List<Process> filteredProcesses = new ArrayList<>();
+        for (Process process : getByQuery(query.formQueryForAll(), query.getQueryParameters())) {
+            if (ProcessService.canCreateChildProcess(process) || ProcessService.canCreateProcessWithCalendar(process)) {
+                filteredProcesses.add(process);
+            }
+        }
+        return filteredProcesses;
     }
 
     /**

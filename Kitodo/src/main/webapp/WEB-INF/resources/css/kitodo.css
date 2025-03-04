@@ -1711,7 +1711,7 @@ Import form
 
 #editForm\:processFromTemplateTabView\:logicalStructure {
     height: calc(100% - 170px);
-    overflow: scroll;
+    overflow: auto;
 }
 
 #recordIdentifierMissingDialog ul {

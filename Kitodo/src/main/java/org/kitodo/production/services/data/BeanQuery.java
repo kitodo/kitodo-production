@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
@@ -44,6 +45,8 @@ public class BeanQuery {
     private final String varName;
     private final Collection<String> extensions = new ArrayList<>();
     private final Collection<String> restrictions = new ArrayList<>();
+    private final List<String> restrictionAlternatives = new ArrayList<>();
+    private boolean indexFiltersAsAlternatives = false;
     private Pair<String, String> sorting = Pair.of("id", "ASC");
     private final Map<String, Pair<FilterField, String>> indexQueries = new HashMap<>();
     private final Map<String, Object> parameters = new HashMap<>();
@@ -314,7 +317,9 @@ public class BeanQuery {
                     databaseSearchQueryPart.addParameters(parameterName, parameters);
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
-                    indexQueryPart.putQueryParameters(varName, parameterName, indexQueries, restrictions);
+                    indexQueryPart.putQueryParameters(varName, parameterName, indexQueries, indexFiltersAsAlternatives
+                            ? restrictionAlternatives
+                            : restrictions);
                 }
             }
             if (groupFilters.size() == 1) {
@@ -327,6 +332,13 @@ public class BeanQuery {
 
     public void defineSorting(String sortField, SortOrder sortOrder) {
         sorting = Pair.of(varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
+    }
+
+    /**
+     * Sets a flag that multiple index query filters are formed as an OR query.
+     */
+    public void setIndexFiltersAsAlternatives() {
+        this.indexFiltersAsAlternatives = true;
     }
 
     /**
@@ -389,6 +401,12 @@ public class BeanQuery {
         for (String extension : extensions) {
             query.append(" INNER JOIN ").append(extension);
         }
+        if (restrictionAlternatives.size() == 1) {
+            restrictions.add(restrictionAlternatives.get(0));
+        } else if (restrictionAlternatives.size() > 1) {
+            restrictions.add(restrictionAlternatives.stream().collect(Collectors.joining(" OR ", "(", ")")));
+        }
+        restrictionAlternatives.clear();
         if (!restrictions.isEmpty()) {
             boolean first = true;
             for (String restriction : restrictions) {

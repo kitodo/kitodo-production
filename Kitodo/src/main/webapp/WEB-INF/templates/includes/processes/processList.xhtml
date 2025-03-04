@@ -170,16 +170,18 @@
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <h:link outcome="processEdit"
-                                            styleClass="action"
+                                            styleClass="#{not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
                                             title="#{msgs.view}"
+                                            disabled="#{not ProcessForm.processInAssignedProject(parent.id)}"
                                             rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-eye fa-lg"/>
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
                                     </h:link>
                                     <h:link outcome="processEdit"
-                                            styleClass="action"
+                                            styleClass="#{not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
                                             title="#{msgs.edit}"
+                                            disabled="#{not ProcessForm.processInAssignedProject(parent.id)}"
                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-pencil-square-o fa-lg"/>
                                         <f:param name="referer" value="processes"/>
@@ -189,8 +191,8 @@
                                                   title="#{MetadataLock.isLocked(parent.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(parent.id).fullName) : msgs['metadataEdit']}">
                                         <h:link id="editMetadata"
                                                 outcome="metadataEditor"
-                                                disabled="#{MetadataLock.isLocked(parent.id)}"
-                                                styleClass="#{MetadataLock.isLocked(parent.id) ? 'ui-state-disabled' : ''}"
+                                                disabled="#{MetadataLock.isLocked(parent.id) or not ProcessForm.processInAssignedProject(parent.id)}"
+                                                styleClass="#{MetadataLock.isLocked(parent.id) or not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled' : ''}"
                                                 rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                                             <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                                             <f:param name="id" value="#{parent.id}"/>
