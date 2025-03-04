@@ -573,6 +573,11 @@ public enum ParameterCore implements ParameterInterface {
     OCR_URL(new Parameter<UndefinedParameter>("ocrUrl")),
 
     /**
+     * Show most recent comment in process list and task list.
+     */
+    SHOW_LAST_COMMENT(new Parameter<>("showLastComment", false)),
+
+    /**
      * Process properties to display in process list.
      */
     PROCESS_PROPERTIES(new Parameter<>("processPropertyColumns")),

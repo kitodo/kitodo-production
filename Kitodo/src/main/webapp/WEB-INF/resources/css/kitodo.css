@@ -1800,8 +1800,8 @@ Mass import
     padding-right: var(--default-half-size);
 }
 
-.comment-column {
-    text-align: center;
+.comment-column .fa {
+    margin-right: var(--default-half-size);
 }
 
 .comment-column .fa-comment {
