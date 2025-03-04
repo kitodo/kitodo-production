@@ -515,10 +515,12 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 executedSuccessful = true;
             } else {
                 logger.info("Calling the shell: {}", script);
-
                 CommandService commandService = ServiceManager.getCommandService();
                 CommandResult commandResult = commandService.runCommand(script);
                 executedSuccessful = commandResult.isSuccessful();
+                if (executedSuccessful && !commandResult.getMessages().isEmpty()) {
+                    Helper.setMessage(String.join(" | ", commandResult.getMessages()));
+                }
             }
             finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
         } catch (IOException | DAOException | InvalidImagesException e) {

@@ -53,8 +53,9 @@ public class CommandService {
         }
         CommandResult commandResult = commandModule.runCommand(script);
         List<String> commandResultMessages = commandResult.getMessages();
-        if (!commandResultMessages.isEmpty() && commandResultMessages.get(0).contains("IOException")) {
-            throw new IOException(commandResultMessages.get(1));
+        if (!commandResult.isSuccessful() && !commandResultMessages.isEmpty()) {
+            String fullErrorMessage = String.join(" | ", commandResultMessages);
+            throw new IOException(fullErrorMessage);
         }
         return commandResult;
     }
