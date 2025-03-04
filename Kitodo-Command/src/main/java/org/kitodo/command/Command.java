@@ -45,9 +45,9 @@ public class Command implements CommandInterface {
             process = new ProcessBuilder(callSequence).start();
             try (InputStream inputStream = process.getInputStream();
                     InputStream errorInputStream = process.getErrorStream()) {
-                int errCode = process.waitFor();
                 List<String> outputMessage = inputStreamArrayToList(inputStream);
                 List<String> errorMessage = inputStreamArrayToList(errorInputStream);
+                int errCode = process.waitFor();
                 if (Integer.valueOf(errCode).equals(0)) {
                     commandResult = new CommandResult(command, true, outputMessage);
                     logger.info("Execution of Command {} was successful!: {}",
