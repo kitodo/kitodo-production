@@ -11,35 +11,29 @@
 
 package org.kitodo.data.database.persistence;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.exceptions.DAOException;
 
-
 public class DataEditorSettingDaoIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockIndex.startNode();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockIndex.stopNode();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     /**
      * Test saving and loading DataEditorSettings.
@@ -54,7 +48,7 @@ public class DataEditorSettingDaoIT {
         dataEditorSettingDAO.save(dataEditorSettings.get(1));
         dataEditorSettingDAO.save(dataEditorSettings.get(2));
 
-        assertEquals("Objects were not saved or not found!", 3, dataEditorSettingDAO.getAll().size());
+        assertEquals(3, dataEditorSettingDAO.getAll().size(), "Objects were not saved or not found!");
         assertEquals(0.5f, dataEditorSettingDAO.getById(2).getGalleryWidth(), 0);
     }
 

@@ -11,34 +11,30 @@
 
 package org.kitodo.data.database.persistence;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class LdapGroupDaoIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockIndex.startNode();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockIndex.stopNode();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
@@ -49,17 +45,17 @@ public class LdapGroupDaoIT {
         ldapGroupDAO.save(ldapGroups.get(1));
         ldapGroupDAO.save(ldapGroups.get(2));
 
-        assertEquals("Objects were not saved or not found!", 3, ldapGroupDAO.getAll().size());
-        assertEquals("Objects were not saved or not found!", 2, ldapGroupDAO.getAll(1,2).size());
-        assertEquals("Object was not saved or not found!", "first_ldapGroup", ldapGroupDAO.getById(1).getTitle());
+        assertEquals(3, ldapGroupDAO.getAll().size(), "Objects were not saved or not found!");
+        assertEquals(2, ldapGroupDAO.getAll(1,2).size(), "Objects were not saved or not found!");
+        assertEquals("first_ldapGroup", ldapGroupDAO.getById(1).getTitle(), "Object was not saved or not found!");
 
         ldapGroupDAO.remove(1);
         ldapGroupDAO.remove(ldapGroups.get(1));
-        assertEquals("Objects were not removed or not found!", 1, ldapGroupDAO.getAll().size());
+        assertEquals(1, ldapGroupDAO.getAll().size(), "Objects were not removed or not found!");
 
-        exception.expect(DAOException.class);
-        exception.expectMessage("Object cannot be found in database");
-        ldapGroupDAO.getById(1);
+        Exception exception = assertThrows(DAOException.class,
+            () -> ldapGroupDAO.getById(1));
+        assertEquals("Object cannot be found in database", exception.getMessage());
     }
 
     private List<LdapGroup> getAuthorities() {
