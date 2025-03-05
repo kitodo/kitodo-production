@@ -13,10 +13,16 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!-- requires ui:param searchUpdate - the ui components that are updated after the user triggers a search -->
+    <!-- requires ui:param searchActionBean - the bean that is called when the search action is triggered by the user -->
+    <!-- requires ui:param searchActionMethod - the method that is called when the search action is triggered by the user -->
+    <!-- requires ui:param showImportOptions - whether to show the ui elements that allow to configure import options -->
 
     <p:dialog widgetVar="catalogSearchDialog"
               id="catalogSearchDialog"
@@ -73,18 +79,22 @@
                         </p:selectOneMenu>
                     </div>
                     <div>
-                        <p:outputLabel for="importDepth"
-                                       value="#{msgs.importDepth}"/>
-                        <p:spinner id="importDepth"
-                                   class="input"
-                                   disabled="#{empty CreateProcessForm.currentImportConfiguration}"
-                                   value="#{CreateProcessForm.catalogImportDialog.importDepth}"
-                                   min="1"
-                                   max="5"/>
+                        <ui:fragment rendered="#{showImportOptions}">
+                            <p:outputLabel for="importDepth"
+                                        value="#{msgs.importDepth}"/>
+                            <p:spinner id="importDepth"
+                                    class="input"
+                                    disabled="#{empty CreateProcessForm.currentImportConfiguration}"
+                                    value="#{CreateProcessForm.catalogImportDialog.importDepth}"
+                                    min="1"
+                                    max="5"/>
+                        </ui:fragment>
                     </div>
                     <div>
-                        <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
-                        <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
+                        <ui:fragment rendered="#{showImportOptions}">
+                            <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
+                            <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
+                        </ui:fragment>
                     </div>
                 </p:row>
                 <p:row>
@@ -104,14 +114,16 @@
                         </p:inputText>
                     </div>
                     <div>
-                        <p:outputLabel id="importChildrenLabel"
-                                       for="importChildren"
-                                       value="#{msgs.importChildren}"/>
-                        <p:selectBooleanCheckbox id="importChildren"
-                                                 class="input switch"
-                                                 title="#{CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured() ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
-                                                 disabled="#{empty CreateProcessForm.currentImportConfiguration or not CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured()}"
-                                                 value="#{CreateProcessForm.catalogImportDialog.importChildren}"/>
+                        <ui:fragment rendered="#{showImportOptions}">
+                            <p:outputLabel id="importChildrenLabel"
+                                        for="importChildren"
+                                        value="#{msgs.importChildren}"/>
+                            <p:selectBooleanCheckbox id="importChildren"
+                                                    class="input switch"
+                                                    title="#{CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured() ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
+                                                    disabled="#{empty CreateProcessForm.currentImportConfiguration or not CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured()}"
+                                                    value="#{CreateProcessForm.catalogImportDialog.importChildren}"/>
+                        </ui:fragment>
                     </div>
                 </p:row>
             </p:panelGrid>
@@ -125,7 +137,7 @@
                           id="catalogSearchButton">
                 <p:commandButton id="performCatalogSearch"
                                  disabled="#{empty CreateProcessForm.currentImportConfiguration or empty CreateProcessForm.catalogImportDialog.selectedField or empty CreateProcessForm.catalogImportDialog.searchTerm}"
-                                 action="#{CreateProcessForm.catalogImportDialog.search}"
+                                 action="#{searchActionBean[searchActionMethod]}"
                                  value="#{msgs.searchOPAC}"
                                  title="#{msgs.searchOPAC}"
                                  process="@this importChildren searchTerm importDepth additionalImport fieldSelectMenu catalogueSelectMenu"
@@ -133,7 +145,7 @@
                                  oncomplete="$('#loadingScreen').hide();PF('catalogSearchDialog').hide();"
                                  icon="fa fa-search" iconPos="right"
                                  styleClass="primary right"
-                                 update="editForm hitlist"/>
+                                 update="#{searchUpdate}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"
                                  process="@this"
