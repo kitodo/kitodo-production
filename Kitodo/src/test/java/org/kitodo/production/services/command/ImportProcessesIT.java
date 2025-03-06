@@ -15,9 +15,9 @@ package org.kitodo.production.services.command;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // base Java
 import java.io.File;
@@ -30,11 +30,11 @@ import java.time.ZoneId;
 
 // open source code
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -57,7 +57,7 @@ public class ImportProcessesIT {
     private int firstProcessId, secondProcessId, thirdProcessId;
     private static Template template;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -98,7 +98,7 @@ public class ImportProcessesIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setScriptPermission() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission
@@ -106,7 +106,7 @@ public class ImportProcessesIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void createOutputDirectories() throws Exception {
         Files.createDirectories(ERRORS_DIR_PATH);
     }
@@ -127,77 +127,69 @@ public class ImportProcessesIT {
 
         // initialize
         underTest.run(0);
-        assertEquals("should require 43 actions", 43, underTest.totalActions);
+        assertEquals(43, underTest.totalActions, "should require 43 actions");
 
         // validate: correct processes
         underTest.run(1);
-        assertEquals("should have validated p1_valid", "p1_valid", underTest.validatingImportingProcess.directoryName);
+        assertEquals("p1_valid", underTest.validatingImportingProcess.directoryName, "should have validated p1_valid");
         ImportingProcess p1_valid = underTest.validatingImportingProcess;
-        assertTrue("should have validated without errors", p1_valid.errors.isEmpty());
+        assertTrue(p1_valid.errors.isEmpty(), "should have validated without errors");
 
         underTest.run(2);
-        assertEquals("should have validated p1c1_valid", "p1c1_valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p1c1_valid", underTest.validatingImportingProcess.directoryName, "should have validated p1c1_valid");
         ImportingProcess p1c1_valid = underTest.validatingImportingProcess;
-        assertTrue("should have validated without errors", p1c1_valid.errors.isEmpty());
+        assertTrue(p1c1_valid.errors.isEmpty(), "should have validated without errors");
 
         underTest.run(3);
-        assertEquals("should have validated p1c2_valid", "p1c2_valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p1c2_valid", underTest.validatingImportingProcess.directoryName, "should have validated p1c2_valid");
         ImportingProcess p1c2_valid = underTest.validatingImportingProcess;
-        assertTrue("should have validated without errors", p1c2_valid.errors.isEmpty());
+        assertTrue(p1c2_valid.errors.isEmpty(), "should have validated without errors");
 
-        assertTrue("p1_valid should be correct", p1_valid.isCorrect());
-        assertTrue("p1c1_valid should be correct", p1c1_valid.isCorrect());
-        assertTrue("p1c2_valid should be correct", p1c2_valid.isCorrect());
+        assertTrue(p1_valid.isCorrect(), "p1_valid should be correct");
+        assertTrue(p1c1_valid.isCorrect(), "p1c1_valid should be correct");
+        assertTrue(p1c2_valid.isCorrect(), "p1c2_valid should be correct");
 
         // validate: error case 'parent is missing a child'
         underTest.run(4);
-        assertEquals("should have validated p2_parentMissingAChild", "p2_parentMissingAChild",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p2_parentMissingAChild", underTest.validatingImportingProcess.directoryName, "should have validated p2_parentMissingAChild");
         ImportingProcess p2_parentMissingAChild = underTest.validatingImportingProcess;
-        assertFalse("should have validated with error", p2_parentMissingAChild.errors.isEmpty());
+        assertFalse(p2_parentMissingAChild.errors.isEmpty(), "should have validated with error");
 
         underTest.run(5);
-        assertEquals("should have validated p2c1_valid", "p2c1_valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p2c1_valid", underTest.validatingImportingProcess.directoryName, "should have validated p2c1_valid");
         ImportingProcess p2c1_valid = underTest.validatingImportingProcess;
-        assertTrue("should have validated without errors", p2c1_valid.errors.isEmpty());
+        assertTrue(p2c1_valid.errors.isEmpty(), "should have validated without errors");
 
-        assertFalse("p1_valid should not be correct", p2_parentMissingAChild.isCorrect());
-        assertFalse("p1c1_valid should not be correct, due to problem in parent case", p2c1_valid.isCorrect());
+        assertFalse(p2_parentMissingAChild.isCorrect(), "p1_valid should not be correct");
+        assertFalse(p2c1_valid.isCorrect(), "p1c1_valid should not be correct, due to problem in parent case");
 
         // validate: error case 'parent not valid'
         underTest.run(6);
-        assertEquals("should have validated p3_not-valid", "p3_not-valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p3_not-valid", underTest.validatingImportingProcess.directoryName, "should have validated p3_not-valid");
         ImportingProcess p3_notValid = underTest.validatingImportingProcess;
-        assertFalse("should have validated with error", p3_notValid.errors.isEmpty());
+        assertFalse(p3_notValid.errors.isEmpty(), "should have validated with error");
 
         underTest.run(7);
-        assertEquals("should have validated p3c1_valid", "p3c1_valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p3c1_valid", underTest.validatingImportingProcess.directoryName, "should have validated p3c1_valid");
         ImportingProcess p3c1_valid = underTest.validatingImportingProcess;
-        assertTrue("should have validated without errors", p3c1_valid.errors.isEmpty());
+        assertTrue(p3c1_valid.errors.isEmpty(), "should have validated without errors");
 
-        assertFalse("p1_valid should not be correct", p3_notValid.isCorrect());
-        assertFalse("p1c1_valid should not be correct, due to problem in parent case", p3c1_valid.isCorrect());
+        assertFalse(p3_notValid.isCorrect(), "p1_valid should not be correct");
+        assertFalse(p3c1_valid.isCorrect(), "p1c1_valid should not be correct, due to problem in parent case");
 
         // validate: error case 'child not valid'
         underTest.run(8);
-        assertEquals("should have validated p4_valid_butChildIsNot", "p4_valid_butChildIsNot",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p4_valid_butChildIsNot", underTest.validatingImportingProcess.directoryName, "should have validated p4_valid_butChildIsNot");
         ImportingProcess p4_valid_butChildIsNot = underTest.validatingImportingProcess;
-        assertTrue("should have validated without errors", p4_valid_butChildIsNot.errors.isEmpty());
+        assertTrue(p4_valid_butChildIsNot.errors.isEmpty(), "should have validated without errors");
 
         underTest.run(9);
-        assertEquals("should have validated p4c1_not-valid", "p4c1_not-valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("p4c1_not-valid", underTest.validatingImportingProcess.directoryName, "should have validated p4c1_not-valid");
         ImportingProcess p4c1_notValid = underTest.validatingImportingProcess;
-        assertFalse("should have validated with error", p4c1_notValid.errors.isEmpty());
+        assertFalse(p4c1_notValid.errors.isEmpty(), "should have validated with error");
 
-        assertFalse("p1_valid should not be correct, due to problem in child case", p4_valid_butChildIsNot.isCorrect());
-        assertFalse("p1c1_valid should not be correct", p4c1_notValid.isCorrect());
+        assertFalse(p4_valid_butChildIsNot.isCorrect(), "p1_valid should not be correct, due to problem in child case");
+        assertFalse(p4c1_notValid.isCorrect(), "p1c1_valid should not be correct");
 
         // copy files and create database entry
 
@@ -210,21 +202,19 @@ public class ImportProcessesIT {
         Path metaXml = processPath.resolve("meta.xml");
 
         underTest.run(10);
-        assertEquals("should have created 1st process,", Long.valueOf(firstProcessId),
-            ServiceManager.getProcessService().count());
+        assertEquals(Long.valueOf(firstProcessId), ServiceManager.getProcessService().count(), "should have created 1st process,");
         underTest.run(11);
-        assertTrue("should have created process directory", Files.isDirectory(processPath));
+        assertTrue(Files.isDirectory(processPath), "should have created process directory");
         underTest.run(12);
         underTest.run(13);
         underTest.run(14);
         underTest.run(15);
 
-        assertTrue("should have created images directory", Files.isDirectory(imagesPath));
-        assertTrue("should have created media directory", Files.isDirectory(mediaPath));
-        assertTrue("should have copied media file", Files.exists(imageOne));
-        assertTrue("should have written meta.xml file", Files.exists(metaXml));
-        assertTrue("should have added image to meta.xml file",
-            Files.readString(metaXml, UTF_8).contains("xlink:href=\"images/17_123_0001_media/00000001.jpg\""));
+        assertTrue(Files.isDirectory(imagesPath), "should have created images directory");
+        assertTrue(Files.isDirectory(mediaPath), "should have created media directory");
+        assertTrue(Files.exists(imageOne), "should have copied media file");
+        assertTrue(Files.exists(metaXml), "should have written meta.xml file");
+        assertTrue(Files.readString(metaXml, UTF_8).contains("xlink:href=\"images/17_123_0001_media/00000001.jpg\""), "should have added image to meta.xml file");
 
         // p1c2_valid (OK)
         secondProcessId = processesBefore + 2;
@@ -237,38 +227,31 @@ public class ImportProcessesIT {
         underTest.run(19);
         underTest.run(20);
         underTest.run(21);
-        assertTrue("should have added image to meta.xml file",
-            Files.readString(metaXml, UTF_8).contains("xlink:href=\"images/17_123_0002_media/00000001.jpg\""));
+        assertTrue(Files.readString(metaXml, UTF_8).contains("xlink:href=\"images/17_123_0002_media/00000001.jpg\""), "should have added image to meta.xml file");
 
         // p2c1_valid (error, broken parent)
         underTest.run(22);
-        assertTrue("should have error directory", Files.isDirectory(Paths.get("src/test/resources/errors/p2c1_valid")));
+        assertTrue(Files.isDirectory(Paths.get("src/test/resources/errors/p2c1_valid")), "should have error directory");
         underTest.run(23);
-        assertTrue("should have written Errors.txt file",
-            Files.exists(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt")));
-        assertTrue("should have written error message",
-            Files.readString(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt"), UTF_8)
-                    .contains("errors in related process(es): p2_parentMissingAChild"));
+        assertTrue(Files.exists(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt")), "should have written Errors.txt file");
+        assertTrue(Files.readString(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt"), UTF_8)
+                .contains("errors in related process(es): p2_parentMissingAChild"), "should have written error message");
         underTest.run(24);
-        assertTrue("should have copied meta.xml file",
-            Files.exists(Paths.get("src/test/resources/errors/p2c1_valid/meta.xml")));
+        assertTrue(Files.exists(Paths.get("src/test/resources/errors/p2c1_valid/meta.xml")), "should have copied meta.xml file");
 
         // p3c1_valid (error, broken parent)
         underTest.run(25);
         underTest.run(26);
-        assertTrue("should have written error message",
-            Files.readString(Paths.get("src/test/resources/errors/p3c1_valid/Errors.txt"), UTF_8)
-                    .contains("errors in related process(es): p3_not-valid"));
+        assertTrue(Files.readString(Paths.get("src/test/resources/errors/p3c1_valid/Errors.txt"), UTF_8)
+                .contains("errors in related process(es): p3_not-valid"), "should have written error message");
         underTest.run(27);
-        assertTrue("should have copied meta.xml file",
-            Files.exists(Paths.get("src/test/resources/errors/p3c1_valid/meta.xml")));
+        assertTrue(Files.exists(Paths.get("src/test/resources/errors/p3c1_valid/meta.xml")), "should have copied meta.xml file");
 
         // p4c1_not-valid (error, not valid)
         underTest.run(28);
         underTest.run(29);
-        assertTrue("should have written error message",
-            Files.readString(Paths.get("src/test/resources/errors/p4c1_not-valid/Errors.txt"), UTF_8)
-                    .contains("Validation error"));
+        assertTrue(Files.readString(Paths.get("src/test/resources/errors/p4c1_not-valid/Errors.txt"), UTF_8)
+                .contains("Validation error"), "should have written error message");
         underTest.run(30);
 
         // p1_valid (OK)
@@ -277,10 +260,9 @@ public class ImportProcessesIT {
         metaXml = processPath.resolve("meta.xml");
 
         underTest.run(31);
-        assertEquals("should have created 3rd process,", processesBefore + 3,
-            (long) ServiceManager.getProcessService().count());
+        assertEquals(processesBefore + 3, (long) ServiceManager.getProcessService().count(), "should have created 3rd process,");
         underTest.run(32);
-        assertTrue("should have created process directory", Files.isDirectory(processPath));
+        assertTrue(Files.isDirectory(processPath), "should have created process directory");
         underTest.run(33);
         String thirdMetaXml = Files.readString(metaXml, UTF_8);
         assertThat("should have added correct child links to meta.xml file", thirdMetaXml,
@@ -289,11 +271,9 @@ public class ImportProcessesIT {
             containsString("xlink:href=\"database://?process.id=" + secondProcessId + "\""));
 
         Process parent = ServiceManager.getProcessService().getById(6);
-        assertEquals("parent should have 2 children", 2, parent.getChildren().size());
-        assertEquals("child (ID " + firstProcessId + ") should have the correct parent", parent,
-            ServiceManager.getProcessService().getById(firstProcessId).getParent());
-        assertEquals("child (ID " + secondProcessId + ") should have the correct parent", parent,
-            ServiceManager.getProcessService().getById(secondProcessId).getParent());
+        assertEquals(2, parent.getChildren().size(), "parent should have 2 children");
+        assertEquals(parent, ServiceManager.getProcessService().getById(firstProcessId).getParent(), "child (ID " + firstProcessId + ") should have the correct parent");
+        assertEquals(parent, ServiceManager.getProcessService().getById(secondProcessId).getParent(), "child (ID " + secondProcessId + ") should have the correct parent");
 
         // p2_parentMissingAChild (error)
         underTest.run(34);
@@ -311,12 +291,11 @@ public class ImportProcessesIT {
         underTest.run(42);
 
         // import results
-        assertEquals("Should import 3 processes,", processesBefore + 3,
-            (long) ServiceManager.getProcessService().count());
-        assertEquals("Should not import 6 processes,", 6, ERRORS_DIR_PATH.toFile().list().length);
+        assertEquals(processesBefore + 3, (long) ServiceManager.getProcessService().count(), "Should import 3 processes,");
+        assertEquals(6, ERRORS_DIR_PATH.toFile().list().length, "Should not import 6 processes,");
     }
 
-    @After
+    @AfterEach
     public void deleteCreatedFiles() throws Exception {
         ProcessTestUtils.removeTestProcess(firstProcessId);
         ProcessTestUtils.removeTestProcess(secondProcessId);
@@ -324,7 +303,7 @@ public class ImportProcessesIT {
         TreeDeleter.deltree(ERRORS_DIR_PATH);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();

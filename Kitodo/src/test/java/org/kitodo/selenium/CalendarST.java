@@ -11,18 +11,18 @@
 
 package org.kitodo.selenium;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -41,7 +41,7 @@ public class CalendarST extends BaseTestSelenium {
     private static final String NEWSPAPER_TEST_METADATA_FILE = "testmetaNewspaper.xml";
     private static final String NEWSPAPER_TEST_PROCESS_TITLE = "NewspaperOverallProcess";
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         calendarPage = Pages.getCalendarPage();
@@ -50,25 +50,25 @@ public class CalendarST extends BaseTestSelenium {
         ProcessTestUtils.copyTestMetadataFile(newspaperTestProcessId, NEWSPAPER_TEST_METADATA_FILE);
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         User calendarUser = ServiceManager.getUserService().getByLogin("kowal");
         Pages.getLoginPage().goTo().performLogin(calendarUser);
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         calendarPage.closePage();
         Pages.getTopNavigation().logout();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() throws DAOException, IOException {
         ProcessTestUtils.removeTestProcess(newspaperTestProcessId);
     }
 
     @Test
-    @Ignore("currently not implemented")
+    @Disabled("currently not implemented")
     /* 'baseType' not available (only available from index), is null.
      * goToCalendar() fails because button is gray, because 'baseType' is not
      * "Newspaper". */
@@ -78,12 +78,12 @@ public class CalendarST extends BaseTestSelenium {
         calendarPage.addBlock();
         calendarPage.addIssue("Morning issue");
         calendarPage.addIssue("Evening issue");
-        assertEquals("Number of issues in the calendar does not match", 4, calendarPage.countIssues());
+        assertEquals(4, calendarPage.countIssues(), "Number of issues in the calendar does not match");
         calendarPage.addMetadataToThis();
         calendarPage.addMetadataToAll();
         List<String> morningIssueMetadata = calendarPage.getMetadata("Morning issue");
         List<String> eveningIssueMetadata = calendarPage.getMetadata("Evening issue");
-        assertEquals("Metadata for morning issue is incorrect", Arrays.asList("Signatur", "Process title"), morningIssueMetadata);
-        assertEquals("Metadata for evening issue is incorrect", List.of("Signatur"), eveningIssueMetadata);
+        assertEquals(Arrays.asList("Signatur", "Process title"), morningIssueMetadata, "Metadata for morning issue is incorrect");
+        assertEquals(List.of("Signatur"), eveningIssueMetadata, "Metadata for evening issue is incorrect");
     }
 }

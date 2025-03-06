@@ -11,22 +11,23 @@
 
 package test;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 
 public class DBConnectionTestIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -35,9 +36,9 @@ public class DBConnectionTestIT {
     @Test
     public void test() throws Exception {
         long counted = ServiceManager.getProcessService().count();
-        Assert.assertEquals("No Process found", 3, counted);
+        assertEquals(3, counted, "No Process found");
 
         String title = ServiceManager.getProcessService().getById(3).getTitle();
-        Assert.assertEquals("DBConnectionTest", title);
+        assertEquals("DBConnectionTest", title);
     }
 }

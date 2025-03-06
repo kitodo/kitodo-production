@@ -11,9 +11,10 @@
 
 package org.kitodo.production.helper.metadata.pagination;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PaginatorTypeTest {
 
@@ -122,9 +123,9 @@ public class PaginatorTypeTest {
         assertEquals("68½", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION, "LXVIII", false, UNUSED_STRING));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testArabicFormatFromJunk() {
-        PaginatorType.ARABIC.format(UNUSED_PAGINATOR_MODE, "junk", UNUSED_BOOLEAN, UNUSED_STRING);
+        assertThrows(NumberFormatException.class, () -> PaginatorType.ARABIC.format(UNUSED_PAGINATOR_MODE, "junk", UNUSED_BOOLEAN, UNUSED_STRING));
     }
 
     @Test
@@ -382,9 +383,9 @@ public class PaginatorTypeTest {
         assertEquals("I½", PaginatorType.ROMAN.format(PaginatorMode.FOLIATION, "I", false, UNUSED_STRING));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testRomanFormatFromJunk() {
-        PaginatorType.ROMAN.format(UNUSED_PAGINATOR_MODE, "junk", UNUSED_BOOLEAN, UNUSED_STRING);
+        assertThrows(NumberFormatException.class, () ->  PaginatorType.ROMAN.format(UNUSED_PAGINATOR_MODE, "junk", UNUSED_BOOLEAN, UNUSED_STRING));
     }
 
     @Test
@@ -569,9 +570,9 @@ public class PaginatorTypeTest {
         assertEquals(PaginatorType.UNCOUNTED, PaginatorType.valueOf(3));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testValueOfFourtytwo() {
-        PaginatorType.valueOf(42);
+        assertThrows(IllegalArgumentException.class, () -> PaginatorType.valueOf(42));
     }
 
     @Test

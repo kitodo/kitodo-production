@@ -11,12 +11,14 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.DummyRulesetManagement;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
@@ -52,13 +54,13 @@ public class StructurePanelTest {
         buildStructureTreeRecursively.setAccessible(true);
         buildStructureTreeRecursively.invoke(underTest, structure, result);
 
-        Assert.assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
+        assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
     }
 
     @Test
     public void preventNullPointerExceptionInIsSeparateMediaOnNotFullInitializedDataEditorForm() {
         DataEditorForm dummyDataEditorForm = new DataEditorForm();
         final StructurePanel underTest = new StructurePanel(dummyDataEditorForm);
-        Assert.assertFalse(underTest.isSeparateMedia());
+        assertFalse(underTest.isSeparateMedia());
     }
 }

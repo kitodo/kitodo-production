@@ -11,8 +11,8 @@
 
 package org.kitodo.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,9 +21,9 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.TreeDeleter;
 import org.kitodo.data.database.beans.Process;
@@ -39,7 +39,7 @@ public class ExportDmsIT {
     /**
      * Initializes the test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
@@ -75,7 +75,7 @@ public class ExportDmsIT {
     /**
      * Cleans up after the test.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -99,35 +99,30 @@ public class ExportDmsIT {
         directoryDownload.invoke(new ExportDms(), process, destination);
         final long tookNanos = System.nanoTime() - start;
 
-        assertTrue("Destination location should exist", downloadDir.isDirectory());
+        assertTrue(downloadDir.isDirectory(), "Destination location should exist");
 
         File jpgsMax = new File(downloadDir, "jpgs/max");
-        assertTrue("Folder jpgs/max should exist in destination location", jpgsMax.isDirectory());
-        assertEquals("jpgs/max should contain 184 JPEGs", 184,
-            jpgsMax.list((directory, filename) -> filename.endsWith(".jpg")).length);
+        assertTrue(jpgsMax.isDirectory(), "Folder jpgs/max should exist in destination location");
+        assertEquals(184, jpgsMax.list((directory, filename) -> filename.endsWith(".jpg")).length, "jpgs/max should contain 184 JPEGs");
 
         File jpgsDefault = new File(downloadDir, "jpgs/default");
-        assertTrue("Folder jpgs/default should exist in destination location", jpgsDefault.isDirectory());
-        assertEquals("jpgs/default should contain 184 JPEGs", 184,
-            jpgsDefault.list((directory, filename) -> filename.endsWith(".jpg")).length);
+        assertTrue(jpgsDefault.isDirectory(), "Folder jpgs/default should exist in destination location");
+        assertEquals(184, jpgsDefault.list((directory, filename) -> filename.endsWith(".jpg")).length, "jpgs/default should contain 184 JPEGs");
 
         File jpgsThumbs = new File(downloadDir, "jpgs/thumbs");
-        assertTrue("Folder jpgs/thumbs should exist in destination location", jpgsThumbs.isDirectory());
-        assertEquals("jpgs/thumbs should contain 184 JPEGs", 184,
-            jpgsThumbs.list((directory, filename) -> filename.endsWith(".jpg")).length);
+        assertTrue(jpgsThumbs.isDirectory(), "Folder jpgs/thumbs should exist in destination location");
+        assertEquals(184, jpgsThumbs.list((directory, filename) -> filename.endsWith(".jpg")).length, "jpgs/thumbs should contain 184 JPEGs");
 
         File ocrAlto = new File(downloadDir, "ocr/alto");
-        assertTrue("Folder ocr/alto should exist in destination location", ocrAlto.isDirectory());
-        assertEquals("ocr/alto should contain 184 XMLs", 184,
-            ocrAlto.list((directory, filename) -> filename.endsWith(".xml")).length);
+        assertTrue(ocrAlto.isDirectory(), "Folder ocr/alto should exist in destination location");
+        assertEquals(184, ocrAlto.list((directory, filename) -> filename.endsWith(".xml")).length, "ocr/alto should contain 184 XMLs");
 
         File pdf = new File(downloadDir, "pdf");
-        assertTrue("Folder pdf should exist in destination location", pdf.isDirectory());
-        assertEquals("pdf should contain 184 PDFs", 184,
-            pdf.list((directory, filename) -> filename.endsWith(".pdf")).length);
+        assertTrue(pdf.isDirectory(), "Folder pdf should exist in destination location");
+        assertEquals(184, pdf.list((directory, filename) -> filename.endsWith(".pdf")).length, "pdf should contain 184 PDFs");
 
         float totalBytes = 184f * (358000 + 181554 + 1890 + 25157 + 3548885);
         float mbps = totalBytes / tookNanos * 1953125 / 2048;
-        assertTrue("It should have been copied >50 MB/s (was: " + mbps + " MB/s)", mbps > 50);
+        assertTrue(mbps > 50, "It should have been copied >50 MB/s (was: " + mbps + " MB/s)");
     }
 }

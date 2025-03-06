@@ -11,15 +11,18 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Template;
@@ -30,14 +33,14 @@ public class TemplateServiceIT {
 
     private static final TemplateService templateService = ServiceManager.getTemplateService();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -46,57 +49,57 @@ public class TemplateServiceIT {
     @Test
     public void shouldCountAllTemplates() throws Exception {
         Long amount = templateService.count();
-        assertEquals("Templates were not counted correctly!", Long.valueOf(4), amount);
+        assertEquals(Long.valueOf(4), amount, "Templates were not counted correctly!");
     }
 
     @Test
     public void shouldFindAll() throws Exception {
         List<Template> templates = templateService.getAll();
-        assertEquals("Found incorrect amount of templates!", 4, templates.size());
+        assertEquals(4, templates.size(), "Found incorrect amount of templates!");
     }
 
     @Test
     public void shouldGetTemplate() throws Exception {
         Template template = templateService.getById(1);
         boolean condition = template.getTitle().equals("First template") && template.getId().equals(1);
-        assertTrue("Template was not found in database!", condition);
+        assertTrue(condition, "Template was not found in database!");
 
-        assertEquals("Template was found but processes were not inserted!", 2, template.getProcesses().size());
-        assertEquals("Template was found but tasks were not inserted!", 5, template.getTasks().size());
+        assertEquals(2, template.getProcesses().size(), "Template was found but processes were not inserted!");
+        assertEquals(5, template.getTasks().size(), "Template was found but tasks were not inserted!");
     }
 
     @Test
     public void shouldGetTemplates() throws Exception {
         List<Template> templates = templateService.getAll();
-        assertEquals("Found incorrect amount of templates!", 4, templates.size());
+        assertEquals(4, templates.size(), "Found incorrect amount of templates!");
     }
 
     @Test
     public void shouldGetTemplatesWithTitle() {
         List<Template> templates = templateService.getProcessTemplatesWithTitle("First template");
-        assertEquals("Incorrect size of templates with given title!", 1, templates.size());
+        assertEquals(1, templates.size(), "Incorrect size of templates with given title!");
     }
 
-    @Test(expected = Test.None.class)
+    @Test
     public void shouldCheckForUnreachableTasks() throws Exception {
         Template template = templateService.getById(1);
-        templateService.checkForUnreachableTasks(template.getTasks());
+        assertDoesNotThrow(() -> templateService.checkForUnreachableTasks(template.getTasks()));
     }
 
-    @Test(expected = ProcessGenerationException.class)
+    @Test
     public void shouldCheckForUnreachableTasksWithException() throws Exception {
         Template template = templateService.getById(3);
-        templateService.checkForUnreachableTasks(template.getTasks());
+        assertThrows(ProcessGenerationException.class, () -> templateService.checkForUnreachableTasks(template.getTasks()));
     }
 
     @Test
     public void shouldHasCompleteTasks() throws Exception {
         Template template = templateService.getById(1);
         boolean condition = templateService.hasCompleteTasks(template.getTasks());
-        assertTrue("Process doesn't have complete tasks!", condition);
+        assertTrue(condition, "Process doesn't have complete tasks!");
 
         template = templateService.getById(3);
         condition = templateService.hasCompleteTasks(template.getTasks());
-        assertFalse("Process has complete tasks!", condition);
+        assertFalse(condition, "Process has complete tasks!");
     }
 }

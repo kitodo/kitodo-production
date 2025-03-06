@@ -11,15 +11,14 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -30,58 +29,56 @@ public class AuthorityServiceIT {
     private static final AuthorityService authorityService = ServiceManager.getAuthorityService();
     private static final int EXPECTED_AUTHORITIES_COUNT = 100;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertRolesFull();
         MockDatabase.setUpAwaitility();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllDatabaseRowsForAuthorities() throws Exception {
         Long amount = authorityService.count();
-        assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
+        assertEquals(Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount, "Authorizations were not counted correctly!");
     }
 
     @Test
     public void shouldGetAllAuthorities() throws Exception {
         List<Authority> authorities = authorityService.getAll();
-        assertEquals("Authorizations were not found database!", EXPECTED_AUTHORITIES_COUNT, authorities.size());
+        assertEquals(EXPECTED_AUTHORITIES_COUNT, authorities.size(), "Authorizations were not found database!");
     }
 
     @Test
     public void shouldGetByTitle() throws Exception {
         Authority authority = authorityService.getByTitle("viewAllRoles_globalAssignable");
-        assertEquals("Authorizations were not found database!", 13, authority.getId().intValue());
+        assertEquals(13, authority.getId().intValue(), "Authorizations were not found database!");
     }
 
     @Test
-    public void shouldNotGetByTitle() throws Exception {
-        exception.expect(DAOException.class);
-        exception.expectMessage("Authority 'viewAllStuff_globalAssignable' cannot be found in database");
-        authorityService.getByTitle("viewAllStuff_globalAssignable");
+    public void shouldNotGetByTitle() {
+        Exception exception = assertThrows(DAOException.class,
+            () -> authorityService.getByTitle("viewAllStuff_globalAssignable"));
+
+        assertEquals("Authority 'viewAllStuff_globalAssignable' cannot be found in database", exception.getMessage());
     }
 
     @Test
-    public void shouldNotSaveAlreadyExistingAuthorities() throws Exception {
+    public void shouldNotSaveAlreadyExistingAuthorities() {
         Authority adminAuthority = new Authority();
         adminAuthority.setTitle("viewAllClients_globalAssignable");
-        exception.expect(DAOException.class);
-        authorityService.save(adminAuthority);
+        assertThrows(DAOException.class,
+            () -> authorityService.save(adminAuthority));
     }
 
     @Test
     public void shouldGetAllClientAssignableAuthorities() throws DAOException {
         List<Authority> authorities = authorityService.getAllAssignableToClients();
-        assertEquals("Client assignable authorities were not found database!", 72, authorities.size());
+        assertEquals(72, authorities.size(), "Client assignable authorities were not found database!");
     }
 }

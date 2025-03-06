@@ -11,12 +11,12 @@
 
 package org.kitodo.production.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
 
@@ -24,13 +24,13 @@ public class AuthorityConverterIT {
 
     private static final String MESSAGE = "Authority was not converted correctly!";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertAuthorities();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -40,28 +40,28 @@ public class AuthorityConverterIT {
     public void shouldGetAsObject() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         Authority authority = (Authority) authorityConverter.getAsObject(null, null, "20");
-        assertEquals(MESSAGE, 20, authority.getId().intValue());
+        assertEquals(20, authority.getId().intValue(), MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         String authority = (String) authorityConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", authority);
+        assertEquals("0", authority, MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         String authority = (String) authorityConverter.getAsObject(null, null, "1000");
-        assertEquals(MESSAGE, "0", authority);
+        assertEquals("0", authority, MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectNullObject() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         Object authority = authorityConverter.getAsObject(null, null, null);
-        assertNull(MESSAGE, authority);
+        assertNull(authority, MESSAGE);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class AuthorityConverterIT {
         Authority newAuthority = new Authority();
         newAuthority.setId(20);
         String authority = authorityConverter.getAsString(null, null, newAuthority);
-        assertEquals(MESSAGE, "20", authority);
+        assertEquals("20", authority, MESSAGE);
     }
 
     @Test
@@ -78,20 +78,20 @@ public class AuthorityConverterIT {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         Authority newAuthority = new Authority();
         String authority = authorityConverter.getAsString(null, null, newAuthority);
-        assertEquals(MESSAGE, "0", authority);
+        assertEquals("0", authority, MESSAGE);
     }
 
     @Test
     public void shouldGetAsStringWithString() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         String authority = authorityConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", authority);
+        assertEquals("20", authority, MESSAGE);
     }
 
     @Test
     public void shouldNotGetAsStringNullObject() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
         String authority = authorityConverter.getAsString(null, null, null);
-        assertNull(MESSAGE, authority);
+        assertNull(authority, MESSAGE);
     }
 }

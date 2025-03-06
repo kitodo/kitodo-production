@@ -11,6 +11,9 @@
 
 package org.kitodo.production.helper.tasks;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -21,10 +24,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
@@ -45,7 +47,7 @@ public class HierarchyMigrationTaskIT {
     /**
      * prepares database.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
@@ -64,7 +66,7 @@ public class HierarchyMigrationTaskIT {
     /**
      * cleans database.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
@@ -83,13 +85,12 @@ public class HierarchyMigrationTaskIT {
             IOException, SAXException, ParserConfigurationException {
         HierarchyMigrationTask hierarchyMigrationTask = new HierarchyMigrationTask(Collections.singletonList(project));
         hierarchyMigrationTask.migrate(ServiceManager.getProcessService().getById(2));
-        Assert.assertTrue("Tasks should have been removed",
-            ServiceManager.getProcessService().getById(4).getTasks().isEmpty());
-        Assert.assertEquals("JahrdeDeG_404810993", ServiceManager.getProcessService().getById(4).getTitle());
+        assertTrue(ServiceManager.getProcessService().getById(4).getTasks().isEmpty(), "Tasks should have been removed");
+        assertEquals("JahrdeDeG_404810993", ServiceManager.getProcessService().getById(4).getTitle());
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .parse(new File("src/test/resources/metadata/4/meta.xml"));
         String documentId = document.getElementsByTagName("mets:metsDocumentID").item(0).getTextContent();
-        Assert.assertEquals("DocumentId not set", "4", documentId);
+        assertEquals("4", documentId, "DocumentId not set");
     }
 
     private static void createTestMetaAnchorfile() throws Exception {

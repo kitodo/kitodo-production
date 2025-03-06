@@ -11,12 +11,12 @@
 
 package org.kitodo.production.security.password;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SecurityPasswordEncoderTest {
     private static Map<String, String> testData;
@@ -34,8 +34,7 @@ public class SecurityPasswordEncoderTest {
     public void encryptTest() {
         for (String clearText : testData.keySet()) {
             String encrypted = new SecurityPasswordEncoder().encrypt(clearText);
-            assertEquals("Encrypted Password doesn't match the precomputed one!", testData.get(clearText),
-                    encrypted);
+            assertEquals(testData.get(clearText), encrypted, "Encrypted Password doesn't match the precomputed one!");
         }
     }
 
@@ -43,7 +42,7 @@ public class SecurityPasswordEncoderTest {
     public void decryptTest() {
         for (String clearText : testData.keySet()) {
             String decrypted = new SecurityPasswordEncoder().decrypt(testData.get(clearText));
-            assertEquals("Decrypted Password doesn't match the given plain text", clearText, decrypted);
+            assertEquals(clearText, decrypted, "Decrypted Password doesn't match the given plain text");
         }
     }
 

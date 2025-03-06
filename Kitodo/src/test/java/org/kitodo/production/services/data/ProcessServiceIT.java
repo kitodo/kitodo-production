@@ -12,11 +12,12 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,13 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -73,7 +71,7 @@ public class ProcessServiceIT {
     private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
     private static Map<String, Integer> testProcessIds;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
@@ -92,7 +90,7 @@ public class ProcessServiceIT {
         });
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         ProcessTestUtils.removeTestProcess(testProcessIds.get(MockDatabase.HIERARCHY_PARENT));
         MockDatabase.stopNode();
@@ -103,16 +101,13 @@ public class ProcessServiceIT {
         }
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllProcesses() throws DAOException {
-        assertEquals("Processes were not counted correctly!", Long.valueOf(7), processService.count());
+        assertEquals(Long.valueOf(7), processService.count(), "Processes were not counted correctly!");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldCountProcessesAccordingToQuery() throws Exception {
         // TODO delete test stub
     }
@@ -120,13 +115,13 @@ public class ProcessServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.count();
-        assertEquals("Processes were not counted correctly!", Long.valueOf(7), amount);
+        assertEquals(Long.valueOf(7), amount, "Processes were not counted correctly!");
     }
 
     @Test
     public void shouldFindByInChoiceListShown() throws DAOException {
         List<Process> byInChoiceListShown = ServiceManager.getProcessService().getTemplateProcesses();
-        Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
+        assertEquals(1, byInChoiceListShown.size(), "wrong amount of processes found");
     }
 
     @Test
@@ -146,8 +141,8 @@ public class ProcessServiceIT {
         Process foundProcess = processService.getById(process.getId());
         Process foundParent = foundProcess.getParent();
 
-        assertEquals("Child process was not found in database!", "Child", foundProcess.getTitle());
-        assertEquals("Parent process was not assigned to child!", "Parent", foundParent.getTitle());
+        assertEquals("Child", foundProcess.getTitle(), "Child process was not found in database!");
+        assertEquals("Parent", foundParent.getTitle(), "Parent process was not assigned to child!");
 
         foundParent.getChildren().clear();
         foundProcess.setParent(null);
@@ -162,21 +157,21 @@ public class ProcessServiceIT {
     public void shouldGetProcess() throws Exception {
         Process process = processService.getById(1);
         boolean condition = process.getTitle().equals(firstProcess) && process.getWikiField().equals("field");
-        assertTrue("Process was not found in database!", condition);
+        assertTrue(condition, "Process was not found in database!");
 
-        assertEquals("Process was found but tasks were not inserted!", 5, process.getTasks().size());
+        assertEquals(5, process.getTasks().size(), "Process was found but tasks were not inserted!");
     }
 
     @Test
     public void shouldGetAllProcesses() throws Exception {
         List<Process> processes = processService.getAll();
-        assertEquals("Not all processes were found in database!", 7, processes.size());
+        assertEquals(7, processes.size(), "Not all processes were found in database!");
     }
 
     @Test
     public void shouldGetAllProcessesInGivenRange() throws Exception {
         List<Process> processes = processService.getAll(1, 10);
-        assertEquals("Not all processes were found in database!", 6, processes.size());
+        assertEquals(6, processes.size(), "Not all processes were found in database!");
     }
 
     @Test
@@ -185,143 +180,136 @@ public class ProcessServiceIT {
         process.setTitle("To Remove");
         processService.save(process);
         Process foundProcess = processService.getById(process.getId());
-        assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
+        assertEquals("To Remove", foundProcess.getTitle(), "Additional process was not inserted in database!");
 
         processService.remove(foundProcess);
-        exception.expect(DAOException.class);
-        processService.getById(10);
+        assertThrows(DAOException.class, () -> processService.getById(10));
 
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.getById(9);
-        assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
+        int processId = process.getId();
+        foundProcess = processService.getById(processId);
+        assertEquals("To remove", foundProcess.getTitle(), "Additional process was not inserted in database!");
 
         processService.remove(foundProcess);
-        exception.expect(DAOException.class);
-        processService.getById(9);
+        assertThrows(DAOException.class, () -> processService.getById(processId));
     }
 
     @Test
     public void shouldFindById() throws DAOException {
         Integer expected = 1;
-        assertEquals(processNotFound, expected, processService.getById(1).getId());
+        assertEquals(expected, processService.getById(1).getId(), processNotFound);
     }
 
     @Test
     public void shouldFindByTitle() throws DAOException {
-        assertEquals(processNotFound, 1, processService.findByTitle(firstProcess).size());
+        assertEquals(1, processService.findByTitle(firstProcess).size(), processNotFound);
     }
 
     @Test
-    @Ignore("Data index currently not available")
     public void shouldFindByMetadata() throws DAOException {
-        assertEquals(processNotFound, 3,
-            processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
+        assertEquals(3, processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size(), processNotFound);
     }
 
     @Test
-    @Ignore("Data index currently not available")
     public void shouldNotFindByMetadata() throws DAOException {
-        assertEquals("Process was found in index!", 0,
-                processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
+        assertEquals(0, processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size(), "Process was found in index!");
     }
 
     @Test
-    @Ignore("Only used in SearchResultForm, which will be thrown out. No new implementation here")
+    @Disabled("Only used in SearchResultForm, which was thrown out. No new implementation here")
     public void shouldFindByMetadataContent() throws Exception {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
+        assertEquals(1, processService.findByAnything("SecondMetaShort").size(), processNotFound);
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
     @Test
-    @Ignore("Data index currently not available")
     public void shouldFindByLongNumberInMetadata() throws DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
-        assertEquals(processNotFound, 1, processService
-                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999991")).size());
-        assertEquals(processNotFound, 1, processService
-                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "991022551489706476")).size());
-        assertEquals(processNotFound, 1, processService
-                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999999999999991")).size());
+        assertEquals(1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999991")).size(), processNotFound);
+        assertEquals(1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "991022551489706476")).size(), processNotFound);
+        assertEquals(1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999999999999991")).size(), processNotFound);
         ProcessTestUtils.removeTestProcess(processId);
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindProcessWithUnderscore() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByProjectTitleWithWildcard() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByAnything() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByMetadataGroupContent() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByProperty() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByWrongPropertyTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByWrongPropertyTitleAndValue() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByTokenizedPropertyTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws Exception {
         // TODO delete test stub
     }
 
     @Test
     public void shouldFindLinkableParentProcesses() throws DAOException, IOException {
-        assertEquals("Processes were not found in index!", 1,
-            processService.findLinkableParentProcesses(MockDatabase.HIERARCHY_PARENT, 1).size());
+        assertEquals(1, processService.findLinkableParentProcesses(MockDatabase.HIERARCHY_PARENT, 1).size(), "Processes were not found in index!");
     }
 
-    @Ignore("for second process is attached task which is processed by blocked user")
+    @Disabled("for second process is attached task which is processed by blocked user")
     @Test
     public void shouldGetBlockedUser() throws Exception {
         UserService userService = ServiceManager.getUserService();
 
         Process process = processService.getById(1);
         boolean condition = MetadataLock.getLockUser(process.getId()) == null;
-        assertTrue("Process has blocked user but it shouldn't!", condition);
+        assertTrue(condition, "Process has blocked user but it shouldn't!");
 
         process = processService.getById(2);
         condition = MetadataLock.getLockUser(process.getId()) == userService.getById(3);
-        assertTrue("Blocked user doesn't match to given user!", condition);
+        assertTrue(condition, "Blocked user doesn't match to given user!");
     }
 
     @Test
@@ -330,12 +318,12 @@ public class ProcessServiceIT {
         URI directory = processService.getImagesTifDirectory(true, process.getId(), process.getTitle(),
             process.getProcessBaseUri());
         boolean condition = directory.getRawPath().contains("First__process_tif");
-        assertTrue("Images TIF directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Images TIF directory doesn't match to given directory!");
 
         directory = processService.getImagesTifDirectory(false, process.getId(), process.getTitle(),
             process.getProcessBaseUri());
         condition = directory.getRawPath().contains("First__process_tif");
-        assertTrue("Images TIF directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Images TIF directory doesn't match to given directory!");
         // I don't know what changes this useFallback so I'm testing for both
         // cases
     }
@@ -345,7 +333,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = processService.getImagesOriginDirectory(false, process);
         boolean condition = directory.getRawPath().contains("orig_First__process_tif");
-        assertTrue("Images orig directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Images orig directory doesn't match to given directory!");
     }
 
     @Test
@@ -353,7 +341,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getImagesDirectory(process);
         boolean condition = directory.getRawPath().contains("1/images");
-        assertTrue("Images directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Images directory doesn't match to given directory!");
     }
 
     @Test
@@ -361,7 +349,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getSourceDirectory(process);
         boolean condition = directory.getRawPath().contains("1/images/First__process_tif");
-        assertTrue("Source directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Source directory doesn't match to given directory!");
     }
 
     @Test
@@ -369,7 +357,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = processService.getProcessDataDirectory(process);
         boolean condition = directory.getRawPath().contains("1");
-        assertTrue("Process data directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Process data directory doesn't match to given directory!");
     }
 
     @Test
@@ -377,7 +365,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getOcrDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr");
-        assertTrue("OCR directory doesn't match to given directory!", condition);
+        assertTrue(condition, "OCR directory doesn't match to given directory!");
     }
 
     @Test
@@ -385,7 +373,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getTxtDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_txt");
-        assertTrue("TXT directory doesn't match to given directory!", condition);
+        assertTrue(condition, "TXT directory doesn't match to given directory!");
     }
 
     @Test
@@ -393,7 +381,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getWordDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_wc");
-        assertTrue("Word directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Word directory doesn't match to given directory!");
     }
 
     @Test
@@ -401,7 +389,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getPdfDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_pdf");
-        assertTrue("PDF directory doesn't match to given directory!", condition);
+        assertTrue(condition, "PDF directory doesn't match to given directory!");
     }
 
     @Test
@@ -409,7 +397,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getAltoDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_alto");
-        assertTrue("Alto directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Alto directory doesn't match to given directory!");
     }
 
     @Test
@@ -417,14 +405,20 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getImportDirectory(process);
         boolean condition = directory.getRawPath().contains("1/import");
-        assertTrue("Import directory doesn't match to given directory!", condition);
+        assertTrue(condition, "Import directory doesn't match to given directory!");
+    }
+
+    @Test
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldGetBatchId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
-        assertEquals("Task doesn't match to given task!", 8, actual.getId().intValue());
+        assertEquals(8, actual.getId().intValue(), "Task doesn't match to given task!");
     }
 
     @Test
@@ -432,7 +426,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         String progress = ProcessConverter.getCombinedProgressAsString(process, true);
-        assertEquals("Progress doesn't match given plain text!", "040020020020", progress);
+        assertEquals("040020020020", progress, "Progress doesn't match given plain text!");
     }
 
     @Test
@@ -440,7 +434,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.DONE);
-        assertEquals("Progress doesn't match given plain text!", 40, condition, 0);
+        assertEquals(40, condition, 0, "Progress doesn't match given plain text!");
     }
 
     @Test
@@ -448,11 +442,11 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.INWORK);
-        assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
+        assertEquals(20, condition, 0, "Progress doesn't match given plain text!");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void testGetQueryForClosedProcesses() throws Exception {
         // TODO delete test stub
     }
@@ -462,7 +456,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.OPEN);
-        assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
+        assertEquals(20, condition, 0, "Progress doesn't match given plain text!");
     }
 
     @Test
@@ -470,7 +464,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.LOCKED);
-        assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
+        assertEquals(20, condition, 0, "Progress doesn't match given plain text!");
     }
 
     @Test
@@ -480,7 +474,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(testProcessId);
         URI directory = fileService.getMetadataFilePath(process);
         boolean condition = directory.getRawPath().contains(testProcessId + "/meta.xml");
-        assertTrue("Metadata file path doesn't match to given file path!", condition);
+        assertTrue(condition, "Metadata file path doesn't match to given file path!");
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
@@ -489,7 +483,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         URI directory = fileService.getTemplateFile(process);
         boolean condition = directory.getRawPath().contains("1/template.xml");
-        assertTrue("Template file path doesn't match to given file path!", condition);
+        assertTrue(condition, "Template file path doesn't match to given file path!");
     }
 
     @Test
@@ -502,7 +496,7 @@ public class ProcessServiceIT {
 
         String processTitle = process.getTitle();
         String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
-        assertEquals("It was not possible to read metadata file!", processTitle, processTitleFromMetadata);
+        assertEquals(processTitle, processTitleFromMetadata, "It was not possible to read metadata file!");
 
         FileLoader.deleteMetadataFile();
     }
@@ -513,14 +507,14 @@ public class ProcessServiceIT {
 
         Process process = processService.getById(1);
         LegacyMetsModsDigitalDocumentHelper fileFormat = processService.readMetadataAsTemplateFile(process);
-        assertNotNull("Read template file has incorrect file format!", fileFormat);
+        assertNotNull(fileFormat, "Read template file has incorrect file format!");
         int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
-        assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);
+        assertEquals(1, metadataSize, "It was not possible to read metadata as template file!");
 
         FileLoader.deleteMetadataTemplateFile();
     }
 
-    @Ignore("PreferencesException: Can't obtain DigitalDocument! Maybe wrong preferences file? - METS node")
+    @Disabled("PreferencesException: Can't obtain DigitalDocument! Maybe wrong preferences file? - METS node")
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
         Process process = processService.getById(1);
@@ -528,7 +522,7 @@ public class ProcessServiceIT {
         fileService.writeMetadataAsTemplateFile(
             new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset()), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));
-        assertTrue("It was not possible to write metadata as template file!", condition);
+        assertTrue(condition, "It was not possible to write metadata as template file!");
 
         Files.deleteIfExists(Paths.get(ConfigCore.getKitodoDataDirectory() + "1/template.xml"));
     }
@@ -537,11 +531,11 @@ public class ProcessServiceIT {
     public void shouldCheckIfIsImageFolderInUse() throws Exception {
         Process process = processService.getById(2);
         boolean condition = !processService.isImageFolderInUse(process);
-        assertTrue("Image folder is in use but it shouldn't be!", condition);
+        assertTrue(condition, "Image folder is in use but it shouldn't be!");
 
         process = processService.getById(1);
         condition = processService.isImageFolderInUse(process);
-        assertTrue("Image folder is not in use but it should be!", condition);
+        assertTrue(condition, "Image folder is not in use but it should be!");
     }
 
     @Test
@@ -551,7 +545,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         User expected = userService.getById(2);
         User actual = processService.getImageFolderInUseUser(process);
-        assertEquals("Processing user doesn't match to the given user!", expected, actual);
+        assertEquals(expected, actual, "Processing user doesn't match to the given user!");
     }
 
     @Test
@@ -559,8 +553,7 @@ public class ProcessServiceIT {
         FileLoader.createMetadataFile();
 
         LegacyMetsModsDigitalDocumentHelper actual = processService.getDigitalDocument(processService.getById(1));
-        assertEquals("Metadata size in digital document is incorrect!", 1,
-            actual.getLogicalDocStruct().getAllMetadata().size());
+        assertEquals(1, actual.getLogicalDocStruct().getAllMetadata().size(), "Metadata size in digital document is incorrect!");
 
         FileLoader.deleteMetadataFile();
     }
@@ -596,15 +589,14 @@ public class ProcessServiceIT {
         processService.updateChildrenFromLogicalStructure(process, logicalStructure);
 
         for (Process child : process.getChildren()) {
-            assertTrue("Process should have child to keep and child to add as only children",
-                Arrays.asList("HierarchyChildToKeep", "HierarchyChildToAdd").contains(child.getTitle()));
-            assertEquals("Child should have parent as parent", process, child.getParent());
+            assertTrue(Arrays.asList("HierarchyChildToKeep", "HierarchyChildToAdd").contains(child.getTitle()), "Process should have child to keep and child to add as only children");
+            assertEquals(process, child.getParent(), "Child should have parent as parent");
         }
-        assertNull("Process to remove should have no parent", processService.getById(6).getParent());
+        assertNull(processService.getById(6).getParent(), "Process to remove should have no parent");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void testFindAllIDs() throws Exception {
         // TODO delete test stub
     }
@@ -617,7 +609,7 @@ public class ProcessServiceIT {
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
         long logicalMetadata = MetsService.countLogicalMetadata(workpiece);
-        Assert.assertEquals("Wrong amount of metadata found!", 4, logicalMetadata);
+        assertEquals(4, logicalMetadata, "Wrong amount of metadata found!");
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 }

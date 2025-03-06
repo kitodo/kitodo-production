@@ -12,9 +12,9 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,11 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
@@ -103,12 +102,11 @@ public class MetadataST extends BaseTestSelenium {
 
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
-     * @throws DAOException when saving of dummy or test processes fails.
-     * @throws DAOException when retrieving test project for test processes fails.
+     * @throws DAOException when saving of dummy or test processes fails or when retrieving test project for test processes fails.
      * @throws IOException when copying test metadata or image files fails.
      */
-    @BeforeClass
-    public static void prepare() throws DAOException, IOException {
+    @BeforeAll
+    public static void prepare() throws DAOException,  IOException {
         MockDatabase.insertFoldersForSecondProject();
         prepareMetadataLockProcess();
         prepareMediaReferenceProcess();
@@ -126,7 +124,7 @@ public class MetadataST extends BaseTestSelenium {
     public void hideStructureDataTest() throws Exception {
         login("verylast");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
-        Assert.assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
+        assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
         Pages.getMetadataEditorPage().save();
     }
 
@@ -146,8 +144,7 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getTopNavigation().logout();
         login("verylast");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
-        Assert.assertTrue("Unable to open metadata editor that was not closed by 'close' button",
-                Browser.getCurrentUrl().contains("metadataEditor.jsf"));
+        assertTrue(Browser.getCurrentUrl().contains("metadataEditor.jsf"), "Unable to open metadata editor that was not closed by 'close' button");
     }
 
     /**
@@ -158,17 +155,13 @@ public class MetadataST extends BaseTestSelenium {
     public void changeProcessLinkOrderTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editParentProcessMetadata();
-        Assert.assertTrue("Wrong initial order of linked child processes",
-                Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
-        Assert.assertTrue("Wrong initial order of linked child processes",
-                Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(SECOND_CHILD_PROCESS_TITLE));
+        assertTrue(Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE), "Wrong initial order of linked child processes");
+        assertTrue(Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(SECOND_CHILD_PROCESS_TITLE), "Wrong initial order of linked child processes");
         Pages.getMetadataEditorPage().changeOrderOfLinkedChildProcesses();
         Pages.getMetadataEditorPage().saveAndExit();
         Pages.getProcessesPage().goTo().editParentProcessMetadata();
-        Assert.assertTrue("Wrong resulting order of linked child processes",
-                Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
-        Assert.assertTrue("Wrong resulting order of linked child processes",
-                Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(FIRST_CHILD_PROCESS_TITLE));
+        assertTrue(Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE), "Wrong resulting order of linked child processes");
+        assertTrue(Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(FIRST_CHILD_PROCESS_TITLE), "Wrong resulting order of linked child processes");
     }
 
     /**
@@ -180,14 +173,11 @@ public class MetadataST extends BaseTestSelenium {
     public void toggleAllStructureNodesTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
-        Assert.assertEquals("Number of visible nodes is wrong initially", 2,
-                Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
+        assertEquals(2, Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements(), "Number of visible nodes is wrong initially");
         Pages.getMetadataEditorPage().collapseAll();
-        Assert.assertEquals("Number of visible nodes after collapsing all is wrong", 1,
-                Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
+        assertEquals(1, Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements(), "Number of visible nodes after collapsing all is wrong");
         Pages.getMetadataEditorPage().expandAll();
-        Assert.assertEquals("Number of visible nodes after expanding all is wrong", 2,
-                Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
+        assertEquals(2, Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements(), "Number of visible nodes after expanding all is wrong");
     }
 
     /**
@@ -197,8 +187,7 @@ public class MetadataST extends BaseTestSelenium {
     public void totalNumberOfScansTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
-        assertEquals("Total number of scans is not correct", "(3 Medien)",
-                Pages.getMetadataEditorPage().getNumberOfScans());
+        assertEquals("(3 Medien)", Pages.getMetadataEditorPage().getNumberOfScans(), "Total number of scans is not correct");
     }
 
     /**
@@ -224,8 +213,8 @@ public class MetadataST extends BaseTestSelenium {
     public void updateMediaReferencesTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_REFERENCES_TEST_PROCESS_TITLE);
-        assertTrue("Media references updated dialog not visible", Pages.getMetadataEditorPage()
-                .isFileReferencesUpdatedDialogVisible());
+        assertTrue(Pages.getMetadataEditorPage()
+                .isFileReferencesUpdatedDialogVisible(), "Media references updated dialog not visible");
         Pages.getMetadataEditorPage().acknowledgeFileReferenceChanges();
     }
 
@@ -238,14 +227,12 @@ public class MetadataST extends BaseTestSelenium {
     public void renameMediaFilesTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
-        assertEquals("Second child node in structure tree has wrong label BEFORE renaming media files",
-                FIRST_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel());
+        assertEquals(FIRST_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel(), "Second child node in structure tree has wrong label BEFORE renaming media files");
         Pages.getMetadataEditorPage().renameMedia();
-        assertTrue("'Renaming media files was successful' dialog is not visible", Pages.getMetadataEditorPage()
-                .isRenamingMediaFilesDialogVisible());
+        assertTrue(Pages.getMetadataEditorPage()
+                .isRenamingMediaFilesDialogVisible(), "'Renaming media files was successful' dialog is not visible");
         Pages.getMetadataEditorPage().acknowledgeRenamingMediaFiles();
-        assertEquals("Second child node in structure tree has wrong label AFTER renaming media files",
-                SECOND_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel());
+        assertEquals(SECOND_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel(), "Second child node in structure tree has wrong label AFTER renaming media files");
     }
 
     /**
@@ -272,8 +259,7 @@ public class MetadataST extends BaseTestSelenium {
         WebElement thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .until(thumbnailOverlay::isDisplayed);
-        Assert.assertEquals("Last thumbnail has wrong overlay before drag'n'drop action",
-                "Bild 1, Seite -", thumbnailOverlay.getText().strip());
+        assertEquals("Bild 1, Seite -", thumbnailOverlay.getText().strip(), "Last thumbnail has wrong overlay before drag'n'drop action");
         // drop position for drag'n'drop action
         WebElement dropPosition = Browser.getDriver()
                 .findElement(By.id("imagePreviewForm:unstructuredMediaList:2:unstructuredPageDropArea"));
@@ -293,8 +279,7 @@ public class MetadataST extends BaseTestSelenium {
         thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .until(thumbnailOverlay::isDisplayed);
-        Assert.assertEquals("Last thumbnail has wrong overlay after drag'n'drop action",
-                "Bild 2, Seite -", thumbnailOverlay.getText().strip());
+        assertEquals("Bild 2, Seite -", thumbnailOverlay.getText().strip(), "Last thumbnail has wrong overlay after drag'n'drop action");
     }
 
     /**
@@ -321,7 +306,7 @@ public class MetadataST extends BaseTestSelenium {
                         .findElement(By.id("buttonForm:saveExit"))::isDisplayed);
         WebElement contextMenu = Browser.getDriver().findElement(By.id("contextMenuLogicalTree"));
         List<WebElement> menuItems = contextMenu.findElements(By.className("ui-menuitem"));
-        assertEquals("Wrong number of context menu items", 3, menuItems.size());
+        assertEquals(3, menuItems.size(), "Wrong number of context menu items");
         // click "add element" option
         menuItems.get(0).click();
         // open "structure element type selection" menu
@@ -339,14 +324,14 @@ public class MetadataST extends BaseTestSelenium {
                 .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
         structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
         WebElement firstChild = structureTree.findElement(By.id("logicalTree:0_0"));
-        Assert.assertEquals("Added structure element has wrong type!", structureType, firstChild.getText());
+        assertEquals(structureType, firstChild.getText(), "Added structure element has wrong type!");
     }
 
     /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */
-    @After
+    @AfterEach
     public void closeEditorAndLogout() throws Exception {
         Pages.getMetadataEditorPage().closeEditor();
         Pages.getTopNavigation().logout();
@@ -354,11 +339,10 @@ public class MetadataST extends BaseTestSelenium {
 
     /**
      * Cleanup test environment by removing temporal dummy processes from database and index.
-     * @throws DAOException when dummy process cannot be removed from database
-     * @throws DAOException when dummy process cannot be removed from index
+     * @throws DAOException when dummy process cannot be removed from database or when dummy process cannot be removed from index
      * @throws IOException when deleting test files fails.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanup() throws DAOException, IOException {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);

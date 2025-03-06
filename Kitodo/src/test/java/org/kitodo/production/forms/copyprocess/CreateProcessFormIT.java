@@ -12,9 +12,9 @@
 package org.kitodo.production.forms.copyprocess;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URI;
@@ -22,11 +22,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -55,7 +53,7 @@ public class CreateProcessFormIT {
     /**
      * Is running before the class runs.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -72,14 +70,11 @@ public class CreateProcessFormIT {
     /**
      * Is running after the class has run.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCreateNewProcess() throws Exception {
@@ -106,7 +101,7 @@ public class CreateProcessFormIT {
             ExecutionPermission.setNoExecutePermission(script);
         }
         long after = processService.count();
-        assertEquals("No process was created!", before + 1, after);
+        assertEquals(before + 1, after, "No process was created!");
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();
@@ -138,10 +133,10 @@ public class CreateProcessFormIT {
         ServiceManager.getProjectService().save(project);
         ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
-        assertEquals("No process was created!", before + 1, after);
+        assertEquals(before + 1, after, "No process was created!");
 
-        assertTrue("Process should not have tasks", newProcess.getTasks().isEmpty());
-        assertNull("process should not have sortHelperStatus", newProcess.getSortHelperStatus());
+        assertTrue(newProcess.getTasks().isEmpty(), "Process should not have tasks");
+        assertNull(newProcess.getSortHelperStatus(), "process should not have sortHelperStatus");
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();

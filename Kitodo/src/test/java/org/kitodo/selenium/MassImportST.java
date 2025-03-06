@@ -11,18 +11,19 @@
 
 package org.kitodo.selenium;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.constants.StringConstants;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -44,7 +45,7 @@ public class MassImportST extends BaseTestSelenium {
     private static final String CSV_UPLOAD_FILE_EXTENSION = ".csv";
     private static final String CSV_CELL_SELECTOR = "#editForm\\:recordsTable_data tr .ui-cell-editor-output";
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         massImportPage = Pages.getMassImportPage();
         csvUploadFile = createCsvFile();
@@ -52,14 +53,14 @@ public class MassImportST extends BaseTestSelenium {
         MockDatabase.insertImportConfigurations();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
         Pages.getProjectsPage().goTo();
         Pages.getProjectsPage().clickMassImportAction();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
         if (Browser.isAlertPresent()) {
@@ -67,7 +68,7 @@ public class MassImportST extends BaseTestSelenium {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() throws IOException {
         deleteCsvFile();
     }
@@ -81,14 +82,14 @@ public class MassImportST extends BaseTestSelenium {
         Thread.sleep(Browser.getDelayAfterLogout());
         List<WebElement> csvRows = Browser.getDriver().findElement(By.id("editForm:recordsTable_data"))
                 .findElements(By.tagName("tr"));
-        Assert.assertEquals("CSV file not parsed correctly", 3, csvRows.size());
+        assertEquals(3, csvRows.size(), "CSV file not parsed correctly");
         List<WebElement> csvCells = Browser.getDriver().findElements(By.cssSelector(CSV_CELL_SELECTOR));
-        Assert.assertEquals("CSV lines should not be segmented correctly into multiple cells when using wrong CSV "
-                + "separator", 3, csvCells.size());
+        assertEquals(3, csvCells.size(), "CSV lines should not be segmented correctly into multiple cells when using wrong CSV "
+                + "separator");
         massImportPage.updateSeparator(StringConstants.COMMA_DELIMITER.trim());
         List<WebElement> updatedCsvCells = Browser.getDriver().findElements(By.cssSelector(CSV_CELL_SELECTOR));
-        Assert.assertEquals("CSV lines should be segmented correctly into multiple cells when using correct CSV "
-                + "separator", 9, updatedCsvCells.size());
+        assertEquals(9, updatedCsvCells.size(), "CSV lines should be segmented correctly into multiple cells when using correct CSV "
+                + "separator");
     }
 
     private static File createCsvFile() throws IOException {

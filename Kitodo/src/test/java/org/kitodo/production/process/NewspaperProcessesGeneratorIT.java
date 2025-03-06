@@ -11,7 +11,10 @@
 
 package org.kitodo.production.process;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,14 +27,11 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -65,16 +65,13 @@ public class NewspaperProcessesGeneratorIT {
     private static final String NEWSPAPER_TEST_METADATA_FILE = "testmetaNewspaper.xml";
     private static final String NEWSPAPER_TEST_PROCESS_TITLE = "NewspaperOverallProcess";
 
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
     /**
      * The test environment is being set up.
      *
      * @throws Exception
      *             if that does not work
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
@@ -96,7 +93,7 @@ public class NewspaperProcessesGeneratorIT {
     /**
      * The test environment is cleaned up and the database is closed.
      */
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -109,11 +106,10 @@ public class NewspaperProcessesGeneratorIT {
 
     /**
      * Create newspaper test process and copy corresponding meta.xml file.
-     * @throws DAOException when inserting test or dummy processes fails
-     * @throws DAOException when inserting test or dummy processes fails
+     * @throws DAOException when inserting test or dummy processes fails or when inserting test or dummy processes fails
      * @throws IOException when copying test metadata file fails
      */
-    @Before
+    @BeforeEach
     public void prepareNewspaperProcess() throws DAOException, IOException {
         newspaperTestProcessId = MockDatabase.insertTestProcess(NEWSPAPER_TEST_PROCESS_TITLE, 1, 1, rulesetId);
         ProcessTestUtils.copyTestFiles(newspaperTestProcessId, NEWSPAPER_TEST_METADATA_FILE);
@@ -121,11 +117,10 @@ public class NewspaperProcessesGeneratorIT {
 
     /**
      * Remove newspaper test processes.
-     * @throws DAOException when removing dummy processes from database fails
-     * @throws DAOException when deleting newspaper test processes fails
+     * @throws DAOException when removing dummy processes from database fails or when deleting newspaper test processes fails
      * @throws IOException when deleting metadata test files fails
      */
-    @After
+    @AfterEach
     public void cleanupNewspaperProcess() throws DAOException, IOException {
         if (newspaperTestProcessId > 0) {
             deleteProcessHierarchy(ServiceManager.getProcessService().getById(newspaperTestProcessId));
@@ -153,14 +148,10 @@ public class NewspaperProcessesGeneratorIT {
             underTest.nextStep();
         }
         int maxId = getChildProcessWithLargestId(completeEdition, 0);
-        Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
-            underTest.getProgress());
-        Assert.assertEquals("Process title missing in newspaper's meta.xml", "NewspaperOverallProcess",
-            readProcessTitleFromMetadata(newspaperTestProcessId, false));
-        Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1703",
-            readProcessTitleFromMetadata(newspaperTestProcessId + 1, false));
-        Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17050127",
-            readProcessTitleFromMetadata(maxId, true));
+        assertEquals(underTest.getNumberOfSteps(), underTest.getProgress(), "The newspaper processes generator has not been completed!");
+        assertEquals("NewspaperOverallProcess", readProcessTitleFromMetadata(newspaperTestProcessId, false), "Process title missing in newspaper's meta.xml");
+        assertEquals("NewspaperOverallProcess_1703", readProcessTitleFromMetadata(newspaperTestProcessId + 1, false), "Process title missing in year's meta.xml");
+        assertEquals("NewspaperOverallProcess_17050127", readProcessTitleFromMetadata(maxId, true), "Process title missing in issue's meta.xml");
     }
 
     private int getChildProcessWithLargestId(Process process, int maxId) {
@@ -209,8 +200,7 @@ public class NewspaperProcessesGeneratorIT {
         while (underTest.getProgress() < underTest.getNumberOfSteps()) {
             underTest.nextStep();
         }
-        Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
-            underTest.getProgress());
+        assertEquals(underTest.getNumberOfSteps(), underTest.getProgress(), "The newspaper processes generator has not been completed!");
 
         // check season-year processes
         for (Process process : processService.getAll()) {
@@ -224,8 +214,7 @@ public class NewspaperProcessesGeneratorIT {
                  */
                 String twoYears = workpiece.getLogicalStructure().getOrderlabel();
                 List<String> years = Arrays.asList(twoYears.split("/", 2));
-                Assert.assertEquals("Bad season-year in " + seasonProcess + ": " + twoYears,
-                        Integer.parseInt(years.get(0)) + 1, Integer.parseInt(years.get(1)));
+                assertEquals(Integer.parseInt(years.get(0)) + 1, Integer.parseInt(years.get(1)), "Bad season-year in " + seasonProcess + ": " + twoYears);
 
                 // more tests
                 monthChecksOfShouldGenerateSeasonProcesses(seasonProcess, workpiece, twoYears, years);
@@ -243,7 +232,7 @@ public class NewspaperProcessesGeneratorIT {
         generatesNewspaperProcessesThread.start();
         DAOException dataException = assertThrows(DAOException.class,
             () -> ServiceManager.getProcessService().getById(11));
-        Assert.assertEquals("Process should not have been created", "Process 11 cannot be found in database",
+        assertEquals("Process should not have been created", "Process 11 cannot be found in database",
             dataException.getMessage());
     }
 
@@ -255,9 +244,7 @@ public class NewspaperProcessesGeneratorIT {
             for (LogicalDivision dayLogicalDivision : monthLogicalDivision
                     .getChildren()) {
                 String dayValue = dayLogicalDivision.getOrderlabel();
-                Assert.assertTrue(
-                    "Error in " + seasonProcess + ": " + dayValue + " misplaced in month " + monthValue + '!',
-                    dayValue.startsWith(monthValue));
+                assertTrue(dayValue.startsWith(monthValue), "Error in " + seasonProcess + ": " + dayValue + " misplaced in month " + monthValue + '!');
             }
         }
 
@@ -269,9 +256,8 @@ public class NewspaperProcessesGeneratorIT {
                     .getChildren()) {
                 String dayValue = dayLogicalDivision.getOrderlabel();
                 if (Objects.nonNull(previousDayValue)) {
-                    Assert.assertTrue("Bad order of days in " + seasonProcess + ": " + dayValue + " should be before "
-                            + previousDayValue + ", but isn’t!",
-                        dayValue.compareTo(previousDayValue) > 0);
+                    assertTrue(dayValue.compareTo(previousDayValue) > 0, "Bad order of days in " + seasonProcess + ": " + dayValue + " should be before "
+                            + previousDayValue + ", but isn’t!");
                 }
                 previousDayValue = dayValue;
             }
@@ -287,16 +273,13 @@ public class NewspaperProcessesGeneratorIT {
             List<String> monthValueFields = Arrays.asList(monthValue.split("-", 2));
             int monthNumberOfMonth = Integer.parseInt(monthValueFields.get(1));
             if (monthValueFields.get(0).equals(years.get(0))) {
-                Assert.assertTrue("Error in " + seasonProcess + ": Found misplaced month " + monthValue
-                        + ", should not be in year " + twoYears + ", starting by the 1st of July!",
-                    monthNumberOfMonth >= 7);
+                assertTrue(monthNumberOfMonth >= 7, "Error in " + seasonProcess + ": Found misplaced month " + monthValue
+                        + ", should not be in year " + twoYears + ", starting by the 1st of July!");
             } else if (monthValueFields.get(0).equals(years.get(1))) {
-                Assert.assertTrue("Error in " + seasonProcess + ": Found misplaced month " + monthValue
-                        + ", should not be in year " + twoYears + ", starting by the 1st of July!",
-                    monthNumberOfMonth < 7);
+                assertTrue(monthNumberOfMonth < 7, "Error in " + seasonProcess + ": Found misplaced month " + monthValue
+                        + ", should not be in year " + twoYears + ", starting by the 1st of July!");
             } else {
-                Assert.fail(
-                    "Error in " + seasonProcess + ": Month " + monthValue + " is not in years " + twoYears + '!');
+                fail("Error in " + seasonProcess + ": Month " + monthValue + " is not in years " + twoYears + '!');
             }
         }
 
@@ -306,9 +289,8 @@ public class NewspaperProcessesGeneratorIT {
                 .getChildren()) {
             String monthValue = monthLogicalDivision.getOrderlabel();
             if (Objects.nonNull(previousMonthValue)) {
-                Assert.assertTrue("Bad order of months in " + seasonProcess + ": " + monthValue + " should be before "
-                        + previousMonthValue + ", but isn’t!",
-                    monthValue.compareTo(previousMonthValue) > 0);
+                assertTrue(monthValue.compareTo(previousMonthValue) > 0, "Bad order of months in " + seasonProcess + ": " + monthValue + " should be before "
+                        + previousMonthValue + ", but isn’t!");
             }
             previousMonthValue = monthValue;
         }

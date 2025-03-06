@@ -12,15 +12,15 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
@@ -36,7 +36,7 @@ public class FilterServiceIT {
 
     private static final String filterValue = "\"id:1\"";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -45,7 +45,7 @@ public class FilterServiceIT {
         given().ignoreExceptions().await().until(() -> Objects.nonNull(filterService.getById(1)));
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -54,11 +54,11 @@ public class FilterServiceIT {
 
     @Test
     public void shouldCountAllFilters() throws DAOException {
-        assertEquals("Filters were not counted correctly!", Long.valueOf(2), filterService.count());
+        assertEquals(Long.valueOf(2), filterService.count(), "Filters were not counted correctly!");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldCountAllFiltersAccordingToQuery() throws Exception {
         // TODO delete test stub
     }
@@ -66,159 +66,150 @@ public class FilterServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForFilters() throws Exception {
         Long amount = filterService.count();
-        assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
+        assertEquals(Long.valueOf(2), amount, "Filters were not counted correctly!");
     }
 
     @Test
     public void shouldGetFilterById() throws Exception {
         Filter filter = filterService.getById(1);
         String actual = filter.getValue();
-        assertEquals("Filter was not found in database!", filterValue, actual);
+        assertEquals(filterValue, actual, "Filter was not found in database!");
     }
 
     @Test
     public void shouldGetAllFilters() throws Exception {
         List<Filter> filters = filterService.getAll();
-        assertEquals("Not all filters were found in database!", 2, filters.size());
+        assertEquals(2, filters.size(), "Not all filters were found in database!");
     }
 
     @Test
     public void shouldGetAllFiltersInGivenRange() throws Exception {
         List<Filter> filters = filterService.getAll(1, 10);
-        assertEquals("Not all filters were found in database!", 1, filters.size());
+        assertEquals(1, filters.size(), "Not all filters were found in database!");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByProcessId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByProjectTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByProcessTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByTaskTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByBatchId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTitle() throws Exception {
         // TODO delete test stub
     }
 
-    /**
-     * find by properties.
-     */
-    @Ignore
     @Test
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByProperty() throws Exception {
-        // TODO
+        // TODO delete test stub
     }
 
-    /**
-     * find by multiple conditions.
-     */
-    @Ignore
     @Test
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByProcessServiceByMultipleConditions() throws Exception {
-        // TODO
+        // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByProcessId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByProjectTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByProcessTitle() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByTaskTitle() throws Exception {
         // TODO delete test stub
     }
 
-    /**
-     * find tasks by property.
-     */
-    @Ignore
     @Test
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByProperty() throws Exception {
-        // TODO
+        // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByClosedTasks() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByOpenTasks() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByInProgressTasks() throws Exception {
         // TODO delete test stub
     }
 
-    @Ignore("problem with steplocked")
     @Test
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByLockedTasks() throws Exception {
-        // TODO
+        // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceWithDisjunctions() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryForDefaultConditions() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldBuildQueryForEmptyConditions() throws Exception {
         // TODO delete test stub
     }

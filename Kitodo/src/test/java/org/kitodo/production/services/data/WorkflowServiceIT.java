@@ -11,14 +11,14 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Workflow;
@@ -28,13 +28,13 @@ public class WorkflowServiceIT {
 
     private WorkflowService workflowService = ServiceManager.getWorkflowService();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -44,13 +44,13 @@ public class WorkflowServiceIT {
     public void shouldGetWorkflow() throws Exception {
         Workflow workflow = workflowService.getById(1);
         boolean condition = workflow.getTitle().equals("test");
-        assertTrue("Workflow was not found in database!", condition);
+        assertTrue(condition, "Workflow was not found in database!");
     }
 
     @Test
     public void shouldGetAllWorkflows() throws Exception {
         List<Workflow> workflows = workflowService.getAll();
-        assertEquals("Workflows were not found in database!", 3, workflows.size());
+        assertEquals(3, workflows.size(), "Workflows were not found in database!");
     }
 
     @Test
@@ -58,7 +58,7 @@ public class WorkflowServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
 
         List<Workflow> workflows = workflowService.getAvailableWorkflows();
-        assertEquals("Workflows were not found in database!", 1, workflows.size());
+        assertEquals(1, workflows.size(), "Workflows were not found in database!");
 
         SecurityTestUtils.cleanSecurityContext();
     }
