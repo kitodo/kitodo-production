@@ -401,13 +401,13 @@ public class KitodoScriptService {
             Folder generatorSource = process.getProject().getGeneratorSource();
             if (Objects.isNull(generatorSource)) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noSourceFolder",
-                    new String[] {process.getTitle(), process.getProject().getTitle() });
+                    process.getTitle(), process.getProject().getTitle());
                 continue;
             }
             Subfolder sourceFolder = new Subfolder(process, generatorSource);
             if (sourceFolder.listContents().isEmpty()) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noSourceFiles",
-                    new String[] {process.getTitle(), sourceFolder.getRelativeDirectoryPath() });
+                    process.getTitle(), sourceFolder.getRelativeDirectoryPath());
                 continue;
             }
             boolean all = folders.size() == 1 && folders.get(0).equalsIgnoreCase("all");
@@ -423,7 +423,7 @@ public class KitodoScriptService {
             }
             if (outputFolders.isEmpty()) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noDestination",
-                    new String[] {process.getTitle(), String.join(", ", ungeneratableFolders) });
+                    process.getTitle(), String.join(", ", ungeneratableFolders));
                 continue;
             }
             ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, generationMode, outputFolders);
