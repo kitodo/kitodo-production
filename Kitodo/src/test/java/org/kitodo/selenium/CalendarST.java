@@ -67,6 +67,7 @@ public class CalendarST extends BaseTestSelenium {
         ProcessTestUtils.removeTestProcess(newspaperTestProcessId);
     }
 
+    @Disabled("faulty, randomly fails during CI builds; needs to be fixed")
     @Test
     @Disabled("currently not implemented")
     /* 'baseType' not available (only available from index), is null.
