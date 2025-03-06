@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.data;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
@@ -32,6 +33,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,6 +59,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.ExternalContext;
@@ -69,8 +73,11 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -173,6 +180,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_FILE_NAME = "meta.xml";
     private static final String NEW_LINE_ENTITY = "\n";
+    private static final Pattern TYPE_PATTERN = Pattern.compile("structMap TYPE=\"LOGICAL\">.*?TYPE=\"([^\"]+)\"");
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
     private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_FROM_CALENDAR = new HashMap<>();
@@ -1476,6 +1484,29 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             return process.getBaseType();
         }
         return "";
+    }
+
+    /**
+     * Retrieves a mapping of process IDs to their corresponding base types.
+     *
+     * @param processIds
+     *            list of document IDs to retrieve and process.
+     * @return a map where the keys are document IDs and the values are their
+     *         associated base types
+     */
+    public Map<Integer, String> getIdBaseTypeMap(List<Integer> processIds) {
+        File metadata = new File(ConfigCore.getKitodoDataDirectory());
+        return processIds.parallelStream().map(processId -> {
+            File metafile = new File(new File(metadata, processId.toString()), "meta.xml");
+            try {
+                String content = FileUtils.readFileToString(metafile, UTF_8);
+                Matcher type = TYPE_PATTERN.matcher(content);
+                return Pair.of(processId, type.find() ? type.group(1) : "");
+            } catch (IOException e) {
+                logger.catching(Level.ERROR, e);
+                return Pair.of(processId, e.getClass().getSimpleName());
+            }
+        }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /**
