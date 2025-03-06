@@ -116,6 +116,11 @@ public class ImportConfigurationService extends BaseBeanService<ImportConfigurat
         return getAllImportConfigurations(ImportConfigurationType.FILE_UPLOAD);
     }
 
+    /**
+     * Load and return all ImportConfigurations sorted by title.
+     * @return list of all ImportConfigurations sorted by title
+     * @throws DAOException when ImportConfigurations could not be loaded
+     */
     @Override
     public List<ImportConfiguration> getAll() throws DAOException {
         User currentUser = ServiceManager.getUserService().getCurrentUser();
