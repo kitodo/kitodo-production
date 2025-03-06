@@ -19,7 +19,7 @@
 
     <groupId>org.kitodo</groupId>
     <artifactId>kitodo-production</artifactId>
-    <version>${revision}</version>
+    <version>3.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -30,8 +30,7 @@
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
-        <revision>3.7.0-SNAPSHOT</revision>
-        <kitodo.version>${revision}</kitodo.version>
+        <kitodo.version>3.7.0-SNAPSHOT</kitodo.version>
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <main.basedir>${project.basedir}</main.basedir>
         <phase.prop>none</phase.prop>

@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>${revision}</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
 
     <name>Kitodo - Persistent Identifier</name>
