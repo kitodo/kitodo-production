@@ -27,7 +27,7 @@ import org.kitodo.production.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = ServiceManager.getAuthorityService();
-    private static final int EXPECTED_AUTHORITIES_COUNT = 100;
+    private static final int EXPECTED_AUTHORITIES_COUNT = 101;
 
     @BeforeAll
     public static void prepareDatabase() throws Exception {
@@ -79,6 +79,6 @@ public class AuthorityServiceIT {
     @Test
     public void shouldGetAllClientAssignableAuthorities() throws DAOException {
         List<Authority> authorities = authorityService.getAllAssignableToClients();
-        assertEquals(72, authorities.size(), "Client assignable authorities were not found database!");
+        assertEquals(73, authorities.size(), "Client assignable authorities were not found database!");
     }
 }

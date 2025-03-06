@@ -499,7 +499,7 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to upload media in metadataeditor.
      *
-     * @return true if the current user has the authority to to upload media in metadataeditor
+     * @return true if the current user has the authority to upload media in metadataeditor
      */
     public boolean hasAuthorityToUploadMedia() {
         return securityAccessService.hasAuthorityToUploadMedia();
@@ -1067,7 +1067,7 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to delete media in metadata editor.
      *
-     * @return true if the current user has the authority to to delete media in metadata editor
+     * @return true if the current user has the authority to delete media in metadata editor
      */
     public boolean hasAuthorityToDeleteMedia() {
         return securityAccessService.hasAuthorityToDeleteMedia();
@@ -1116,5 +1116,14 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToLinkToProcessesOfUnassignedProjects() {
         return securityAccessService.hasAuthorityToLinkToProcessesOfUnassignedProjects();
+    }
+
+    /**
+     * Check if the current user has the permission to create processes and use the mass import feature.
+     *
+     * @return true if the current user has the permission to create processes and use the mass import feature.
+     */
+    public boolean hasAuthorityToMassImportProcesses() {
+        return securityAccessService.hasAuthorityToUseMassImport() && securityAccessService.hasAuthorityToAddProcess();
     }
 }

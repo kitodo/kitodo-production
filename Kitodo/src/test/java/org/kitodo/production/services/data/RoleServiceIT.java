@@ -127,7 +127,7 @@ public class RoleServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         Role role = roleService.getById(1);
         int actual = roleService.getAuthorizationsAsString(role).size();
-        int expected = 34;
+        int expected = 35;
         assertEquals(expected, actual, "Number of authority strings doesn't match!");
     }
 
