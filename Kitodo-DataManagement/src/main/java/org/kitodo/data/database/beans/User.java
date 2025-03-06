@@ -114,6 +114,9 @@ public class User extends BaseBean {
     @Column(name = "paginate_from_first_page_by_default")
     private boolean paginateFromFirstPageByDefault;
 
+    @Column(name = "show_physical_page_number_below_thumbnail")
+    private boolean showPhysicalPageNumberBelowThumbnail;
+
     /**
      * Constructor for User Entity.
      */
@@ -151,30 +154,12 @@ public class User extends BaseBean {
         this.showPaginationByDefault = user.showPaginationByDefault;
         this.paginateFromFirstPageByDefault = user.paginateFromFirstPageByDefault;
         this.defaultGalleryViewMode = user.defaultGalleryViewMode;
+        this.showPhysicalPageNumberBelowThumbnail = user.showPhysicalPageNumberBelowThumbnail;
 
-        if (user.roles != null) {
-            this.roles = user.roles;
-        } else {
-            this.roles = new ArrayList<>();
-        }
-
-        if (Objects.isNull(user.projects)) {
-            this.projects = new ArrayList<>();
-        } else {
-            this.projects = user.projects;
-        }
-
-        if (Objects.isNull(user.clients)) {
-            this.clients = new ArrayList<>();
-        } else {
-            this.clients = user.clients;
-        }
-
-        if (Objects.isNull(user.filters)) {
-            this.filters = new ArrayList<>();
-        } else {
-            this.filters = user.filters;
-        }
+        this.roles = Objects.isNull(user.roles) ? new ArrayList<>() : user.roles;
+        this.projects = Objects.isNull(user.projects) ? new ArrayList<>() : user.projects;
+        this.clients = Objects.isNull(user.clients) ? new ArrayList<>() : user.clients;
+        this.filters = Objects.isNull(user.filters) ? new ArrayList<>() : user.filters;
 
         if (Objects.nonNull(user.tableSize)) {
             this.tableSize = user.tableSize;
@@ -607,6 +592,24 @@ public class User extends BaseBean {
      */
     public void setPaginateFromFirstPageByDefault(boolean paginateFromFirstPageByDefault) {
         this.paginateFromFirstPageByDefault = paginateFromFirstPageByDefault;
+    }
+
+    /**
+     * Get showPhysicalPageNumberBelowThumbnail.
+     * 
+     * @return value of showPhysicalPageNumberBelowThumbnail
+     */
+    public boolean isShowPhysicalPageNumberBelowThumbnail() {
+        return showPhysicalPageNumberBelowThumbnail;
+    }
+
+    /**
+     * Set showPhysicalPageNumberBelowThumbnail.
+     * 
+     * @param showPhysicalPageNumberBelowThumbnail as boolean
+     */
+    public void setShowPhysicalPageNumberBelowThumbnail(boolean showPhysicalPageNumberBelowThumbnail) {
+        this.showPhysicalPageNumberBelowThumbnail = showPhysicalPageNumberBelowThumbnail;
     }
 
     /**
