@@ -195,6 +195,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
      *
      * @return The projects page.
      */
+    @Override
     public ProjectsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProjects();
         await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
