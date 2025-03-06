@@ -131,6 +131,7 @@ function handleKeydown(event) {
             }
             break;
         case "Enter":
+        case "NumpadEnter":
             if ($(FILTER_OPTIONS_FORM_WRAPPER).is(':visible') && $(SELECTED_SUGGESTION_ITEM).length === 1) {
                 selectConfirm();
             } else {
