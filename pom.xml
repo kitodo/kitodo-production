@@ -34,6 +34,7 @@
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <main.basedir>${project.basedir}</main.basedir>
         <phase.prop>none</phase.prop>
+        <!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/check-mojo.html -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>11</maven.compiler.source>
@@ -896,12 +897,12 @@ from system library in Java 11+ -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.4.0</version>
                         <dependencies>
                             <dependency>
                                 <groupId>com.puppycrawl.tools</groupId>
                                 <artifactId>checkstyle</artifactId>
-                                <version>10.3.2</version>
+                                <version>10.17.0</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -909,7 +910,6 @@ from system library in Java 11+ -->
                                 <id>checkstyle-check</id>
                                 <phase>validate</phase>
                                 <configuration>
-                                    <encoding>UTF-8</encoding>
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
                                     <logViolationsToConsole>true</logViolationsToConsole>
