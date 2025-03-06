@@ -146,7 +146,7 @@ public class CurrentTaskForm extends BaseForm {
                     return tasksPath;
                 } else {
                     this.workflowControllerService.assignTaskToUser(this.currentTask);
-                    ServiceManager.getTaskService().save(this.currentTask);
+                    ServiceManager.getTaskService().save(this.currentTask, true);
                 }
             } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
