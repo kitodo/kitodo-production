@@ -13,6 +13,7 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Tests the image preview panel (OpenLayers map) in the metadata editor.
@@ -207,6 +209,77 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
         // check that rotation and zoom was correctly applied to next image (and is not reset)
         assertTrue(Math.abs(getOpenLayersZoom() - changedZoom) < EPSILON);
         assertTrue(Math.abs(getOpenLayersRotation() - changedRotation) < EPSILON);
+    }
+
+    /**
+     * Test that navigation buttons select previous or following image, are disabled in case there is 
+     * no previous or next image, and are hidden if the mouse is not inside the image preview panel.
+     */
+    @Test
+    public void navigationButtonTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor and detail view
+        Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
+        Pages.getMetadataEditorPage().openDetailView();
+        pollAssertTrue(() -> findElementsByCSS(OPEN_LAYERS_CANVAS_SELECTOR).get(0).isDisplayed());
+        
+        // image is thumbnail 2, which is the very first image, such that left buttons are disabled
+        assertEquals("Bild 2, Seite -", findElementsByCSS(GALLERY_HEADING_WRAPPER_SELECTOR).get(0).getText().strip());
+        WebElement leftMany = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementMany").get(0);
+        WebElement rightMany = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementMany").get(0);
+
+        // check left buttons are disabled and right buttons are enabled
+        assertFalse(leftMany.isEnabled());
+        assertTrue(rightMany.isEnabled());
+        
+        // click on right-many button, which selects last image
+        rightMany.click();
+
+        // wait for image 3 to be shown
+        pollAssertTrue(
+            () -> "Bild 3, Seite -".equals(
+                findElementsByCSS(GALLERY_HEADING_WRAPPER_SELECTOR).get(0).getText().strip()
+            )
+        );
+
+        // find buttons again because image preview is re-rendered
+        WebElement leftOne = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0);
+        WebElement rightOne = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementOne").get(0);
+
+        // check left buttons are enabled and right buttons are disabled
+        assertTrue(leftOne.isEnabled());
+        assertFalse(rightOne.isEnabled());
+
+        // click on left-one button, selecting image 1 (middle image of all 3 images)
+        leftOne.click();
+
+        // wait for image 1 to be shown
+        pollAssertTrue(
+            () -> "Bild 1, Seite -".equals(
+                findElementsByCSS(GALLERY_HEADING_WRAPPER_SELECTOR).get(0).getText().strip()
+            )
+        );
+
+        // find buttons again because image preview is re-rendered
+        leftOne = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0);
+        rightOne = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementOne").get(0);
+
+        // both left and right buttons are enabled
+        assertTrue(leftOne.isEnabled());
+        assertTrue(rightOne.isEnabled());
+
+        // check that buttons are displayed (since mouse in hovering buttons due to prior click)
+        assertTrue(leftOne.isDisplayed());
+        assertTrue(rightOne.isDisplayed());
+
+        // move mouse to main header menu
+        new Actions(Browser.getDriver()).moveToElement(findElementsByCSS("#menu").get(0)).perform();
+
+        // check buttons are hidden now
+        pollAssertTrue(
+            () -> !findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0).isDisplayed()
+        );
     }
 
     /**
