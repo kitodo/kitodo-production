@@ -33,7 +33,6 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,20 +72,17 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -119,7 +114,6 @@ import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ConfigurationException;
@@ -1272,16 +1266,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                HSSFWorkbook wb = sr.getResult();
-                List<List<HSSFCell>> rowList = new ArrayList<>();
-                HSSFSheet mySheet = wb.getSheetAt(0);
+                SXSSFWorkbook wb = sr.getResult();
+                List<List<Cell>> rowList = new ArrayList<>();
+                Sheet mySheet = wb.getSheetAt(0);
                 Iterator<Row> rowIter = mySheet.rowIterator();
                 while (rowIter.hasNext()) {
-                    HSSFRow myRow = (HSSFRow) rowIter.next();
+                    Row myRow = (Row) rowIter.next();
                     Iterator<Cell> cellIter = myRow.cellIterator();
-                    List<HSSFCell> row = new ArrayList<>();
+                    List<Cell> row = new ArrayList<>();
                     while (cellIter.hasNext()) {
-                        HSSFCell myCell = (HSSFCell) cellIter.next();
+                        Cell myCell = (Cell) cellIter.next();
                         row.add(myCell);
                     }
                     rowList.add(row);
@@ -1298,6 +1292,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 }
 
                 document.close();
+                wb.close();
                 out.flush();
                 facesContext.responseComplete();
             }
@@ -1314,12 +1309,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
+            ExternalContext response = prepareHeaderInformation(facesContext, "search.xlsx");
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                HSSFWorkbook wb = sr.getResult();
+                SXSSFWorkbook wb = sr.getResult();
                 wb.write(out);
+                wb.close();
                 out.flush();
                 facesContext.responseComplete();
             }
@@ -1360,15 +1356,15 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         return externalContext;
     }
 
-    private PdfPTable getPdfTable(List<List<HSSFCell>> rowList) throws DocumentException {
+    private PdfPTable getPdfTable(List<List<Cell>> rowList) throws DocumentException {
         // create formatter for cells with default locale
         DataFormatter formatter = new DataFormatter();
 
         PdfPTable table = new PdfPTable(8);
         table.setSpacingBefore(20);
         table.setWidths(new int[] {4, 1, 2, 1, 1, 1, 2, 2 });
-        for (List<HSSFCell> row : rowList) {
-            for (HSSFCell hssfCell : row) {
+        for (List<Cell> row : rowList) {
+            for (Cell hssfCell : row) {
                 String stringCellValue = formatter.formatCellValue(hssfCell);
                 table.addCell(stringCellValue);
             }
