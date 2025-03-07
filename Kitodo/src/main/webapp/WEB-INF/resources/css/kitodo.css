@@ -3165,6 +3165,11 @@ Column content
     overflow: hidden;
 }
 
+#metadataAccordion\:metadata\:metadataTable_data tr.focusedRow,
+div[id$='metadataTable'].ui-treetable tr.focusedRow {
+    background-color: var(--trans-blue-highlight);
+}
+
 #imagePreviewForm {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
