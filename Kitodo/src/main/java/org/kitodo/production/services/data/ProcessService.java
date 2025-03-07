@@ -105,6 +105,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -382,18 +383,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static LegacyMetadataTypeHelper getMetadataType(Process inProzess, String inName) {
         LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return LegacyPrefsHelper.getMetadataType(myPrefs, inName);
-    }
-
-    /**
-     * Returns processes to be offered as templates in the selection list. If a
-     * user wants to create a larger number of processes that are the same in
-     * many metadata, they can create one sample process and then create copies
-     * of it.
-     * 
-     * @return processes to be offered in the choice list
-     */
-    public List<Process> getTemplateProcesses() throws DAOException {
-        return getByQuery("FROM Process WHERE inChoiceListShown IS true ORDER BY title ASC");
     }
 
     @Override
@@ -2482,5 +2471,42 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             return true;
         }
         return FileService.hasImages(process, generatorSource);
+    }
+
+    /**
+     * Returns processes to be offered as templates in the selection list,
+     * sorted by title. If a user wants to create a larger number of processes
+     * that are the same in many metadata, they can create one sample process
+     * and then create copies of it.
+     * 
+     * @return processes to be offered in the choice list
+     */
+    public List<Process> getTemplateProcesses() throws DAOException {
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
+            Project::isActive).map(Project::getId).collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        query.addBooleanRestriction("inChoiceListShown", true);
+        query.defineSorting("title", SortOrder.ASCENDING);
+        return getByQuery(query.formQueryForAll());
+    }
+
+
+    /**
+     * Set import configuration of given processes.
+     * @param processes list of processes for which import configuration is set
+     * @param configurationId ID of import configuration to assign to processes
+     * @return name of ImportConfiguration
+     * @throws DAOException when loading import configuration by ID or saving updated processes fails
+     */
+    public String setImportConfigurationForMultipleProcesses(List<Process> processes, int configurationId)
+            throws DAOException {
+        ImportConfiguration configuration = ServiceManager.getImportConfigurationService().getById(configurationId);
+        for (Process process : processes) {
+            process.setImportConfiguration(configuration);
+            save(process);
+        }
+        return configuration.getTitle();
     }
 }

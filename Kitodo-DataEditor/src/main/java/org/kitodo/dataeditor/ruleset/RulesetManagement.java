@@ -32,6 +32,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.dataeditor.ruleset.xml.AcquisitionStage;
@@ -348,6 +349,12 @@ public class RulesetManagement implements RulesetManagementInterface {
             currentMetadata.addAll(metadataInReimport.get());
         }
         return currentMetadata.size() - sizeBefore;
+    }
+
+    @Override
+    public Reimport getMetadataReimport(String metadataKey, String acquisitionStage) {
+        Settings settings = ruleset.getSettings(acquisitionStage);
+        return settings.getReimport(metadataKey);
     }
 
     private Collection<ReimportMetadata> createListOfMetadataToMerge(Collection<Metadata> currentMetadata,

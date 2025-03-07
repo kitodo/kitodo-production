@@ -1,0 +1,210 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:importEnum type="org.kitodo.api.dataeditor.rulesetmanagement.Reimport"
+                  var="reimportEnum"/>
+    <p:dialog id="updateMetadataDialog"
+              widgetVar="updateMetadataDialog"
+              resizable="false"
+              showHeader="false"
+              width="1200"
+              dynamic="true"
+              modal="true">
+        <h:form id="updateMetadataForm">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <h3>#{msgs['updateMetadata']}<h:panelGroup> <h:outputText styleClass="set-apart" value="(#{DataEditorForm.getProcessRecordIdentifier()})"/></h:panelGroup>
+                        <p:commandButton id="updateMetadataHelp"
+                                         type="button"
+                                         styleClass="help-button"
+                                         icon="fa fa-lg fa-question-circle-o"/>
+                    </h3>
+                    <p:tooltip for="updateMetadataHelp" position="left">
+                        #{msgs['dataEditor.updateMetadata.help']}
+                    </p:tooltip>
+                </p:row>
+                <p:row>
+                    <h:panelGroup layout="block"
+                                  styleClass="not-scrollable dialogFieldWrapper">
+                        <p:dataTable id="metadataUpdateTable"
+                                     widgetVar="metadataUpdateTable"
+                                     value="#{DataEditorForm.updateMetadataDialog.metadataComparisons}"
+                                     scrollable="#{true}"
+                                     scrollHeight="400"
+                                     rowIndexVar="rowIdx"
+                                     var="comparison">
+                            <p:column id="metadataKeyColumn"
+                                      width="240"
+                                      headerText="#{msgs['dataEditor.updateMetadata.metadata']}">
+                                <h:outputText value="#{DataEditorForm.getMetadataLabel(comparison.metadataKey)}"
+                                              title="#{DataEditorForm.getMetadataLabel(comparison.metadataKey)}"/>
+                            </p:column>
+                            <p:column id="oldValueColumn"
+                                      headerText="#{msgs['applicationTitle']}">
+                                <p:dataList id="oldMetadataEntryValues"
+                                            rendered="#{not comparison.isMetadataGroup()}"
+                                            value="#{comparison.oldValuesAsStrings}"
+                                            var="oldEntry"
+                                            itemStyleClass="metadata-value-list">
+                                    <h:outputText value="#{oldEntry}"
+                                                  title="#{oldEntry}"
+                                                  styleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}"/>
+                                </p:dataList>
+                                <p:dataList id="oldMetadataGroupValues"
+                                            rendered="#{comparison.isMetadataGroup()}"
+                                            value="#{comparison.getMetadataGroupsSorted(DataEditorForm.process.ruleset, comparison.oldValues)}"
+                                            var="oldGroup"
+                                            styleClass="metadata-groups"
+                                            itemStyleClass="metadata-value-list">
+                                    <p:outputLabel value="#{DataEditorForm.getGroupDisplayLabel(oldGroup)}"
+                                                   styleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}"/>
+                                    <p:dataTable id="oldGroupEntries"
+                                                 value="#{comparison.getMetadataSorted(oldGroup)}"
+                                                 var="oldGroupMetadata"
+                                                 rowStyleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}">
+                                        <p:column id="oldGroupEntryKeyColumn">
+                                            <h:outputText value="#{DataEditorForm.getMetadataEntryLabel(oldGroupMetadata.key, comparison.metadataKey)}"
+                                                          title="#{DataEditorForm.getMetadataEntryLabel(oldGroupMetadata.key, comparison.metadataKey)}"/>
+                                        </p:column>
+                                        <p:column id="oldGroupEntryValueColumn">
+                                            <h:outputText value="#{comparison.getValueAsString(oldGroupMetadata)}"
+                                                          title="#{comparison.getValueAsString(oldGroupMetadata)}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:dataList>
+                            </p:column>
+                            <p:column id="selectionColumn"
+                                      width="40">
+                                <f:facet name="header">
+                                    <p:commandButton id="selectColumnHeaderButton"
+                                                     type="button"
+                                                     icon="fa fa-exchange fa-lg" >
+                                        <p:tooltip for="selectColumnHeaderButton"
+                                                   position="left">
+                                            #{msgs['dataEditor.updateMetadata.updateMode']}
+                                        </p:tooltip>
+                                    </p:commandButton>
+                                </f:facet>
+                                <p:outputPanel>
+                                    <!--@elvariable id="rowIdx" type="java.lang.Integer"-->
+                                    <p:commandButton id="selectOldValuesButton"
+                                                     partialSubmit="true"
+                                                     process="@this"
+                                                     title="#{msgs['dataEditor.updateMetadata.modeKeep']}"
+                                                     actionListener="#{comparison.updateSelection()}"
+                                                     update="metadataUpdateTable:@row(#{rowIdx})"
+                                                     rendered="#{comparison.selection eq reimportEnum.KEEP}"
+                                                     icon="fa fa-long-arrow-left fa-lg">
+                                        <p:tooltip for="selectOldValuesButton"
+                                                   hideEvent="mouseleave click"
+                                                   position="bottom">
+                                            #{msgs['dataEditor.updateMetadata.modeKeep']}
+                                        </p:tooltip>
+                                    </p:commandButton>
+                                    <p:commandButton id="selectBothValuesButton"
+                                                     partialSubmit="true"
+                                                     process="@this"
+                                                     title="#{msgs['dataEditor.updateMetadata.modeExtend']}"
+                                                     actionListener="#{comparison.updateSelection()}"
+                                                     update="metadataUpdateTable:@row(#{rowIdx})"
+                                                     rendered="#{comparison.selection eq reimportEnum.ADD}"
+                                                     icon="fa fa-arrows-h fa-lg">
+                                        <p:tooltip for="selectBothValuesButton"
+                                                   hideEvent="mouseleave click"
+                                                   position="bottom">
+                                            #{msgs['dataEditor.updateMetadata.modeExtend']}
+                                        </p:tooltip>
+                                    </p:commandButton>
+                                    <p:commandButton id="selectNewValuesButton"
+                                                     partialSubmit="true"
+                                                     process="@this"
+                                                     title="#{msgs['dataEditor.updateMetadata.modeReplace']}"
+                                                     actionListener="#{comparison.updateSelection()}"
+                                                     update="metadataUpdateTable:@row(#{rowIdx})"
+                                                     rendered="#{comparison.selection eq reimportEnum.REPLACE}"
+                                                     icon="fa fa-long-arrow-right fa-lg">
+                                        <p:tooltip for="selectNewValuesButton"
+                                                   hideEvent="mouseleave click"
+                                                   position="bottom">
+                                            #{msgs['dataEditor.updateMetadata.modeReplace']}
+                                        </p:tooltip>
+                                    </p:commandButton>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column id="newValueColumn"
+                                      headerText="#{DataEditorForm.process.importConfiguration.title}">
+                                <p:dataList id="newValues"
+                                            rendered="#{not comparison.isMetadataGroup()}"
+                                            value="#{comparison.newValuesAsStrings}"
+                                            var="newValue"
+                                            itemStyleClass="metadata-value-list">
+                                    <h:outputText value="#{newValue}"
+                                                  title="#{newValue}"
+                                                  styleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}"/>
+                                </p:dataList>
+                                <p:dataList id="newMetadataGroupValues"
+                                            rendered="#{comparison.isMetadataGroup()}"
+                                            value="#{comparison.getMetadataGroupsSorted(DataEditorForm.process.ruleset, comparison.newValues)}"
+                                            var="newGroup"
+                                            styleClass="metadata-groups"
+                                            itemStyleClass="metadata-value-list">
+                                    <p:outputLabel value="#{DataEditorForm.getGroupDisplayLabel(newGroup)}"
+                                                   styleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}"/>
+                                    <p:dataTable id="newGroupEntries"
+                                                 value="#{comparison.getMetadataSorted(newGroup)}"
+                                                 var="newGroupMetadata"
+                                                 rowStyleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}">
+                                        <p:column id="newGroupMetadataKeyColumn">
+                                            <h:outputText value="#{DataEditorForm.getMetadataEntryLabel(newGroupMetadata.key, comparison.metadataKey)}"
+                                                          title="#{DataEditorForm.getMetadataEntryLabel(newGroupMetadata.key, comparison.metadataKey)}"/>
+                                        </p:column>
+                                        <p:column id="newGroupMetadataValueColumn">
+                                            <h:outputText value="#{comparison.getValueAsString(newGroupMetadata)}"
+                                                          title="#{comparison.getValueAsString(newGroupMetadata)}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:dataList>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:row>
+            </p:panelGrid>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton value="#{msgs['apply']}"
+                                 id="apply"
+                                 action="#{DataEditorForm.applyMetadataUpdate()}"
+                                 update="metadataAccordion:metadata:metadataTable
+                                         metadataAccordion:addMetadataButtonWrapper
+                                         @(.ui-tree, .stripe)"
+                                 styleClass="primary right"
+                                 icon="fa fa fa-check fa-lg"
+                                 iconPos="right"
+                                 oncomplete="PF('updateMetadataDialog').hide();"/>
+                <p:commandButton value="#{msgs['cancel']}"
+                                 id="cancel"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 immediate="true"
+                                 styleClass="secondary right"
+                                 onclick="PF('updateMetadataDialog').hide();"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>
