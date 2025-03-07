@@ -124,21 +124,6 @@ public abstract class ProcessDetail implements Serializable {
     public abstract Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException;
 
     /**
-     * If the metadata entry addresses a property of the structure, returns a
-     * pair of the setter and the value to set; else {@code null}. This method
-     * it to be called when saving the data.
-     *
-     * @return if data is to be written a pair of the setter of the
-     *         {@link LogicalDivision} and the value to set, else null
-     * @throws InvalidMetadataValueException
-     *             if the metadata form contains syntactically wrong input
-     * @throws NoSuchMetadataFieldException
-     *             if the field configured in the rule set does not exist
-     */
-    abstract Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue()
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException;
-
-    /**
      * Returns whether this metadata entry is leading for options of other
      * metadata entries. If true, the application must refresh the metadata
      * panel after this entry was changed to reflect the option changes in other
