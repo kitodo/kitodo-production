@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -90,7 +92,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     private RulesetManagementInterface rulesetManagement;
     private final List<Locale.LanguageRange> priorityList;
-    private final String acquisitionStage = "create";
     private Project project;
     private Template template;
     private LinkedList<TempProcess> processes = new LinkedList<>();
@@ -172,7 +173,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     @Override
     public String getAcquisitionStage() {
-        return acquisitionStage;
+        return CREATE;
     }
 
     /**
@@ -417,7 +418,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             } else {
                 String parentType = logicalDivision.getType();
                 StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType,
-                    acquisitionStage, priorityList);
+                    CREATE, priorityList);
                 if (divisionView.getAllowedSubstructuralElements().containsKey(processDataTab.getDocType())) {
                     return null;
                 } else {
@@ -597,7 +598,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         // set parent relations between main process and its imported child processes!
         try {
             ImportService.processProcessChildren(getMainProcess(), childProcesses, rulesetManagement,
-                    acquisitionStage, priorityList);
+                CREATE, priorityList);
         } catch (DAOException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
@@ -621,7 +622,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private void processTempProcess(TempProcess tempProcess) throws ProcessGenerationException {
         try {
             tempProcess.getProcessMetadata().preserve();
-            ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
+            ImportService.processTempProcess(tempProcess, rulesetManagement, CREATE, priorityList, null);
         } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
             throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
         } catch (RulesetNotFoundException e) {
@@ -638,11 +639,11 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (this.processes.indexOf(tempProcess) == 0) {
                 tempProcess.getProcessMetadata().preserve();
             }
-            ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, acquisitionStage, priorityList);
+            ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
         }
         // save child processes meta.xml files
         for (TempProcess tempProcess : this.childProcesses) {
-            ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, acquisitionStage, priorityList);
+            ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
         }
     }
 

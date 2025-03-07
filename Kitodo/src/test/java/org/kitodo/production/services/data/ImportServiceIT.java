@@ -11,6 +11,9 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+import static org.kitodo.constants.StringConstants.KITODO;
+
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -133,7 +136,6 @@ public class ImportServiceIT {
     private static final String PICA_PARENT_ID = "pica.parentId";
     private static final String firstProcess = "First process";
     private static final String TEST_PROCESS_TITLE = "Testtitel";
-    private static final String KITODO = "kitodo";
     private static final String METADATA = "metadata";
     private static final String EXPECTED_AUTHOR = "HansMeier";
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
@@ -440,9 +442,8 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            ImportService.processTempProcess(tempProcess, management,
-                    ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
-                            .getCurrentMetadataLanguage(), null);
+            ImportService.processTempProcess(tempProcess, management, CREATE, ServiceManager.getUserService()
+                    .getCurrentMetadataLanguage(), null);
             assertFalse(tempProcess.getProcess().getProperties().isEmpty(), "Process should have some properties");
             assertTrue(StringUtils.isNotBlank(tempProcess.getProcess().getTitle()), "Process title should not be empty");
         }
@@ -636,9 +637,8 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            return ProcessHelper.transformToProcessDetails(tempProcess, management,
-                    ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
-                            .getCurrentMetadataLanguage());
+            return ProcessHelper.transformToProcessDetails(tempProcess, management, CREATE, ServiceManager
+                    .getUserService().getCurrentMetadataLanguage());
         }
     }
 
