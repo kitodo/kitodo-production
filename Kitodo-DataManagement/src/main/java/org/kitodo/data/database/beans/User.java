@@ -117,6 +117,10 @@ public class User extends BaseBean {
     @Column(name = "show_physical_page_number_below_thumbnail")
     private boolean showPhysicalPageNumberBelowThumbnail;
 
+    @ManyToOne
+    @JoinColumn(name = "default_client_id", foreignKey = @ForeignKey(name = "FK_user_default_client_id"))
+    private Client defaultClient;
+
     /**
      * Constructor for User Entity.
      */
@@ -160,6 +164,7 @@ public class User extends BaseBean {
         this.projects = Objects.isNull(user.projects) ? new ArrayList<>() : user.projects;
         this.clients = Objects.isNull(user.clients) ? new ArrayList<>() : user.clients;
         this.filters = Objects.isNull(user.filters) ? new ArrayList<>() : user.filters;
+        this.defaultClient = Objects.isNull(user.defaultClient) ? null : user.defaultClient;
 
         if (Objects.nonNull(user.tableSize)) {
             this.tableSize = user.tableSize;
@@ -610,6 +615,24 @@ public class User extends BaseBean {
      */
     public void setShowPhysicalPageNumberBelowThumbnail(boolean showPhysicalPageNumberBelowThumbnail) {
         this.showPhysicalPageNumberBelowThumbnail = showPhysicalPageNumberBelowThumbnail;
+    }
+
+    /**
+     * Get default client.
+     *
+     * @return default client
+     */
+    public Client getDefaultClient() {
+        return defaultClient;
+    }
+
+    /**
+     * Set default client.
+     *
+     * @param defaultClient default client
+     */
+    public void setDefaultClient(Client defaultClient) {
+        this.defaultClient = defaultClient;
     }
 
     /**
