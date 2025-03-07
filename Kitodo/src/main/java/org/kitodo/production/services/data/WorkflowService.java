@@ -131,4 +131,28 @@ public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
     public List<Workflow> getAllActiveWorkflows() {
         return dao.getAllActive();
     }
+
+    private List<Workflow> getByTitle(String title) {
+        return dao.getByQuery("FROM Workflow WHERE title = :title", Collections.singletonMap("title", title));
+    }
+
+    /**
+     * Save given workflow if it is an existing workflow (e.g. if it does have an ID)
+     * or if it is a new workflow and no workflow with the same name exists.
+     *
+     * @param workflow the object to save
+     *
+     * @throws DataException if the given workflow is a new workflow and a workflow with the same name already exists
+     */
+    public void saveWorkflow(Workflow workflow) throws DAOException {
+        if (Objects.nonNull(workflow.getId())) {
+            save(workflow);
+        } else {
+            if (getByTitle(workflow.getTitle()).isEmpty()) {
+                save(workflow);
+            } else {
+                throw new DAOException(Helper.getTranslation("duplicateWorkflowTitle", workflow.getTitle()));
+            }
+        }
+    }
 }
