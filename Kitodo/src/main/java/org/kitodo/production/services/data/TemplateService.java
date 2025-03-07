@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,7 +92,7 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
                 + " CASE WHEN EXISTS (SELECT 1 FROM Process p WHERE p.template.id = t.id) "
                 + " THEN true ELSE false END AS isUsed "
                 + " FROM Template t";
-        List<Object[]> results = getProjectionByQuery(hql);
+        List<Object[]> results = dao.getProjectionByQuery(hql, Collections.emptyMap());
         return results.stream()
                 .collect(Collectors.toMap(
                         row -> (Integer) row[0], // templateId

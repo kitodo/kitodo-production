@@ -36,9 +36,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -104,10 +102,10 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             Process parentProcess = formProcessTitle(order, tempProcess, process);
             createProcess(tempProcess, process, parentProcess);
 
-        } catch (CommandException | CustomResponseException | DataException | DAOException
-                | InvalidMetadataValueException | IOException | NoRecordFoundException | NoSuchMetadataFieldException
-                | ParserConfigurationException | ProcessGenerationException | SAXException | TransformerException
-                | UnsupportedFormatException | URISyntaxException | XPathExpressionException e) {
+        } catch (CommandException | DataException | DAOException | InvalidMetadataValueException | IOException
+                | NoRecordFoundException | NoSuchMetadataFieldException | ParserConfigurationException
+                | ProcessGenerationException | SAXException | TransformerException | UnsupportedFormatException
+                | URISyntaxException | XPathExpressionException e) {
             throw new ProcessorException(e.getMessage());
         }
     }
@@ -190,31 +188,18 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
 
     /* In the third and final part of the processing routine, the process is
      * created and saved. */
-    private void createProcess(TempProcess tempProcess, Process process, Process parentProcess) throws DataException,
-            CustomResponseException, IOException, CommandException {
+    private void createProcess(TempProcess tempProcess, Process process, Process parentProcess) throws DAOException,
+            IOException, CommandException {
 
-        saveProcess(process);
+        processService.save(process);
         fileService.createProcessLocation(process);
         metsService.saveWorkpiece(tempProcess.getWorkpiece(), processService.getMetadataFileUri(process));
         if (Objects.nonNull(parentProcess)) {
             MetadataEditor.addLink(parentProcess, LAST_CHILD, process.getId());
             process.setParent(parentProcess);
             parentProcess.getChildren().add(process);
-            saveProcess(process);
-            saveProcess(parentProcess);
-        }
-    }
-
-    /**
-     * When the process is saved, the tasks are also indexed.
-     * 
-     * @param process
-     *            process to be saved
-     */
-    private void saveProcess(Process process) throws DataException, CustomResponseException, IOException {
-        processService.save(process, true);
-        for (Task task : process.getTasks()) {
-            taskService.saveToIndex(task, true);
+            processService.save(process);
+            processService.save(parentProcess);
         }
     }
 }
