@@ -755,32 +755,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Determines how many processes have a specific identifier.
-     *
-     * <p>
-     * <b>API Note:</b><br>
-     * This function counts the data records for the client, for which the
-     * logged-in user is currently working.
-     * 
-     * <p>
-     * <b>Implementation Requirements:</b><br>
-     * This function requires that the thread is assigned to a logged-in user.
-     *
-     * <!-- Used to check whether a process identifier is already in use. In
-     * both places, the result is only checked for > 0. -->
-     *
-     * @param title
-     *            process name to be searched for
-     * @return number of processes with this title
-     */
-    public Long findNumberOfProcessesWithTitle(String title) throws DAOException {
-        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
-        String query = "FROM Process process WHERE process.title = '" + title + "' "
-                + "AND process.project.client.id = " + sessionClientId;
-        return (long) getByQuery(query).size();
-    }
-
-    /**
      * Returns all selected processes. This refers to when a user has ticked
      * "select all", and then optionally deselected individual processes. The
      * function then returns a list of all <i>remaining</i> processes.
@@ -1496,6 +1470,33 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 return Pair.of(processId, e.getClass().getSimpleName());
             }
         }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    /**
+     * Determines how many processes have a specific identifier.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This function counts the data records for the client, for which the
+     * logged-in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     *
+     * <!-- Used to check whether a process identifier is already in use. In
+     * both places, the result is only checked for > 0. -->
+     *
+     * @param title
+     *            process name to be searched for
+     * @return number of processes with this title
+     */
+    public Long findNumberOfProcessesWithTitle(String title) throws DAOException {
+        BeanQuery query = new BeanQuery(Process.class);
+        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
+        query.restrictToClient(sessionClientId);
+        query.addStringRestriction("title", title);
+        return count(query.formCountQuery());
     }
 
     /**

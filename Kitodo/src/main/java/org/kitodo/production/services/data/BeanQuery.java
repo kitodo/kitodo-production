@@ -132,6 +132,20 @@ public class BeanQuery {
     }
 
     /**
+     * Requires that hits in a specific field must contain specific string.
+     * 
+     * @param field
+     *            field that must have the specified string
+     * @param value
+     *            string that must be contained in the field
+     */
+    public void addStringRestriction(String field, String value) {
+        String parameterName = varName(field);
+        restrictions.add(varName + '.' + field + " = :" + parameterName);
+        parameters.put(parameterName, value);
+    }
+
+    /**
      * Requires that a member with the given ID is in the {@code @ManyToMany}
      * relationship.
      * 
