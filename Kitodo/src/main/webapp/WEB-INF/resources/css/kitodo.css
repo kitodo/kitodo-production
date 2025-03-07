@@ -3824,6 +3824,29 @@ kbd {
     padding: 0 var(--default-half-size);
 }
 
+#externalViewTitle {
+    color: var(--pure-white);
+    line-height: 1.5em;
+}
+
+#externalViewPanel {
+    margin: auto 16px; 
+}
+
+#externalViewPanel, #externalViewPanel_content {
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#externalViewPanel #imagePreviewForm\:mediaDetailMediaContainer {
+    height: 100%;
+}
+
+#externalViewPanel video {
+    max-height: 90%;
+}
+
 /*----------------------------------------------------------------------
 Workflow Editor
 ----------------------------------------------------------------------*/

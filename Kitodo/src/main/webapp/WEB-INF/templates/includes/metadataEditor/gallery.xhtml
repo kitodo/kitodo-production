@@ -201,6 +201,19 @@
                             update="dialogAddDocStrucTypeDialog">
                     <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
                 </p:menuitem>
+                <p:menuitem value="#{msgs.viewPageInNewWindow}"
+                            rendered="#{
+                                DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE and 
+                                mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
+                            icon="fa fa-external-link fa-sm"
+                            styleClass="plain"
+                            outcome="externalView" 
+                            target="_blank">
+                    <f:param name="processId" value="#{DataEditorForm.process.id}"/>
+                    <f:param name="mediaId" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                    <f:param name="mimeType" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType}"/>
+                    <f:param name="cachingUUID" value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                </p:menuitem>
                 <p:menuitem value="#{msgs.assignToNextElement}"
                             icon="fa fa-link fa-sm"
                             styleClass="plain"
