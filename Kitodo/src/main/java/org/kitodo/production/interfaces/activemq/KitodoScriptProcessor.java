@@ -13,7 +13,6 @@ package org.kitodo.production.interfaces.activemq;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class KitodoScriptProcessor extends ActiveMQProcessor {
                 processes.add(processService.getById(id));
             }
             kitodoScriptService.execute(processes, script);
-        } catch (DAOException | DataException | IOException | InvalidImagesException | MediaNotFoundException e) {
+        } catch (DAOException | IOException | InvalidImagesException | MediaNotFoundException e) {
             throw new ProcessorException(e);
         }
     }
