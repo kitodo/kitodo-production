@@ -22,8 +22,8 @@ public class DataEditorSetting extends BaseBean {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "task_id")
-    private int taskId;
+    @Column(name = "task_id", nullable = true)
+    private Integer taskId;
 
     @Column(name = "structure_width")
     private float structureWidth;
@@ -38,6 +38,19 @@ public class DataEditorSetting extends BaseBean {
      * Constructor.
      */
     public DataEditorSetting() {
+    }
+
+    /**
+     * Copy constructor (without id).
+     * 
+     * @param setting the data editor settings that are copied
+     */
+    public DataEditorSetting(DataEditorSetting setting) {
+        setUserId(setting.getUserId());
+        setTaskId(setting.getTaskId());
+        setStructureWidth(setting.getStructureWidth());
+        setMetadataWidth(setting.getMetadataWidth());
+        setGalleryWidth(setting.getGalleryWidth());
     }
 
     /**
@@ -59,20 +72,20 @@ public class DataEditorSetting extends BaseBean {
     }
 
     /**
-     * Get taskId.
+     * Get taskId. Either the id of the task or null, for a task-independent default layout.
      *
      * @return value of taskId
      */
-    public int getTaskId() {
+    public Integer getTaskId() {
         return taskId;
     }
 
     /**
-     * Set taskId.
+     * Set taskId. Either the id of the task or null, for a task-independent default layout.
      *
      * @param taskId as int
      */
-    public void setTaskId(int taskId) {
+    public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
 
