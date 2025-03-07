@@ -74,4 +74,15 @@ public class Metadata {
         return domain == metadata.domain
                 && Objects.equals(key, metadata.key);
     }
+
+    /**
+     * hashCode method of current class.
+     *
+     * @see java.lang.Object#hashCode()
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(domain, key);
+    }
 }

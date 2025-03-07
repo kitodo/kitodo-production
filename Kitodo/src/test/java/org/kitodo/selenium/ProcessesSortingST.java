@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
@@ -41,7 +41,7 @@ public class ProcessesSortingST extends BaseTestSelenium {
     /**
      * Set up process sorting tests.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         
@@ -52,12 +52,12 @@ public class ProcessesSortingST extends BaseTestSelenium {
         ServiceManager.getTaskService().save(task);
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
     }

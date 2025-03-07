@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2">
+	<declaration>
+
+		<!--Divisons für Level of description (ISAD(G)) -->
+
+		<division id="bestand" processTitle="docType+'_'+name_intern" withWorkflow="false" use="createChildrenFromParent">
+			<label>Fonds</label>
+			<label lang="de">Bestand</label>
+		</division>
+
+		<division id="teilbestand" processTitle="docType+'_'+name_intern">
+			<label>Subfonds</label>
+			<label lang="de">Teilbestand</label>
+		</division>
+
+		<division id="klassifikation" processTitle="docType+'_'+id">
+			<label>Classification</label>
+			<label lang="de">Klassifikation</label>
+		</division>
+
+		<division id="series" processTitle="docType+'_'+name_intern">
+			<label>Series</label>
+			<label lang="de">Serie</label>
+		</division>
+
+		<division id="vorgang" processTitle="docType+'_'+signatur_intern">
+			<label>Item</label>
+			<label lang="de">Vorgang</label>
+		</division>
+
+		<division id="verzeichnungseinheit" processTitle="docType+'_'+id">
+			<label>file</label>
+			<label lang="de">Verzeichnungseinheit</label>
+		</division>
+
+		<!--Divisions für Strukturelemente auf dem Level von Verzeichnungseinheiten-->
+
+		<division id="article">
+            <label>Article</label>
+            <label lang="de">Artikel</label>
+        </division>
+
+		<division id="chapter">
+            <label>Kapitel</label>
+        </division>
+
+        <division id="contents">
+            <label>Table of contents</label>
+            <label lang="de">Inhaltsverzeichnis</label>
+        </division>
+
+        <division id="title_page">
+            <label>Title page</label>
+            <label lang="de">Titelblatt</label>
+        </division>
+
+        <division id="verse">
+            <label>Verse</label>
+            <label lang="de">Verse</label>
+        </division>
+
+		<!-- Keys für Level of description Bestand-->
+
+		<key id="id" use="recordIdentifier">
+			<label lang="de">ID</label>
+		</key>
+
+		<key id="name">
+		   <label lang="de">Name</label>
+		</key>
+
+		<key id="name_intern">
+		   <label lang="de">Name (intern)</label>
+		</key>
+
+		<key id="anzeigename">
+			<label lang="de">Anzeigename</label>
+		</key>
+
+		<key id="rechte">
+			<label lang="de">Rechte</label>
+		</key>
+
+		<key id="bestand_rechtebedingungen">
+			<label lang="de">Rechtebedingungen</label>
+		</key>
+
+		<key id="info_laufzeit">
+			<label lang="de">Laufzeit</label>
+		</key>
+
+		<key id="info_umfang">
+			<label lang="de">Umfang</label>
+		</key>
+
+		<key id="status_id">
+			<label lang="de">Status</label>
+		</key>
+
+		<!-- Keys für Level of description Verzeichnungseinheit-->
+
+		<key id="id" use="recordIdentifier">
+			<label lang="de">ID</label>
+		</key>
+
+		<key id="einheitstitel">
+			<label lang="de">Einheitstitel</label>
+		</key>
+
+		<key id="signatur">
+			<label lang="de">Signatur</label>
+		</key>
+
+		<key id="signatur_intern">
+			<label lang="de">Signatur (intern)</label>
+		</key>
+
+		<key id="alte_signatur">
+			<label lang="de">Alte Signatur</label>
+		</key>
+
+		<key id="enthaelt">
+			<label lang="de">Enthält</label>
+		</key>
+
+		<key id="provenienz">
+			<label lang="de">Provenienz</label>
+		</key>
+
+		<key id="umfang">
+			<label lang="de">Umfang</label>
+		</key>
+
+		<key id="ort">
+			<label lang="de">Ort</label>
+		</key>
+
+		<key id="datierung">
+			<label lang="de">Datierung-verbal</label>
+		</key>
+
+		<key id="datierung_date_bis">
+			<label lang="de">Datierung bis</label>
+		</key>
+
+		<key id="datierung_date_von">
+			<label lang="de">Datierung von</label>
+		</key>
+
+		<key id="material_technik">
+			<label lang="de">Material/Technik</label>
+		</key>
+
+		<key id="masse_format">
+			<label lang="de">Maße/Format</label>
+		</key>
+
+		<key id="objekttyp_id">
+			<label lang="de">Objekttyp</label>
+		</key>
+
+		<key id="freigabe_id">
+			<label lang="de">Freigabe</label>
+		</key>
+
+		<key id="rechte_id">
+			<label lang="de">Rechte (easyDB)</label>
+		</key>
+
+        <key id="LegalNoteAndTermsOfUse"><!-- rights information according to DINI AG KIM Lizenzen Grupppe -->
+            <label>legal note / terms of use</label>
+            <label lang="de">Rechtehinweis / Nutzungshinweis</label>
+            <option value="PDM1.0"><label>PDM 1.0</label></option>
+            <option value="FZRV1.0INC1.0"><label>Freier Zugang - Rechte vorbehalten + Urheberrechtsschutz 1.0</label></option>
+            <option value="FZRV1.0"><label>Freier Zugang - Rechte vorbehalten 1.0</label></option>
+            <option value="VW1.0"><label>Vergriffene Werke 1.0</label></option>
+            <option value="CCBYSA4.0"><label>CC BY-SA 4.0</label></option>
+            <option value="CC01.0"><label>CC0 1.0</label></option>
+            <option value="INC1.0"><label>In Copyright 1.0</label></option>
+        </key>
+
+		<key id="license">  <!-- rights information according to DFG METS Anwendungsprofil -->
+            <label>Lizenz des Digitalisats</label>
+            <option value="pdm"><label>Kennzeichnung als Public Domain</label></option>
+            <option value="cc0"><label>Lizensierung unter CC0-Lizenz</label></option>
+            <option value="cc-by"><label>Lizensierung unter CC-BY-Lizenz</label></option>
+            <option value="cc-by-sa"><label>Lizensierung unter CC-BY-SA-Lizenz</label></option>
+            <option value="cc-by-nd"><label>Lizensierung unter CC-BY-NC-Lizenz</label></option>
+            <option value="cc-by-nc-sa"><label>Lizensierung unter CC-BY-NC-SA-Lizenz</label></option>
+            <option value="cc-by-nc-nd"><label>Lizensierung unter CC-BY-NC-ND-Lizenz</label></option>
+            <option value="http://rightsstatements.org/vocab/InC/1.0/"><label>Urheberrechtsschutz</label></option>
+            <option value="http://rightsstatements.org/vocab/InC-NC/1.0/"><label>Urheberrechtsschutz - Nicht kommerzielle Nutzung gestattet</label></option>
+            <option value="reserved"><label>Sonstiger Rechtevorbehalt</label></option>
+        </key>
+
+		<!-- Keys Objektspezifische Felder Verzeichnungseinheit-->
+
+		<key id="iconclass">
+			<label lang="de">Iconclass</label>
+		</key>
+
+		<key id="signatur_des_kuenstlerers">
+			<label lang="de">Signatur des Künstlers</label>
+		</key>
+
+		<key id="projekt">
+			<label lang="de">Projekt</label>
+		</key>
+
+		<key id="fassung">
+			<label lang="de">Fassung</label>
+		</key>
+
+		<key id="besetzung">
+			<label lang="de">Besetzung</label>
+		</key>
+
+		<key id="premiere">
+			<label lang="de">Premiere-Datum</label>
+		</key>
+
+		<key id="produktion">
+			<label lang="de">Produktion</label>
+		</key>
+
+		<key id="auffuehrungsort">
+			<label lang="de">Aufführungsort</label>
+		</key>
+
+		<key id="abzug">
+			<label lang="de">Abzug</label>
+		</key>
+
+		<key id="audiocodec">
+			<label lang="de">Audiocodec</label>
+		</key>
+
+		<key id="aufloeseung">
+			<label lang="de">Auflösung</label>
+		</key>
+
+		<key id="aufnahmedatum">
+		   <label lang="de">Aufnahmedatum</label>
+		</key>
+
+		<key id="aufnahmeort">
+			<label lang="de">Aufnahmeort</label>
+		</key>
+
+		<key id="aufzeichnungsform">
+			<label lang="de">Aufzeichnungsform</label>
+		</key>
+
+		<key id="aeussere_kennzeichen">
+			<label lang="de">äußere Kennzeichen</label>
+		</key>
+
+		<key id="bandlaenge">
+			<label lang="de">Bandlänge</label>
+		</key>
+
+		<key id="entstehungstyp">
+			<label lang="de">Entstehungstyp</label>
+		</key>
+
+		<key id="farbigkeit">
+			<label lang="de">Farbigkeit</label>
+		</key>
+
+		<key id="file_type">
+			<label lang="de">File Type (Container)</label>
+		</key>
+
+		<key id="format">
+			<label lang="de">Format</label>
+		</key>
+
+		<key id="fototyp">
+			<label lang="de">Fototyp</label>
+		</key>
+
+		<key id="geschwindigkeit">
+			<label lang="de">Geschwindigkeit</label>
+		</key>
+
+		<key id="kanaltechnik">
+			<label lang="de">Kanaltechnik (Ton)</label>
+		</key>
+
+		<key id="magnetbandtyp">
+			<label lang="de">Magnetbandtyp</label>
+		</key>
+
+		<key id="massstab">
+			<label lang="de">Maßstab</label>
+		</key>
+
+		<key id="papiertyp">
+			<label lang="de">Papiertyp</label>
+		</key>
+
+		<key id="plakat_nr">
+			<label lang="de">Plakat-Nr.</label>
+		</key>
+
+		<key id="rauschunterdrueckung">
+			<label lang="de">Rauschunterdrückung</label>
+		</key>
+
+		<key id="seitenverhältnis">
+			<label lang="de">seitenverhältnis</label>
+		</key>
+
+		<key id="spieldauer">
+			<label lang="de">Spieldauer</label>
+		</key>
+
+		<key id="tonhead">
+			<label lang="de">Ton</label>
+		</key>
+
+		<key id="tonsystem">
+			<label lang="de">tonsystem</label>
+		</key>
+
+		<key id="traegermaterial">
+			<label lang="de">Trägermaterial</label>
+		</key>
+
+		<key id="tv_norm">
+			<label lang="de">TV-Norm</label>
+		</key>
+
+		<key id="video_nummer">
+			<label lang="de">Video-Nr</label>
+		</key>
+
+		<key id="inhaltliche_beschreibung">
+			<label lang="de">Inhalt (Beschreibung)</label>
+		</key>
+
+		<key id="inventarnummer">
+			<label lang="de">Inventarnummer</label>
+		</key>
+
+		<key id="verweis">
+			<label lang="de">Verweis</label>
+		</key>
+
+		<!-- Key IDs Personen Verzeichnungseinheit-->
+
+		<key id="person">
+			<label>Person</label>
+			<label lang="de">Person</label>
+			<key id="typ_id">
+				<label>Role</label>
+				<label lang="de">Rolle</label>
+			</key>
+
+			<key id="gnd_id">
+				<label>GND-ID</label>
+				<label lang="de">GND-ID</label>
+			</key>
+
+			<key id="gnd_name">
+				<label>Name</label>
+				<label lang="de">Name</label>
+			</key>
+		</key>
+
+		<!-- Higher level identifier -> contains collection ID for files! -->
+		<key id="collection_id" use="higherlevelIdentifier">
+			<label lang="de">Bestands-ID</label>
+		</key>
+
+        <key id="docType" use="docType">
+            <label>type of document</label>
+            <label lang="de">Dokumenttyp</label>
+        </key>
+
+	</declaration>
+
+	<correlation>
+		<restriction division="bestand" unspecified="forbidden">
+			<permit division="teilbestand"/>
+			<permit division="verzeichnungseinheit"/>
+			<permit key="id" minOccurs="1" maxOccurs="1"/>
+			<permit key="name" minOccurs="1" maxOccurs="1"/>
+			<permit key="name_intern" minOccurs="1" maxOccurs="1"/>
+			<permit key="anzeigename" minOccurs="1" maxOccurs="1"/>
+			<permit key="rechte" maxOccurs="1"/>
+			<permit key="rechtebedingungen" maxOccurs="1"/>
+			<permit key="info_laufzeit" maxOccurs="1"/>
+			<permit key="info_umfang" maxOccurs="1"/>
+			<permit key="status_id" minOccurs="1" maxOccurs="1"/>
+			<permit key="docType" minOccurs="1" maxOccurs="1"/>
+		</restriction>
+
+		<restriction division="teilbestand" unspecified="forbidden">
+			<permit division="verzeichnungseinheit"/>
+			<permit key="id" minOccurs="1" maxOccurs="1"/>
+			<permit key="name" minOccurs="1" maxOccurs="1"/>
+			<permit key="name_intern" minOccurs="1" maxOccurs="1"/>
+			<permit key="anzeigename" minOccurs="1" maxOccurs="1"/>
+			<permit key="rechte" maxOccurs="1"/>
+			<permit key="rechtebedingungen" maxOccurs="1"/>
+			<permit key="info_laufzeit" maxOccurs="1"/>
+			<permit key="info_umfang" maxOccurs="1"/>
+			<permit key="docType" minOccurs="1" maxOccurs="1"/>
+		</restriction>
+
+		<restriction division="klassifikation" unspecified="forbidden">
+			<permit division="verzeichnungseinheit"/>
+			<permit key="id" minOccurs="1" maxOccurs="1"/>
+			<permit key="name" minOccurs="1" maxOccurs="1"/>
+			<permit key="name_intern" minOccurs="1" maxOccurs="1"/>
+			<permit key="anzeigename" minOccurs="1" maxOccurs="1"/>
+			<permit key="rechte" maxOccurs="1"/>
+			<permit key="rechtebedingungen" maxOccurs="1"/>
+			<permit key="info_laufzeit" maxOccurs="1"/>
+			<permit key="info_umfang" maxOccurs="1"/>
+			<permit key="docType" minOccurs="1" maxOccurs="1"/>
+		</restriction>
+
+		<restriction division="verzeichnungseinheit">
+			<permit division="item"/>
+            <permit division="article"/>
+            <permit division="chapter"/>
+			<permit division="verse"/>
+            <permit division="title_page"/>
+			<permit division="contents"/>
+			<permit key="id" minOccurs="1" maxOccurs="1"/>
+			<permit key="collection_id"/>
+			<permit key="einheitstitel" minOccurs="1" maxOccurs="1"/>
+			<permit key="signatur" maxOccurs="1"/>
+			<permit key="signatur_intern" maxOccurs="1"/>
+			<permit key="alte_signatur" maxOccurs="1"/>
+			<permit key="enthaelt" maxOccurs="1"/>
+			<permit key="provenienz" maxOccurs="1"/>
+			<permit key="umfang" maxOccurs="1"/>
+			<permit key="ort" maxOccurs="1"/>
+			<permit key="datierung" maxOccurs="1"/>
+			<permit key="datierung_date_bis" maxOccurs="1"/>
+			<permit key="datierung_date_von" maxOccurs="1"/>
+			<permit key="freigabe_id" maxOccurs="1"/>
+			<permit key="rechte_id" maxOccurs="1"/>
+			<permit key="LegalNoteAndTermsOfUse" maxOccurs="1"/>
+			<permit key="license" maxOccurs="1"/>
+			<permit key="iconclass"/>
+			<permit key="signatur_des_kuenstlers" maxOccurs="1"/>
+			<permit key="projekt" maxOccurs="1"/>
+			<permit key="fassung" maxOccurs="1"/>
+			<permit key="besetzung" maxOccurs="1"/>
+			<permit key="permiere" maxOccurs="1"/>
+			<permit key="produktion" maxOccurs="1"/>
+			<permit key="auffuehrungsort" maxOccurs="1"/>
+			<permit key="inhaltliche_beschreibung" maxOccurs="1"/>
+			<permit key="inventarnummer" maxOccurs="1"/>
+			<permit key="kommentar"/>
+			<permit key="typ_id"/>
+			<permit key="gnd_id"/>
+			<permit key="ld_gnd_name"/>
+			<permit key="docType" minOccurs="1" maxOccurs="1"/>
+		</restriction>
+
+		<restriction division="title_page">
+			<permit key="name" minOccurs="1" maxOccurs="1"/>
+		</restriction>
+	</correlation>
+
+    <editing>
+        <setting key="LegalNoteAndTermsOfUse" alwaysShowing="true"/>
+        <setting key="license" alwaysShowing="true"/>
+    </editing>
+
+</ruleset>

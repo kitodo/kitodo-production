@@ -11,27 +11,27 @@
 
 package org.kitodo.data.database.persistence;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class UserDaoIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockIndex.startNode();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockIndex.stopNode();
     }
@@ -45,16 +45,16 @@ public class UserDaoIT {
         userDAO.save(users.get(1));
         userDAO.save(users.get(2));
 
-        assertEquals("Objects were not saved or not found!", 3, userDAO.getAll().size());
-        assertEquals("Objects were not saved or not found!", 2, userDAO.getAll(1,2).size());
-        assertEquals("Object was not saved or not found!", "first_user", userDAO.getById(1).getLogin());
+        assertEquals(3, userDAO.getAll().size(), "Objects were not saved or not found!");
+        assertEquals(2, userDAO.getAll(1,2).size(), "Objects were not saved or not found!");
+        assertEquals("first_user", userDAO.getById(1).getLogin(), "Object was not saved or not found!");
 
         userDAO.remove(1);
         userDAO.remove(users.get(1));
-        assertEquals("Objects were not removed or not found!", 1, userDAO.getAll().size());
+        assertEquals(1, userDAO.getAll().size(), "Objects were not removed or not found!");
 
         User deletedUser = userDAO.getById(1);
-        assertTrue("Object was not saved or not removed!", deletedUser.isDeleted());
+        assertTrue(deletedUser.isDeleted(), "Object was not saved or not removed!");
     }
 
     private List<User> getAuthorities() {

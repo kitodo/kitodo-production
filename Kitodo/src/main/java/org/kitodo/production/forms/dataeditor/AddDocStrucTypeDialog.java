@@ -126,6 +126,7 @@ public class AddDocStrucTypeDialog {
         } else {
             this.addSingleDocStruc(preview);
         }
+        dataEditor.getStructurePanel().preserve();
         if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNode)
                 || StringUtils.isEmpty(this.selectLastPageOnAddNode))
                 || Objects.nonNull(this.preselectedViews) && !this.preselectedViews.isEmpty())) {
@@ -184,6 +185,7 @@ public class AddDocStrucTypeDialog {
             if (Objects.nonNull(selectedLogicalTreeNode)) {
                 this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
                 this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
+                dataEditor.refreshStructurePanel();
             }
             List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
                     .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))
@@ -195,10 +197,9 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Returns the selected item of the docStructAddTypeSelection drop-down
-     * menu.
+     * Returns a List of SelectItems representing the available types for the element to be created.
      *
-     * @return the selected item of the docStructAddTypeSelection
+     * @return the selected items for the docStructAddTypeSelection
      */
     public List<SelectItem> getDocStructAddTypeSelectionItems() {
         if (Objects.isNull(selectedDocStructPosition)) {
@@ -409,7 +410,6 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
-        docStructAddTypeSelectionSelectedItem = "";
         elementsToAddSpinnerValue = 1;
         checkSelectedLogicalNode();
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
@@ -424,6 +424,12 @@ public class AddDocStrucTypeDialog {
         }
         this.prepareDocStructTypes();
         prepareSelectPageOnAddNodeItems();
+        // reset type selection if previous selection is not allowed on current parent/position
+        if (getDocStructAddTypeSelectionItems()
+                .stream()
+                .noneMatch(selectItem -> selectItem.getValue().equals(docStructAddTypeSelectionSelectedItem))) {
+            docStructAddTypeSelectionSelectedItem = "";
+        }
     }
 
     private void checkSelectedLogicalNode() {

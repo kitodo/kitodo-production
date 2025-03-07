@@ -6,4 +6,4 @@ Die Verlinkung mit dem Homeverzeichnis ermöglicht es, dass die Images eines Vor
 
 In der <i>Vorgangsliste</i>, können über die Aktionen des nach unten oder oben zeigenden Pfeils die Verlinkung hergestellt, bzw. entfernt werden.
 
-<center><img src= "/user/pictures/VorgangslisteHomeverzeichnisVerlinken.png" alt="Bild" width= 80% height= auto></center>
+<center><img src= "../pictures/VorgangslisteHomeverzeichnisVerlinken.png" alt="Bild" width= 80% height= auto></center>

@@ -11,7 +11,8 @@
 
 package org.kitodo.production.helper;
 
-import static junit.framework.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,26 +20,26 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.production.services.file.FileService;
 
 public class FilesystemHelperTest {
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         FileService fileService = new FileService();
         fileService.delete(URI.create("old.xml"));
         fileService.delete(URI.create("new.xml"));
     }
 
-    @Test(expected = java.io.FileNotFoundException.class)
+    @Test
     public void renamingOfNonExistingFileShouldThrowFileNotFoundException() throws IOException {
         FileService fileService = new FileService();
         URI oldFileName = Paths.get(ConfigCore.getKitodoDataDirectory() + "none.xml").toUri();
         String newFileName = "new.xml";
-        fileService.renameFile(oldFileName, newFileName);
+        assertThrows(java.io.FileNotFoundException.class, () -> fileService.renameFile(oldFileName, newFileName));
     }
 
     @Test

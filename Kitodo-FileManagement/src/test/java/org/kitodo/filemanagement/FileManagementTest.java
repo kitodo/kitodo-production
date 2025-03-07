@@ -11,9 +11,10 @@
 
 package org.kitodo.filemanagement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collections;
@@ -30,12 +30,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
@@ -53,10 +51,7 @@ public class FileManagementTest {
 
     private static final File script = new File(KitodoConfig.getParameter("script_createDirMeta"));
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         fileManagement.create(URI.create(""), FILE_TEST, false);
         fileManagement.create(URI.create(""), DIRECTORY_SIZE, false);
@@ -65,7 +60,7 @@ public class FileManagementTest {
         ExecutionPermission.setExecutePermission(script);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         fileManagement.delete(URI.create(FILE_TEST));
         fileManagement.delete(URI.create(DIRECTORY_SIZE));
@@ -76,14 +71,14 @@ public class FileManagementTest {
     @Test
     public void shouldCreateDirectory() throws IOException {
         URI testDirectory = fileManagement.create(URI.create(FILE_TEST), "testDirectory", false);
-        assertTrue("Directory not created", fileManagement.isDirectory(testDirectory));
-        assertTrue("Directory not created", fileManagement.fileExist(testDirectory));
+        assertTrue(fileManagement.isDirectory(testDirectory), "Directory not created");
+        assertTrue(fileManagement.fileExist(testDirectory), "Directory not created");
     }
 
     @Test
     public void shouldCreateResource() throws IOException {
         URI testDirectory = fileManagement.create(URI.create(FILE_TEST), "newResource.xml", true);
-        assertTrue(FILE_NOT_CREATED, fileManagement.fileExist(testDirectory));
+        assertTrue(fileManagement.fileExist(testDirectory), FILE_NOT_CREATED);
     }
 
     @Test
@@ -96,7 +91,7 @@ public class FileManagementTest {
         }
 
         InputStream inputStream = fileManagement.read(testRead);
-        assertEquals("Did not read right content", testContent, inputStream.read());
+        assertEquals(testContent, inputStream.read(), "Did not read right content");
 
         inputStream.close();
     }
@@ -116,25 +111,25 @@ public class FileManagementTest {
         }
 
         InputStream inputStream = fileManagement.read(testWrite);
-        assertEquals("Did not write right content", testContent, inputStream.read());
+        assertEquals(testContent, inputStream.read(), "Did not write right content");
 
         inputStream.close();
     }
 
     @Test
     public void shouldCanRead() {
-        assertTrue("URI cannot be read!", fileManagement.canRead(URI.create(FILE_TEST)));
+        assertTrue(fileManagement.canRead(URI.create(FILE_TEST)), "URI cannot be read!");
     }
 
     @Test
     public void shouldGetNumberOfFiles() {
         int numberOfFiles = fileManagement.getNumberOfFiles(null, URI.create("2"));
-        assertEquals("URI cannot be read!", 1, numberOfFiles);
+        assertEquals(1, numberOfFiles, "URI cannot be read!");
     }
 
     @Test
     public void shouldCreateUriForExistingProcess() {
-        assertEquals("URI cannot be created!", URI.create("10"), fileManagement.createUriForExistingProcess("10"));
+        assertEquals(URI.create("10"), fileManagement.createUriForExistingProcess("10"), "URI cannot be created!");
     }
 
     @Test
@@ -146,7 +141,7 @@ public class FileManagementTest {
 
         fileManagement.rename(resource, "newName.xml");
         URI newUri = URI.create("fileTest/newName.xml");
-        Assert.assertFalse(fileManagement.fileExist(oldUri));
+        assertFalse(fileManagement.fileExist(oldUri));
         assertTrue(fileManagement.fileExist(newUri));
     }
 
@@ -154,13 +149,11 @@ public class FileManagementTest {
     public void shouldSkipRenamingDirectory() throws Exception {
         String directoryName = "testDir";
         URI resource = fileManagement.create(URI.create(""), directoryName, false);
-        assumeTrue(fileManagement.isDirectory(resource));
+        Assumptions.assumeTrue(fileManagement.isDirectory(resource));
         URI expectedUri = new File(KitodoConfig.getKitodoDataDirectory() + resource).toURI();
-        assertEquals("Renaming directory to the identical name should return identical URI", expectedUri,
-                fileManagement.rename(resource, directoryName));
+        assertEquals(expectedUri, fileManagement.rename(resource, directoryName), "Renaming directory to the identical name should return identical URI");
         String directoryWithTrailingSlash = directoryName + "/";
-        assertEquals("Renaming directory to the identical name with trailing slash should return identical URI",
-                expectedUri, fileManagement.rename(resource, directoryWithTrailingSlash));
+        assertEquals(expectedUri, fileManagement.rename(resource, directoryWithTrailingSlash), "Renaming directory to the identical name with trailing slash should return identical URI");
         fileManagement.delete(resource);
     }
 
@@ -205,52 +198,53 @@ public class FileManagementTest {
     }
 
     @Test
-    public void shouldDeleteFile() throws URISyntaxException, IOException {
+    public void shouldDeleteFile() throws IOException {
         URI fileForDeletion = fileManagement.create(URI.create(""), "testDelete.txt", true);
-        assertTrue(FILE_NOT_CREATED, fileManagement.fileExist(fileForDeletion));
+        assertTrue(fileManagement.fileExist(fileForDeletion), FILE_NOT_CREATED);
 
         fileManagement.delete(fileForDeletion);
-        Assert.assertFalse("File not deleted", fileManagement.fileExist(fileForDeletion));
-        assertTrue("File should not be deleted", fileManagement.fileExist(URI.create(FILE_TEST)));
+        assertFalse(fileManagement.fileExist(fileForDeletion), "File not deleted");
+        assertTrue(fileManagement.fileExist(URI.create(FILE_TEST)), "File should not be deleted");
 
-        exception.expect(IOException.class);
-        exception.expectMessage("Attempt to delete subdirectory with URI that is empty or null!");
-        fileManagement.delete(new URI(""));
-
+        Exception exception = assertThrows(IOException.class,
+            () -> fileManagement.delete(new URI(""))
+        );
+        String expectedMessage = "Attempt to delete subdirectory with URI that is empty or null!";
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
     @Test
     public void shouldMoveDirectory() throws IOException {
         URI resource = fileManagement.create(URI.create(FILE_TEST), "testMove", false);
         URI file = fileManagement.create(resource, "testMove.txt", true);
-        assertTrue(FILE_NOT_CREATED, fileManagement.fileExist(file));
+        assertTrue(fileManagement.fileExist(file), FILE_NOT_CREATED);
 
         fileManagement.move(resource, URI.create("fileTest/moved"));
         URI movedFile = URI.create("fileTest/moved/testMove.txt");
-        Assert.assertFalse("Directory not deleted", fileManagement.fileExist(resource));
-        assertTrue("Directory not moved", fileManagement.fileExist(movedFile));
+        assertFalse(fileManagement.fileExist(resource), "Directory not deleted");
+        assertTrue(fileManagement.fileExist(movedFile), "Directory not moved");
     }
 
     @Test
     public void shouldMoveFile() throws IOException {
         URI resource = fileManagement.create(URI.create(FILE_TEST), "testMove.txt", true);
-        assertTrue(FILE_NOT_CREATED, fileManagement.fileExist(resource));
+        assertTrue(fileManagement.fileExist(resource), FILE_NOT_CREATED);
 
         URI movedFile = URI.create("fileTest/moved.txt");
         fileManagement.move(resource, movedFile);
-        Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
-        assertTrue("File not moved", fileManagement.fileExist(movedFile));
+        assertFalse(fileManagement.fileExist(resource), "File not deleted");
+        assertTrue(fileManagement.fileExist(movedFile), "File not moved");
     }
 
     @Test
     public void shouldDeleteDirectory() throws IOException {
         URI directory = fileManagement.create(URI.create(""), "testDelete", false);
 
-        assertTrue("Directory not created", fileManagement.fileExist(directory));
-        assertTrue("Directory is not a directory", fileManagement.isDirectory(directory));
+        assertTrue(fileManagement.fileExist(directory), "Directory not created");
+        assertTrue(fileManagement.isDirectory(directory), "Directory is not a directory");
 
         fileManagement.delete(directory);
-        Assert.assertFalse("Directory not deleted", fileManagement.fileExist(directory));
+        assertFalse(fileManagement.fileExist(directory), "Directory not deleted");
     }
 
     @Test
@@ -260,12 +254,12 @@ public class FileManagementTest {
         URI resource = fileManagement.create(URI.create(DIRECTORY_SIZE), "size.txt", true);
         assertTrue(fileManagement.fileExist(resource));
 
-        try (OutputStream outputStream = fileManagement.write(URI.create("directorySize/size.txt"))){
+        try (OutputStream outputStream = fileManagement.write(URI.create("directorySize/size.txt"))) {
             outputStream.write(testContent);
         }
 
         long directorySize = fileManagement.getSizeOfDirectory(URI.create(DIRECTORY_SIZE));
-        assertEquals("Incorrect size of directory", 1, directorySize);
+        assertEquals(1, directorySize, "Incorrect size of directory");
     }
 
     @Test
@@ -274,7 +268,7 @@ public class FileManagementTest {
         assertTrue(fileManagement.fileExist(resource));
 
         String fileName = fileManagement.getFileNameWithExtension(resource);
-        assertEquals("File name is incorrect!", "fileName.xml", fileName);
+        assertEquals("fileName.xml", fileName, "File name is incorrect!");
     }
 
     @Test
@@ -301,7 +295,7 @@ public class FileManagementTest {
         String processFolder = "testProcess";
 
         URI processLocation = fileManagement.createProcessLocation("testProcess");
-        assertTrue("wrong processLocation", processLocation.toString().contains(processFolder));
+        assertTrue(processLocation.toString().contains(processFolder), "wrong processLocation");
 
         fileManagement.delete(processLocation);
     }
@@ -309,15 +303,15 @@ public class FileManagementTest {
     @Test
     public void shouldGetProcessSubTypeURI() {
         URI processSubTypeURI = fileManagement.getProcessSubTypeUri(URI.create("1"), "test", ProcessSubType.IMAGE, "");
-        assertEquals("Process subtype URI was incorrectly generated!", URI.create("1/images/"), processSubTypeURI);
+        assertEquals(URI.create("1/images/"), processSubTypeURI, "Process subtype URI was incorrectly generated!");
 
         processSubTypeURI = fileManagement.getProcessSubTypeUri(URI.create("1"), "test", ProcessSubType.OCR_ALTO, "");
-        assertEquals("Process subtype URI was incorrectly generated!", URI.create("1/ocr/test_alto/"), processSubTypeURI);
+        assertEquals(URI.create("1/ocr/test_alto/"), processSubTypeURI, "Process subtype URI was incorrectly generated!");
     }
 
     @Test
     public void shouldCreateSymLink() throws IOException {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        Assumptions.assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
         URI symLinkSource = URI.create(SYMLINK_SOURCE);
         URI symLinkTarget = URI.create(SYMLINK_TARGET);
 
@@ -327,7 +321,7 @@ public class FileManagementTest {
         setFileExecutable(script);
         boolean result = fileManagement.createSymLink(symLinkSource, symLinkTarget, false, SystemUtils.USER_NAME);
         setFileNotExecutable(script);
-        assertTrue("Create symbolic link has failed!", result);
+        assertTrue(result, "Create symbolic link has failed!");
 
         File scriptClean = new File(KitodoConfig.getParameter("script_deleteSymLink"));
         setFileExecutable(scriptClean);
@@ -339,7 +333,7 @@ public class FileManagementTest {
 
     @Test
     public void shouldDeleteSymLink() throws IOException {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        Assumptions.assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         URI symLinkSource = URI.create(SYMLINK_SOURCE);
         URI symLinkTarget = URI.create(SYMLINK_TARGET);
@@ -355,7 +349,7 @@ public class FileManagementTest {
         setFileExecutable(script);
         boolean result = fileManagement.deleteSymLink(symLinkTarget);
         setFileNotExecutable(script);
-        assertTrue("Delete symbolic link has failed!", result);
+        assertTrue(result, "Delete symbolic link has failed!");
 
         fileManagement.delete(symLinkSource);
         fileManagement.delete(symLinkTarget);

@@ -11,6 +11,8 @@
 
 package org.kitodo.production.security;
 
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -73,7 +75,7 @@ public class SecuritySession {
      * @return The lastRequest.
      */
     public String getLastRequestAsString() {
-        return lastRequest.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return lastRequest.format(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT));
     }
 
     /**

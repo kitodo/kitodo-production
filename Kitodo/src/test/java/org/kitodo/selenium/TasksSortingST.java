@@ -11,19 +11,18 @@
 
 package org.kitodo.selenium;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.TasksPage;
-
 
 /**
  * Tests the task list for various requirements related to sorting it.
@@ -35,17 +34,17 @@ public class TasksSortingST extends BaseTestSelenium {
 
     private static TasksPage tasksPage;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         tasksPage = Pages.getTasksPage();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
     }
@@ -59,11 +58,11 @@ public class TasksSortingST extends BaseTestSelenium {
         tasksPage.goTo();
 
         // default first task title is "Next Open"
-        assertEquals("Default task sort should be ascending by title", "Next Open", tasksPage.getFirstRowTaskTitle());
+        assertEquals("Next Open", tasksPage.getFirstRowTaskTitle(), "Default task sort should be ascending by title");
 
         // first click on title column triggers reverse order such that top task is "Progress"
         tasksPage.clickTaskTableColumnHeaderForSorting(2);
-        assertEquals("Reverse order by task title not correct", "Progress", tasksPage.getFirstRowTaskTitle());
+        assertEquals("Progress", tasksPage.getFirstRowTaskTitle(), "Reverse order by task title not correct");
     }
 
     /**
@@ -76,12 +75,11 @@ public class TasksSortingST extends BaseTestSelenium {
 
         // first click process top task "Progress" or "Open"
         tasksPage.clickTaskTableColumnHeaderForSorting(3);
-        assertTrue("Sorting tasks by process title not correct", tasksPage.getFirstRowTaskTitle().matches("Progress|Open"));
+        assertTrue(tasksPage.getFirstRowTaskTitle().matches("Progress|Open"), "Sorting tasks by process title not correct");
 
         tasksPage.clickTaskTableColumnHeaderForSorting(3);
         // second click process header top task "Processed and Some" or "Next Open"
-        assertTrue("Reverse-sorting tasks by process title not correct", 
-            tasksPage.getFirstRowTaskTitle().matches("Processed and Some|Next Open"));
+        assertTrue(tasksPage.getFirstRowTaskTitle().matches("Processed and Some|Next Open"), "Reverse-sorting tasks by process title not correct");
     }
 
     /**
@@ -94,10 +92,11 @@ public class TasksSortingST extends BaseTestSelenium {
 
         // first click on status header should have top task "Progress" or "Processed and Some" (both having the same status)
         tasksPage.clickTaskTableColumnHeaderForSorting(4);
-        assertTrue("Sorting tasks by status not correct", tasksPage.getFirstRowTaskTitle().matches("Progress|Processed and Some"));
+        assertTrue(tasksPage.getFirstRowTaskTitle().matches("Progress|Processed and Some"),
+            "Sorting tasks by status not correct");
 
         // second click on status header should have top task "Open" or "Next Open" (both having the same status)
         tasksPage.clickTaskTableColumnHeaderForSorting(4);
-        assertTrue("Sorting tasks by status not correct", tasksPage.getFirstRowTaskTitle().matches("Open|Next Open"));
+        assertTrue(tasksPage.getFirstRowTaskTitle().matches("Open|Next Open"), "Sorting tasks by status not correct");
     }
 }

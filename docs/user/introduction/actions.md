@@ -6,22 +6,22 @@ Aktionen sind in diesem Abschnitt definiert als Befehle, die ausgelöst werden k
 
 Die globalen Aktionen erscheinen in allen Bereichen von Kitodo.Production und sollen im Folgenden dargestellt und beschrieben werden:
 
-* <img src= "/user/pictures/IconBearbeiten.png" alt="Bild" height= "35" width= "35"> Bearbeiten
-* <img src= "/user/pictures/IconLoeschen.png" alt="Bild" height= "35" width= "35"> Löschen
-* <img src= "/user/pictures/IconDuplizieren.png" alt="Bild" height= "35" width= "35"> Duplizieren
-* <img src= "/user/pictures/IconAnzeigen.png" alt="Bild" height= "35" width= "35"> Anzeigen
-* <img src= "/user/pictures/IconArchivieren.png" alt="Bild" height= "35" width= "35"> Archivieren
+* <img src= "../pictures/IconBearbeiten.png" alt="Bild" height= "35" width= "35"> Bearbeiten
+* <img src= "../pictures/IconLoeschen.png" alt="Bild" height= "35" width= "35"> Löschen
+* <img src= "../pictures/IconDuplizieren.png" alt="Bild" height= "35" width= "35"> Duplizieren
+* <img src= "../pictures/IconAnzeigen.png" alt="Bild" height= "35" width= "35"> Anzeigen
+* <img src= "../pictures/IconArchivieren.png" alt="Bild" height= "35" width= "35"> Archivieren
 * EINS STATISTIK? 
 
 ## Spezifische Aktionen:
 
-* <img src= "/user/pictures/BearbeitungsstatusHochsetzen.png" alt="Bild" width= "200"> Bearbeitungsstatus hochsetzen
-* <img src= "/user/pictures/BearbeitungsstatusRuntersetzen.png" alt="Bild" width= "200">  Bearbeitungsstatus runtersetzen
-* <img src= "/user/pictures/HomeverzeichnisVerlinken.png" alt="Bild" width= "200">  Im Homeverzeichnis verlinken
-* <img src= "/user/pictures/VerlinkungHomeEntfernen.png" alt="Bild" width= "250">  Verlinkung aus Homeverzeichnis entfernen
-* <img src= "/user/pictures/ExportDMS.png" alt="Bild" width= "100">  Export DMS
-* <img src= "/user/pictures/ExceldateiErzeugen.png" alt="Bild" width= "150">  Exceldatei erzeugen
-* <img src= "/user/pictures/PDFErzeugen.png" alt="Bild" width= "125">  PDF erzeugen
+* <img src= "../pictures/BearbeitungsstatusHochsetzen.png" alt="Bild" width= "200"> Bearbeitungsstatus hochsetzen
+* <img src= "../pictures/BearbeitungsstatusRuntersetzen.png" alt="Bild" width= "200">  Bearbeitungsstatus runtersetzen
+* <img src= "../pictures/HomeverzeichnisVerlinken.png" alt="Bild" width= "200">  Im Homeverzeichnis verlinken
+* <img src= "../pictures/VerlinkungHomeEntfernen.png" alt="Bild" width= "250">  Verlinkung aus Homeverzeichnis entfernen
+* <img src= "../pictures/ExportDMS.png" alt="Bild" width= "100">  Export DMS
+* <img src= "../pictures/ExceldateiErzeugen.png" alt="Bild" width= "150">  Exceldatei erzeugen
+* <img src= "../pictures/PDFErzeugen.png" alt="Bild" width= "125">  PDF erzeugen
 
 
 

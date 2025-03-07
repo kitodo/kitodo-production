@@ -12,18 +12,17 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Ruleset;
@@ -41,7 +40,7 @@ public class RulesetServiceIT {
     private static final String slubDD = "SLUBDD";
     private static final String rulesetNotFound = "Ruleset was not found in index!";
 
-    @Before
+    @BeforeEach
     public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertClients();
@@ -55,22 +54,19 @@ public class RulesetServiceIT {
         });
     }
 
-    @After
+    @AfterEach
     public void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllRulesets() throws DAOException {
-        assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), rulesetService.count());
+        assertEquals(Long.valueOf(3), rulesetService.count(), "Rulesets were not counted correctly!");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldCountAllRulesetsAccordingToQuery() throws Exception {
         // TODO delete test stub
     }
@@ -78,95 +74,95 @@ public class RulesetServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
         Long amount = rulesetService.count();
-        assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals(Long.valueOf(3), amount, "Rulesets were not counted correctly!");
     }
 
     @Test
     public void shouldFindRuleset() throws Exception {
         Ruleset ruleset = rulesetService.getById(1);
         boolean condition = ruleset.getTitle().equals(slubDD) && ruleset.getFile().equals("ruleset_test.xml");
-        assertTrue("Ruleset was not found in database!", condition);
+        assertTrue(condition, "Ruleset was not found in database!");
     }
 
     @Test
     public void shouldFindAllRulesets() throws Exception {
         List<Ruleset> rulesets = rulesetService.getAll();
-        assertEquals("Not all rulesets were found in database!", 3, rulesets.size());
+        assertEquals(3, rulesets.size(), "Not all rulesets were found in database!");
     }
 
     @Test
     public void shouldGetAllRulesetsInGivenRange() throws Exception {
         List<Ruleset> rulesets = rulesetService.getAll(1, 10);
-        assertEquals("Not all rulesets were found in database!", 2, rulesets.size());
+        assertEquals(2, rulesets.size(), "Not all rulesets were found in database!");
     }
 
     @Test
     public void shouldFindById() throws DAOException {
-        assertEquals(rulesetNotFound, slubDD, rulesetService.getById(1).getTitle());
+        assertEquals(slubDD, rulesetService.getById(1).getTitle(), rulesetNotFound);
     }
 
     @Test
     public void shouldFindByTitle() throws DAOException {
-        assertEquals(rulesetNotFound, 1, rulesetService.getByTitle(slubDD).size());
+        assertEquals(1, rulesetService.getByTitle(slubDD).size(), rulesetNotFound);
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindManyByClientId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindOneByClientId() throws Exception, DAOException {
-        // TODO
+        // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByClientId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByTitleAndFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByTitleAndFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindManyByTitleOrFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindOneByTitleOrFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByTitleOrFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
     public void shouldFindAllRulesetsDocuments() throws DAOException {
-        assertEquals("Not all rulesets were found in index!", 3, rulesetService.getAll().size());
+        assertEquals(3, rulesetService.getAll().size(), "Not all rulesets were found in database!");
     }
 
     @Test
@@ -175,20 +171,18 @@ public class RulesetServiceIT {
         ruleset.setTitle("To Remove");
         rulesetService.save(ruleset);
         Ruleset foundRuleset = rulesetService.getById(4);
-        assertEquals("Additional ruleset was not inserted in database!", "To Remove", foundRuleset.getTitle());
+        assertEquals("To Remove", foundRuleset.getTitle(), "Additional ruleset was not inserted in database!");
 
         rulesetService.remove(ruleset);
-        exception.expect(DAOException.class);
-        rulesetService.getById(4);
+        assertThrows(DAOException.class, () -> rulesetService.getById(4));
 
         ruleset = new Ruleset();
         ruleset.setTitle("To remove");
         rulesetService.save(ruleset);
         foundRuleset = rulesetService.getById(5);
-        assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
+        assertEquals("To remove", foundRuleset.getTitle(), "Additional ruleset was not inserted in database!");
 
         rulesetService.remove(foundRuleset);
-        exception.expect(DAOException.class);
-        rulesetService.getById(5);
+        assertThrows(DAOException.class, () -> rulesetService.getById(5));
     }
 }

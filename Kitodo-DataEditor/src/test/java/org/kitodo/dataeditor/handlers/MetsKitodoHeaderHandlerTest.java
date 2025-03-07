@@ -11,13 +11,15 @@
 
 package org.kitodo.dataeditor.handlers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
+
 
 public class MetsKitodoHeaderHandlerTest {
 
@@ -27,7 +29,7 @@ public class MetsKitodoHeaderHandlerTest {
         Mets mets = new Mets();
 
         Mets actual = MetsKitodoHeaderHandler.addNoteToMetsHeader(noteMessage, mets);
-        Assert.assertEquals("Mets object differ.", mets, actual);
+        assertEquals(mets, actual, "Mets object differ.");
     }
 
     @Test
@@ -36,7 +38,7 @@ public class MetsKitodoHeaderHandlerTest {
         Mets mets = new Mets();
 
         Mets actual = MetsKitodoHeaderHandler.addNoteToMetsHeader(noteMessage, mets);
-        Assert.assertEquals("Mets object differ.", mets, actual);
+        assertEquals(mets, actual, "Mets object differ.");
     }
 
     @Test
@@ -54,6 +56,6 @@ public class MetsKitodoHeaderHandlerTest {
         Mets actual = MetsKitodoHeaderHandler.addNoteToMetsHeader(noteMessage, mets);
 
         List<String> resultNotes = actual.getMetsHdr().getAgent().get(0).getNote();
-        Assert.assertEquals("MetsHeader notes differ.", expectedNotes, resultNotes);
+        assertEquals(expectedNotes, resultNotes, "MetsHeader notes differ.");
     }
 }

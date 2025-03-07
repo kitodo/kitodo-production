@@ -112,7 +112,7 @@
         </h:panelGroup>
 
         <h:panelGroup id="ldapManagerPasswordsMigration" rendered="#{MigrationForm.ldapManagerPasswordsMigrationRendered}">
-            <div style="margin: 10px; width: 50%;"><h:outputText value="#{msgs.migrateLdapManagerPasswordsDesc}:"/></div>
+            <div style="margin: 10px; width: 50%;"><h:outputText value="#{msgs.migrateLdapManagerPasswordsDesc}"/></div>
             <p:commandButton id="startLdapManagerPasswordMigration" value="#{msgs.ok}"
                              action="#{MigrationForm.startLdapManagerPasswordsMigration}"
                              update="systemTabView:migrationForm" style="margin: 0 10px;" />

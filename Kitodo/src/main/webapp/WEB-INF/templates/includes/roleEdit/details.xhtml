@@ -42,18 +42,20 @@
             </p:row>
             <p:row rendered="#{not SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}" />
         </p:panelGrid>
-        <p:panelGrid columns="2" layout="grid">
-            <p:row>
+        <p:panelGrid columns="#{SecurityAccessController.hasAuthorityGlobalToViewRole() ? 2 : 1}"
+                     layout="grid">
+            <p:row rendered="#{SecurityAccessController.hasAuthorityGlobalToViewRole()}">
                 <!--global authorities-->
                 <h:panelGroup>
                     <h3 style="margin-bottom: 20px">
                         <h:outputText value="#{msgs.globalAssignable}"/>
                     </h3>
+                    <!--@elvariable id="authority" type="org.kitodo.data.database.beans.Authority"-->
                     <p:pickList id="authoritiesGlobalPick"
                                 showSourceFilter="true" showTargetFilter="true"
                                 filterMatchMode="contains"
                                 responsive="true"
-                                disabled="#{isViewMode}"
+                                disabled="#{not SecurityAccessController.hasAuthorityGlobalToEditRole() or isViewMode}"
                                 value="#{RoleForm.globalAssignableAuthorities}"
                                 converter="#{authorityConverter}"
                                 var="authority"
@@ -70,7 +72,7 @@
                 <!--client authorities-->
                 <h:panelGroup>
                     <h3 style="margin-bottom: 20px">
-                        <h:outputText value="#{msgs.clientAssignable}"/>
+                        <h:outputText value="#{SecurityAccessController.hasAuthorityGlobalToViewRole() ? msgs.clientAssignable : msgs.authorities}"/>
                     </h3>
                     <p:pickList id="authoritiesClientPick"
                                 value="#{RoleForm.clientAssignableAuthorities}"

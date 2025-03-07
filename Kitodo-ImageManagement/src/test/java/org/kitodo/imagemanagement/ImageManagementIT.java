@@ -11,8 +11,8 @@
 
 package org.kitodo.imagemanagement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Image;
 import java.io.File;
@@ -31,9 +31,9 @@ import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Info;
 import org.im4java.core.InfoException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.KitodoConfig;
@@ -76,7 +76,7 @@ public class ImageManagementIT {
      * image that is compiled into ImageMagick. The image has a size of 480 ×
      * 640 pixels and a density of 72 DPI.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createTestTiff() throws IOException, InterruptedException, IM4JavaException {
 
         // create the resources directory if it is not there
@@ -143,7 +143,7 @@ public class ImageManagementIT {
     /**
      * Clean up after tests.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanUp() {
         File resources = new File(RESOURCES);
         for (File file : Objects.requireNonNull(resources.listFiles())) {

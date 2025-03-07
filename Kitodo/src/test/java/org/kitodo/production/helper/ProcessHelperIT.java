@@ -11,19 +11,20 @@
 
 package org.kitodo.production.helper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.kitodo.constants.StringConstants.CREATE;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -40,7 +41,6 @@ import org.kitodo.test.utils.ProcessTestUtils;
 public class ProcessHelperIT {
 
     public static final String DOCTYPE = "Monograph";
-    private static final String ACQUISITION_STAGE_CREATE = "create";
     private static final String TEST_PROCESS_TITLE = "Second process";
     private static List<Locale.LanguageRange> priorityList;
     private static int processHelperTestProcessId = -1;
@@ -52,7 +52,7 @@ public class ProcessHelperIT {
      * @throws Exception
      *         the exception when set up test
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -62,19 +62,19 @@ public class ProcessHelperIT {
         priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Before
+    @BeforeEach
     public void prepareTestProcess() throws DAOException, IOException {
         processHelperTestProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processHelperTestProcessId, metadataTestfile);
     }
 
-    @After
+    @AfterEach
     public void removeTestProcess() throws DAOException {
         ProcessTestUtils.removeTestProcess(processHelperTestProcessId);
         processHelperTestProcessId = -1;
@@ -111,7 +111,7 @@ public class ProcessHelperIT {
     private void testForceRegenerationByParentProcess(TempProcess tempProcess,
             RulesetManagementInterface rulesetManagement) throws ProcessGenerationException, DAOException {
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList,
+                null, DOCTYPE, rulesetManagement, CREATE, priorityList,
                 ServiceManager.getProcessService().getById(processHelperTestProcessId), true);
         assertEquals("Secopr", tempProcess.getAtstsl());
     }
@@ -127,18 +127,18 @@ public class ProcessHelperIT {
             }
         });
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                Collections.singletonList(tempProcessParent), DOCTYPE, rulesetManagement,
-                ACQUISITION_STAGE_CREATE, priorityList, null, true);
+                Collections.singletonList(tempProcessParent), DOCTYPE, rulesetManagement, CREATE, priorityList, null,
+                true);
         assertEquals("Secopr", tempProcess.getAtstsl());
     }
 
     private void testForceRegenerationOfAtstsl(TempProcess tempProcess,
             RulesetManagementInterface rulesetManagement) throws ProcessGenerationException {
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList, null, false);
+                null, DOCTYPE, rulesetManagement, CREATE, priorityList, null, false);
         assertEquals("test", tempProcess.getAtstsl());
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList, null, true);
+                null, DOCTYPE, rulesetManagement, CREATE, priorityList, null, true);
         assertEquals("test2", tempProcess.getAtstsl());
     }
 
@@ -152,7 +152,7 @@ public class ProcessHelperIT {
         });
         assertNull(tempProcess.getAtstsl());
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList, null, false);
+                null, DOCTYPE, rulesetManagement, CREATE, priorityList, null, false);
         assertEquals("test", tempProcess.getAtstsl());
         tempProcess.getProcessMetadata().setProcessDetails(new ProcessFieldedMetadata() {
             {

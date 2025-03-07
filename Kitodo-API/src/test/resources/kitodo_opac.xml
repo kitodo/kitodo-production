@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<opacCatalogues>
+    <doctypes>
+        <type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false"
+              rulesetType="Monograph" tifHeaderType="Monographie" title="monograph">
+            <label language="de">Monographie</label>
+            <label language="en">Monograph</label>
+            <mapping>Aa</mapping>
+            <mapping>Oa</mapping>
+        </type>
+        <type isContainedWork="false" isMultiVolume="false" isPeriodical="true" isNewspaper="true"
+              rulesetType="Periodical" tifHeaderType="Band_Zeitschrift" title="periodical">
+            <label language="de">Zeitschrift / Zeitung</label>
+            <label language="en">Periodical</label>
+            <mapping>Ab</mapping>
+            <mapping>Ob</mapping>
+        </type>
+        <type isContainedWork="false" isMultiVolume="true" isPeriodical="false" isNewspaper="false"
+              rulesetType="MultivolumeWork" tifHeaderType="Band_MultivolumeWork"
+              title="multivolume">
+            <label language="de">Mehrbändiges Werk</label>
+            <label language="en">Multivolume work</label>
+            <mapping>Of</mapping>
+            <mapping>Af</mapping>
+            <mapping>OF</mapping>
+            <mapping>AF</mapping>
+        </type>
+        <type isContainedWork="true" isMultiVolume="false" isPeriodical="false" isNewspaper="false"
+              rulesetType="ContainedWork" tifHeaderType="ContainedWork" title="containedWork">
+            <label language="de">Beigefügtes Werk</label>
+            <label language="en">Contained work</label>
+            <mapping>Aj</mapping>
+            <mapping>Oj</mapping>
+        </type>
+    </doctypes>
+
+    <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
+        <interfaceType>sru</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <fileUpload>false</fileUpload>
+        <metadataFormat>MODS</metadataFormat>
+        <mappingFiles>
+            <file>mods2kitodo.xsl</file>
+        </mappingFiles>
+        <config>
+            <param name="host" value="sru.gbv.de" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/gvk" />
+        </config>
+        <identifierParameter value="pica.ppn" />
+        <urlParameters>
+            <param name="version" value="1.2" />
+            <param name="operation" value="searchRetrieve" />
+            <param name="recordSchema" value="mods" />
+        </urlParameters>
+        <searchFields>
+            <searchField label="PPN" value="pica.ppn" default="true"/>
+            <searchField label="Titel" value="pica.tit"/>
+            <searchField label="Author" value="pica.per"/>
+            <searchField label="ISSN" value="pica.iss"/>
+            <searchField label="ISBN" value="pica.isb"/>
+            <searchField label="Erscheinungsort" value="pica.plc"/>
+            <searchField label="Erscheinungsjahr" value="pica.jah"/>
+            <searchField label="Volltext" value="pica.txt"/>
+        </searchFields>
+    </catalogue>
+
+    <catalogue title="Kalliope" description="Kalliope Verbundkatalog">
+        <interfaceType>sru</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <fileUpload>false</fileUpload>
+        <metadataFormat>MODS</metadataFormat>
+        <mappingFiles>
+            <file>mods2kitodo.xsl</file>
+        </mappingFiles>
+        <parentMappingFile>mods2kitodo.xsl</parentMappingFile>
+        <config>
+            <param name="host" value="localhost" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/sru" />
+            <param name="port" value="8888" />
+        </config>
+        <identifierParameter value="ead.id" />
+        <urlParameters>
+            <param name="version" value="1.2" />
+            <param name="operation" value="searchRetrieve" />
+            <param name="recordSchema" value="mods" />
+        </urlParameters>
+        <searchFields>
+            <searchField label="Title" value="ead.title" />
+            <searchField label="Creator" value="ead.creator" />
+            <searchField label="Identifier" value="ead.id" />
+            <searchField label="Creation date" value="ead.creationdate.normal" />
+            <searchField label="Genre" value="ead.genre" />
+            <searchField label="Keyword" value="ead.keyword" />
+        </searchFields>
+    </catalogue>
+    <catalogue title="K10Plus" description="K10Plus OPAC" default="true">
+        <interfaceType>sru</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <fileUpload>false</fileUpload>
+        <metadataFormat>PICA</metadataFormat>
+        <mappingFile>pica2kitodo.xsl</mappingFile>
+        <config>
+            <param name="host" value="localhost" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/sru" />
+            <param name="port" value="8888" />
+        </config>
+        <identifierParameter value="pica.ppn" />
+        <urlParameters>
+            <param name="version" value="1.1" />
+            <param name="operation" value="searchRetrieve" />
+            <param name="recordSchema" value="picaxml" />
+        </urlParameters>
+        <searchFields>
+            <searchField label="Titel" value="pica.tit"/>
+            <searchField label="PPN" value="pica.ppn"/>
+            <searchField label="Author" value="pica.per"/>
+            <searchField label="ISSN" value="pica.iss"/>
+            <searchField label="ISBN" value="pica.isb"/>
+            <searchField label="Erscheinungsort" value="pica.plc"/>
+            <searchField label="Erscheinungsjahr" value="pica.jah"/>
+            <searchField label="Volltext" value="pica.txt"/>
+        </searchFields>
+    </catalogue>
+</opacCatalogues>

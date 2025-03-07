@@ -11,15 +11,17 @@
 
 package org.kitodo.production.forms;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Task;
@@ -45,7 +47,7 @@ public class WorkflowFormIT {
      * @throws Exception
      *             If databaseConnection failed.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
@@ -58,7 +60,7 @@ public class WorkflowFormIT {
      * @throws Exception
      *             if elasticsearch could not been stopped.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -79,7 +81,7 @@ public class WorkflowFormIT {
         firstTemplate.setWorkflow(workflow);
         ServiceManager.getTemplateService().save(firstTemplate);
         currentWorkflowForm.load(workflow.getId());
-        assertEquals(true, dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
+        assertTrue(dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
 
         //Get second template (without predefined tasks) and assign a task.
         //Assign data editor settings to this task
@@ -103,7 +105,7 @@ public class WorkflowFormIT {
         currentWorkflowForm.updateTemplateTasks();
 
         firstTemplate = ServiceManager.getTemplateService().getById(1);
-        assertEquals(false, dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
+        assertFalse(dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
         assertEquals(numberOfTasksAfterUpdate, 1);
         dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
@@ -114,9 +116,9 @@ public class WorkflowFormIT {
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
         List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
         assertEquals(1, completeEditorSettingsAfterUpdate.size());
-        assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.get(0).getStructureWidth(),0);
-        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getMetadataWidth(),0);
-        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getGalleryWidth(),0);
+        assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.get(0).getStructureWidth(), 0);
+        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getMetadataWidth(), 0);
+        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getGalleryWidth(), 0);
     }
 
     private Task createAndSaveTemplateTask(TaskStatus taskStatus, int ordering, Template template) throws DAOException {

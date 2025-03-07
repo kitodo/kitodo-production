@@ -25,11 +25,15 @@
                         <recordIdentifier source="1">9991</recordIdentifier>
                     </recordInfo>
                     <relatedItem>
-                        <identifier type="localparentid">123123</identifier>
+                        <identifier type="localparentid">DE-1234-BE-56-7890</identifier>
                     </relatedItem>
                     <titleInfo>
                         <title>Child process 1</title>
                     </titleInfo>
+                    <genre authority='gnd-content'>Volume</genre>
+                    <originInfo>
+                        <issuance>single unit</issuance>
+                    </originInfo>
                 </mods>
             </srw:recordData>
         </srw:record>
@@ -45,11 +49,15 @@
                         <recordIdentifier source="1">9992</recordIdentifier>
                     </recordInfo>
                     <relatedItem>
-                        <identifier type="localparentid">123123</identifier>
+                        <identifier type="localparentid">DE-1234-BE-56-7890</identifier>
                     </relatedItem>
                     <titleInfo>
                         <title>Child process 2</title>
                     </titleInfo>
+                    <genre authority='gnd-content'>Volume</genre>
+                    <originInfo>
+                        <issuance>single unit</issuance>
+                    </originInfo>
                 </mods>
             </srw:recordData>
         </srw:record>
@@ -65,11 +73,15 @@
                         <recordIdentifier source="1">9993</recordIdentifier>
                     </recordInfo>
                     <relatedItem>
-                        <identifier type="localparentid">123123</identifier>
+                        <identifier type="localparentid">DE-1234-BE-56-7890</identifier>
                     </relatedItem>
                     <titleInfo>
                         <title>Child process 3</title>
                     </titleInfo>
+                    <genre authority='gnd-content'>Volume</genre>
+                    <originInfo>
+                        <issuance>single unit</issuance>
+                    </originInfo>
                 </mods>
             </srw:recordData>
         </srw:record>

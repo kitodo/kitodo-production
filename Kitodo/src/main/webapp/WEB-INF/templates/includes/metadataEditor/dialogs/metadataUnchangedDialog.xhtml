@@ -1,0 +1,40 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="metadataUnchangedDialog"
+              widgetVar="metadataUnchangedDialog"
+              resizable="false"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+        <h:form id="metadataUnchangedForm">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <h3>#{msgs['dataEditor.updateMetadata.metadataUnchanged']}</h3>
+                </p:row>
+            </p:panelGrid>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="close"
+                                 styleClass="secondary right"
+                                 onclick="PF('metadataUnchangedDialog').hide();"
+                                 value="#{msgs['close']}"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

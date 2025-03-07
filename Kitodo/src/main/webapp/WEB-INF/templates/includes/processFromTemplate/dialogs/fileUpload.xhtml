@@ -19,14 +19,15 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:dialog widgetVar="fileUploadDialog"
-              id="fileUpload"
+              id="fileUploadDialog"
               width="578"
               modal="true"
-              visible="#{CreateProcessForm.defaultConfigurationType eq 'FILE_UPLOAD'}"
+              visible="#{false}"
               appendTo="@(body)"
               resizable="false">
         <h3>#{msgs['newProcess.fileUpload.heading']}</h3>
-        <h:form id="fileUploadForm">
+        <h:form id="fileUploadForm"
+                styleClass="metadata-import-dialog-form">
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
                 <p:row>
                     <div>
@@ -36,7 +37,7 @@
                                          autoWidth="false"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          immediate="true"
-                                         value="#{CreateProcessForm.fileUploadDialog.importConfiguration}"
+                                         value="#{CreateProcessForm.currentImportConfiguration}"
                                          converter="#{importConfigurationConverter}">
                             <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
                             <f:selectItems value="#{CreateProcessForm.fileUploadDialog.importConfigurations}"
@@ -48,7 +49,7 @@
                     </div>
                 </p:row>
             </p:panelGrid>
-            <p:panelGrid rendered="#{CreateProcessForm.fileUploadDialog.importConfiguration ne null}">
+            <p:panelGrid>
                 <p:row>
                     <div>
                         <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
@@ -57,7 +58,7 @@
                         </p:selectBooleanCheckbox>
                     </div>
                     <div>
-                        <p:fileUpload rendered="#{CreateProcessForm.fileUploadDialog.importConfiguration ne null}"
+                        <p:fileUpload rendered="#{CreateProcessForm.currentImportConfiguration ne null}"
                                       listener="#{CreateProcessForm.fileUploadDialog.handleFileUpload}"
                                       allowTypes="/(\.|\/)(xml)$/"
                                       skinSimple="true"
@@ -71,10 +72,17 @@
                     </div>
                 </p:row>
             </p:panelGrid>
+            <h:panelGroup id="eadLevelSelectionWrapper">
+                <ui:fragment rendered="#{CreateProcessForm.currentImportConfiguration.configurationType eq 'FILE_UPLOAD' and
+                                         CreateProcessForm.currentImportConfiguration.metadataFormat eq 'EAD'}">
+                    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/eadLevelSelection.xhtml"/>
+                </ui:fragment>
+            </h:panelGroup>
             <h:panelGroup layout="block"
                           id="fileUploadButton">
                 <p:commandButton id="close"
                                  value="#{msgs.close}"
+                                 process="@this"
                                  styleClass="secondary right"
                                  icon="fa fa-times fa-lg"
                                  iconPos="right"

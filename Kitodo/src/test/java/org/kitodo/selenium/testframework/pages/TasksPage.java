@@ -12,7 +12,7 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 import static org.kitodo.selenium.testframework.Browser.scrollWebElementIntoView;

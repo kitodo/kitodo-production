@@ -117,6 +117,7 @@ public class UsersPage extends Page<UsersPage> {
      * 
      * @return The users page.
      */
+    @Override
     public UsersPage goTo() throws Exception {
         Pages.getTopNavigation().gotoUsers();
         await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)

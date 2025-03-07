@@ -15,17 +15,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
-import org.kitodo.api.dataformat.Division;
-import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serializable {
 
@@ -84,6 +79,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
      * @param skipEmpty boolean
      * @return the metadata from this row
      */
+    @Override
     public Collection<Metadata> getMetadata(boolean skipEmpty) {
         value = value.trim();
         if (skipEmpty && value.isEmpty()) {
@@ -105,20 +101,6 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
     }
 
     @Override
-    Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue()
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-
-        if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-            if (!settings.isValid(value, container.getListForLeadingMetadataFields())) {
-                throw new InvalidMetadataValueException(label, value);
-            }
-            return Pair.of(super.getStructureFieldSetters(settings), value);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public boolean isValid() {
         if (Objects.isNull(value) || value.isEmpty()) {
             return false;
@@ -133,6 +115,11 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
      */
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String extractSimpleValue() {
+        return getValue();
     }
 
     /**

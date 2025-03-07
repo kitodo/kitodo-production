@@ -20,11 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
@@ -32,9 +30,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
-import org.kitodo.api.dataformat.Division;
 import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProcessSelectMetadata.class);
@@ -192,17 +188,8 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
-    Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue()
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-            String value = String.join(" ", selectedItems);
-            if (!settings.isValid(value, container.getListForLeadingMetadataFields())) {
-                throw new InvalidMetadataValueException(label, value);
-            }
-            return Pair.of(super.getStructureFieldSetters(settings), value);
-        } else {
-            return null;
-        }
+    public String extractSimpleValue() {
+        return String.join(" ", getSelectedItems());
     }
 
     @Override

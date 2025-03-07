@@ -14,13 +14,13 @@ package org.kitodo.config;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.configuration.AbstractConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.ConfigurationUtils;
-import org.apache.commons.configuration.ConversionException;
-import org.apache.commons.configuration.FileSystem;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.ex.ConversionException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,20 +41,26 @@ public abstract class Config {
             synchronized (Config.class) {
                 if (!configMap.containsKey(configFile)) {
                     PropertiesConfiguration initialized;
-                    AbstractConfiguration.setDefaultListDelimiter('&');
                     try {
-                        initialized = new PropertiesConfiguration(configFile);
+                        // Create and initialize the builder
+                        ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                            new ReloadingFileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                                .configure(new Parameters().properties()
+                                    .setFileName(configFile)
+                                    .setThrowExceptionOnMissing(true)
+                                    .setListDelimiterHandler(new DefaultListDelimiterHandler('&'))
+                                    .setIncludesAllowed(false));
+                        // Register an event listener for triggering reloading checks
+                        builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
+                            event -> builder.getReloadingController().checkForReloading(null));
+                        initialized = builder.getConfiguration();
                         if (logger.isDebugEnabled()) {
-                            logger.debug("Using configuration from "
-                                    + ConfigurationUtils.locate(FileSystem.getDefaultFileSystem(), null, configFile));
+                            logger.debug("Using configuration from {}", configFile);
                         }
                     } catch (ConfigurationException e) {
                         logger.warn("Loading of {} failed. Trying to start with empty configuration.", configFile, e);
                         initialized = new PropertiesConfiguration();
                     }
-                    initialized.setListDelimiter('&');
-                    initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    initialized.setThrowExceptionOnMissing(true);
                     configMap.put(configFile, initialized);
                 }
             }

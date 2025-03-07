@@ -11,14 +11,15 @@
 
 package org.kitodo.production.metadata;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 
@@ -58,7 +59,7 @@ public class MetadataEditorTest {
         List<LogicalDivision> result = (List<LogicalDivision>) determineLogicalDivisionPathToChild
                 .invoke(null, logicalDivision, number);
 
-        Assert.assertEquals(new LinkedList<>(Arrays.asList(logicalDivision, monthLogicalDivision,
+        assertEquals(new LinkedList<>(Arrays.asList(logicalDivision, monthLogicalDivision,
             correctDayLogicalDivision)), result);
     }
 }

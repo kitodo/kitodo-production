@@ -12,7 +12,7 @@
 package org.kitodo.production.handler;
 
 import static org.apache.commons.io.IOUtils.toInputStream;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.kitodo.production.helper.RangeStreamHelper.DEFAULT_BUFFER_SIZE;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.weld.el.WeldExpressionFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.BasePrimefaceTest;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -70,7 +70,7 @@ public class RangeStreamContentHandlerIT extends BasePrimefaceTest {
      *
      * @throws Exception the exceptions thrown by method
      */
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         when(externalContext.getRequest()).thenReturn(httpServletRequest);
         when(externalContext.getResponse()).thenReturn(httpServletResponse);

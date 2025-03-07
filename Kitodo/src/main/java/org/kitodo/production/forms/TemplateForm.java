@@ -17,10 +17,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,7 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 
 @Named("TemplateForm")
-@SessionScoped
+@ViewScoped
 public class TemplateForm extends TemplateBaseForm {
 
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
@@ -59,6 +60,7 @@ public class TemplateForm extends TemplateBaseForm {
     private List<String> templateFilters;
     private List<String> selectedTemplateFilters;
     private static final String DEACTIVATED_TEMPLATES_FILTER = "deactivatedTemplates";
+    private Map<Integer,Boolean> templateUsageMap;
 
     /**
      * Constructor.
@@ -221,7 +223,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to templateEdit view
      */
     public String saveTaskAndRedirect() {
-        super.saveTask(this.task);
+        saveTask(this.task);
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -470,12 +472,11 @@ public class TemplateForm extends TemplateBaseForm {
      * @return whether template is used by any processes or not
      */
     public boolean isTemplateUsed(int templateId) {
-        try {
-            return !ServiceManager.getProcessService().findByTemplate(templateId).isEmpty();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return false;
+        if (Objects.isNull(templateUsageMap)) {
+            templateUsageMap = ServiceManager.getTemplateService().getTemplateUsageMap();
         }
+        Boolean isUsed = templateUsageMap.get(templateId);
+        return Boolean.TRUE.equals(isUsed);
     }
 
     /**

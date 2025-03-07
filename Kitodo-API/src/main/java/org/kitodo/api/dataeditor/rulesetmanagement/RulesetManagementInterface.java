@@ -161,4 +161,15 @@ public interface RulesetManagementInterface {
      * @return number of added metadata items
      */
     int updateMetadata(String division, Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems);
+
+    /**
+     * Return 'Reimport' value for metadata with provided key 'metadataKey'.
+     *
+     * @param metadataKey
+     *              key of metadata for which 'Reimport' values is returned
+     * @param acquisitionStage
+     *              current acquisition stage
+     * @return 'Reimport' value of metadata with given key
+     */
+    Reimport getMetadataReimport(String metadataKey, String acquisitionStage);
 }

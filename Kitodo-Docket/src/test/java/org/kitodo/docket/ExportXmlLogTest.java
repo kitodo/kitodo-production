@@ -11,23 +11,22 @@
 
 package org.kitodo.docket;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.docket.DocketData;
 
 public class ExportXmlLogTest extends ExportXmlLog {
 
-    public ExportXmlLogTest() throws URISyntaxException {
+    public ExportXmlLogTest() {
         super(getDocketData());
     }
 
-    static final DocketData getDocketData() throws URISyntaxException {
+    static DocketData getDocketData() {
         DocketData data = new DocketData();
         data.setMetadataFile(Paths.get("src/test/resources/meta.xml").toAbsolutePath().toUri());
         return data;
@@ -38,9 +37,9 @@ public class ExportXmlLogTest extends ExportXmlLog {
      */
     @Test
     public void shouldExportXmlLogWithMetadata() throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        super.startExport(((OutputStream) buffer));
-        Assert.assertTrue("Output should contain test string",
-            new String(buffer.toByteArray()).contains("findMeInOutput"));
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            super.startExport(buffer);
+            assertTrue(buffer.toString().contains("findMeInOutput"), "Output should contain test string");
+        }
     }
 }

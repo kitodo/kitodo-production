@@ -88,11 +88,11 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
 
     /**
      * Delete data editor settings identified by task id. 
-     * @param taskId ID of the associated task
+     * @param taskId ID of the associated task (or null for task-independent default layout)
      * @throws DAOException if data editor setting could not be deleted from database
      * 
      */
-    public void removeFromDatabaseByTaskId(int taskId) throws DAOException {
+    public void removeFromDatabaseByTaskId(Integer taskId) throws DAOException {
         List<DataEditorSetting> dataEditorSettings = getByTaskId(taskId);
         for (DataEditorSetting dataEditorSetting: dataEditorSettings) {
             dao.remove(dataEditorSetting.getId());
@@ -101,30 +101,41 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
 
     /**
      * Retrieve data editor settings by task id.
-     * @param taskId ID of the task
+     * @param taskId ID of the task (or null for task-independent default layout)
      *
      * @return List of DataEditorSetting objects
      */
-    public List<DataEditorSetting> getByTaskId(int taskId) {
+    public List<DataEditorSetting> getByTaskId(Integer taskId) {
         Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put("taskId", taskId);
-        return getByQuery("FROM DataEditorSetting WHERE task_id = :taskId ORDER BY id ASC", parameterMap);
+        if (Objects.nonNull(taskId)) {
+            parameterMap.put("taskId", taskId);
+            return getByQuery("FROM DataEditorSetting WHERE task_id = :taskId ORDER BY id ASC", parameterMap);
+        }
+        return getByQuery("FROM DataEditorSetting WHERE task_id is NULL ORDER BY id ASC", parameterMap);
     }
     
-    private List<DataEditorSetting> getByUserAndTask(int userId, int taskId) {
+    private List<DataEditorSetting> getByUserAndTask(int userId, Integer taskId) {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("userId", userId);
-        parameterMap.put("taskId", taskId);
-        return getByQuery("FROM DataEditorSetting WHERE user_id = :userId AND task_id = :taskId ORDER BY id ASC", parameterMap);
+        if (Objects.nonNull(taskId)) {
+            parameterMap.put("taskId", taskId);
+            return getByQuery(
+                "FROM DataEditorSetting WHERE user_id = :userId AND task_id = :taskId ORDER BY id ASC", parameterMap
+            );
+        }
+        return getByQuery(
+            "FROM DataEditorSetting WHERE user_id = :userId AND task_id IS NULL ORDER BY id ASC", parameterMap
+        );
     }
 
     /**
      * Load DataEditorSetting from database or return null if no entry matches the specified ids.
      * @param userId id of the user
-     * @param taskId id of the corresponding template task for the task that is currently edited
+     * @param taskId id of the corresponding template task for the task that is currently edited 
+     *               (or null for task-independent default layout)
      * @return settings for the data editor
      */
-    public DataEditorSetting loadDataEditorSetting(int userId, int taskId) {
+    public DataEditorSetting loadDataEditorSetting(int userId, Integer taskId) {
         List<DataEditorSetting> results = getByUserAndTask(userId, taskId);
         if (Objects.nonNull(results) && !results.isEmpty()) {
             return results.get(0);

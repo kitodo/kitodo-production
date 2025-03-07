@@ -39,6 +39,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      *
      * @return The KitodoType object.
      */
+    @Override
     public KitodoType createKitodoType() {
         KitodoType kitodoType = super.createKitodoType();
         kitodoType.setVersion(VersionProvider.getDataFormatVersion());

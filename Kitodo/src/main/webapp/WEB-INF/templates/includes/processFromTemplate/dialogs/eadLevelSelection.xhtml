@@ -1,0 +1,62 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+    <ui:fragment>
+        <p:panelGrid id="eadLevelSelection"
+                     styleClass="ead-level-selection-table"
+                     columns="2">
+            <p:row style="background-color: var(--light-gray);">
+                <h:panelGroup layout="block"
+                              styleClass="ead-level-selection">
+                    <p:outputLabel for="eadLevelParentProcess"
+                                   value="#{msgs['newProcess.fileUpload.eadLevelParent']}"/>
+                    <p:selectOneRadio id="eadLevelParentProcess"
+                                      styleClass="ui-corner-all"
+                                      layout="grid"
+                                      columns="1"
+                                      value="#{CreateProcessForm.selectedParentEadLevel}">
+                        <f:selectItems value="#{CreateProcessForm.eadParentLevels}"
+                                       var="eadLevel"
+                                       itemValue="#{eadLevel}"
+                                       itemLabel="#{eadLevel.toUpperCase()}"/>
+                        <p:ajax event="change"/>
+                    </p:selectOneRadio>
+                </h:panelGroup>
+            </p:row>
+            <p:row style="background-color: var(--light-gray);">
+                <h:panelGroup layout="block"
+                              styleClass="ead-level-selection">
+                    <p:outputLabel for="eadLevelChildProcesses"
+                                   value="#{msgs['newProcess.fileUpload.eadLevelChildren']}"/>
+                    <p:selectOneRadio id="eadLevelChildProcesses"
+                                      styleClass="ui-corner-all"
+                                      layout="grid"
+                                      columns="1"
+                                      value="#{CreateProcessForm.selectedEadLevel}">
+                        <f:selectItems value="#{CreateProcessForm.eadLevels}"
+                                       var="eadLevel"
+                                       itemValue="#{eadLevel}"
+                                       itemLabel="#{eadLevel.toUpperCase()}"/>
+                        <p:ajax event="change"/>
+                    </p:selectOneRadio>
+                </h:panelGroup>
+            </p:row>
+        </p:panelGrid>
+    </ui:fragment>
+</ui:composition>

@@ -11,13 +11,16 @@
 
 package org.kitodo.dataformat.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
@@ -28,17 +31,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.config.KitodoConfig;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class MetsXmlElementAccessIT {
 
     private static final File OUT_FILE = new File("src/test/resources/out.xml");
@@ -251,42 +261,59 @@ public class MetsXmlElementAccessIT {
 
     @Test
     public void missingMetsHeaderCreationDateDidNotThrowNullPointerException() throws IOException {
-        Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")));
-        assertNotNull(workpiece.getCreationDate());
+        try (InputStream fileContent = new FileInputStream("src/test/resources/meta_missing_createdate.xml")) {
+            Workpiece workpiece = new MetsXmlElementAccess()
+                    .read(fileContent);
+            assertNotNull(workpiece.getCreationDate());
+        }
     }
 
     @Test
-    public void missingMetsFileForPointer() throws Exception {
-        try {
-            new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/meta_missing_file.xml")));
-        } catch (IllegalArgumentException e) {
-            assertEquals("Corrupt file: file id for <mets:fptr> not found for div PHYS_0001", e.getMessage());
-        };
+    public void missingMetsFileForPointer() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new MetsXmlElementAccess().read(
+                        new FileInputStream("src/test/resources/meta_missing_file.xml")
+                )
+            );
+
+        assertEquals("Corrupt file: file id for <mets:fptr> not found for div PHYS_0001", exception.getMessage());
     }
 
     @Test
-    public void duplicateMetsFileDefinition() throws Exception {
-        try {
-            new MetsXmlElementAccess().read(
-                new FileInputStream(new File("src/test/resources/meta_duplicate_file.xml"))
+    public void duplicateMetsFileDefinitionWithoutStrictFileIdCheck() throws IOException {
+        try (InputStream fileContent = new FileInputStream("src/test/resources/meta_duplicate_file.xml")) {
+            assertDoesNotThrow(
+                () -> new MetsXmlElementAccess().read(fileContent)
             );
-        } catch (IllegalArgumentException e) {
-            assertEquals("Corrupt file: file with id FILE_0001 is part of multiple groups", e.getMessage());
-        };
+        }
     }
 
     @Test
-    public void missingMetsFileGroupUse() throws Exception {
-        try {
-            new MetsXmlElementAccess().read(
-                new FileInputStream(new File("src/test/resources/meta_missing_file_use.xml"))
+    public void duplicateMetsFileDefinitionWithStrictFileIdCheck() {
+        // mock access to KitodoConfig usage
+        PropertiesConfiguration propertiesConfiguration = Mockito.mock(PropertiesConfiguration.class);
+        MockedStatic<KitodoConfig> mockedConfig = Mockito.mockStatic(KitodoConfig.class);
+        mockedConfig.when(KitodoConfig::getConfig).thenReturn(propertiesConfiguration);
+        // mock getBoolean method call like in the main class
+        Mockito.when(propertiesConfiguration.getBoolean("useStrictMetsFileIdCheck", false)).thenReturn(true);
+
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new MetsXmlElementAccess().read(
+                        new FileInputStream("src/test/resources/meta_duplicate_file.xml")
+                )
             );
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                "Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>",
-                e.getMessage()
+
+        assertEquals("Corrupt file: each METS file ID has to be unique but FILE_0001 is used multiple times!", exception.getMessage());
+    }
+
+    @Test
+    public void missingMetsFileGroupUse() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new MetsXmlElementAccess().read(
+                    new FileInputStream("src/test/resources/meta_missing_file_use.xml")
+                )
             );
-        };
+
+        assertEquals("Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>", exception.getMessage());
     }
 }

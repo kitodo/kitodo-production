@@ -122,6 +122,10 @@ html.progressCursor * {
     display: none;
 }
 
+div.ui-contextmenu .ui-menuitem .ui-menuitem-text {
+    padding: 0 0.5em;
+}
+
 /*----------------------------------------------------------------------
 Header
 ----------------------------------------------------------------------*/
@@ -735,6 +739,7 @@ section#content-section {
     white-space: nowrap;
 }
 
+.ui-panelgrid-cell > h3 span.set-apart,
 .content-header > .ui-panel-content > h3 span.set-apart {
     color: var(--medium-gray);
     flex-grow: 0;
@@ -881,8 +886,6 @@ label.ui-outputlabel[for] {
 #filterOptionsFormWrapper {
     box-shadow: var(--second-level-shadow);
     display: none;
-    overflow-x: hidden;
-    overflow-y: scroll;
     position: absolute;
     top: 100%;
     z-index: 1;
@@ -900,6 +903,8 @@ label.ui-outputlabel[for] {
 #filterOptionsForm\:suggestions  {
     border-bottom: solid var(--contrast-border-width) var(--medium-gray);
     margin-bottom: var(--default-full-size);
+    max-height: calc(100vh - 350px);
+    overflow-x: auto;
 }
 
 #filterOptionsForm\:suggestions .selected {
@@ -1711,7 +1716,7 @@ Import form
 
 #editForm\:processFromTemplateTabView\:logicalStructure {
     height: calc(100% - 170px);
-    overflow: scroll;
+    overflow: auto;
 }
 
 #recordIdentifierMissingDialog ul {
@@ -1800,8 +1805,8 @@ Mass import
     padding-right: var(--default-half-size);
 }
 
-.comment-column {
-    text-align: center;
+.comment-column .fa {
+    margin-right: var(--default-half-size);
 }
 
 .comment-column .fa-comment {
@@ -2194,10 +2199,6 @@ Metadata Editor
     pointer-events: all;
 }
 
-#metadataEditorLayoutForm {
-    margin: 0;
-}
-
 #metadataEditorHeader .ui-panel,
 #metadataEditorHeader .ui-panel-content {
     padding: 0;
@@ -2400,6 +2401,17 @@ form#metadata div label,
     margin: 0;
 }
 
+.metadata-import-dialog-form .ead-level-selection-table {
+    width: 100%;
+}
+
+.metadata-import-dialog-form .ead-level-selection-table > tbody > tr > td.ui-panelgrid-cell {
+    vertical-align: top;
+}
+
+.ui-dialog .ui-panelgrid-cell div.ead-level-selection div {
+    margin-bottom: auto;
+}
 
 #metadataAccordion\:metadata .ui-treetable-indent,
 #metadataAccordion\:metadata .ui-treetable-toggler {
@@ -2526,6 +2538,18 @@ form#metadata div label,
 
 .columnHeadingWrapper .columnHeading {
     color: var(--medium-gray);
+}
+
+.columnHeadingWrapper .columnHeading {
+    color: var(--medium-gray);
+}
+
+.columnHeadingWrapper .columnHeading.icon-media-partial {
+    margin-right: 5px;
+}
+
+.columnHeadingWrapper .columnHeading.mediaPartialHeading {
+    margin-left: 5px;
 }
 
 .collapsibleWrapper > .columnExpandButton + .columnHeadingWrapper .columnHeading {
@@ -2698,7 +2722,7 @@ Column content
 
 #structureAccordion .scroll-wrapper {
     box-sizing: border-box;
-    height: calc(100% - 53px);
+    height: calc(100% - var(--input-height) - 2 * var(--default-half-size));
     overflow: hidden scroll;
     width: 100%;
 }
@@ -2760,13 +2784,111 @@ Column content
     margin-left: 0.3em;
 }
 
-#logicalStructureHeader {
+.metadata-column-menu {
     border-bottom: 1px solid var(--cloudy-gray);
     display: flex;
-    padding: var(--default-half-size);
+    padding: var(--default-half-size) 0 var(--default-half-size) var(--default-half-size);
 }
 
-#logicalStructureHeader .logicalStructureTitle {
+.ui-widget-content .metadata-column-menu .ui-button {
+    margin-right: var(--default-half-size);
+}
+
+#updateMetadataDialog .ui-panelgrid-cell div {
+    margin: 0;
+}
+
+#updateMetadataDialog_content {
+    overflow-y: hidden;
+}
+
+#updateMetadataDialog_content .selected {
+    color: var(--carbon-blue);
+    font-weight: bold;
+}
+
+#updateMetadataDialog_content .unselected {
+    color: var(--medium-gray);
+    font-weight: bold;
+}
+
+#updateMetadataDialog_content .ui-datatable td:nth-child(1) span {
+    font-weight: normal;
+}
+
+#updateMetadataDialog_content .metadata-value-list {
+    list-style: none;
+}
+
+#updateMetadataDialog_content .ui-widget-content {
+    background: transparent;
+}
+
+#updateMetadataDialog_content .ui-datalist-empty-message {
+    display: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable > .ui-datatable-scrollable-header {
+    background: var(--cloudy-gray);
+}
+
+#updateMetadataForm\:metadataUpdateTable > .ui-datatable-scrollable-body {
+    background: var(--pure-white);
+}
+
+#updateMetadataForm\:metadataUpdateTable tr:hover {
+    background: var(--trans-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable button.ui-button {
+    background: transparent;
+    color: var(--carbon-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable button.ui-button:hover {
+    background: var(--focused-blue);
+    color: var(--pure-white);
+}
+
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton {
+    cursor: default;
+}
+
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton,
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton:hover {
+    background: var(--cloudy-gray);
+    color: var(--carbon-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-body tr {
+    border: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-body > table > tbody > tr:not(:first-child) {
+    border-top: solid 1px var(--cloudy-gray);
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header,
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header-box {
+    margin-bottom: 0;
+}
+
+#updateMetadataForm\:updateMetadataHelp {
+    float: right;
+    right: 12px;
+    top: -12px;
+}
+
+#updateMetadataForm td[role='gridcell'] {
+    vertical-align: top;
+    padding: var(--group-margin) var(--default-half-size) var(--group-margin) var(--default-full-size);
+}
+
+#updateMetadataForm .metadata-groups li:not(:first-child) {
+    border-top: 1px solid var(--cloudy-gray);
+}
+
+#logicalStructureTitle {
     flex-grow: 1;
     flex-shrink: 1;
     margin-right: var(--default-half-size);
@@ -2784,6 +2906,50 @@ Column content
 
 #logicalStructureMenuForm ul li {
     padding: 0.5em 0.25em;
+}
+
+button.settings-loaded::after,
+button.settings-loaded-task::after {
+    background: white;
+    color: var(--green);
+    font-family: FontAwesome;
+    font-size: large;
+    font-weight: normal;
+    position: absolute;
+    right: -6px;
+    top: -6px;
+}
+
+button.settings-loaded::after {
+    content: "\f05d";
+}
+
+button.settings-loaded-task::after {
+    content: "\f058";
+}
+
+#metadataEditorLayoutForm ul {
+    list-style: none;
+    margin: 0.25em 0;
+}
+
+#metadataEditorLayoutForm ul li {
+    padding: 0.25em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#metadataEditorLayoutForm i.fa {
+    margin-right: 0.5em;
+}
+
+#metadataEditorLayoutForm .ui-commandlink {
+    margin-right: 1em;
+}
+
+#metadataEditorLayoutForm a, #metadataEditorLayoutForm a:hover {
+    text-decoration: none;
 }
 
 #commentsPanel {
@@ -2831,7 +2997,6 @@ Column content
 
 #metadataAccordion,
 #metadataAccordion > .ui-accordion-content,
-#metadataAccordion\:logicalMetadataWrapperPanel,
 #metadataAccordion\:physicalMetadataWrapperPanel,
 #metadataAccordion\:logicalMetadataWrapperPanel_content,
 #metadataAccordion\:physicalMetadataWrapperPanel_content,
@@ -2840,6 +3005,10 @@ Column content
 #metadataAccordion\:metadata\:metadataTable,
 #metadataAccordion\:physicalMetadata\:metadataTable {
     height: 100%;
+}
+
+#metadataAccordion\:logicalMetadataWrapperPanel {
+    height: calc(100% - var(--input-height) - 2 * var(--default-half-size));
 }
 
 #structureAccordion .ui-accordion-header,
@@ -2864,10 +3033,6 @@ Column content
 #metadataAccordion\:physicalMetadata\:metadataTable {
     background: var(--trans-blue);
     overflow-y: scroll;
-}
-
-#metadataAccordion\:metadata\:metadataTable table[role='treegrid'] {
-    margin-bottom: 42px;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data,
@@ -3031,6 +3196,11 @@ Column content
     overflow: hidden;
 }
 
+#metadataAccordion\:metadata\:metadataTable_data tr.focusedRow,
+div[id$='metadataTable'].ui-treetable tr.focusedRow {
+    background-color: var(--trans-blue-highlight);
+}
+
 #imagePreviewForm {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -3130,6 +3300,7 @@ Column content
     width: calc(100% - 100px);
     align-items: center;
     justify-content: left;
+    position: relative;
 }
 
 #imagePreviewForm\:mediaDetailMediaContainer {
@@ -3189,6 +3360,12 @@ Column content
     min-width: 60px;
 }
 
+#imagePreviewForm\:mediaDetailMediaPartial .icon-media-partial {
+    top: 50px;
+    left: 10px;
+    position: absolute;
+}
+
 #imagePreviewForm\:mediaPartialList {
     height: 100%;
     overflow-y: scroll;
@@ -3224,6 +3401,9 @@ Column content
     left: 16px;
     position: absolute;
     top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
 }
 
 #map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control {
@@ -3245,6 +3425,7 @@ Column content
 }
 
 #map .ol-control {
+    display: inline-block;
     background: transparent;
     padding: 0;
     position: static;
@@ -3279,6 +3460,29 @@ Column content
 
 #map div.ol-control button {
     background-color: var(--blue);
+}
+
+#imagePreviewForm\:mediaDetailNavigationPanel {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+#imagePreviewForm\:mediaDetailNavigationPanel button {
+    margin: var(--default-full-size) var(--default-half-size);
+    pointer-events: all;
+    opacity: 0.0;
+    transition: opacity 0.1s linear;
+}
+
+#imagePreviewForm:hover #imagePreviewForm\:mediaDetailNavigationPanel button {
+    opacity: 1.0;
+}
+
+#imagePreviewForm\:mediaDetailNavigationPanel button:enabled:hover {
+    background: var(--blue);
 }
 
 #galleryWrapperPanel,
@@ -3374,25 +3578,7 @@ Column content
 
 .thumbnail-parent {
     display: block;
-    height: 104px;
-    width: 75px;
     position: relative;
-}
-
-.thumbnail-parent.media-type-video {
-    width: 185px;
-    height: auto;
-}
-
-.thumbnail-parent.media-type-audio {
-    width: 120px;
-    height: auto;
-}
-
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-audio,
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-video {
-    width: 90px;
-    height: auto;
 }
 
 .thumbnail-parent audio,
@@ -3403,6 +3589,8 @@ Column content
 
 .thumbnail-parent video {
     height: auto;
+    vertical-align: bottom;
+    box-sizing: border-box;
 }
 
 .thumbnail {
@@ -3426,6 +3614,7 @@ Column content
 .thumbnail + .thumbnail-container video {
     background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+    box-sizing: border-box;
 }
 
 .thumbnail.selected + .thumbnail-container .mediaListIconItem,
@@ -3450,13 +3639,27 @@ Column content
     border-style: solid;
 }
 
-
-
 .thumbnail-container {
     display: inline-block;
-    height: 100%;
     position: relative;
-    width: 100%;
+    height: 104px;
+    width: 75px;
+}
+
+.thumbnail-container.media-type-video {
+    width: 185px;
+    height: auto;
+}
+
+.thumbnail-container.media-type-audio {
+    width: 120px;
+    height: auto;
+}
+
+#imagePreviewForm\:thumbnailStripe .thumbnail-container.media-type-audio,
+#imagePreviewForm\:thumbnailStripe .thumbnail-container.media-type-video {
+    width: 90px;
+    height: auto;
 }
 
 .thumbnail-container > .ui-widget-content {
@@ -3465,23 +3668,26 @@ Column content
     width: 100%;
 }
 
-
-.thumbnail-container .icon-media-partial {
-    top: 5px;
-    color: var(--carbon-blue);
-    left: 5px;
-    position: absolute;
-    background: rgb(from var(--pure-white) r g b / 0.8);
+.icon-media-partial {
     width: 18px;
-    display: block;
     text-align: center;
     padding: 3px;
-    border-radius: 18px;
+
 }
 
-.thumbnail-container .icon-media-partial::before {
+.icon-media-partial::before {
     content: "\f08d";
     font-family: FontAwesome;
+}
+
+.thumbnail-container .icon-media-partial {
+    color: var(--carbon-blue);
+    top: 5px;
+    left: 5px;
+    position: absolute;
+    display: block;
+    border-radius: 18px;
+    background: rgb(from var(--pure-white) r g b / 0.8);
 }
 
 .thumbnail-container .assigned-several-times {
@@ -3559,6 +3765,13 @@ Column content
     opacity: .7;
 }
 
+.thumbnail-parent .thumbnail-banner {
+    word-break: break-word;
+    color: var(--pure-white);
+    font-size: smaller;
+    text-align: center;
+}
+
 #imagePreviewForm {
     height: 100%;
     overflow: hidden;
@@ -3585,6 +3798,7 @@ Column content
 #imagePreviewForm\:unstructuredMedia ul li > .ui-panel.ui-draggable {
     display: inline-block;
     position: relative;
+    vertical-align: top;
 }
 
 .page-drop-area {
@@ -3667,6 +3881,29 @@ kbd {
     border-radius: var(--default-border-radius);
     margin: 0 var(--default-half-size);
     padding: 0 var(--default-half-size);
+}
+
+#externalViewTitle {
+    color: var(--pure-white);
+    line-height: 1.5em;
+}
+
+#externalViewPanel {
+    margin: auto 16px; 
+}
+
+#externalViewPanel, #externalViewPanel_content {
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#externalViewPanel #imagePreviewForm\:mediaDetailMediaContainer {
+    height: 100%;
+}
+
+#externalViewPanel video {
+    max-height: 90%;
 }
 
 /*----------------------------------------------------------------------
@@ -4294,3 +4531,19 @@ Print Styles
         border: solid var(--default-border-width) #000;
     }
 }
+
+/*----------------------------------------------------------------------
+PrimeFaces fix preventing hidden input elements from scrolling outside 
+of a container when focused e.g. via the tab key or from Javascript.
+See https://github.com/kitodo/kitodo-production/issues/6438
+----------------------------------------------------------------------*/
+
+.ui-selectmanymenu {
+    position: relative;
+}
+
+.ui-selectbooleancheckbox {
+    position: relative;
+}
+
+/* ------ End of Primefaces fix ----- */

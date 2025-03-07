@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,8 +23,8 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -32,7 +34,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -54,6 +55,9 @@ public abstract class MetadataImportDialog {
      */
     MetadataImportDialog(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
+        this.createProcessForm.numberOfEadElements = 0;
+        this.createProcessForm.setXmlString("");
+        this.createProcessForm.setFilename("");
     }
 
     void attachToExistingParentAndGenerateAtstslIfNotExist(TempProcess tempProcess)
@@ -82,11 +86,10 @@ public abstract class MetadataImportDialog {
 
         if (StringUtils.isBlank(tempProcess.getAtstsl())) {
             if (Objects.nonNull(parentTempProcess)) {
-                ProcessHelper.generateAtstslFields(tempProcess, Collections.singletonList(parentTempProcess),
-                        ImportService.ACQUISITION_STAGE_CREATE, true);
+                ProcessHelper.generateAtstslFields(tempProcess, Collections.singletonList(parentTempProcess), CREATE,
+                        true);
             } else {
-                ProcessHelper.generateAtstslFields(tempProcess, null,
-                        ImportService.ACQUISITION_STAGE_CREATE, true);
+                ProcessHelper.generateAtstslFields(tempProcess, null, CREATE, true);
             }
         }
     }
@@ -128,7 +131,7 @@ public abstract class MetadataImportDialog {
      *            The linked list of TempProcess instances
      */
     void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException, IOException {
 
         int countOfAddedMetadata = 0;
         if (!processes.isEmpty()) {
@@ -136,8 +139,10 @@ public abstract class MetadataImportDialog {
             if (process.getMetadataNodes().getLength() > 0) {
                 if (createProcessForm.getProcessDataTab().getDocType()
                         .equals(process.getWorkpiece().getLogicalStructure().getType())) {
+                    RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetService()
+                            .openRuleset(process.getProcess().getRuleset());
                     Collection<Metadata> metadata = ProcessHelper
-                            .convertMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
+                            .convertMetadata(process.getMetadataNodes(), rulesetManagementInterface);
                     countOfAddedMetadata = createProcessForm.getProcessMetadata().getProcessDetails()
                             .addMetadataIfNotExists(metadata);
                 } else {

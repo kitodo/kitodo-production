@@ -45,11 +45,11 @@ sudo sed -i 's/securerandom.source=file:\/dev\/random/securerandom.source=file:\
 ### Build development version and modules
 
 ```
-wget https://github.com/kitodo/kitodo-production/archive/master.zip
-unzip master.zip && rm master.zip
-(cd kitodo-production-master/ && mvn clean package '-P!development')
-zip -j kitodo-3-modules.zip kitodo-production-master/Kitodo/modules/*.jar
-mv kitodo-production-master/Kitodo/target/kitodo-3*.war kitodo-3.war
+wget https://github.com/kitodo/kitodo-production/archive/main.zip
+unzip main.zip && rm main.zip
+(cd kitodo-production-main/ && mvn clean package '-P!development')
+zip -j kitodo-3-modules.zip kitodo-production-main/Kitodo/modules/*.jar
+mv kitodo-production-main/Kitodo/target/kitodo-3*.war kitodo-3.war
 ```
 
 Note: If you want to build a release version, you may want to set the version in pom.xml files before packaging
@@ -63,9 +63,9 @@ sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo
 ### Generate SQL dump (flyway migration)
 
 ```
-cat kitodo-production-master/Kitodo/setup/schema.sql | mysql -u kitodo -D kitodo --password=kitodo
-cat kitodo-production-master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
-(cd kitodo-production-master/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
+cat kitodo-production-main/Kitodo/setup/schema.sql | mysql -u kitodo -D kitodo --password=kitodo
+cat kitodo-production-main/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
+(cd kitodo-production-main/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
 mysqldump -u kitodo --password=kitodo kitodo > kitodo-3.sql
 ```
 
@@ -73,11 +73,11 @@ mysqldump -u kitodo --password=kitodo kitodo > kitodo-3.sql
 
 ```
 mkdir zip zip/config zip/debug zip/import zip/logs zip/messages zip/metadata zip/plugins zip/plugins/command zip/plugins/import zip/plugins/opac zip/plugins/step zip/plugins/validation zip/rulesets zip/scripts zip/swap zip/temp zip/users zip/xslt zip/diagrams
-install -m 444 kitodo-production-master/Kitodo/src/main/resources/kitodo_*.xml zip/config/
-install -m 444 kitodo-production-master/Kitodo/src/main/resources/docket*.xsl zip/xslt/
-install -m 444 kitodo-production-master/Kitodo/rulesets/*.xml zip/rulesets/
-install -m 444 kitodo-production-master/Kitodo/diagrams/*.xml zip/diagrams/
-install -m 554 kitodo-production-master/Kitodo/scripts/*.sh zip/scripts/
+install -m 444 kitodo-production-main/Kitodo/src/main/resources/kitodo_*.xml zip/config/
+install -m 444 kitodo-production-main/Kitodo/src/main/resources/docket*.xsl zip/xslt/
+install -m 444 kitodo-production-main/Kitodo/rulesets/*.xml zip/rulesets/
+install -m 444 kitodo-production-main/Kitodo/diagrams/*.xml zip/diagrams/
+install -m 554 kitodo-production-main/Kitodo/scripts/*.sh zip/scripts/
 chmod -w zip/config zip/import zip/messages zip/plugins zip/plugins/command zip/plugins/import zip/plugins/opac zip/plugins/step zip/plugins/validation zip/rulesets zip/scripts zip/xslt
 (cd zip && zip -r ../kitodo-3-config.zip *)
 ```
@@ -191,9 +191,9 @@ Menu System: <http://localhost:8080/kitodo/pages/system.jsf>
 ### Download sources
 
 ```
-rm -rf kitodo-production-master
-wget https://github.com/kitodo/kitodo-production/archive/master.zip
-unzip master.zip && rm master.zip
+rm -rf kitodo-production-main
+wget https://github.com/kitodo/kitodo-production/archive/main.zip
+unzip main.zip && rm main.zip
 ```
 
 ### Reset database
@@ -201,26 +201,26 @@ unzip master.zip && rm master.zip
 ```
 sudo mysql -e "drop database kitodo;"
 sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo@localhost identified by 'kitodo';flush privileges;"
-cat kitodo-production-master/Kitodo/setup/schema.sql | mysql -u kitodo -D kitodo --password=kitodo
-cat kitodo-production-master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
-(cd kitodo-production-master/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
+cat kitodo-production-main/Kitodo/setup/schema.sql | mysql -u kitodo -D kitodo --password=kitodo
+cat kitodo-production-main/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
+(cd kitodo-production-main/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
 ```
 
 ### Rebuild and deploy war file
 
 ```
-(cd kitodo-production-master/ && mvn clean package '-P!development')
+(cd kitodo-production-main/ && mvn clean package '-P!development')
 sudo rm -f /usr/local/kitodo/modules/*
-sudo cp kitodo-production-master/Kitodo/modules/*.jar /usr/local/kitodo/modules
+sudo cp kitodo-production-main/Kitodo/modules/*.jar /usr/local/kitodo/modules
 sudo chown -R tomcat8:tomcat8 /usr/local/kitodo/modules
-mv kitodo-production-master/Kitodo/target/kitodo-3*.war kitodo-3.war
+mv kitodo-production-main/Kitodo/target/kitodo-3*.war kitodo-3.war
 sudo chown tomcat8:tomcat8 kitodo-3.war
 sudo mv kitodo-3.war /var/lib/tomcat8/webapps/kitodo.war
 sleep 5
 until curl -s GET "localhost:8080/kitodo/pages/login.jsf" | grep -q -o "KITODO.PRODUCTION" ; do sleep 1; done
 ```
 
-Note: If the update provides new example data, it has to be copied from kitodo-production-master/Kitodo/... to /usr/local/kitodo/... manually.
+Note: If the update provides new example data, it has to be copied from kitodo-production-main/Kitodo/... to /usr/local/kitodo/... manually.
 
 ### Reset index
 

@@ -19,7 +19,13 @@
     <p:remoteCommand name="removeFilter"
                      action="#{ProcessForm.filterMenu.removeFilter}"
                      oncomplete="setFilterInputPadding()"
-                     update="processesTabView:processesForm:processesTable parsedFiltersForm:parsedFilters"/>
+                     update="processesTabView:processesForm:processesTable
+                             parsedFiltersForm:parsedFilters
+                             processCount"/>
+    <p:remoteCommand name="removeFilterForEdit"
+                     action="#{ProcessForm.filterMenu.removeFilter}"
+                     oncomplete="setFilterInputPadding()"
+                     update="parsedFiltersForm:parsedFilters"/>
     <p:remoteCommand name="updateSuggestions"
                      action="#{ProcessForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>
@@ -60,7 +66,9 @@
                                      icon="fa fa-times"
                                      action="#{ProcessForm.filterMenu.removeFilter(parsedFilter)}"
                                      oncomplete="setFilterInputPadding()"
-                                     update="processesTabView:processesForm:processesTable parsedFilters"/>
+                                     update="processesTabView:processesForm:processesTable
+                                             parsedFilters
+                                             processCount"/>
                 </p:dataList>
             </h:form>
             <h:form id="filterOptionsForm">
