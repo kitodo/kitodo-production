@@ -20,6 +20,10 @@
                      action="#{UserForm.filterMenu.removeFilter}"
                      oncomplete="setFilterInputPadding()"
                      update="usersTabView:usersTable parsedFiltersForm:parsedFilters"/>
+    <p:remoteCommand name="removeFilterForEdit"
+                     action="#{UserForm.filterMenu.removeFilter}"
+                     oncomplete="setFilterInputPadding()"
+                     update="parsedFiltersForm:parsedFilters"/>
     <p:remoteCommand name="updateSuggestions"
                      action="#{UserForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>
