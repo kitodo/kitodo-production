@@ -430,7 +430,7 @@ public class MetadataST extends BaseTestSelenium {
         metaDataEditor.openContextMenuForStructureTreeNode("0_0_0_0");
 
         // click on 2nd menu entry "assign to next element"
-        metaDataEditor.clickStructureTreeContextMenuEntry(2);
+        metaDataEditor.clickStructureTreeContextMenuEntry("assignToNextElement");
 
         // verify page "2" is now marked as "linked"
         assertTrue(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
@@ -445,7 +445,7 @@ public class MetadataST extends BaseTestSelenium {
         metaDataEditor.openContextMenuForStructureTreeNode("0_1_0_0");
 
         // click on 2nd menu entry "remove assignment"
-        metaDataEditor.clickStructureTreeContextMenuEntry(2);
+        metaDataEditor.clickStructureTreeContextMenuEntry("unassign");
 
         // check page "2" is not marked as "linked" any more
         assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
@@ -472,20 +472,11 @@ public class MetadataST extends BaseTestSelenium {
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
             .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
 
-        // right click on first tree node representing image 2
-        WebElement firstTreeNode = Browser.getDriver().findElement(
-            By.cssSelector("#logicalTree\\:0_0 .ui-treenode-content")
-        );
-        new Actions(Browser.getDriver()).contextClick(firstTreeNode).build().perform();
-
-        // wait until menu is visible
-        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-            .until(() -> Browser.getDriver().findElement(By.id("contextMenuLogicalTree")).isDisplayed());
+        // open context menu for linked page "2"
+        Pages.getMetadataEditorPage().openContextMenuForStructureTreeNode("0_0");
 
         // click second menu entry to open new tab
-        Browser.getDriver().findElement(By.cssSelector(
-            "#contextMenuLogicalTree .ui-menuitem:nth-child(2) .ui-menuitem-link"
-        )).click();
+        Browser.getDriver().findElement(By.cssSelector("#contextMenuLogicalTree .viewPageInNewWindow")).click();
 
         // find handle of new tab window
         String newWindowHandle = Browser.getDriver().getWindowHandles().stream()

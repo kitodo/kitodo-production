@@ -251,13 +251,11 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     /**
      * Click on a menu entry in the structure tree context menu.
      * 
-     * @param menuEntry the menu entry index (starting with 1)
+     * @param menuItemClassName the class name of the menu entry
      */
-    public void clickStructureTreeContextMenuEntry(int menuEntry) {
+    public void clickStructureTreeContextMenuEntry(String menuItemClassName) {
         // click on menu entry
-        contextMenuLogicalTree.findElement(By.cssSelector(
-            ".ui-menuitem:nth-child(" + menuEntry +  ") .ui-menuitem-link"
-        )).click();
+        contextMenuLogicalTree.findElement(By.className(menuItemClassName)).click();
         // wait for context menu to disappear
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .until(() -> !contextMenuLogicalTree.isDisplayed());
