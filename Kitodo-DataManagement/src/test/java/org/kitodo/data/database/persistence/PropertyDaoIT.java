@@ -17,11 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.enums.PropertyType;
