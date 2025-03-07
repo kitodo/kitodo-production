@@ -890,6 +890,25 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Checks if current user has global authority for editing a role.
+     *
+     * @return true if current user has global authority for editing a role
+     */
+    public boolean hasAuthorityGlobalToEditRole() {
+        return hasAnyAuthorityGlobal("editRole");
+    }
+
+    /**
+     * Checks if current user has global authority for viewing a role.
+     * Having the authority to edit a role also grants permission to view it inherently.
+     *
+     * @return true if current user has global authority for editing a role
+     */
+    public boolean hasAuthorityGlobalToViewRole() {
+        return hasAnyAuthorityGlobal("viewRole, editRole");
+    }
+
+    /**
      * Check if current user has global authority to view role list. It returns true
      * if user has "viewAllRoles" authority globally.
      *

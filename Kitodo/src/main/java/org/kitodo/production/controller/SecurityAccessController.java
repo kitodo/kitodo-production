@@ -957,6 +957,24 @@ public class SecurityAccessController {
     }
 
     /**
+     * Checks if current user has global authority for editing roles.
+     *
+     * @return true if current user has global authority for editing roles
+     */
+    public boolean hasAuthorityGlobalToEditRole() {
+        return securityAccessService.hasAuthorityGlobalToEditRole();
+    }
+
+    /**
+     * Checks if current user has global authority for viewing a role.
+     *
+     * @return true if current user has global authority for editing a role
+     */
+    public boolean hasAuthorityGlobalToViewRole() {
+        return securityAccessService.hasAuthorityGlobalToViewRole();
+    }
+
+    /**
      * Checks if current user has authority to configure displayed columns in list
      * views.
      *
