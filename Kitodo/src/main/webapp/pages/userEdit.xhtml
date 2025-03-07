@@ -100,14 +100,14 @@
                 </ui:include>
             </p:tab>
 
-            <p:tab id="projectTab" title="#{msgs.projectList}">
+            <p:tab id="projectTab" title="#{msgs.projects}">
                 <ui:include src="/WEB-INF/templates/includes/userEdit/projectList.xhtml">
                     <ui:param name="isEditMode" value="#{isEditMode}" />
                     <ui:param name="isCreateMode" value="#{isCreateMode}" />
                 </ui:include>
             </p:tab>
 
-            <p:tab id="clientTab" title="#{msgs.clientList}" rendered="#{SecurityAccessController.hasAuthorityGlobal('editUser')}">
+            <p:tab id="clientTab" title="#{msgs.clients}" rendered="#{SecurityAccessController.hasAuthorityGlobal('editUser')}">
                 <ui:include src="/WEB-INF/templates/includes/userEdit/clientList.xhtml">
                     <ui:param name="isEditMode" value="#{isEditMode}" />
                     <ui:param name="isCreateMode" value="#{isCreateMode}" />
