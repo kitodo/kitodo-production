@@ -67,6 +67,11 @@ public enum FunctionalMetadata {
     RECORD_IDENTIFIER("recordIdentifier"),
 
     /**
+     * In case the metadata key shall be used as node label in the structure tree.
+     */
+    STRUCTURE_TREE_TITLE("structureTreeTitle"),
+
+    /**
      * The title. It is used to form the author-title key or the title key.
      */
     TITLE("title"),

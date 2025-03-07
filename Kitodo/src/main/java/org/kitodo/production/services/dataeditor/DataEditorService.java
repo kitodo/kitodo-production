@@ -18,7 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -114,22 +113,11 @@ public class DataEditorService {
     }
 
     /**
-     * Retrieve and return list of metadata keys that are used for displaying title information in the metadata editors
-     * structure and gallery panels from the Kitodo configuration file.
-     *
-     * @return list of title metadata keys
-     */
-    public static List<String> getTitleKeys() {
-        return Arrays.stream(ConfigCore.getParameter(ParameterCore.TITLE_KEYS, "").split(","))
-                .map(String::trim).collect(Collectors.toList());
-    }
-
-    /**
      * Retrieve and return title value from given IncludedStructuralElement.
      *
      * @param element IncludedStructuralElement for which the title value is returned.
      * @param metadataTitleKey as a String that its value will be displayed.
-     * @return title value of given element
+     * @return title value of given element or an empty string
      */
     public static String getTitleValue(LogicalDivision element, String metadataTitleKey) {
         String[] metadataPath = metadataTitleKey.split("@");
@@ -143,13 +131,13 @@ public class DataEditorService {
                     .flatMap(metadataGroup -> metadataGroup.getMetadata().stream())
                     .collect(Collectors.toList());
         }
-        Optional<String> metadataTitle = metadata.stream()
+        return metadata.stream()
                 .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
                 .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
                 .map(MetadataEntry::getValue)
                 .filter(value -> !value.isEmpty())
-                .findFirst();
-        return metadataTitle.orElse(" - ");
+                .findFirst()
+                .orElse("");
     }
 
     /**

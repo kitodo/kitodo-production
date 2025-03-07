@@ -46,6 +46,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -197,6 +198,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     private Task templateTask;
 
+    /**
+     * The list of metadata keys that are annotated with <code>use="structureTreeTitle"</code>, meaning, 
+     * they are used to generate the tree node label in case the title is requested by the user.
+     */
+    private Collection<String> structureTreeTitles = new ArrayList<>();
+
     private DataEditorSetting dataEditorSetting;
 
     private static final String DESKTOP_LINK = "/pages/desktop.jsf";
@@ -289,6 +296,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
+            this.loadStructureTreeTitlesFromRuleset();
             try {
                 mediaUpdated = openMetsFile();
             } catch (MediaNotFoundException e) {
@@ -344,6 +352,14 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
         } else {
             this.folderConfigurationComplete = false;
+        }
+    }
+
+    private void loadStructureTreeTitlesFromRuleset() {
+        structureTreeTitles = getRulesetManagement().getFunctionalKeys(FunctionalMetadata.STRUCTURE_TREE_TITLE);
+        if (structureTreeTitles.isEmpty()) {
+            Locale locale = LocaleHelper.getCurrentLocale();
+            Helper.setWarnMessage(Helper.getString(locale, "dataEditor.noStructureTreeTitleFoundWarning"));
         }
     }
 
@@ -982,20 +998,25 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Retrieve and return 'title' value of given Object 'dataObject' if Object is instance of
-     * 'LogicalDivision' and if it does have a title. Uses a configurable list of metadata keys to determine
-     * which metadata keys should be considered.
+     * Retrieve and return title of dataObject if it is a 'LogicalDivision' and if it has a title. 
+     * Uses metadata value as title if one of the provided keys exists.
      * Return empty string otherwise.
      *
      * @param dataObject
      *          StructureTreeNode containing the LogicalDivision whose title is returned
+     * @param metadataKeys
+     *          the list of metadata keys that are annotated with "structureTreeTitle"
      * @return 'title' value of the LogicalDivision contained in the given StructureTreeNode 'treeNode'
      */
-    public String getStructureElementTitle(Object dataObject) {
+    public static String getStructureElementTitle(Object dataObject, Collection<String> metadataKeys) {
         String title = "";
         if (dataObject instanceof LogicalDivision) {
             LogicalDivision logicalDivision = ((LogicalDivision) dataObject);
-            title = DataEditorService.getTitleValue(logicalDivision, structurePanel.getTitleMetadata());
+            
+            title = metadataKeys.stream()
+                .map((key) -> DataEditorService.getTitleValue(logicalDivision, key))
+                .filter((t) -> !t.isEmpty()).findFirst().orElse("");
+
             if (StringUtils.isBlank(title)) {
                 title = logicalDivision.getLabel();
                 if (StringUtils.isBlank(title)) {
@@ -1004,6 +1025,19 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
         }
         return title;
+    }
+
+    /**
+     * Retrieve and return title of dataObject if it is a 'LogicalDivision' and if it has a title. 
+     * Uses metadata value as title if one of the provided keys exists.
+     * Return empty string otherwise.
+     *
+     * @param dataObject
+     *          StructureTreeNode containing the LogicalDivision whose title is returned
+     * @return 'title' value of the LogicalDivision contained in the given StructureTreeNode 'treeNode'
+     */
+    public String getStructureElementTitle(Object dataObject) {
+        return DataEditorForm.getStructureElementTitle(dataObject, structureTreeTitles);
     }
 
     /**
@@ -1120,7 +1154,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting)) {
-            if (Objects.nonNull(templateTask) && !templateTask.getId().equals(dataEditorSetting.getTaskId())) {          
+            if (Objects.nonNull(templateTask) && !templateTask.getId().equals(dataEditorSetting.getTaskId())) {
                 // create a copy of the task-independent configuration 
                 // in case the user wants to save it as task-specific config
                 dataEditorSetting = new DataEditorSetting(dataEditorSetting);
