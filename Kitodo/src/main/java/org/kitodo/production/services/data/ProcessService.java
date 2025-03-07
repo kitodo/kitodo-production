@@ -325,10 +325,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * Find all parent processes for a process ordered such that the root parent comes first.
      * 
      * @param process the process whose parents are to be found
-     * @return the list of parent processes (direct parents and grand parents, and more)
+     * @return the list of parent processes (direct parents and grandparents, and more)
      */
     public List<Process> findParentProcesses(Process process) {
-        List<Process> parents = new ArrayList<Process>();
+        List<Process> parents = new ArrayList<>();
         Process current = process;
         while (Objects.nonNull(current.getParent())) {
             current = current.getParent();

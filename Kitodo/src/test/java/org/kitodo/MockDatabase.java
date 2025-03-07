@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -85,6 +86,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
@@ -94,12 +96,11 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
 import org.opensearch.node.Node;
 import org.opensearch.transport.Netty4Plugin;
-import java.nio.file.Path;
-import org.kitodo.test.utils.TestConstants;
 
 /**
  * Insert data to test database.
@@ -685,6 +686,97 @@ public class MockDatabase {
         ProcessTestUtils.logTestProcessInfo(seventhProcess);
         testProcesses.put(seventhProcess.getTitle(), seventhProcess.getId());
         return testProcesses;
+    }
+
+    private static ImportConfiguration insertEadImportConfiguration() throws DAOException {
+        // EAD mapping files (for "file" and "collection" level)
+        MappingFile eadMappingFile = new MappingFile();
+        eadMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
+        eadMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        eadMappingFile.setFile("ead2kitodo.xsl");
+        eadMappingFile.setTitle("EAD to Kitodo");
+        ServiceManager.getMappingFileService().save(eadMappingFile);
+
+        MappingFile eadParentMappingFile = new MappingFile();
+        eadParentMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
+        eadParentMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        eadParentMappingFile.setFile("eadParent2kitodo.xsl");
+        eadParentMappingFile.setTitle("EAD Parent to Kitodo");
+        ServiceManager.getMappingFileService().save(eadParentMappingFile);
+
+        // EAD upload import configuration
+        ImportConfiguration eadUploadConfiguration = new ImportConfiguration();
+        eadUploadConfiguration.setTitle("EAD upload configuration");
+        eadUploadConfiguration.setConfigurationType(ImportConfigurationType.FILE_UPLOAD.name());
+        eadUploadConfiguration.setMetadataFormat(MetadataFormat.EAD.name());
+        eadUploadConfiguration.setReturnFormat(FileFormat.XML.name());
+        eadUploadConfiguration.setMappingFiles(Collections.singletonList(eadMappingFile));
+        eadUploadConfiguration.setParentMappingFile(eadParentMappingFile);
+        ServiceManager.getImportConfigurationService().save(eadUploadConfiguration);
+        return eadUploadConfiguration;
+    }
+
+    private static Template insertEadTemplate(Ruleset eadRuleset, Project eadImportProject, Client client)
+            throws DAOException {
+        Task firstTask = new Task();
+        firstTask.setTitle("Open");
+        firstTask.setOrdering(1);
+        firstTask.setRepeatOnCorrection(true);
+        firstTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        firstTask.setProcessingStatus(TaskStatus.OPEN);
+
+        Task secondTask = new Task();
+        secondTask.setTitle("Locked");
+        secondTask.setOrdering(2);
+        secondTask.setRepeatOnCorrection(true);
+        secondTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        secondTask.setTypeImagesWrite(true);
+        secondTask.setProcessingStatus(TaskStatus.LOCKED);
+
+        List<Task> tasks = Arrays.asList(firstTask, secondTask);
+
+        // EAD template
+        Template eadTemplate = new Template();
+        eadTemplate.setTitle("EAD template");
+        eadTemplate.setRuleset(eadRuleset);
+        eadTemplate.getProjects().add(eadImportProject);
+        eadTemplate.setClient(client);
+        ServiceManager.getTemplateService().save(eadTemplate);
+        eadTemplate.setTasks(tasks);
+        Role role = ServiceManager.getRoleService().getById(1);
+        for (Task task : eadTemplate.getTasks()) {
+            task.setTemplate(eadTemplate);
+            task.getRoles().add(role);
+            role.getTasks().add(task);
+            ServiceManager.getTaskService().save(task);
+        }
+        return eadTemplate;
+    }
+
+    public static Project insertProjectForEadImport(User user, Client client) throws DAOException {
+
+        // EAD ruleset
+        Ruleset eadRuleset = new Ruleset();
+        eadRuleset.setTitle("EAD ruleset");
+        eadRuleset.setFile("ruleset_ead.xml");
+        eadRuleset.setClient(client);
+        ServiceManager.getRulesetService().save(eadRuleset);
+
+        ImportConfiguration eadUploadConfiguration = insertEadImportConfiguration();
+
+        // EAD project
+        Project eadImportProject = new Project();
+        eadImportProject.setTitle("EAD test project");
+        eadImportProject.getUsers().add(user);
+        eadImportProject.setClient(client);
+        eadImportProject.setDefaultImportConfiguration(eadUploadConfiguration);
+        ServiceManager.getProjectService().save(eadImportProject);
+
+        Template eadTemplate = insertEadTemplate(eadRuleset, eadImportProject, client);
+
+        eadImportProject.getTemplates().add(eadTemplate);
+        ServiceManager.getProjectService().save(eadImportProject);
+        return eadImportProject;
     }
 
     /**

@@ -655,7 +655,19 @@ public enum ParameterCore implements ParameterInterface {
     /* Optional parameter can be used to limit the number of processes for which media renaming can be conducted as a
      * list function. Values different from positive integers are interpreted as "unlimited".
      */
-    MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING(new Parameter<>("maxNumberOfProcessesForMediaRenaming", -1));
+    MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING(new Parameter<>("maxNumberOfProcessesForMediaRenaming", -1)),
+
+    /*
+     * Optional parameter controlling how many processes are to be displayed and processed in the metadata import mask.
+     * When more data records are imported the import process is moved to a background task. Default value is 5.
+     */
+    MAX_NUMBER_OF_PROCESSES_FOR_IMPORT_MASK(new Parameter<>("maxNumberOfProcessesForImportMask", 5)),
+
+    /*
+     * Optional parameter controlling whether the import of all elements from an uploaded EAD XML file should be
+     * canceled when an exception occurs or not. Defaults to 'false'.
+     */
+    STOP_EAD_COLLECTION_IMPORT_ON_EXCEPTION(new Parameter<>("stopEadCollectionImportOnException", false));
 
     private final Parameter<?> parameter;
 

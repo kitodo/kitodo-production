@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<ead audience="external">
+  <eadheader countryencoding="iso3166-1"
+             dateencoding="iso8601"
+             langencoding="iso639-2b"
+             repositoryencoding="iso15511"
+             scriptencoding="iso15924">
+    <filedesc>
+      <titlestmt>
+        <titleproper>Test-Archiv</titleproper>
+      </titlestmt>
+    </filedesc>
+  </eadheader>
+  <archdesc level="collection" type="Findbuch">
+    <dsc>
+      <c level="collection" id="111">
+        <did>
+          <unitid>Custom Collection</unitid>
+          <unittitle>Test-Bestand des Test-Archivs</unittitle>
+          <unitdate normal="1989-01-01/1991-12-31">1989-1991</unitdate>
+          <physdesc>
+            <genreform normal="Bilder">Foto</genreform>
+            <extent>0,3 lfm.</extent>
+          </physdesc>
+          <langmaterial>
+            <language langcode="ger" scriptcode="Latn"/>
+          </langmaterial>
+          <origination/>
+        </did>
+        <scopecontent>
+          <head>Beschreibung</head>
+          <p>Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica,
+            sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation
+            e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca</p>
+        </scopecontent>
+        <accessrestrict>
+          <head>Zugangsbeschränkung</head>
+          <p>extern</p>
+        </accessrestrict>
+        <relatedmaterial>
+          <head>Literatur</head>
+          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.</p>
+        </relatedmaterial>
+        <index>
+          <indexentry>
+            <persname source="GND" authfilenumber="1234567890">Martin Mustermann</persname>
+          </indexentry>
+        </index>
+        <c level="class" id="1111">
+          <did>
+            <unittitle>Personen</unittitle>
+            <abstract/>
+          </did>
+          <c level="file" id="11111">
+            <did>
+              <unitid>Custom ID 101</unitid>
+              <unittitle type="Einheitstitel">Testtitel 1</unittitle>
+              <unitdate normal="1950-01-01/1953-12-31"> 1. Januar 1950 - 31. Dezember 1953</unitdate>
+              <abstract type="Enth&#xE4;lt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
+                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+                ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
+                quis enim. Donec.</abstract>
+              <origination>Ankauf</origination>
+              <physdesc>
+                <genreform normal="Bilder">Foto</genreform>
+                <extent>1 Bild</extent>
+              </physdesc>
+              <langmaterial/>
+              <note>
+                <p/>
+              </note>
+            </did>
+            <odd>
+              <head>Technische Daten / Farbigkeit</head>
+              <p>s/w</p>
+            </odd>
+            <odd>
+              <head>Technische Daten / Fototyp</head>
+              <p>Positiv</p>
+            </odd>
+            <index>
+              <indexentry>
+                <geogname>Deutschland</geogname>
+              </indexentry>
+              <indexentry>
+                <persname role="Dargestellte Person" source="GND" authfilenumber="0000000">Müller, Hansi</persname>
+              </indexentry>
+            </index>
+          </c>
+          <c level="file" id="11112">
+            <did>
+              <unitid>Custom ID 102</unitid>
+              <unittitle type="Einheitstitel">Testtitel 2</unittitle>
+              <unitdate normal="1950-01-01/1953-12-31"> 1. Januar 1950 - 31. Dezember 1953</unitdate>
+              <abstract type="Enth&#xE4;lt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
+                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+                ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
+                quis enim. Donec.</abstract>
+              <origination>Ankauf</origination>
+              <physdesc>
+                <genreform normal="Bilder">Foto</genreform>
+                <extent>1 Bild</extent>
+              </physdesc>
+              <langmaterial/>
+              <note>
+                <p/>
+              </note>
+            </did>
+            <odd>
+              <head>Technische Daten / Farbigkeit</head>
+              <p>s/w</p>
+            </odd>
+            <odd>
+              <head>Technische Daten / Fototyp</head>
+              <p>Positiv</p>
+            </odd>
+            <index>
+              <indexentry>
+                <geogname>Deutschland</geogname>
+              </indexentry>
+              <indexentry>
+                <persname role="Dargestellte Person" source="GND" authfilenumber="0000000">Müller, Hansi</persname>
+              </indexentry>
+            </index>
+          </c>
+          <c level="file" id="11113">
+            <did>
+              <unitid>Custom ID 103</unitid>
+              <unittitle type="Einheitstitel">Testtitel 3</unittitle>
+              <unitdate normal="1950-01-01/1953-12-31"> 1. Januar 1950 - 31. Dezember 1953</unitdate>
+              <abstract type="Enth&#xE4;lt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
+                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+                ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
+                quis enim. Donec.</abstract>
+              <origination>Ankauf</origination>
+              <physdesc>
+                <genreform normal="Bilder">Foto</genreform>
+                <extent>1 Bild</extent>
+              </physdesc>
+              <langmaterial/>
+              <note>
+                <p/>
+              </note>
+            </did>
+            <odd>
+              <head>Technische Daten / Farbigkeit</head>
+              <p>s/w</p>
+            </odd>
+            <odd>
+              <head>Technische Daten / Fototyp</head>
+              <p>Positiv</p>
+            </odd>
+            <index>
+              <indexentry>
+                <geogname>Deutschland</geogname>
+              </indexentry>
+              <indexentry>
+                <persname role="Dargestellte Person" source="GND" authfilenumber="0000000">Müller, Hansi</persname>
+              </indexentry>
+            </index>
+          </c>
+          <c level="file" id="11114">
+            <did>
+              <unitid>Custom ID 104</unitid>
+              <unittitle type="Einheitstitel">Testtitel 4</unittitle>
+              <unitdate normal="1950-01-01/1953-12-31"> 1. Januar 1950 - 31. Dezember 1953</unitdate>
+              <abstract type="Enth&#xE4;lt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
+                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+                ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
+                quis enim. Donec.</abstract>
+              <origination>Ankauf</origination>
+              <physdesc>
+                <genreform normal="Bilder">Foto</genreform>
+                <extent>1 Bild</extent>
+              </physdesc>
+              <langmaterial/>
+              <note>
+                <p/>
+              </note>
+            </did>
+            <odd>
+              <head>Technische Daten / Farbigkeit</head>
+              <p>s/w</p>
+            </odd>
+            <odd>
+              <head>Technische Daten / Fototyp</head>
+              <p>Positiv</p>
+            </odd>
+            <index>
+              <indexentry>
+                <geogname>Deutschland</geogname>
+              </indexentry>
+              <indexentry>
+                <persname role="Dargestellte Person" source="GND" authfilenumber="0000000">Müller, Hansi</persname>
+              </indexentry>
+            </index>
+          </c>
+          <c level="file" id="11115">
+            <did>
+              <unitid>Custom ID 105</unitid>
+              <unittitle type="Einheitstitel">Testtitel 5</unittitle>
+              <unitdate normal="1950-01-01/1953-12-31"> 1. Januar 1950 - 31. Dezember 1953</unitdate>
+              <abstract type="Enth&#xE4;lt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
+                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+                ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa
+                quis enim. Donec.</abstract>
+              <origination>Ankauf</origination>
+              <physdesc>
+                <genreform normal="Bilder">Foto</genreform>
+                <extent>1 Bild</extent>
+              </physdesc>
+              <langmaterial/>
+              <note>
+                <p/>
+              </note>
+            </did>
+            <odd>
+              <head>Technische Daten / Farbigkeit</head>
+              <p>s/w</p>
+            </odd>
+            <odd>
+              <head>Technische Daten / Fototyp</head>
+              <p>Positiv</p>
+            </odd>
+            <index>
+              <indexentry>
+                <geogname>Deutschland</geogname>
+              </indexentry>
+              <indexentry>
+                <persname role="Dargestellte Person" source="GND" authfilenumber="0000000">Müller, Hansi</persname>
+              </indexentry>
+            </index>
+          </c>
+        </c>
+      </c>
+    </dsc>
+  </archdesc>
+</ead>

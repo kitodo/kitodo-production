@@ -106,7 +106,7 @@ public class MetadataST extends BaseTestSelenium {
         copyTestFilesForCreateStructure();
     }
 
-    private static void prepareLinkPageToNextDivision() throws DAOException, DataException, IOException {
+    private static void prepareLinkPageToNextDivision() throws DAOException, IOException {
         linkPageToNextDivisionProcessId = MockDatabase.insertTestProcessIntoSecondProject(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
         ProcessTestUtils.copyTestFiles(linkPageToNextDivisionProcessId, TEST_LINK_PAGE_TO_NEXT_DIVISION_MEDIA_FILE);
     }
