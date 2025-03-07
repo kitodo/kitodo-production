@@ -42,8 +42,8 @@
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
         <maxAllowedViolations>0</maxAllowedViolations>
         <tomcat.baseversion>9</tomcat.baseversion>
-        <tomcat.version>9.0.65</tomcat.version>
-        <awaitility.version>4.0.1</awaitility.version>
+        <tomcat.version>9.0.96</tomcat.version>
+        <awaitility.version>4.0.3</awaitility.version>
         <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-io.version>2.14.0</commons-io.version>
@@ -51,8 +51,9 @@
         <commons-net.version>3.9.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
-        <hamcrest.version>2.2-rc1</hamcrest.version>
+        <hamcrest.version>2.2</hamcrest.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
+        <hibernate-search.version>6.2.4.Final</hibernate-search.version>
         <jaxb.api.version>2.3.3</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
@@ -64,7 +65,7 @@
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
-        <junit.version>5.9.2</junit.version>
+        <junit.version>5.9.3</junit.version>
         <opensearch.version>1.3.19</opensearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
 
@@ -77,11 +78,11 @@
         <mockito.version>5.9.0</mockito.version>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.11</spring.security.version>
+        <spring.security.version>5.7.13</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
+        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
@@ -137,7 +138,7 @@
             <dependency>
                 <groupId>com.xebialabs.restito</groupId>
                 <artifactId>restito</artifactId>
-                <version>0.9.3</version>
+                <version>0.9.5</version>
                 <exclusions>
                     <exclusion>
                         <groupId>junit</groupId>
@@ -265,7 +266,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
-                <version>5.18.5</version>
+                <version>5.18.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -424,12 +425,12 @@ from system library in Java 11+ -->
 	    <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.17.1</version>
+                <version>2.17.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.17.1</version>
+                <version>2.17.2</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
@@ -459,7 +460,7 @@ from system library in Java 11+ -->
                 <!-- hibernate caching dependency -->
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>3.8.1</version>
+                <version>3.8.2.1</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -599,7 +600,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.omnifaces</groupId>
                 <artifactId>omnifaces</artifactId>
-                <version>3.13.3</version>
+                <version>3.13.4</version>
             </dependency>
             <dependency>
                 <groupId>org.openpreservation.jhove</groupId>
@@ -619,7 +620,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.passay</groupId>
                 <artifactId>passay</artifactId>
-                <version>1.6.5</version>
+                <version>1.6.6</version>
             </dependency>
             <dependency>
                 <groupId>org.primefaces.extensions</groupId>
