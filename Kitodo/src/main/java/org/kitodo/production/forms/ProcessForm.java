@@ -351,7 +351,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        super.saveTask(this.task);
+        saveTask(this.task);
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
@@ -1158,7 +1158,7 @@ public class ProcessForm extends TemplateBaseForm {
             String configName = ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(
                     getSelectedProcesses(), importConfigurationId);
             settingImportConfigurationResultMessage = Helper.getTranslation("setImportConfigurationSuccessfulDescription",
-                    configName, String.valueOf(selectedProcessesOrProcessDTOs.size()));
+                configName, String.valueOf(selectedProcesses.size()));
             importConfigurationsSetSuccessfully = true;
         } catch (DAOException e) {
             settingImportConfigurationResultMessage = e.getLocalizedMessage();
