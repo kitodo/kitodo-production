@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -300,7 +299,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      * @throws IOException when deleting test files fails.
      */
     @AfterAll
-    public static void cleanup() throws DAOException, CustomResponseException, DataException, IOException {
+    public static void cleanup() throws DAOException, DataException, IOException {
         ProcessService.deleteProcess(processId);
     }
 

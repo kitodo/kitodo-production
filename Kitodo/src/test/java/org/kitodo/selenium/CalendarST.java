@@ -69,10 +69,6 @@ public class CalendarST extends BaseTestSelenium {
 
     @Disabled("faulty, randomly fails during CI builds; needs to be fixed")
     @Test
-    @Disabled("currently not implemented")
-    /* 'baseType' not available (only available from index), is null.
-     * goToCalendar() fails because button is gray, because 'baseType' is not
-     * "Newspaper". */
     public void createProcessFromCalendar() throws Exception {
         processesPage.goTo();
         processesPage.goToCalendar(newspaperTestProcessId);
