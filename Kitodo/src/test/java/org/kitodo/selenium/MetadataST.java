@@ -220,6 +220,37 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verifies that changing the pagination type does not reset the selected pagination scope.
+     * @throws Exception when page navigation fails
+     */
+    @Test
+    public void keepPaginationScopeOnPaginationTypeChangeTest() throws Exception {
+        String paginationTogglerId = "secondSectionSecondColumnToggler";
+        String paginationScopeId = "paginationForm:selectPaginationScope";
+        String paginationTypeId = "paginationForm:paginationTypeSelect";
+        String secondTypeCssSelector = "#paginationForm\\:paginationTypeSelect_items li:nth-child(2)";
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        Browser.getDriver().findElement(By.id(paginationTogglerId)).click();
+        // get current scope value
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(paginationScopeId))::isDisplayed);
+        String scope = Browser.getDriver().findElement(By.id(paginationScopeId)).getText();
+        // change pagination type
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(paginationTypeId))::isDisplayed);
+        Browser.getDriver().findElement(By.id(paginationTypeId)).click();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector))::isDisplayed);
+        Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector)).click();
+        // verify that scope value did not change
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(paginationScopeId))::isDisplayed);
+        String scopeUpdated = Browser.getDriver().findElement(By.id(paginationScopeId)).getText();
+        assertEquals(scope, scopeUpdated, "Pagination scope changed after changing pagination type");
+    }
+
+    /**
      * Verifies that changing process images on file system triggers information/warning dialog.
      * @throws Exception when page navigation fails
      */
