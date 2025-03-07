@@ -126,6 +126,7 @@ public class AddDocStrucTypeDialog {
         } else {
             this.addSingleDocStruc(preview);
         }
+        dataEditor.getStructurePanel().preserve();
         if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNode)
                 || StringUtils.isEmpty(this.selectLastPageOnAddNode))
                 || Objects.nonNull(this.preselectedViews) && !this.preselectedViews.isEmpty())) {
