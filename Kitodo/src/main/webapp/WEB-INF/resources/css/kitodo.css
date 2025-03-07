@@ -122,6 +122,10 @@ html.progressCursor * {
     display: none;
 }
 
+div.ui-contextmenu .ui-menuitem .ui-menuitem-text {
+    padding: 0 0.5em;
+}
+
 /*----------------------------------------------------------------------
 Header
 ----------------------------------------------------------------------*/
