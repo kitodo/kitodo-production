@@ -4531,3 +4531,19 @@ Print Styles
         border: solid var(--default-border-width) #000;
     }
 }
+
+/*----------------------------------------------------------------------
+PrimeFaces fix preventing hidden input elements from scrolling outside 
+of a container when focused e.g. via the tab key or from Javascript.
+See https://github.com/kitodo/kitodo-production/issues/6438
+----------------------------------------------------------------------*/
+
+.ui-selectmanymenu {
+    position: relative;
+}
+
+.ui-selectbooleancheckbox {
+    position: relative;
+}
+
+/* ------ End of Primefaces fix ----- */
