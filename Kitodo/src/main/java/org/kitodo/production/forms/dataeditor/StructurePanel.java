@@ -1182,6 +1182,7 @@ public class StructurePanel implements Serializable {
      */
     public void onDragDrop(TreeDragDropEvent event) {
         TreeNode dropTreeNode = event.getDropNode();
+        TreeNode[] dragTreeNodes = Objects.nonNull(event.getDragNodes()) ? event.getDragNodes() : new TreeNode[] { event.getDragNode() };
         Object dropNodeObject = dropTreeNode.getData();
         expandNode(dropTreeNode);
 
@@ -1190,7 +1191,7 @@ public class StructurePanel implements Serializable {
             boolean physicalMoved = false;
             boolean pageMoved = false;
 
-            for (TreeNode dragTreeNode : event.getDragNodes()) {
+            for (TreeNode dragTreeNode : dragTreeNodes) {
                 Object dragNodeObject = dragTreeNode.getData();
                 StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
                 StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
@@ -1237,15 +1238,18 @@ public class StructurePanel implements Serializable {
             StructureTreeOperations.getTreeNodeLogicalParentOrSelf(event.getDropNode())
         );
 
+        // nodes that were dragged (either multiple if multipleDrag=true, or a single node otherwise)
+        TreeNode[] dragNodes = Objects.nonNull(event.getDragNodes()) ? event.getDragNodes() : new TreeNode[] { event.getDragNode() };
+
         // update selected physical divisions with new parent logical division
-        List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = Arrays.stream(event.getDragNodes())
+        List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = Arrays.stream(dragNodes)
             .map(StructureTreeOperations::getPhysicalDivisionPairFromTreeNode)
             .filter(Objects::nonNull)
             .map(Pair::getLeft)
             .map((p) -> new ImmutablePair<>(p, targetLogicalDivision))
             .collect(Collectors.toList());
 
-        List<LogicalDivision> selectedLogicalDivisions = Arrays.stream(event.getDragNodes())
+        List<LogicalDivision> selectedLogicalDivisions = Arrays.stream(dragNodes)
             .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
