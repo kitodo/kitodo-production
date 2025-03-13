@@ -435,7 +435,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
                 .until(Browser.getDriver().findElement(By.id(SAVE_AND_EXIT_BUTTON_ID))::isEnabled);
         Pages.getMetadataEditorPage().saveAndExit();
         // check whether new position has been saved correctly
-        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_AND_DRAG_N_DROP_TEST_PROCESS_TITLE);
         secondThumbnail = Browser.getDriver().findElement(By.id(targetId));
         hoverAction.moveToElement(secondThumbnail).build().perform();
         thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
