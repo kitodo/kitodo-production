@@ -128,6 +128,15 @@ public class MetadataST extends BaseTestSelenium {
         prepareLinkPageToNextDivision();
     }
 
+    @Test
+    public void importMetadataForLogicalStructureTest() throws Exception {
+        try {
+            Thread.sleep(100 * 6000);
+        } catch (InterruptedException e) {
+            // ignore;
+        }
+    }
+
     /**
      * Tests whether structure tree is hidden when user lacks permission to see a process structure in metadata editor.
      * @throws Exception when page navigation fails
@@ -440,6 +449,9 @@ public class MetadataST extends BaseTestSelenium {
             Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0 .ui-treenode-label")).getText());
     }
     
+    /**
+     * Test that page can be linked to next logicial division even if it is not just a sibling division.
+     */
     @Test
     public void linkPageToNextDivision() throws Exception {
         login("kowal");
@@ -591,6 +603,51 @@ public class MetadataST extends BaseTestSelenium {
 
         // switch back to previous window
         Browser.getDriver().switchTo().window(firstWindowHandle);
+    }
+
+    /**
+     * Test that the catalog search dialog appears when clicking on the update metadata button for a logical division.
+     */
+    @Test
+    public void updateMetadataDialogAppearsTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until metadata table is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("metadataAccordion:metadata:metadataTable")).isDisplayed()
+        );
+
+        // check update metadata button is visible and enabled
+        WebElement updateMetadataButton = Browser.getDriver().findElement(By.id("metadataAccordion:updateMetadataButton"));
+        assertTrue(updateMetadataButton.isDisplayed());
+        assertTrue(updateMetadataButton.isEnabled());
+
+        // click on button 
+        updateMetadataButton.click();
+
+        // wait until catalog search dialog is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("catalogSearchDialog")).isDisplayed()
+        );
+
+        // click on cancel
+        Browser.getDriver().findElement(By.id("catalogSearchForm:cancel")).click();
+        
+        // wait until catalog search dialog disappears
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> !Browser.getDriver().findElement(By.id("catalogSearchDialog")).isDisplayed()
+        );
+
+        // select first tree node containing a page
+        Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0_0 .ui-treenode-content")).click();
+
+        // check update metadata button is disabled
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> !Browser.getDriver().findElement(By.id("metadataAccordion:updateMetadataButton")).isEnabled()
+        );
     }
 
     /**

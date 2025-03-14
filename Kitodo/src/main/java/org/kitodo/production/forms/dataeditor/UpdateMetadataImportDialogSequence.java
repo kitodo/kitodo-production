@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.constants.StringConstants;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -52,17 +54,40 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
 import org.xml.sax.SAXException;
 
-@Named("ImportMetadataDialogSequence")
+/**
+ * Manages the dialog sequence when a user requests to update the metadata of a logical structure element.
+ * 
+ * <p>First, the catalog search dialog is shown, where the user can select an import configuration and 
+ * search parameters. If the catalog search matches multiple records, the hit list dialog is shown. 
+ * Finally, the metadata comparison dialog allows to select the specific metadata information that is 
+ * imported for a logical structure element.</p>
+ */
+@Named("UpdateMetadataImportDialogSequence")
 @ViewScoped
-public class ImportMetadataDialogSequence implements Serializable {
+public class UpdateMetadataImportDialogSequence implements Serializable {
 
-    private static final Logger logger = LogManager.getLogger(ImportMetadataDialogSequence.class);
+    private static final Logger logger = LogManager.getLogger(UpdateMetadataImportDialogSequence.class);
 
     @Inject
     private CreateProcessForm createProcessForm;
 
     @Inject
     private DataEditorForm dataEditorForm;
+
+    @Inject
+    private UpdateMetadataDialog updateMetadataDialog;
+
+    /**
+     * Return true if any logical division is selected such that catalog metadata can be imported.
+     * 
+     * @return true if a logical division is selected
+     */
+    public boolean canImportMetadata() {
+        TreeNode selectedNode = dataEditorForm.getStructurePanel().getSelectedLogicalNode();
+        return Objects.nonNull(selectedNode)
+                && selectedNode.getData() instanceof StructureTreeNode
+                && ((StructureTreeNode) selectedNode.getData()).getDataObject() instanceof LogicalDivision;
+    }
 
     /**
      * Open catalog search dialog when the user requests to import metadata from a catalog record.
@@ -91,6 +116,7 @@ public class ImportMetadataDialogSequence implements Serializable {
      */
     public void selectRecord() {
         String recordId = Helper.getRequestParameter("ID");
+        updateMetadataDialog.setRecordIdentifier(recordId);
 
         try {
             LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
@@ -111,13 +137,17 @@ public class ImportMetadataDialogSequence implements Serializable {
         }
     }
 
+    /**
+     * Extract metadata comparison information from create process form (after catalog search was performed by the user) 
+     * and show comparison dialog.
+     */
     private void showMetadataComparisonDialog() {
         try {
             if (!createProcessForm.getProcesses().isEmpty()) {
                 Process process = dataEditorForm.getProcess();
                 TempProcess tempProcess = createProcessForm.getProcesses().get(0);
                 
-                List<MetadataComparison> metadataComparisons = dataEditorForm.getUpdateMetadataDialog().getMetadataComparisons();
+                List<MetadataComparison> metadataComparisons = updateMetadataDialog.getMetadataComparisons();
                 metadataComparisons.clear();
             
                 HashSet<Metadata> existingMetadata = getMetadata(dataEditorForm.getMetadataPanel().getLogicalMetadataRows());

@@ -41,20 +41,16 @@
                 </h:panelGroup>
                 <h:panelGroup id="updateMetadataButtonWrapper"
                               rendered="#{SecurityAccessController.hasAuthorityToReimportMetadata()}"
-                              title="#{msgs.updateMetadata}">
+                              title="#{UpdateMetadataDialog.canUpdateMetadata() ? 
+                                        msgs['dataEditor.updateMetadata.canUpdate'] : UpdateMetadataImportDialogSequence.canImportMetadata() ? 
+                                        msgs['dataEditor.updateMetadata.canImport'] : msgs['dataEditor.updateMetadata.canNotImport']}">
                     <p:commandButton id="updateMetadataButton"
                                      icon="fa fa-refresh"
                                      styleClass="secondary"
-                                     action="#{DataEditorForm.updateMetadataDialog.updateCatalogMetadata()}"
-                                     disabled="#{not DataEditorForm.canUpdateMetadata()}"
+                                     action="#{UpdateMetadataDialog.onUpdateCatalogMetadataClick()}"
+                                     disabled="#{not UpdateMetadataDialog.canUpdateMetadata() and not UpdateMetadataImportDialogSequence.canImportMetadata()}"
                                      onstart="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"/>
-                </h:panelGroup>
-                <h:panelGroup id="importMetadataButtonWrapper">
-                    <p:commandButton id="importMetadataButton" 
-                                     icon="fa fa-download" 
-                                     styleClass="secondary"
-                                     action="#{ImportMetadataDialogSequence.importMetadata()}"/>
                 </h:panelGroup>
             </p:row>
         </p:panelGrid>

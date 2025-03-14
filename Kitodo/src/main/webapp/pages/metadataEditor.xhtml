@@ -276,13 +276,13 @@
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/updateMetadata.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataUnchangedDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/import.xhtml">
-            <ui:param name="searchActionBean" value="#{ImportMetadataDialogSequence}" />
+            <ui:param name="searchActionBean" value="#{UpdateMetadataImportDialogSequence}" />
             <ui:param name="searchActionMethod" value="catalogSearch" />
             <ui:param name="searchUpdate" value="hitlist" />
             <ui:param name="showImportOptions" value="false" />
         </ui:include>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/hitlistDialog.xhtml">
-            <ui:param name="selectRecordActionBean" value="#{ImportMetadataDialogSequence}" />
+            <ui:param name="selectRecordActionBean" value="#{UpdateMetadataImportDialogSequence}" />
             <ui:param name="selectRecordActionMethod" value="selectRecord" />
             <ui:param name="selectRecordUpdate" value="" />
         </ui:include>

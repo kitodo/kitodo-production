@@ -49,7 +49,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
@@ -96,8 +95,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * Dialog for adding metadata.
      */
     private final AddMetadataDialog addMetadataDialog;
-
-    private final UpdateMetadataDialog updateMetadataDialog;
 
     /**
      * Backing bean for the add PhysicalDivision dialog.
@@ -240,7 +237,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         this.paginationPanel = new PaginationPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMetadataDialog = new AddMetadataDialog(this);
-        this.updateMetadataDialog = new UpdateMetadataDialog(this);
         this.addPhysicalDivisionDialog = new AddPhysicalDivisionDialog(this);
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
@@ -671,16 +667,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public AddMetadataDialog getAddMetadataDialog() {
         return addMetadataDialog;
     }
-
-    /**
-     * Get updateMetadataDialog.
-     *
-     * @return value of updateMetadataDialog
-     */
-    public UpdateMetadataDialog getUpdateMetadataDialog() {
-        return updateMetadataDialog;
-    }
-
 
     /**
      * Returns the backing bean for the add media dialog. This function is used
@@ -1309,33 +1295,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public String getMetadataFileLoadingError() {
         return metadataFileLoadingError;
-    }
-
-    /**
-     * Check and return whether conditions for metadata update are met or not.
-     *
-     * @return whether metadata of process can be updated
-     */
-    public boolean canUpdateMetadata() {
-        try {
-            return DataEditorService.canUpdateCatalogMetadata(process, workpiece, structurePanel.getSelectedLogicalNode());
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return false;
-        }
-    }
-
-    /**
-     * Perform metadata update for current process.
-     */
-    public void applyMetadataUpdate() {
-        Division<?> division = metadataPanel.getLogicalMetadataTable().getDivision();
-        if (Objects.nonNull(division) && division instanceof LogicalDivision) {
-            DataEditorService.updateMetadataWithNewValues((LogicalDivision) division, updateMetadataDialog.getMetadataComparisons());
-            metadataPanel.update();
-        } else {
-            Helper.setErrorMessage("cannot update metadata of non-logical division");
-        }        
     }
 
     /**

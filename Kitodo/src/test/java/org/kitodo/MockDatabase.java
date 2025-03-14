@@ -427,6 +427,7 @@ public class MockDatabase {
         authorities.add(new Authority("viewProcessStructureData" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewProcessPagination" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewProcessImages" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("reimportMetadata" + CLIENT_ASSIGNABLE));
 
         // Batch
         authorities.add(new Authority("viewBatch" + CLIENT_ASSIGNABLE));
@@ -1694,6 +1695,7 @@ public class MockDatabase {
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllProcesses" + CLIENT_ASSIGNABLE));
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessImages" + CLIENT_ASSIGNABLE));
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("editProcessMetaData" + CLIENT_ASSIGNABLE));
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("reimportMetadata" + CLIENT_ASSIGNABLE));
         sixthRole.setAuthorities(userMetadataAuthorities);
 
         ServiceManager.getRoleService().saveToDatabase(sixthRole);
