@@ -128,15 +128,6 @@ public class MetadataST extends BaseTestSelenium {
         prepareLinkPageToNextDivision();
     }
 
-    @Test
-    public void importMetadataForLogicalStructureTest() throws Exception {
-        try {
-            Thread.sleep(100 * 6000);
-        } catch (InterruptedException e) {
-            // ignore;
-        }
-    }
-
     /**
      * Tests whether structure tree is hidden when user lacks permission to see a process structure in metadata editor.
      * @throws Exception when page navigation fails
