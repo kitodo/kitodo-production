@@ -43,8 +43,6 @@
                  styleClass="no-header"
                  widgetVar="metadataTable"
                  id="metadataTable">
-        <p:ajax event="collapse"
-                onstart="return #{request.requestURI.contains('metadataEditor')};"/>
         <p:column>
             <span class="input-wrapper">
                 <!-- field label
@@ -67,7 +65,6 @@
                                  label="#{item.label}"
                                  value="#{item.value}"
                                  disabled="#{not item.editable or readOnly}"
-                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                  onkeydown="metadataEditor.metadataTree.handleKeyDown(event, this)">
                         <p:ajax event="change"
@@ -83,7 +80,6 @@
                                      value="#{item.value}"
                                      rows="2"
                                      disabled="#{not item.editable or readOnly}"
-                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
                         <p:ajax event="change"
                                 oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
@@ -97,7 +93,6 @@
                                label="#{item.label}"
                                value="#{item.value}"
                                disabled="#{not item.editable or readOnly}"
-                               required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
                         <p:ajax event="change"
                                 oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
@@ -112,7 +107,6 @@
                                 pattern="yyyy-MM-dd"
                                 styleClass="input-with-button #{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                 showOn="button"
-                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
                         <p:ajax event="dateSelect"
                                 oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
@@ -127,7 +121,6 @@
                                       readonly="#{not item.editable}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       disabled="#{not item.editable or readOnly}"
-                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true"
                                       filter="#{item.filterable}"
                                       filterMatchMode="contains">
@@ -146,7 +139,6 @@
                                      readonly="#{not item.editable}"
                                      autoWidth="false"
                                      disabled="#{not item.editable or readOnly}"
-                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{readOnly ? 'read-only' : ''}"
                                      filter="#{item.filterable}"
                                      filterMatchMode="contains">
@@ -166,7 +158,6 @@
                                       label="#{item.label}"
                                       value="#{item.selectedItem}"
                                       readonly="#{not item.editable}"
-                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       disabled="#{not item.editable or readOnly}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       layout="grid"
@@ -182,7 +173,6 @@
                     <p:selectBooleanCheckbox id="toggleSwitch"
                                              label="#{item.label}"
                                              disabled="#{not item.editable or readOnly}"
-                                             required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                              value="#{item.active}">
                         <p:ajax event="change"
                                 oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
