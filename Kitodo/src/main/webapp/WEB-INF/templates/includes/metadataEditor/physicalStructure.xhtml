@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui"
@@ -100,6 +101,19 @@
                         actionListener="#{DataEditorForm.addPhysicalDivisionDialog.prepare}"
                         oncomplete="PF('dialogAddPhysicalDivision').show()"
                         update="dialogAddPhysicalDivisionForm"/>
+            <p:menuitem value="#{msgs.viewPageInNewWindow}"
+                        rendered="#{
+                                DataEditorForm.structurePanel.selectedPhysicalNode.type eq StructurePanel.MEDIA_NODE_TYPE and
+                                mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
+                        icon="fa fa-external-link fa-sm"
+                        styleClass="plain viewPageInNewWindow"
+                        outcome="externalView"
+                        target="_blank">
+                <f:param name="processId" value="#{DataEditorForm.process.id}"/>
+                <f:param name="mediaId" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                <f:param name="mimeType" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType}"/>
+                <f:param name="cachingUUID" value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+            </p:menuitem>
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
                         styleClass="plain assignToNextElement"
