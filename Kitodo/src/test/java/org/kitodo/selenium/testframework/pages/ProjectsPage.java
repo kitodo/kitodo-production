@@ -295,10 +295,26 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return getTableDataByColumn(rulesetsTable, 0);
     }
 
+    /**
+     * Open "create new process" page with template "First template".
+     *
+     * @throws Exception if "create new process" page could not be opened
+     */
     public void createNewProcess() throws Exception {
+        createNewProcess("First template");
+    }
+
+    /**
+     * Open "create new process" page with template with given title "templateTitle".
+     *
+     * @param templateTitle title of template to use
+     *
+     * @throws Exception if "create new process" page could not be opened
+     */
+    public void createNewProcess(String templateTitle) throws Exception {
         switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
 
-        int index = triggerRowToggle(templatesTable, "First template");
+        int index = triggerRowToggle(templatesTable, templateTitle);
         WebElement createProcess = Browser.getDriver()
                 .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":createProcessForm:projects:0:createProcess"));
         clickButtonAndWaitForRedirect(createProcess, Pages.getProcessFromTemplatePage().getUrl());

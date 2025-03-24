@@ -62,6 +62,7 @@ public class ImportingST extends BaseTestSelenium {
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
         MockDatabase.addDefaultChildProcessImportConfigurationToFirstProject();
+        MockDatabase.insertTestTemplateForCreatingProcesses();
         server = new StubServer(MockDatabase.PORT).run();
         setupServer();
     }
@@ -151,6 +152,29 @@ public class ImportingST extends BaseTestSelenium {
         List<String> importConfigurationNames = importPage.getImportConfigurationsTitles();
         assertEquals(TestConstants.GBV, importConfigurationNames.get(1), "Wrong title of first import configuration");
         assertEquals(TestConstants.K10PLUS, importConfigurationNames.get(2), "Wrong title of second import configuration");
+    }
+
+    /**
+     * Checks whether checkboxes in group in the metadata table of the "create new process" form are preserved on
+     * collapsing the group UI element or not.
+     *
+     * @throws Exception when opening the "create new process" form fails
+     */
+    @Test
+    public void checkCollapsedCheckboxMetadataIsPreserved() throws Exception {
+        projectsPage.createNewProcess("Book template");
+        importPage.cancelCatalogSearch();
+        importPage.insertTestTitle();
+        importPage.selectCheckBox(0);
+        importPage.toggleTreeTable();
+        importPage.clickSaveButton();
+        await("Waiting to be redirected to processes page after saving process with selected mandatory checkbox "
+                + "in collapsed metadata group")
+                .pollDelay(500, TimeUnit.MILLISECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> processesPage.isAt());
     }
 
     /**
