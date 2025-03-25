@@ -47,7 +47,7 @@ public enum MetadataFormat {
             case "MODS":
                 return ".//*[local-name()='recordInfo']/*[local-name()='recordIdentifier']/text()";
             case "MARC":
-                return ".//*[local-name()='datafield'][@tag='245']/*[local-name()='subfield'][@code='a']/text()";
+                return ".//*[local-name()='controlfield'][@tag='001']/text()";
             case "PICA":
                 return ".//*[local-name()='datafield'][@tag='003@']/*[local-name()='subfield'][@code='0']/text()";
             default:
@@ -66,7 +66,7 @@ public enum MetadataFormat {
             case "MODS":
                 return ".//*[local-name()='titleInfo']/*[local-name()='title']/text()";
             case "MARC":
-                return ".//*[local-name()='controlfield'][@tag='001']/text()";
+                return ".//*[local-name()='datafield'][@tag='245']/*[local-name()='subfield'][@code='a']/text()";
             case "PICA":
                 return ".//*[local-name()='datafield'][@tag='021A']/*[local-name()='subfield'][@code='a']/text()";
             default:
