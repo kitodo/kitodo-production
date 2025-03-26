@@ -1491,7 +1491,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
         query.restrictToClient(sessionClientId);
         query.addStringRestriction("title", title);
-        return count(query.formCountQuery());
+        return count(query.formCountQuery(), query.getQueryParameters());
     }
 
     /**
