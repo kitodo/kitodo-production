@@ -186,7 +186,17 @@ public class ProcessTestUtils {
      */
     public static void removeTestProcess(int testProcessId) throws DAOException {
         if (testProcessId > 0) {
-            deleteProcessHierarchy(ServiceManager.getProcessService().getById(testProcessId));
+            Process process;
+            try {
+                process = ServiceManager.getProcessService().getById(testProcessId);
+            } catch (DAOException daoException) {
+                if (daoException.getMessage().contains("cannot be found")) {
+                    return;
+                } else {
+                    throw daoException;
+                }
+            }
+            deleteProcessHierarchy(process);
         }
     }
 

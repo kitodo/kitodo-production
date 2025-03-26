@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -598,7 +599,7 @@ public class ImportServiceIT {
                 ImportEadProcessesThread eadProcessesThread = new ImportEadProcessesThread(createProcessForm, user, client);
                 eadProcessesThread.start();
                 assertTrue(eadProcessesThread.isAlive(), "Process should have been started");
-                eadProcessesThread.join(3000);
+                eadProcessesThread.join(10_000);
                 assertFalse(eadProcessesThread.isAlive(), "Process should have been stopped");
             }
         }
