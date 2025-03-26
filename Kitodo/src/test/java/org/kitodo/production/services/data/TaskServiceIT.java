@@ -264,12 +264,12 @@ public class TaskServiceIT {
         assertEquals(9, size, "Incorrect size of distinct titles for tasks!");
 
         String title = taskTitlesDistinct.get(0);
-        assertEquals("additional", title, "Incorrect sorting of distinct titles for tasks!");
+        assertEquals("Additional", title, "Incorrect sorting of distinct titles for tasks!");
 
         title = taskTitlesDistinct.get(1);
-        assertEquals("blocking", title, "Incorrect sorting of distinct titles for tasks!");
+        assertEquals("Blocking", title, "Incorrect sorting of distinct titles for tasks!");
 
         title = taskTitlesDistinct.get(2);
-        assertEquals("closed", title, "Incorrect sorting of distinct titles for tasks!");
+        assertEquals("Closed", title, "Incorrect sorting of distinct titles for tasks!");
     }
 }
