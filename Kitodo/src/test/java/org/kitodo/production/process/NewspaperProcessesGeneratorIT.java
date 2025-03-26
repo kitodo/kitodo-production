@@ -232,8 +232,8 @@ public class NewspaperProcessesGeneratorIT {
         generatesNewspaperProcessesThread.start();
         DAOException dataException = assertThrows(DAOException.class,
             () -> ServiceManager.getProcessService().getById(11));
-        assertEquals("Process should not have been created", "Process 11 cannot be found in database",
-            dataException.getMessage());
+        assertEquals("Process 11 cannot be found in database", dataException.getMessage(),
+            "Process should not have been created");
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {
