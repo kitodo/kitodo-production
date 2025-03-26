@@ -510,6 +510,11 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Finds all processes with specific metadata entries.
      *
+     * <!-- Used in the import service to locate parent processes. The map
+     * contains exactly one entry: a metadata key which is
+     * use="recordIdentifier", and as value the remote ID of the parent process
+     * (for example its PPN). exactMatch is always true here. -->
+     *
      * @param metadata
      *            metadata entries that the process must have
      * @param exactMatch
@@ -519,12 +524,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @throws DAOException
      *             if there was an error during the search, or if the metadata
      *             is not indexed
-     */
-    /*
-     * Used in the import service to locate parent processes. The map contains
-     * exactly one entry: a metadata key which is use="recordIdentifier", and as
-     * value the remote ID of the parent process (for example its PPN).
-     * exactMatch is always true here.
      */
     public List<Process> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
