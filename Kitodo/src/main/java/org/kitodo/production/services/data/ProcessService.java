@@ -1397,7 +1397,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *            process whose root type is to be determined
      * @return the type of the logical structure of the workpiece, "" if unreadable
      */
-    public String getBaseType(Process process) {
+    public static String getBaseType(Process process) {
         try {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
             return ServiceManager.getMetsService().getBaseType(metadataFilePath);
@@ -2215,7 +2215,11 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                     .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
             RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
         }
-        return functionalDivisions.contains(process.getBaseType());
+        String baseType = process.getBaseType();
+        if (Objects.isNull(baseType)) {
+            baseType = getBaseType(process);
+        }
+        return functionalDivisions.contains(baseType);
     }
 
     /**
