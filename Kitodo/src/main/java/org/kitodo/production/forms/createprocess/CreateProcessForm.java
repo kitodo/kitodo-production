@@ -384,7 +384,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public String createNewProcessAndContinue() {
         String destination = createNewProcess();
-        if (!destination.equals(processListPath)) {
+        if (!processListPath.equals(destination)) {
             return destination;
         }
         Process parentProcess = titleRecordLinkTab.getTitleRecordProcess();
