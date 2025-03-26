@@ -15,6 +15,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
+    private static final Collection<Integer> NO_HIT = Collections.singletonList(-1);
     private final FilterService fileterService = ServiceManager.getFilterService();
     private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;
@@ -205,7 +207,7 @@ public class BeanQuery {
             Entry<String, Pair<FilterField, String>> entry = iterator.next();
             Collection<Integer> ids = indexingService.searchIds(beanClass, entry.getValue().getLeft().getSearchField(),
                 entry.getValue().getRight());
-            parameters.put(entry.getKey(), ids);
+            parameters.put(entry.getKey(), ids.isEmpty() ? NO_HIT : ids);
             iterator.remove();
         }
     }

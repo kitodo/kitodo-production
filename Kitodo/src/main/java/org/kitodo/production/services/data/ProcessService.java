@@ -537,6 +537,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
+        query.performIndexSearches();
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -567,6 +568,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
+        query.performIndexSearches();
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
