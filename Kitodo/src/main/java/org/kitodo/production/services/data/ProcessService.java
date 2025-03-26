@@ -2501,7 +2501,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictToProjects(projectIDs);
         query.addBooleanRestriction("inChoiceListShown", true);
         query.defineSorting("title", SortOrder.ASCENDING);
-        return getByQuery(query.formQueryForAll());
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
 
