@@ -47,6 +47,7 @@ public class Client extends BaseBean {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
+    @ManyToMany(mappedBy = "clients")
     private List<ImportConfiguration> importConfigurations;
 
     /**
