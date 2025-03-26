@@ -324,7 +324,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 transaction.commit();
             }
         } catch (PersistenceException e) {
-            throw new DAOException(e);
+            if (e.getMessage().startsWith("No row with the given identifier exists")) {
+                return;
+            } else {
+                throw new DAOException(e);
+            }
         }
     }
 

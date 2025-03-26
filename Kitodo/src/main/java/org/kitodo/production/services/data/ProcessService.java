@@ -1968,11 +1968,21 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static void deleteProcess(Process processToDelete) throws DAOException, IOException {
         deleteMetadataDirectory(processToDelete);
 
+        ArrayList<Property> workpieceProperties = new ArrayList<>(processToDelete.getWorkpieces());
+        if (workpieceProperties.size() > 0) {
+            for (Property workpieceProperty : workpieceProperties) {
+                processToDelete.getWorkpieces().remove(workpieceProperty);
+                workpieceProperty.getProcesses().clear();
+                ServiceManager.getProcessService().save(processToDelete);
+                ServiceManager.getPropertyService().remove(workpieceProperty);
+            }
+        }
         Project project = processToDelete.getProject();
         if (Objects.nonNull(project)) {
             processToDelete.setProject(null);
             if (Objects.nonNull(project.getProcesses())) {
                 project.getProcesses().remove(processToDelete);
+                ServiceManager.getProcessService().save(processToDelete);
                 ServiceManager.getProjectService().save(project);
             }
         }
