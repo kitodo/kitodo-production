@@ -12,25 +12,14 @@
 package org.kitodo.production.helper;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.kitodo.data.database.beans.BaseTemplateBean;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.persistence.HibernateUtil;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.enums.ObjectType;
+import org.kitodo.data.database.beans.BaseTemplateBean;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
 
@@ -40,7 +29,6 @@ public class SearchResultGeneration {
     private String filter;
     private boolean showClosedProcesses;
     private boolean showInactiveProjects;
-    private static final Logger logger = LogManager.getLogger(SearchResultGeneration.class);
 
     /**
      * Constructor.
