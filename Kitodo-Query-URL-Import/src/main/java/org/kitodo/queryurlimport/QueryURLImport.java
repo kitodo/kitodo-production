@@ -89,6 +89,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String HTTPS_PROTOCOL = "https";
     private static final String FTP_PROTOCOL = "ftp";
     private static final String EQUALS_OPERAND = "=";
+    private static final String EQUALS_OPERAND_ENCODED = "%3D";
     private static final String AND = "&";
     private static final String OAI_IDENTIFIER = "identifier";
     private final Charset encoding = StandardCharsets.UTF_8;
@@ -269,10 +270,11 @@ public class QueryURLImport implements ExternalDataImportInterface {
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
         String idParameter = SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) ? OAI_IDENTIFIER
                 : dataImport.getIdParameter();
+        String encodedValue = URLEncoder.encode(prefix + identifier, encoding);
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            fullUrl += URLEncoder.encode(idParameter + EQUALS_OPERAND + prefix + identifier, encoding);
+            fullUrl += idParameter + EQUALS_OPERAND_ENCODED + encodedValue;
         } else {
-            fullUrl += URLEncoder.encode(idParameter, encoding) + EQUALS_OPERAND + URLEncoder.encode(prefix + identifier, encoding);
+            fullUrl += idParameter + EQUALS_OPERAND + encodedValue;
         }
         try {
             this.reinitializeHttpClient(dataImport.getUsername(), dataImport.getPassword());
@@ -414,17 +416,17 @@ public class QueryURLImport implements ExternalDataImportInterface {
     }
 
     private String createSearchFieldString(SearchInterfaceType interfaceType, LinkedHashMap<String, String> searchFields) {
-        String searchString = "";
         List<String> searchOperands = searchFields.entrySet().stream()
-                .map(entry -> entry.getKey() + EQUALS_OPERAND + entry.getValue())
+                .map(entry -> {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    String encodedValue = URLEncoder.encode(value, encoding);
+                    return SearchInterfaceType.SRU.equals(interfaceType)
+                            ? key + EQUALS_OPERAND_ENCODED + encodedValue
+                            : key + EQUALS_OPERAND + encodedValue;
+                })
                 .collect(Collectors.toList());
-        if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            searchString = URLEncoder.encode(String.join(" AND ", searchOperands), encoding);
-        } else {
-            searchOperands.replaceAll(s -> !s.equals(EQUALS_OPERAND) ? URLEncoder.encode(s, encoding) : s);
-            searchString = String.join(" AND ", searchOperands);
-        }
-        return searchString;
+        return String.join(" AND ", searchOperands);
     }
 
     private Document stringToDocument(String xmlContent) throws ParserConfigurationException, IOException,
