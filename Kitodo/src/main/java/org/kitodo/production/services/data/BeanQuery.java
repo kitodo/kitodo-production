@@ -39,7 +39,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
-    private static final Collection<Integer> NO_HIT = Collections.singletonList(-1);
+    private static final Collection<Integer> NO_HIT = Collections.singletonList(0);
     private final FilterService fileterService = ServiceManager.getFilterService();
     private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;

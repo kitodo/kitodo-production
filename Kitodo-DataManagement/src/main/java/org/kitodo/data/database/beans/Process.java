@@ -1130,4 +1130,12 @@ public class Process extends BaseTemplateBean {
             return processKeywords;
         }
     }
+
+    /**
+     * Resets the process metadata keywords. This function is called from the
+     * DAO before saving to ensure the keywords are updated reliably.
+     */
+    public void dropKeywords() {
+        this.processKeywords = null;
+    }
 }
