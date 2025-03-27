@@ -498,6 +498,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
@@ -520,6 +521,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
@@ -565,6 +567,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
@@ -587,6 +590,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
@@ -611,6 +615,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
         newMetadataSearchMap.put(metadataKey, "Overwritten");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
@@ -642,6 +647,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
         newMetadataSearchMap.put(metadataKey, "Second process");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
@@ -673,6 +679,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
         newMetadataSearchMap.put(metadataKey, String.valueOf(kitodoScriptTestProcessId));
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
