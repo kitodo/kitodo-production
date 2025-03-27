@@ -375,6 +375,7 @@ public class KitodoScriptServiceIT {
         logger.debug("Running Test: shouldCopyMultipleDataToChildren()");
         Map<String, Integer> testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
         ProcessTestUtils.copyHierarchyTestFiles(testProcessIds);
+        Thread.sleep(2000);
         String metadataKey = "DigitalCollection";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Kollektion2");
