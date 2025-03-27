@@ -542,6 +542,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
 
+        Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
