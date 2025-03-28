@@ -2360,4 +2360,41 @@ public class MockDatabase {
                     .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
         }
     }
+
+    /**
+     * Add simple template with one task that can be used to create processes.
+     *
+     * @throws DAOException when loading role or template fails
+     * @throws DataException when saving template task fails
+     */
+    public static void insertTestTemplateForCreatingProcesses() throws DAOException, DataException {
+        Project project = ServiceManager.getProjectService().getById(1);
+        Client client = ServiceManager.getClientService().getById(1);
+
+        Ruleset bookRuleset = new Ruleset();
+        bookRuleset.setTitle("Book");
+        bookRuleset.setFile("simple-book.xml");
+        bookRuleset.setOrderMetadataByRuleset(false);
+        bookRuleset.setClient(client);
+        ServiceManager.getRulesetService().save(bookRuleset);
+        int bookRulesetId = bookRuleset.getId();
+
+        Template bookTemplate = new Template();
+        bookTemplate.setTitle("Book template");
+        bookTemplate.setClient(project.getClient());
+        bookTemplate.setDocket(ServiceManager.getDocketService().getById(2));
+        bookTemplate.setRuleset(ServiceManager.getRulesetService().getById(bookRulesetId));
+        bookTemplate.getProjects().add(project);
+        ServiceManager.getTemplateService().save(bookTemplate, true);
+        int bookTemplateId = bookTemplate.getId();
+
+        Role role = ServiceManager.getRoleService().getById(1);
+        Task templateTask = new Task();
+        templateTask.setTitle("Template task");
+        templateTask.setProcessingStatus(TaskStatus.OPEN);
+        templateTask.setTemplate(ServiceManager.getTemplateService().getById(bookTemplateId));
+        templateTask.getRoles().add(role);
+        role.getTasks().add(templateTask);
+        ServiceManager.getTaskService().save(templateTask);
+    }
 }

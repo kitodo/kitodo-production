@@ -1686,6 +1686,14 @@ Import form
     background: var(--blue);
 }
 
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .ui-button.validation-error {
+    background: var(--orange);
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .selected.validation-error {
+    background: var(--focused-orange);
+}
+
 #editForm\:processFromTemplateTabView\:processChildren {
     margin: auto;
 }
