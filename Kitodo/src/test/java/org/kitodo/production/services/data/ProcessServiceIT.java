@@ -208,7 +208,8 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByMetadata() throws DAOException {
+    public void shouldFindByMetadata() throws Exception {
+        Thread.sleep(2000);
         assertEquals(3, processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size(), processNotFound);
     }
 
@@ -227,9 +228,10 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByLongNumberInMetadata() throws DAOException, IOException {
+    public void shouldFindByLongNumberInMetadata() throws Exception {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
+        Thread.sleep(2000);
         assertEquals(1, processService
                 .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999991")).size(), processNotFound);
         assertEquals(1, processService
