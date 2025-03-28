@@ -36,7 +36,7 @@
                     itemLabel="#{msgs.showOnlyStructureElements}">
                         <p:ajax event="change"
                             listener="#{DataEditorForm.structurePanel.onHideMediaInLogicalTreeChange}"
-                            update="@this logicalTree @(.pageList) imagePreviewForm:thumbnailStripe"/>
+                            update="@this logicalTree @(.pageList) imagePreviewForm:thumbnailStripe imagePreviewForm:mediaContextMenu"/>
                     </p:selectBooleanCheckbox>
                 </li>
                 <li>
