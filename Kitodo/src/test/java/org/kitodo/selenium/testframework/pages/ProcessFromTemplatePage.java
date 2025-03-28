@@ -107,6 +107,9 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     @FindBy(id = "catalogSearchForm:cancel")
     private WebElement cancelCatalogSearchButton;
 
+    @FindBy(id = "editForm:processFromTemplateTabView:metadataTable_data")
+    private WebElement metadataTable;
+
     public ProcessFromTemplatePage() {
         super("pages/processFromTemplate.jsf");
     }
@@ -370,5 +373,42 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     public void cancel() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(cancelButton, Pages.getProjectsPage().getUrl());
         Pages.getProcessesPage();
+    }
+
+    /**
+     * Select checkbox in metadata table with given index.
+     *
+     * @param index index of checkbox to click
+     */
+    public void selectCheckBox(int index) {
+        metadataTable.findElements(By.className("ui-chkbox-icon")).get(index).click();
+    }
+
+    /**
+     * Click first tree table toggler in metadata table.
+     */
+    public void toggleTreeTable() {
+        metadataTable.findElement(By.className("ui-treetable-toggler")).click();
+    }
+
+    /**
+     * Click 'cancel' button on catalog search popup to close dialog.
+     */
+    public void cancelCatalogSearch() {
+        clickElement(cancelCatalogSearchButton);
+    }
+
+    /**
+     * Click 'save' button in 'new process form'.
+     */
+    public void clickSaveButton() {
+        clickElement(saveButton);
+    }
+
+    /**
+     * Insert String into 'process title' input field.
+     */
+    public void insertTestTitle() {
+        processTitleInput.sendKeys("Testvorgang");
     }
 }

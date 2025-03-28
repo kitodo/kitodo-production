@@ -33,7 +33,7 @@
                 <p:commandButton action="#{CreateProcessForm.fillCreateProcessForm(processAncestor)}"
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
                                  process="@this"
-                                 styleClass="carousel-button #{CreateProcessForm.currentProcess.equals(processAncestor) ? 'selected' : ''}"
+                                 styleClass="#{CreateProcessForm.getProcessButtonStyleClass(processAncestor)}"
                                  value="#{CreateProcessForm.getCatalogId(processAncestor)}"
                                  update="editForm:processFromTemplateTabView:processData
                                          @(.carousel-button)"/>
@@ -49,7 +49,7 @@
                 <p:commandButton action="#{CreateProcessForm.fillCreateProcessForm(childProcess)}"
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
                                  process="@this"
-                                 styleClass="carousel-button #{CreateProcessForm.currentProcess.equals(childProcess) ? 'selected' : ''}"
+                                 styleClass="#{CreateProcessForm.getProcessButtonStyleClass(childProcess)}"
                                  value="#{CreateProcessForm.getCatalogId(childProcess)}"
                                  update="editForm:processFromTemplateTabView:processData
                                          @(.carousel-button)"/>
