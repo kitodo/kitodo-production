@@ -189,6 +189,8 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         ppnDigitalInput.sendKeys("12345");
 
         guessImagesInput.sendKeys("299");
+        await("Wait for delay from ajax request of input fields").pollDelay(1, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> generateTitleButton.isDisplayed());
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.test(processTitleInput));
