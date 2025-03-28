@@ -56,7 +56,7 @@ class ProcessKeywords {
     private static final Pattern TITLE_GROUPS_PATTERN = Pattern.compile("[\\p{IsLetter}\\p{Digit}]+");
     private static final Pattern METADATA_PATTERN = Pattern.compile("name=\"([^\"]+)\">([^<]*)<", Pattern.DOTALL);
     private static final Pattern METADATA_SECTIONS_PATTERN
-            = Pattern.compile("<mets:dmdSec.*?o(?: xmlns\\S+)?>(.*?)</kitodo:k",
+            = Pattern.compile("<mets:dmdSec.*?o(?: (?:xmlns|version)\\S+)*?>(.*?)</kitodo:k",
         Pattern.DOTALL);
     private static final Pattern RULESET_KEY_PATTERN = Pattern.compile("key id=\"([^\"]+)\">(.*?)</key>",
         Pattern.DOTALL);
