@@ -36,7 +36,7 @@
                                 <p:inputText id="shortcutInput"
                                              value="#{UserForm.shortcuts[item.key]}"
                                              styleClass="shortcut-input">
-                                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                                    <p:ajax oncomplete="toggleSave()"/>
                                 </p:inputText>
                                 <p:button title="#{msgs['shortcuts.clear']}"
                                           icon="fa fa-trash"

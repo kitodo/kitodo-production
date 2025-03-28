@@ -146,7 +146,7 @@
                                              required="#{empty param['editForm:saveButtonToggler']}">
                                 <f:selectItems value="#{LdapServerForm.passwordEncryption}" var="encryption"
                                                itemValue="#{encryption}" />
-                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>
                         <div>

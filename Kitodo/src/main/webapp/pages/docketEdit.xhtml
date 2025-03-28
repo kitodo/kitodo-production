@@ -86,7 +86,7 @@
                             <p:selectOneMenu id="file" value="#{DocketForm.docket.file}" disabled="#{isViewMode}">
                                 <f:selectItems value="#{DocketForm.docketFiles}" var="docketFile" itemValue="#{docketFile}"
                                                itemLabel="#{docketFile}"/>
-                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>
                     </p:row>

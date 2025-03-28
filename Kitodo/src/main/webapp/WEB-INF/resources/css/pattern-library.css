@@ -1473,7 +1473,7 @@ Popup dialogs
 }
 
 #loadingScreen {
-    animation: overlay-delayed .3s .5s forwards;
+    animation: overlay-delayed .3s .7s forwards;
     position: fixed;
     width: 100vw;
     height: 100vh;

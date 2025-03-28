@@ -26,7 +26,6 @@
                              title="#{TemplateForm.template.title}"
                              class="input" disabled="#{isViewMode}"
                              required="#{not empty param['editForm:save']}">
-                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
 
@@ -40,7 +39,7 @@
                                    itemLabel="#{project.title}"
                                    itemValue="#{project}"
                                    itemDisabled="#{TemplateForm.isUserNotAssignedToProject(project)}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectManyCheckbox >
             </div>
 
@@ -49,7 +48,7 @@
                 <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}"
                                          title="#{TemplateForm.template.active}"
                                          disabled="#{isViewMode}">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
 
@@ -65,7 +64,7 @@
                                    var="ruleset"
                                    itemValue="#{ruleset}"
                                    itemLabel="#{ruleset.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -78,7 +77,7 @@
                                    var="docket"
                                    itemValue="#{docket}"
                                    itemLabel="#{docket.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -92,7 +91,7 @@
                                    var="workflow"
                                    itemValue="#{workflow}"
                                    itemLabel="#{workflow.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -108,7 +107,7 @@
                                    var="ocrdWorkflow"
                                    itemValue="#{ocrdWorkflow}"
                                    itemLabel="#{ocrdWorkflow.value}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>
