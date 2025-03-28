@@ -11,6 +11,8 @@
 
 package org.kitodo.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -22,28 +24,27 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 public class MetsKitodoConverterTest {
-    private URI xmlfile = Paths.get("src/test/resources/testmetaOldFormat.xml").toUri();
-    private URI xsltFile = Paths.get("src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
+    private final URI xmlfile = Paths.get("src/test/resources/testmetaOldFormat.xml").toUri();
+    private final URI xsltFile = Paths.get("src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
     private static byte[] testMetaOldFormat;
 
-    @Before
+    @BeforeEach
     public void saveFile() throws IOException {
         File file = new File("src/test/resources/testmetaOldFormat.xml");
         testMetaOldFormat = IOUtils.toByteArray(file.toURI());
     }
 
-    @After
+    @AfterEach
     public void revertFile() throws IOException {
         IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
     }
@@ -55,18 +56,28 @@ public class MetsKitodoConverterTest {
         KitodoType kitodoType = (KitodoType) jaxbElement.getValue();
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
-            metadataType.getName());
-        Assert.assertEquals("Reading content metadata out of kitodo format was not correct", "Test Publisher",
-            metadataType.getValue());
+        assertEquals("PublisherName",
+            metadataType.getName(),
+            "Reading data of type 'name' out of kitodo format was not correct");
+        assertEquals("Test Publisher",
+            metadataType.getValue(),
+            "Reading content metadata out of kitodo format was not correct");
 
         MetadataGroupType metadataGroup = kitodoType.getMetadataGroup().get(0);
-        Assert.assertEquals("Converting of metadata group was wrong at name attribute","TypeOfResource", metadataGroup.getName());
-        Assert.assertEquals("Converting of metadata group was wrong at metadata child element","Handschrift", metadataGroup.getMetadata().get(0).getValue());
+        assertEquals("TypeOfResource",
+            metadataGroup.getName(),
+            "Converting of metadata group was wrong at name attribute");
+        assertEquals("Handschrift",
+            metadataGroup.getMetadata().get(0).getValue(),
+            "Converting of metadata group was wrong at metadata child element");
 
         MetadataGroupType personMetadataGroup = kitodoType.getMetadataGroup().get(1);
-        Assert.assertEquals("Converting of person was wrong at name attribute","person", personMetadataGroup.getName());
-        Assert.assertEquals("Converting of person was wrong at metadata child element","FormerOwner", personMetadataGroup.getMetadata().get(0).getValue());
+        assertEquals("person",
+            personMetadataGroup.getName(),
+            "Converting of person was wrong at name attribute");
+        assertEquals("FormerOwner",
+            personMetadataGroup.getMetadata().get(0).getValue(),
+            "Converting of person was wrong at metadata child element");
 
     }
 }

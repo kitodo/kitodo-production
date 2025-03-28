@@ -11,6 +11,9 @@
 
 package org.kitodo.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,23 +22,22 @@ import java.nio.file.Paths;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 public class MetsKitodoValidatorTest {
     private static byte[] testMetaOldFormat;
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
 
-    @Before
+    @BeforeEach
     public void saveFile() throws IOException {
         File file = new File("src/test/resources/testmetaOldFormat.xml");
         testMetaOldFormat = IOUtils.toByteArray(file.toURI());
     }
 
-    @After
+    @AfterEach
     public void revertFile() throws IOException {
         IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
     }
@@ -43,24 +45,23 @@ public class MetsKitodoValidatorTest {
     @Test
     public void shouldCheckValidMetsObject() throws JAXBException, IOException {
         Mets mets = MetsKitodoReader.readUriToMets(Paths.get("./src/test/resources/testmeta.xml").toUri());
-        Assert.assertTrue("Result of validation of Mets object was not true!",
-            MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets));
+        assertTrue(MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets),
+            "Result of validation of Mets object was not true!");
     }
 
     @Test
     public void shouldCheckOldFormatMetsObject() throws JAXBException, IOException {
         Mets mets = MetsKitodoReader.readUriToMets(Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri());
-        Assert.assertFalse("Result of validation of Mets object was not false!",
-            MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets));
+        assertFalse(MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets),
+            "Result of validation of Mets object was not false!");
     }
 
     @Test
     public void shouldMetsContainsMetadataAtMdSecIndex() throws JAXBException, IOException {
         Mets mets = MetsKitodoReader.readUriToMets(Paths.get("./src/test/resources/testmeta.xml").toUri());
-        Assert.assertTrue("Result of checking if mets contains metadata at dmdSec index was wrong!",
-            MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 2));
-        Assert.assertFalse(
-            "Result of checking if mets contains metadata at dmdSec index which does not exist was wrong!",
-            MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 6));
+        assertTrue(MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 2),
+            "Result of checking if mets contains metadata at dmdSec index was wrong!");
+        assertFalse(MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 6),
+            "Result of checking if mets contains metadata at dmdSec index which does not exist was wrong!");
     }
 }

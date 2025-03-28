@@ -11,9 +11,9 @@
 
 package org.kitodo.production.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,9 +23,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -37,13 +37,13 @@ public class BackupFileRotationTest {
     private static ProcessService processService = ServiceManager.getProcessService();
     private static FileService fileService = new FileService();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         URI directory = fileService.createDirectory(URI.create(""), "12");
         fileService.createResource(directory, BACKUP_FILE_NAME);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         fileService.delete(URI.create("12"));
     }
@@ -198,8 +198,7 @@ public class BackupFileRotationTest {
 
     private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
         long currentLastModifiedDate = getLastModifiedFileDate(fileName);
-        assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate,
-                currentLastModifiedDate);
+        assertEquals(expectedLastModifiedDate, currentLastModifiedDate, "Last modified date of file " + fileName + " differ:");
     }
 
     private long getLastModifiedFileDate(String fileName) {
@@ -229,15 +228,15 @@ public class BackupFileRotationTest {
             content.append(line);
         }
         br.close();
-        assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content.toString());
+        assertEquals(expectedContent, content.toString(), "File " + fileName + " does not contain expected content:");
     }
 
     private void assertFileExists(String fileName) {
-        assertTrue("File " + fileName + " does not exist.", fileService.fileExist(URI.create(fileName)));
+        assertTrue(fileService.fileExist(URI.create(fileName)), "File " + fileName + " does not exist.");
     }
 
     private void assertFileNotExists(String fileName) {
-        assertFalse("File " + fileName + " should not exist.", fileService.fileExist(URI.create(fileName)));
+        assertFalse(fileService.fileExist(URI.create(fileName)), "File " + fileName + " should not exist.");
     }
 
     private void writeFile(URI uri, String content) throws IOException {

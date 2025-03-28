@@ -11,7 +11,7 @@
 
 package org.kitodo.command;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,23 +23,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.kitodo.api.command.CommandResult;
 import org.apache.commons.lang3.SystemUtils;
+import org.kitodo.api.command.CommandResult;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class CommandTest {
     private static String scriptExtension;
     private static boolean windows = false;
-    private static File workingScript = new File(
+    private static final File workingScript = new File(
             System.getProperty("user.dir") + "/src/test/resources/working_script.sh");
-    private static File workingScriptWithParameters = new File(
+    private static final File workingScriptWithParameters = new File(
             System.getProperty("user.dir") + "/src/test/resources/working_script_with_parameters.sh");
-    private static File notWorkingScript = new File(
+    private static final File notWorkingScript = new File(
             System.getProperty("user.dir") + "/src/test/resources/not_working_script.sh");
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
 
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -55,7 +55,7 @@ public class CommandTest {
 
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         if (!windows) {
             setFileNotExecuteable(workingScript);
@@ -81,12 +81,15 @@ public class CommandTest {
 
         CommandResult expectedCommandResult = new CommandResult(commandString, true, expectedMessages);
 
-        assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(),
-                commandResult.isSuccessful());
-        assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(),
-                commandResult.getCommand());
-        assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(),
-                commandResult.getMessages());
+        assertEquals(expectedCommandResult.isSuccessful(),
+                commandResult.isSuccessful(),
+                "successful booleans of CommandResults are not identical");
+        assertEquals(expectedCommandResult.getCommand(),
+                commandResult.getCommand(),
+                "Command of CommandResults are not identical");
+        assertEquals(expectedCommandResult.getMessages(),
+                commandResult.getMessages(),
+                "Result messages of CommandResults are not identical");
     }
 
     @Test
@@ -98,8 +101,9 @@ public class CommandTest {
 
         CommandResult expectedCommandResult = new CommandResult(commandString, false, null);
 
-        assertEquals("Should not run not existing Command", expectedCommandResult.isSuccessful(),
-                commandResult.isSuccessful());
+        assertEquals(expectedCommandResult.isSuccessful(),
+                commandResult.isSuccessful(),
+                "Should not run not existing Command");
     }
 
     @Test
@@ -111,8 +115,9 @@ public class CommandTest {
 
         CommandResult expectedCommandResult = new CommandResult(commandString, false, null);
 
-        assertEquals("Should not run command with false syntax", expectedCommandResult.isSuccessful(),
-                commandResult.isSuccessful());
+        assertEquals(expectedCommandResult.isSuccessful(),
+                commandResult.isSuccessful(),
+                "Should not run command with false syntax");
     }
 
     @Test
@@ -133,12 +138,15 @@ public class CommandTest {
 
         CommandResult expectedCommandResult = new CommandResult(commandString, true, expectedMessages);
 
-        assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(),
-                commandResult.isSuccessful());
-        assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(),
-                commandResult.getCommand());
-        assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(),
-                commandResult.getMessages());
+        assertEquals(expectedCommandResult.isSuccessful(),
+                commandResult.isSuccessful(),
+                "successful booleans of CommandResults are not identical");
+        assertEquals(expectedCommandResult.getCommand(),
+                commandResult.getCommand(),
+                "Command of CommandResults are not identical");
+        assertEquals(expectedCommandResult.getMessages(),
+                commandResult.getMessages(),
+                "Result messages of CommandResults are not identical");
     }
 
     private static void setFileExecuteable(File file) throws IOException {

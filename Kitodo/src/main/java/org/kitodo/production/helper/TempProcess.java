@@ -17,13 +17,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessMetadata;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -71,14 +72,16 @@ public class TempProcess {
      * @param nodeList Metadata NodeList of this TempProcess
      * @param docType Document type of process
      */
-    public TempProcess(Process process, NodeList nodeList, String docType) {
+    public TempProcess(Process process, NodeList nodeList, String docType) throws IOException {
         this.process = process;
         this.metadataNodes = nodeList;
         this.workpiece = new Workpiece();
         this.workpiece.getLogicalStructure().setType(docType);
         if (nodeList.getLength() != 0) {
+            RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetService()
+                    .openRuleset(process.getRuleset());
             this.workpiece.getLogicalStructure().getMetadata().addAll(
-                    ProcessHelper.convertMetadata(this.metadataNodes, MdSec.DMD_SEC));
+                    ProcessHelper.convertMetadata(this.metadataNodes, rulesetManagementInterface));
         }
         this.processMetadata = new ProcessMetadata();
     }
@@ -212,7 +215,7 @@ public class TempProcess {
                 if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
                     String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
                     if (StringUtils.isNotBlank(docType)
-                            && !this.getWorkpiece().getLogicalStructure().getType().equals(docType)) {
+                            && !Objects.equals(this.getWorkpiece().getLogicalStructure().getType(), docType)) {
                         this.getWorkpiece().getLogicalStructure().setType(docType);
                     }
                 }

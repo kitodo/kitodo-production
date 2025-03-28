@@ -11,10 +11,10 @@
 
 package org.kitodo.docket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,20 +26,20 @@ import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.io.RandomAccessReadMemoryMappedFile;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class DocketTest {
+public class DocketIT {
 
     private DocketDataGenerator docketDataGenerator;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.docketDataGenerator = new DocketDataGenerator();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         new File("docket.pdf").delete();
         new File("docket_multipage.pdf").delete();
@@ -70,7 +70,7 @@ public class DocketTest {
         String expectedPdfText = getPDFText(expectedFile);
         String generatedPdfText = getPDFText(generatedFile);
 
-        assertNotEquals("Compared results are different!", expectedPdfText, generatedPdfText);
+        assertNotEquals(expectedPdfText, generatedPdfText, "Compared results are different!");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class DocketTest {
 
         String generatedFileStrings = getPDFText(generatedDocket);
 
-        assertEquals("Compared results are different!", expectedFileStrings, generatedFileStrings);
+        assertEquals(expectedFileStrings, generatedFileStrings, "Compared results are different!");
     }
 
     private String getPDFText(File pdfFile) throws IOException {

@@ -341,7 +341,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
         for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
             Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
-            if (!optionalMetadataView.isPresent()) {
+            if (optionalMetadataView.isEmpty()) {
                 continue;
             }
             MetadataViewInterface metadataView = optionalMetadataView.orElseThrow(IllegalStateException::new);
@@ -419,7 +419,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         Map<MetadataViewInterface, Collection<Metadata>> squashed = new HashMap<>();
         for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
             Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
-            if (!optionalMetadataView.isPresent()) {
+            if (optionalMetadataView.isEmpty()) {
                 continue;
             }
             squashed.computeIfAbsent(optionalMetadataView.get(), each -> new ArrayList<>());

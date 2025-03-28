@@ -49,7 +49,7 @@
                 URI; if the type is specified, this applies. If a namespace has been specified, Production looks for an
                 XML file in the same directory whose file name is the same as the last segment of the namespace URI
                 and, if it finds it, makes the namespace elements available as a selection list.
-                
+
                 The attribute "minDigits" can be used with type="integer" to define a minimum number of digits, which
                 will save the value with leading zeroes, if it has less digits.
             </xs:documentation>
@@ -354,7 +354,8 @@
                 This can be used if a certain metadata entry must not be changed at a certain point in time. (If no
                 changes are to be made to the metadata in its whole, this should be mapped via the authorization
                 management, not via the ruleset.) With "excluded", a metadata entry can be hidden. It is not deleted,
-                it is simply not displayed. With "multiline", a larger input box can be requested for a metadata key.
+                it is simply not displayed. With "filterable" an input field is rendered for checkbox lists to filter
+                the list of available values. With "multiline", a larger input box can be requested for a metadata key.
                 This makes sense for entries that contain a lot of text, for example an abstract. Settings must be
                 nested in order to define properties of subkeys.
             </xs:documentation>
@@ -366,6 +367,7 @@
         <xs:attribute type="xs:boolean" name="alwaysShowing" default="false"/>
         <xs:attribute type="xs:boolean" name="editable" default="true"/>
         <xs:attribute type="xs:boolean" name="excluded" default="false"/>
+        <xs:attribute type="xs:boolean" name="filterable" default="false"/>
         <xs:attribute type="xs:boolean" name="multiline" default="false"/>
         <xs:attribute type="ruleset:Reimport" name="reimport" default="replace"/>
     </xs:complexType>
@@ -464,7 +466,13 @@
                 'recordIdentifier' Identifier of the data record fetched from an external data source, so that the
                     imported metadata entries from the data source can be updated later.
 
+                'structureTreeTitle' will be displayed as node titles of the structure tree of the metadata editor 
+                    if title is selected as the preferred display option.
+
                 'title' This field is used as the title to form the author-title key.
+
+                'groupDisplayLabel' keys of this type are displayed in the metadata update dialog of the metadata
+                    editor.
             </xs:documentation>
         </xs:annotation>
         <xs:restriction>
@@ -480,6 +488,8 @@
                             <xs:enumeration value="higherlevelIdentifier"/>
                             <xs:enumeration value="processTitle"/>
                             <xs:enumeration value="recordIdentifier"/>
+                            <xs:enumeration value="structureTreeTitle"/>
+                            <xs:enumeration value="groupDisplayLabel"/>
                             <xs:enumeration value="title"/>
                         </xs:restriction>
                     </xs:simpleType>
@@ -501,6 +511,11 @@
                 'createChildrenWithCalendar' This division is a superordinate unit to which child processes with a
                     calendar structure can be created. This attribute can only be set on a division that has a
                     &lt;subdivisionByDate&gt;.
+
+                'mediaPartial' with this feature, audio and video bookmarks can be set. This allows, for example,
+                    the setting of chapters for videos, similar to what is possible with YouTube, or the division
+                    of sections of a vinyl record side into segments for audio. More information are available
+                    under https://github.com/kitodo/kitodo-production/wiki/Verwendung-von-Audio-oder-Video#nutzung-der-medienteile-media-partials
             </xs:documentation>
         </xs:annotation>
         <xs:restriction>
@@ -510,6 +525,7 @@
                         <xs:restriction base="xs:token">
                             <xs:enumeration value="createChildrenFromParent"/>
                             <xs:enumeration value="createChildrenWithCalendar"/>
+                            <xs:enumeration value="mediaPartial"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:list>

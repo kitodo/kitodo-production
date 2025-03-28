@@ -8,10 +8,9 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals removeFilter, updateSuggestions, submitFilters, filterKeydownEvents */
+/* globals removeFilter, removeFilterForEdit, updateSuggestions, submitFilters, filterKeydownEvents */
 
 /* Define identifiers used to select elements */
-const LIST_WRAPPER = "#listWrapper";
 const FILTER_INPUT_FORM = "#filterInputForm";
 const FILTER_INPUT = "#filterInputForm\\:filterfield";
 const FILTER_INPUT_PARSED_FILTERS_AND_OPTIONS_FORMS = "#filterInputForm, #parsedFiltersForm, #filterOptionsForm";
@@ -132,6 +131,7 @@ function handleKeydown(event) {
             }
             break;
         case "Enter":
+        case "NumpadEnter":
             if ($(FILTER_OPTIONS_FORM_WRAPPER).is(':visible') && $(SELECTED_SUGGESTION_ITEM).length === 1) {
                 selectConfirm();
             } else {
@@ -147,12 +147,9 @@ function handleKeydown(event) {
 }
 
 /**
- * Calculate the maximum height and display the filter options overlay.
+ * Display the filter options overlay.
  */
 function openFilterOptionsMenu() {
-    let distanceWrapperToMenuTop = $(FILTER_INPUT).offset().top - $(LIST_WRAPPER).offset().top + $(FILTER_INPUT).height();
-    let maxMenuHeight = $(LIST_WRAPPER).height() - distanceWrapperToMenuTop - 20;
-    $(FILTER_OPTIONS_FORM_WRAPPER).css("max-height", maxMenuHeight + "px");
     $(FILTER_OPTIONS_FORM_WRAPPER).show();
 }
 
@@ -195,7 +192,7 @@ $(document).ready(function () {
             let filter = target.siblings(".plainFilter").length ? target.siblings(".plainFilter").first().text()
                 : target.find(".plainFilter").first().text();
             $(FILTER_INPUT).val(filter);
-            removeFilter([{name: "plainFilter", value: filter}]);
+            removeFilterForEdit([{name: "plainFilter", value: filter}]);
             $(FILTER_INPUT).focus();
         }
     });

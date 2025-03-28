@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.data;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
@@ -114,14 +116,24 @@ public class ImportConfigurationService extends BaseBeanService<ImportConfigurat
         return getAllImportConfigurations(ImportConfigurationType.FILE_UPLOAD);
     }
 
+    /**
+     * Load and return all ImportConfigurations sorted by title.
+     * @return list of all ImportConfigurations sorted by title
+     * @throws DAOException when ImportConfigurations could not be loaded
+     */
     @Override
     public List<ImportConfiguration> getAll() throws DAOException {
-        return super.getAll().stream().sorted(Comparator.comparing(ImportConfiguration::getTitle))
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        return super.getAll().stream()
+                .filter(importConfiguration -> !Collections.disjoint(importConfiguration.getClients(), currentUser.getClients()))
+                .sorted(Comparator.comparing(ImportConfiguration::getTitle))
                 .collect(Collectors.toList());
     }
 
     private List<ImportConfiguration> getAllImportConfigurations(ImportConfigurationType type) throws DAOException {
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
         return super.getAll().stream()
+                .filter(importConfiguration -> !Collections.disjoint(importConfiguration.getClients(), currentUser.getClients()))
                 .filter(importConfiguration -> type.name()
                         .equals(importConfiguration.getConfigurationType()))
                 .sorted(Comparator.comparing(ImportConfiguration::getTitle))

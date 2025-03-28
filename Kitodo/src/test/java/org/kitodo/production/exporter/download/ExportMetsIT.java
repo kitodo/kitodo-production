@@ -11,6 +11,7 @@
 
 package org.kitodo.production.exporter.download;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kitodo.test.utils.ProcessTestUtils.METADATA_DIR;
 import static org.kitodo.test.utils.ProcessTestUtils.META_XML;
 
@@ -22,10 +23,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -50,7 +50,7 @@ public class ExportMetsIT {
 
     private final ExportMets exportMets = new ExportMets();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -75,7 +75,7 @@ public class ExportMetsIT {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         SecurityTestUtils.cleanSecurityContext();
         MockDatabase.stopNode();
@@ -104,11 +104,8 @@ public class ExportMetsIT {
         exportMets.startExport(process);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_mets.xml"));
-        Assert.assertTrue("Export of metadata 'singleDigCollection' was wrong",
-            strings.toString().contains("<kitodo:metadata name=\"singleDigCollection\">test collection</kitodo:metadata>"));
-        Assert.assertTrue("Export of metadata 'TitleDocMain' was wrong",
-            strings.toString().contains("<kitodo:metadata name=\"TitleDocMain\">test title</kitodo:metadata>"));
-        Assert.assertTrue("Export of metadata 'PublisherName' was wrong",
-            strings.toString().contains("<kitodo:metadata name=\"PublisherName\">Publisher test name</kitodo:metadata>"));
+        assertTrue(strings.toString().contains("<kitodo:metadata name=\"singleDigCollection\">test collection</kitodo:metadata>"), "Export of metadata 'singleDigCollection' was wrong");
+        assertTrue(strings.toString().contains("<kitodo:metadata name=\"TitleDocMain\">test title</kitodo:metadata>"), "Export of metadata 'TitleDocMain' was wrong");
+        assertTrue(strings.toString().contains("<kitodo:metadata name=\"PublisherName\">Publisher test name</kitodo:metadata>"), "Export of metadata 'PublisherName' was wrong");
     }
 }

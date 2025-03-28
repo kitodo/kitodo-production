@@ -234,6 +234,19 @@ public class ProcessesPage extends Page<ProcessesPage> {
         return getTableDataByColumn(processesTable, 3);
     }
 
+    /**
+     * Returns a list of all process IDs which were displayed on process page.
+     *
+     * @return list of process IDs
+     * @throws Exception when navigating to processes page fails
+     */
+    public List<String> getProcessIds() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(processesTable, 2);
+    }
+
     public void createNewBatch() throws Exception {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
@@ -558,5 +571,22 @@ public class ProcessesPage extends Page<ProcessesPage> {
             throw new NoSuchElementException("Unable to find table row for process with title '"
                     + MULTI_VOLUME_WORK_PROCESS_TITLE + "'");
         }
+    }
+
+    /**
+     * Toggles first row expansion in process list.
+     */
+    public void filterByChildren() {
+        WebElement rowToggler = processesTable.findElement(By.className("ui-row-toggler"));
+        rowToggler.click();
+        await("Wait for row expansion to become visible").pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.className("row-expansion-wrapper")).isDisplayed());
+        WebElement rowExpansion = Browser.getDriver().findElement(By.className("row-expansion-wrapper"));
+        WebElement childFilterLink = rowExpansion.findElement(By.cssSelector(".value a"));
+        childFilterLink.click();
+        await("Wait for execution of link click").pollDelay(1, TimeUnit.SECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
     }
 }

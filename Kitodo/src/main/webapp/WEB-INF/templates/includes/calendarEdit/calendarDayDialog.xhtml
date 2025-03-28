@@ -109,12 +109,12 @@
                                                          converter="#{processDetailConverter}"
                                                          value="#{metadata.metadataDetail}"
                                                          title="#{msgs.type}">
-                                            <f:selectItems value="#{metadata.allMetadataTypes}"
+                                            <f:selectItems value="#{metadata.getAllMetadataTypes(CalendarForm.parentId)}"
                                                            var="metadataType"
                                                            itemValue="#{metadataType}"
                                                            itemLabel="#{metadataType.label}"/>
                                             <f:attribute name="allMetadataTypes"
-                                                         value="#{metadata.allMetadataTypes}"/>
+                                                         value="#{metadata.getAllMetadataTypes(CalendarForm.parentId)}"/>
                                             <p:ajax event="change" update="calendarDayForm"/>
                                         </p:selectOneMenu>
                                     </div>

@@ -317,12 +317,6 @@ public enum ParameterCore implements ParameterInterface {
      */
     PAGE_SEPARATORS(new Parameter<>("metsEditor.pageSeparators", "\" \"")),
 
-    /**
-     # Priority list of metadata keys used to display title information in the metadata editors structure and gallery
-     panels.
-     */
-    TITLE_KEYS(new Parameter<>("metsEditor.titleMetadata", "")),
-
     /*
      * backup of metadata configuration
      */
@@ -373,7 +367,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Validation of process title via regular expression.
      */
-    VALIDATE_PROCESS_TITLE_REGEX(new Parameter<>("validateProzessTitelRegex", "[\\w-]*")),
+    VALIDATE_PROCESS_TITLE_REGEX(new Parameter<>("validateProzessTitelRegex", "^[\\w-]+$")),
 
     /**
      * Validation of the identifier via regular expression.
@@ -573,6 +567,11 @@ public enum ParameterCore implements ParameterInterface {
     OCR_URL(new Parameter<UndefinedParameter>("ocrUrl")),
 
     /**
+     * Show most recent comment in process list and task list.
+     */
+    SHOW_LAST_COMMENT(new Parameter<>("showLastComment", false)),
+
+    /**
      * Process properties to display in process list.
      */
     PROCESS_PROPERTIES(new Parameter<>("processPropertyColumns")),
@@ -614,7 +613,13 @@ public enum ParameterCore implements ParameterInterface {
 
     ACTIVE_MQ_AUTH_PASSWORD(new Parameter<>("activeMQ.authPassword", "")),
 
+    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE(new Parameter<UndefinedParameter>("activeMQ.createNewProcesses.queue")),
+
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
+
+    ACTIVE_MQ_KITODO_SCRIPT_ALLOW(new Parameter<UndefinedParameter>("activeMQ.kitodoScript.allow")),
+
+    ACTIVE_MQ_KITODO_SCRIPT_QUEUE(new Parameter<UndefinedParameter>("activeMQ.kitodoScript.queue")),
 
     ACTIVE_MQ_TASK_ACTION_QUEUE(new Parameter<UndefinedParameter>("activeMQ.taskAction.queue")),
 
@@ -650,7 +655,19 @@ public enum ParameterCore implements ParameterInterface {
     /* Optional parameter can be used to limit the number of processes for which media renaming can be conducted as a
      * list function. Values different from positive integers are interpreted as "unlimited".
      */
-    MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING(new Parameter<>("maxNumberOfProcessesForMediaRenaming", -1));
+    MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING(new Parameter<>("maxNumberOfProcessesForMediaRenaming", -1)),
+
+    /*
+     * Optional parameter controlling how many processes are to be displayed and processed in the metadata import mask.
+     * When more data records are imported the import process is moved to a background task. Default value is 5.
+     */
+    MAX_NUMBER_OF_PROCESSES_FOR_IMPORT_MASK(new Parameter<>("maxNumberOfProcessesForImportMask", 5)),
+
+    /*
+     * Optional parameter controlling whether the import of all elements from an uploaded EAD XML file should be
+     * canceled when an exception occurs or not. Defaults to 'false'.
+     */
+    STOP_EAD_COLLECTION_IMPORT_ON_EXCEPTION(new Parameter<>("stopEadCollectionImportOnException", false));
 
     private final Parameter<?> parameter;
 

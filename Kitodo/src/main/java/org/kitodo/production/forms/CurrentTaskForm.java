@@ -28,6 +28,8 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -815,4 +817,14 @@ public class CurrentTaskForm extends BaseForm {
     public FilterMenu getFilterMenu() {
         return filterMenu;
     }
+
+    /**
+     * Determine whether the last comment should be displayed in the comments column.
+     *
+     * @return boolean
+     */
+    public boolean showLastComment() {
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT);
+    }
+
 }

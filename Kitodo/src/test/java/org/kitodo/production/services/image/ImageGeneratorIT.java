@@ -12,8 +12,8 @@
 package org.kitodo.production.services.image;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +29,9 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -147,7 +147,7 @@ public class ImageGeneratorIT {
      * broken image go into the destination directory. This happens twice, for
      * the two test variants.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         Path processDir = Paths.get(metadata, processId.toString());
         if (processDir.toFile().exists()) {
@@ -176,7 +176,7 @@ public class ImageGeneratorIT {
     /**
      * Deletes the files created in the test.
      */
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         Path processDir = Paths.get(metadata, processId.toString());
         Files.walk(processDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
@@ -217,12 +217,9 @@ public class ImageGeneratorIT {
 
         imageGenerator.run();
 
-        assertNotEquals(resultFileOne + MESSAGE_NOT_CHANGED, resultFileOneBefore,
-            lastModifiedTime(resultFileOne));
-        assertNotEquals(resultFileTwo + MESSAGE_NOT_CHANGED, resultFileTwoBefore,
-            lastModifiedTime(resultFileTwo));
-        assertNotEquals(resultFileThree + MESSAGE_NOT_CHANGED, resultFileThreeBefore,
-            lastModifiedTime(resultFileThree));
+        assertNotEquals(resultFileOneBefore, lastModifiedTime(resultFileOne), resultFileOne + MESSAGE_NOT_CHANGED);
+        assertNotEquals(resultFileTwoBefore, lastModifiedTime(resultFileTwo), resultFileTwo + MESSAGE_NOT_CHANGED);
+        assertNotEquals(resultFileThreeBefore, lastModifiedTime(resultFileThree), resultFileThree + MESSAGE_NOT_CHANGED);
     }
 
     /**
@@ -261,12 +258,9 @@ public class ImageGeneratorIT {
 
         imageGenerator.run();
 
-        assertEquals(resultFileOne + MESSAGE_CHANGED, resultFileOneBefore,
-            lastModifiedTime(resultFileOne));
-        assertEquals(resultFileTwo + MESSAGE_CHANGED, resultFileTwoBefore,
-            lastModifiedTime(resultFileTwo));
-        assertNotEquals(resultFileThree + MESSAGE_NOT_CHANGED, resultFileThreeBefore,
-            lastModifiedTime(resultFileThree));
+        assertEquals(resultFileOneBefore, lastModifiedTime(resultFileOne), resultFileOne + MESSAGE_CHANGED);
+        assertEquals(resultFileTwoBefore, lastModifiedTime(resultFileTwo), resultFileTwo + MESSAGE_CHANGED);
+        assertNotEquals(resultFileThreeBefore, lastModifiedTime(resultFileThree), resultFileThree + MESSAGE_NOT_CHANGED);
     }
 
     /**
@@ -305,12 +299,9 @@ public class ImageGeneratorIT {
 
         imageGenerator.run();
 
-        assertEquals(resultFileOne + MESSAGE_CHANGED, resultFileOneBefore,
-            lastModifiedTime(resultFileOne));
-        assertNotEquals(resultFileTwo + MESSAGE_NOT_CHANGED, resultFileTwoBefore,
-            lastModifiedTime(resultFileTwo));
-        assertNotEquals(resultFileThree + MESSAGE_NOT_CHANGED, resultFileThreeBefore,
-            lastModifiedTime(resultFileThree));
+        assertEquals(resultFileOneBefore, lastModifiedTime(resultFileOne), resultFileOne + MESSAGE_CHANGED);
+        assertNotEquals(resultFileTwoBefore, lastModifiedTime(resultFileTwo), resultFileTwo + MESSAGE_NOT_CHANGED);
+        assertNotEquals(resultFileThreeBefore, lastModifiedTime(resultFileThree), resultFileThree + MESSAGE_NOT_CHANGED);
     }
 
     /**
@@ -347,12 +338,9 @@ public class ImageGeneratorIT {
 
         imageGenerator.run();
 
-        assertNotEquals(mixedResultOne + MESSAGE_NOT_CHANGED, resultFileOneBefore,
-            lastModifiedTime(mixedResultOne));
-        assertNotEquals(mixedResultTwo + MESSAGE_NOT_CHANGED, resultFileTwoBefore,
-            lastModifiedTime(mixedResultTwo));
-        assertNotEquals(mixedResultThree + MESSAGE_NOT_CHANGED, resultFileThreeBefore,
-            lastModifiedTime(mixedResultThree));
+        assertNotEquals(resultFileOneBefore, lastModifiedTime(mixedResultOne), mixedResultOne + MESSAGE_NOT_CHANGED);
+        assertNotEquals(resultFileTwoBefore, lastModifiedTime(mixedResultTwo), mixedResultTwo + MESSAGE_NOT_CHANGED);
+        assertNotEquals(resultFileThreeBefore, lastModifiedTime(mixedResultThree), mixedResultThree + MESSAGE_NOT_CHANGED);
     }
 
     /**
@@ -391,12 +379,9 @@ public class ImageGeneratorIT {
 
         imageGenerator.run();
 
-        assertEquals(mixedResultOne + MESSAGE_CHANGED, resultFileOneBefore,
-            lastModifiedTime(mixedResultOne));
-        assertEquals(mixedResultTwo + MESSAGE_CHANGED, resultFileTwoBefore,
-            lastModifiedTime(mixedResultTwo));
-        assertNotEquals(mixedResultThree + MESSAGE_NOT_CHANGED, resultFileThreeBefore,
-            lastModifiedTime(mixedResultThree));
+        assertEquals(resultFileOneBefore, lastModifiedTime(mixedResultOne), mixedResultOne + MESSAGE_CHANGED);
+        assertEquals(resultFileTwoBefore, lastModifiedTime(mixedResultTwo), mixedResultTwo + MESSAGE_CHANGED);
+        assertNotEquals(resultFileThreeBefore, lastModifiedTime(mixedResultThree), mixedResultThree + MESSAGE_NOT_CHANGED);
     }
 
     /**
@@ -435,11 +420,8 @@ public class ImageGeneratorIT {
 
         imageGenerator.run();
 
-        assertEquals(mixedResultOne + MESSAGE_CHANGED, resultFileOneBefore,
-            lastModifiedTime(mixedResultOne));
-        assertNotEquals(mixedResultTwo + MESSAGE_NOT_CHANGED, resultFileTwoBefore,
-            lastModifiedTime(mixedResultTwo));
-        assertNotEquals(mixedResultThree + MESSAGE_NOT_CHANGED, resultFileThreeBefore,
-            lastModifiedTime(mixedResultThree));
+        assertEquals(resultFileOneBefore, lastModifiedTime(mixedResultOne), mixedResultOne + MESSAGE_CHANGED);
+        assertNotEquals(resultFileTwoBefore, lastModifiedTime(mixedResultTwo), mixedResultTwo + MESSAGE_NOT_CHANGED);
+        assertNotEquals(resultFileThreeBefore, lastModifiedTime(mixedResultThree), mixedResultThree + MESSAGE_NOT_CHANGED);
     }
 }

@@ -18,13 +18,14 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.KitodoScriptExecutionException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 
 public class OverwriteDataScript extends EditDataScript {
 
     @Override
     public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
-            MetadataScript metadataScript) {
+            MetadataScript metadataScript) throws KitodoScriptExecutionException {
         Workpiece workpiece = metadataFile.getWorkpiece();
 
         Collection<Metadata> metadataCollection = getMetadataCollection(metadataScript, workpiece);

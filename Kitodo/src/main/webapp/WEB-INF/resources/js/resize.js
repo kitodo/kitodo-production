@@ -397,6 +397,7 @@ function toggleThirdColumn() {
             secondColumn.animate({width: wrapper.width() - firstColumn.width() - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
         }
     } else {
+        metadataEditor.detailMap.update();
         var neededWidth = thirdColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
         if (secondColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
@@ -522,16 +523,14 @@ function updateMetadataEditorView(showMetadataColumn) {
     }
     expandThirdColumn();
     scrollToSelectedThumbnail();
-    initializeImage();
+    metadataEditor.detailMap.update();
     metadataEditor.gallery.mediaView.update();
     scrollToSelectedTreeNode();
     scrollToSelectedPaginationRow();
 }
 
 function resizeMap() {
-    if (kitodo.map) {
-        kitodo.map.updateSize();
-    }
+    metadataEditor.detailMap.onResize();
 }
 
 function saveLayout() {

@@ -58,7 +58,7 @@
             <p:ajax event="tabChange" listener="#{MassImportForm.onTabChange}"/>
             <p:tab title="#{msgs.massImport}"
                    id="massImportTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                   rendered="#{SecurityAccessController.hasAuthorityToMassImportProcesses()}">
                 <ui:include src="/WEB-INF/templates/includes/massImport/massImportTab.xhtml"/>
             </p:tab>
 

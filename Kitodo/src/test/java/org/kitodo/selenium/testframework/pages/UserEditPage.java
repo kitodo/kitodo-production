@@ -119,6 +119,9 @@ public class UserEditPage extends EditPage<UserEditPage> {
     @FindBy(id = "editForm:userTabView:showPaginationPanelByDefault")
     private WebElement showPaginationByDefaultSwitch;
 
+    @FindBy(id = "editForm:userTabView:showPhysicalPageNumberBelowThumbnail")
+    private WebElement showPhysicalPageNumberBelowThumbnailSwitch;
+
     public UserEditPage() {
         super("pages/userEdit.jsf");
     }
@@ -193,11 +196,23 @@ public class UserEditPage extends EditPage<UserEditPage> {
     /**
      * Set pagination panel to show by default in metadata editor.
      */
-    public void setPaginationToShowByDefault() throws Exception {
+    public void togglePaginationToShowByDefault() throws Exception {
         openUserConfig();
         switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
         WebElement switchCheckBox = showPaginationByDefaultSwitch.findElement(By.className("ui-chkbox-box"));
         switchCheckBox.click();
+        save();
+    }
+
+    /**
+     * Toggle user setting that controls whether the physical page number is shown below a thumbnail in 
+     * the metadata editor.
+     */
+    public void toggleShowPhysicalPageNumberBelowThumbnail() throws Exception {
+        openUserConfig();
+        switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
+        WebElement checkBox = showPhysicalPageNumberBelowThumbnailSwitch.findElement(By.className("ui-chkbox-box"));
+        checkBox.click();
         save();
     }
 

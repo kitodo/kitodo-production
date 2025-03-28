@@ -11,15 +11,21 @@
 
 package org.kitodo.production.services.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.production.services.ServiceManager;
 
 public class DataEditorServiceTest {
@@ -28,30 +34,55 @@ public class DataEditorServiceTest {
     private static byte[] testMetaOldFormat;
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
     private static final String metadataFilesDir = "./src/test/resources/metadata/metadataFiles/";
+    private static final String EXPECTED_ENTRY_STRING = "Test-Titel";
+    private static final String EXPECTED_GROUP_STRING = "JohnDoeAuthor";
 
-    @Before
+    @BeforeEach
     public void saveFile() throws IOException {
         File file = new File(metadataFilesDir + "testmetaOldFormat.xml");
         testMetaOldFormat = IOUtils.toByteArray(file.toURI());
     }
 
-    @After
+    @AfterEach
     public void revertFile() throws IOException {
         IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
     }
 
     @Test
-    public void shouldReadMetadata() throws IOException {
-        dataEditorService.readData(Paths.get(metadataFilesDir + "testmeta.xml").toUri());
+    public void shouldReadMetadata() {
+        assertDoesNotThrow(() -> dataEditorService.readData(Paths.get(metadataFilesDir + "testmeta.xml").toUri()));
     }
 
     @Test
-    public void shouldReadOldMetadata() throws IOException {
-        dataEditorService.readData(Paths.get(metadataFilesDir + "testmetaOldFormat.xml").toUri());
+    public void shouldReadOldMetadata() {
+        assertDoesNotThrow(() -> dataEditorService.readData(Paths.get(metadataFilesDir + "testmetaOldFormat.xml").toUri()));
     }
 
-    @Test(expected = IOException.class)
-    public void shouldNotReadMetadataOfNotExistingFile() throws IOException {
-        dataEditorService.readData(Paths.get("notExisting.xml").toUri());
+    @Test
+    public void shouldNotReadMetadataOfNotExistingFile() {
+        assertThrows(IOException.class, () -> dataEditorService.readData(Paths.get("notExisting.xml").toUri()));
+    }
+
+    @Test
+    public void shouldConvertMetadataToString() {
+        MetadataEntry metadataEntry = new MetadataEntry();
+        metadataEntry.setKey("TitleMainDoc");
+        metadataEntry.setValue(EXPECTED_ENTRY_STRING);
+        assertEquals(EXPECTED_ENTRY_STRING, DataEditorService.metadataToString(metadataEntry));
+        MetadataGroup metadataGroup = new MetadataGroup();
+        metadataGroup.setKey("Person");
+        MetadataEntry firstNameEntry = new MetadataEntry();
+        firstNameEntry.setKey("FirstName");
+        firstNameEntry.setValue("John");
+        MetadataEntry lastNameEntry = new MetadataEntry();
+        lastNameEntry.setKey("LastName");
+        lastNameEntry.setValue("Doe");
+        MetadataEntry roleEntry = new MetadataEntry();
+        roleEntry.setKey("Role");
+        roleEntry.setValue("Author");
+        metadataGroup.getMetadata().add(firstNameEntry);
+        metadataGroup.getMetadata().add(lastNameEntry);
+        metadataGroup.getMetadata().add(roleEntry);
+        assertEquals(EXPECTED_GROUP_STRING, DataEditorService.metadataToString(metadataGroup));
     }
 }

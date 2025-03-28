@@ -11,12 +11,12 @@
 
 package org.kitodo.production.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
 
@@ -24,14 +24,14 @@ public class DocketConverterIT {
 
     private static final String MESSAGE = "Docket was not converted correctly!";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertClients();
         MockDatabase.insertDockets();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -41,28 +41,28 @@ public class DocketConverterIT {
     public void shouldGetAsObject() {
         DocketConverter docketConverter = new DocketConverter();
         Docket docket = (Docket) docketConverter.getAsObject(null, null, "2");
-        assertEquals(MESSAGE, 2, docket.getId().intValue());
+        assertEquals(2, docket.getId().intValue(), MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         DocketConverter docketConverter = new DocketConverter();
         String docket = (String) docketConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", docket);
+        assertEquals("0", docket, MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         DocketConverter docketConverter = new DocketConverter();
         String docket = (String) docketConverter.getAsObject(null, null, "10");
-        assertEquals(MESSAGE, "0", docket);
+        assertEquals("0", docket, MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectNullObject() {
         DocketConverter docketConverter = new DocketConverter();
         Object docket = docketConverter.getAsObject(null, null, null);
-        assertNull(MESSAGE, docket);
+        assertNull(docket, MESSAGE);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class DocketConverterIT {
         Docket newDocket = new Docket();
         newDocket.setId(20);
         String docket = docketConverter.getAsString(null, null, newDocket);
-        assertEquals(MESSAGE, "20", docket);
+        assertEquals("20", docket, MESSAGE);
     }
 
     @Test
@@ -79,20 +79,20 @@ public class DocketConverterIT {
         DocketConverter docketConverter = new DocketConverter();
         Docket newDocket = new Docket();
         String docket = docketConverter.getAsString(null, null, newDocket);
-        assertEquals(MESSAGE, "0", docket);
+        assertEquals("0", docket, MESSAGE);
     }
 
     @Test
     public void shouldGetAsStringWithString() {
         DocketConverter docketConverter = new DocketConverter();
         String docket = docketConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", docket);
+        assertEquals("20", docket, MESSAGE);
     }
 
     @Test
     public void shouldNotGetAsStringNullObject() {
         DocketConverter docketConverter = new DocketConverter();
         String docket = docketConverter.getAsString(null, null, null);
-        assertNull(MESSAGE, docket);
+        assertNull(docket, MESSAGE);
     }
 }

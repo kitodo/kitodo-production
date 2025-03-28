@@ -11,77 +11,69 @@
 
 package org.kitodo.config.enums;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.config.ConfigCore;
 
 public class KitodoConfigFileTest {
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         FileLoader.createConfigProjectsFile();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         FileLoader.deleteConfigProjectsFile();
     }
 
     @Test
     public void shouldGetFileNameTest() {
-        assertEquals("Config projects file name is incorrect!", "kitodo_projects.xml",
-            String.valueOf(KitodoConfigFile.PROJECT_CONFIGURATION));
-        assertEquals("Config projects file name is incorrect!", "kitodo_projects.xml",
-            KitodoConfigFile.PROJECT_CONFIGURATION.getName());
+        assertEquals("kitodo_projects.xml", String.valueOf(KitodoConfigFile.PROJECT_CONFIGURATION), "Config projects file name is incorrect!");
+        assertEquals("kitodo_projects.xml", KitodoConfigFile.PROJECT_CONFIGURATION.getName(), "Config projects file name is incorrect!");
     }
 
     @Test
     public void shouldGetAbsolutePathTest() {
-        assertTrue("Config projects file absolute path is incorrect!",
-            KitodoConfigFile.PROJECT_CONFIGURATION.getAbsolutePath().contains("Kitodo" + File.separator + "src"
-                    + File.separator + "test" + File.separator + "resources" + File.separator + "kitodo_projects.xml"));
+        assertTrue(KitodoConfigFile.PROJECT_CONFIGURATION.getAbsolutePath().contains("Kitodo" + File.separator + "src"
+                + File.separator + "test" + File.separator + "resources" + File.separator + "kitodo_projects.xml"), "Config projects file absolute path is incorrect!");
     }
 
     @Test
     public void shouldGetFileTest() {
-        assertEquals("Config projects file absolute path is incorrect!",
-            new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml"),
-            KitodoConfigFile.PROJECT_CONFIGURATION.getFile());
+        assertEquals(new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml"), KitodoConfigFile.PROJECT_CONFIGURATION.getFile(), "Config projects file absolute path is incorrect!");
     }
 
     @Test
     public void shouldGetByFileNameTest() throws FileNotFoundException {
-        assertEquals("Config projects file doesn't exists for given!", KitodoConfigFile.PROJECT_CONFIGURATION,
-            KitodoConfigFile.getByName("kitodo_projects.xml"));
+        assertEquals(KitodoConfigFile.PROJECT_CONFIGURATION, KitodoConfigFile.getByName("kitodo_projects.xml"), "Config projects file doesn't exists for given!");
     }
 
     @Test
-    public void shouldNotGetByFileNameTest() throws FileNotFoundException {
-        exception.expect(FileNotFoundException.class);
-        exception.expectMessage("Configuration file 'kitodo_nonexistent.xml' doesn't exists!");
-        KitodoConfigFile.getByName("kitodo_nonexistent.xml");
+    public void shouldNotGetByFileNameTest() {
+        Exception exception = assertThrows(FileNotFoundException.class,
+            () -> KitodoConfigFile.getByName("kitodo_nonexistent.xml"));
+
+        assertEquals("Configuration file 'kitodo_nonexistent.xml' doesn't exists!", exception.getMessage());
     }
 
     @Test
     public void configFileShouldExistTest() {
-        assertTrue("Config projects file doesn't exist!", KitodoConfigFile.PROJECT_CONFIGURATION.exists());
+        assertTrue(KitodoConfigFile.PROJECT_CONFIGURATION.exists(), "Config projects file doesn't exist!");
     }
 
     @Test
     public void configFileShouldNotExistTest() {
-        assertTrue("Config OPAC file exists!", KitodoConfigFile.OPAC_CONFIGURATION.exists());
+        assertTrue(KitodoConfigFile.OPAC_CONFIGURATION.exists(), "Config OPAC file exists!");
     }
 }

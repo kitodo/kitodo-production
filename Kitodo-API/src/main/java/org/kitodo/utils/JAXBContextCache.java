@@ -118,6 +118,7 @@ public class JAXBContextCache {
 
         private final String fileName;
 
+        @Override
         public boolean equals(Object potentialContextDescriptor) {
             if (potentialContextDescriptor instanceof ContextDescriptor) {
                 final ContextDescriptor contextDescriptor = ((ContextDescriptor) potentialContextDescriptor);
@@ -127,6 +128,7 @@ public class JAXBContextCache {
             return false;
         }
 
+        @Override
         public int hashCode() {
             return (clazz + fileName).hashCode();
         }

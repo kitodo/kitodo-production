@@ -13,8 +13,10 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.services.ServiceManager;
@@ -27,15 +29,15 @@ public class ProjectServiceTest {
 
         // A project without dmsExportFormat, internal format or templates
         Project project = new Project();
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
+        assertFalse(projectService.isProjectComplete(project), "Project shouldn't be complete");
 
         // Add title, still not complete
         project.setTitle("testProject");
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
+        assertFalse(projectService.isProjectComplete(project), "Project shouldn't be complete");
 
         // Add xmls to complete project
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().createNewFile();
-        Assert.assertTrue("Project should be complete", projectService.isProjectComplete(project));
+        assertTrue(projectService.isProjectComplete(project), "Project should be complete");
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
     }
 

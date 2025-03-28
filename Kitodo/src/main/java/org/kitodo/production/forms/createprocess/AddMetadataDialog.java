@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
@@ -64,6 +65,9 @@ public class AddMetadataDialog {
      * @return whether any further metadata can be added to currently selected structure element.
      */
     public boolean metadataAddableToStructureElement() throws InvalidMetadataValueException {
+        if (Objects.isNull(createProcessForm.getRulesetManagement())) {
+            return false;
+        }
         prepareAddableMetadataForStructure();
         return !getAddableMetadata().isEmpty();
     }

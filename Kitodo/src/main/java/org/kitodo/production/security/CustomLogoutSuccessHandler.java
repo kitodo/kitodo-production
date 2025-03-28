@@ -17,6 +17,9 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +34,7 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
  */
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
+    private static final Logger logger = LogManager.getLogger(CustomLogoutSuccessHandler.class);
     private final String onSuccessUrl;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -41,12 +45,21 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
-        if (Objects.nonNull(authentication) && Objects.nonNull(authentication.getDetails())) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                UserDetails user = (UserDetails) principal;
-                ServiceManager.getSessionService().expireSessionsOfUser(user);
+        if (Objects.nonNull(authentication)) {
+            if (Objects.nonNull(authentication.getDetails())) {
+                Object principal = authentication.getPrincipal();
+                if (principal instanceof UserDetails) {
+                    UserDetails user = (UserDetails) principal;
+                    ServiceManager.getSessionService().expireSessionsOfUser(user);
+                } else {
+                    logger.warn("Cannot expire session: {} is not an instance of UserDetails",
+                            Helper.getObjectDescription(principal));
+                }
+            } else {
+                logger.warn("Cannot expire session: authentication.getDetails() is null");
             }
+        } else {
+            logger.warn("Cannot expire session: authentication is null");
         }
         redirectStrategy.sendRedirect(request, response, onSuccessUrl);
     }

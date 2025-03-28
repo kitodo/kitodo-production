@@ -19,14 +19,15 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:dialog widgetVar="catalogSearchDialog"
-              id="catalogSearch"
+              id="catalogSearchDialog"
               width="640"
               modal="true"
               appendTo="@(body)"
-              visible="#{CreateProcessForm.defaultConfigurationType eq 'OPAC_SEARCH'}"
+              visible="#{false}"
               resizable="false">
         <h3>#{msgs['newProcess.catalogueSearch.heading']}</h3>
-        <h:form id="catalogSearchForm">
+        <h:form id="catalogSearchForm"
+                styleClass="metadata-import-dialog-form">
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
                 <p:row>
                     <div>
@@ -36,7 +37,7 @@
                                          autoWidth="false"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          immediate="true"
-                                         value="#{CreateProcessForm.catalogImportDialog.hitModel.importConfiguration}"
+                                         value="#{CreateProcessForm.currentImportConfiguration}"
                                          converter="#{importConfigurationConverter}">
                             <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
                             <f:selectItems value="#{CreateProcessForm.catalogImportDialog.importConfigurations}"
@@ -47,7 +48,8 @@
                                             catalogSearchForm:searchTerm,
                                             catalogSearchForm:importDepth,
                                             catalogSearchForm:importChildren,
-                                            catalogSearchForm:catalogSearchButton"/>
+                                            catalogSearchForm:catalogSearchButton,
+                                            catalogSearchForm:eadLevelSelectionWrapper"/>
                         </p:selectOneMenu>
                     </div>
                 </p:row>
@@ -62,9 +64,9 @@
                                        value="#{msgs.field}"/>
                         <p:selectOneMenu id="fieldSelectMenu"
                                          autoWidth="false"
-                                         disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration}"
+                                         disabled="#{empty CreateProcessForm.currentImportConfiguration}"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
-                                         value="#{CreateProcessForm.catalogImportDialog.hitModel.selectedField}">
+                                         value="#{CreateProcessForm.catalogImportDialog.selectedField}">
                             <f:selectItems value="#{CreateProcessForm.catalogImportDialog.searchFields}" var="field"/>
                             <p:ajax update="catalogSearchForm:searchTerm
                                             catalogSearchForm:catalogSearchButton"/>
@@ -75,8 +77,8 @@
                                        value="#{msgs.importDepth}"/>
                         <p:spinner id="importDepth"
                                    class="input"
-                                   disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration}"
-                                   value="#{CreateProcessForm.catalogImportDialog.hitModel.importDepth}"
+                                   disabled="#{empty CreateProcessForm.currentImportConfiguration}"
+                                   value="#{CreateProcessForm.catalogImportDialog.importDepth}"
                                    min="1"
                                    max="5"/>
                     </div>
@@ -91,8 +93,8 @@
                                        value="#{msgs.value}"/>
                         <p:inputText id="searchTerm"
                                      onkeypress="if (event.keyCode === 13) { document.getElementById('catalogSearchForm:performCatalogSearch').click(); return false; }"
-                                     disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration}"
-                                     value="#{CreateProcessForm.catalogImportDialog.hitModel.searchTerm}"
+                                     disabled="#{empty CreateProcessForm.currentImportConfiguration}"
+                                     value="#{CreateProcessForm.catalogImportDialog.searchTerm}"
                                      class="input"
                                      placeholder="#{msgs['newProcess.catalogueSearch.searchTerm']}"
                                      required="#{not empty param['catalogSearchForm:performCatalogSearch']}">
@@ -108,15 +110,21 @@
                         <p:selectBooleanCheckbox id="importChildren"
                                                  class="input switch"
                                                  title="#{CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured() ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
-                                                 disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or not CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured()}"
+                                                 disabled="#{empty CreateProcessForm.currentImportConfiguration or not CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured()}"
                                                  value="#{CreateProcessForm.catalogImportDialog.importChildren}"/>
                     </div>
                 </p:row>
             </p:panelGrid>
+            <h:panelGroup id="eadLevelSelectionWrapper">
+                <ui:fragment rendered="#{CreateProcessForm.currentImportConfiguration.configurationType eq 'OPAC_SEARCH' and
+                                         CreateProcessForm.currentImportConfiguration.metadataFormat eq 'EAD'}">
+                    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/eadLevelSelection.xhtml"/>
+                </ui:fragment>
+            </h:panelGroup>
             <h:panelGroup layout="block"
                           id="catalogSearchButton">
                 <p:commandButton id="performCatalogSearch"
-                                 disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or empty CreateProcessForm.catalogImportDialog.hitModel.selectedField or empty CreateProcessForm.catalogImportDialog.hitModel.searchTerm}"
+                                 disabled="#{empty CreateProcessForm.currentImportConfiguration or empty CreateProcessForm.catalogImportDialog.selectedField or empty CreateProcessForm.catalogImportDialog.searchTerm}"
                                  action="#{CreateProcessForm.catalogImportDialog.search}"
                                  value="#{msgs.searchOPAC}"
                                  title="#{msgs.searchOPAC}"
@@ -128,6 +136,7 @@
                                  update="editForm hitlist"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"
+                                 process="@this"
                                  styleClass="secondary right"
                                  icon="fa fa-times fa-lg"
                                  iconPos="right"

@@ -9,10 +9,15 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.constants;
+package org.kitodo.exceptions;
 
-public class StringConstants {
+public class KitodoScriptExecutionException extends Exception {
 
-    public static String COMMA_DELIMITER = ", ";
-
+    /**
+     * Constructor with given exception message.
+     * @param message as String
+     */
+    public KitodoScriptExecutionException(String message) {
+        super(message);
+    }
 }

@@ -12,18 +12,17 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Docket;
@@ -44,7 +43,7 @@ public class DocketServiceIT {
     private static final String none = "none";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertClients();
@@ -54,22 +53,19 @@ public class DocketServiceIT {
         given().ignoreExceptions().await().until(() -> Objects.nonNull(docketService.getByTitle(defaultDocket)));
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllDockets() throws DAOException {
-        assertEquals("Dockets were not counted correctly!", Long.valueOf(4), docketService.count());
+        assertEquals(Long.valueOf(4), docketService.count(), "Dockets were not counted correctly!");
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldCountAllDocketsAccordingToQuery() throws Exception {
         // TODO delete test stub
     }
@@ -77,89 +73,89 @@ public class DocketServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForDockets() throws Exception {
         Long amount = docketService.count();
-        assertEquals("Dockets were not counted correctly!", Long.valueOf(4), amount);
+        assertEquals(Long.valueOf(4), amount, "Dockets were not counted correctly!");
     }
 
     @Test
     public void shouldFindDocket() throws Exception {
         Docket docket = docketService.getById(1);
         boolean condition = docket.getTitle().equals(defaultDocket) && docket.getFile().equals(fileName);
-        assertTrue("Docket was not found in database!", condition);
+        assertTrue(condition, "Docket was not found in database!");
     }
 
     @Test
     public void shouldFindAllDockets() throws Exception {
         List<Docket> dockets = docketService.getAll();
-        assertEquals("Not all dockets were found in database!", 4, dockets.size());
+        assertEquals(4, dockets.size(), "Not all dockets were found in database!");
     }
 
     @Test
     public void shouldGetAllDocketsInGivenRange() throws Exception {
         List<Docket> dockets = docketService.getAll(1, 10);
-        assertEquals("Not all dockets were found in database!", 3, dockets.size());
+        assertEquals(3, dockets.size(), "Not all dockets were found in database!");
     }
 
     @Test
     public void shouldFindById() throws DAOException {
         String expected = defaultDocket;
-        assertEquals(docketNotFound, expected, docketService.getById(1).getTitle());
+        assertEquals(expected, docketService.getById(1).getTitle(), docketNotFound);
     }
 
     @Test
     public void shouldFindByTitle() throws DAOException {
-        assertEquals(docketNotFound, 1, docketService.getByTitle(defaultDocket).size());
+        assertEquals(1, docketService.getByTitle(defaultDocket).size(), docketNotFound);
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindManyByClientId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByClientId() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByTitleAndFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByTitleAndFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindManyByTitleOrFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindOneByTitleOrFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldNotFindByTitleOrFile() throws Exception {
         // TODO delete test stub
     }
 
     @Test
-    @Ignore("functionality nowhere used, no longer implemented")
+    @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindAllDocketsDocuments() throws Exception {
         // TODO delete test stub
     }
@@ -170,20 +166,18 @@ public class DocketServiceIT {
         docket.setTitle("To Remove");
         docketService.save(docket);
         Docket foundDocket = docketService.getById(5);
-        assertEquals("Additional docket was not inserted in database!", "To Remove", foundDocket.getTitle());
+        assertEquals("To Remove", foundDocket.getTitle(), "Additional docket was not inserted in database!");
 
         docketService.remove(foundDocket);
-        exception.expect(DAOException.class);
-        docketService.getById(5);
+        assertThrows(DAOException.class, () -> docketService.getById(5));
 
         docket = new Docket();
         docket.setTitle("To remove");
         docketService.save(docket);
         foundDocket = docketService.getById(6);
-        assertEquals("Additional docket was not inserted in database!", "To remove", foundDocket.getTitle());
+        assertEquals("To remove", foundDocket.getTitle(), "Additional docket was not inserted in database!");
 
         docketService.remove(foundDocket);
-        exception.expect(DAOException.class);
-        docketService.getById(6);
+        assertThrows(DAOException.class, () -> docketService.getById(6));
     }
 }

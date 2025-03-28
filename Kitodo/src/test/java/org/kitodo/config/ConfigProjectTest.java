@@ -11,14 +11,15 @@
 
 package org.kitodo.config;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.kitodo.constants.StringConstants.KITODO;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.exceptions.DoctypeMissingException;
 
@@ -26,13 +27,13 @@ public class ConfigProjectTest {
 
     private static ConfigProject configProject;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         FileLoader.createConfigProjectsFile();
         configProject = new ConfigProject("default");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         FileLoader.deleteConfigProjectsFile();
     }
@@ -40,35 +41,35 @@ public class ConfigProjectTest {
     @Test
     public void shouldGetConfigProjectsForItems() {
         List<String> items = configProject.getParamList("createNewProcess.itemlist.item");
-        assertEquals("Incorrect amount of items!", 10, items.size());
+        assertEquals(10, items.size(), "Incorrect amount of items!");
     }
 
     @Test
     public void shouldGetConfigProjectsForSelectItems() {
         List<String> items = configProject.getParamList("createNewProcess.itemlist.item(1).select");
-        assertEquals("Incorrect amount of select items for second element!", 3, items.size());
+        assertEquals(3, items.size(), "Incorrect amount of select items for second element!");
     }
 
     @Test
     public void shouldGetConfigProjectsForProcessTitles() {
         List<String> processTitles = configProject.getParamList("createNewProcess.itemlist.processtitle");
-        assertEquals("Incorrect amount of process titles!", 5, processTitles.size());
+        assertEquals(5, processTitles.size(), "Incorrect amount of process titles!");
     }
 
     @Test
     public void shouldGetDocType() throws DoctypeMissingException {
-        assertEquals("Document type is incorrect!", "monograph", configProject.getDocType());
+        assertEquals("monograph", configProject.getDocType(), "Document type is incorrect!");
     }
 
     @Test
     public void shouldGetTifDefinition() throws DoctypeMissingException {
-        assertEquals("Tif definition is incorrect!", "kitodo", configProject.getTifDefinition());
+        assertEquals(KITODO, configProject.getTifDefinition(), "Tif definition is incorrect!");
     }
 
     @Test
     public void shouldGetTitleDefinition() throws DoctypeMissingException {
         String titleDefinition = configProject.getTitleDefinition();
         String expected = "TSL_ATS+'_'+CatalogIDDigital";
-        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+        assertEquals(expected, titleDefinition, "Title definition is incorrect!");
     }
 }

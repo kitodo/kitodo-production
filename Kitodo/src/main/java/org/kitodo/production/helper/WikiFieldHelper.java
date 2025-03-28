@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -130,7 +132,7 @@ public class WikiFieldHelper {
     }
 
     private static Date getCreationDate(Property property) throws ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(property.getValue().substring(1, 20));
+        return new SimpleDateFormat(DEFAULT_DATE_FORMAT).parse(property.getValue().substring(1, 20));
     }
 
     private static String getWikiFieldMessage(String message) {

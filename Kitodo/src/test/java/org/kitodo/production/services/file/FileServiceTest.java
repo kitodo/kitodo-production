@@ -11,10 +11,11 @@
 
 package org.kitodo.production.services.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,9 +30,9 @@ import java.util.Collections;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
@@ -41,7 +42,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.CommandException;
-import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.services.ServiceManager;
 
@@ -52,14 +52,14 @@ public class FileServiceTest {
     private static final String OLD_DIRECTORY_NAME = "oldDirectoryName";
     private static final String NEW_DIRECTORY_NAME = "newDirectoryName";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         fileService.createDirectory(URI.create(""), "fileServiceTest");
         URI directory = fileService.createDirectory(URI.create(""), "12");
         fileService.createResource(directory, "meta.xml");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         fileService.delete(URI.create("fileServiceTest"));
         fileService.delete(URI.create("12"));
@@ -77,11 +77,11 @@ public class FileServiceTest {
         File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
         ExecutionPermission.setNoExecutePermission(script);
 
-        assertEquals("Result of execution was incorrect!", URI.create((parentFolderUri.getPath()
-                + '/' + "testMetaScript")), result);
-        assertTrue("Created resource is not directory!", file.isDirectory());
-        assertFalse("Created resource is file!", file.isFile());
-        assertTrue("Directory was not created!", file.exists());
+        assertEquals(URI.create((parentFolderUri.getPath()
+                + '/' + "testMetaScript")), result, "Result of execution was incorrect!");
+        assertTrue(file.isDirectory(), "Created resource is not directory!");
+        assertFalse(file.isFile(), "Created resource is file!");
+        assertTrue(file.exists(), "Directory was not created!");
     }
 
     @Test
@@ -89,11 +89,10 @@ public class FileServiceTest {
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMeta");
         File file = fileService.getFile(URI.create("fileServiceTest/testMeta"));
 
-        assertTrue("Created resource is not directory!", file.isDirectory());
-        assertFalse("Created resource is file!", file.isFile());
-        assertTrue("Directory was not created!", file.exists());
-        assertTrue("Incorrect path!",
-            Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
+        assertTrue(file.isDirectory(), "Created resource is not directory!");
+        assertFalse(file.isFile(), "Created resource is file!");
+        assertTrue(file.exists(), "Directory was not created!");
+        assertTrue(Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()), "Incorrect path!");
     }
 
     @Test
@@ -119,8 +118,7 @@ public class FileServiceTest {
         file = fileService.getFile(URI.create("fileServiceTest/testMetaExisting"));
 
         assertTrue(file.exists());
-        assertTrue("Incorrect path!",
-            Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
+        assertTrue(Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()), "Incorrect path!");
     }
 
     @Test
@@ -162,9 +160,8 @@ public class FileServiceTest {
      * <p>MediaNotFoundException will be thrown instead of removing file references from workpiece, if no media are
      * present but workpiece contains file references.</p>
      */
-    @Test(expected = MediaNotFoundException.class)
-    public void testSearchForMedia()
-            throws MediaNotFoundException, IOException, InvalidImagesException, URISyntaxException {
+    @Test
+    public void testSearchForMedia() throws IOException, URISyntaxException {
         Process process = mock(Process.class);
         Project project = mock(Project.class);
         Folder folder = mock(Folder.class);
@@ -181,10 +178,10 @@ public class FileServiceTest {
         URI testmeta = Paths.get("./src/test/resources/metadata/metadataFiles/testmeta.xml").toUri();
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(testmeta);
 
-        fileService.searchForMedia(process, workpiece);
+        assertThrows(MediaNotFoundException.class, () -> fileService.searchForMedia(process, workpiece));
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testRenameFileWithExistingTarget() throws IOException {
         FileService fileService = new FileService();
 
@@ -193,15 +190,15 @@ public class FileServiceTest {
         assertTrue(fileService.fileExist(oldUri));
         assertTrue(fileService.fileExist(newUri));
 
-        fileService.renameFile(oldUri, "newName.xml");
+        assertThrows(IOException.class, () -> fileService.renameFile(oldUri, "newName.xml"));
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testRenameFileWithMissingSource() throws IOException {
+    @Test
+    public void testRenameFileWithMissingSource() {
         URI oldUri = URI.create("fileServiceTest/oldNameMissing.xml");
         assertFalse(fileService.fileExist(oldUri));
 
-        fileService.renameFile(oldUri, "newName.xml");
+        assertThrows(FileNotFoundException.class, () -> fileService.renameFile(oldUri, "newName.xml"));
     }
 
     @Test
@@ -213,7 +210,6 @@ public class FileServiceTest {
         int numberOfFiles = fileService.getNumberOfFiles(directory);
 
         assertEquals(2, numberOfFiles);
-
     }
 
     @Test
@@ -227,7 +223,6 @@ public class FileServiceTest {
         int numberOfFiles = fileService.getNumberOfFiles(directory);
 
         assertEquals(3, numberOfFiles);
-
     }
 
     @Test
@@ -240,7 +235,6 @@ public class FileServiceTest {
         int numberOfFiles = fileService.getNumberOfImageFiles(directory);
 
         assertEquals(1, numberOfFiles);
-
     }
 
     @Test
@@ -254,7 +248,6 @@ public class FileServiceTest {
         int numberOfFiles = fileService.getNumberOfImageFiles(directory);
 
         assertEquals(1, numberOfFiles);
-
     }
 
     @Test
@@ -270,19 +263,17 @@ public class FileServiceTest {
         assertTrue(fileService.fileExist(toDirectory));
         assertTrue(fileService.fileExist(toDirectory.resolve("test.pdf")));
         assertTrue(fileService.fileExist(fromDirectory));
-
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testCopyDirectoryWithMissingSource() throws IOException {
+    @Test
+    public void testCopyDirectoryWithMissingSource() {
         URI fromDirectory = URI.create("fileServiceTest/copyDirectoryNotExisting/");
         URI toDirectory = URI.create("fileServiceTest/copyDirectoryNotExistingTo/");
 
         assertFalse(fileService.fileExist(fromDirectory));
         assertFalse(fileService.fileExist(toDirectory));
 
-        fileService.copyDirectory(fromDirectory, toDirectory);
-
+        assertThrows(FileNotFoundException.class, () -> fileService.copyDirectory(fromDirectory, toDirectory));
     }
 
     @Test
@@ -304,7 +295,6 @@ public class FileServiceTest {
         assertTrue(fileService.fileExist(fromDirectory));
         assertTrue(fileService.fileExist(fromDirectory.resolve("testToCopy.pdf")));
         assertFalse(fileService.fileExist(fromDirectory.resolve("testExisting.pdf")));
-
     }
 
     @Test
@@ -319,19 +309,17 @@ public class FileServiceTest {
 
         assertTrue(fileService.fileExist(originFile));
         assertTrue(fileService.fileExist(targetFile));
-
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testCopyFileWithMissingSource() throws IOException {
+    @Test
+    public void testCopyFileWithMissingSource() {
         URI originFile = URI.create("fileServiceTest/copyFileMissing");
         URI targetFile = URI.create("fileServiceTest/copyFileTargetMissing");
 
         assertFalse(fileService.fileExist(originFile));
         assertFalse(fileService.fileExist(targetFile));
 
-        fileService.copyFile(originFile, targetFile);
-
+        assertThrows(FileNotFoundException.class, () -> fileService.copyFile(originFile, targetFile));
     }
 
     @Test
@@ -346,7 +334,6 @@ public class FileServiceTest {
 
         assertTrue(fileService.fileExist(originFile));
         assertTrue(fileService.fileExist(targetFile));
-
     }
 
     @Test
@@ -362,7 +349,6 @@ public class FileServiceTest {
 
         assertTrue(fileService.fileExist(originFile));
         assertTrue(fileService.fileExist(targetDirectory.resolve("copyFileToDirectory.txt")));
-
     }
 
     @Test
@@ -378,10 +364,9 @@ public class FileServiceTest {
 
         assertTrue(fileService.fileExist(originFile));
         assertTrue(fileService.fileExist(targetDirectory.resolve("copyFileToDirectoryMissing")));
-
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void testCopyFileToDirectoryWithMissingSource() throws IOException {
         URI originFile = URI.create("fileServiceTest/copyFileToDirectoryMissingSource");
         URI targetDirectory = fileService.createDirectory(URI.create("fileServiceTest"),
@@ -391,8 +376,7 @@ public class FileServiceTest {
         assertTrue(fileService.fileExist(targetDirectory));
         assertFalse(fileService.fileExist(targetDirectory.resolve("copyFileToDirectoryMissingSource")));
 
-        fileService.copyFileToDirectory(originFile, targetDirectory);
-
+        assertThrows(FileNotFoundException.class, () -> fileService.copyFileToDirectory(originFile, targetDirectory));
     }
 
     @Test
@@ -430,7 +414,6 @@ public class FileServiceTest {
 
         URI existing = fileService.createResource(URI.create("fileServiceTest"), "fileExists");
         assertTrue(fileService.fileExist(existing));
-
     }
 
     @Test
@@ -485,19 +468,17 @@ public class FileServiceTest {
         assertFalse(fileService.fileExist(directory.resolve("test.xml")));
         assertTrue(fileService.fileExist(target));
         assertTrue(fileService.fileExist(target.resolve("test.xml")));
-
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testMoveDirectoryWithMissingSource() throws IOException {
+    @Test
+    public void testMoveDirectoryWithMissingSource() {
         URI directory = URI.create("fileServiceTest/movingDirectoryMissing/");
         URI target = URI.create("fileServiceTest/movingDirectoryMissingTarget/");
 
         assertFalse(fileService.fileExist(directory));
         assertFalse(fileService.fileExist(target));
 
-        fileService.moveDirectory(directory, target);
-
+        assertThrows(FileNotFoundException.class, () -> fileService.moveDirectory(directory, target));
     }
 
     @Test
@@ -519,7 +500,6 @@ public class FileServiceTest {
         assertTrue(fileService.fileExist(target));
         assertTrue(fileService.fileExist(target.resolve("test.xml")));
         assertTrue(fileService.fileExist(target.resolve("testTarget.xml")));
-
     }
 
     @Test
@@ -534,19 +514,17 @@ public class FileServiceTest {
 
         assertFalse(fileService.fileExist(file));
         assertTrue(fileService.fileExist(target));
-
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testMoveFileWithMissingSource() throws IOException {
+    @Test
+    public void testMoveFileWithMissingSource() {
         URI file = URI.create("fileServiceTest/movingFileMissing");
         URI target = URI.create("fileServiceTest/movingFileMissingTarget");
 
         assertFalse(fileService.fileExist(file));
         assertFalse(fileService.fileExist(target));
 
-        fileService.moveDirectory(file, target);
-
+        assertThrows(FileNotFoundException.class, () -> fileService.moveDirectory(file, target));
     }
 
     @Test
@@ -561,7 +539,6 @@ public class FileServiceTest {
 
         assertFalse(fileService.fileExist(file));
         assertTrue(fileService.fileExist(target));
-
     }
 
     @Test
@@ -597,7 +574,7 @@ public class FileServiceTest {
     public void testDeleteFirstSlashFromPath() {
         URI uri = URI.create("/test/test");
         URI actualUri = fileService.deleteFirstSlashFromPath(uri);
-        assertEquals("Paths of Uri did not match", "test/test", actualUri.getPath());
+        assertEquals("test/test", actualUri.getPath(), "Paths of Uri did not match");
     }
 
     @Test
@@ -615,7 +592,7 @@ public class FileServiceTest {
         ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
         ExecutionPermission.setNoExecutePermission(script);
-        assertTrue("Create symbolic link has failed!", result);
+        assertTrue(result, "Create symbolic link has failed!");
 
         File scriptClean = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
         ExecutionPermission.setExecutePermission(scriptClean);
@@ -645,7 +622,7 @@ public class FileServiceTest {
         ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.deleteSymLink(symLinkTarget);
         ExecutionPermission.setNoExecutePermission(script);
-        assertTrue("Delete symbolic link has failed!", result);
+        assertTrue(result, "Delete symbolic link has failed!");
 
         fileService.delete(symLinkSource);
         fileService.delete(symLinkTarget);

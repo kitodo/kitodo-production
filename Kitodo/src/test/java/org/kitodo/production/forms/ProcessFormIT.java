@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,10 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
@@ -39,7 +40,7 @@ public class ProcessFormIT {
      *
      * @throws Exception If databaseConnection failed.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -79,7 +80,7 @@ public class ProcessFormIT {
      *
      * @throws Exception if elasticsearch could not been stopped.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -95,17 +96,17 @@ public class ProcessFormIT {
 
         selectedIds = processForm.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
-        Assert.assertEquals(new ArrayList<>(Arrays.asList(1, 2, 4, 5)), selectedIds);
+        assertEquals(new ArrayList<>(Arrays.asList(1, 2, 4, 5)), selectedIds);
 
         processForm.getExcludedProcessIds().add(4);
         selectedIds = processForm.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
 
-        Assert.assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
+        assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
 
         processForm.setAllSelected(false);
         selectedIds = processForm.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
-        Assert.assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
+        assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
     }
 }

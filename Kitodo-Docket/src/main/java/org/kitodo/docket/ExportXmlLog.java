@@ -29,9 +29,12 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -382,9 +385,16 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         try {
             File file = new File(KitodoConfig.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
-                XMLConfiguration config = new XMLConfiguration(file);
-                config.setListDelimiter('&');
-                config.setReloadingStrategy(new FileChangedReloadingStrategy());
+                // Create and initialize the builder
+                ReloadingFileBasedConfigurationBuilder<XMLConfiguration> builder =
+                    new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class)
+                        .configure(new Parameters().xml()
+                            .setFile(file)
+                            .setListDelimiterHandler(new DefaultListDelimiterHandler('&')));
+                // Register an event listener for triggering reloading checks
+                builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
+                    event -> builder.getReloadingController().checkForReloading(null));
+                XMLConfiguration config = builder.getConfiguration();
 
                 int count = config.getMaxIndex(xmlPath);
                 for (int i = 0; i <= count; i++) {

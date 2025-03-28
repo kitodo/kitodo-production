@@ -11,15 +11,16 @@
 
 package org.kitodo.dataformat;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class DataFormatVersionProviderTest {
 
-    private DataFormatVersionProvider versionProvider = new DataFormatVersionProvider();
+    private final DataFormatVersionProvider versionProvider = new DataFormatVersionProvider();
 
     @Test
     public void getDataFormatVersionTest() {
-        Assert.assertEquals("Data format version was not correct", "1.0", versionProvider.getDataFormatVersion());
+        assertEquals("1.0", versionProvider.getDataFormatVersion(), "Data format version was not correct");
     }
 }

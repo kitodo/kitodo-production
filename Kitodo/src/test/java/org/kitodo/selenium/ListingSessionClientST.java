@@ -11,21 +11,16 @@
 
 package org.kitodo.selenium;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.FilterService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -35,20 +30,17 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     private static ProjectsPage projectsPage;
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         projectsPage = Pages.getProjectsPage();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getById(2));
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
         if (Browser.isAlertPresent()) {
@@ -68,10 +60,9 @@ public class ListingSessionClientST extends BaseTestSelenium {
         int projectsInDatabase = ServiceManager.getProjectService()
                 .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 1").size();
         int projectsDisplayed = projectsPage.countListedProjects();
-        assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
+        assertEquals(projectsInDatabase, projectsDisplayed, "Displayed wrong number of projects");
 
-        exception.expect(IndexOutOfBoundsException.class);
-        projectsPage.countListedTemplates();
+        assertThrows(IndexOutOfBoundsException.class, () -> projectsPage.countListedTemplates());
 
         SecurityTestUtils.cleanSecurityContext();
     }
@@ -88,23 +79,22 @@ public class ListingSessionClientST extends BaseTestSelenium {
         int projectsInDatabase = ServiceManager.getProjectService()
                 .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 2").size();
         int projectsDisplayed = projectsPage.countListedProjects();
-        assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
+        assertEquals(projectsInDatabase, projectsDisplayed, "Displayed wrong number of projects");
 
         // TODO: rewrite query for active templates
         //int templatesInDatabase = ServiceManager.getTemplateService().getActiveTemplates().size();
         int templatesDisplayed = projectsPage.countListedTemplates();
-        assertEquals("Displayed wrong number of templates", 2, templatesDisplayed);
+        assertEquals(2, templatesDisplayed, "Displayed wrong number of templates");
 
         int workflowsInDatabase = ServiceManager.getWorkflowService().countResults(null).intValue();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
-        assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
+        assertEquals(workflowsInDatabase, workflowsDisplayed, "Displayed wrong number of workflows");
 
         int docketsInDatabase = ServiceManager.getDocketService().getAllForSelectedClient().size();
         int docketsDisplayed = projectsPage.countListedDockets();
-        assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
+        assertEquals(docketsInDatabase, docketsDisplayed, "Displayed wrong number of dockets");
 
-        exception.expect(IndexOutOfBoundsException.class);
-        projectsPage.countListedRulesets();
+        assertThrows(IndexOutOfBoundsException.class, () -> projectsPage.countListedRulesets());
 
         SecurityTestUtils.cleanSecurityContext();
     }

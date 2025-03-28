@@ -44,6 +44,7 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -427,18 +428,19 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      */
     private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
         StructLink structLink = new StructLink();
-        structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
-            if (Objects.isNull(entry.getLeft())) {
-                throw new IllegalArgumentException("smLinkData.entry[?].left must not be null");
+        List<Object> content = structLink.getSmLinkOrSmLinkGrp();
+        for (Pair<String, String> link : smLinkData) {
+            if (Objects.isNull(link.getLeft())) {
+                throw new IllegalArgumentException("link.left must not be null");
             }
-            if (Objects.isNull(entry.getRight())) {
-                throw new IllegalArgumentException("smLinkData.entry[?].right must not be null");
+            if (Objects.isNull(link.getRight())) {
+                throw new IllegalArgumentException("link.right must not be null");
             }
             SmLink smLink = new SmLink();
-            smLink.setFrom(entry.getLeft());
-            smLink.setTo(entry.getRight());
-            return smLink;
-        }).collect(Collectors.toList()));
+            smLink.setFrom(link.getLeft());
+            smLink.setTo(link.getRight());
+            content.add(smLink);
+        }
         return structLink;
     }
 
@@ -451,19 +453,21 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     private Map<FileType, String> createFileUseByFileCache(Mets mets) {
         HashMap<FileType, String> fileUseMap = new HashMap<>();
         FileSec fileSec = mets.getFileSec();
+        Set<String> usedFileId = new HashSet<>();
+        boolean strictCheck = KitodoConfig.getConfig().getBoolean("useStrictMetsFileIdCheck", false);
         if (Objects.nonNull(fileSec)) {
             for (FileGrp fileGrp : fileSec.getFileGrp()) {
                 String use = fileGrp.getUSE();
                 for (FileType file : fileGrp.getFile()) {
-                    if (fileUseMap.containsKey(file)) {
+                    if (strictCheck && usedFileId.contains(file.getID())) {
                         throw new IllegalArgumentException(
-                            "Corrupt file: file with id " + file.getID() + " is part of multiple groups"
+                            "Corrupt file: each METS file ID has to be unique but " + file.getID() + " is used multiple times!"
                         );
                     } else {
+                        usedFileId.add(file.getID());
                         fileUseMap.put(file, use);
                     }
                 }
-                
             }
         }
         return fileUseMap;

@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -112,5 +113,15 @@ public class ClientService extends BaseBeanService<Client, ClientDAO> {
             return clients.stream().filter(client -> ServiceManager.getUserService().getAuthenticatedUser().getClients()
                     .contains(client)).map(Client::getName).collect(Collectors.joining(COMMA_DELIMITER));
         }
+    }
+
+    /**
+     * Get all clients sorted by name.
+     * @return all clients, sorted by name
+     * @throws DAOException when retrieving clients from the database fails
+     */
+    public List<Client> getAllSortedByName() throws DAOException {
+        return getAll().stream().sorted(Comparator.comparing(Client::getName))
+                .collect(Collectors.toList());
     }
 }

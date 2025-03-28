@@ -14,18 +14,15 @@ package org.kitodo.test.utils;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -50,6 +48,7 @@ public class ProcessTestUtils {
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
     private static final String ID_PLACEHOLDER = "IDENTIFIER_PLACEHOLDER";
+    private static final String RECORD_ID_METADATA_KEY = "CatalogIDDigital";
     public static final String testFileForHierarchyParent = "multivalued_metadata.xml";
     public static final String testFileForLongNumbers = "testMetadataWithLongNumbers.xml";
     public static final String testFileChildProcessToKeep = "testMetadataForChildProcessToKeep.xml";
@@ -187,7 +186,17 @@ public class ProcessTestUtils {
      */
     public static void removeTestProcess(int testProcessId) throws DAOException {
         if (testProcessId > 0) {
-            deleteProcessHierarchy(ServiceManager.getProcessService().getById(testProcessId));
+            Process process;
+            try {
+                process = ServiceManager.getProcessService().getById(testProcessId);
+            } catch (DAOException daoException) {
+                if (daoException.getMessage().contains("cannot be found")) {
+                    return;
+                } else {
+                    throw daoException;
+                }
+            }
+            deleteProcessHierarchy(process);
         }
     }
 
@@ -231,13 +240,10 @@ public class ProcessTestUtils {
         Process process = ServiceManager.getProcessService().getById(processId);
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
         try (InputStream fileContent = ServiceManager.getFileService().readMetadataFile(process)) {
-            InputStreamReader inputStreamReader = new InputStreamReader(fileContent);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            List<String> textLines = bufferedReader.lines().collect(Collectors.toList());
-            String textContent = String.join("", textLines);
+            String textContent = new String(fileContent.readAllBytes());
             textContent = textContent.replace(ID_PLACEHOLDER, String.valueOf(processId));
             try (OutputStream updatedFileContent = ServiceManager.getFileService().write(metadataFileUri)) {
-                updatedFileContent.write(textContent.getBytes());
+                updatedFileContent.write(textContent.getBytes(StandardCharsets.UTF_8));
                 // re-save process to update index
                 ServiceManager.getProcessService().save(process);
             }
@@ -253,5 +259,18 @@ public class ProcessTestUtils {
         logger.info(" ************* ");
         logger.info(" Process '" + process.getTitle() + "' has ID " + process.getId());
         logger.info(" ************* ");
+    }
+
+    /**
+     * Add record identifier metadata with provided value to given workpiece.
+     *
+     * @param workpiece Workpiece to which record identifier metadata is added
+     * @param idValue value of record identifier metadata to set
+     */
+    public static void addRecordIdentifierToLogicalRoot(Workpiece workpiece, String idValue) {
+        MetadataEntry recordIdMetadata = new MetadataEntry();
+        recordIdMetadata.setKey(RECORD_ID_METADATA_KEY);
+        recordIdMetadata.setValue(idValue);
+        workpiece.getLogicalStructure().getMetadata().add(recordIdMetadata);
     }
 }

@@ -123,6 +123,25 @@
                             onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
                             redisplay="true"/>
             </h:panelGroup>
+            <h:panelGroup layout="block"
+                          id="defaultClientWrapper"
+                          rendered="#{UserForm.userObject.clients.size() gt 1}">
+                <p:outputLabel for="defaultClient"
+                               value="#{msgs['defaultClient']}"
+                               title="#{msgs['defaultClient']}"/>
+                <p:selectOneMenu id="defaultClient"
+                                 converter="#{clientConverter}"
+                                 value="#{UserForm.userObject.defaultClient}"
+                                 disabled="#{isViewMode}">
+                    <f:selectItem noSelectionOption="true"
+                                  itemLabel="#{msgs['notSelected']}"/>
+                    <f:selectItems value="#{UserForm.userObject.clients}"
+                                   var="client"
+                                   itemLabel="#{client.name}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </h:panelGroup>
             <div>
                 <!-- table size -->
                 <p:outputLabel for="table-size" value="#{msgs.tableSize}" />

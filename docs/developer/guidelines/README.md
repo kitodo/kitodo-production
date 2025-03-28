@@ -22,4 +22,4 @@
 
 * Unterscheidung bezieht sich auf die GitHub Projekte [Kitodo.ContentServer](https://github.com/kitodo/kitodo-contentserver), [Kitodo.Production](https://github.com/kitodo/kitodo-production) und [Kitodo.UGH](https://github.com/kitodo/kitodo-ugh)
 * **Branch 2.x**: ist die Weiterentwicklung der alten Goobi.Production Community Edition (Version 1.11.x) unter dem neuen Namen Kitodo.Production und wird als Version 2.x weiter geführt
-* **Branch master**: die unter dem DFG Projekt geförderten Weiterentwicklung von Kitodo.Production findet hier statt und enthält auch die darauf basierenden betriebenen Entwicklungen
+* **Branch main (ehemals master)**: die unter dem DFG Projekt geförderten Weiterentwicklung von Kitodo.Production findet hier statt und enthält auch die darauf basierenden betriebenen Entwicklungen

@@ -11,16 +11,16 @@
 
 package org.kitodo.production.forms;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URI;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Workflow;
@@ -31,13 +31,13 @@ public class WorkflowFormTest {
 
     private static FileService fileService = ServiceManager.getFileService();
 
-    @BeforeClass
+    @BeforeAll
     public static void createDiagrams() throws Exception {
         FileLoader.createDiagramBaseFile();
         FileLoader.createDiagramTestFile();
     }
 
-    @AfterClass
+    @AfterAll
     public static void removeDiagram() throws Exception {
         fileService.delete(new File(ConfigCore.getKitodoDiagramDirectory() + "new.bpmn20.xml").toURI());
         fileService.delete(new File(ConfigCore.getKitodoDiagramDirectory() + "test2.bpmn20.xml").toURI());
@@ -53,7 +53,7 @@ public class WorkflowFormTest {
         modelerForm.setWorkflow(new Workflow("test"));
         modelerForm.readXMLDiagram();
 
-        assertNotNull("Diagram XML was not read!", modelerForm.getXmlDiagram());
+        assertNotNull(modelerForm.getXmlDiagram(), "Diagram XML was not read!");
     }
 
     @Test
@@ -96,8 +96,8 @@ public class WorkflowFormTest {
         modelerForm.setWorkflow(new Workflow(fileName));
         modelerForm.saveFile(xmlDiagramURI, xmlDiagram);
 
-        assertEquals("Diagram XML was not saved!", xmlDiagram, modelerForm.getXmlDiagram());
-        assertTrue("Diagram XML was not saved!", file.exists());
+        assertEquals(xmlDiagram, modelerForm.getXmlDiagram(), "Diagram XML was not saved!");
+        assertTrue(file.exists(), "Diagram XML was not saved!");
 
         file.deleteOnExit();
     }
@@ -179,8 +179,8 @@ public class WorkflowFormTest {
         modelerForm.setWorkflow(new Workflow(fileName));
         modelerForm.saveFile(svgDiagramURI, svgDiagram);
 
-        assertEquals("Diagram SVG was not saved!", svgDiagram, modelerForm.getSvgDiagram());
-        assertTrue("Diagram SVG was not saved!", file.exists());
+        assertEquals(svgDiagram, modelerForm.getSvgDiagram(), "Diagram SVG was not saved!");
+        assertTrue(file.exists(), "Diagram SVG was not saved!");
 
         file.deleteOnExit();
     }

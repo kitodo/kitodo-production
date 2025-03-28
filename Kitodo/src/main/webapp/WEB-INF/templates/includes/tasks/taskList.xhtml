@@ -123,6 +123,8 @@
                         #{item.correctionCommentStatus gt 0 ? 'fa-exclamation-circle correction' : 'fa-comment'}
                         #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                                   rendered="#{item.getProcess().hasComments()}"/>
+                    <h:outputText value="#{commentTooltipView.getLastComment(item)}"
+                                  rendered="#{CurrentTaskForm.showLastComment() and item.getProcess().hasComments()}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
