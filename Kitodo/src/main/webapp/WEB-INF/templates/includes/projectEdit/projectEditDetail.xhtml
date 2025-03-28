@@ -23,23 +23,18 @@
                              value="#{ProjectForm.project.title}"
                              disabled="#{ProjectForm.locked}"
                              required="#{not empty param['editForm:save']}">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />
                 <p:inputText id="pages" placeholder="10" class="input" value="#{ProjectForm.project.numberOfPages}"
                              disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="band" value="#{msgs.numberVolumes}" />
                 <p:inputText id="band" placeholder="1" class="input" value="#{ProjectForm.project.numberOfVolumes}"
                              disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:inputText>
             </div>
         </p:row>
@@ -50,7 +45,6 @@
                             showOn="button"
                             disabled="#{ProjectForm.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
-                    <p:ajax event="blur" oncomplete="toggleSave()"/>
                 </p:calendar>
             </div>
             <div>
@@ -59,7 +53,6 @@
                             showOn="button"
                             disabled="#{ProjectForm.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
-                    <p:ajax event="blur" oncomplete="toggleSave()"/>
                 </p:calendar>
             </div>
             <div>
@@ -70,8 +63,6 @@
                                class="input"
                                value="#{ProjectForm.project.filenameLength}"
                                disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:inputNumber>
             </div>
 

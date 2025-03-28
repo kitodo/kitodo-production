@@ -101,8 +101,7 @@
                                                var="mappingFile"
                                                itemValue="#{mappingFile}"
                                                itemLabel="#{mappingFile}"/>
-                                <p:ajax event="change"
-                                        oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                             <p:commandButton id="fileHelp"
                                              type="button"
@@ -118,8 +117,7 @@
                                                      styleClass="switch input-with-button"
                                                      value="#{mappingFileEditView.mappingFile.prestructuredImport}"
                                                      disabled="#{isViewMode}">
-                                <p:ajax event="change"
-                                        oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectBooleanCheckbox>
                             <p:commandButton id="prestructuredImportHelp"
                                              type="button"
@@ -141,8 +139,7 @@
                                                var="mappingFile"
                                                itemValue="#{mappingFile}"
                                                itemLabel="#{mappingFile}"/>
-                                <p:ajax event="change"
-                                        oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                             <p:commandButton id="inputFormatHelp"
                                              type="button"
@@ -162,8 +159,7 @@
                                                var="mappingFile"
                                                itemValue="#{mappingFile}"
                                                itemLabel="#{mappingFile}"/>
-                                <p:ajax event="change"
-                                        oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                             <p:commandButton id="outputFormatHelp"
                                              type="button"

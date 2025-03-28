@@ -32,7 +32,7 @@
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItem itemLabel="clientAssignable" itemValue="clientAssignable"/>
                     <f:selectItem itemLabel="globalAssignable" itemValue="globalAssignable"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>
