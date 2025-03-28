@@ -316,12 +316,13 @@ public class ImportServiceIT {
      *             when copying test metadata file fails
      */
     @Test
-    public void shouldCheckForParent() throws DAOException, IOException, DataException {
+    public void shouldCheckForParent() throws Exception {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
         try {
             ProcessTestUtils.updateIdentifier(parentTestId);
+            Thread.sleep(2000);
             importService.checkForParent(String.valueOf(parentTestId), ruleset, PROJECT_ID);
             assertNotNull(importService.getParentTempProcess());
         } finally {
