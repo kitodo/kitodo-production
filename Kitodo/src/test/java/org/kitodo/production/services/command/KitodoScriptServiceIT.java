@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,7 +51,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.test.utils.ProcessTestUtils;
 
 public class KitodoScriptServiceIT {
-    private static final Logger logger = LogManager.getLogger(KitodoScriptServiceIT.class);
+    // private static final Logger logger =
+    // LogManager.getLogger(KitodoScriptServiceIT.class);
     private static final String metadataWithDuplicatesTestFile = "testMetaWithDuplicateMetadata.xml";
     private static final String directoryForDerivateGeneration = "testFilesForDerivativeGeneration";
     private static int kitodoScriptTestProcessId = -1;
@@ -69,7 +68,6 @@ public class KitodoScriptServiceIT {
 
     @BeforeAll
     public static void prepareDatabase() throws Exception {
-        logger.debug("Running BeforeAll: prepareDatabase()");
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         User userOne = ServiceManager.getUserService().getById(userId);
@@ -78,7 +76,6 @@ public class KitodoScriptServiceIT {
 
     @AfterAll
     public static void cleanDatabase() throws Exception {
-        logger.debug("Running AfterAll: cleanDatabase()");
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
@@ -88,7 +85,6 @@ public class KitodoScriptServiceIT {
      */
     @BeforeEach
     public void prepareFileCopy() throws IOException, DAOException {
-        logger.debug("Running BeforeEach: prepareFileCopy()");
         kitodoScriptTestProcessId = MockDatabase.insertTestProcess(testProcessTitle, projectId, templateId, rulesetId);
         ProcessTestUtils.copyTestResources(kitodoScriptTestProcessId, directoryForDerivateGeneration);
         ProcessTestUtils.copyTestMetadataFile(kitodoScriptTestProcessId, metadataWithDuplicatesTestFile);
@@ -99,23 +95,12 @@ public class KitodoScriptServiceIT {
      */
     @AfterEach
     public void removeKitodoScriptServiceTestFile() throws IOException, DAOException {
-        logger.debug("Running AfterEach: removeKitodoScriptServiceTestFile()");
         ProcessTestUtils.removeTestProcess(kitodoScriptTestProcessId);
         kitodoScriptTestProcessId = -1;
-        if (logger.isDebugEnabled()) {
-            for (int i = 1; i <= 99; i++) {
-                File metafile = new File("src/test/resources/metadata/" + i + "/meta.xml");
-                if (metafile.exists()) {
-                    logger.warn("File {} was not deleted properly!", metafile);
-                }
-            }
-        }
     }
 
     @Test
     public void shouldCreateProcessFolders() throws Exception {
-        logger.debug("Running Test: shouldCreateProcessFolders()");
-        logger.debug("()");
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
         }
@@ -146,7 +131,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteAddRoleScript() throws Exception {
-        logger.debug("Running Test: shouldExecuteAddRoleScript()");
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         Task task = ServiceManager.getTaskService().getById(8);
@@ -163,7 +147,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteSetTaskStatusScript() throws Exception {
-        logger.debug("Running Test: shouldExecuteSetTaskStatusScript()");
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:setStepStatus \"tasktitle:Progress\" status:3";
@@ -177,7 +160,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteAddShellScriptToTaskScript() throws Exception {
-        logger.debug("Running Test: shouldExecuteAddShellScriptToTaskScript()");
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:addShellScriptToStep \"tasktitle:Progress\" \"label:script\" \"script:/some/new/path\"";
@@ -192,7 +174,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldExecuteSetPropertyTaskScript() throws Exception {
-        logger.debug("Running Test: shouldExecuteSetPropertyTaskScript()");
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:setTaskProperty \"tasktitle:Closed\" property:validate value:true";
@@ -206,7 +187,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldNotExecuteSetPropertyTaskScript() throws Exception {
-        logger.debug("Running Test: shouldNotExecuteSetPropertyTaskScript()");
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
 
         String script = "action:setTaskProperty \"tasktitle:Closed\" property:validate value:invalid";
@@ -220,7 +200,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldGenerateDerivativeImages() throws Exception {
-        logger.debug("Running Test: shouldGenerateDerivativeImages()");
 
         // Delete created and still running taskmanager tasks from other test suites because
         // this test is assuming that there are no other taskmanager tasks running!
@@ -250,7 +229,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldAddDataWithValue() throws Exception {
-        logger.debug("Running Test: shouldAddDataWithValue()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -272,7 +250,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldAddDataWithType() throws Exception {
-        logger.debug("Running Test: shouldAddDataWithType()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
 
@@ -297,7 +274,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldDeleteDataWithType() throws Exception {
-        logger.debug("Running Test: shouldDeleteDataWithType()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMain";
 
@@ -322,7 +298,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldNotDeleteDataWithTypeAndWrongValue() throws Exception {
-        logger.debug("Running Test: shouldNotDeleteDataWithTypeAndWrongValue()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMain";
 
@@ -347,7 +322,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldNotDeleteDataWithWrongType() throws Exception {
-        logger.debug("Running Test: shouldNotDeleteDataWithWrongType()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
 
@@ -372,7 +346,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldCopyMultipleDataToChildren() throws Exception {
-        logger.debug("Running Test: shouldCopyMultipleDataToChildren()");
         Map<String, Integer> testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
         ProcessTestUtils.copyHierarchyTestFiles(testProcessIds);
         Thread.sleep(2000);
@@ -397,7 +370,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldAddDataWithWhitespace() throws Exception {
-        logger.debug("Running Test: shouldAddDataWithWhitespace()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -419,7 +391,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldAddDataWithMultipleScripts() throws Exception {
-        logger.debug("Running Test: shouldAddDataWithMultipleScripts()");
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
@@ -448,7 +419,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldCopyDataWithSource() throws Exception {
-        logger.debug("Running Test: shouldCopyDataWithSource()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -470,7 +440,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldAddDataWithVariable() throws Exception {
-        logger.debug("Running Test: shouldAddDataWithVariable()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -492,7 +461,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldDeleteData() throws Exception {
-        logger.debug("Running Test: shouldDeleteData()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -515,7 +483,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldDeleteDataWithValue() throws Exception {
-        logger.debug("Running Test: shouldDeleteDataWithValue()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -538,7 +505,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldDeleteAllDataWithSameKey() throws Exception {
-        logger.debug("Running Test: shouldDeleteAllDataWithSameKey()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TSL_ATS";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -561,7 +527,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldDeleteDataWithSource() throws Exception {
-        logger.debug("Running Test: shouldDeleteDataWithSource()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -584,7 +549,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldNotDeleteDataWithValue() throws Exception {
-        logger.debug("Running Test: shouldNotDeleteDataWithValue()");
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -607,7 +571,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldOverwriteDataWithValue() throws Exception {
-        logger.debug("Running Test: shouldOverwriteDataWithValue()");
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -639,7 +602,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldOverwriteDataWithSource() throws Exception {
-        logger.debug("Running Test: shouldOverwriteDataWithSource()");
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -671,7 +633,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldOverwriteDataWithVariable() throws Exception {
-        logger.debug("Running Test: shouldOverwriteDataWithVariable()");
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
