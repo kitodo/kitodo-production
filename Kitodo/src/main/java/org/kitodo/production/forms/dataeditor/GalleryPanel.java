@@ -432,7 +432,7 @@ public class GalleryPanel {
     }
 
     private void addStripesRecursive(LogicalDivision structure) {
-        List<Integer> treeNodeIdList = new ArrayList<Integer>();
+        List<Integer> treeNodeIdList = new ArrayList<>();
         Integer idx = 0;
         Process process = dataEditor.getProcess();
         if (Objects.nonNull(process) && Objects.nonNull(process.getParent())) {
@@ -458,7 +458,7 @@ public class GalleryPanel {
                 // add child
                 if (Objects.isNull(child.getLink())) {
                     List<Integer> childTreeNodeIdList = new ArrayList<>(treeNodeIdList);
-                    if (!dataEditor.getStructurePanel().logicalStructureTreeContainsMedia()) {
+                    if (dataEditor.getStructurePanel().isSeparateMedia()) {
                         childTreeNodeIdList.add(siblingWithoutViewsIdx);
                     } else {
                         childTreeNodeIdList.add(siblingWithViewsIdx);
