@@ -338,7 +338,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         surroundingMetadata.addLast(containedMetadata.parallelStream()
                 .filter(MetadataEntry.class::isInstance)
                 .map(MetadataEntry.class::cast)
-                .collect(Collectors.toMap(Function.identity(), each -> Boolean.FALSE, (value1, value2) -> value1)));
+                .collect(Collectors.toMap(Function.identity(), each -> Boolean.FALSE, (firstValue, secondValue) -> firstValue)));
         List<MetadataViewWithValuesInterface> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
         for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
