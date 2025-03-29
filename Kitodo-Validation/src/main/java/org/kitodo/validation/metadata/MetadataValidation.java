@@ -335,8 +335,10 @@ public class MetadataValidation implements MetadataValidationInterface {
             String location, Map<String, String> translations, LinkedList<Map<MetadataEntry, Boolean>> surroundingMetadata) {
         boolean error = false;
         Collection<String> messages = new HashSet<>();
-        surroundingMetadata.addLast(containedMetadata.parallelStream().filter(MetadataEntry.class::isInstance)
-                .map(MetadataEntry.class::cast).collect(Collectors.toMap(Function.identity(), all -> Boolean.FALSE)));
+        surroundingMetadata.addLast(containedMetadata.parallelStream()
+                .filter(MetadataEntry.class::isInstance)
+                .map(MetadataEntry.class::cast)
+                .collect(Collectors.toMap(Function.identity(), each -> Boolean.FALSE, (value1, value2) -> value1)));
         List<MetadataViewWithValuesInterface> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
         for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
