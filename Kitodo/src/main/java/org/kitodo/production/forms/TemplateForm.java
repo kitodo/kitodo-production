@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +47,7 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 
 @Named("TemplateForm")
-@ViewScoped
+@SessionScoped
 public class TemplateForm extends TemplateBaseForm {
 
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
