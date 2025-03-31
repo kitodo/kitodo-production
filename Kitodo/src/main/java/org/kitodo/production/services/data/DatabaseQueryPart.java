@@ -66,6 +66,9 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
     String getDatabaseQuery(String className, String varName, String parameterName) {
         String query = Objects.equals(className, "Task") ? filterField.getTaskTitleQuery()
                 : filterField.getProcessTitleQuery();
+        if (Objects.isNull(query)) {
+            return "1 != 1";
+        }
         query = query.contains("~") ? query.replace("~", varName) : varName + '.' + query;
         query = query.contains("#") ? query.replace("#", parameterName) : query + " = " + parameterName;
         return operand ? query : "NOT (" + query + ')';
