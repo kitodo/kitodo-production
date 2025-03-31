@@ -460,6 +460,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
         await("Wait for loading screen to disappear").pollDelay(100, TimeUnit.MILLISECONDS)
                 .atMost(5, TimeUnit.SECONDS)
                 .until(() -> filterInput.isDisplayed());
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // hide filter menu to enable action buttons positioned behind it
         headerText.click();
         await("Wait for filter menu to close").pollDelay(100, TimeUnit.MILLISECONDS)
