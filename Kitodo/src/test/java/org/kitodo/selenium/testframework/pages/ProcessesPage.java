@@ -461,6 +461,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .atMost(5, TimeUnit.SECONDS)
                 .until(() -> filterInput.isDisplayed());
         // hide filter menu to enable action buttons positioned behind it
+        Browser.waitForLoadingScreenToDisappear();
         headerText.click();
         await("Wait for filter menu to close").pollDelay(100, TimeUnit.MILLISECONDS)
                 .atMost(5, TimeUnit.SECONDS)
