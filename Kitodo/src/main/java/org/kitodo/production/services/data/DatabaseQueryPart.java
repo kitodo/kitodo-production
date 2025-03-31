@@ -19,6 +19,7 @@ import java.util.Objects;
  */
 public class DatabaseQueryPart implements UserSpecifiedFilter {
 
+    static final String SQL_FALSE = "1 != 1";
     protected FilterField filterField;
     protected boolean operand;
     private String value;
@@ -67,7 +68,7 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
         String query = Objects.equals(className, "Task") ? filterField.getTaskTitleQuery()
                 : filterField.getProcessTitleQuery();
         if (Objects.isNull(query)) {
-            return "1 != 1";
+            return SQL_FALSE;
         }
         query = query.contains("~") ? query.replace("~", varName) : varName + '.' + query;
         query = query.contains("#") ? query.replace("#", parameterName) : query + " = " + parameterName;

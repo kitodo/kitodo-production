@@ -330,7 +330,9 @@ public class BeanQuery {
                     } else {
                         groupFilters.add(query);
                     }
-                    databaseSearchQueryPart.addParameters(parameterName, parameters);
+                    if (query != DatabaseQueryPart.SQL_FALSE) {
+                        databaseSearchQueryPart.addParameters(parameterName, parameters);
+                    }
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
                     indexQueryPart.putQueryParameters(varName, parameterName, indexQueries, indexFiltersAsAlternatives
