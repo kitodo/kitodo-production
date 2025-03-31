@@ -236,7 +236,11 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
             try {
                 return new FileInputStream(tasksDiagram);
             } catch (FileNotFoundException e) {
-                logger.error(e.getMessage(), e);
+                if (logger.isTraceEnabled()) {
+                    logger.error(e.getMessage(), e);
+                } else {
+                    logger.error(e.getMessage());
+                }
                 return getEmptyInputStream();
             }
         }
