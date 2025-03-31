@@ -210,7 +210,10 @@
                 </p:menuitem>
                 <p:menuitem value="#{msgs.viewPageInNewWindow}"
                             rendered="#{
-                                DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.VIEW_NODE_TYPE and 
+                                (not DataEditorForm.structurePanel.separateMedia and
+                                DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.VIEW_NODE_TYPE or
+                                DataEditorForm.structurePanel.separateMedia and
+                                DataEditorForm.structurePanel.selectedPhysicalNodeIfSingle.type eq StructurePanel.MEDIA_NODE_TYPE) and
                                 mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
                             icon="fa fa-external-link fa-sm"
                             styleClass="plain viewPageInNewWindow"
