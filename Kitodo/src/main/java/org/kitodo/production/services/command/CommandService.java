@@ -51,7 +51,13 @@ public class CommandService {
         if (Objects.isNull(script)) {
             return null;
         }
-        return commandModule.runCommand(script);
+        CommandResult commandResult = commandModule.runCommand(script);
+        List<String> commandResultMessages = commandResult.getMessages();
+        if (!commandResult.isSuccessful() && !commandResultMessages.isEmpty()) {
+            String fullErrorMessage = String.join(" | ", commandResultMessages);
+            throw new IOException(fullErrorMessage);
+        }
+        return commandResult;
     }
 
     /**

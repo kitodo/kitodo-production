@@ -518,11 +518,9 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 CommandService commandService = ServiceManager.getCommandService();
                 CommandResult commandResult = commandService.runCommand(script);
                 executedSuccessful = commandResult.isSuccessful();
-                for (String message : commandResult.getMessages()) {
-                    if (executedSuccessful) {
+                if (executedSuccessful && !commandResult.getMessages().isEmpty()) {
+                    for (String message : commandResult.getMessages()) {
                         Helper.setMessage(message);
-                    } else {
-                        Helper.setErrorMessage(message, logger);
                     }
                 }
             }
