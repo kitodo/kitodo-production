@@ -75,7 +75,7 @@ public class SearchingST extends BaseTestSelenium {
 
         processesPage.searchInSearchField("Second");
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertEquals(1, processesPage.getProcessIds().size(), "There should be two processes found"));
+            () -> assertEquals(1, processesPage.getProcessIds().size(), "There should be one process found"));
 
         processesPage.searchInSearchField("möhö");
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
