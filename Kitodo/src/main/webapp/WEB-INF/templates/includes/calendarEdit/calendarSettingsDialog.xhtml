@@ -34,7 +34,6 @@
                                       value="#{CalendarForm.yearStart}"
                                       yearRange="#{CalendarForm.today.year}:#{CalendarForm.today.year}"
                                       pattern="dd.MM">
-                            <p:ajax event="dateSelect"/>
                         </p:datePicker>
                     </div>
                     <div>
@@ -43,7 +42,6 @@
                         <p:inputText id="calendarYearName"
                                      value="#{CalendarForm.yearName}"
                                      styleClass="input">
-                            <p:ajax event="change"/>
                         </p:inputText>
                     </div>
                 </h:panelGroup>
