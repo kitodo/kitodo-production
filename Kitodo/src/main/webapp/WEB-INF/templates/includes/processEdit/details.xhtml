@@ -28,7 +28,6 @@
                                          empty param['editForm:tabs:addTemplateProperty'] and
                                          empty param['editForm:tabs:addWorkpieceProperty'] and
                                          empty param['editForm:tabs:createNewProperty']}">
-                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
 
@@ -44,7 +43,7 @@
                                    var="project"
                                    itemValue="#{project}"
                                    itemLabel="#{project.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -60,8 +59,7 @@
                                    var="config"
                                    itemValue="#{config}"
                                    itemLabel="#{config.title}"/>
-                    <p:ajax event="change"
-                            oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -80,7 +78,7 @@
                                    var="ruleset"
                                    itemValue="#{ruleset}"
                                    itemLabel="#{ruleset.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -96,7 +94,7 @@
                                    var="docket"
                                    itemValue="#{docket}"
                                    itemLabel="#{docket.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -112,7 +110,7 @@
                                    var="ocrdWorkflow"
                                    itemValue="#{ocrdWorkflow}"
                                    itemLabel="#{ocrdWorkflow.value}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                    <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>

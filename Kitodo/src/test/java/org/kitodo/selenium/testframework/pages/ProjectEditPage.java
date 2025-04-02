@@ -16,13 +16,17 @@ import static org.awaitility.Awaitility.await;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ProjectEditPage extends EditPage<ProjectEditPage> {
 
     private static final String PROJECT_TAB_VIEW = EDIT_FORM + ":projectTabView";
+    private static final String SAVE_BUTTON_ID = EDIT_FORM + ":save";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROJECT_TAB_VIEW + ":title")
@@ -68,6 +72,16 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
         return Pages.getProjectsPage();
     }
 
+    public ProjectsPage saveOnce() throws IllegalAccessException, InstantiationException {
+        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
+        Browser.getDriver().findElementById(SAVE_BUTTON_ID).click();
+        if (Browser.isAlertPresent() && Pages.getProjectsPage().getUrl().contains("login")) {
+            Browser.getDriver().switchTo().alert().accept();
+        }
+        webDriverWait.until(ExpectedConditions.urlContains(Pages.getProjectsPage().getUrl()));
+        return Pages.getProjectsPage();
+    }
+
     public void changeTitle(String newTitle) throws InterruptedException {
         if (!areElementsEnabled()) {
             detailLockedButton.click();
@@ -79,8 +93,21 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
         pagesAmountInput.click();
     }
 
+    public void changeTitleKeepFocus(String newTitle) throws InterruptedException {
+        if (!areElementsEnabled()) {
+            detailLockedButton.click();
+            await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                    .ignoreExceptions().until(() -> titleInput.isEnabled());
+        }
+        titleInput.sendKeys(newTitle);
+    }
+
     public boolean areElementsEnabled() {
         return titleInput.isEnabled() && pagesAmountInput.isEnabled() && volumeAmountInput.isEnabled();
+    }
+
+    public boolean isSaveButtonEnabled() {
+        return Browser.getDriver().findElementById(SAVE_BUTTON_ID).isEnabled();
     }
 
     public ProjectEditPage toggleProjectActiveCheckbox() throws InterruptedException {
