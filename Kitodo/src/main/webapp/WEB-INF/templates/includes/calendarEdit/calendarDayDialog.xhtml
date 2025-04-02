@@ -133,7 +133,7 @@
                                                          title="#{msgs['calendar.metadata.startValue']}">
                                                 <p:ajax event="keyup"
                                                         delay="300"
-                                                        update="calendarDayForm"/>
+                                                        update="@(.metadata-value)"/>
                                             </p:inputText>
                                             <p:inputTextarea value="#{metadata.startValue}"
                                                              rendered="#{metadata.metadataDetail.input eq 'inputTextarea'}"
@@ -142,13 +142,13 @@
                                                              title="#{msgs['calendar.metadata.startValue']}">
                                                 <p:ajax event="keyup"
                                                         delay="300"
-                                                        update="calendarDayForm"/>
+                                                        update="@(.metadata-value)"/>
                                             </p:inputTextarea>
 
                                             <!-- current value -->
                                             <p:outputLabel value="#{msgs['calendar.metadata.currentValue']}:"
                                                            styleClass="metadata-value-label"/>
-                                            <h:outputText styleClass="metadata-value"
+                                            <p:outputLabel styleClass="metadata-value"
                                                           value="#{CalendarForm.getTextMetadataValue(metadata, date, issue)}"/>
                                         </div>
                                         <!-- step size -->
