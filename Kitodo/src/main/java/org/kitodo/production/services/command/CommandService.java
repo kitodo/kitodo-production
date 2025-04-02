@@ -31,7 +31,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class CommandService {
     private final CommandInterface commandModule;
     private final ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
-    private static final Logger logger = LogManager.getLogger(TaskService.class);
+    private static final Logger logger = LogManager.getLogger(CommandService.class);
 
     /**
      * Initialize Command Service.
