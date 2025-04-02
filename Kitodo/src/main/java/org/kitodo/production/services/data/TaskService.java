@@ -519,6 +519,11 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 CommandService commandService = ServiceManager.getCommandService();
                 CommandResult commandResult = commandService.runCommand(script);
                 executedSuccessful = commandResult.isSuccessful();
+                if (executedSuccessful && !commandResult.getMessages().isEmpty()) {
+                    for (String message : commandResult.getMessages()) {
+                        Helper.setMessage(message);
+                    }
+                }
             }
             finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
         } catch (IOException | DAOException | InvalidImagesException e) {
