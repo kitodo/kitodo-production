@@ -16,7 +16,7 @@ function checkForm(form) {
     inputs = document.querySelectorAll('#' + form + ' .ui-inputtext');
     if ($('#' + form)) {
         $(document).on('input', '#' + form + ' .ui-inputfield', function () {
-            compareForm(form)
+            compareForm(form);
         });
         inputs.forEach(function (element) {
             values.push(element.value);
