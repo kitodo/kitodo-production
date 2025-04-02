@@ -20,13 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.data.TaskService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class CommandService {
     private final CommandInterface commandModule;
     private final ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
+    private static final Logger logger = LogManager.getLogger(TaskService.class);
 
     /**
      * Initialize Command Service.
@@ -54,6 +59,9 @@ public class CommandService {
         CommandResult commandResult = commandModule.runCommand(script);
         List<String> commandResultMessages = commandResult.getMessages();
         if (!commandResult.isSuccessful() && !commandResultMessages.isEmpty()) {
+            for (String message : commandResultMessages) {
+                Helper.setErrorMessage(message);
+            }
             String fullErrorMessage = String.join(" | ", commandResultMessages);
             throw new IOException(fullErrorMessage);
         }
