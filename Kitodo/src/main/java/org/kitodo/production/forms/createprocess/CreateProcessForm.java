@@ -410,36 +410,35 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.getDocType(), forbiddenParentType));
                 return false;
             }
-        } else {
-            // validate process and potential ancestors
-            for (TempProcess tempProcess : processes) {
-                ValidationResult result = ServiceManager.getMetadataValidationService().validate(
-                        tempProcess.getWorkpiece(), rulesetManagement, false);
-                if (ERROR.equals(result.getState())) {
-                    validationResultHashMap.put(getCatalogId(tempProcess), result);
+        }
+        // validate process and potential ancestors
+        for (TempProcess tempProcess : processes) {
+            ValidationResult result = ServiceManager.getMetadataValidationService().validate(
+                    tempProcess.getWorkpiece(), rulesetManagement, false);
+            if (ERROR.equals(result.getState())) {
+                validationResultHashMap.put(getCatalogId(tempProcess), result);
+            }
+        }
+        // validate potential process children
+        for (TempProcess tempProcess : childProcesses) {
+            ValidationResult result = ServiceManager.getMetadataValidationService().validate(
+                    tempProcess.getWorkpiece(), rulesetManagement, false);
+            if (ERROR.equals(result.getState())) {
+                validationResultHashMap.put(getCatalogId(tempProcess), result);
+            }
+        }
+        if (!validationResultHashMap.isEmpty()) {
+            Helper.setErrorMessage("dataEditor.validation.state.error");
+            for (Map.Entry<String, ValidationResult> resultEntry : validationResultHashMap.entrySet()) {
+                if (processes.size() > 1 || childProcesses.size() > 1) {
+                    Helper.setErrorMessage(Helper.getTranslation("process") + ": " +  resultEntry.getKey());
+                }
+                for (String message : resultEntry.getValue().getResultMessages()) {
+                    Helper.setErrorMessage(" - " + message);
                 }
             }
-            // validate potential process children
-            for (TempProcess tempProcess : childProcesses) {
-                ValidationResult result = ServiceManager.getMetadataValidationService().validate(
-                        tempProcess.getWorkpiece(), rulesetManagement, false);
-                if (ERROR.equals(result.getState())) {
-                    validationResultHashMap.put(getCatalogId(tempProcess), result);
-                }
-            }
-            if (!validationResultHashMap.isEmpty()) {
-                Helper.setErrorMessage("dataEditor.validation.state.error");
-                for (Map.Entry<String, ValidationResult> resultEntry : validationResultHashMap.entrySet()) {
-                    if (processes.size() > 1 || childProcesses.size() > 1) {
-                        Helper.setErrorMessage(Helper.getTranslation("process") + ": " +  resultEntry.getKey());
-                    }
-                    for (String message : resultEntry.getValue().getResultMessages()) {
-                        Helper.setErrorMessage(" - " + message);
-                    }
-                }
-                PrimeFaces.current().ajax().update("editForm:processFromTemplateTabView:processHierarchyContent");
-                return false;
-            }
+            PrimeFaces.current().ajax().update("editForm:processFromTemplateTabView:processHierarchyContent");
+            return false;
         }
         return true;
     }
