@@ -203,9 +203,15 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 if (!createProcessForm.getProcesses().isEmpty() && additionalImport) {
                     extendsMetadataTableOfMetadataTab(processes);
                 } else {
+                    for (TempProcess tempProcess : createProcessForm.getChildProcesses()) {
+                        createProcessForm.fillCreateProcessForm(tempProcess);
+                    }
                     createProcessForm.setProcesses(processes);
-                    TempProcess currentTempProcess = processes.getFirst();
-                    createProcessForm.fillCreateProcessForm(currentTempProcess);
+                    TempProcess currentTempProcess = null;
+                    for (int i = processes.size() -1; i >= 0; i--) {
+                        currentTempProcess = processes.get(i);
+                        createProcessForm.fillCreateProcessForm(currentTempProcess);
+                    }
                     attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
                     showMessageAndRecord(importConfiguration, processes);
                 }
