@@ -101,6 +101,15 @@
     </ui:define>
 
     <ui:define name="pageTabView">
+        <h:panelGroup layout="block"
+                      id="validateWrapper"
+                      rendered="#{CreateProcessForm.validationOptional}">
+            <p:selectBooleanCheckbox id="validate"
+                                     value="#{CreateProcessForm.validate}"/>
+            <p:outputLabel title="#{msgs.validateOnSave}"
+                           for="validate"
+                           value="#{msgs.validate}"/>
+        </h:panelGroup>
         <p:tabView id="processFromTemplateTabView"
                    widgetVar="processFromTemplateTabView"
                    activeIndex="#{CreateProcessForm.editActiveTabIndex}">
