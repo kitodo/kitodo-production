@@ -1827,6 +1827,8 @@ public class StructurePanel implements Serializable {
     /**
      * Check if the given TreeNode's PhysicalDivision is assigned to several LogicalDivisions.
      *
+     * @param treeNode TreeNode to be checked for assignment to multiple LogicalDivisions
+     *
      * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     private boolean isAssignedSeveralTimes(TreeNode treeNode) {
@@ -1935,6 +1937,8 @@ public class StructurePanel implements Serializable {
      * Check if the given TreeNode's PhysicalDivision can be assigned to the next logical element in addition to the
      * current assignment.
      *
+     * @param treeNode TreeNode representing View to be checked
+     *
      * @return {@code true} if the PhysicalDivision can be assigned to the next LogicalDivision
      */
     private boolean isAssignableSeveralTimes(TreeNode treeNode) {
@@ -1975,6 +1979,8 @@ public class StructurePanel implements Serializable {
 
     /**
      * Assign given TreeNode's PhysicalDivision to the next LogicalDivision.
+     *
+     * @param treeNode TreeNode representing View to be assigned to next LogicalDivision
      */
     private void assign(TreeNode treeNode) {
         TreeNode nextLogical = findNextLogicalNodeForViewAssignment(treeNode);
@@ -1994,6 +2000,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Unassign the selected Node's PhysicalDivision from the LogicalDivision parent at the selected position.
+     * If media is hidden in the structure tree the selected node is retrieved from the selected logical structure first.
      * This does not remove it from other LogicalDivisions.
      */
     public void unassign() {
