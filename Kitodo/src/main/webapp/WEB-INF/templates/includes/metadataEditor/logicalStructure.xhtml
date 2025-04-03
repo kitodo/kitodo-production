@@ -83,8 +83,7 @@
                             contextMenuLogicalTree
                             imagePreviewForm:stripeContextMenu
                             imagePreviewForm:mediaContextMenu
-                            metadataAccordion:logicalMetadataHeader
-                            metadataAccordion:logicalMetadataWrapperPanel"/>
+                            metadataAccordion"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     onstart="$('#contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
@@ -100,13 +99,13 @@
                             imagePreviewForm:mediaPartialList
                             contextMenuLogicalTree
                             physicalTree
-                            metadataAccordion:logicalMetadataWrapperPanel"/>
+                            metadataAccordion"/>
             <p:ajax event="dragdrop"
                     disabled="#{not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="logicalTree
                             contextMenuLogicalTree
-                            metadataAccordion:logicalMetadataWrapperPanel
+                            metadataAccordion
                             @(.pageList)
                             paginationForm:paginationWrapperPanel
                             imagePreviewForm:thumbnailStripe
@@ -207,7 +206,7 @@
                         oncomplete="$('#loadingScreen').hide()"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.unassign}"
@@ -220,7 +219,7 @@
                         oncomplete="$('#loadingScreen').hide()"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.uploadMedia}"
@@ -242,7 +241,7 @@
                         process="@this"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.deleteMedia}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE}"
@@ -256,7 +255,7 @@
                         update="numberOfScans
                                 logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.deleteMediaPartial}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.MEDIA_PARTIAL_NODE_TYPE}"
@@ -270,7 +269,7 @@
                         update="numberOfScans
                                 logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 galleryWrapperPanel"/>
         </p:contextMenu>
     </div>

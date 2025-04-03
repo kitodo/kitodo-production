@@ -40,8 +40,7 @@
                                      imagePreviewForm:mediaDetail
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
-                                     metadataAccordion:logicalMetadataHeader
-                                     metadataAccordion:logicalMetadataWrapperPanel"/>
+                                     metadataAccordion"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -231,7 +230,7 @@
                             oncomplete="$('#loadingScreen').hide()"
                             update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.unassign}"
@@ -244,7 +243,7 @@
                             oncomplete="$('#loadingScreen').hide()"
                             update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.uploadMedia}"
@@ -267,7 +266,7 @@
                             update="logicalTree
                                 physicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion
                                 galleryWrapperPanel"/>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
@@ -306,7 +305,7 @@
                             oncomplete="$('#loadingScreen').hide()"
                             update="logicalTree
                                     paginationForm:paginationWrapperPanel
-                                    metadataAccordion:logicalMetadataWrapperPanel
+                                    metadataAccordion
                                     galleryWrapperPanel"/>
             </p:contextMenu>
         </h:form>
