@@ -750,7 +750,7 @@ metadataEditor.logicalTree = {
         let currentTreeNodeId = this._getTreeNodeIdFromNode(node);
 
         if (!(event.metaKey || event.ctrlKey)) {
-            // remove all previous selections when clicking without ctrl key or shift key
+            // remove all previous selections when clicking without ctrl key
             this.resetSelectionStyle();
         }
 
