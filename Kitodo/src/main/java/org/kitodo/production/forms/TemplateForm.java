@@ -354,7 +354,7 @@ public class TemplateForm extends TemplateBaseForm {
         try {
             Template flashTemplate = (Template) FacesContext.getCurrentInstance()
                     .getExternalContext().getFlash().get("duplicatedTemplate");
-            if (flashTemplate != null) {
+            if (Objects.nonNull(flashTemplate)) {
                 setTemplate(flashTemplate);
             } else if (id != 0) {
                 setTemplate(ServiceManager.getTemplateService().getById(id));
