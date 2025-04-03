@@ -20,6 +20,7 @@ import com.xebialabs.restito.server.StubServer;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
@@ -40,6 +41,7 @@ import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.kitodo.test.utils.TestConstants;
+import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
 public class ImportingST extends BaseTestSelenium {
@@ -164,13 +166,40 @@ public class ImportingST extends BaseTestSelenium {
     public void checkCollapsedCheckboxMetadataIsPreserved() throws Exception {
         projectsPage.createNewProcess("Book template");
         importPage.cancelCatalogSearch();
-        importPage.insertTestTitle();
+        importPage.insertTestTitle("Testvorgang");
         importPage.selectCheckBox(0);
         importPage.toggleTreeTable();
         importPage.clickSaveButton();
         await("Waiting to be redirected to processes page after saving process with selected mandatory checkbox "
                 + "in collapsed metadata group")
                 .pollDelay(500, TimeUnit.MILLISECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> processesPage.isAt());
+    }
+
+    /**
+     * Checks whether deactivating validation during process creation works and allows the user to save a process
+     * with invalid metadata according to the rules defined in the corresponding ruleset.
+     *
+     * @throws Exception when opening the "create new process" form fails
+     */
+    @Test
+    public void checkOptionalMetadataValidationDuringProcessCreation() throws Exception {
+        projectsPage.createNewProcess("Book template");
+        importPage.cancelCatalogSearch();
+        // check if option to deactivate validation is available
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id("editForm:validate")).isDisplayed());
+        importPage.insertTestTitle("Testvorgang_with_invalid_metadata");
+        importPage.clickSaveButton();
+        // verify that saving fails with metadata validation enabled
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id("editForm:error-messages")).isDisplayed());
+        // deactivate metadata validation
+        Browser.getDriver().findElement(By.id("editForm:validate")).click();
+        importPage.clickSaveButton();
+        await("Waiting for redirection to process list after saving process with deactivated metadata validation")
+                .pollDelay(1, TimeUnit.SECONDS)
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .atMost(5, TimeUnit.SECONDS)
                 .ignoreExceptions()
@@ -206,5 +235,13 @@ public class ImportingST extends BaseTestSelenium {
         List<String> childProcessIds = processesPage.getProcessIds();
         assertEquals(3, childProcessIds.size(), "Wrong number of child processes");
         ProcessTestUtils.removeTestProcess(processId);
+    }
+
+    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
+        await().ignoreExceptions()
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(conditionEvaluator);
     }
 }
