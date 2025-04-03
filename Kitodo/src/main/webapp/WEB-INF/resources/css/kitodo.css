@@ -3171,6 +3171,16 @@ button.settings-loaded-task::after {
     padding-right: 26px;
 }
 
+#editForm\:validateWrapper {
+    margin: 12px var(--default-full-size) -31px auto;
+    z-index: 1;
+}
+
+#editForm\:validateWrapper .ui-outputlabel {
+    display: inline-block;
+    margin-left: var(--default-half-size);
+}
+
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
     display: inline-table;
 }
