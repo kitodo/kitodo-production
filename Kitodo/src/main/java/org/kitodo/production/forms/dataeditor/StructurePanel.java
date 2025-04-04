@@ -482,11 +482,7 @@ public class StructurePanel implements Serializable {
             this.preserveLogical();
             this.preservePhysical();
         } else {
-            if (isHideMediaInLogicalTree()) {
-                this.preserveLogical();
-            } else {
-                this.preserveLogicalAndPhysical();
-            }
+            this.preserveLogicalAndPhysical();
         }
     }
 
@@ -731,7 +727,7 @@ public class StructurePanel implements Serializable {
         }
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
-        if (!this.logicalStructureTreeContainsMedia()) {
+        if (this.isSeparateMedia()) {
             for (LogicalDivision child : structure.getChildren()) {
                 viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent, processTypeMap, viewCache));
             }
@@ -1272,10 +1268,10 @@ public class StructurePanel implements Serializable {
      */
     private void preserveAfterDragDrop(boolean logicalMoved, boolean pageMoved, boolean physicalMoved) {
         if (logicalMoved || pageMoved) {
-            if (logicalStructureTreeContainsMedia()) {
-                preserveLogicalAndPhysical();
-            } else {
+            if (this.isSeparateMedia()) {
                 preserveLogical();
+            } else {
+                preserveLogicalAndPhysical();
             }
             this.dataEditor.getGalleryPanel().updateStripes();
             this.dataEditor.getPaginationPanel().show();
@@ -1816,9 +1812,19 @@ public class StructurePanel implements Serializable {
      * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     public boolean isAssignedSeveralTimes() {
-        TreeNode selected = getSelectedLogicalNodeIfSingle();
-        if (Objects.nonNull(selected) && selected.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selected.getData();
+        return isAssignedSeveralTimes(getSelectedLogicalNodeIfSingle());
+    }
+
+    /**
+     * Check if the given TreeNode's PhysicalDivision is assigned to several LogicalDivisions.
+     *
+     * @param treeNode TreeNode to be checked for assignment to multiple LogicalDivisions
+     *
+     * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
+     */
+    private boolean isAssignedSeveralTimes(TreeNode treeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof  StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             if (structureTreeNode.getDataObject() instanceof View) {
                 View view = (View) structureTreeNode.getDataObject();
                 return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
@@ -1831,7 +1837,7 @@ public class StructurePanel implements Serializable {
      * Find the next logical structure node that can be used to create a new link to the currently selected node. 
      * The node needs to be the last node amongst its siblings.
      * 
-     * @param node the tree node of the currently selected physical devision node
+     * @param node the tree node of the currently selected physical division node
      * @return the next logical tree node 
      */
     private TreeNode findNextLogicalNodeForViewAssignment(TreeNode node) {
@@ -1901,9 +1907,9 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Check if the selected Node's PhysicalDivision can be assigned to the next logical element in addition to the 
+     * Check if the selected Node's PhysicalDivision can be assigned to the next logical element in addition to the
      * current assignment.
-     * 
+     *
      * @return {@code true} if the PhysicalDivision can be assigned to the next LogicalDivision
      */
     public boolean isAssignableSeveralTimes() {
@@ -1911,13 +1917,25 @@ public class StructurePanel implements Serializable {
         if (Objects.isNull(selectedLogicalNode)) {
             return false;
         }
-        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(selectedLogicalNode);
+        return isAssignableSeveralTimes(selectedLogicalNode);
+    }
+
+    /**
+     * Check if the given TreeNode's PhysicalDivision can be assigned to the next logical element in addition to the
+     * current assignment.
+     *
+     * @param treeNode TreeNode representing View to be checked
+     *
+     * @return {@code true} if the PhysicalDivision can be assigned to the next LogicalDivision
+     */
+    private boolean isAssignableSeveralTimes(TreeNode treeNode) {
+        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(treeNode);
         if (Objects.nonNull(nextLogical)) {
-            // check whether first child is already view of current node (too avoid adding views multiple times)
+            // check whether first child is already view of current node (to avoid adding views multiple times)
             if (!nextLogical.getChildren().isEmpty()) {
                 TreeNode childNode = nextLogical.getChildren().get(0);
                 View childNodeView = getTreeNodeView(childNode);
-                View selectedView = getTreeNodeView(selectedLogicalNode);
+                View selectedView = getTreeNodeView(treeNode);
                 if (Objects.nonNull(childNodeView) && Objects.nonNull(selectedView)) {
                     if (childNodeView.equals(selectedView)) {
                         // first child is already a view for the currently selected node
@@ -1939,9 +1957,18 @@ public class StructurePanel implements Serializable {
             logger.error("assign called without selection or too many selected, should not happen");
             return;
         }
-        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(selectedLogicalNode);
+        assign(selectedLogicalNode);
+    }
+
+    /**
+     * Assign given TreeNode's PhysicalDivision to the next LogicalDivision.
+     *
+     * @param treeNode TreeNode representing View to be assigned to next LogicalDivision
+     */
+    private void assign(TreeNode treeNode) {
+        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(treeNode);
         if (Objects.nonNull(nextLogical)) {
-            View view = (View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject();
+            View view = (View) ((StructureTreeNode) treeNode.getData()).getDataObject();
             View viewToAssign = new View();
             viewToAssign.setPhysicalDivision(view.getPhysicalDivision());
             StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextLogical.getData();
@@ -1956,6 +1983,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Unassign the selected Node's PhysicalDivision from the LogicalDivision parent at the selected position.
+     * If media is hidden in the structure tree the selected node is retrieved from the selected logical structure first.
      * This does not remove it from other LogicalDivisions.
      */
     public void unassign() {
@@ -1964,11 +1992,21 @@ public class StructurePanel implements Serializable {
             logger.error("unassign called without selection or too many selected, should not happen");
             return;
         }
+        unassign(selectedLogicalNode);
+    }
+
+    /**
+     * Unassign the givens TreeNode's PhysicalDivision from the LogicalDivision parent at the selected position.
+     * This does not remove it from other LogicalDivisions.
+     *
+     * @param treeNode TreeNode representing View to be unassigned from the LogicalDivision parent at the selected position
+     */
+    private void unassign(TreeNode treeNode) {
         if (isAssignedSeveralTimes()) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             View view = (View) structureTreeNode.getDataObject();
-            if (selectedLogicalNode.getParent().getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureTreeNodeParent = (StructureTreeNode) selectedLogicalNode.getParent().getData();
+            if (treeNode.getParent().getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureTreeNodeParent = (StructureTreeNode) treeNode.getParent().getData();
                 if (structureTreeNodeParent.getDataObject() instanceof LogicalDivision) {
                     LogicalDivision logicalDivision =
                             (LogicalDivision) structureTreeNodeParent.getDataObject();
@@ -2000,15 +2038,6 @@ public class StructurePanel implements Serializable {
             throw new IllegalArgumentException("node label option must be either type, title or type+title");
         }
         this.nodeLabelOption = nodeLabelOption;
-    }
-
-    /**
-     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media).
-     *
-     * @return true if logical structure tree contains media
-     */
-    public boolean logicalStructureTreeContainsMedia() {
-        return !this.isSeparateMedia() && !this.isHideMediaInLogicalTree();
     }
 
     /**
