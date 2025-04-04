@@ -102,12 +102,14 @@
                             imagePreviewForm:mediaPartialList
                             contextMenuLogicalTree
                             physicalTree
+                            metadataAccordion:logicalMetadataHeader
                             metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:ajax event="dragdrop"
                     disabled="#{not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="logicalTree
                             contextMenuLogicalTree
+                            metadataAccordion:logicalMetadataHeader
                             metadataAccordion:logicalMetadataWrapperPanel
                             @(.pageList)
                             paginationForm:paginationWrapperPanel
@@ -223,6 +225,7 @@
                         oncomplete="$('#loadingScreen').hide()"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
@@ -245,6 +248,7 @@
                         process="@this"
                         update="logicalTree
                                 paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.deleteMedia}"
@@ -259,6 +263,7 @@
                         update="numberOfScans
                                 logicalTree
                                 paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.deleteMediaPartial}"
@@ -273,6 +278,7 @@
                         update="numberOfScans
                                 logicalTree
                                 paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
         </p:contextMenu>
