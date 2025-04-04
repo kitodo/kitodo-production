@@ -2788,6 +2788,7 @@ Column content
     margin-right: 3px;
 }
 
+#structureTreeForm .hidden-tree-node + .ui-tree-droppoint,
 #structureTreeForm .hidden-tree-node {
     display: none;
 }
