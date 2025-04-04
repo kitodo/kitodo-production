@@ -482,11 +482,7 @@ public class StructurePanel implements Serializable {
             this.preserveLogical();
             this.preservePhysical();
         } else {
-            if (isHideMediaInLogicalTree()) {
-                this.preserveLogical();
-            } else {
-                this.preserveLogicalAndPhysical();
-            }
+            this.preserveLogicalAndPhysical();
         }
     }
 
@@ -1270,10 +1266,10 @@ public class StructurePanel implements Serializable {
      */
     private void preserveAfterDragDrop(boolean logicalMoved, boolean pageMoved, boolean physicalMoved) {
         if (logicalMoved || pageMoved) {
-            if (logicalStructureTreeContainsMedia()) {
-                preserveLogicalAndPhysical();
-            } else {
+            if (this.isSeparateMedia()) {
                 preserveLogical();
+            } else {
+                preserveLogicalAndPhysical();
             }
             this.dataEditor.getGalleryPanel().updateStripes();
             this.dataEditor.getPaginationPanel().show();
@@ -2040,15 +2036,6 @@ public class StructurePanel implements Serializable {
             throw new IllegalArgumentException("node label option must be either type, title or type+title");
         }
         this.nodeLabelOption = nodeLabelOption;
-    }
-
-    /**
-     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media).
-     *
-     * @return true if logical structure tree contains media
-     */
-    public boolean logicalStructureTreeContainsMedia() {
-        return !this.isSeparateMedia() && !this.isHideMediaInLogicalTree();
     }
 
     /**

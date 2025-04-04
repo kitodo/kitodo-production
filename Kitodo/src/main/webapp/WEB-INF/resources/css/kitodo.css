@@ -2788,6 +2788,10 @@ Column content
     margin-right: 3px;
 }
 
+#structureTreeForm .hidden-tree-node {
+    display: none;
+}
+
 #structureTreeForm .ui-treenode .pageRange {
     margin-left: 0.3em;
 }
