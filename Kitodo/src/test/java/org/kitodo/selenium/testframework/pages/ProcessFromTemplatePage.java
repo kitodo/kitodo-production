@@ -409,8 +409,9 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     /**
      * Insert String into 'process title' input field.
+     * @param testTitle title as String
      */
-    public void insertTestTitle() {
-        processTitleInput.sendKeys("Testvorgang");
+    public void insertTestTitle(String testTitle) {
+        processTitleInput.sendKeys(testTitle);
     }
 }
