@@ -1814,12 +1814,7 @@ public class StructurePanel implements Serializable {
      * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     public boolean isAssignedSeveralTimes() {
-        TreeNode selected = getSelectedLogicalNodeIfSingle();
-        if (isHideMediaInLogicalTree()) {
-            return isAssignedSeveralTimes(getSelectedView(selected));
-        } else {
-            return isAssignedSeveralTimes(selected);
-        }
+        return isAssignedSeveralTimes(getSelectedLogicalNodeIfSingle());
     }
 
     /**
@@ -1924,11 +1919,7 @@ public class StructurePanel implements Serializable {
         if (Objects.isNull(selectedLogicalNode)) {
             return false;
         }
-        if (isHideMediaInLogicalTree()) {
-            return isAssignableSeveralTimes(getSelectedView(selectedLogicalNode));
-        } else {
-            return isAssignableSeveralTimes(selectedLogicalNode);
-        }
+        return isAssignableSeveralTimes(selectedLogicalNode);
     }
 
     /**
@@ -1968,11 +1959,7 @@ public class StructurePanel implements Serializable {
             logger.error("assign called without selection or too many selected, should not happen");
             return;
         }
-        if (isHideMediaInLogicalTree()) {
-            assign(getSelectedView(selectedLogicalNode));
-        } else {
-            assign(selectedLogicalNode);
-        }
+        assign(selectedLogicalNode);
     }
 
     /**
@@ -2007,11 +1994,7 @@ public class StructurePanel implements Serializable {
             logger.error("unassign called without selection or too many selected, should not happen");
             return;
         }
-        if (isHideMediaInLogicalTree()) {
-            unassign(getSelectedView(selectedLogicalNode));
-        } else {
-            unassign(selectedLogicalNode);
-        }
+        unassign(selectedLogicalNode);
     }
 
     /**
@@ -2147,47 +2130,5 @@ public class StructurePanel implements Serializable {
             toggleAll(childNode, expanded);
         }
         treeNode.setExpanded(expanded);
-    }
-
-    private TreeNode getSelectedView(TreeNode node) {
-        if (node.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) node.getData();
-            if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
-                LogicalDivision logicalDivision = (LogicalDivision) structureTreeNode.getDataObject();
-                TreeNode selectedNode = getSelectedViewOfLogicalDivision(logicalDivision, node);
-                if (Objects.nonNull(selectedNode)) {
-                    return selectedNode;
-                }
-            }
-        }
-        return null;
-    }
-
-    private TreeNode getSelectedViewOfLogicalDivision(LogicalDivision logicalDivision, TreeNode node) {
-        for (View view : logicalDivision.getViews()) {
-            GalleryMediaContent content = dataEditor.getGalleryPanel().getGalleryMediaContent(view);
-            if (Objects.nonNull(content) && dataEditor.isSelected(content.getView().getPhysicalDivision(), logicalDivision)) {
-                TreeNode matchingTreeNode = getChildTreeNodeWithMatchingView(node, content.getView());
-                if (Objects.nonNull(matchingTreeNode)) {
-                    return matchingTreeNode;
-                }
-            }
-        }
-        return null;
-    }
-
-    private TreeNode getChildTreeNodeWithMatchingView(TreeNode parentNode, View targetView) {
-        for (TreeNode childNode : parentNode.getChildren()) {
-            if (childNode.getData() instanceof StructureTreeNode) {
-                StructureTreeNode childStructureTreeNode = (StructureTreeNode) childNode.getData();
-                if (childStructureTreeNode.getDataObject() instanceof View) {
-                    View childView = (View) childStructureTreeNode.getDataObject();
-                    if (childView.equals(targetView)) {
-                        return childNode;
-                    }
-                }
-            }
-        }
-        return null;
     }
 }
