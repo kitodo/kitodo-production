@@ -504,15 +504,11 @@ public class NewspaperProcessesMigrator {
             LogicalDivision processDayLogicalDivision = computeIfAbsent(
                 processMonthLogicalDivision, daySimpleMetadataView, day, dayType);
             MetadataEditor.writeMetadataEntry(metaFileDayLogicalDivision, daySimpleMetadataView, day);
-            createLinkStructureOfIssues(process, yearFileDayLogicalDivision,
-                processDayLogicalDivision);
+            createLinkStructureOfIssues(process, processDayLogicalDivision);
         }
     }
 
-    private void createLinkStructureOfIssues(Process process,
-            LogicalDivision yearFileDayLogicalDivision,
-            LogicalDivision processDayLogicalDivision) {
-
+    private void createLinkStructureOfIssues(Process process, LogicalDivision processDayLogicalDivision) {
         MetadataEditor.addLink(processDayLogicalDivision, process.getId());
     }
 
@@ -617,8 +613,11 @@ public class NewspaperProcessesMigrator {
      *             if the process cannot be generated
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
+<<<<<<< HEAD
      * @throws DAOException
      *             if there is an error saving the process
+=======
+>>>>>>> 80a7a29a9de389218f293e4b7366f0bff4a2e5f0
      * @throws DAOException
      *             if a process cannot be load from the database
      */

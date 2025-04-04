@@ -25,6 +25,7 @@
     --medium-gray: #999;
     --orange: #f94a15;
     --trans-blue: #f2fbff;
+    --trans-blue-highlight: #dbecf6;
     --pure-white: #fff;
     --error-background: #f2dede;
 
@@ -618,7 +619,8 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 
 .ui-inputfield::placeholder {
-    color: var(--blue);
+    color: var(--light-blue);
+    font-style: italic;
 }
 
 .ui-inputfield.ui-state-hover::placeholder {
@@ -961,7 +963,7 @@ tr.ui-widget-content {
 }
 
 tr.ui-widget-content:not(:first-child) {
-    border-top: 1px solid var(--cloudy-gray) !important;
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 tr.ui-widget-content.ui-expanded-row-content:not(:first-child),
@@ -1215,6 +1217,9 @@ tr.ui-expanded-row-content:hover .ui-datatable tbody {
     color: var(--carbon-blue) !important;
 }
 
+.ui-progressbar-determinate .ui-progressbar-label {
+    line-height: initial;
+}
 
 .ui-picklist-caption {
     border-bottom: 1px solid var(--carbon-blue) !important;
@@ -1615,6 +1620,10 @@ Popup dialogs
     padding: 5px 10px;
 }
 
+.ui-growl {
+    top: 55px;
+}
+
 .ui-growl-item {
     background: var(--green);
     text-shadow: 0 0 0 transparent;
@@ -1732,6 +1741,13 @@ Popup dialogs
     border: 0;
     border-radius: 0;
     color: var(--pure-white);
+}
+
+.ui-messages-error.ui-corner-all ul,
+.ui-messages-warn.ui-corner-all ul,
+.ui-messages-info.ui-corner-all ul {
+    max-height: 80px;
+    overflow-y: auto;
 }
 
 .ui-messages-error.ui-corner-all span.ui-icon-close,

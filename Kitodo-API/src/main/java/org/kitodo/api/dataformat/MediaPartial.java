@@ -28,8 +28,7 @@ public class MediaPartial {
      * Constructs a media partial object.
      *
      * @param begin
-     *         The begin as formatted time in form of
-     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     *         The begin as formatted time.
      */
     public MediaPartial(String begin) {
         this.begin = begin;
@@ -39,11 +38,9 @@ public class MediaPartial {
      * Constructs a media partial object.
      *
      * @param begin
-     *         The begin as formatted time in form of
-     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     *         The begin as formatted time.
      * @param extent
-     *         The extent as formatted time in form of
-     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     *         The extent as formatted time.
      */
     public MediaPartial(String begin, String extent) {
         this(begin);
@@ -77,7 +74,7 @@ public class MediaPartial {
 
         MediaPartial mediaPartial = (MediaPartial) o;
 
-        return (Objects.isNull(begin) && Objects.isNull(mediaPartial.begin)) || begin.equals(mediaPartial.getBegin());
+        return Objects.equals(begin, mediaPartial.begin);
     }
 
     @Override

@@ -11,10 +11,10 @@
 
 package org.kitodo.production.services.workflow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -37,7 +37,9 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.WorkflowCondition;
+import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -52,6 +54,8 @@ public class WorkflowControllerServiceIT {
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
     private static final File scriptCreateSymLink = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
+    private static final File scriptDeleteSymLink = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
     private static final File scriptNotWorking = new File("src/test/resources/scripts/not_working_script.sh");
     private static final File scriptWorking = new File("src/test/resources/scripts/working_script.sh");
     private static final File usersDirectory = new File("src/test/resources/users");
@@ -62,7 +66,7 @@ public class WorkflowControllerServiceIT {
     private static int workflowTestProcessId2 = -1;
     private static final String METADATA_TEST_FILENAME = "testMetadataForNonBlockingParallelTasksTest.xml";
 
-    @Before
+    @BeforeEach
     public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
@@ -78,12 +82,13 @@ public class WorkflowControllerServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setExecutePermission(scriptCreateSymLink);
+            ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
             ExecutionPermission.setExecutePermission(scriptNotWorking);
             ExecutionPermission.setExecutePermission(scriptWorking);
         }
     }
 
-    @After
+    @AfterEach
     public void cleanDatabase() throws Exception {
         ProcessTestUtils.removeTestProcess(workflowTestProcessId);
         ProcessTestUtils.removeTestProcess(workflowTestProcessId2);
@@ -94,6 +99,7 @@ public class WorkflowControllerServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
+            ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
             ExecutionPermission.setNoExecutePermission(scriptNotWorking);
             ExecutionPermission.setNoExecutePermission(scriptWorking);
         }
@@ -106,8 +112,7 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(10);
 
         workflowService.setTaskStatusUp(task);
-        assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.OPEN,
-            task.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status was not set up!");
 
         workflowService.setTaskStatusDown(task);
         taskService.save(task);
@@ -117,22 +122,17 @@ public class WorkflowControllerServiceIT {
     public void shouldSetTasksStatusUp() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
         List<Task> tasks = process.getTasks();
-        assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                tasks.get(3).getProcessingStatus());
-        assertEquals("Task '" + tasks.get(2).getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                tasks.get(2).getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, tasks.get(3).getProcessingStatus(), "Task '" + tasks.get(3).getTitle() + "' status should be OPEN!");
+        assertEquals(TaskStatus.INWORK, tasks.get(2).getProcessingStatus(), "Task '" + tasks.get(2).getTitle() + "' status should be INWORK!");
 
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
             if (Objects.equals(task.getId(), 9)) {
-                assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.INWORK,
-                    task.getProcessingStatus());
+                assertEquals(TaskStatus.INWORK, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status was not set up!");
             } else if (Objects.equals(task.getId(), 10)) {
-                assertEquals("Task '" + task.getTitle() + "' status should not be set up!", TaskStatus.LOCKED,
-                    task.getProcessingStatus());
+                assertEquals(TaskStatus.LOCKED, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should not be set up!");
             } else {
-                assertEquals("Task '" + task.getTitle() + "' status was not set up!", TaskStatus.DONE,
-                    task.getProcessingStatus());
+                assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status was not set up!");
             }
         }
     }
@@ -142,17 +142,13 @@ public class WorkflowControllerServiceIT {
         Process process = ServiceManager.getProcessService().getById(1);
         //Due to testszenario there are multiple current tasks, so task with id 2 is set down twice (inwork->open->locked)
         List<Task> tasks = process.getTasks();
-        assertEquals("Task '" + tasks.get(3).getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-            tasks.get(3).getProcessingStatus());
-        assertEquals("Task '" + tasks.get(2).getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-            tasks.get(2).getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, tasks.get(3).getProcessingStatus(), "Task '" + tasks.get(3).getTitle() + "' status should be OPEN!");
+        assertEquals(TaskStatus.INWORK, tasks.get(2).getProcessingStatus(), "Task '" + tasks.get(2).getTitle() + "' status should be INWORK!");
 
         workflowService.setTasksStatusDown(process);
         tasks = process.getTasks();
-        assertEquals("Task '" + tasks.get(3).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
-            tasks.get(3).getProcessingStatus());
-        assertEquals("Task '" + tasks.get(2).getTitle() + "' status was not set down!", TaskStatus.LOCKED,
-            tasks.get(2).getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, tasks.get(3).getProcessingStatus(), "Task '" + tasks.get(3).getTitle() + "' status was not set down!");
+        assertEquals(TaskStatus.LOCKED, tasks.get(2).getProcessingStatus(), "Task '" + tasks.get(2).getTitle() + "' status was not set down!");
     }
 
     @Test
@@ -160,11 +156,10 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(9);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         Task nextTask = taskService.getById(10);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
     }
 
     @Test
@@ -173,26 +168,22 @@ public class WorkflowControllerServiceIT {
         ProcessTestUtils.copyTestMetadataFile(task.getProcess().getId(), ProcessTestUtils.testFileChildProcessToKeep);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         // Task 2 and 4 are set up to open because they are concurrent and conditions
         // were evaluated to true
         Task nextTask = taskService.getById(20);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         // Task 3 has XPath which evaluates to false - it gets immediately closed
         nextTask = taskService.getById(21);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to done!");
 
         nextTask = taskService.getById(22);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         nextTask = taskService.getById(23);
-        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was set up to open!");
 
         ProcessTestUtils.removeTestProcess(task.getProcess().getId());
     }
@@ -203,21 +194,18 @@ public class WorkflowControllerServiceIT {
         ProcessTestUtils.copyTestMetadataFile(task.getProcess().getId(), ProcessTestUtils.testFileChildProcessToKeep);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         // Task 3 has XPath which evaluates to false - it gets immediately closed
         Task nextTask = taskService.getById(26);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to done!");
 
         // Task 3 and 4 are concurrent - 3 got immediately finished, 4 is set to open
         nextTask = taskService.getById(27);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         nextTask = taskService.getById(28);
-        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was set up to open!");
         ProcessTestUtils.removeTestProcess(task.getProcess().getId());
     }
 
@@ -226,19 +214,16 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(30);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         Task nextTask = taskService.getById(31);
-        assertEquals("Task '" + nextTask.getTitle() + "' is not in work!", TaskStatus.INWORK,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' is not in work!");
 
         nextTask = taskService.getById(32);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set to locked!", TaskStatus.LOCKED,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set to locked!");
 
         nextTask = taskService.getById(33);
-        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was set up to open!");
     }
 
     @Test
@@ -246,19 +231,16 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(35);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         Task nextTask = taskService.getById(36);
-        assertEquals("Task '" + nextTask.getTitle() + "' is not in work!", TaskStatus.INWORK,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' is not in work!");
 
         nextTask = taskService.getById(37);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         nextTask = taskService.getById(38);
-        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was set up to open!");
     }
 
     @Test
@@ -266,40 +248,35 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(42);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         Task nextTask = taskService.getById(43);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
     }
 
     //TODO: find out why it doesn't work in github ci
-    @Ignore("Doesn't work on gitHub ci")
+    @Disabled("Doesn't work on gitHub ci")
     @Test
     public void shouldCloseAndAssignNextForProcessWithParallelTasks() throws Exception {
         Task task = taskService.getById(44);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         // Task 2 and 4 are set up to open because they are concurrent and conditions
         // were evaluated to true
         Task nextTask = taskService.getById(45);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-                nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         // Task 3 has XPath which evaluates to false - it gets immediately closed
         nextTask = taskService.getById(46);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
-                nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to done!");
 
         nextTask = taskService.getById(47);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-                nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         nextTask = taskService.getById(48);
-        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
-                nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was set up to open!");
 
         fileService.createDirectory(URI.create("9"), "images");
 
@@ -309,8 +286,7 @@ public class WorkflowControllerServiceIT {
 
         // Task 4 should be kept open
         Task nextConcurrentTask = taskService.getById(47);
-        assertEquals("Task '" + nextConcurrentTask.getTitle() + "' was not kept to open!", TaskStatus.OPEN,
-                nextConcurrentTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextConcurrentTask.getProcessingStatus(), "Task '" + nextConcurrentTask.getTitle() + "' was not kept to open!");
     }
 
     @Test
@@ -322,26 +298,22 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(54);
 
         workflowService.close(task);
-        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Task '" + task.getTitle() + "' was not closed!");
 
         // Task 2 and 4 are set up to open because they are concurrent and conditions
         // were evaluated to true
         Task nextTask = taskService.getById(55);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         // Task 3 has Script which evaluates to false - it gets immediately closed
         nextTask = taskService.getById(56);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to done!");
 
         nextTask = taskService.getById(57);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was not set up to open!");
 
         nextTask = taskService.getById(58);
-        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
-            nextTask.getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, nextTask.getProcessingStatus(), "Task '" + nextTask.getTitle() + "' was set up to open!");
     }
 
     @Test
@@ -371,23 +343,17 @@ public class WorkflowControllerServiceIT {
 
         workflowService.close(taskToClose);
 
-        assertEquals("Task '" + taskToClose.getTitle() + "' was not closed!", TaskStatus.DONE,
-            taskToClose.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, taskToClose.getProcessingStatus(), "Task '" + taskToClose.getTitle() + "' was not closed!");
         taskService.refresh(skippedTask);
-        assertEquals("Task '" + skippedTask.getTitle() + "' was not skipped!", TaskStatus.DONE,
-                skippedTask.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, skippedTask.getProcessingStatus(), "Task '" + skippedTask.getTitle() + "' was not skipped!");
         taskService.refresh(secondSkippedTask);
-        assertEquals("Task '" + secondSkippedTask.getTitle() + "' was not skipped!", TaskStatus.DONE,
-                secondSkippedTask.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, secondSkippedTask.getProcessingStatus(), "Task '" + secondSkippedTask.getTitle() + "' was not skipped!");
         taskService.refresh(taskToOpen);
-        assertEquals("Task '" + taskToOpen.getTitle() + "' was not opened!", TaskStatus.OPEN,
-                taskToOpen.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, taskToOpen.getProcessingStatus(), "Task '" + taskToOpen.getTitle() + "' was not opened!");
         taskService.refresh(secondTaskToOpen);
-        assertEquals("Task '" + secondTaskToOpen.getTitle() + "' was not opened!", TaskStatus.OPEN,
-                secondTaskToOpen.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, secondTaskToOpen.getProcessingStatus(), "Task '" + secondTaskToOpen.getTitle() + "' was not opened!");
         taskService.refresh(thirdTaskToSkip);
-        assertEquals("Task '" + thirdTaskToSkip.getTitle() + "' was not skipped!", TaskStatus.DONE,
-                thirdTaskToSkip.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, thirdTaskToSkip.getProcessingStatus(), "Task '" + thirdTaskToSkip.getTitle() + "' was not skipped!");
 
         process.getTasks().clear();
         ProcessTestUtils.removeTestProcess(processId);
@@ -412,7 +378,7 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(6);
 
         workflowService.assignTaskToUser(task);
-        assertEquals("Incorrect user was assigned to the task!", Integer.valueOf(1), task.getProcessingUser().getId());
+        assertEquals(Integer.valueOf(1), task.getProcessingUser().getId(), "Incorrect user was assigned to the task!");
 
         fileService.delete(URI.create("1/images"));
         fileService.delete(URI.create("1"));
@@ -423,9 +389,8 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(6);
 
         workflowService.unassignTaskFromUser(task);
-        assertNull("User was not unassigned from the task!", task.getProcessingUser());
-        assertEquals("Task was not set up to open after unassing of the user!", TaskStatus.OPEN,
-            task.getProcessingStatus());
+        assertNull(task.getProcessingUser(), "User was not unassigned from the task!");
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task was not set up to open after unassing of the user!");
     }
 
     @Test
@@ -447,25 +412,58 @@ public class WorkflowControllerServiceIT {
 
         workflowService.reportProblem(problem, TaskEditType.MANUAL_SINGLE);
 
-        assertEquals(
-            "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not set up to open!",
-            TaskStatus.OPEN, correctionTask.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, correctionTask.getProcessingStatus(), "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not set up to open!");
 
-        assertTrue(
-            "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not a correction task!",
-            correctionTask.isCorrection());
+        assertTrue(correctionTask.isCorrection(), "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not a correction task!");
 
         Process process = problem.getCurrentTask().getProcess();
         for (Task task : process.getTasks()) {
             if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
-                assertEquals("Report of problem was incorrect - tasks between were not set up to locked!",
-                    TaskStatus.LOCKED, task.getProcessingStatus());
+                assertEquals(TaskStatus.LOCKED, task.getProcessingStatus(), "Report of problem was incorrect - tasks between were not set up to locked!");
             }
         }
     }
 
     @Test
     public void shouldSolveProblem() throws Exception {
+
+        Comment correctionComment = prepareCorrectionComment();
+        Task currentTask = correctionComment.getCurrentTask();
+        Task correctionTask = correctionComment.getCorrectionTask();
+
+        workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        ServiceManager.getCommentService().refresh(correctionComment);
+        workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+
+        Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
+        for (Task task : process.getTasks()) {
+            if (correctionComment.getCorrectionTask().getOrdering() < task.getOrdering()
+                    && task.getOrdering() < correctionComment.getCurrentTask().getOrdering()) {
+                assertEquals(TaskStatus.DONE, task.getProcessingStatus(), "Solving reported problem was unsuccessful - tasks between '"
+                                + correctionTask.getTitle() + "' and '" + currentTask.getTitle()
+                                + "' were not set to processing status DONE!");
+            }
+        }
+
+        assertEquals(TaskStatus.DONE, correctionComment.getCorrectionTask().getProcessingStatus(), "Solving reported problem was unsuccessful - correction task '" + correctionTask.getTitle()
+                        + "' was not set to processing status DONE!");
+
+        assertEquals(TaskStatus.OPEN, correctionComment.getCurrentTask().getProcessingStatus(), "Solving reported problem was unsuccessful - current task '" + currentTask.getTitle()
+                + "' was not set to processing status 'OPEN'!");
+    }
+
+    @Test
+    public void shouldGetCorrectCommentStatus() throws DAOException, IOException {
+        Comment correctionComment = prepareCorrectionComment();
+        workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        assertEquals(CorrectionComments.OPEN_CORRECTION_COMMENTS, ProcessConverter
+                .getCorrectionCommentStatus(correctionComment.getProcess()));
+        workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        assertEquals(CorrectionComments.NO_OPEN_CORRECTION_COMMENTS, ProcessConverter
+                .getCorrectionCommentStatus(correctionComment.getProcess()));
+    }
+
+    private Comment prepareCorrectionComment() throws DAOException {
         Task currentTask = taskService.getById(8);
         Task correctionTask = taskService.getById(6);
 
@@ -481,25 +479,6 @@ public class WorkflowControllerServiceIT {
 
         ServiceManager.getCommentService().save(correctionComment);
 
-        workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
-        ServiceManager.getCommentService().refresh(correctionComment);
-        workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
-
-        Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
-        for (Task task : process.getTasks()) {
-            if (correctionComment.getCorrectionTask().getOrdering() < task.getOrdering()
-                    && task.getOrdering() < correctionComment.getCurrentTask().getOrdering()) {
-                assertEquals("Solving reported problem was unsuccessful - tasks between '"
-                                + correctionTask.getTitle() + "' and '" + currentTask.getTitle()
-                                + "' were not set to processing status DONE!", TaskStatus.DONE,
-                    task.getProcessingStatus());
-            }
-        }
-
-        assertEquals("Solving reported problem was unsuccessful - correction task '" + correctionTask.getTitle()
-                        + "' was not set to processing status DONE!", TaskStatus.DONE, correctionComment.getCorrectionTask().getProcessingStatus());
-
-        assertEquals("Solving reported problem was unsuccessful - current task '" + currentTask.getTitle()
-                + "' was not set to processing status 'OPEN'!", TaskStatus.OPEN, correctionComment.getCurrentTask().getProcessingStatus());
+        return correctionComment;
     }
 }

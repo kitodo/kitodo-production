@@ -394,6 +394,13 @@ public class WorkflowControllerService {
      */
     public void solveProblem(Comment comment, TaskEditType taskEditType)
             throws DAOException, IOException {
+        comment.setCorrected(Boolean.TRUE);
+        comment.setCorrectionDate(new Date());
+        try {
+            ServiceManager.getCommentService().save(comment);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
+        }
         if (Objects.nonNull(comment.getCorrectionTask())) {
             closeTaskByUser(comment.getCorrectionTask());
             comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
@@ -406,13 +413,13 @@ public class WorkflowControllerService {
             taskService.replaceProcessingUser(currentTask, getCurrentUser());
             taskService.save(currentTask);
         }
+        // "currentTask" and "process" are re-added to the comment object without saving it to database, again, because
+        // comment is further used in calling method, hence we make use of a side effect here (without requiring to save
+        // the comment again, because process ID and current task ID remain the same)
+        // TODO: refactor to improve readability and maintainability
         comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
-        comment.setCorrected(Boolean.TRUE);
-        comment.setCorrectionDate(new Date());
-        try {
-            ServiceManager.getCommentService().save(comment);
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
+        if (Objects.nonNull(comment.getProcess())) {
+            comment.setProcess(ServiceManager.getProcessService().getById(comment.getProcess().getId()));
         }
     }
 

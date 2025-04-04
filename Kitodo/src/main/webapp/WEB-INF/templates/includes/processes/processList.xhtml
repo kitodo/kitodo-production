@@ -116,6 +116,8 @@
                         #{process.correctionCommentStatus gt 0 ? 'fa-exclamation-circle correction' : 'fa-comment'}
                         #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                                   rendered="#{process.hasComments()}"/>
+                    <h:outputText value="#{commentTooltipView.getLastComment(process)}"
+                                  rendered="#{ProcessForm.showLastComment() and process.hasComments()}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true" rendered="#{process.hasComments()}">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
@@ -170,16 +172,18 @@
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <h:link outcome="processEdit"
-                                            styleClass="action"
+                                            styleClass="#{not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
                                             title="#{msgs.view}"
+                                            disabled="#{not ProcessForm.processInAssignedProject(parent.id)}"
                                             rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-eye fa-lg"/>
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
                                     </h:link>
                                     <h:link outcome="processEdit"
-                                            styleClass="action"
+                                            styleClass="#{not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
                                             title="#{msgs.edit}"
+                                            disabled="#{not ProcessForm.processInAssignedProject(parent.id)}"
                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-pencil-square-o fa-lg"/>
                                         <f:param name="referer" value="processes"/>
@@ -189,8 +193,8 @@
                                                   title="#{MetadataLock.isLocked(parent.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(parent.id).fullName) : msgs['metadataEdit']}">
                                         <h:link id="editMetadata"
                                                 outcome="metadataEditor"
-                                                disabled="#{MetadataLock.isLocked(parent.id)}"
-                                                styleClass="#{MetadataLock.isLocked(parent.id) ? 'ui-state-disabled' : ''}"
+                                                disabled="#{MetadataLock.isLocked(parent.id) or not ProcessForm.processInAssignedProject(parent.id)}"
+                                                styleClass="#{MetadataLock.isLocked(parent.id) or not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled' : ''}"
                                                 rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                                             <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                                             <f:param name="id" value="#{parent.id}"/>
@@ -322,6 +326,11 @@
                                 value="#{msgs['renameMediaFiles']}"
                                 action="#{ProcessForm.renameMedia}"
                                 icon="fa fa-files-o"/>
+                    <p:menuitem id="setImportConfiguration"
+                                rendered="#{SecurityAccessController.hasAuthorityToSetImportConfiguration()}"
+                                value="#{msgs['setImportConfiguration']}"
+                                action="#{ProcessForm.setImportConfiguration}"
+                                icon="fa fa-cloud-download "/>
                 </p:menu>
             <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary"
                              icon="fa fa-sort" iconPos="right" process="@this"/>

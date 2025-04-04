@@ -12,19 +12,14 @@
 package org.kitodo.production.helper;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
 
@@ -34,7 +29,6 @@ public class SearchResultGeneration {
     private String filter;
     private boolean showClosedProcesses;
     private boolean showInactiveProjects;
-    private static final Logger logger = LogManager.getLogger(SearchResultGeneration.class);
 
     /**
      * Constructor.
@@ -57,7 +51,7 @@ public class SearchResultGeneration {
      *
      * @return HSSFWorkbook
      */
-    public HSSFWorkbook getResult() {
+    public SXSSFWorkbook getResult() {
         return getWorkbook();
     }
 
@@ -76,11 +70,11 @@ public class SearchResultGeneration {
         return ServiceManager.getProcessService().getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
-    private HSSFWorkbook getWorkbook() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Search results");
+    private SXSSFWorkbook getWorkbook() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Search results");
 
-        HSSFRow title = sheet.createRow(0);
+        Row title = sheet.createRow(0);
         title.createCell(0).setCellValue(this.filter);
         for (int i = 1; i < 8; i++) {
             title.createCell(i).setCellValue("");
@@ -93,7 +87,7 @@ public class SearchResultGeneration {
         return workbook;
     }
 
-    private void insertRowData(HSSFSheet sheet) {
+    private void insertRowData(Sheet sheet) {
         int rowCounter = 2;
         List<Process> resultsWithFilter = getResultsWithFilter();
         for (Process process : resultsWithFilter) {
@@ -102,8 +96,8 @@ public class SearchResultGeneration {
         }
     }
 
-    private void setRowHeader(HSSFSheet sheet) {
-        HSSFRow rowHeader = sheet.createRow(1);
+    private void setRowHeader(Sheet sheet) {
+        Row rowHeader = sheet.createRow(1);
         rowHeader.createCell(0).setCellValue(Helper.getTranslation("title"));
         rowHeader.createCell(1).setCellValue(Helper.getTranslation("ID"));
         rowHeader.createCell(2).setCellValue(Helper.getTranslation("Datum"));
@@ -114,8 +108,8 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
-    private void prepareRow(int rowCounter, HSSFSheet sheet, Process process) {
-        HSSFRow row = sheet.createRow(rowCounter);
+    private void prepareRow(int rowCounter, Sheet sheet, Process process) {
+        Row row = sheet.createRow(rowCounter);
         row.createCell(0).setCellValue(process.getTitle());
         row.createCell(1).setCellValue(process.getId());
         row.createCell(2).setCellValue(dateFormatter.format(process.getCreationDate()));

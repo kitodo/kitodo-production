@@ -11,7 +11,7 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 
 /**

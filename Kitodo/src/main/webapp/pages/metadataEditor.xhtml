@@ -208,23 +208,34 @@
                                     <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
+                                    <ui:param name="selectedGalleryMediaContent"
+                                              value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
+                                    <h:outputText styleClass="columnHeading icon-media-partial"
+                                                  rendered="#{selectedGalleryMediaContent.isMediaPartial()}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('audio')}"
                                                   value="#{msgs.audio}
-                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                                  #{selectedGalleryMediaContent.shortId}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('video')}"
                                                   value="#{msgs.video}
-                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                                  #{selectedGalleryMediaContent.shortId}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('image')}"
                                                   value="#{msgs.image}
-                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
+                                                 #{selectedGalleryMediaContent.shortId},
                                                  #{msgs.page}
-                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
+                                                 #{selectedGalleryMediaContent.orderlabel}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.lastSelection eq null}"
                                                   value="#{msgs.notSelected}"/>
+                                    <ui:param name="mediaPartial"
+                                              value="#{selectedGalleryMediaContent.getMediaPartial()}"/>
+                                    <h:outputText styleClass="columnHeading mediaPartialHeading"
+                                                  value="(#{msgs.start}:#{mediaPartial.begin}, #{msgs.duration}:#{mediaPartial.extent})"
+                                                  rendered="#{selectedGalleryMediaContent.isMediaPartial() and mediaPartial ne null}"
+                                                  a:data-media-partial-start="#{mediaPartial.begin}"
+                                                  a:data-media-partial-duration="#{mediaPartial.extent}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
@@ -258,8 +269,12 @@
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/errorLoadingMetadataDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/fileReferencesUpdatedDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/dataEditorSettingSavingResult.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/dataEditorSettingDeletedResult.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/dataEditorSettingMenu.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/renamingMediaResults.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/addMediaPartial.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/updateMetadata.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataUnchangedDialog.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
@@ -271,12 +286,14 @@
     </ui:define>
 
     <ui:define name="page-scripts">
+        <h:outputScript name="js/defaultScript.js" target="body"/>
         <h:outputScript name="js/resize.js" target="body"/>
         <h:outputScript name="js/scroll.js" target="body"/>
         <h:outputScript name="js/metadata_editor.js" target="body"/>
         <h:outputScript name="js/metadata_editor_unsaved_changes.js" target="head"/>
         <h:outputScript name="js/metadataeditor_jquery-ui_fix.js" />
         <h:outputScript name="js/pf_contextMenu_custom.js" target="body"/>
+        <h:outputScript name="js/metadata_table.js" target="body"/>
         <h:outputScript>
             PrimeFaces.widget.VerticalTree.prototype.bindKeyEvents = function () {
                 // Prevent PrimeFaces' default keyboard event handling for VerticalTrees.

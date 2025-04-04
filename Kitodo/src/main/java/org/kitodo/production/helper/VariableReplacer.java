@@ -322,7 +322,7 @@ public class VariableReplacer {
             logger.warn("Cannot replace \"(projectid)\": process has no project assigned");
             return variableFinder.group(1);
         }
-        return variableFinder.group(1) + String.valueOf(process.getProject().getId());
+        return variableFinder.group(1) + process.getProject().getId();
     }
 
     private String determineReplacementForStepid(Matcher variableFinder) {
@@ -330,7 +330,7 @@ public class VariableReplacer {
             logger.warn("Cannot replace \"(stepid)\": no task given");
             return variableFinder.group(1);
         }
-        return variableFinder.group(1) + String.valueOf(task.getId());
+        return variableFinder.group(1) + task.getId();
     }
 
     private String determineReplacementForStepname(Matcher variableFinder) {
@@ -463,8 +463,8 @@ public class VariableReplacer {
         if (Objects.isNull(stringWithVariables)) {
             return false;
         }
-        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)")
-                | stringWithVariables.contains("(relativepath)");
+        return stringWithVariables.contains("(filename)") || stringWithVariables.contains("(basename)")
+                || stringWithVariables.contains("(relativepath)");
     }
 
     /**

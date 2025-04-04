@@ -162,6 +162,10 @@ public class Process extends BaseTemplateBean {
     @Transient
     private transient ProcessKeywords processKeywords;
 
+    @ManyToOne
+    @JoinColumn(name = "import_configuration_id", foreignKey = @ForeignKey(name = "FK_process_import_configuration_id"))
+    private ImportConfiguration importConfiguration;
+
     /**
      * Constructor.
      */
@@ -1030,6 +1034,26 @@ public class Process extends BaseTemplateBean {
         }
     }
 
+    /**
+     * Get ImportConfiguration used to create this process.
+     *
+     * @return ImportConfiguration used to create this process. "null" if
+     *         process was created manually.
+     */
+    public ImportConfiguration getImportConfiguration() {
+        return importConfiguration;
+    }
+
+    /**
+     * Set ImportConfiguration used to create this process.
+     * 
+     * @param importConfiguration
+     *            ImportConfiguration used to create this process
+     */
+    public void setImportConfiguration(ImportConfiguration importConfiguration) {
+        this.importConfiguration = importConfiguration;
+    }
+
     @Override
     public String toString() {
         return title + " [" + id + "]";
@@ -1105,5 +1129,13 @@ public class Process extends BaseTemplateBean {
         } else {
             return processKeywords;
         }
+    }
+
+    /**
+     * Resets the process metadata keywords. This function is called from the
+     * DAO before saving to ensure the keywords are updated reliably.
+     */
+    public void dropKeywords() {
+        this.processKeywords = null;
     }
 }

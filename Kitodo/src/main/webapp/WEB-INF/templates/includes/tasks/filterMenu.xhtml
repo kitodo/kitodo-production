@@ -21,6 +21,10 @@
                      action="#{CurrentTaskForm.filterMenu.removeFilter}"
                      oncomplete="setFilterInputPadding()"
                      update="tasksTabView:tasksForm:taskTable parsedFiltersForm:parsedFilters"/>
+    <p:remoteCommand name="removeFilterForEdit"
+                     action="#{CurrentTaskForm.filterMenu.removeFilter}"
+                     oncomplete="setFilterInputPadding()"
+                     update="parsedFiltersForm:parsedFilters"/>
     <p:remoteCommand name="updateSuggestions"
                      action="#{CurrentTaskForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>

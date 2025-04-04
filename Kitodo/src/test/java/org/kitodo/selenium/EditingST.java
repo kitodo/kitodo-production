@@ -12,16 +12,16 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -40,19 +40,19 @@ public class EditingST extends BaseTestSelenium {
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         projectsPage = Pages.getProjectsPage();
         usersPage = Pages.getUsersPage();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
         if (Browser.isAlertPresent()) {
@@ -63,25 +63,23 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editProcessTest() throws Exception {
         processesPage.editProcess().changeProcessData();
-        assertEquals("Header for edit process is incorrect", "First process\n(ID: 1)",
-            Pages.getProcessEditPage().getHeaderText());
+        assertEquals("First process\n(ID: 1)", Pages.getProcessEditPage().getHeaderText(), "Header for edit process is incorrect");
 
         Pages.getProcessEditPage().save();
-        assertTrue("Redirection after save was not successful", processesPage.isAt());
+        assertTrue(processesPage.isAt(), "Redirection after save was not successful");
 
         Process processAfterEdit = ServiceManager.getProcessService().getById(1);
 
-        assertEquals("Incorrect amount of template properties", 4, processAfterEdit.getTemplates().size());
+        assertEquals(4, processAfterEdit.getTemplates().size(), "Incorrect amount of template properties");
     }
 
     @Test
     public void editBatchTest() throws Exception {
         processesPage.editBatch();
-        await().untilAsserted(() -> assertEquals("Batch was not renamed!", 1,
-                ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+        await().untilAsserted(() -> assertEquals(1, ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size(), "Batch was not renamed!"));
 
-        assertEquals("Process was not removed from batch", 1, ServiceManager.getBatchService()
-                .getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
+        assertEquals(1, ServiceManager.getBatchService()
+                .getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size(), "Process was not removed from batch");
     }
 
     @Test
@@ -89,8 +87,7 @@ public class EditingST extends BaseTestSelenium {
         final String newProjectTitle = "newTitle";
 
         ProjectEditPage projectEditPage = projectsPage.editProject();
-        assertEquals("Header for edit project is incorrect", "Projekt bearbeiten (First project)",
-                Pages.getProjectEditPage().getHeaderText());
+        assertEquals("Projekt bearbeiten (First project)", Pages.getProjectEditPage().getHeaderText(), "Header for edit project is incorrect");
 
         assertFalse(projectEditPage.areElementsEnabled());
 
@@ -100,7 +97,7 @@ public class EditingST extends BaseTestSelenium {
         projectEditPage.toggleProjectActiveCheckbox();
         projectEditPage.save();
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(newProjectTitle);
-        assertTrue("Title was not changed", projectAvailable);
+        assertTrue(projectAvailable, "Title was not changed");
         List<String> projectsActiveStates = projectsPage.getProjectsActiveStates();
         assertTrue(projectsActiveStates.contains("fa fa-minus-square-o fa-lg checkbox-unchecked"));
 
@@ -115,72 +112,62 @@ public class EditingST extends BaseTestSelenium {
     public void editTemplateTest() throws Exception {
         projectsPage = projectsPage.goToTemplateTab();
         List<String> templateDetails = projectsPage.getTemplateDetails();
-        assertTrue("The first project should be assigned to this template", templateDetails.contains("First project"));
-        assertFalse("The template is already assigned to second Project",
-            templateDetails.stream().anyMatch(listString -> listString.contains("Second project")));
+        assertTrue(templateDetails.contains("First project"), "The first project should be assigned to this template");
+        assertFalse(templateDetails.stream().anyMatch(listString -> listString.contains("Second project")), "The template is already assigned to second Project");
 
         TemplateEditPage editTemplatePage = projectsPage.editTemplate();
-        assertEquals("Header for edit template is incorrect", "Produktionsvorlage bearbeiten (Fourth template)",
-            Pages.getTemplateEditPage().getHeaderText());
+        assertEquals("Produktionsvorlage bearbeiten (Fourth template)", Pages.getTemplateEditPage().getHeaderText(), "Header for edit template is incorrect");
 
         editTemplatePage.addSecondProject();
         templateDetails = editTemplatePage.save().getTemplateDetails();
-        assertTrue("The second project should be assigned to this template",
-            templateDetails.stream().anyMatch(listString -> listString.contains("Second project")));
+        assertTrue(templateDetails.stream().anyMatch(listString -> listString.contains("Second project")), "The second project should be assigned to this template");
     }
 
     @Test
     public void editWorkflowTest() throws Exception {
         String status = projectsPage.goToWorkflowTab().getWorkflowStatusForWorkflow();
-        assertEquals("Status is not correct", "Entwurf", status);
+        assertEquals("Entwurf", status, "Status is not correct");
         WorkflowEditPage workflowEditPage = projectsPage.editWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
-        assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test_second)",
-            Pages.getWorkflowEditPage().getHeaderText());
+        assertEquals("Workflow bearbeiten (test_second)", Pages.getWorkflowEditPage().getHeaderText(), "Header for edit workflow is incorrect");
         projectsPage = workflowEditPage.save();
         status = projectsPage.goToWorkflowTab().getWorkflowStatusForWorkflow();
-        assertEquals("Status change was not saved", "Aktiv", status);
+        assertEquals("Aktiv", status, "Status change was not saved");
     }
 
     @Test
     public void editDocketTest() throws Exception {
         projectsPage.editDocket();
-        assertEquals("Header for edit docket is incorrect", "Laufzettel bearbeiten (default)",
-            Pages.getDocketEditPage().getHeaderText());
+        assertEquals("Laufzettel bearbeiten (default)", Pages.getDocketEditPage().getHeaderText(), "Header for edit docket is incorrect");
     }
 
     @Test
     public void editRulesetTest() throws Exception {
         projectsPage.editRuleset();
-        assertEquals("Header for edit ruleset is incorrect", "Regelsatz bearbeiten (SLUBDD)",
-            Pages.getRulesetEditPage().getHeaderText());
+        assertEquals("Regelsatz bearbeiten (SLUBDD)", Pages.getRulesetEditPage().getHeaderText(), "Header for edit ruleset is incorrect");
     }
 
     @Test
     public void editUserTest() throws Exception {
         usersPage.editUser();
-        assertEquals("Header for edit user is incorrect", "Benutzer bearbeiten (null, Removable user)",
-            Pages.getUserEditPage().getHeaderText());
+        assertEquals("Benutzer bearbeiten (null, Removable user)", Pages.getUserEditPage().getHeaderText(), "Header for edit user is incorrect");
     }
 
     @Test
     public void editRoleTest() throws Exception {
         usersPage.editRole();
-        assertEquals("Header for edit role is incorrect", "Rolle bearbeiten (Admin)",
-            Pages.getRoleEditPage().getHeaderText());
+        assertEquals("Rolle bearbeiten (Admin)", Pages.getRoleEditPage().getHeaderText(), "Header for edit role is incorrect");
     }
 
     @Test
     public void editLdapGroupTest() throws Exception {
         usersPage.editLdapGroup();
-        assertEquals("Header for edit LDAP group is incorrect", "LDAP-Gruppe bearbeiten (LG)",
-            Pages.getLdapGroupEditPage().getHeaderText());
+        assertEquals("LDAP-Gruppe bearbeiten (LG)", Pages.getLdapGroupEditPage().getHeaderText(), "Header for edit LDAP group is incorrect");
     }
 
     @Test
     public void editClientTest() throws Exception {
         usersPage.editClient();
-        assertEquals("Header for edit client is incorrect", "Mandant bearbeiten",
-            Pages.getClientEditPage().getHeaderText());
+        assertEquals("Mandant bearbeiten", Pages.getClientEditPage().getHeaderText(), "Header for edit client is incorrect");
     }
 }

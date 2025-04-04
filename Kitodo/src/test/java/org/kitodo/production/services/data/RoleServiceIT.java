@@ -11,16 +11,15 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Role;
@@ -35,50 +34,46 @@ public class RoleServiceIT {
 
     private static final RoleService roleService = ServiceManager.getRoleService();
 
-    private static final int EXPECTED_ROLES_COUNT = 8;
+    private static final int EXPECTED_ROLES_COUNT = 9;
 
     private static final String WRONG_NUMBER_OF_ROLES = "Amount of roles assigned to client is incorrect!";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertRolesFull();
         MockDatabase.setUpAwaitility();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllDatabaseRowsForRoles() throws Exception {
         Long amount = roleService.count();
-        assertEquals("Roles were not counted correctly!", Long.valueOf(EXPECTED_ROLES_COUNT), amount);
+        assertEquals(Long.valueOf(EXPECTED_ROLES_COUNT), amount, "Roles were not counted correctly!");
     }
 
     @Test
     public void shouldGetRole() throws Exception {
         Role role = roleService.getById(1);
-        assertEquals("Role title is not matching", "Admin", role.getTitle());
-        assertEquals("Role first authorities title is not matching", "viewClient_globalAssignable",
-            role.getAuthorities().get(1).getTitle());
+        assertEquals("Admin", role.getTitle(), "Role title is not matching");
+        assertEquals("viewClient_globalAssignable", role.getAuthorities().get(1).getTitle(), "Role first authorities title is not matching");
     }
 
     @Test
     public void shouldGetAllRoles() throws Exception {
         List<Role> roles = roleService.getAll();
-        assertEquals("Not all user's roles were found in database!", EXPECTED_ROLES_COUNT, roles.size());
+        assertEquals(EXPECTED_ROLES_COUNT, roles.size(), "Not all user's roles were found in database!");
     }
 
     @Test
     public void shouldGetAllRolesInGivenRange() throws Exception {
         List<Role> roles = roleService.getAll(1, 10);
-        assertEquals("Not all user's roles were found in database!", 7, roles.size());
+        assertEquals(8, roles.size(), "Not all user's roles were found in database!");
     }
 
     @Test
@@ -87,22 +82,19 @@ public class RoleServiceIT {
         role.setTitle("To Remove");
         roleService.save(role);
         Role foundRole = roleService.getByQuery("FROM Role WHERE title = 'To Remove'").get(0);
-        assertEquals("Additional user group was not inserted in database!", "To Remove", foundRole.getTitle());
+        assertEquals("To Remove", foundRole.getTitle(), "Additional user group was not inserted in database!");
 
         roleService.remove(foundRole);
-        exception.expect(DAOException.class);
-        exception.expectMessage("");
-        roleService.getById(foundRole.getId());
+        Role finalFoundRole = foundRole;
+        assertThrows(DAOException.class, () -> roleService.getById(finalFoundRole.getId()));
 
         role = new Role();
         role.setTitle("To remove");
         roleService.save(role);
         foundRole = roleService.getByQuery("FROM Role WHERE title = 'To remove'").get(0);
-        assertEquals("Additional user group was not inserted in database!", "To remove", foundRole.getTitle());
+        assertEquals("To remove", foundRole.getTitle(), "Additional user group was not inserted in database!");
 
         roleService.remove(foundRole.getId());
-        exception.expect(DAOException.class);
-        exception.expectMessage("");
     }
 
     @Test
@@ -119,14 +111,14 @@ public class RoleServiceIT {
         roleService.save(role);
 
         Role foundRole = roleService.getByQuery("FROM Role WHERE title = 'Cascados Group'").get(0);
-        assertEquals("Additional user was not inserted in database!", "Cascados Group", foundRole.getTitle());
+        assertEquals("Cascados Group", foundRole.getTitle(), "Additional user was not inserted in database!");
 
         roleService.remove(foundRole);
         int size = roleService.getByQuery("FROM Role WHERE title = 'Cascados Group'").size();
-        assertEquals("Additional user was not removed from database!", 0, size);
+        assertEquals(0, size, "Additional user was not removed from database!");
 
         size = userService.getByQuery("FROM User WHERE login = 'Cascados'").size();
-        assertEquals("User was removed from database!", 1, size);
+        assertEquals(1, size, "User was removed from database!");
 
         userService.remove(userService.getByQuery("FROM User WHERE login = 'Cascados'").get(0));
     }
@@ -135,16 +127,15 @@ public class RoleServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         Role role = roleService.getById(1);
         int actual = roleService.getAuthorizationsAsString(role).size();
-        int expected = 34;
-        assertEquals("Number of authority strings doesn't match!", expected, actual);
+        int expected = 35;
+        assertEquals(expected, actual, "Number of authority strings doesn't match!");
     }
 
     @Test
     public void shouldGetAuthorities() throws Exception {
         Role role = roleService.getById(1);
         List<Authority> actual = role.getAuthorities();
-        assertEquals("Permission strings doesn't match to given plain text!", "viewClient_globalAssignable",
-            actual.get(1).getTitle());
+        assertEquals("viewClient_globalAssignable", actual.get(1).getTitle(), "Permission strings doesn't match to given plain text!");
     }
 
     @Test
@@ -164,27 +155,26 @@ public class RoleServiceIT {
         role = roleService.getById(1);
 
         List<String> actual = roleService.getAuthorizationsAsString(role);
-        assertTrue("Title of Authority was not found in user group authorities!",
-            actual.contains(authority.getTitle()));
+        assertTrue(actual.contains(authority.getTitle()), "Title of Authority was not found in user group authorities!");
     }
 
     @Test
     public void shouldGetAllRolesByClientIds() {
         List<Role> roles = roleService.getAllRolesByClientId(1);
-        assertEquals(WRONG_NUMBER_OF_ROLES, 7, roles.size());
+        assertEquals(7, roles.size(), WRONG_NUMBER_OF_ROLES);
 
         roles = roleService.getAllRolesByClientId(2);
-        assertEquals(WRONG_NUMBER_OF_ROLES, 1, roles.size());
+        assertEquals(2, roles.size(), WRONG_NUMBER_OF_ROLES);
     }
 
     @Test
     public void shouldGetAllAvailableForAssignToUser() throws Exception {
         User user = ServiceManager.getUserService().getById(1);
         List<Role> roles = roleService.getAllAvailableForAssignToUser(user);
-        assertEquals(WRONG_NUMBER_OF_ROLES, 3, roles.size());
+        assertEquals(3, roles.size(), WRONG_NUMBER_OF_ROLES);
 
         user = ServiceManager.getUserService().getById(2);
         roles = roleService.getAllAvailableForAssignToUser(user);
-        assertEquals(WRONG_NUMBER_OF_ROLES, 6, roles.size());
+        assertEquals(7, roles.size(), WRONG_NUMBER_OF_ROLES);
     }
 }

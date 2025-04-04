@@ -49,7 +49,6 @@ Create your `config-local`
 In the source directory that you just cloned, create a folder named `config-local`. Copy the following files there:
 
 *From `Kitodo\src\main\resources\`:*
-* `contentServerConfig.xml`
 * `hibernate.cfg.xml`
 * `kitodo_config.properties`
 

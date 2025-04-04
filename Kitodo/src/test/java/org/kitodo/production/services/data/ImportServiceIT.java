@@ -11,7 +11,18 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+import static org.kitodo.constants.StringConstants.KITODO;
+
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.kitodo.constants.StringConstants.COLLECTION;
+import static org.kitodo.constants.StringConstants.FILE;
 
 import com.xebialabs.restito.server.StubServer;
 
@@ -27,10 +38,14 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -39,11 +54,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -57,26 +70,33 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
+import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.thread.ImportEadProcessesThread;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -86,13 +106,13 @@ public class ImportServiceIT {
     private static final ImportService importService = ServiceManager.getImportService();
     private static StubServer server;
     private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
+    private static final String EAD_COLLECTION_FILE = "importRecords/eadCollection.xml";
     private static final String TEST_FILE_PATH_NUMBER_OF_HITS = "src/test/resources/importRecords/sruResponseNumberOfHits.xml";
     private static final String TEST_FILE_SUCCESS_RESPONSE_PATH = "src/test/resources/customInterfaceSuccessResponse.xml";
     private static final String TEST_FILE_ERROR_RESPONSE_PATH = "src/test/resources/customInterfaceErrorResponse.xml";
     private static final String PARENT_PROCESS_TEST_FILE = "testMetadataForKalliopeParentProcess.xml";
     private static final String CHILD_RECORDS_PATH = "src/test/resources/importRecords/importMultipleChildRecords.xml";
     private static final String MODS_TEST_RECORD_PATH = "src/test/resources/importRecords/modsTestRecord.xml";
-    private static final String TEST_RULESET = "src/test/resources/rulesets/ruleset_test.xml";
     private static final String TEST_KITODO_METADATA_FILE = "testMetadataFileTempProcess.xml";
     private static final String TEST_METADATA_WITH_AUTHOR_FILE = "testMetadataWithAuthor.xml";
     private static final String TEST_KITODO_METADATA_FILE_PATH = "src/test/resources/metadata/metadataFiles/"
@@ -104,31 +124,31 @@ public class ImportServiceIT {
     private static final List<String> CHILD_RECORD_IDS = Arrays.asList("9991", "9992", "9993");
     private static final String KALLIOPE_RECORD_ID = "999";
     private static final String CUSTOM_INTERFACE_RECORD_ID = "12345";
-    private static final int PORT = 8888;
     private static final int TEMPLATE_ID = 1;
     private static final int PROJECT_ID = 1;
     private static final int RULESET_ID = 1;
+    private static final String TITLE = "Title";
+    private static final String PLACE = "Place";
+    private static final String LABEL = "LABEL";
+    private static final String ORDERLABEL = "ORDERLABEL";
     private static final int EXPECTED_NR_OF_CHILDREN = 23;
     private static final String PICA_XML = "picaxml";
-    private static final String MODS = "mods";
     private static final String PICA_PPN = "pica.ppn";
     private static final String PICA_PARENT_ID = "pica.parentId";
-    private static final String EAD_PARENT_ID = "context.ead.id";
     private static final String firstProcess = "First process";
     private static final String TEST_PROCESS_TITLE = "Testtitel";
-    private static final String KITODO = "kitodo";
     private static final String METADATA = "metadata";
     private static final String EXPECTED_AUTHOR = "HansMeier";
     private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertProcessesFull();
+        MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
         MockDatabase.insertImportconfigurationWithCustomUrlParameters();
-        MockDatabase.insertProcessesFull();
-        MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
@@ -136,11 +156,11 @@ public class ImportServiceIT {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
             return !processService.findByTitle(firstProcess).isEmpty();
         });
-        server = new StubServer(PORT).run();
+        server = new StubServer(MockDatabase.PORT).run();
         setupServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -157,37 +177,103 @@ public class ImportServiceIT {
      */
     @Test
     public void testImportProcess() throws DAOException, ImportException, IOException {
-        Assert.assertEquals("Not the correct amount of processes found", 7, (long) processService.count());
+        assertEquals(7, (long) processService.count(), "Not the correct amount of processes found");
         Process importedProcess = importProcess(RECORD_ID, MockDatabase.getK10PlusImportConfiguration());
         try {
-            Assert.assertEquals("WrongProcessTitle", "Kitodo_" + RECORD_ID, importedProcess.getTitle());
-            Assert.assertEquals("Wrong project used", 1, (long) importedProcess.getProject().getId());
-            Assert.assertEquals("Wrong template used", 1, (long) importedProcess.getTemplate().getId());
-            Assert.assertEquals("Not the correct amount of processes found", 8, (long) processService.count());
+            assertEquals("Kitodo_" + RECORD_ID, importedProcess.getTitle(), "WrongProcessTitle");
+            assertEquals(1, (long) importedProcess.getProject().getId(), "Wrong project used");
+            assertEquals(1, (long) importedProcess.getTemplate().getId(), "Wrong template used");
+            assertEquals(8, (long) processService.count(), "Not the correct amount of processes found");
         } finally {
             ProcessTestUtils.removeTestProcess(importedProcess.getId());
         }
+    }
+
+    /**
+     * Tests whether basic catalog metadata import with additional preset metadata to a single process succeeds or not.
+     *
+     * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
+     * @throws ImportException when importing metadata fails
+     * @throws IOException when importing metadata fails
+     */
+    @Test
+    public void testImportProcessWithAdditionalMetadata() throws DAOException, ImportException, IOException {
+        Map<String, List<String>> presetMetadata = new HashMap<>();
+        presetMetadata.put(TITLE, List.of("Band 1"));
+        presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+                MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
+        HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
+        try {
+            assertTrue(assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"), "Process does not contain correct metadata");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"), "Process does not contain correct metadata");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"), "Process does not contain correct metadata");
+        } finally {
+            ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
+        }
+    }
+
+    /**
+     * Tests whether basic catalog metadata import with additional preset metadata including LABEL and ORDERLABEL
+     * succeeds.
+     *
+     * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
+     * @throws ImportException when importing metadata fails
+     * @throws IOException when importing metadata fails
+     */
+    @Test
+    public void testImportProcessWithAdditionalMetadataWithLabelAndOrderlabel() throws DAOException, ImportException, IOException {
+        Map<String, List<String>> presetMetadata = new HashMap<>();
+        presetMetadata.put(TITLE, List.of("Band 1"));
+        presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
+        presetMetadata.put(LABEL, List.of("TEST-LABEL"));
+        presetMetadata.put(ORDERLABEL, List.of("TEST-ORDERLABEL"));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+                MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
+        HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
+        String processLabel = workpiece.getLogicalStructure().getLabel();
+        String processOrderlabel = workpiece.getLogicalStructure().getOrderlabel();
+        try {
+            assertTrue(assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"), "Process does not contain correct metadata");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"), "Process does not contain correct metadata");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"), "Process does not contain correct metadata");
+            assertEquals("TEST-LABEL", processLabel,"Process does not have the correct LABEL");
+            assertEquals("TEST-ORDERLABEL", processOrderlabel,"Process does not have the correct ORDERLABEL");
+        } finally {
+            ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
+        }
+    }
+
+
+    private boolean assertMetadataSetContainsMetadata(HashSet<Metadata> metadataSet, String metadataKey, String metadataValue) {
+        return metadataSet.stream()
+                .filter(metadata -> metadata.getKey().equals(metadataKey))
+                .anyMatch(metadata -> metadata instanceof MetadataEntry &&
+                        ((MetadataEntry) metadata).getValue().equals(metadataValue));
     }
 
     @Test
     public void shouldCreateUrlWithCustomParameters() throws DAOException, ImportException, IOException {
         Process importedProcess = importProcess(CUSTOM_INTERFACE_RECORD_ID, MockDatabase.getCustomTypeImportConfiguration());
         try {
-            Assert.assertNotNull(importedProcess);
+            assertNotNull(importedProcess);
         } finally {
             ProcessTestUtils.removeTestProcess(importedProcess.getId());
         }
     }
 
-    @Test(expected = ImportException.class)
-    public void shouldFailToImportFromCustomInterfaceWithoutConfiguredUrlParameters() throws DAOException,
-            ImportException, IOException {
+    @Test
+    public void shouldFailToImportFromCustomInterfaceWithoutConfiguredUrlParameters() throws DAOException {
         ImportConfiguration customConfiguration = MockDatabase.getCustomTypeImportConfiguration();
         UrlParameter wrongUrlParameter = new UrlParameter();
         wrongUrlParameter.setParameterKey("firstKey");
         wrongUrlParameter.setParameterValue("wrongValue");
         customConfiguration.setUrlParameters(Collections.singletonList(wrongUrlParameter));
-        importProcess(CUSTOM_INTERFACE_RECORD_ID, customConfiguration);
+        assertThrows(ImportException.class, () -> importProcess(CUSTOM_INTERFACE_RECORD_ID, customConfiguration));
     }
 
     /**
@@ -198,9 +284,8 @@ public class ImportServiceIT {
     public void shouldTestWhetherRecordIdentifierMetadataIsConfigured() throws IOException {
         RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
-        rulesetManagement.load(new File(TEST_RULESET));
-        Assert.assertTrue("Should determine that recordIdentifier is configured for all document types",
-                ServiceManager.getImportService().isRecordIdentifierMetadataConfigured(rulesetManagement));
+        rulesetManagement.load(new File(TestConstants.TEST_RULESET));
+        assertTrue(ServiceManager.getImportService().isRecordIdentifierMetadataConfigured(rulesetManagement), "Should determine that recordIdentifier is configured for all document types");
     }
 
     /**
@@ -215,29 +300,31 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(importConfiguration,
                     xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            Assert.assertNotNull("TempProcess should not be null", tempProcess);
+            assertNotNull(tempProcess, "TempProcess should not be null");
         }
     }
 
     /**
-     * Tests whether the parent process with the provided process ID exists and whether the parent TempProcess was
-     * created from it.
+     * Tests whether the parent process with the provided process ID exists and
+     * whether the parent TempProcess was created from it.
      *
-     * @throws DAOException when test ruleset cannot be loaded from database
-     * @throws ProcessGenerationException when checking for parent process fails
-     * @throws IOException when checking for parent process fails
-     * @throws DAOException when copying test metadata file fails
+     * @throws DAOException
+     *             when test ruleset cannot be loaded from database
+     * @throws IOException
+     *             when checking for parent process fails
+     * @throws DataException
+     *             when copying test metadata file fails
      */
     @Test
-    @Ignore("index currently not available")
-    public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException {
+    public void shouldCheckForParent() throws Exception {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
         try {
             ProcessTestUtils.updateIdentifier(parentTestId);
+            Thread.sleep(2000);
             importService.checkForParent(String.valueOf(parentTestId), ruleset, PROJECT_ID);
-            Assert.assertNotNull(importService.getParentTempProcess());
+            assertNotNull(importService.getParentTempProcess());
         } finally {
             ProcessTestUtils.removeTestProcess(parentTestId);
         }
@@ -251,18 +338,16 @@ public class ImportServiceIT {
     @Test
     public void shouldGetNumberOfChildren() throws DAOException {
         int numberOfChildren = importService.getNumberOfChildren(MockDatabase.getK10PlusImportConfiguration(), RECORD_ID);
-        Assert.assertEquals("Number of children is incorrect", EXPECTED_NR_OF_CHILDREN , numberOfChildren);
+        assertEquals(EXPECTED_NR_OF_CHILDREN, numberOfChildren, "Number of children is incorrect");
     }
 
     /**
      * Tests whether importing child processes via an ImportConfiguration that does not support it fails or not.
-     *
-     * @throws Exception when loading ImportConfiguration from test database fails
      */
-    @Test(expected = NoRecordFoundException.class)
-    public void shouldFailToLoadK1PlusChildProcesses() throws Exception {
-        importService.getChildProcesses(MockDatabase.getK10PlusImportConfiguration(), RECORD_ID, PROJECT_ID,
-                TEMPLATE_ID, 1, Collections.emptyList());
+    @Test
+    public void shouldFailToLoadK1PlusChildProcesses() {
+        assertThrows(NoRecordFoundException.class,
+            () -> importService.getChildProcesses(MockDatabase.getK10PlusImportConfiguration(), RECORD_ID, PROJECT_ID, TEMPLATE_ID, 1, Collections.emptyList()));
     }
 
     /**
@@ -274,7 +359,7 @@ public class ImportServiceIT {
     public void shouldSucceedToLoadKalliopeChildProcesses() throws Exception {
         List<TempProcess> childRecords = importService.getChildProcesses(MockDatabase.getKalliopeImportConfiguration(),
                 KALLIOPE_RECORD_ID, PROJECT_ID, TEMPLATE_ID, 3, Collections.emptyList());
-        Assert.assertEquals("Wrong number of Kalliope child records", 3, childRecords.size());
+        assertEquals(3, childRecords.size(), "Wrong number of Kalliope child records");
     }
 
     /**
@@ -294,14 +379,13 @@ public class ImportServiceIT {
             LinkedList<TempProcess> childProcesses = ServiceManager.getImportService().getChildProcesses(
                     MockDatabase.getKalliopeImportConfiguration(), PARENT_RECORD_CATALOG_ID, PROJECT_ID, TEMPLATE_ID, 3,
                     Collections.singletonList(parentTempProcess));
-            Assert.assertEquals("Wrong number of imported child processes", 3, childProcesses.size());
+            assertEquals(3, childProcesses.size(), "Wrong number of imported child processes");
             for (TempProcess childProcess : childProcesses) {
                 String childId = CHILD_RECORD_IDS.get(childProcesses.indexOf(childProcess));
                 Optional<Metadata> importedChildId = childProcess.getWorkpiece().getLogicalStructure().getMetadata().stream()
                         .filter(metadata -> metadata instanceof MetadataEntry && metadata.getKey().equals("CatalogIDDigital")
                                 && ((MetadataEntry) metadata).getValue().equals(childId)).findAny();
-                Assert.assertTrue(String.format("Retrieved child records should contain process with CatalogIDDigital '%s'", childId),
-                        importedChildId.isPresent());
+                assertTrue(importedChildId.isPresent(), String.format("Retrieved child records should contain process with CatalogIDDigital '%s'", childId));
             }
         } finally {
             ProcessTestUtils.removeTestProcess(parentProcessId);
@@ -331,10 +415,8 @@ public class ImportServiceIT {
             dataRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
             Document internalDocument = ServiceManager.getImportService().convertDataRecordToInternal(dataRecord,
                     MockDatabase.getKalliopeImportConfiguration(), false);
-            Assert.assertEquals("Converted data should contain one 'kitodo' root node", 1,
-                    internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO).getLength());
-            Assert.assertEquals("Converted data should contain three 'metadata' nodes", 3,
-                    internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, METADATA).getLength());
+            assertEquals(1, internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO).getLength(), "Converted data should contain one 'kitodo' root node");
+            assertEquals(3, internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, METADATA).getLength(), "Converted data should contain three 'metadata' nodes");
         }
     }
 
@@ -362,13 +444,10 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            ImportService.processTempProcess(tempProcess, management,
-                    ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
-                            .getCurrentMetadataLanguage(), null);
-            Assert.assertFalse("Process should have some properties",
-                    tempProcess.getProcess().getProperties().isEmpty());
-            Assert.assertTrue("Process title should not be empty",
-                    StringUtils.isNotBlank(tempProcess.getProcess().getTitle()));
+            ImportService.processTempProcess(tempProcess, management, CREATE, ServiceManager.getUserService()
+                    .getCurrentMetadataLanguage(), null);
+            assertFalse(tempProcess.getProcess().getProperties().isEmpty(), "Process should have some properties");
+            assertTrue(StringUtils.isNotBlank(tempProcess.getProcess().getTitle()), "Process title should not be empty");
         }
     }
 
@@ -380,9 +459,8 @@ public class ImportServiceIT {
     @Test
     public void shouldGetProcessDetailValue() throws Exception {
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_KITODO_METADATA_FILE_PATH);
-        Assert.assertFalse("List of process details should not be empty", processDetails.isEmpty());
-        Assert.assertEquals("Value of first process details should not be empty",
-                TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(processDetails.get(0)));
+        assertFalse(processDetails.isEmpty(), "List of process details should not be empty");
+        assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(processDetails.get(0)), "Value of first process details should not be empty");
     }
 
     /**
@@ -394,13 +472,11 @@ public class ImportServiceIT {
     public void shouldSetProcessDetailValue() throws Exception {
         String newProcessTitle = "New process title";
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_KITODO_METADATA_FILE_PATH);
-        Assert.assertFalse("Process detail list should not be empty", processDetails.isEmpty());
+        assertFalse(processDetails.isEmpty(), "Process detail list should not be empty");
         ProcessDetail title = processDetails.get(0);
-        Assert.assertEquals("Wrong title process detail before setting it", TEST_PROCESS_TITLE,
-                ImportService.getProcessDetailValue(title));
+        assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(title), "Wrong title process detail before setting it");
         ImportService.setProcessDetailValue(title, newProcessTitle);
-        Assert.assertEquals("Wrong title process detail after setting it", newProcessTitle,
-                ImportService.getProcessDetailValue(title));
+        assertEquals(newProcessTitle, ImportService.getProcessDetailValue(title), "Wrong title process detail after setting it");
     }
 
     /**
@@ -411,9 +487,9 @@ public class ImportServiceIT {
     @Test
     public void shouldGetListOfCreators() throws Exception {
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_METADATA_WITH_AUTHOR_FILE_PATH);
-        Assert.assertFalse("Process detail list should not be empty", processDetails.isEmpty());
+        assertFalse(processDetails.isEmpty(), "Process detail list should not be empty");
         String creators = ImportService.getListOfCreators(processDetails);
-        Assert.assertEquals("Author metadata is not correct", EXPECTED_AUTHOR, creators);
+        assertEquals(EXPECTED_AUTHOR, creators, "Author metadata is not correct");
     }
 
     /**
@@ -429,14 +505,14 @@ public class ImportServiceIT {
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_METADATA_WITH_AUTHOR_FILE_PATH);
         String exemplarDataOwner = getProcessDetailByMetadataId(importConfiguration.getItemFieldOwnerMetadata(), processDetails);
         String exemplarDataSignature = getProcessDetailByMetadataId(importConfiguration.getItemFieldSignatureMetadata(), processDetails);
-        Assert.assertNotEquals("Wrong exemplar data owner BEFORE selecting exemplar", exemplarDataOwner, expectedOwner);
-        Assert.assertNotEquals("Wrong exemplar data signature BEFORE selecting exemplar", exemplarDataSignature, expectedSignature);
+        assertNotEquals(exemplarDataOwner, expectedOwner, "Wrong exemplar data owner BEFORE selecting exemplar");
+        assertNotEquals(exemplarDataSignature, expectedSignature, "Wrong exemplar data signature BEFORE selecting exemplar");
         ExemplarRecord exemplarRecord = new ExemplarRecord(expectedOwner, expectedSignature);
         ImportService.setSelectedExemplarRecord(exemplarRecord, importConfiguration, processDetails);
         exemplarDataOwner = getProcessDetailByMetadataId(importConfiguration.getItemFieldOwnerMetadata(), processDetails);
         exemplarDataSignature = getProcessDetailByMetadataId(importConfiguration.getItemFieldSignatureMetadata(), processDetails);
-        Assert.assertEquals("Wrong exemplar data owner AFTER selecting exemplar", exemplarDataOwner, expectedOwner);
-        Assert.assertEquals("Wrong exemplar data signature AFTER selecting exemplar", exemplarDataSignature, expectedSignature);
+        assertEquals(exemplarDataOwner, expectedOwner, "Wrong exemplar data owner AFTER selecting exemplar");
+        assertEquals(exemplarDataSignature, expectedSignature, "Wrong exemplar data signature AFTER selecting exemplar");
     }
 
     /**
@@ -455,12 +531,11 @@ public class ImportServiceIT {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(parentProcess);
             Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
             TempProcess parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
-            Assert.assertTrue("Process title should be empty before setting it",
-                    StringUtils.isBlank(parentTempProcess.getProcess().getTitle()));
+            assertTrue(StringUtils.isBlank(parentTempProcess.getProcess().getTitle()), "Process title should be empty before setting it");
             LinkedList<TempProcess> tempProcesses = new LinkedList<>();
             tempProcesses.add(parentTempProcess);
             boolean titleChanged = ImportService.ensureNonEmptyTitles(tempProcesses);
-            Assert.assertTrue("Process titles should have been changed", titleChanged);
+            assertTrue(titleChanged, "Process titles should have been changed");
         } finally {
             ProcessTestUtils.removeTestProcess(parentProcessId);
         }
@@ -485,13 +560,62 @@ public class ImportServiceIT {
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
             TempProcess tempProcess = new TempProcess(process, workpiece);
             List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_METADATA_WITH_AUTHOR_FILE_PATH);
-            Assert.assertFalse("Process should NOT contain 'DocType' property before adding it",
-                    process.getWorkpieces().stream().anyMatch(property -> docType.equals(property.getTitle())));
+            assertFalse(process.getWorkpieces().stream().anyMatch(property -> docType.equals(property.getTitle())), "Process should NOT contain 'DocType' property before adding it");
             ImportService.addProperties(tempProcess, template, processDetails, monograph, imageDescription);
-            Assert.assertTrue("Process should contain 'DocType' property after adding it",
-                    process.getWorkpieces().stream().anyMatch(property -> docType.equals(property.getTitle())));
+            assertTrue(process.getWorkpieces().stream().anyMatch(property -> docType.equals(property.getTitle())), "Process should contain 'DocType' property after adding it");
         } finally {
             ProcessTestUtils.removeTestProcess(processId);
+        }
+    }
+
+    /**
+     * Test EAD import.
+     *
+     * @throws Exception when something goes wrong
+     */
+    @Test
+    public void shouldImportEadCollection() throws Exception {
+        User user = ServiceManager.getUserService().getById(1);
+        Client client = ServiceManager.getClientService().getById(1);
+        Project eadProject = MockDatabase.insertProjectForEadImport(user, client);
+        Template eadTemplate = eadProject.getTemplates().get(0);
+        CreateProcessForm createProcessForm = new CreateProcessForm();
+        createProcessForm.setProject(eadProject);
+        createProcessForm.setTemplate(eadTemplate);
+        createProcessForm.setSelectedEadLevel(FILE);
+        createProcessForm.setSelectedParentEadLevel(COLLECTION);
+        createProcessForm.setCurrentImportConfiguration(eadProject.getDefaultImportConfiguration());
+        createProcessForm.updateRulesetAndDocType(eadTemplate.getRuleset());
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        List<Integer> allIds = ServiceManager.getProcessService().getAll().stream().map(BaseBean::getId).collect(
+            Collectors.toList());
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(EAD_COLLECTION_FILE)) {
+            if (Objects.nonNull(inputStream)) {
+                String xmlString = IOUtils.toString(inputStream, Charset.defaultCharset());
+                createProcessForm.setXmlString(xmlString);
+                ImportEadProcessesThread eadProcessesThread = new ImportEadProcessesThread(createProcessForm, user, client);
+                eadProcessesThread.start();
+                assertTrue(eadProcessesThread.isAlive(), "Process should have been started");
+                eadProcessesThread.join(10_000);
+                assertFalse(eadProcessesThread.isAlive(), "Process should have been stopped");
+            }
+        }
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+        List<Integer> allIdsWithEad = ServiceManager.getProcessService().getAll().stream().map(BaseBean::getId).collect(
+            Collectors.toList());
+        // EAD test file contains one collection and 5 files, so the system should contain 6 new processes altogether
+        assertEquals(allIds.size() + 6, allIdsWithEad.size(),
+                "Database does not contain the correct number of processes after EAD import");
+        if (allIdsWithEad.removeAll(allIds)) {
+            for (int processId : allIdsWithEad) {
+                ProcessTestUtils.removeTestProcess(processId);
+            }
         }
     }
 
@@ -515,9 +639,8 @@ public class ImportServiceIT {
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            return ProcessHelper.transformToProcessDetails(tempProcess, management,
-                    ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
-                            .getCurrentMetadataLanguage());
+            return ProcessHelper.transformToProcessDetails(tempProcess, management, CREATE, ServiceManager
+                    .getUserService().getCurrentMetadataLanguage());
         }
     }
 
@@ -529,9 +652,9 @@ public class ImportServiceIT {
         // REST endpoint for testing failed import of child records
         MockDatabase.addRestEndPointForSru(server, PICA_PARENT_ID + "=" + RECORD_ID, TEST_FILE_PATH_NUMBER_OF_HITS, PICA_XML, 1);
         // REST endpoint for testing successful import of child records
-        MockDatabase.addRestEndPointForSru(server, EAD_PARENT_ID + "=" + KALLIOPE_RECORD_ID, CHILD_RECORDS_PATH, MODS, 3);
+        MockDatabase.addRestEndPointForSru(server, TestConstants.EAD_PARENT_ID + "=" + KALLIOPE_RECORD_ID, CHILD_RECORDS_PATH, TestConstants.MODS, 3);
         // REST endpoint for testing retrieval of child records given existing parent process
-        MockDatabase.addRestEndPointForSru(server, EAD_PARENT_ID + "=" + PARENT_RECORD_CATALOG_ID, CHILD_RECORDS_PATH, MODS,3);
+        MockDatabase.addRestEndPointForSru(server, TestConstants.EAD_PARENT_ID + "=" + PARENT_RECORD_CATALOG_ID, CHILD_RECORDS_PATH, TestConstants.MODS,3);
         // REST endpoint for successful import from custom search interface
         MockDatabase.addRestEndPointForCustom(server, TEST_FILE_SUCCESS_RESPONSE_PATH, CUSTOM_INTERFACE_RECORD_ID,
                 "firstValue");
@@ -548,6 +671,21 @@ public class ImportServiceIT {
         }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, new HashMap<>());
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+        return importedProcess;
+    }
+
+    private Process importProcessWithAdditionalMetadata(String recordId, ImportConfiguration importConfiguration,
+                                                        Map<String, List<String>> presetMetadata)
+            throws IOException, ImportException {
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+        Process importedProcess = importService.importProcess(recordId, 1, 1,
+                importConfiguration, presetMetadata);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }

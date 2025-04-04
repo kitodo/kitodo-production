@@ -11,11 +11,11 @@
 
 package org.kitodo.production.migration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -25,7 +25,7 @@ public class XmlGeneratorIT {
 
     private static Template template;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -33,7 +33,7 @@ public class XmlGeneratorIT {
         template = ServiceManager.getTemplateService().getById(1);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -56,7 +56,7 @@ public class XmlGeneratorIT {
                 + "        </bpmn2:scriptTask>\n"
                 + "        <bpmn2:sequenceFlow id=\"SequenceFlow_2\" sourceRef=\"Task_1\" targetRef=\"Task_2\"/>\n";
 
-        assertEquals("Generate task is incorrect!", expected, taskString);
+        assertEquals(expected, taskString, "Generate task is incorrect!");
     }
 
     @Test
@@ -75,7 +75,7 @@ public class XmlGeneratorIT {
                 + "        </bpmn2:task>\n"
                 + "        <bpmn2:sequenceFlow id=\"SequenceFlow_1\" sourceRef=\"StartEvent_1\" targetRef=\"Task_1\"/>\n";
 
-        assertEquals("Generate task is incorrect!", expected, taskString);
+        assertEquals(expected, taskString, "Generate task is incorrect!");
     }
 
     @Test
@@ -93,6 +93,6 @@ public class XmlGeneratorIT {
                 + "                </bpmndi:BPMNLabel>\n"
                 + "            </bpmndi:BPMNEdge>\n";
 
-        assertEquals("Generate task shaped is incorrect!", expected, taskString);
+        assertEquals(expected, taskString, "Generate task shaped is incorrect!");
     }
 }

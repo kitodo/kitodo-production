@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -85,6 +86,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
@@ -94,11 +96,11 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
 import org.opensearch.node.Node;
 import org.opensearch.transport.Netty4Plugin;
-import java.nio.file.Path;
 
 /**
  * Insert data to test database.
@@ -120,10 +122,13 @@ public class MockDatabase {
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
     public static final String MEDIA_RENAMING_TEST_PROCESS_TITLE = "Rename media";
+    public static final String DRAG_N_DROP_TEST_PROCESS_TITLE = "Drag'n'drop";
+    public static final String CREATE_STRUCTURE_PROCESS_TITLE = "Create_Structure_Element";
     public static final String HIERARCHY_PARENT = "HierarchyParent";
     public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
     public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
     public static final String HIERARCHY_CHILD_TO_ADD = "HierarchyChildToAdd";
+    public static final int PORT = 8888;
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -381,6 +386,12 @@ public class MockDatabase {
         // Rename media files
         authorities.add(new Authority("renameMedia" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("renameMedia" + CLIENT_ASSIGNABLE));
+
+        // Assign import configurations to clients
+        authorities.add(new Authority("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE));
+
+        // Use mass import
+        authorities.add(new Authority("useMassImport" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
             ServiceManager.getAuthorityService().save(authority);
@@ -675,6 +686,97 @@ public class MockDatabase {
         ProcessTestUtils.logTestProcessInfo(seventhProcess);
         testProcesses.put(seventhProcess.getTitle(), seventhProcess.getId());
         return testProcesses;
+    }
+
+    private static ImportConfiguration insertEadImportConfiguration() throws DAOException {
+        // EAD mapping files (for "file" and "collection" level)
+        MappingFile eadMappingFile = new MappingFile();
+        eadMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
+        eadMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        eadMappingFile.setFile("ead2kitodo.xsl");
+        eadMappingFile.setTitle("EAD to Kitodo");
+        ServiceManager.getMappingFileService().save(eadMappingFile);
+
+        MappingFile eadParentMappingFile = new MappingFile();
+        eadParentMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
+        eadParentMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        eadParentMappingFile.setFile("eadParent2kitodo.xsl");
+        eadParentMappingFile.setTitle("EAD Parent to Kitodo");
+        ServiceManager.getMappingFileService().save(eadParentMappingFile);
+
+        // EAD upload import configuration
+        ImportConfiguration eadUploadConfiguration = new ImportConfiguration();
+        eadUploadConfiguration.setTitle("EAD upload configuration");
+        eadUploadConfiguration.setConfigurationType(ImportConfigurationType.FILE_UPLOAD.name());
+        eadUploadConfiguration.setMetadataFormat(MetadataFormat.EAD.name());
+        eadUploadConfiguration.setReturnFormat(FileFormat.XML.name());
+        eadUploadConfiguration.setMappingFiles(Collections.singletonList(eadMappingFile));
+        eadUploadConfiguration.setParentMappingFile(eadParentMappingFile);
+        ServiceManager.getImportConfigurationService().save(eadUploadConfiguration);
+        return eadUploadConfiguration;
+    }
+
+    private static Template insertEadTemplate(Ruleset eadRuleset, Project eadImportProject, Client client)
+            throws DAOException {
+        Task firstTask = new Task();
+        firstTask.setTitle("Open");
+        firstTask.setOrdering(1);
+        firstTask.setRepeatOnCorrection(true);
+        firstTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        firstTask.setProcessingStatus(TaskStatus.OPEN);
+
+        Task secondTask = new Task();
+        secondTask.setTitle("Locked");
+        secondTask.setOrdering(2);
+        secondTask.setRepeatOnCorrection(true);
+        secondTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        secondTask.setTypeImagesWrite(true);
+        secondTask.setProcessingStatus(TaskStatus.LOCKED);
+
+        List<Task> tasks = Arrays.asList(firstTask, secondTask);
+
+        // EAD template
+        Template eadTemplate = new Template();
+        eadTemplate.setTitle("EAD template");
+        eadTemplate.setRuleset(eadRuleset);
+        eadTemplate.getProjects().add(eadImportProject);
+        eadTemplate.setClient(client);
+        ServiceManager.getTemplateService().save(eadTemplate);
+        eadTemplate.setTasks(tasks);
+        Role role = ServiceManager.getRoleService().getById(1);
+        for (Task task : eadTemplate.getTasks()) {
+            task.setTemplate(eadTemplate);
+            task.getRoles().add(role);
+            role.getTasks().add(task);
+            ServiceManager.getTaskService().save(task);
+        }
+        return eadTemplate;
+    }
+
+    public static Project insertProjectForEadImport(User user, Client client) throws DAOException {
+
+        // EAD ruleset
+        Ruleset eadRuleset = new Ruleset();
+        eadRuleset.setTitle("EAD ruleset");
+        eadRuleset.setFile("ruleset_ead.xml");
+        eadRuleset.setClient(client);
+        ServiceManager.getRulesetService().save(eadRuleset);
+
+        ImportConfiguration eadUploadConfiguration = insertEadImportConfiguration();
+
+        // EAD project
+        Project eadImportProject = new Project();
+        eadImportProject.setTitle("EAD test project");
+        eadImportProject.getUsers().add(user);
+        eadImportProject.setClient(client);
+        eadImportProject.setDefaultImportConfiguration(eadUploadConfiguration);
+        ServiceManager.getProjectService().save(eadImportProject);
+
+        Template eadTemplate = insertEadTemplate(eadRuleset, eadImportProject, client);
+
+        eadImportProject.getTemplates().add(eadTemplate);
+        ServiceManager.getProjectService().save(eadImportProject);
+        return eadImportProject;
     }
 
     /**
@@ -1042,6 +1144,26 @@ public class MockDatabase {
     }
 
     /**
+     * Add test process for moving pages via mouse drag'n'drop.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForDragNDropTestIntoSecondProject() throws DAOException {
+        return insertTestProcessIntoSecondProject(DRAG_N_DROP_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for creating structure elements.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForCreatingStructureElementIntoSecondProject() throws DAOException {
+        return insertTestProcessIntoSecondProject(CREATE_STRUCTURE_PROCESS_TITLE);
+    }
+
+    /**
      * Insert test process for media reference updates into database.
      * @return database ID of created test process
      * @throws DAOException when loading test project fails
@@ -1358,6 +1480,7 @@ public class MockDatabase {
         Role metadataRole = ServiceManager.getRoleService().getById(6);
         Role databaseRole = ServiceManager.getRoleService().getById(7);
         Role renameMediaRole = ServiceManager.getRoleService().getById(8);
+        Role clientAdminRole = ServiceManager.getRoleService().getById(9);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1400,6 +1523,8 @@ public class MockDatabase {
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         thirdUser.getRoles().add(adminRole);
+        thirdUser.getRoles().add(clientAdminRole);
+        thirdUser.getClients().add(secondClient);
         ServiceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
@@ -1438,22 +1563,26 @@ public class MockDatabase {
 
     private static void insertRoles() throws DAOException {
         List<Authority> allAuthorities = ServiceManager.getAuthorityService().getAll();
-        Client client = ServiceManager.getClientService().getById(1);
+        Client firstClient = ServiceManager.getClientService().getById(1);
+        Client secondClient = ServiceManager.getClientService().getById(2);
 
         Role firstRole = new Role();
         firstRole.setTitle("Admin");
-        firstRole.setClient(client);
+        firstRole.setClient(firstClient);
 
         // insert administration authorities
         for (int i = 0; i < 34; i++) {
             firstRole.getAuthorities().add(allAuthorities.get(i));
         }
 
+        firstRole.getAuthorities().add(ServiceManager.getAuthorityService()
+                .getByTitle("useMassImport" + CLIENT_ASSIGNABLE));
+
         ServiceManager.getRoleService().save(firstRole);
 
         Role secondRole = new Role();
         secondRole.setTitle("General");
-        secondRole.setClient(client);
+        secondRole.setClient(firstClient);
 
         // insert general authorities
         for (int i = 34; i < allAuthorities.size(); i++) {
@@ -1464,7 +1593,7 @@ public class MockDatabase {
 
         Role thirdRole = new Role();
         thirdRole.setTitle("Random for first");
-        thirdRole.setClient(client);
+        thirdRole.setClient(firstClient);
 
         // insert authorities for view on projects page
         List<Authority> userAuthoritiesForFirst = new ArrayList<>();
@@ -1494,12 +1623,12 @@ public class MockDatabase {
 
         Role fifthUserGroup = new Role();
         fifthUserGroup.setTitle("Without authorities");
-        fifthUserGroup.setClient(client);
+        fifthUserGroup.setClient(firstClient);
         ServiceManager.getRoleService().save(fifthUserGroup);
 
         Role sixthRole = new Role();
         sixthRole.setTitle("With partial metadata editor authorities");
-        sixthRole.setClient(client);
+        sixthRole.setClient(firstClient);
 
         // insert authorities to view metadata and gallery in metadata editor, but not structure data
         List<Authority> userMetadataAuthorities = new ArrayList<>();
@@ -1513,7 +1642,7 @@ public class MockDatabase {
         // insert database authority
         Role databaseStatisticsRole = new Role();
         databaseStatisticsRole.setTitle("Database management role");
-        databaseStatisticsRole.setClient(client);
+        databaseStatisticsRole.setClient(firstClient);
 
         List<Authority> databaseStatisticAuthorities = new ArrayList<>();
         databaseStatisticAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
@@ -1524,11 +1653,19 @@ public class MockDatabase {
         // insert media renaming role
         Role renameMediaRole = new Role();
         renameMediaRole.setTitle("Rename process media files");
-        renameMediaRole.setClient(client);
+        renameMediaRole.setClient(firstClient);
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + GLOBAL_ASSIGNABLE)));
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + CLIENT_ASSIGNABLE)));
 
         ServiceManager.getRoleService().save(renameMediaRole);
+
+        // insert client admin role
+        Role clientAdminRole = new Role();
+        clientAdminRole.setTitle("Client administrator");
+        clientAdminRole.setClient(secondClient);
+        clientAdminRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE)));
+
+        ServiceManager.getRoleService().save(clientAdminRole);
     }
 
     private static void insertUserFilters() throws DAOException {
@@ -1622,10 +1759,13 @@ public class MockDatabase {
     }
 
     public static void insertImportConfigurations() throws DAOException {
+        Client firstClient = ServiceManager.getClientService().getById(1);
+        Client secondClient = ServiceManager.getClientService().getById(2);
+        List<Client> clients = Arrays.asList(firstClient, secondClient);
 
         // add GBV import configuration, including id and default search fields
         ImportConfiguration gbvConfiguration = new ImportConfiguration();
-        gbvConfiguration.setTitle("GBV");
+        gbvConfiguration.setTitle(TestConstants.GBV);
         gbvConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         gbvConfiguration.setSruVersion("1.2");
@@ -1645,11 +1785,12 @@ public class MockDatabase {
         gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
         gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
+        gbvConfiguration.setClients(clients);
         ServiceManager.getImportConfigurationService().save(gbvConfiguration);
 
         // add Kalliope import configuration, including id search field
         ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
-        kalliopeConfiguration.setTitle("Kalliope");
+        kalliopeConfiguration.setTitle(TestConstants.KALLIOPE);
         kalliopeConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         kalliopeConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         kalliopeConfiguration.setSruVersion("1.2");
@@ -1657,7 +1798,7 @@ public class MockDatabase {
         kalliopeConfiguration.setHost("localhost");
         kalliopeConfiguration.setScheme("http");
         kalliopeConfiguration.setPath("/sru");
-        kalliopeConfiguration.setPort(8888);
+        kalliopeConfiguration.setPort(PORT);
         kalliopeConfiguration.setPrestructuredImport(false);
         kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
         kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
@@ -1665,12 +1806,12 @@ public class MockDatabase {
                 .getById(1)));
 
         SearchField idSearchFieldKalliope = new SearchField();
-        idSearchFieldKalliope.setValue("ead.id");
+        idSearchFieldKalliope.setValue(TestConstants.EAD_ID);
         idSearchFieldKalliope.setLabel("Identifier");
         idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
         SearchField parentIdSearchFieldKalliope = new SearchField();
-        parentIdSearchFieldKalliope.setValue("context.ead.id");
+        parentIdSearchFieldKalliope.setValue(TestConstants.EAD_PARENT_ID);
         parentIdSearchFieldKalliope.setLabel("Parent ID");
         parentIdSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
@@ -1683,11 +1824,12 @@ public class MockDatabase {
 
         kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
         kalliopeConfiguration.setParentSearchField(kalliopeConfiguration.getSearchFields().get(1));
+        kalliopeConfiguration.setClients(Collections.singletonList(firstClient));
         ServiceManager.getImportConfigurationService().save(kalliopeConfiguration);
 
         // add K10Plus import configuration, including id search field
         ImportConfiguration k10plusConfiguration = new ImportConfiguration();
-        k10plusConfiguration.setTitle("K10Plus");
+        k10plusConfiguration.setTitle(TestConstants.K10PLUS);
         k10plusConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         k10plusConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         k10plusConfiguration.setSruVersion("1.1");
@@ -1695,7 +1837,8 @@ public class MockDatabase {
         k10plusConfiguration.setHost("localhost");
         k10plusConfiguration.setScheme("http");
         k10plusConfiguration.setPath("/sru");
-        k10plusConfiguration.setPort(8888);
+        k10plusConfiguration.setPort(PORT);
+        k10plusConfiguration.setDefaultImportDepth(1);
         k10plusConfiguration.setPrestructuredImport(false);
         k10plusConfiguration.setReturnFormat(FileFormat.XML.name());
         k10plusConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
@@ -1721,6 +1864,7 @@ public class MockDatabase {
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
         k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
+        k10plusConfiguration.setClients(clients);
         ServiceManager.getImportConfigurationService().save(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {
@@ -1747,7 +1891,7 @@ public class MockDatabase {
         customConfiguration.setHost("localhost");
         customConfiguration.setScheme("http");
         customConfiguration.setPath("/custom");
-        customConfiguration.setPort(8888);
+        customConfiguration.setPort(PORT);
         customConfiguration.setPrestructuredImport(false);
         customConfiguration.setReturnFormat(FileFormat.XML.name());
         customConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
@@ -2105,6 +2249,23 @@ public class MockDatabase {
      * @param numberOfRecords URL parameter containing maximum number of records associated with this endpoint
      * @throws IOException when reading the response file fails
      */
+    public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
+                                             int startRecord, int numberOfRecords)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/sru"),
+                            parameter("operation", "searchRetrieve"),
+                            parameter("recordSchema", format),
+                            parameter("startRecord", String.valueOf(startRecord)),
+                            parameter("maximumRecords", String.valueOf(numberOfRecords)),
+                            parameter("query", query))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
+
+    }
+
     public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
                                              int numberOfRecords)
             throws IOException {

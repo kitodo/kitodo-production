@@ -12,7 +12,7 @@
  *
 -->
 
-<xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:kitodo="http://www.kitodo.org/logfile" exclude-result-prefixes="fo">
     <xsl:output method="xml" indent="yes"/>

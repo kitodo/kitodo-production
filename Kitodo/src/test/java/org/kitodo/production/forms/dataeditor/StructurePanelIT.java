@@ -11,11 +11,12 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Process;
 import org.primefaces.model.DefaultTreeNode;
 
@@ -38,6 +39,6 @@ public class StructurePanelIT {
         addParentLinksRecursive.setAccessible(true);
         addParentLinksRecursive.invoke(underTest, child, result);
 
-        Assert.assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
+        assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
     }
 }

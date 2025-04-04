@@ -11,8 +11,11 @@
 
 package org.kitodo.dataeditor;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.kitodo.constants.StringConstants.KITODO;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class MetsKitodoNamespacePrefixMapperTest {
     MetsKitodoNamespacePrefixMapper mapper = new MetsKitodoNamespacePrefixMapper();
@@ -23,10 +26,9 @@ public class MetsKitodoNamespacePrefixMapperTest {
         String preferredMetsPrefix = mapper.getPreferredPrefix("http://www.loc.gov/METS/", null, true);
         String preferredXlinkPrefix = mapper.getPreferredPrefix("http://www.w3.org/1999/xlink", null, true);
         String notExistingPrefix = mapper.getPreferredPrefix("http://not.existing", "return this", true);
-        Assert.assertEquals("Prefix mapper return the wrong prefix for kitodo uri", "kitodo", preferredKitodoPrefix);
-        Assert.assertEquals("Prefix mapper return the wrong prefix for mets uri", "mets", preferredMetsPrefix);
-        Assert.assertEquals("Prefix mapper return the wrong prefix for xlink uri", "xlink", preferredXlinkPrefix);
-        Assert.assertEquals("Prefix mapper return the wrong prefix for not existing uri", "return this",
-            notExistingPrefix);
+        assertEquals(KITODO, preferredKitodoPrefix, "Prefix mapper return the wrong prefix for kitodo uri");
+        assertEquals("mets", preferredMetsPrefix, "Prefix mapper return the wrong prefix for mets uri");
+        assertEquals("xlink", preferredXlinkPrefix, "Prefix mapper return the wrong prefix for xlink uri");
+        assertEquals("return this", notExistingPrefix, "Prefix mapper return the wrong prefix for not existing uri");
     }
 }

@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -51,6 +52,7 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -286,7 +288,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
      */
-    public boolean nextStep() throws ConfigurationException, DAOException, IOException,
+    public boolean nextStep() throws ConfigurationException, DAOException, DataException, IOException,
             ProcessGenerationException, DoctypeMissingException, CommandException {
 
         if (currentStep == 0) {
@@ -500,7 +502,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                     (one, another) -> one + ", " + another));
     }
 
-    private void createProcess(int index) throws DAOException, IOException, ProcessGenerationException,
+    private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
             CommandException {
         final long begin = System.nanoTime();
 
@@ -522,6 +524,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         yearProcess.getChildren().add(getGeneratedProcess());
         processService.save(getGeneratedProcess());
         createMetadataFileForProcess(individualIssuesForProcess, title);
+        processService.save(getGeneratedProcess());
 
         if (logger.isTraceEnabled()) {
             logger.trace("Creating newspaper process {} took {} ms", title,
@@ -577,6 +580,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             processDay.getChildren().add(processIssue);
 
             LogicalDivision yearIssue = new LogicalDivision();
+            yearIssue.setType(issueDivisionView.getId());
             LinkedMetsResource linkToProcess = new LinkedMetsResource();
             linkToProcess.setLoctype("Kitodo.Production");
             linkToProcess.setUri(processService.getProcessURI(getGeneratedProcess()));
@@ -747,7 +751,10 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         link.setLoctype("Kitodo.Production");
         link.setUri(processService.getProcessURI(getGeneratedProcess()));
         newYearChild.setLink(link);
+        newYearChild.setOrderlabel(yearMark);
         overallWorkpiece.getLogicalStructure().getChildren().add(newYearChild);
+        overallWorkpiece.getLogicalStructure().getChildren().sort(Comparator.comparing(LogicalDivision::getOrderlabel,
+                Comparator.nullsLast(Comparator.naturalOrder())));
 
         LogicalDivision logicalStructure = new LogicalDivision();
         logicalStructure.setType(yearType);
@@ -785,6 +792,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         createdChild.setType(childType);
         MetadataEditor.writeMetadataEntry(createdChild, identifierMetadata, identifierMetadataValue);
         logicalDivision.getChildren().add(createdChild);
+        logicalDivision.getChildren().sort(Comparator.comparing(LogicalDivision::getOrderlabel,
+                Comparator.nullsLast(Comparator.naturalOrder())));
         return createdChild;
     }
 

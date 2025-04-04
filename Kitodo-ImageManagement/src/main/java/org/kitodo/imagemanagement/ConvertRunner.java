@@ -51,7 +51,7 @@ class ConvertRunner {
     /**
      * Default timeout.
      */
-    private static final int DEFAULT_TIMEOUT_MINS = (int) TimeUnit.MINUTES.convert(2, TimeUnit.HOURS);
+    private static final int DEFAULT_TIMEOUT_SECS = (int) TimeUnit.SECONDS.convert(2, TimeUnit.HOURS);
 
     /**
      * {@code convert} command, optionally with full path.
@@ -72,7 +72,7 @@ class ConvertRunner {
         OutputStream outAndErr = new ByteArrayOutputStream();
         executor.setStreamHandler(new PumpStreamHandler(outAndErr));
 
-        long timeoutMillis = 1000 * KitodoConfig.getIntParameter(ParameterImageManagement.TIMEOUT_SEC, DEFAULT_TIMEOUT_MINS);
+        long timeoutMillis = 1000L * KitodoConfig.getIntParameter(ParameterImageManagement.TIMEOUT_SEC, DEFAULT_TIMEOUT_SECS);
         executor.setWatchdog(new ExecuteWatchdog(timeoutMillis));
 
         CommandLine command;

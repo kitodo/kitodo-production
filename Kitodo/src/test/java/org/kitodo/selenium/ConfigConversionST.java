@@ -12,16 +12,16 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
@@ -29,6 +29,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.openqa.selenium.By;
 
 public class ConfigConversionST extends BaseTestSelenium {
 
@@ -37,12 +38,12 @@ public class ConfigConversionST extends BaseTestSelenium {
     private static final String GBV = "GBV";
     private static final String K10PLUS = "K10Plus";
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
     }
@@ -61,7 +62,12 @@ public class ConfigConversionST extends BaseTestSelenium {
         assertEquals(MODS_2_KITODO, importConfigurationsTab.getMappingFileTitle());
         importConfigurationsTab.selectInputFormatMods();
         importConfigurationsTab.selectOutputFormatKitodo();
-        importConfigurationsTab.clickMappingFileOkButton();
+        await("Wait for 'confirm mapping' button to be enabled")
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                        .atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                        .until(() -> Browser.getDriver().findElement(By.id("mappingFileFormatsForm:ok")).isEnabled());
+        Browser.getDriver().findElement(By.id("mappingFileFormatsForm:ok")).click();
 
         await("Wait for 'Results' dialog to be displayed")
                 .atMost(5, TimeUnit.SECONDS)

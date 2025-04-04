@@ -11,7 +11,7 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.exceptions.ConfigurationException;
 
 /**
  * A string selector will always return the string used to create it. It can be

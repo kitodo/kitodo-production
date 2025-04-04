@@ -11,26 +11,26 @@
 
 package org.kitodo.docket;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ExportDocketTest {
     private DocketDataGenerator docketDataGenerator;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.docketDataGenerator = new DocketDataGenerator();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         new File("docket.pdf").delete();
     }

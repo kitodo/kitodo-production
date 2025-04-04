@@ -29,7 +29,10 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.data.database.persistence.ImportConfigurationDAO;
 import org.kitodo.data.database.persistence.MappingFileDAO;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
 import org.kitodo.data.database.persistence.UrlParameterDAO;
@@ -157,6 +160,16 @@ public class ImportConfiguration extends BaseBean {
 
     @Column(name = "metadata_record_title_xpath")
     private String metadataRecordTitleXPath;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(name = "client_x_importconfiguration", joinColumns = {
+        @JoinColumn(name = "importconfiguration_id",
+                foreignKey = @ForeignKey(name = "FK_client_x_importconfiguration_importconfiguration_id")) },
+            inverseJoinColumns = {
+                @JoinColumn(name = "client_id",
+                    foreignKey = @ForeignKey(name = "FK_client_x_importconfiguration_client_id")) })
+    private List<Client> clients;
 
     /**
      * Default constructor.
@@ -842,6 +855,28 @@ public class ImportConfiguration extends BaseBean {
         return "";
     }
 
+    /**
+     * Get clients.
+     *
+     * @return value of clients
+     */
+    public List<Client> getClients() {
+        initialize(new ImportConfigurationDAO(), this.clients);
+        if (Objects.isNull(this.clients)) {
+            this.clients = new ArrayList<>();
+        }
+        return clients;
+    }
+
+    /**
+     * Set clients.
+     *
+     * @param clients List of Client
+     */
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -852,5 +887,54 @@ public class ImportConfiguration extends BaseBean {
             return Objects.equals(this.getId(), importConfiguration.getId());
         }
         return false;
+    }
+
+    /**
+     * hashCode method of current class.
+     *
+     * @see java.lang.Object#hashCode()
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                title,
+                description,
+                configurationType,
+                prestructuredImport,
+                interfaceType,
+                returnFormat,
+                metadataFormat,
+                defaultImportDepth,
+                parentElementTrimMode,
+                host,
+                scheme,
+                path,
+                port,
+                anonymousAccess,
+                username,
+                password,
+                queryDelimiter,
+                itemFieldXpath,
+                itemFieldOwnerSubPath,
+                itemFieldOwnerMetadata,
+                itemFieldSignatureSubPath,
+                itemFieldSignatureMetadata,
+                idPrefix,
+                searchFields,
+                urlParameters,
+                defaultSearchField,
+                idSearchField,
+                parentSearchField,
+                defaultTemplateProcess,
+                mappingFiles,
+                parentMappingFile,
+                sruVersion,
+                sruRecordSchema,
+                oaiMetadataPrefix,
+                metadataRecordIdXPath,
+                metadataRecordTitleXPath,
+                clients
+        );
     }
 }

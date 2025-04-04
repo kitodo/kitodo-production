@@ -16,12 +16,12 @@ import static org.mockito.Mockito.when;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public abstract class BasePrimefaceTest {
 
     @Mock
@@ -31,7 +31,7 @@ public abstract class BasePrimefaceTest {
     protected ExternalContext externalContext;
 
 
-    @Before
+    @BeforeEach
     public void initPrimeface() {
         when(facesContext.getExternalContext()).thenReturn(externalContext);
     }

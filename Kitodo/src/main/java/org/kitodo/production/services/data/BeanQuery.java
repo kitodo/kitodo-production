@@ -15,13 +15,15 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
@@ -37,6 +39,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
+    private static final Collection<Integer> NO_HIT = Collections.singletonList(0);
     private final FilterService fileterService = ServiceManager.getFilterService();
     private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;
@@ -44,6 +47,8 @@ public class BeanQuery {
     private final String varName;
     private final Collection<String> extensions = new ArrayList<>();
     private final Collection<String> restrictions = new ArrayList<>();
+    private final List<String> restrictionAlternatives = new ArrayList<>();
+    private boolean indexFiltersAsAlternatives = false;
     private Pair<String, String> sorting = Pair.of("id", "ASC");
     private final Map<String, Pair<FilterField, String>> indexQueries = new HashMap<>();
     private final Map<String, Object> parameters = new HashMap<>();
@@ -129,6 +134,20 @@ public class BeanQuery {
     }
 
     /**
+     * Requires that hits in a specific field must contain specific string.
+     * 
+     * @param field
+     *            field that must have the specified string
+     * @param value
+     *            string that must be contained in the field
+     */
+    public void addStringRestriction(String field, String value) {
+        String parameterName = varName(field);
+        restrictions.add(varName + '.' + field + " = :" + parameterName);
+        parameters.put(parameterName, value);
+    }
+
+    /**
      * Requires that a member with the given ID is in the {@code @ManyToMany}
      * relationship.
      * 
@@ -188,7 +207,7 @@ public class BeanQuery {
             Entry<String, Pair<FilterField, String>> entry = iterator.next();
             Collection<Integer> ids = indexingService.searchIds(beanClass, entry.getValue().getLeft().getSearchField(),
                 entry.getValue().getRight());
-            parameters.put(entry.getKey(), ids);
+            parameters.put(entry.getKey(), ids.isEmpty() ? NO_HIT : ids);
             iterator.remove();
         }
     }
@@ -311,10 +330,14 @@ public class BeanQuery {
                     } else {
                         groupFilters.add(query);
                     }
-                    databaseSearchQueryPart.addParameters(parameterName, parameters);
+                    if (query != DatabaseQueryPart.SQL_FALSE) {
+                        databaseSearchQueryPart.addParameters(parameterName, parameters);
+                    }
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
-                    indexQueryPart.putQueryParameters(varName, parameterName, indexQueries, restrictions);
+                    indexQueryPart.putQueryParameters(varName, parameterName, indexQueries, indexFiltersAsAlternatives
+                            ? restrictionAlternatives
+                            : restrictions);
                 }
             }
             if (groupFilters.size() == 1) {
@@ -327,6 +350,13 @@ public class BeanQuery {
 
     public void defineSorting(String sortField, SortOrder sortOrder) {
         sorting = Pair.of(varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
+    }
+
+    /**
+     * Sets a flag that multiple index query filters are formed as an OR query.
+     */
+    public void setIndexFiltersAsAlternatives() {
+        this.indexFiltersAsAlternatives = true;
     }
 
     /**
@@ -389,6 +419,12 @@ public class BeanQuery {
         for (String extension : extensions) {
             query.append(" INNER JOIN ").append(extension);
         }
+        if (restrictionAlternatives.size() == 1) {
+            restrictions.add(restrictionAlternatives.get(0));
+        } else if (restrictionAlternatives.size() > 1) {
+            restrictions.add(restrictionAlternatives.stream().collect(Collectors.joining(" OR ", "(", ")")));
+        }
+        restrictionAlternatives.clear();
         if (!restrictions.isEmpty()) {
             boolean first = true;
             for (String restriction : restrictions) {

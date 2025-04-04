@@ -18,7 +18,7 @@ import java.util.List;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.OPACConfig;
@@ -28,7 +28,6 @@ import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -38,15 +37,6 @@ public class ImportConfigurationListView extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ImportConfigurationListView.class);
     private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
-
-    /**
-     * Empty default constructor that also sets the LazyBeanModel instance of
-     * this bean.
-     */
-    public ImportConfigurationListView() {
-        super();
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getImportConfigurationService()));
-    }
 
     /**
      * Get import configurations.

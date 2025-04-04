@@ -11,22 +11,27 @@
 
 package org.kitodo.production.interfaces.activemq;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
 import javax.jms.JMSException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -38,17 +43,24 @@ public class TaskActionProcessorIT {
 
     private static final TaskService taskService = ServiceManager.getTaskService();
 
+    private static final File scriptDeleteSymLink = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
+    private static final File scriptCreateDirMeta = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
+
     /**
      * Prepare the data for every test.
      *
      * @throws Exception
      *         if something goes wrong
      */
-    @Before
+    @BeforeEach
     public void prepare() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+        ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
+        ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
     }
 
     /**
@@ -57,21 +69,23 @@ public class TaskActionProcessorIT {
      * @throws Exception
      *         if something goes wrong
      */
-    @After
+    @AfterEach
     public void clean() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
+        ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
+        ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
     }
 
-    @Test(expected = ProcessorException.class)
-    public void testTaskNotFound() throws Exception {
-        processAction(Integer.MIN_VALUE, TaskAction.COMMENT.name(), StringUtils.EMPTY, null);
+    @Test
+    public void testTaskNotFound() {
+        assertThrows(ProcessorException.class, () -> processAction(Integer.MIN_VALUE, TaskAction.COMMENT.name(), StringUtils.EMPTY, null));
     }
 
-    @Test(expected = ProcessorException.class)
-    public void testUnsupportedAction() throws Exception {
-        processAction(9, "UNSUPPORTED", StringUtils.EMPTY, null);
+    @Test
+    public void testUnsupportedAction() {
+        assertThrows(ProcessorException.class, () -> processAction(9, "UNSUPPORTED", StringUtils.EMPTY, null));
     }
 
     /**
@@ -83,11 +97,9 @@ public class TaskActionProcessorIT {
     @Test
     public void testActionProcess() throws Exception {
         Task task = taskService.getById(9);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                task.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
         processAction(task, TaskAction.PROCESS);
-        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be INWORK!");
     }
 
     /**
@@ -96,12 +108,11 @@ public class TaskActionProcessorIT {
      * @throws Exception
      *         if something goes wrong
      */
-    @Test(expected = ProcessorException.class)
+    @Test
     public void testActionProcessWithoutTaskStatusOpen() throws Exception {
         Task task = taskService.getById(8);
-        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                task.getProcessingStatus());
-        processAction(task, TaskAction.PROCESS);
+        assertEquals(TaskStatus.INWORK, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be INWORK!");
+        assertThrows(ProcessorException.class, () -> processAction(task, TaskAction.PROCESS));
     }
 
     /**
@@ -113,11 +124,9 @@ public class TaskActionProcessorIT {
     @Test
     public void testActionClose() throws Exception {
         Task task = taskService.getById(9);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                task.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
         processAction(task, TaskAction.CLOSE);
-        assertEquals("Task '" + task.getTitle() + "' status should be DONE!", TaskStatus.DONE,
-                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.DONE, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be DONE!");
     }
 
     /**
@@ -129,11 +138,9 @@ public class TaskActionProcessorIT {
     @Test
     public void testActionErrorOpen() throws Exception {
         Task inWorkTask = taskService.getById(8);
-        assertEquals("Task '" + inWorkTask.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                inWorkTask.getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, inWorkTask.getProcessingStatus(), "Task '" + inWorkTask.getTitle() + "' status should be INWORK!");
         processAction(inWorkTask, TaskAction.ERROR_OPEN);
-        assertEquals("Task '" + inWorkTask.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                taskService.getById(inWorkTask.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, taskService.getById(inWorkTask.getId()).getProcessingStatus(), "Task '" + inWorkTask.getTitle() + "' status should be INWORK!");
     }
 
     /**
@@ -146,13 +153,10 @@ public class TaskActionProcessorIT {
     public void testActionErrorOpenWithCorrectionTask() throws Exception {
         Task task = taskService.getById(8);
         Task correctionTask = taskService.getById(6);
-        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                task.getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be INWORK!");
         processAction(task, TaskAction.ERROR_OPEN, correctionTask.getId(), 1);
-        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
-                taskService.getById(task.getId()).getProcessingStatus());
-        assertEquals("Correction task '" + correctionTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                taskService.getById(correctionTask.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be LOCKED!");
+        assertEquals(TaskStatus.OPEN, taskService.getById(correctionTask.getId()).getProcessingStatus(), "Correction task '" + correctionTask.getTitle() + "' status should be OPEN!");
     }
 
     /**
@@ -161,12 +165,11 @@ public class TaskActionProcessorIT {
      * @throws Exception
      *         if something goes wrong
      */
-    @Test(expected = ProcessorException.class)
+    @Test
     public void testActionErrorOpenWithoutTaskStatusInWork() throws Exception {
         Task task = taskService.getById(9);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                task.getProcessingStatus());
-        processAction(task, TaskAction.ERROR_OPEN);
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
+        assertThrows(ProcessorException.class, () -> processAction(task, TaskAction.ERROR_OPEN));
     }
 
     /**
@@ -175,10 +178,10 @@ public class TaskActionProcessorIT {
      * @throws Exception
      *         if something goes wrong
      */
-    @Test(expected = ProcessorException.class)
+    @Test
     public void testActionErrorOpenWithoutMessage() throws Exception {
         Task task = taskService.getById(10);
-        processAction(task.getId(), TaskAction.ERROR_OPEN.name(), StringUtils.EMPTY, null);
+        assertThrows(ProcessorException.class, () -> processAction(task.getId(), TaskAction.ERROR_OPEN.name(), StringUtils.EMPTY, null));
     }
 
     /**
@@ -190,11 +193,9 @@ public class TaskActionProcessorIT {
     @Test
     public void testActionErrorClose() throws Exception {
         Task task = taskService.getById(8);
-        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                task.getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be INWORK!");
         processAction(task, TaskAction.ERROR_CLOSE);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
     }
 
     /**
@@ -207,20 +208,15 @@ public class TaskActionProcessorIT {
     public void testActionErrorCloseWithCorrectionTask() throws Exception {
         Task task = taskService.getById(8);
         Task correctionTask = taskService.getById(6);
-        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
-                task.getProcessingStatus());
+        assertEquals(TaskStatus.INWORK, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be INWORK!");
 
         processAction(task, TaskAction.ERROR_OPEN, correctionTask.getId(), 1);
-        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
-                taskService.getById(task.getId()).getProcessingStatus());
-        assertEquals("Correction task '" + correctionTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                taskService.getById(correctionTask.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.LOCKED, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be LOCKED!");
+        assertEquals(TaskStatus.OPEN, taskService.getById(correctionTask.getId()).getProcessingStatus(), "Correction task '" + correctionTask.getTitle() + "' status should be OPEN!");
 
         processAction(task, TaskAction.ERROR_CLOSE, correctionTask.getId(), 2);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                taskService.getById(task.getId()).getProcessingStatus());
-        assertEquals("Correction task '" + correctionTask.getTitle() + "' status should be DONE!", TaskStatus.DONE,
-                taskService.getById(correctionTask.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
+        assertEquals(TaskStatus.DONE, taskService.getById(correctionTask.getId()).getProcessingStatus(), "Correction task '" + correctionTask.getTitle() + "' status should be DONE!");
     }
 
     /**
@@ -229,12 +225,11 @@ public class TaskActionProcessorIT {
      * @throws Exception
      *         if something goes wrong
      */
-    @Test(expected = ProcessorException.class)
+    @Test
     public void testActionErrorCloseWithoutTaskStatusInWork() throws Exception {
         Task task = taskService.getById(9);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                task.getProcessingStatus());
-        processAction(task, TaskAction.ERROR_CLOSE);
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
+        assertThrows(ProcessorException.class, () -> processAction(task, TaskAction.ERROR_CLOSE));
     }
 
     /**
@@ -246,12 +241,10 @@ public class TaskActionProcessorIT {
     @Test
     public void testActionComment() throws Exception {
         Task task = taskService.getById(9);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                task.getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
         processAction(task, TaskAction.COMMENT, null, 1);
         processAction(task, TaskAction.COMMENT, null, 2);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals(TaskStatus.OPEN, taskService.getById(task.getId()).getProcessingStatus(), "Task '" + task.getTitle() + "' status should be OPEN!");
     }
 
     private static void processAction(Task task, TaskAction taskAction) throws JMSException, ProcessorException {
@@ -263,9 +256,8 @@ public class TaskActionProcessorIT {
         String message = "Process action " + taskAction.name();
         processAction(task.getId(), taskAction.name(), message, correctionTaskId);
         List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(task);
-        assertEquals("Comment should be created!", commentCount, comments.size());
-        assertEquals("Comment message should be '" + message + "'!", message,
-                comments.get(commentCount - 1).getMessage());
+        assertEquals(commentCount, comments.size(), "Comment should be created!");
+        assertEquals(message, comments.get(commentCount - 1).getMessage(), "Comment message should be '" + message + "'!");
     }
 
     private static void processAction(Integer taskId, String action, String message, Integer correctionTaskId)

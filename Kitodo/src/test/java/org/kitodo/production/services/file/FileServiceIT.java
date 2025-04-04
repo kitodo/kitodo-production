@@ -11,9 +11,9 @@
 
 package org.kitodo.production.services.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.TreeDeleter;
 import org.kitodo.api.dataformat.MediaVariant;
@@ -60,7 +60,7 @@ public class FileServiceIT {
     private static int mediaRenamingSecondProcessId = -1;
     private static int revertMediaRenamingProcessId = -1;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         FileService fileService = new FileService();
         fileService.createDirectory(URI.create(""), "fileServiceTest");
@@ -70,7 +70,7 @@ public class FileServiceIT {
         MockDatabase.insertFoldersForSecondProject();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         FileService fileService = new FileService();
         fileService.delete(URI.create("fileServiceTest"));
@@ -113,20 +113,20 @@ public class FileServiceIT {
     public void testMetadataImageComparator() {
         MetadataImageComparator metadataImageComparator = ServiceManager.getFileService().getMetadataImageComparator();
 
-        assertEquals(metadataImageComparator.compare("filename2", "filename1"),1);
+        assertEquals(metadataImageComparator.compare("filename2", "filename1"), 1);
 
-        assertEquals(metadataImageComparator.compare("0000001", "0000002"),-1);
+        assertEquals(metadataImageComparator.compare("0000001", "0000002"), -1);
 
         assertEquals(metadataImageComparator.compare("file.name.01", "file.name.02"),-1);
 
         assertEquals(metadataImageComparator.compare(
-                new File("filename_01.tif").toURI(), new File("filename_02.tif").toURI()),-1);
+                new File("filename_01.tif").toURI(), new File("filename_02.tif").toURI()), -1);
 
         assertEquals(metadataImageComparator.compare(
-                new File("0000001.tif").toURI(), new File("0000002.tif").toURI()),-1);
+                new File("0000001.tif").toURI(), new File("0000002.tif").toURI()), -1);
 
         assertEquals(metadataImageComparator.compare(
-                new File("file.name.01.tif").toURI(), new File("file.name.02.tif").toURI()),-1);
+                new File("file.name.01.tif").toURI(), new File("file.name.02.tif").toURI()), -1);
 
     }
 
@@ -211,7 +211,7 @@ public class FileServiceIT {
      *
      * @throws Exception when removing process from database, index or filesystem fails.
      */
-    @AfterClass
+    @AfterAll
     public static void removeDummyAndTestProcesses() throws Exception {
         ProcessTestUtils.removeTestProcess(mediaRenamingFirstProcessId);
         ProcessTestUtils.removeTestProcess(mediaRenamingSecondProcessId);

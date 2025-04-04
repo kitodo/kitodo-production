@@ -45,6 +45,12 @@ public class ProcessDAO extends BaseDAO<Process> {
             offset, size);
     }
 
+    @Override
+    public void save(Process process) throws DAOException {
+        process.dropKeywords();
+        storeObject(process);
+    }
+
     /**
      * Save process with regard to its progress.
      *
@@ -71,6 +77,9 @@ public class ProcessDAO extends BaseDAO<Process> {
      *             procedure failure.
      */
     public void saveList(List<Process> list) throws DAOException {
+        for (Process process : list) {
+            process.dropKeywords();
+        }
         storeList(list);
     }
 

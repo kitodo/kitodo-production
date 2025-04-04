@@ -18,6 +18,9 @@ import static com.xebialabs.restito.semantics.Action.stringContent;
 import static com.xebialabs.restito.semantics.Condition.get;
 import static com.xebialabs.restito.semantics.Condition.parameter;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.xebialabs.restito.server.StubServer;
 
@@ -34,10 +37,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.externaldatamanagement.DataImport;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -61,7 +63,7 @@ public class QueryURLImportTest {
     private static final int PORT = 8888;
     private static final String SRU = "SRU";
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
         server = new StubServer(PORT).run();
         try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_FILE_PATH))) {
@@ -75,16 +77,13 @@ public class QueryURLImportTest {
             NoRecordFoundException {
         QueryURLImport queryURLImport = new QueryURLImport();
         DataRecord importRecord = queryURLImport.getFullRecordById(dataImport, RECORD_ID);
-        Assert.assertNotNull(importRecord);
-        Assert.assertThat("Original data of data record has wrong class!",
-                importRecord.getOriginalData(), instanceOf(String.class));
+        assertNotNull(importRecord);
+        assertThat("Original data of data record has wrong class!", importRecord.getOriginalData(), instanceOf(String.class));
         Document xmlDocument = parseInputStreamToDocument((String) importRecord.getOriginalData());
         NodeList recordIdentifierNodeList = xmlDocument.getElementsByTagName(RECORD_IDENTIFIER);
-        Assert.assertEquals("Wrong number of record identifiers found!", 1,
-                recordIdentifierNodeList.getLength());
+        assertEquals(1, recordIdentifierNodeList.getLength(), "Wrong number of record identifiers found!");
         Element recordIdentifierElement = (Element) recordIdentifierNodeList.item(0);
-        Assert.assertEquals("Wrong record identifier found!", RECORD_IDENTIFIER_VALUE,
-                recordIdentifierElement.getTextContent());
+        assertEquals(RECORD_IDENTIFIER_VALUE, recordIdentifierElement.getTextContent(), "Wrong record identifier found!");
     }
 
     private static void setupServer(String serverResponse) {
@@ -101,7 +100,7 @@ public class QueryURLImportTest {
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,
             IOException, SAXException {
-        try (InputStream inputStream = new ByteArrayInputStream(inputString.getBytes())) {
+        try (InputStream inputStream = new ByteArrayInputStream(inputString.getBytes(StandardCharsets.UTF_8))) {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             return documentBuilderFactory.newDocumentBuilder().parse(inputStream);
         }
@@ -127,7 +126,7 @@ public class QueryURLImportTest {
         return dataImport;
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         server.stop();
     }

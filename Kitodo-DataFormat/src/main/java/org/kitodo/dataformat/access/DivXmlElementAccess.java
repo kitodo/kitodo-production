@@ -11,10 +11,13 @@
 
 package org.kitodo.dataformat.access;
 
+import static org.kitodo.constants.StringConstants.KITODO;
+
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,7 +60,7 @@ public class DivXmlElementAccess extends LogicalDivision {
      * The qualified name of the Kitodo metadata format, needed to assemble the
      * metadata entries in METS using JAXB.
      */
-    private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
+    private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", KITODO);
 
     /**
      * Some magic numbers that are used in the METS XML file representation of
@@ -254,13 +257,14 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
-        smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision).map(physicalDivisionIDs::get)
-                .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId)).collect(Collectors.toList()));
+        smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision)
+            .sorted(Comparator.comparing(PhysicalDivision::getOrder)).map(physicalDivisionIDs::get)
+            .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
-            String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
+            String name = metsReferrerId + ':' + MdSec.DMD_SEC;
             dmdSec.setID(KitodoUUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)));
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);

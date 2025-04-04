@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.data;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,8 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.services.ServiceManager;
@@ -90,11 +91,11 @@ public class ProcessServiceTest {
         Process process = new Process();
         process.setProcessBaseUri(URI.create("relative/path/no/ending/slash"));
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(process);
-        Assert.assertEquals(URI.create("relative/path/no/ending/slash/meta.xml"), uri);
+        assertEquals(URI.create("relative/path/no/ending/slash/meta.xml"), uri);
 
         process.setProcessBaseUri(URI.create("relative/path/with/ending/slash/"));
         uri = ServiceManager.getProcessService().getMetadataFileUri(process);
-        Assert.assertEquals(URI.create("relative/path/with/ending/slash/meta.xml"), uri);
+        assertEquals(URI.create("relative/path/with/ending/slash/meta.xml"), uri);
     }
 
     @Test
@@ -102,13 +103,13 @@ public class ProcessServiceTest {
         Process process = new Process();
         process.setId(42);
         URI uri = ServiceManager.getProcessService().getProcessURI(process);
-        Assert.assertEquals(URI.create("database://?process.id=42"), uri);
+        assertEquals(URI.create("database://?process.id=42"), uri);
     }
 
     @Test
     public void testProcessIdFromUri() {
         URI uri = URI.create("database://?process.id=42");
         int processId = ServiceManager.getProcessService().processIdFromUri(uri);
-        Assert.assertEquals(42, processId);
+        assertEquals(42, processId);
     }
 }

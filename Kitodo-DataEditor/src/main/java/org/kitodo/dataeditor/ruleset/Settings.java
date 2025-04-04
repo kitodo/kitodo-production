@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.kitodo.dataeditor.ruleset.xml.Reimport;
+import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
 
 /**

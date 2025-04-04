@@ -37,6 +37,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.KitodoScriptExecutionException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.GenerationMode;
@@ -204,13 +205,13 @@ public class KitodoScriptService {
                 copyDataToChildren(processes, script);
                 break;
             default:
-                return executeRemainingScript(processes, script);
+                return executeRemainingScript(processes);
         }
         return true;
     }
 
-    private boolean executeRemainingScript(List<Process> processes, String script)
-            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
+    private boolean executeRemainingScript(List<Process> processes)
+            throws IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "generateImages":
@@ -253,10 +254,10 @@ public class KitodoScriptService {
 
     private void deleteData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        try {
-            script = script.replaceFirst("\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
-            DeleteDataScript deleteDataScript = new DeleteDataScript();
-            for (Process process : processes) {
+        script = script.replaceFirst("\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
+        DeleteDataScript deleteDataScript = new DeleteDataScript();
+        for (Process process : processes) {
+            try {
                 currentProcessTitle = process.getTitle();
                 LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
@@ -264,20 +265,20 @@ public class KitodoScriptService {
                 ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
                         ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("deleteDataOk", currentProcessTitle);
+            } catch (IOException | KitodoScriptExecutionException e) {
+                Helper.setErrorMessage("deleteDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
-        } catch (IOException e) {
-            Helper.setErrorMessage("deleteDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
         }
     }
 
     private void copyDataToChildren(List<Process> processes, String script) {
-        String currentProcessTitle = null;
-        try {
-            script = script.replaceFirst("\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
-            AddDataScript addDataScript = new AddDataScript();
-            for (Process parentProcess : processes) {
-                currentProcessTitle = parentProcess.getTitle();
-                List<MetadataScript> metadataScripts = addDataScript.parseScript(script);
+        String currentProcessTitle;
+        script = script.replaceFirst("\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
+        AddDataScript addDataScript = new AddDataScript();
+        for (Process parentProcess : processes) {
+            currentProcessTitle = parentProcess.getTitle();
+            List<MetadataScript> metadataScripts = addDataScript.parseScript(script);
+            try {
                 generateScriptValues(addDataScript, metadataScripts, parentProcess);
                 for (Process child : parentProcess.getChildren()) {
                     LegacyMetsModsDigitalDocumentHelper childMetadataFile = ServiceManager.getProcessService()
@@ -287,9 +288,9 @@ public class KitodoScriptService {
                     }
                 }
                 Helper.setMessage("addDataOk", currentProcessTitle);
+            } catch (IOException | KitodoScriptExecutionException e) {
+                Helper.setErrorMessage("addDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
-        } catch (IOException e) {
-            Helper.setErrorMessage("addDataOk", currentProcessTitle + ":" + e.getMessage(), logger, e);
         }
     }
 
@@ -302,10 +303,10 @@ public class KitodoScriptService {
 
     private void overwriteData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        try {
-            script = script.replaceFirst("\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
-            OverwriteDataScript overwriteDataScript = new OverwriteDataScript();
-            for (Process process : processes) {
+        script = script.replaceFirst("\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
+        OverwriteDataScript overwriteDataScript = new OverwriteDataScript();
+        for (Process process : processes) {
+            try {
                 currentProcessTitle = process.getTitle();
                 LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
@@ -313,9 +314,9 @@ public class KitodoScriptService {
                 ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
                         ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("overwriteDataOk", currentProcessTitle);
+            } catch (IOException | KitodoScriptExecutionException e) {
+                Helper.setErrorMessage("overwriteDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
-        } catch (IOException e) {
-            Helper.setErrorMessage("overwriteDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
         }
     }
 
@@ -373,10 +374,10 @@ public class KitodoScriptService {
 
     private void addData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        try {
-            script = script.replaceFirst("\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
-            AddDataScript addDataScript = new AddDataScript();
-            for (Process process : processes) {
+        script = script.replaceFirst("\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
+        AddDataScript addDataScript = new AddDataScript();
+        for (Process process : processes) {
+            try {
                 currentProcessTitle = process.getTitle();
                 LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
@@ -384,9 +385,9 @@ public class KitodoScriptService {
                 ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
                         ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("addDataOk", currentProcessTitle);
+            } catch (IOException | KitodoScriptExecutionException e) {
+                Helper.setErrorMessage("addDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
-        } catch (IOException e) {
-            Helper.setErrorMessage("addDataError", currentProcessTitle + ":" + e.getMessage(), logger, e);
         }
     }
 
@@ -400,13 +401,13 @@ public class KitodoScriptService {
             Folder generatorSource = process.getProject().getGeneratorSource();
             if (Objects.isNull(generatorSource)) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noSourceFolder",
-                    new String[] {process.getTitle(), process.getProject().getTitle() });
+                    process.getTitle(), process.getProject().getTitle());
                 continue;
             }
             Subfolder sourceFolder = new Subfolder(process, generatorSource);
             if (sourceFolder.listContents().isEmpty()) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noSourceFiles",
-                    new String[] {process.getTitle(), sourceFolder.getRelativeDirectoryPath() });
+                    process.getTitle(), sourceFolder.getRelativeDirectoryPath());
                 continue;
             }
             boolean all = folders.size() == 1 && folders.get(0).equalsIgnoreCase("all");
@@ -422,7 +423,7 @@ public class KitodoScriptService {
             }
             if (outputFolders.isEmpty()) {
                 Helper.setErrorMessage("kitodoScript.generateImages.error.noDestination",
-                    new String[] {process.getTitle(), String.join(", ", ungeneratableFolders) });
+                    process.getTitle(), String.join(", ", ungeneratableFolders));
                 continue;
             }
             ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, generationMode, outputFolders);

@@ -49,7 +49,7 @@ public class BackupFileRotation {
     private String format;
     private Process process;
 
-    public final FileService fileService = ServiceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
 
     /**
      * Start the configured backup.

@@ -31,7 +31,7 @@
         <division id="Volume" withWorkflow="true" processTitle="TSL_ATS+'_'+CatalogIDDigital">
             <label>Band</label>
         </division>
-        <key id="TitleDocMain" domain="source">
+        <key id="TitleDocMain" domain="source" use="structureTreeTitle">
             <label>HauptTitel</label>
         </key>
         <key id="TitleDocMainShort" domain="technical">
@@ -45,6 +45,9 @@
         </key>
         <key id="CatalogIDDigital" use="recordIdentifier">
             <label>PPN (digital)</label>
+        </key>
+        <key id="CatalogIDPredecessorPeriodical" use="higherlevelIdentifier">
+            <label>PPN (Überordnung)</label>
         </key>
         <key id="CatalogIDSource" domain="source">
             <label>PPN (Vorlage)</label>
@@ -135,12 +138,22 @@
             <permit key="CatalogIDDigital" minOccurs="1"/>
             <permit key="CatalogIDSource" minOccurs="1"/>
             <permit key="TSL_ATS"/>
+            <permit key="PublicationYear"/>
             <permit key="ContributorPerson"/>
             <permit key="Person">
                 <permit key="Role" unspecified="forbidden">
                     <permit value="Author"/>
                 </permit>
             </permit>
+        </restriction>
+        <restriction division="MultiVolumeWork" unspecified="forbidden">
+            <permit division="Volume"/>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" minOccurs="1"/>
+            <permit key="CatalogIDDigital" minOccurs="1"/>
+            <permit key="CatalogIDSource" minOccurs="1"/>
+            <permit key="TSL_ATS"/>
+            <permit key="ContributorPerson"/>
         </restriction>
         <restriction division="ContainedWork" unspecified="forbidden">
                 <permit key="TitleDocMain" minOccurs="1"/>

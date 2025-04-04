@@ -14,7 +14,34 @@
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
-var metadataEditor = {};
+var metadataEditor = metadataEditor || {};
+
+metadataEditor.metadataTree = {
+
+    /**
+     * Key down event for all inputText elements in the metadata tree.
+     * If the key is "enter", handle it like a "tab"-event.
+     * @param event the corresponding key down event
+     * @param element the corresponding element
+     */
+    handleKeyDown(event, element) {
+        // Check if the pressed key is 'Enter'
+        if (event.keyCode === 13 || event.key === "Enter") {
+            event.preventDefault();
+            let form = element.form;
+            let focusableElements = Array.from(form.elements).filter((element) => {
+                return element.tabIndex >= 0 && !element.disabled;
+            });
+            let index = focusableElements.indexOf(element);
+            let nextInput = focusableElements[index + 1];
+            if (nextInput) {
+                // Focus on the next input element
+                nextInput.focus();
+            }
+        }
+    },
+
+};
 
 /**
  * Methods and events related to the gallery section of the meta data editor.
@@ -910,6 +937,36 @@ metadataEditor.pagination = {
     }
 };
 
+metadataEditor.detailView = {
+
+    /**
+     * Select the previous or following media when clicking on the navigation buttons of the detail view.
+     * @param {int} delta position delta with respect to currently selected media
+     */
+    navigate(delta) {
+        // find media currently shown in detail view
+        let currentTreeNodeId = $("#imagePreviewForm\\:mediaDetail").data("logicaltreenodeid");
+        if (!currentTreeNodeId) {
+            return;
+        }
+        // find current media in list of thumbnails
+        let thumbnails = $("#imagePreviewForm .thumbnail-container");
+        let currentThumbnail = $("#imagePreviewForm .thumbnail-container[data-logicaltreenodeid='" + currentTreeNodeId + "']");
+        let index = thumbnails.index(currentThumbnail);
+        if (index < 0) {
+            return;
+        }
+        // add delta to find previous or next thumbnail
+        index = Math.min(thumbnails.length - 1, Math.max(0, index + delta));
+        let nextThumbnail = thumbnails.eq(index);
+        let nextTreeNodeId = nextThumbnail.data("logicaltreenodeid");
+        // update selection and trigger reload of detail view
+        metadataEditor.gallery.pages.handleSingleSelect(null, nextThumbnail, nextTreeNodeId);
+        metadataEditor.gallery.pages.handleSelectionUpdates(nextTreeNodeId);
+        scrollToPreviewThumbnail(nextThumbnail, $("#thumbnailStripeScrollableContent"));
+    }    
+};
+
 metadataEditor.contextMenu = {
     listen() {
         document.oncontextmenu = function(event) {
@@ -1120,7 +1177,7 @@ metadataEditor.shortcuts = {
             case "PREVIEW":
                 initialize();
                 scrollToSelectedThumbnail();
-                changeToMapView();
+                metadataEditor.detailMap.update();
                 break;
         }
     }

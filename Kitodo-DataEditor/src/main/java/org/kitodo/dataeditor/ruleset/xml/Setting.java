@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
+
 /**
  * Display settings for the edit mask related to a specific key.
  */

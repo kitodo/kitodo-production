@@ -108,16 +108,20 @@ public class FileManagement implements FileManagementInterface {
 
     private void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
         if (!targetDirectory.exists()) {
+            logger.debug("Creating directory {}", targetDirectory);
             targetDirectory.mkdirs();
         }
+        logger.debug("Copying directory {} as {}", sourceDirectory, targetDirectory);
         FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
     private void copyFile(File sourceFile, File destinationFile) throws IOException {
+        logger.debug("Copying {} as {}", sourceFile, destinationFile);
         FileUtils.copyFile(sourceFile, destinationFile);
     }
 
     private void copyFileToDirectory(File sourceFile, File targetDirectory) throws IOException {
+        logger.debug("Copying {} into directory {}", sourceFile, targetDirectory);
         FileUtils.copyFileToDirectory(sourceFile, targetDirectory);
     }
 
@@ -134,9 +138,11 @@ public class FileManagement implements FileManagementInterface {
         File file = new File(uri);
         if (file.exists()) {
             if (file.isFile()) {
+                logger.debug("{} is a regular file, deleting it", file);
                 return Files.deleteIfExists(file.toPath());
             }
             if (file.isDirectory()) {
+                logger.debug("{} is a directory, deleting it", file);
                 FileUtils.deleteDirectory(file);
                 return true;
             }
@@ -563,6 +569,7 @@ public class FileManagement implements FileManagementInterface {
         return decodedPath;
     }
 
+    @Override
     public File getFile(URI uri) {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri);

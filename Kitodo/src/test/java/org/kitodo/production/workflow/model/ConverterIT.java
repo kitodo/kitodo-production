@@ -1,18 +1,28 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.workflow.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -21,16 +31,13 @@ import org.kitodo.production.helper.Helper;
 
 public class ConverterIT {
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertRolesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -41,13 +48,12 @@ public class ConverterIT {
         Converter converter = new Converter("gateway-test1");
 
         List<Task> tasks = converter.validateWorkflowTaskList();
-        assertEquals("Process definition - workflow was read incorrectly!", 5, tasks.size());
+        assertEquals(5, tasks.size(), "Process definition - workflow was read incorrectly!");
 
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));
 
         assertCorrectTask(tasks.get(0), "Task1", 1);
-        assertFalse("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(0).isLast());
+        assertFalse(tasks.get(0).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
 
         assertCorrectTask(tasks.get(1), "ScriptTask", 2, "/mets:mets/mets:metsHdr");
 
@@ -56,8 +62,7 @@ public class ConverterIT {
         assertCorrectTask(tasks.get(3), "Task4", 2, "/mets:mets/mets:dmdSec/mets:mdWrap/mets:xmlData/kitodo:kitodo");
 
         assertCorrectTask(tasks.get(4), "Task5", 3);
-        assertTrue("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(4).isLast());
+        assertTrue(tasks.get(4).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
     }
 
     @Test
@@ -66,18 +71,16 @@ public class ConverterIT {
 
         Template template = new Template();
         converter.convertWorkflowToTemplate(template);
-        assertEquals("Process definition - workflow was read incorrectly!", 5, template.getTasks().size());
+        assertEquals(5, template.getTasks().size(), "Process definition - workflow was read incorrectly!");
 
         List<Task> tasks = template.getTasks();
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));
 
         assertCorrectTask(tasks.get(0), "Task1", 1);
-        assertFalse("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(0).isLast());
+        assertFalse(tasks.get(0).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
 
         assertCorrectTask(tasks.get(0), "Task1", 1);
-        assertFalse("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(0).isLast());
+        assertFalse(tasks.get(0).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
 
         assertCorrectTask(tasks.get(1), "ScriptTask", 2, "/mets:mets/mets:metsHdr");
 
@@ -86,8 +89,7 @@ public class ConverterIT {
         assertCorrectTask(tasks.get(3), "Task4", 2, "/mets:mets/mets:dmdSec/mets:mdWrap/mets:xmlData/kitodo:kitodo");
 
         assertCorrectTask(tasks.get(4), "Task5", 3);
-        assertTrue("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(4).isLast());
+        assertTrue(tasks.get(4).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
     }
 
     @Test
@@ -95,10 +97,8 @@ public class ConverterIT {
         Converter converter = new Converter("gateway-test2");
 
         Template template = new Template();
-        exception.expect(WorkflowException.class);
-        exception.expectMessage(Helper.getTranslation("workflowExceptionParallelBranch",
-            "Task9"));
-        converter.convertWorkflowToTemplate(template);
+        Exception exception = assertThrows(WorkflowException.class, () -> converter.convertWorkflowToTemplate(template));
+        assertEquals(Helper.getTranslation("workflowExceptionParallelBranch", "Task9"), exception.getMessage());
     }
 
     @Test
@@ -106,10 +106,8 @@ public class ConverterIT {
         Converter converter = new Converter("gateway-test4");
 
         Template template = new Template();
-        exception.expect(WorkflowException.class);
-        exception.expectMessage(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
-            "Task1"));
-        converter.convertWorkflowToTemplate(template);
+        Exception exception = assertThrows(WorkflowException.class, () -> converter.convertWorkflowToTemplate(template));
+        assertEquals(Helper.getTranslation("workflowExceptionMissingRoleAssignment", "Task1"), exception.getMessage());
     }
 
     @Test
@@ -118,32 +116,28 @@ public class ConverterIT {
 
         Template template = new Template();
         converter.convertWorkflowToTemplate(template);
-        assertEquals("Process definition - workflow was read incorrectly!", 7, template.getTasks().size());
+        assertEquals(7, template.getTasks().size(), "Process definition - workflow was read incorrectly!");
 
         List<Task> tasks = template.getTasks();
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));
 
         assertCorrectTask(tasks.get(0), "Task1", 1);
-        assertFalse("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(0).isLast());
+        assertFalse(tasks.get(0).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
 
         assertCorrectTask(tasks.get(1), "Task2", 2);
 
         assertCorrectTask(tasks.get(2), "Task3", 3, "type=2");
-        assertFalse("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(2).isLast());
+        assertFalse(tasks.get(2).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
 
         assertCorrectTask(tasks.get(3), "Task7", 3, "type=1");
-        assertTrue("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(3).isLast());
+        assertTrue(tasks.get(3).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
 
         assertCorrectTask(tasks.get(4), "Task4", 4, "type=2");
 
         assertCorrectTask(tasks.get(5), "Task5", 4, "type=2");
 
         assertCorrectTask(tasks.get(6), "Task6", 5, "type=2");
-        assertTrue("Process definition - workflow's task last property were determined incorrectly!",
-            tasks.get(6).isLast());
+        assertTrue(tasks.get(6).isLast(), "Process definition - workflow's task last property were determined incorrectly!");
     }
 
     private void assertCorrectTask(Task task, String title, int ordering) {
@@ -151,12 +145,10 @@ public class ConverterIT {
     }
 
     private void assertCorrectTask(Task task, String title, int ordering, String workflowCondition) {
-        assertEquals("Process definition - workflow's task title was read incorrectly!", title, task.getTitle());
-        assertEquals("Process definition - workflow's task ordering was determined incorrectly!", ordering,
-            task.getOrdering().intValue());
+        assertEquals(title, task.getTitle(), "Process definition - workflow's task title was read incorrectly!");
+        assertEquals(ordering, task.getOrdering().intValue(), "Process definition - workflow's task ordering was determined incorrectly!");
         if (Objects.nonNull(workflowCondition)) {
-            assertEquals("Process definition - workflow's task conditions were determined incorrectly!", workflowCondition,
-                    task.getWorkflowCondition().getValue());
+            assertEquals(workflowCondition, task.getWorkflowCondition().getValue(), "Process definition - workflow's task conditions were determined incorrectly!");
         }
     }
 }

@@ -12,36 +12,36 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.with;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.awaitility.Durations;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 
 public class IndexingST extends BaseTestSelenium {
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void reindexingTest() throws Exception {
-        Assert.assertTrue(true);
+        assertTrue(true);
         Pages.getSystemPage().goTo().startReindexingAll();
 
         Predicate<String> isIndexingFinished = (d) -> {

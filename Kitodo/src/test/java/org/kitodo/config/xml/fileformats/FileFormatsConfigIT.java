@@ -11,44 +11,34 @@
 
 package org.kitodo.config.xml.fileformats;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Locale;
 import java.util.Locale.LanguageRange;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
+
 
 public class FileFormatsConfigIT {
     @Test
     public void testFileFormatsConfig() throws JAXBException {
-        assertEquals("kitodo_fileFormats.xml does not contain exactly 8 entries", 8,
-            FileFormatsConfig.getFileFormats().size());
+        assertEquals(8, FileFormatsConfig.getFileFormats().size(), "kitodo_fileFormats.xml does not contain exactly 8 entries");
 
         FileFormat tiff = FileFormatsConfig.getFileFormat("image/tiff").get();
-        assertEquals("Wrong label of TIFF file format", "Tagged Image File Format (image/tiff, *.tif)",
-            tiff.getLabel());
-        assertEquals("Wrong label with declared language range of TIFF file format",
-            "Tagged Image File Format (image/tiff, *.tif)",
-            tiff.getLabel(Locale.LanguageRange.parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")));
-        assertTrue("Long time preservation validation file type is missing for TIFF file format",
-            tiff.getFileType().isPresent());
-        assertEquals("Image management file format of TIFF file format is not TIFF", ImageFileFormat.TIFF,
-            tiff.getImageFileFormat().get());
+        assertEquals("Tagged Image File Format (image/tiff, *.tif)", tiff.getLabel(), "Wrong label of TIFF file format");
+        assertEquals("Tagged Image File Format (image/tiff, *.tif)", tiff.getLabel(LanguageRange.parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")), "Wrong label with declared language range of TIFF file format");
+        assertTrue(tiff.getFileType().isPresent(), "Long time preservation validation file type is missing for TIFF file format");
+        assertEquals(ImageFileFormat.TIFF, tiff.getImageFileFormat().get(), "Image management file format of TIFF file format is not TIFF");
     }
 
     @Test
     public void testFileFormatsConfigTransliteration() throws JAXBException {
         FileFormat gif = FileFormatsConfig.getFileFormat("image/gif").get();
-        assertEquals("Wrong label without declared language of GIF file format",
-            "Graphics Interchange Format (image/gif, *.gif)", gif.getLabel());
-        assertEquals("Wrong label for language requesting arab of GIF file format",
-            "تنسيق تبادل الرسومات (image/gif, *.gif)", gif.getLabel(LanguageRange.parse("fr;q=0.9,ar;q=0.4,*;q=0.2")));
-        assertEquals("Wrong label for language requesting no specialized label of GIF file format",
-            "Graphics Interchange Format (image/gif, *.gif)",
-            gif.getLabel(LanguageRange.parse("en;q=0.9,fr;q=0.4,*;q=0.2")));
+        assertEquals("Graphics Interchange Format (image/gif, *.gif)", gif.getLabel(), "Wrong label without declared language of GIF file format");
+        assertEquals("تنسيق تبادل الرسومات (image/gif, *.gif)", gif.getLabel(LanguageRange.parse("fr;q=0.9,ar;q=0.4,*;q=0.2")), "Wrong label for language requesting arab of GIF file format");
+        assertEquals("Graphics Interchange Format (image/gif, *.gif)", gif.getLabel(LanguageRange.parse("en;q=0.9,fr;q=0.4,*;q=0.2")), "Wrong label for language requesting no specialized label of GIF file format");
     }
 }

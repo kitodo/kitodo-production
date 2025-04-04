@@ -89,7 +89,7 @@ public class WorkflowForm extends BaseForm {
     /**
      * Get list of workflow statues for select list.
      *
-     * @return list of SelectItem objects
+     * @return array of SelectItem objects
      */
     public WorkflowStatus[] getWorkflowStatuses() {
         return WorkflowStatus.values();
@@ -225,7 +225,11 @@ public class WorkflowForm extends BaseForm {
      */
     public void archive() {
         this.workflow.setStatus(WorkflowStatus.ARCHIVED);
-        saveWorkflow();
+        try {
+            saveWorkflow();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -325,12 +329,8 @@ public class WorkflowForm extends BaseForm {
         return xmlDiagramName;
     }
 
-    private void saveWorkflow() {
-        try {
-            ServiceManager.getWorkflowService().save(this.workflow);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+    private void saveWorkflow() throws DAOException {
+        ServiceManager.getWorkflowService().saveWorkflow(this.workflow);
     }
 
     /**

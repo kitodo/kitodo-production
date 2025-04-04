@@ -11,9 +11,16 @@
 
 package org.kitodo.production.services.data;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -74,38 +81,41 @@ public class MassImportService {
     }
 
     /**
-     * Creates and returns new list of records from given list of records by applying a different
-     * CSV separator character to the lines obtained by joining the CSV cell values of the existing
-     * CSV records with the previous CSV separator character.
-     * @param records CSV records created using previous CSV separator character
-     * @param oldSeparator previous CSV separator character
-     * @param newSeparator new CSV separator character
-     * @return list of CSV records using new CSV separator character
-     */
-    public List<CsvRecord> updateSeparator(List<CsvRecord> records, String oldSeparator, String newSeparator) {
-        List<String> lines = records.stream().map(record -> record.getCsvCells()
-                .stream().map(CsvCell::getValue)
-                .collect(Collectors.joining(oldSeparator)))
-                .collect(Collectors.toList());
-        return parseLines(lines, newSeparator);
-    }
-
-    /**
      * Split provided lines by given 'separator'-String and return list of CsvRecord.
+     * The method also handles quoted csv values, which contain comma or semicolon to allow
+     * csv separators in csv cells.
      * @param lines lines to parse
      * @param separator String used to split lines into individual parts
      * @return list of CsvRecord
      */
-    public List<CsvRecord> parseLines(List<String> lines, String separator) {
+    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvException {
         List<CsvRecord> records = new LinkedList<>();
-        for (String line : lines) {
-            List<CsvCell> cells = new LinkedList<>();
-            for (String value : line.split(separator, -1)) {
-                cells.add(new CsvCell(value));
+        CSVParser parser = new CSVParserBuilder()
+                .withSeparator(separator.charAt(0))
+                .withQuoteChar('\"')
+                .build();
+        try (StringReader reader = new StringReader(String.join("\n", lines));
+             CSVReader csvReader = new CSVReaderBuilder(reader)
+                     .withSkipLines(0)
+                     .withCSVParser(parser)
+                     .build()) {
+            for (String[] entries : csvReader.readAll()) {
+                if (isSingleEmptyEntry(entries)) {
+                    continue; // Skip processing this line
+                }
+                List<CsvCell> cells = new LinkedList<>();
+                for (String value : entries) {
+                    cells.add(new CsvCell(value.trim()));
+                }
+                records.add(new CsvRecord(cells));
             }
-            records.add(new CsvRecord(cells));
         }
         return records;
+    }
+
+    // Helper method to check if a line has a single empty entry
+    private boolean isSingleEmptyEntry(String[] entries) {
+        return entries.length == 1 && entries[0].isEmpty();
     }
 
     /**
@@ -114,16 +124,17 @@ public class MassImportService {
      * @param metadataKeys metadata keys for additional metadata added to individual records during import
      * @param records list of CSV records
      */
-    public Map<String, Map<String, String>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
+    public Map<String, Map<String, List<String>>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
             throws ImportException {
-        Map<String, Map<String, String>> presetMetadata = new LinkedHashMap<>();
+        Map<String, Map<String, List<String>>> presetMetadata = new LinkedHashMap<>();
         for (CsvRecord record : records) {
-            Map<String, String> processMetadata = new HashMap<>();
+            Map<String, List<String>> processMetadata = new HashMap<>();
             // skip first metadata key as it always contains the record ID to be used for search
             for (int index = 1; index < metadataKeys.size(); index++) {
                 String metadataKey = metadataKeys.get(index);
                 if (StringUtils.isNotBlank(metadataKey)) {
-                    processMetadata.put(metadataKey, record.getCsvCells().get(index).getValue());
+                    List<String> values = processMetadata.computeIfAbsent(metadataKey, k -> new ArrayList<>());
+                    values.add(record.getCsvCells().get(index).getValue());
                 }
             }
             presetMetadata.put(record.getCsvCells().get(0).getValue(), processMetadata);

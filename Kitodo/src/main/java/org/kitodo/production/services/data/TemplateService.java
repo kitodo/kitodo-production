@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,6 +77,27 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
             }
         }
         return localReference;
+    }
+
+    /**
+     * Retrieves a map indicating the usage status of templates.
+     * The method executes an HQL query to determine whether each template is used
+     * (i.e., has associated processes).
+     *
+     * @return a map where the key is the template ID and the value is a boolean
+     *         indicating whether the template is used
+     */
+    public Map<Integer, Boolean> getTemplateUsageMap() {
+        String hql = "SELECT t.id AS templateId, "
+                + " CASE WHEN EXISTS (SELECT 1 FROM Process p WHERE p.template.id = t.id) "
+                + " THEN true ELSE false END AS isUsed "
+                + " FROM Template t";
+        List<Object[]> results = dao.getProjectionByQuery(hql, Collections.emptyMap());
+        return results.stream()
+                .collect(Collectors.toMap(
+                        row -> (Integer) row[0], // templateId
+                        row -> (Boolean) row[1]  // isUsed
+                ));
     }
 
     @Override
@@ -214,7 +236,11 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
             try {
                 return new FileInputStream(tasksDiagram);
             } catch (FileNotFoundException e) {
-                logger.error(e.getMessage(), e);
+                if (logger.isTraceEnabled()) {
+                    logger.error(e.getMessage(), e);
+                } else {
+                    logger.error(e.getMessage());
+                }
                 return getEmptyInputStream();
             }
         }

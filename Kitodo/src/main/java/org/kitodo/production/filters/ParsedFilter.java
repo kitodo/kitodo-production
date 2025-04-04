@@ -83,4 +83,15 @@ public class ParsedFilter {
         }
         return plainFilter.equals(((ParsedFilter) o).getPlainFilter());
     }
+
+    /**
+     * hashCode method of current class.
+     *
+     * @see java.lang.Object#hashCode()
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(plainFilter);
+    }
 }

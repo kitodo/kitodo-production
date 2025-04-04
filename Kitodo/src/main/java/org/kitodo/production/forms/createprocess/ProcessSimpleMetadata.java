@@ -12,20 +12,16 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
 
@@ -56,20 +52,15 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      */
     abstract ProcessSimpleMetadata getClone();
 
-    protected BiConsumer<Division<?>, String> getStructureFieldSetters(MetadataViewInterface field)
-            throws NoSuchMetadataFieldException {
-        String key = field.getId();
+    /**
+     * Returns a simpler string representation of the Metadata.
+     *
+     * @return A string representation of the Metadata
+     */
+    abstract String extractSimpleValue();
 
-        switch (key.toUpperCase()) {
-            case "LABEL":
-                return Division::setLabel;
-            case "ORDERLABEL":
-                return Division::setOrderlabel;
-            case "CONTENTIDS":
-                return (division, value) -> division.getContentIds().add(URI.create(value));
-            default:
-                throw new NoSuchMetadataFieldException(key, field.getLabel());
-        }
+    public SimpleMetadataViewInterface getSettings() {
+        return settings;
     }
 
     /**
@@ -87,6 +78,7 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
         return Objects.isNull(settings) || settings.isUndefined();
     }
 
+    @Override
     public boolean isRequired() {
         ComplexMetadataViewInterface containerSettings = container.getMetadataView();
         if (!(containerSettings instanceof StructuralElementViewInterface) && container.getChildMetadata().isEmpty()

@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import static org.kitodo.constants.StringConstants.CREATE;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,11 +26,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,11 +61,14 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public static final ProcessFieldedMetadata EMPTY = new ProcessFieldedMetadata();
     public static final String METADATA_KEY_LABEL = "LABEL";
     public static final String METADATA_KEY_ORDERLABEL = "ORDERLABEL";
+    public static final String METADATA_KEY_CONTENTIDS = "CONTENTIDS";
 
     /**
      * Fields the user has selected to show in addition, with no data yet.
      */
     private final Collection<String> additionallySelectedFields = new ArrayList<>();
+    private static final Set<String> specialFields = Set.of(METADATA_KEY_LABEL, METADATA_KEY_ORDERLABEL,
+            METADATA_KEY_CONTENTIDS);
 
     private boolean copy;
 
@@ -144,7 +148,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
 
         preserve();
-        int count = rulesetService.updateMetadata(division.getType(), metadata, "create", potentialMetadataItems);
+        int count = rulesetService.updateMetadata(division.getType(), metadata, CREATE, potentialMetadataItems);
         buildTreeNodeAndCreateMetadataTable();
         return count;
     }
@@ -219,7 +223,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
         List<MetadataViewWithValuesInterface> tableData = metadataView.getSortedVisibleMetadata(entered, additionallySelectedFields);
-        treeNode.getChildren().clear();
+        if (Objects.nonNull(treeNode) && Objects.nonNull(treeNode.getChildren())) {
+            treeNode.getChildren().clear();
+        }
         hiddenMetadata = Collections.emptyList();
         for (MetadataViewWithValuesInterface rowData : tableData) {
             Optional<MetadataViewInterface> optionalMetadataView = rowData.getMetadata();
@@ -444,8 +450,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * Returns the only metadata entry or null. Throws an IllegalStateException
      * if the value is ambiguous or cannot be cast.
      *
-     * @param <T>
-     *
      * @param values
      *            values obtained
      * @return the only entry or null
@@ -614,11 +618,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         return new UnmodifiableList<>(rows);
     }
 
-    @Override
-    Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue() {
-        return null;
-    }
-
     public TreeNode getTreeNode() {
         return treeNode;
     }
@@ -670,6 +669,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *             there is no setter corresponding to the name configured in
      *             the rule set
      */
+    @Override
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
             if (Objects.nonNull(division)) {
@@ -678,16 +678,27 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 division.setLabel(null);
             }
             metadata.clear();
+
             for (TreeNode child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
-                Pair<BiConsumer<Division<?>, String>, String> metsFieldValue = row.getStructureFieldValue();
-                if (Objects.nonNull(metsFieldValue)) {
-                    metsFieldValue.getKey().accept(division, metsFieldValue.getValue());
+                String id = row.getMetadataID();
+                if (row instanceof ProcessSimpleMetadata && specialFields.contains(id)
+                        && ((ProcessSimpleMetadata) row).getSettings()
+                        .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
+                    updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
                 } else {
                     metadata.addAll(row.getMetadataWithFilledValues());
                 }
             }
-            if (Objects.nonNull(hiddenMetadata)) {
+            if (Objects.nonNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
+                for (Metadata hidden : hiddenMetadata) {
+                    if (hidden instanceof MetadataEntry) {
+                        MetadataEntry entry = (MetadataEntry) hidden;
+                        if (specialFields.contains(entry.getKey())) {
+                            updateDivision(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
                 metadata.addAll(hiddenMetadata);
             }
         } catch (InvalidMetadataValueException invalidValueException) {
@@ -704,6 +715,33 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             metadataGroup.setMetadata(metadata);
             container.metadata.add(metadataGroup);
             copy = false;
+        }
+    }
+
+    private void updateDivisionFromProcessDetail(String key, ProcessSimpleMetadata processDetail) throws InvalidMetadataValueException {
+        String simpleValue = processDetail.extractSimpleValue();
+        if (!processDetail.getSettings().isValid(simpleValue, getListForLeadingMetadataFields())) {
+            throw new InvalidMetadataValueException(key, simpleValue);
+        };
+        if (simpleValue == null) {
+            return;
+        }
+        updateDivision(key, simpleValue);
+    }
+
+    private void updateDivision(String key, String value) {
+        switch (key) {
+            case METADATA_KEY_LABEL:
+                division.setLabel(value);
+                break;
+            case METADATA_KEY_ORDERLABEL:
+                division.setOrderlabel(value);
+                break;
+            case METADATA_KEY_CONTENTIDS:
+                division.getContentIds().add(URI.create(value));
+                break;
+            default:
+                break;
         }
     }
 

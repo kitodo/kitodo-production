@@ -32,6 +32,7 @@ import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.utils.Guard;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -159,13 +160,8 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     private MapMessageObjectReader getMessageFromObjectReader(Message arg) {
-        MapMessageObjectReader message;
-        if (arg instanceof MapMessage) {
-            message = new MapMessageObjectReader((MapMessage) arg);
-        } else {
-            throw new IllegalArgumentException("Incompatible types.");
-        }
-        return message;
+        MapMessage mapMessage = Guard.canCast("arg", arg, MapMessage.class);
+        return new MapMessageObjectReader(mapMessage);
     }
 
     /**

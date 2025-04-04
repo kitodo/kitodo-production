@@ -11,23 +11,24 @@
 
 package org.kitodo.production.forms;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 public class ClientFormIT {
 
-    private ClientForm clientForm = new ClientForm();
+    private final ClientForm clientForm = new ClientForm();
 
     /**
      * Setup Database and start elasticsearch.
      * @throws Exception If databaseConnection failed.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -39,7 +40,7 @@ public class ClientFormIT {
      * @throws Exception
      *             if elasticsearch could not been stopped.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -52,7 +53,7 @@ public class ClientFormIT {
         final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
                 .size();
 
-        Assert.assertEquals("Number of roles is incorrect", 8, numberOfRolesForFirstClient);
+        assertEquals(8, numberOfRolesForFirstClient, "Number of roles is incorrect");
 
         clientForm.getRolesForClient();
         clientForm.setClientToCopyRoles(ServiceManager.getClientService().getById(2));
@@ -64,9 +65,8 @@ public class ClientFormIT {
                 .size();
         int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(8).getAuthorities()
                 .size();
-        Assert.assertEquals("Role was not added", 9, numberOfRolesForFirstClient);
-        Assert.assertEquals("Authorities were not added", numberOfOldAuthorities, numberOfNewAuthorities);
-        Assert.assertEquals("Authorities were removed from second client", numberOfAuthoritiesToCopy,
-                numberOfOldAuthorities);
+        assertEquals(10, numberOfRolesForFirstClient, "Role was not added");
+        assertEquals(numberOfOldAuthorities, numberOfNewAuthorities, "Authorities were not added");
+        assertEquals(numberOfAuthoritiesToCopy, numberOfOldAuthorities, "Authorities were removed from second client");
     }
 }

@@ -32,7 +32,7 @@
         <mets:div ID="PHYS_0000" DMDID="uuid-83867038-fca7-3001-9e9c-2ca97bc1b168" TYPE="physSequence"/>
     </mets:structMap>
     <mets:structMap TYPE="LOGICAL">
-        <mets:div ID="LOG_0000" DMDID="uuid-017a6d80-fde9-3445-a239-bc86ba0c9f14" TYPE="Monograph" ORDER="1">
+        <mets:div ID="LOG_0000" DMDID="uuid-017a6d80-fde9-3445-a239-bc86ba0c9f14" TYPE="MultiVolumeWork" ORDER="1">
             <mets:div ID="uuid-0a7803be-1d54-455f-bea8-dfee41735e09">
                 <mets:mptr LOCTYPE="OTHER" OTHERLOCTYPE="Kitodo.Production" xlink:href="database://?process.id=7"/>
             </mets:div>

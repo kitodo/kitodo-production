@@ -12,22 +12,26 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import com.xebialabs.restito.server.StubServer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
@@ -60,16 +64,20 @@ import org.kitodo.test.utils.ProcessTestUtils;
 
 public class AddingST extends BaseTestSelenium {
 
+    private static StubServer server;
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
     private static RoleEditPage roleEditPage;
     private static UserEditPage userEditPage;
     private static ImportConfigurationEditPage importConfigurationEditPage;
-    private static final String TEST_METADATA_FILE = "testMetadataFileServiceTest.xml";
+    private static final String TEST_METADATA_FILE = "testMultiVolumeWorkMeta.xml";
     private static int secondProcessId = -1;
+    private static final String PICA_PPN = "pica.ppn";
+    private static final String PICA_XML = "picaxml";
+    private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         projectsPage = Pages.getProjectsPage();
@@ -86,25 +94,33 @@ public class AddingST extends BaseTestSelenium {
                 break;
             }
         }
-        assertTrue("Should find exactly one second process!", secondProcessId > 0);
+        assertTrue(secondProcessId > 0, "Should find exactly one second process!");
         ProcessTestUtils.copyTestMetadataFile(secondProcessId, TEST_METADATA_FILE);
+        server = new StubServer(MockDatabase.PORT).run();
+        setupServer();
+    }
+
+    private static void setupServer() throws IOException {
+        // REST endpoint for testing metadata import
+        MockDatabase.addRestEndPointForSru(server, PICA_PPN + "=test", TEST_FILE_PATH, PICA_XML, 1);
     }
 
     /**
      * Remove unsuitable parent test process.
      * @throws DAOException when test process cannot be removed
      */
-    @AfterClass
+    @AfterAll
     public static void removeUnsuitableParentTestProcess() throws DAOException {
         ProcessTestUtils.removeTestProcess(secondProcessId);
+        server.stop();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
         if (Browser.isAlertPresent()) {
@@ -115,22 +131,20 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addBatchTest() throws Exception {
         processesPage.createNewBatch();
-        await().untilAsserted(() -> assertEquals("Batch was inserted!", 1,
-            ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+        await().untilAsserted(() -> assertEquals(1, ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size(), "Batch was inserted!"));
     }
 
     @Test
     public void addProjectTest() throws Exception {
         Project project = ProjectGenerator.generateProject();
         projectsPage.createNewProject();
-        assertEquals("Header for create new project is incorrect", "Neues Projekt",
-            Pages.getProjectEditPage().getHeaderText());
+        assertEquals("Neues Projekt", Pages.getProjectEditPage().getHeaderText(), "Header for create new project is incorrect");
 
         Pages.getProjectEditPage().insertProjectData(project).save();
-        assertTrue("Redirection after save was not successful", projectsPage.isAt());
+        assertTrue(projectsPage.isAt(), "Redirection after save was not successful");
 
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(project.getTitle());
-        assertTrue("Created Project was not listed at projects table!", projectAvailable);
+        assertTrue(projectAvailable, "Created Project was not listed at projects table!");
     }
 
     @Test
@@ -138,69 +152,67 @@ public class AddingST extends BaseTestSelenium {
         Template template = new Template();
         template.setTitle("MockTemplate");
         projectsPage.createNewTemplate();
-        assertEquals("Header for create new template is incorrect", "Neue Produktionsvorlage",
-            Pages.getTemplateEditPage().getHeaderText());
+        assertEquals("Neue Produktionsvorlage", Pages.getTemplateEditPage().getHeaderText(), "Header for create new template is incorrect");
 
         Pages.getTemplateEditPage().insertTemplateData(template).save();
         await().until(() -> projectsPage.countListedTemplates() == 3);
         boolean templateAvailable = projectsPage.getTemplateTitles().contains(template.getTitle());
-        assertTrue("Created Template was not listed at templates table!", templateAvailable);
+        assertTrue(templateAvailable, "Created Template was not listed at templates table!");
     }
 
     @Test
     public void addProcessesTest() throws Exception {
         projectsPage.createNewProcess();
-        assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
-            Pages.getProcessFromTemplatePage().getHeaderText());
+        assertEquals("Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')", Pages.getProcessFromTemplatePage().getHeaderText(), "Header for create new process is incorrect");
 
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
         boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
-        assertTrue("Created Process was not listed at processes table!", processAvailable);
+        assertTrue(processAvailable, "Created Process was not listed at processes table!");
 
         ProcessService processService = ServiceManager.getProcessService();
-        // TODO: make processService.findByTitle(generatedTitle) work
-        int recordNumber = 1;
-        Process generatedProcess;
-        do {
-            generatedProcess = processService.getById(recordNumber++);
-        } while (!generatedTitle.equals(generatedProcess.getTitle()));
-        assertNull("Created Process unexpectedly got a parent!", generatedProcess.getParent());
+        Optional<Process> optionalProcess = processService.getAll().stream().filter(process -> generatedTitle
+                .equals(process.getTitle())).findAny();
+        assertTrue(optionalProcess.isPresent(), "Generated process not found in database");
+        Process generatedProcess = optionalProcess.get();
+        assertNull(generatedProcess.getParent(), "Created Process unexpectedly got a parent!");
 
         projectsPage.createNewProcess();
         String generatedChildTitle = Pages.getProcessFromTemplatePage()
                 .createProcessAsChild(generatedProcess.getTitle());
 
         boolean childProcessAvailable = processesPage.getProcessTitles().contains(generatedChildTitle);
-        assertTrue("Created Process was not listed at processes table!", childProcessAvailable);
+        assertTrue(childProcessAvailable, "Created Process was not listed at processes table!");
 
-        // TODO: make processService.findByTitle(generatedChildTitle) work
-        Process generatedChildProcess;
-        do {
-            generatedChildProcess = processService.getById(recordNumber++);
-        } while (!generatedChildTitle.equals(generatedChildProcess.getTitle()));
-        assertEquals("Created Process has a wrong parent!", generatedProcess, generatedChildProcess.getParent());
+        Optional<Process> optionalChildProcess = processService.getAll().stream().filter(process -> generatedChildTitle
+                .equals(process.getTitle())).findAny();
+        assertTrue(optionalChildProcess.isPresent(), "Generated child process not found in database");
+        Process generatedChildProcess = optionalChildProcess.get();
+        assertEquals(generatedProcess, generatedChildProcess.getParent(), "Created Process has a wrong parent!");
+        ProcessTestUtils.removeTestProcess(generatedProcess.getId());
     }
 
     @Test
     public void addProcessAsChildNotPossible() throws Exception {
         projectsPage.createNewProcess();
         boolean errorMessageShowing = Pages.getProcessFromTemplatePage().createProcessAsChildNotPossible();
-        assertTrue("There was no error!", errorMessageShowing);
+        assertTrue(errorMessageShowing, "There was no error!");
         Pages.getProcessFromTemplatePage().cancel();
     }
 
-    @Ignore
     @Test
     public void addProcessFromCatalogTest() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
 
         projectsPage.createNewProcess();
-        assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
-                Pages.getProcessFromTemplatePage().getHeaderText());
+        assertEquals("Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')", Pages.getProcessFromTemplatePage().getHeaderText(), "Header for create new process is incorrect");
 
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcessFromCatalog();
         boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
-        assertTrue("Created Process was not listed at processes table!", processAvailable);
+        assertTrue(processAvailable, "Created Process was not listed at processes table!");
+        int index = processesPage.getProcessTitles().indexOf(generatedTitle);
+        assertTrue(index >= 0, "Process table does not contain ID or new process");
+        int processId = Integer.parseInt(processesPage.getProcessIds().get(index));
+        ProcessTestUtils.removeTestProcess(processId);
     }
 
     @Test
@@ -208,18 +220,16 @@ public class AddingST extends BaseTestSelenium {
         Workflow workflow = new Workflow();
         workflow.setTitle("testWorkflow");
         projectsPage.createNewWorkflow();
-        assertEquals("Header for create new workflow is incorrect", "Neuen Workflow anlegen",
-            Pages.getWorkflowEditPage().getHeaderText());
+        assertEquals("Neuen Workflow anlegen", Pages.getWorkflowEditPage().getHeaderText(), "Header for create new workflow is incorrect");
 
         Pages.getWorkflowEditPage().insertWorkflowData(workflow).save();
 
-        assertTrue("Redirection after save was not successful", AddingST.projectsPage.isAt());
+        assertTrue(AddingST.projectsPage.isAt(), "Redirection after save was not successful");
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .untilAsserted(() -> assertEquals("There should be no processes found", 3,
-                    AddingST.projectsPage.getWorkflowTitles().size()));
+                .untilAsserted(() -> assertEquals(3, AddingST.projectsPage.getWorkflowTitles().size(), "There should be no processes found"));
         List<String> workflowTitles = AddingST.projectsPage.getWorkflowTitles();
         boolean workflowAvailable = workflowTitles.contains("testWorkflow");
-        assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
+        assertTrue(workflowAvailable, "Created Workflow was not listed at workflows table!");
 
         new File("src/test/resources/diagrams/testWorkflow.bpmn20.xml").delete();
         new File("src/test/resources/diagrams/testWorkflow.svg").delete();
@@ -230,15 +240,14 @@ public class AddingST extends BaseTestSelenium {
         Docket docket = new Docket();
         docket.setTitle("MockDocket");
         projectsPage.createNewDocket();
-        assertEquals("Header for create new docket is incorrect", "Neuen Laufzettel anlegen",
-            Pages.getDocketEditPage().getHeaderText());
+        assertEquals("Neuen Laufzettel anlegen", Pages.getDocketEditPage().getHeaderText(), "Header for create new docket is incorrect");
 
         Pages.getDocketEditPage().insertDocketData(docket).save();
-        assertTrue("Redirection after save was not successful", projectsPage.isAt());
+        assertTrue(projectsPage.isAt(), "Redirection after save was not successful");
 
         List<String> docketTitles = projectsPage.getDocketTitles();
         boolean docketAvailable = docketTitles.contains(docket.getTitle());
-        assertTrue("Created Docket was not listed at dockets table!", docketAvailable);
+        assertTrue(docketAvailable, "Created Docket was not listed at dockets table!");
     }
 
     @Test
@@ -246,55 +255,51 @@ public class AddingST extends BaseTestSelenium {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("MockRuleset");
         projectsPage.createNewRuleset();
-        assertEquals("Header for create new ruleset is incorrect", "Neuen Regelsatz anlegen",
-            Pages.getRulesetEditPage().getHeaderText());
+        assertEquals("Neuen Regelsatz anlegen", Pages.getRulesetEditPage().getHeaderText(), "Header for create new ruleset is incorrect");
 
         Pages.getRulesetEditPage().insertRulesetData(ruleset).save();
-        assertTrue("Redirection after save was not successful", projectsPage.isAt());
+        assertTrue(projectsPage.isAt(), "Redirection after save was not successful");
 
         List<String> rulesetTitles = projectsPage.getRulesetTitles();
         boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());
-        assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
+        assertTrue(rulesetAvailable, "Created Ruleset was not listed at rulesets table!");
     }
 
-    @Ignore("broken: this test often causes unintentional javascript warning popups when adding roles to the user")
+    @Disabled("broken: this test often causes unintentional javascript warning popups when adding roles to the user")
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
         usersPage.createNewUser();
-        assertEquals("Header for create new user is incorrect", "Neuen Benutzer anlegen",
-                userEditPage.getHeaderText());
+        assertEquals("Neuen Benutzer anlegen", userEditPage.getHeaderText(), "Header for create new user is incorrect");
 
         userEditPage.insertUserData(user);
         userEditPage.addUserToRole(ServiceManager.getRoleService().getById(2).getTitle());
         userEditPage.addUserToClient(ServiceManager.getClientService().getById(2).getName());
         userEditPage.save();
-        assertTrue("Redirection after save was not successful", usersPage.isAt());
+        assertTrue(usersPage.isAt(), "Redirection after save was not successful");
 
         User insertedUser = ServiceManager.getUserService().getByLogin(user.getLogin());
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(insertedUser);
         Pages.getTopNavigation().selectSessionClient(1);
-        assertEquals(ServiceManager.getClientService().getById(2).getName(),
-            Pages.getTopNavigation().getSessionClient());
+        assertEquals(ServiceManager.getClientService().getById(2).getName(), Pages.getTopNavigation().getSessionClient());
     }
 
     @Test
     public void addLdapGroupTest() throws Exception {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
         usersPage.createNewLdapGroup();
-        assertEquals("Header for create new LDAP group is incorrect", "Neue LDAP-Gruppe anlegen",
-            Pages.getLdapGroupEditPage().getHeaderText());
+        assertEquals("Neue LDAP-Gruppe anlegen", Pages.getLdapGroupEditPage().getHeaderText(), "Header for create new LDAP group is incorrect");
 
         Pages.getLdapGroupEditPage().insertLdapGroupData(ldapGroup).save();
-        assertTrue("Redirection after save was not successful", usersPage.isAt());
+        assertTrue(usersPage.isAt(), "Redirection after save was not successful");
 
         boolean ldapGroupAvailable = usersPage.getLdapGroupNames().contains(ldapGroup.getTitle());
-        assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
+        assertTrue(ldapGroupAvailable, "Created ldap group was not listed at ldap group table!");
 
         LdapGroup actualLdapGroup = usersPage.editLdapGroup(ldapGroup.getTitle()).readLdapGroup();
-        assertEquals("Saved ldap group is giving wrong data at edit page!", ldapGroup, actualLdapGroup);
+        assertEquals(ldapGroup, actualLdapGroup, "Saved ldap group is giving wrong data at edit page!");
     }
 
     @Test
@@ -302,14 +307,13 @@ public class AddingST extends BaseTestSelenium {
         Client client = new Client();
         client.setName("MockClient");
         usersPage.createNewClient();
-        assertEquals("Header for create new client is incorrect", "Neuen Mandanten anlegen",
-            Pages.getClientEditPage().getHeaderText());
+        assertEquals("Neuen Mandanten anlegen", Pages.getClientEditPage().getHeaderText(), "Header for create new client is incorrect");
 
         Pages.getClientEditPage().insertClientData(client).save();
-        assertTrue("Redirection after save was not successful", usersPage.isAt());
+        assertTrue(usersPage.isAt(), "Redirection after save was not successful");
 
         boolean clientAvailable = usersPage.getClientNames().contains(client.getName());
-        assertTrue("Created Client was not listed at clients table!", clientAvailable);
+        assertTrue(clientAvailable, "Created Client was not listed at clients table!");
     }
 
     @Test
@@ -318,29 +322,26 @@ public class AddingST extends BaseTestSelenium {
         role.setTitle("MockRole");
 
         usersPage.createNewRole();
-        assertEquals("Header for create new role is incorrect", "Neue Rolle anlegen",
-                roleEditPage.getHeaderText());
+        assertEquals("Neue Rolle anlegen", roleEditPage.getHeaderText(), "Header for create new role is incorrect");
 
         roleEditPage.setRoleTitle(role.getTitle()).assignAllGlobalAuthorities()
                 .assignAllClientAuthorities();
         roleEditPage.save();
-        assertTrue("Redirection after save was not successful", usersPage.isAt());
+        assertTrue(usersPage.isAt(), "Redirection after save was not successful");
         List<String> roleTitles = usersPage.getRoleTitles();
-        assertTrue("New role was not saved", roleTitles.contains(role.getTitle()));
+        assertTrue(roleTitles.contains(role.getTitle()), "New role was not saved");
 
         int availableGlobalAuthorities = ServiceManager.getAuthorityService().getAllAssignableGlobal().size();
         int assignedGlobalAuthorities = usersPage.editRole(role.getTitle())
                 .countAssignedGlobalAuthorities();
-        assertEquals("Assigned authorities of the new role were not saved!", availableGlobalAuthorities,
-                assignedGlobalAuthorities);
+        assertEquals(availableGlobalAuthorities, assignedGlobalAuthorities, "Assigned authorities of the new role were not saved!");
         String actualTitle = Pages.getRoleEditPage().getRoleTitle();
-        assertEquals("New Name of role was not saved", role.getTitle(), actualTitle);
+        assertEquals(role.getTitle(), actualTitle, "New Name of role was not saved");
 
         int availableClientAuthorities = ServiceManager.getAuthorityService().getAllAssignableToClients().size();
         int assignedClientAuthorities = usersPage.editRole(role.getTitle())
                 .countAssignedClientAuthorities();
-        assertEquals("Assigned client authorities of the new role were not saved!", availableClientAuthorities,
-            assignedClientAuthorities);
+        assertEquals(availableClientAuthorities, assignedClientAuthorities, "Assigned client authorities of the new role were not saved!");
     }
 
     @Test
@@ -350,8 +351,8 @@ public class AddingST extends BaseTestSelenium {
         importConfigurationEditPage.save();
         ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(4);
         List<UrlParameter> urlParameters = importConfiguration.getUrlParameters();
-        assertEquals("Wrong number of custom URL parameters", 1, urlParameters.size());
-        assertEquals("Wrong URL parameter key", "testkey", urlParameters.get(0).getParameterKey());
-        assertEquals("Wrong URL parameter value", "testvalue", urlParameters.get(0).getParameterValue());
+        assertEquals(1, urlParameters.size(), "Wrong number of custom URL parameters");
+        assertEquals("testkey", urlParameters.get(0).getParameterKey(), "Wrong URL parameter key");
+        assertEquals("testvalue", urlParameters.get(0).getParameterValue(), "Wrong URL parameter value");
     }
 }

@@ -11,12 +11,12 @@
 
 package org.kitodo.production.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Workflow;
 
@@ -24,13 +24,13 @@ public class WorkflowConverterIT {
 
     private static final String MESSAGE = "Workflow was not converted correctly!";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -40,28 +40,28 @@ public class WorkflowConverterIT {
     public void shouldGetAsObject() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         Workflow workflow = (Workflow) workflowConverter.getAsObject(null, null, "2");
-        assertEquals(MESSAGE, 2, workflow.getId().intValue());
+        assertEquals(2, workflow.getId().intValue(), MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         String workflow = (String) workflowConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", workflow);
+        assertEquals("0", workflow, MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         String workflow = (String) workflowConverter.getAsObject(null, null, "10");
-        assertEquals(MESSAGE, "0", workflow);
+        assertEquals("0", workflow, MESSAGE);
     }
 
     @Test
     public void shouldGetAsObjectNullObject() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         Object workflow = workflowConverter.getAsObject(null, null, null);
-        assertNull(MESSAGE, workflow);
+        assertNull(workflow, MESSAGE);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class WorkflowConverterIT {
         Workflow newWorkflow = new Workflow();
         newWorkflow.setId(20);
         String workflow = workflowConverter.getAsString(null, null, newWorkflow);
-        assertEquals(MESSAGE, "20", workflow);
+        assertEquals("20", workflow, MESSAGE);
     }
 
     @Test
@@ -78,20 +78,20 @@ public class WorkflowConverterIT {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         Workflow newWorkflow = new Workflow();
         String workflow = workflowConverter.getAsString(null, null, newWorkflow);
-        assertEquals(MESSAGE, "0", workflow);
+        assertEquals("0", workflow, MESSAGE);
     }
 
     @Test
     public void shouldGetAsStringWithString() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         String workflow = workflowConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", workflow);
+        assertEquals("20", workflow, MESSAGE);
     }
 
     @Test
     public void shouldNotGetAsStringNullObject() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
         String workflow = workflowConverter.getAsString(null, null, null);
-        assertNull(MESSAGE, workflow);
+        assertNull(workflow, MESSAGE);
     }
 }

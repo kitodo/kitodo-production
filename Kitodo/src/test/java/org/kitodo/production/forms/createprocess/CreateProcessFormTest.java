@@ -11,13 +11,13 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
@@ -42,9 +42,8 @@ public class CreateProcessFormTest {
         Workpiece result = new Workpiece();
         CreateProcessForm.setChildCount(parentProcess, ServiceManager.getRulesetService().openRuleset(ruleset), result);
 
-        assertEquals("The child count was not set correctly", "4",
-            result.getLogicalStructure().getMetadata().parallelStream().filter(MetadataEntry.class::isInstance)
-                    .map(MetadataEntry.class::cast)
-                    .collect(Collectors.toMap(Metadata::getKey, MetadataEntry::getValue)).get("ChildCount"));
+        assertEquals("4", result.getLogicalStructure().getMetadata().parallelStream().filter(MetadataEntry.class::isInstance)
+                .map(MetadataEntry.class::cast)
+                .collect(Collectors.toMap(Metadata::getKey, MetadataEntry::getValue)).get("ChildCount"), "The child count was not set correctly");
     }
 }
