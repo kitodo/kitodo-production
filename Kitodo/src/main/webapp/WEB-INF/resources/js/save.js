@@ -14,10 +14,14 @@ function checkForm(form) {
     window.values = [];
 
     inputs = document.querySelectorAll('#' + form + ' .ui-inputtext');
-    $('#' + form).on('input', '.ui-inputtext', function () {compareForm(form)});
-    inputs.forEach(function (element) {
-        values.push(element.value);
-    });
+    if ($('#' + form)) {
+        $(document).on('input', '#' + form + ' .ui-inputfield', function () {
+            compareForm(form);
+        });
+        inputs.forEach(function (element) {
+            values.push(element.value);
+        });
+    }
 }
 
 function compareForm(form) {

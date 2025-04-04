@@ -81,7 +81,7 @@
                                          placeholder="#{msgs.title}"
                                          disabled="#{isViewMode}"
                                          required="#{not empty param['editForm:save']}">
-                                <p:ajax event="change"/>
+                                <p:ajax/>
                             </p:inputText>
                             <p:commandButton id="titleHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
@@ -95,7 +95,7 @@
                                          value="#{importConfigurationEditView.importConfiguration.description}"
                                          placeholder="#{msgs['importConfig.field.description']}"
                                          disabled="#{isViewMode}">
-                                <p:ajax event="change"/>
+                                <p:ajax/>
                             </p:inputText>
                             <p:commandButton id="descriptionHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
@@ -116,8 +116,7 @@
                                                var="configType"
                                                itemValue="#{configType}"
                                                itemLabel="#{msgs[configType.messageKey]}"/>
-                                <p:ajax event="change"
-                                        update="editForm:importConfigurationTabView"
+                                <p:ajax update="editForm:importConfigurationTabView"
                                         oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                             <p:commandButton id="configurationTypeHelp" type="button"
@@ -193,8 +192,7 @@
                                        var="client"
                                        itemLabel="#{client.name}"
                                        itemValue="#{client}"/>
-                        <p:ajax event="change"
-                                oncomplete="toggleSave()"/>
+                        <p:ajax oncomplete="toggleSave()"/>
                     </p:selectManyCheckbox>
                 </p:panelGrid>
             </p:tab>

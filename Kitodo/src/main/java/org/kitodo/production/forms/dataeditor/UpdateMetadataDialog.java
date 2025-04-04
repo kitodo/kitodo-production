@@ -110,7 +110,7 @@ public class UpdateMetadataDialog implements Serializable {
     public boolean canUpdateMetadata() {
         try {
             return DataEditorService.canUpdateCatalogMetadata(
-                dataEditor.getProcess(), dataEditor.getWorkpiece(), dataEditor.getStructurePanel().getSelectedLogicalNode()
+                dataEditor.getProcess(), dataEditor.getWorkpiece(), dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle()
             );
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

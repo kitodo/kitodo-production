@@ -83,7 +83,7 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
      * @return true if a logical division is selected
      */
     public boolean canImportMetadata() {
-        TreeNode selectedNode = dataEditorForm.getStructurePanel().getSelectedLogicalNode();
+        TreeNode selectedNode = dataEditorForm.getStructurePanel().getSelectedLogicalNodeIfSingle();
         return Objects.nonNull(selectedNode)
                 && selectedNode.getData() instanceof StructureTreeNode
                 && ((StructureTreeNode) selectedNode.getData()).getDataObject() instanceof LogicalDivision;
