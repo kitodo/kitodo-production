@@ -74,7 +74,12 @@
                                 <p:ajax event="complete"
                                         listener="#{DataEditorForm.uploadFileDialog.updateWorkpiece()}"
                                         oncomplete="PF('uploadFileDialog').hide();"
-                                        update="numberOfScans,logicalTree,metadataAccordion,paginationForm:paginationWrapperPanel,@(.pageList)"/>
+                                        update="numberOfScans
+                                                logicalTree
+                                                metadataAccordion:logicalMetadataWrapperPanel
+                                                metadataAccordion:logicalMetadataHeader
+                                                paginationForm:paginationWrapperPanel
+                                                @(.pageList)"/>
                             </p:progressBar>
                         </div>
                     </p:row>

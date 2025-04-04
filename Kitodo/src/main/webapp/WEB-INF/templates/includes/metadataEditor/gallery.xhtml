@@ -235,7 +235,7 @@
                             oncomplete="$('#loadingScreen').hide()"
                             update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion
+                                metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.unassign}"
@@ -248,7 +248,8 @@
                             oncomplete="$('#loadingScreen').hide()"
                             update="logicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.uploadMedia}"
@@ -271,7 +272,8 @@
                             update="logicalTree
                                 physicalTree
                                 paginationForm:paginationWrapperPanel
-                                metadataAccordion
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
                                 galleryWrapperPanel"/>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
@@ -310,7 +312,8 @@
                             oncomplete="$('#loadingScreen').hide()"
                             update="logicalTree
                                     paginationForm:paginationWrapperPanel
-                                    metadataAccordion
+                                    metadataAccordion:logicalMetadataWrapperPanel
+                                    metadataAccordion:logicalMetadataHeader
                                     galleryWrapperPanel"/>
             </p:contextMenu>
         </h:form>
