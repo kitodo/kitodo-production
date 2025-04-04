@@ -215,6 +215,7 @@ public class WorkflowControllerService {
             // image validation
             if (task.isTypeImagesWrite()) {
                 ImageHelper mih = new ImageHelper();
+                // URI imageFolder = ServiceManager.getProcessService().getImagesTifDirectory(false, task.getProcess().getId(), task.getProcess().getTitle(), task.getProcess().getProcessBaseUri());
                 URI imageFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     throw new DataException("Error on image validation!");

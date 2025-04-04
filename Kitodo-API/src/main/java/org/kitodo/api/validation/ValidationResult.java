@@ -12,6 +12,9 @@
 package org.kitodo.api.validation;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ValidationResult {
 
@@ -42,5 +45,9 @@ public class ValidationResult {
      */
     public Collection<String> getResultMessages() {
         return resultMessages;
+    }
+
+    public String toString() {
+        return "[ValidationResult state='" + state.name() + "' messages=(" + StringUtils.join(resultMessages, "," + ")]");
     }
 }

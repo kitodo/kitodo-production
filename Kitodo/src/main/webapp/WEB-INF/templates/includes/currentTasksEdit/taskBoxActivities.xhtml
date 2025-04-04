@@ -127,6 +127,14 @@
                         <h:outputText><i class="fa fa-exclamation-circle" /> #{msgs.correctionMessageWrite}</h:outputText>
                     </p:commandLink>
 
+                    <p:commandLink id="validateImages"
+                                   rendered="#{CurrentTaskForm.showingImageValidationAction and process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.validateImages}"
+                                   disabled="#{!CurrentTaskForm.isImageValidationPossible()}"
+                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs['currentTaskEdit.validateImages'] : msgs['currentTaskEdit.imageValidationNotPossible']}">
+                        <h:outputText><i class="fa fa-cog"/> #{msgs['currentTaskEdit.validateImages']}</h:outputText>
+                    </p:commandLink>
+
                     <!-- Edit Cancel-buttons -->
                     <p:commandLink id="cancel" action="#{CurrentTaskForm.releaseTask}" title="#{msgs.releaseTask}">
                         <h:outputText><i class="fa fa-ban"/> #{msgs.releaseTask}</h:outputText>

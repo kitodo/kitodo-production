@@ -17,6 +17,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
@@ -25,6 +27,9 @@ import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValida
  * A LongTermPreservationValidationInterface implementation using Jhove.
  */
 public class LongTermPreservationValidation implements LongTermPreservationValidationInterface {
+
+    private static final Logger logger = LogManager.getLogger(LongTermPreservationValidation.class);
+
     /**
      * Returns the matching module name for the given file type.
      */
@@ -40,13 +45,7 @@ public class LongTermPreservationValidation implements LongTermPreservationValid
         MODULE_NAMES.put(FileType.TIFF, "TIFF-hul");
     }
 
-    /**
-     * Modules to initialize.
-     */
-    private static final List<String> MODULES = Arrays.asList("edu.harvard.hul.ois.jhove.module.GifModule",
-        "edu.harvard.hul.ois.jhove.module.Jpeg2000Module", "edu.harvard.hul.ois.jhove.module.JpegModule",
-        "edu.harvard.hul.ois.jhove.module.PdfModule", "com.mcgath.jhove.module.PngModule",
-        "edu.harvard.hul.ois.jhove.module.TiffModule");
+
 
     /**
      * {@inheritDoc}<!-- . -->
@@ -58,10 +57,10 @@ public class LongTermPreservationValidation implements LongTermPreservationValid
      */
     @Override
     public ValidationResult validate(URI fileUri, FileType fileType) {
+        logger.error("LongTermPreservationValidation.validate");
         KitodoOutputHandler result = new KitodoOutputHandler();
         try {
-            KitodoJhoveBase jhoveBase = new KitodoJhoveBase(MODULES);
-            jhoveBase.validate(fileUri.getPath(), MODULE_NAMES.get(fileType), result);
+            KitodoJhoveBase.validate(fileUri.getPath(), MODULE_NAMES.get(fileType), result);
         } catch (Exception e) {
             result.treatException(e);
         }
