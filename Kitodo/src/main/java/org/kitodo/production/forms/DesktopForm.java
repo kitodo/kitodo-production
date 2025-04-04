@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -154,6 +155,16 @@ public class DesktopForm extends BaseForm {
         } catch (ProjectDeletionException e) {
             Helper.setErrorMessage(e.getMessage());
         }
+    }
+
+    /**
+     * Custom sort function for to compare project titles
+     * in a case-insensitive and null-safe manner.
+     */
+    public int sortByProjectTitle(Object sortObjectOne, Object sortObjectTwo) {
+        String titleOne = Objects.requireNonNullElse(sortObjectOne, "").toString();
+        String titleTwo = Objects.requireNonNullElse(sortObjectTwo, "").toString();
+        return titleOne.compareToIgnoreCase(titleTwo);
     }
 
     /**
