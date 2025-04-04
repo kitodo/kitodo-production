@@ -18,10 +18,12 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="projectTable"
                  value="#{DesktopForm.projects}"
+                 var="project"
                  scrollable="true"
                  sortBy="#{project.title}"
-                 styleClass="default-layout"
-                 var="project">
+                 sortFunction="#{DesktopForm.sortByProjectTitle}"
+                 sortMode="single"
+                 styleClass="default-layout">
         <p:column headerText="#{msgs.title}">
             <h:outputText title="#{project.title}"
                           value="#{project.title}"/>
