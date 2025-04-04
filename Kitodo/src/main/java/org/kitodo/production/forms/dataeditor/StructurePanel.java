@@ -2017,6 +2017,8 @@ public class StructurePanel implements Serializable {
     /**
      * Unassign the givens TreeNode's PhysicalDivision from the LogicalDivision parent at the selected position.
      * This does not remove it from other LogicalDivisions.
+     *
+     * @param treeNode TreeNode representing View to be unassigned from the LogicalDivision parent at the selected position
      */
     private void unassign(TreeNode treeNode) {
         if (isAssignedSeveralTimes()) {
