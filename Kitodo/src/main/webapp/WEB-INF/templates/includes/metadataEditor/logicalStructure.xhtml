@@ -138,7 +138,7 @@
                               styleClass="pageRange"/>
             </p:treeNode>
             <p:treeNode type="#{StructurePanel.VIEW_NODE_TYPE}"
-                        rendered="#{not DataEditorForm.structurePanel.hideMediaInLogicalTree}"
+                        styleClass="#{DataEditorForm.structurePanel.hideMediaInLogicalTree ? 'hidden-tree-node' : ''}"
                         icon="ui-icon-document">
                 <h:outputText value="#{empty logicalNode.label ? msgs['dataEditor.withoutType'] : logicalNode.label}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"/>
