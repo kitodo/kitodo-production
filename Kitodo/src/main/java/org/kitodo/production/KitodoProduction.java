@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.interfaces.activemq.ActiveMQDirector;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -118,6 +119,10 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
         if (Objects.nonNull(activeMQDirector)) {
             activeMQDirector.shutDown();
         }
+
+        // close connection to database on shutdown.
+        // must be adjusted on switching to JPA or another connection layer.
+        HibernateUtil.getSession().getSessionFactory().close();
     }
 
     @Override
