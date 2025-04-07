@@ -46,6 +46,8 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.validation.ValidationResult;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.constants.StringConstants;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -118,6 +120,9 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private String filename;
     protected int numberOfEadElements;
     private HashMap<String, ValidationResult> validationResultHashMap = new HashMap<>();
+    private final boolean validationOptional = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore
+            .OPTIONAL_VALIDATION_ON_PROCESS_CREATION);
+    private Boolean validate = true;
 
     public CreateProcessForm() {
         priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
@@ -411,34 +416,36 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 return false;
             }
         }
-        // validate process and potential ancestors
-        for (TempProcess tempProcess : processes) {
-            ValidationResult result = ServiceManager.getMetadataValidationService().validate(
-                    tempProcess.getWorkpiece(), rulesetManagement, false);
-            if (ERROR.equals(result.getState())) {
-                validationResultHashMap.put(getCatalogId(tempProcess), result);
-            }
-        }
-        // validate potential process children
-        for (TempProcess tempProcess : childProcesses) {
-            ValidationResult result = ServiceManager.getMetadataValidationService().validate(
-                    tempProcess.getWorkpiece(), rulesetManagement, false);
-            if (ERROR.equals(result.getState())) {
-                validationResultHashMap.put(getCatalogId(tempProcess), result);
-            }
-        }
-        if (!validationResultHashMap.isEmpty()) {
-            Helper.setErrorMessage("dataEditor.validation.state.error");
-            for (Map.Entry<String, ValidationResult> resultEntry : validationResultHashMap.entrySet()) {
-                if (processes.size() > 1 || childProcesses.size() > 1) {
-                    Helper.setErrorMessage(Helper.getTranslation("process") + ": " +  resultEntry.getKey());
-                }
-                for (String message : resultEntry.getValue().getResultMessages()) {
-                    Helper.setErrorMessage(" - " + message);
+        if (validate) {
+            // validate process and potential ancestors
+            for (TempProcess tempProcess : processes) {
+                ValidationResult result = ServiceManager.getMetadataValidationService().validate(
+                        tempProcess.getWorkpiece(), rulesetManagement, false);
+                if (ERROR.equals(result.getState())) {
+                    validationResultHashMap.put(getCatalogId(tempProcess), result);
                 }
             }
-            PrimeFaces.current().ajax().update("editForm:processFromTemplateTabView:processHierarchyContent");
-            return false;
+            // validate potential process children
+            for (TempProcess tempProcess : childProcesses) {
+                ValidationResult result = ServiceManager.getMetadataValidationService().validate(
+                        tempProcess.getWorkpiece(), rulesetManagement, false);
+                if (ERROR.equals(result.getState())) {
+                    validationResultHashMap.put(getCatalogId(tempProcess), result);
+                }
+            }
+            if (!validationResultHashMap.isEmpty()) {
+                Helper.setErrorMessage("dataEditor.validation.state.error");
+                for (Map.Entry<String, ValidationResult> resultEntry : validationResultHashMap.entrySet()) {
+                    if (processes.size() > 1 || childProcesses.size() > 1) {
+                        Helper.setErrorMessage(Helper.getTranslation("process") + ": " +  resultEntry.getKey());
+                    }
+                    for (String message : resultEntry.getValue().getResultMessages()) {
+                        Helper.setErrorMessage(" - " + message);
+                    }
+                }
+                PrimeFaces.current().ajax().update("editForm:processFromTemplateTabView:processHierarchyContent");
+                return false;
+            }
         }
         return true;
     }
@@ -1046,5 +1053,32 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         } else {
             return "desktop.jsf?faces-redirect=true";
         }
+    }
+
+    /**
+     * Get value of boolean property 'validationOptional'.
+     *
+     * @return value of 'validationOptional'.
+     */
+    public boolean isValidationOptional() {
+        return validationOptional;
+    }
+
+    /**
+     * Get value of Boolean property 'validate'.
+     *
+     * @return value of 'validate'
+     */
+    public Boolean getValidate() {
+        return validate;
+    }
+
+    /**
+     * Set value of property 'validate'.
+     *
+     * @param validate new value of property 'value' as Boolean
+     */
+    public void setValidate(Boolean validate) {
+        this.validate = validate;
     }
 }
