@@ -36,12 +36,10 @@
             <h:form id="projectActionForm">
                 <h:panelGroup styleClass="action"
                               title="#{project.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
-                    <p:commandLink id="createProcessFromTemplate"
-                                   action="#{SelectTemplateDialogView.createProcessForProject()}"
-                                   disabled="#{project.templates.size() lt 1}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                        <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
-                        <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{project}"/>
+                    <p:commandLink
+                            action="#{SelectTemplateDialogView.createProcessForProject(project.id)}"
+                            disabled="#{project.templates.size() lt 1}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                         <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
                     </p:commandLink>
                 </h:panelGroup>

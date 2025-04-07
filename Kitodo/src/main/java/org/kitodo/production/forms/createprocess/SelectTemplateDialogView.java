@@ -19,9 +19,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
 @ViewScoped
@@ -74,10 +76,17 @@ public class SelectTemplateDialogView implements Serializable {
     /**
      * check for templates with create process path.
      */
-    public void createProcessForProject() {
-        redirectPath = CREATE_PROCESS_PATH;
-        checkForTemplates();
+    public void createProcessForProject(int projectId) {
+        try {
+            this.project = ServiceManager.getProjectService().findById(projectId);
+            this.selectedTemplateId = 0;
+            redirectPath = CREATE_PROCESS_PATH;
+            checkForTemplates();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
     }
+
 
     /**
      * check for templates with massimport path.
