@@ -158,16 +158,6 @@ public class DesktopForm extends BaseForm {
     }
 
     /**
-     * Custom sort function for to compare project titles
-     * in a case-insensitive and null-safe manner.
-     */
-    public int sortByProjectTitle(Object sortObjectOne, Object sortObjectTwo) {
-        String titleOne = Objects.requireNonNullElse(sortObjectOne, "").toString();
-        String titleTwo = Objects.requireNonNullElse(sortObjectTwo, "").toString();
-        return titleOne.compareToIgnoreCase(titleTwo);
-    }
-
-    /**
      * Export METS.
      */
     public void exportMets(int processId) {
