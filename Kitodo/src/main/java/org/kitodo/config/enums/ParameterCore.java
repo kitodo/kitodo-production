@@ -667,7 +667,14 @@ public enum ParameterCore implements ParameterInterface {
      * Optional parameter controlling whether the import of all elements from an uploaded EAD XML file should be
      * canceled when an exception occurs or not. Defaults to 'false'.
      */
-    STOP_EAD_COLLECTION_IMPORT_ON_EXCEPTION(new Parameter<>("stopEadCollectionImportOnException", false));
+    STOP_EAD_COLLECTION_IMPORT_ON_EXCEPTION(new Parameter<>("stopEadCollectionImportOnException", false)),
+
+    /*
+     * Optional parameter controlling whether ruleset based metadata validation during process creation is optional or
+     * not. If set to true, a checkbox will be displayed in the "Create new process" form allowing the user to
+     * deactivate validation during process creation. Default value is 'false', thus validation is enforced by default.
+     */
+    OPTIONAL_VALIDATION_ON_PROCESS_CREATION(new Parameter<>("metadataValidationOptionalDuringProcessCreation", false));
 
     private final Parameter<?> parameter;
 
