@@ -148,7 +148,7 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     private void addMultiDocStruc() {
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             if (!selectedMetadata.isEmpty()) {
                 MetadataViewInterface metadataView = getMetadataViewFromKey(
@@ -170,7 +170,7 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     private void addSingleDocStruc(boolean selectViews) {
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             LogicalDivision newStructure = MetadataEditor.addLogicalDivision(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), selectedStructure.get(),
@@ -413,8 +413,7 @@ public class AddDocStrucTypeDialog {
      */
     public void prepare() {
         elementsToAddSpinnerValue = 1;
-        checkSelectedLogicalNode();
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                 dataEditor.getWorkpiece().getLogicalStructure());
@@ -435,13 +434,15 @@ public class AddDocStrucTypeDialog {
     }
 
     /** 
-     * Determines the logical parent division that can be used as a basis for the dialog and overwrites the 
-     * user selection with this logical parent division. 
+     * Determines the logical parent division that can be used as a basis for the dialog.
      * 
-     * <p>Note: Sneakily overwriting the current user selection is a very bad legacy design choice of this dialog. 
-     * This should be improved in the future!</p>
+     * <p>In case physical divisions are selected, the parent logical division is returned.</p>
+     * 
+     * <p>In case a single logical division is selected, the logical division itself is returned.</p>
+     * 
+     * <p>In case multiple divisions are selected, or physical divisions have multiple different parents, nothing is returned.</p>
      */
-    private void checkSelectedLogicalNode() {
+    private Optional<LogicalDivision> getTargetLogicalDivisionFromNodeSelection() {
         Set<LogicalDivision> logicalDivisionSet =  dataEditor.getStructurePanel().getSelectedLogicalNodes().stream()
             .map(StructureTreeOperations::getTreeNodeLogicalParentOrSelf)
             .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
@@ -458,14 +459,9 @@ public class AddDocStrucTypeDialog {
 
         if (logicalDivisionSet.size() == 1) {
             LogicalDivision logicalDivision = logicalDivisionSet.iterator().next();
-            if (Objects.nonNull(logicalDivision)) {
-                try {
-                    dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(logicalDivision));
-                } catch (NoSuchMetadataFieldException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                }
-            }
+            return Optional.of(logicalDivision);
         }
+        return Optional.empty();
     }
 
     /**
@@ -473,7 +469,7 @@ public class AddDocStrucTypeDialog {
      * currently selected position.
      */
     public void prepareDocStructTypes() {
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                     dataEditor.getWorkpiece().getLogicalStructure());
@@ -495,7 +491,7 @@ public class AddDocStrucTypeDialog {
         selectionItemsForChildren = DataEditorService.getSortedAllowedSubstructuralElements(
                 dataEditor.getRulesetManagement()
                         .getStructuralElementView(
-                                dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                                getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new).getType(),
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
                 dataEditor.getProcess().getRuleset());
     }
@@ -510,7 +506,7 @@ public class AddDocStrucTypeDialog {
                 StructuralElementViewInterface newParentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                     newParent, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(
-                    dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType())) {
+                    getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new).getType())) {
                     selectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
@@ -724,7 +720,7 @@ public class AddDocStrucTypeDialog {
      */
     public void addProcessLink() {
         dataEditor.getCurrentChildren().add(selectedProcess);
-        MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
+        MetadataEditor.addLink(getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new),
             selectedProcess.getId());
         dataEditor.getStructurePanel().show(true);
         dataEditor.getPaginationPanel().show();
@@ -738,9 +734,10 @@ public class AddDocStrucTypeDialog {
      * @return label of the currently selected structure
      */
     public String getCurrentStructureLabel() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
+        if (selectedStructure.isPresent()) {
             StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                    dataEditor.getSelectedStructure().get().getType(), dataEditor.getAcquisitionStage(),
+                    selectedStructure.get().getType(), dataEditor.getAcquisitionStage(),
                     dataEditor.getPriorityList());
             return divisionView.getLabel();
         } else {
