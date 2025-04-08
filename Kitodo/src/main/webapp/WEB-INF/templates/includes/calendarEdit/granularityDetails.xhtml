@@ -35,8 +35,7 @@
                                    var="granularity"
                                    itemValue="#{granularity}"
                                    itemLabel="#{msgs['granularity.'.concat(granularity.toString().toLowerCase())]}"/>
-                    <p:ajax event="change"
-                            update="editForm:calendarTabView:granularity"/>
+                    <p:ajax update="editForm:calendarTabView:granularity"/>
                 </p:selectOneButton>
             </div>
 
@@ -58,7 +57,8 @@
                                value="#{CalendarForm.numberOfPagesPerIssue}"
                                decimalPlaces="0"
                                minValue="0">
-                    <p:ajax event="change"
+                    <p:ajax event="keyup"
+                            delay="300"
                             update="editForm:calendarTabView:granularity"/>
                 </p:inputNumber>
             </div>

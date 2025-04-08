@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -128,7 +129,9 @@ public class TemplateForm extends TemplateBaseForm {
             this.assignedProjects.clear();
             this.assignedProjects.addAll(template.getProjects());
             this.setSaveDisabled(false);
-            return templateEditPath;
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .getFlash().put("duplicatedTemplate", this.template);
+            return templateEditPath + "&id=0";
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                 logger, e);
@@ -362,15 +365,18 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public void loadTemplate(int id) {
         try {
-            if (id != 0) {
+            Template flashTemplate = (Template) FacesContext.getCurrentInstance()
+                    .getExternalContext().getFlash().get("duplicatedTemplate");
+            if (Objects.nonNull(flashTemplate)) {
+                setTemplate(flashTemplate);
+            } else if (id != 0) {
                 setTemplate(ServiceManager.getTemplateService().getById(id));
             } else {
                 newTemplate();
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id}, logger, e);
         }
     }
 

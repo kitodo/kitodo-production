@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class CommandService {
@@ -53,8 +54,12 @@ public class CommandService {
         }
         CommandResult commandResult = commandModule.runCommand(script);
         List<String> commandResultMessages = commandResult.getMessages();
-        if (!commandResultMessages.isEmpty() && commandResultMessages.get(0).contains("IOException")) {
-            throw new IOException(commandResultMessages.get(1));
+        if (!commandResult.isSuccessful() && !commandResultMessages.isEmpty()) {
+            for (String message : commandResultMessages) {
+                Helper.setErrorMessage(message);
+            }
+            String fullErrorMessage = String.join(" | ", commandResultMessages);
+            throw new IOException(fullErrorMessage);
         }
         return commandResult;
     }

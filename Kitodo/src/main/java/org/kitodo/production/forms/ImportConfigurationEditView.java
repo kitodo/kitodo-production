@@ -61,7 +61,7 @@ public class ImportConfigurationEditView extends BaseForm {
     static {
         DEFAULT_ID_XPATHS = List.of(
                 ".//*[local-name()='recordInfo']/*[local-name()='recordIdentifier']/text()",
-                ".//*[local-name()='datafield'][@tag='245']/*[local-name()='subfield'][@code='a']/text()",
+                ".//*[local-name()='controlfield'][@tag='001']/text()",
                 ".//*[local-name()='datafield'][@tag='003@']/*[local-name()='subfield'][@code='0']/text()"
         );
     }
@@ -69,7 +69,7 @@ public class ImportConfigurationEditView extends BaseForm {
     static {
         DEFAULT_TITLE_XPATHS = List.of(
                 ".//*[local-name()='titleInfo']/*[local-name()='title']/text()",
-                ".//*[local-name()='controlfield'][@tag='001']/text()",
+                ".//*[local-name()='datafield'][@tag='245']/*[local-name()='subfield'][@code='a']/text()",
                 ".//*[local-name()='datafield'][@tag='021A']/*[local-name()='subfield'][@code='a']/text()"
         );
     }

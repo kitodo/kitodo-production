@@ -162,7 +162,7 @@ public class ProjectServiceIT {
     @Test
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
-        assertEquals("First client", project.getClient().getName(), "Client names doesnt match");
+        assertEquals("First client", project.getClient().getName(), "Client names do not match");
     }
 
     @Test

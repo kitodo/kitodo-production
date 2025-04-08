@@ -146,7 +146,7 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     private void addMultiDocStruc() {
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             if (!selectedMetadata.isEmpty()) {
                 MetadataViewInterface metadataView = getMetadataViewFromKey(
@@ -168,7 +168,7 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     private void addSingleDocStruc(boolean selectViews) {
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             LogicalDivision newStructure = MetadataEditor.addLogicalDivision(docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), selectedStructure.get(),
@@ -180,13 +180,13 @@ public class AddDocStrucTypeDialog {
                 }
             }
             dataEditor.refreshStructurePanel();
-            TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
-                    this.dataEditor.getStructurePanel().getLogicalTree());
-            if (Objects.nonNull(selectedLogicalTreeNode)) {
-                this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
-                this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
-                dataEditor.refreshStructurePanel();
+            
+            try {
+                dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(newStructure));
+            } catch (NoSuchMetadataFieldException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
+            
             List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
                     .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))
                     .collect(Collectors.toList());
@@ -411,8 +411,7 @@ public class AddDocStrucTypeDialog {
      */
     public void prepare() {
         elementsToAddSpinnerValue = 1;
-        checkSelectedLogicalNode();
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                 dataEditor.getWorkpiece().getLogicalStructure());
@@ -432,18 +431,35 @@ public class AddDocStrucTypeDialog {
         }
     }
 
-    private void checkSelectedLogicalNode() {
-        //If a view is selected in logical tree then the 'selectedLogicalNode' will be set to the parent of this view
-        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
-        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-            if (structureTreeNode.getDataObject() instanceof View) {
-                if (Objects.nonNull(selectedLogicalNode.getParent())) {
-                    previouslySelectedLogicalNode = selectedLogicalNode;
-                    dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalNode.getParent());
-                }
-            }
+    /** 
+     * Determines the logical parent division that can be used as a basis for the dialog.
+     * 
+     * <p>In case physical divisions are selected, the parent logical division is returned.</p>
+     * 
+     * <p>In case a single logical division is selected, the logical division itself is returned.</p>
+     * 
+     * <p>In case multiple divisions are selected, or physical divisions have multiple different parents, nothing is returned.</p>
+     */
+    private Optional<LogicalDivision> getTargetLogicalDivisionFromNodeSelection() {
+        Set<LogicalDivision> logicalDivisionSet =  dataEditor.getStructurePanel().getSelectedLogicalNodes().stream()
+            .map(StructureTreeOperations::getTreeNodeLogicalParentOrSelf)
+            .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
+            .collect(Collectors.toSet());
+
+        if (logicalDivisionSet.isEmpty()) {
+            // determine logical parent division for selection of media (in case of gallery selection)
+            logicalDivisionSet.addAll(
+                dataEditor.getSelectedMedia().stream()
+                    .map(Pair::getRight)
+                    .collect(Collectors.toSet())
+            );
         }
+
+        if (logicalDivisionSet.size() == 1) {
+            LogicalDivision logicalDivision = logicalDivisionSet.iterator().next();
+            return Optional.of(logicalDivision);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -451,7 +467,7 @@ public class AddDocStrucTypeDialog {
      * currently selected position.
      */
     public void prepareDocStructTypes() {
-        Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
         if (selectedStructure.isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                     dataEditor.getWorkpiece().getLogicalStructure());
@@ -473,7 +489,7 @@ public class AddDocStrucTypeDialog {
         selectionItemsForChildren = DataEditorService.getSortedAllowedSubstructuralElements(
                 dataEditor.getRulesetManagement()
                         .getStructuralElementView(
-                                dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                                getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new).getType(),
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
                 dataEditor.getProcess().getRuleset());
     }
@@ -488,7 +504,7 @@ public class AddDocStrucTypeDialog {
                 StructuralElementViewInterface newParentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                     newParent, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(
-                    dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType())) {
+                    getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new).getType())) {
                     selectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
@@ -592,7 +608,7 @@ public class AddDocStrucTypeDialog {
         selectFirstPageOnAddNode = null;
         selectLastPageOnAddNode = null;
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
-            dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
+            dataEditor.getStructurePanel().setSelectedLogicalNodes(Collections.singletonList(previouslySelectedLogicalNode));
             previouslySelectedLogicalNode = null;
         }
     }
@@ -702,7 +718,7 @@ public class AddDocStrucTypeDialog {
      */
     public void addProcessLink() {
         dataEditor.getCurrentChildren().add(selectedProcess);
-        MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
+        MetadataEditor.addLink(getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new),
             selectedProcess.getId());
         dataEditor.getStructurePanel().show(true);
         dataEditor.getPaginationPanel().show();
@@ -716,22 +732,23 @@ public class AddDocStrucTypeDialog {
      * @return label of the currently selected structure
      */
     public String getCurrentStructureLabel() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
+        Optional<LogicalDivision> selectedStructure = getTargetLogicalDivisionFromNodeSelection();
+        if (selectedStructure.isPresent()) {
             StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                    dataEditor.getSelectedStructure().get().getType(), dataEditor.getAcquisitionStage(),
+                    selectedStructure.get().getType(), dataEditor.getAcquisitionStage(),
                     dataEditor.getPriorityList());
             return divisionView.getLabel();
         } else {
             return " - ";
         }
     }
-    
+
     private StructuralElementViewInterface getDivisionViewOfStructure(String structure) {
         StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement()
                 .getStructuralElementView(structure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         return divisionView;
     }
-    
+
     /**
      * This method checks if the selected metadatakey refers to complex metadata.
      * 

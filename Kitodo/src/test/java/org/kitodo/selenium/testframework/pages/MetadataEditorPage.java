@@ -21,6 +21,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -246,6 +247,72 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      * 
      * @param nodeId the tree node id describing the node in the tree (e.g., "0_1_0_1")
      */
+    public void selectStructureTreeNode(String nodeId, boolean withCtrl, boolean withShift) {
+        WebElement treeNode = Browser.getDriver().findElement(By.cssSelector(
+            "#logicalTree\\:" + nodeId +  " .ui-treenode-content"
+        ));
+        Actions actions = new Actions(Browser.getDriver());
+        if (withCtrl) {
+            actions = actions.keyDown(Keys.LEFT_CONTROL).click(treeNode).keyUp(Keys.LEFT_CONTROL); 
+        } else if (withShift) {
+            actions = actions.keyDown(Keys.LEFT_SHIFT).click(treeNode).keyUp(Keys.LEFT_SHIFT);
+        } else {
+            actions = actions.click(treeNode);
+        }
+        actions.build().perform();
+    }
+
+    /**
+     * Check that the provided number of pages are selected in the pagination panel.
+     * 
+     * @param count the number of pages that should be selected in the pagination panel
+     */
+    public void checkPaginationSelection(int count) {
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElements(
+                By.cssSelector("#paginationForm\\:paginationSelection .ui-chkbox-box.ui-state-active")
+            ).size() == count);
+    }
+
+    /**
+     * Check that the provided number of pages are selected in the gallery.
+     * 
+     * @param count the number of pages that should be selected in the gallery
+     */
+    public void checkGallerySelection(int count) {
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElements(
+                By.cssSelector("#imagePreviewForm .thumbnail.selected")
+            ).size() == count);
+    }
+
+    /**
+     * Check that overlay text of a gallery thumbnail matches an expected text.
+     * 
+     * @param thumbnailId the id of the thumbnail
+     * @param expectedText the expected overlay text
+     * @param errorText an error message in case the overlay text does not match
+     */
+    public void checkGalleryThumbnailOverlayText(String thumbnailId, String expectedText, String errorText) {
+        // find gallery thumbnail
+        WebElement thumbnail = Browser.getDriver().findElement(By.id(thumbnailId));
+
+        // move moues to thumbnail
+        new Actions(Browser.getDriver()).moveToElement(thumbnail).build().perform();
+
+        // retrieve thumbnail text
+        WebElement overlay = thumbnail.findElement(By.className("thumbnail-overlay"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(overlay::isDisplayed);
+
+        assertEquals(expectedText, overlay.getText().strip(), errorText);
+    }
+
+    /**
+     * Open context menu (right click) for specific structure tree node.
+     * 
+     * @param nodeId the tree node id describing the node in the tree (e.g., "0_1_0_1")
+     */
     public void openContextMenuForStructureTreeNode(String nodeId) {
         WebElement treeNode = Browser.getDriver().findElement(By.cssSelector(
             "#logicalTree\\:" + nodeId +  " .ui-treenode-content"
@@ -368,7 +435,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
                 .until(Browser.getDriver().findElement(By.id(SAVE_AND_EXIT_BUTTON_ID))::isEnabled);
         Pages.getMetadataEditorPage().saveAndExit();
         // check whether new position has been saved correctly
-        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_AND_DRAG_N_DROP_TEST_PROCESS_TITLE);
         secondThumbnail = Browser.getDriver().findElement(By.id(targetId));
         hoverAction.moveToElement(secondThumbnail).build().perform();
         thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));

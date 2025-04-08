@@ -676,9 +676,13 @@ public class WorkflowControllerService {
                 process, null);
 
         script = replacer.replace(script);
-
-        CommandResult commandResult = ServiceManager.getCommandService().runCommand(script);
-        return commandResult.isSuccessful();
+        try {
+            CommandResult commandResult = ServiceManager.getCommandService().runCommand(script);
+            return commandResult.isSuccessful();
+        } catch (IOException e) {
+            Helper.setErrorMessage("runCommandError", logger, e);
+            return false;
+        }
     }
 
     private boolean runXPathCondition(Process process, String xpath) throws IOException {

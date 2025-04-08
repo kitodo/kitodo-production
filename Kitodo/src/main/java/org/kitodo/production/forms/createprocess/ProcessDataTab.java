@@ -23,6 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
@@ -67,20 +69,24 @@ public class ProcessDataTab {
      * Update process metadata of currently selected process.
      */
     public void updateProcessMetadata() {
-        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess()) && Objects.nonNull(
-                createProcessForm.getCurrentProcess().getWorkpiece())) {
-            createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
-            if (this.docType.isEmpty()) {
-                createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
-            } else {
-                createProcessForm.getProcessMetadata().initializeProcessDetails(
-                        createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
-                overwriteProcessMetadata();
+        try {
+            if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess()) && Objects.nonNull(
+                    createProcessForm.getCurrentProcess().getWorkpiece())) {
+                createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
+                if (this.docType.isEmpty()) {
+                    createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
+                } else {
+                    createProcessForm.getProcessMetadata().initializeProcessDetails(
+                            createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
+                    overwriteProcessMetadata();
+                }
             }
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getMessage());
         }
     }
 
-    private void overwriteProcessMetadata() {
+    private void overwriteProcessMetadata() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         TempProcess currentProcess = createProcessForm.getCurrentProcess();
         if (StringUtils.isNotBlank(currentProcess.getAtstsl())) {
             for (ProcessDetail processDetail : currentProcess.getProcessMetadata().getProcessDetailsElements()) {
@@ -89,6 +95,7 @@ public class ProcessDataTab {
                     ProcessTextMetadata processTextMetadata = (ProcessTextMetadata) processDetail;
                     if (StringUtils.isBlank(processTextMetadata.getValue())) {
                         processTextMetadata.setValue(currentProcess.getAtstsl());
+                        processTextMetadata.preserve();
                     }
                 }
             }

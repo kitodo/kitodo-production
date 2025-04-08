@@ -83,7 +83,7 @@
                             <p:selectOneMenu id="file" value="#{RulesetForm.ruleset.file}" disabled="#{isViewMode}">
                                 <f:selectItems value="#{RulesetForm.rulesetFilenames}" var="rulesetFile" itemValue="#{rulesetFile}"
                                                itemLabel="#{rulesetFile}"/>
-                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>
                     </p:row>

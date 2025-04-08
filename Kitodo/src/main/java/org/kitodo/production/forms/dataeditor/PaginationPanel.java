@@ -12,11 +12,12 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -113,23 +114,18 @@ public class PaginationPanel {
      */
     public void setPaginationSelectionSelectedItems(List<Integer> selectedItems) {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
-        if (!selectedItems.isEmpty()) {
-            int lastItemIndex = selectedItems.get(selectedItems.size() - 1);
-            if (this.paginationSelectionSelectedItems.isEmpty()
-                    || !Objects.equals(this.paginationSelectionSelectedItems.get(
-                    this.paginationSelectionSelectedItems.size() - 1), lastItemIndex)) {
-                dataEditor.getStructurePanel().updateNodeSelection(
-                        dataEditor.getGalleryPanel().getGalleryMediaContent(physicalDivisions.get(lastItemIndex)),
-                        physicalDivisions.get(lastItemIndex).getLogicalDivisions().get(0));
-                updateMetadataPanel();
-            }
+        
+        List<Pair<PhysicalDivision, LogicalDivision>> selection = selectedItems.stream()
+            .map(physicalDivisions::get)
+            .map((p) -> new ImmutablePair<>(p, p.getLogicalDivisions().get(0)))
+            .collect(Collectors.toList());
+
+        try {
+            dataEditor.updateSelection(selection, Collections.emptyList());
+        }  catch (NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        dataEditor.getSelectedMedia().clear();
-        for (int i : selectedItems) {
-            for (LogicalDivision logicalDivision : physicalDivisions.get(i).getLogicalDivisions()) {
-                dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivisions.get(i), logicalDivision));
-            }
-        }
+
         this.paginationSelectionSelectedItems = selectedItems;
     }
 
@@ -291,7 +287,6 @@ public class PaginationPanel {
                 PhysicalDivision physicalDivision = physicalDivisions.get(i);
                 if (physicalDivision.equals(selectedElement.getKey())) {
                     paginationSelectionSelectedItems.add(i);
-                    break;
                 }
             }
         }
@@ -360,25 +355,11 @@ public class PaginationPanel {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage("paginationFormatError", new Object[] { paginationStartValue });
         }
-        paginationSelectionSelectedItems = new ArrayList<>();
-        preparePaginationSelectionItems();
         dataEditor.refreshStructurePanel();
-        updateMetadataPanel();
+        preparePaginationSelectionItems();
+        preparePaginationSelectionSelectedItems();
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
-    }
-
-    private void updateMetadataPanel() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
-            dataEditor.getMetadataPanel().showLogical(dataEditor.getSelectedStructure());
-        } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())
-                && dataEditor.getStructurePanel().getSelectedLogicalNode().getData() instanceof StructureTreeNode
-                && Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
-                && ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
-                .getDataObject() instanceof View) {
-            View view = (View) ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData()).getDataObject();
-            dataEditor.getMetadataPanel().showPageInLogical(view.getPhysicalDivision());
-        }
     }
 
     /**

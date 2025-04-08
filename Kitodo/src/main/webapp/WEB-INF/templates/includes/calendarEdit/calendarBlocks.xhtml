@@ -50,7 +50,7 @@
                                   pattern="dd.MM.yyyy"
                                   autocomplete="off"
                                   required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
-                        <p:ajax event="change" oncomplete="hideAndFocusNextInput(this);"
+                        <p:ajax event="change" oncomplete="hide(this)"
                                 listener="#{CalendarForm.checkBlockPlausibility(block)}"
                                 update="editForm:calendarTabView:calendarDetailsLayout"/>
                         <p:ajax event="dateSelect" oncomplete="hideAndFocusNextInput(this);"
@@ -103,7 +103,9 @@
                                 <p:inputText value="#{issue.heading}"
                                              id="issueName"
                                              styleClass="input-with-button" >
-                                    <p:ajax event="blur" listener="#{block.checkIssuesWithSameHeading()}"
+                                    <p:ajax event="keyup"
+                                            delay="300"
+                                            listener="#{block.checkIssuesWithSameHeading()}"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
                                 </p:inputText>
                                 <span class="issue-badge"
