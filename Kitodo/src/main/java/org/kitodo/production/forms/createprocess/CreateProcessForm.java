@@ -366,7 +366,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
-            Helper.setErrorMessage("Error validating process metadata", e);
         } catch (RulesetNotFoundException e) {
             String rulesetFile = "Process list is empty";
             if (!this.processes.isEmpty() && Objects.nonNull(getMainProcess().getRuleset())) {
