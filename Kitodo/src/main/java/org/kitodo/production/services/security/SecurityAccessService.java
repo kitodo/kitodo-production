@@ -1064,7 +1064,7 @@ public class SecurityAccessService extends SecurityAccess {
 
 
     private boolean hasAuthorityForTask(int taskId) throws DAOException {
-        Integer processId = ServiceManager.getTaskService().findById(taskId).getProcess().getId();
+        Integer processId = ServiceManager.getTaskService().getById(taskId).getProcess().getId();
         return hasAuthorityForProcess(processId);
     }
 

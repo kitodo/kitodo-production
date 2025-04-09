@@ -63,7 +63,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldFindTask() {
-        await().untilAsserted(() -> assertEquals("Finished", taskService.findById(1).getTitle(), "Task was not found in index!"));
+        await().untilAsserted(() -> assertEquals("Finished", taskService.getById(1).getTitle(), "Task was not found in index!"));
     }
 
     @Test

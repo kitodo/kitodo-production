@@ -882,19 +882,4 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         }
         return -1;
     }
-
-    // === alternative functions that are no longer required ===
-
-    /**
-     * Find object in ES and convert it to Interface.
-     *
-     * @param id
-     *            object id
-     * @return Interface object
-     * @deprecated Use {@link #getById(Integer)}.
-     */
-    @Deprecated
-    public Task findById(Integer id) throws DAOException {
-        return getById(id);
-    }
 }
