@@ -586,27 +586,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Determines all processes with a specific production template.
-     *
-     * <!-- Used in TemplateForm to find out whether a production template is
-     * used in a process. (Then it may not be deleted.) Is only checked for
-     * isEmpty(). -->
-     *
-     * @param templateId
-     *            record number of the production template
-     * @return list that is not empty if something was found, otherwise empty
-     *         list
-     * @throws DAOException
-     *             if an error occurred during the search
-     */
-    public Collection<?> findByTemplate(int templateId) throws DAOException {
-        BeanQuery query = new BeanQuery(Process.class);
-        query.addIntegerRestriction("template.id", templateId);
-        query.setUnordered();
-        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
-    }
-
-    /**
      * Determines all processes with a specific ruleset.
      *
      * <!-- Used in RulesetForm to find out whether a ruleset is used in a
