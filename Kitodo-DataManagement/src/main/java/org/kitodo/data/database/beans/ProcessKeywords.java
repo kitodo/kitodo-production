@@ -220,9 +220,6 @@ class ProcessKeywords {
      * 
      * @param process
      *            process of the METS file
-     * @param placeDebug
-     *            what the metadata is read for, only for debug log messages.
-     *            Can be null if logging is disabled on the debug level.
      * @return metadata keywords, and metadata pseudo keywords
      */
     private static final Set<String> initMetadataKeywords(Process process) {
@@ -480,8 +477,8 @@ class ProcessKeywords {
      * process. This is only done if the log level for this class is set to
      * TRACE.
      * 
-     * @param keywordsLogfile
-     *            file name (without path)
+     * @param processId
+     *            metadata directory
      */
     private final void logKeywords(Integer processId) {
         try {
