@@ -20,10 +20,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.controller.SessionClientController;
 import org.kitodo.production.security.CustomLoginSuccessHandler;
 import org.kitodo.production.services.ServiceManager;
