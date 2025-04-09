@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.text.ParseException;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -102,8 +101,6 @@ public abstract class BaseTemplateBean extends BaseBean {
      *
      * @param creationDate
      *            creation time to set
-     * @throws ParseException
-     *             if the time cannot be converted
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
