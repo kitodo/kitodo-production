@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.KitodoConfig;
+import org.kitodo.config.ConfigCore;
 
 /**
  * Checks the connection to the search service. This is an asynchronous function
@@ -77,7 +77,7 @@ class ServerConnectionChecker implements Runnable {
      * Get search server information.
      */
     private static final String downloadServerInformation() {
-        try (InputStream greetStream = KitodoConfig.getSearchServerUrl().openStream();
+        try (InputStream greetStream = ConfigCore.getSearchServerUrl().openStream();
                 Scanner scanner = new Scanner(greetStream, StandardCharsets.US_ASCII)) {
             scanner.useDelimiter("\\A");
             String body = scanner.hasNext() ? scanner.next() : "";
