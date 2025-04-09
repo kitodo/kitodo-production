@@ -87,21 +87,6 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
         return count("SELECT COUNT(*) FROM Filter");
     }
 
-    /**
-     * Find filters with exact value.
-     *
-     * @param value
-     *            of the searched filter
-     * @param contains
-     *            of the searched filter
-     * @return list of JSON objects with properties
-     */
-    @Deprecated
-    List<Map<String, Object>> findByValue(String value, boolean contains) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
     Set<Integer> collectIds(List<BaseBean> dtos) {
         Set<Integer> ids = new HashSet<>();
         for (BaseBean process : dtos) {

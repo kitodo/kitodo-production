@@ -679,36 +679,6 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     }
 
     /**
-     * Find tasks by id of process.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with tasks for specific process id
-     */
-    List<Map<String, Object>> findByProcessId(Integer id) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
-     * Determines all processes with a specific production template.
-     *
-     * @param templateId
-     *            record number of the production template
-     * @return list that is not empty if something was found, otherwise empty
-     *         list
-     * @throws DAOException
-     *             if an error occurred during the search
-     */
-    /*
-     * Used in TemplateForm to find out whether a production template is used in
-     * a process. (Then it may not be deleted.) Is only checked for isEmpty().
-     */
-    public List<Map<String, Object>> findByTemplateId(Integer id) throws DAOException {
-        throw new UnsupportedOperationException("not yet implemented");
-    }
-
-    /**
      * The function determines, from projects, the folders whose contents can be
      * generated automatically.
      *

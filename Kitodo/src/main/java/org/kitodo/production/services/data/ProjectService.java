@@ -147,11 +147,6 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         }
     }
 
-    private List<Project> findAvailableForAssignToUser(User user) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
     /**
      * Checks if a project can be actually used.
      *

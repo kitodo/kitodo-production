@@ -142,58 +142,6 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
     }
 
     /**
-     * Find ruleset with exact file.
-     *
-     * @param file
-     *            of the searched ruleset
-     * @return search result
-     */
-    public Map<String, Object> findByFile(String file) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
-     * Find rulesets for client id.
-     *
-     * @param clientId
-     *            of the searched rulesets
-     * @return search result
-     */
-    List<Map<String, Object>> findByClientId(Integer clientId) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
-     * Find ruleset with exact title and file name.
-     *
-     * @param title
-     *            of the searched ruleset
-     * @param file
-     *            of the searched ruleset
-     * @return search result
-     */
-    public Map<String, Object> findByTitleAndFile(String title, String file) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
-     * Find ruleset with exact title or file name.
-     *
-     * @param title
-     *            of the searched ruleset
-     * @param file
-     *            of the searched ruleset
-     * @return search result
-     */
-    public List<Map<String, Object>> findByTitleOrFile(String title, String file) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
      * Get preferences.
      *
      * @param ruleset

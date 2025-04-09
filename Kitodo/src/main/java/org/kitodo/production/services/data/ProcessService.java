@@ -467,21 +467,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Compare two list and return difference between them.
-     *
-     * @param firstList
-     *            list from which records can be remove
-     * @param secondList
-     *            records stored here will be removed from firstList
-     * @return difference between two lists
-     */
-    @Deprecated
-    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
      * Saves multiple processes in the database.
      * 
      * <p>
@@ -498,12 +483,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     @Override
     public void refresh(Process process) {
         dao.refresh(process);
-    }
-
-    @Deprecated
-    List<Map<String, Object>> findForCurrentSessionClient() {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -587,26 +566,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     @SuppressWarnings("unchecked")
     public Collection<Process> findByTitle(String title) throws DAOException {
         return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
-    }
-
-    /**
-     * Finds processes by searchQuery for a number of fields.
-     *
-     * @param searchQuery
-     *            the query word or phrase
-     * @return a List of found Processs
-     * @throws DAOException
-     *             when accessing the elasticsearch server fails
-     */
-    /*
-     * Only used in SearchResultForm. SearchResultForm is thrown out in further
-     * development. No new implementation required here. (However, the
-     * functionality must be provided in countResults() and loadData().)
-     */
-    @Deprecated
-    public List<Process> findByAnything(String searchQuery) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -724,27 +683,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             }
         }
         return filteredProcesses;
-    }
-
-    /**
-     * Find processes by property.
-     *
-     * @param title
-     *            of property
-     * @param value
-     *            of property
-     * @return list of JSON objects with processes for specific property
-     */
-    @Deprecated
-    public List<Process> findByProperty(String title, String value) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    @Deprecated
-    List<Process> findByProjectIds(Set<Integer> projectIds, boolean related) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**

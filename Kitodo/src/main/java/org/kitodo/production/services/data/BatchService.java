@@ -89,32 +89,6 @@ public class BatchService extends BaseBeanService<Batch, BatchDAO> {
     }
 
     /**
-     * Find batches by id of process.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with batches for specific process id
-     */
-    @Deprecated
-    public List<Map<String, Object>> findByProcessId(Integer id) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
-     * Find batches by title of process.
-     *
-     * @param title
-     *            of process
-     * @return list of JSON objects with batches for specific process title
-     */
-    @Deprecated
-    public List<Map<String, Object>> findByProcessTitle(String title) {
-        // TODO delete method stub
-        throw new UnsupportedOperationException("no longer used function");
-    }
-
-    /**
      * Returns true if the title (if set) or the id-based label contain the
      * specified sequence of char values.
      *
