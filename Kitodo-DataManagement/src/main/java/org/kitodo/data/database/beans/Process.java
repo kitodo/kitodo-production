@@ -975,23 +975,6 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Sets whether the process has any comments. This should only be set if the
-     * data comes from a third party; internally, it is determined in the
-     * database.
-     *
-     * @param hasComments
-     *            whether the process has comments
-     */
-    public void setHasComments(boolean hasComments) {
-        if (!hasComments && Objects.nonNull(comments)) {
-            comments.forEach(comment -> comment.setProcess(null));
-            comments.clear();
-        } else if (hasComments && CollectionUtils.isEmpty(comments)) {
-            throw new UnsupportedOperationException("cannot insert comments");
-        }
-    }
-
-    /**
      * Get ImportConfiguration used to create this process.
      *
      * @return ImportConfiguration used to create this process. "null" if
