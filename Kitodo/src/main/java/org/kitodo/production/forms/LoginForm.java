@@ -32,7 +32,6 @@ import org.kitodo.production.services.security.SecurityAccessService;
 @Named("LoginForm")
 @SessionScoped
 public class LoginForm implements Serializable {
-    private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private User loggedUser;
     private boolean firstVisit = true;
     private static final String DESKTOP_VIEW = "desktop.jsf";
