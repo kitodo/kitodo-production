@@ -826,7 +826,7 @@ public class ProjectForm extends BaseForm {
      */
     public List<Project> getProjects() {
         try {
-            return ServiceManager.getProjectService().findAll();
+            return ServiceManager.getProjectService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);

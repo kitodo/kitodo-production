@@ -297,23 +297,4 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         }
         ServiceManager.getProjectService().remove(project);
     }
-
-    // === alternative functions that are no longer required ===
-
-    /**
-     * Returns all projects from the database.
-     * 
-     * <p>
-     * <b>API Note:</b><br>
-     * This method actually returns all objects of all clients and is therefore
-     * more suitable for operational purposes, rather not for display purposes.
-     *
-     * @return all objects of the implementing type
-     * @deprecated Use {@link #getAll()}.
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public List<Project> findAll() throws DAOException {
-        return (List<Project>) (List<?>) getAll();
-    }
 }

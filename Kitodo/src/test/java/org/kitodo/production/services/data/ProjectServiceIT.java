@@ -88,7 +88,7 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindAllProjects() throws DAOException {
-        assertEquals(3, projectService.findAll().size(), "Not all projects were found in index!");
+        assertEquals(3, projectService.getAll().size(), "Not all projects were found in index!");
     }
 
     @Test
