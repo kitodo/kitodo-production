@@ -240,27 +240,6 @@ public class KitodoConfig extends Config {
     }
 
     /**
-     * Returns the URL of the search server.
-     * 
-     * @return the URL
-     * @throws MalformedURLException
-     *             if an unknown protocol, or the port is a negative number
-     *             other than -1
-     */
-    public static URL getSearchServerUrl() throws MalformedURLException {
-        String host = getParameter("elasticsearch.host", "localhost");
-        int port = getIntParameter(new ParameterInterface() {
-            @Override
-            public String getName() {
-                return "elasticsearch.port";
-            }
-        }, 9200);
-        String protocol = getParameter("elasticsearch.protocol", "http");
-        String path = getParameter("elasticsearch.path", "/");
-        return new URL(protocol, host, port, path);
-    }
-
-    /**
      * Returns the selected URI from the configuration file. Throws a
      * {@code NoSuchElementException} if no such parameter exists.
      *

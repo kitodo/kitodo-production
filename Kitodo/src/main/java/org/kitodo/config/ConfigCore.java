@@ -12,6 +12,8 @@
 package org.kitodo.config;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
 import java.util.NoSuchElementException;
@@ -21,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.beans.Parameter;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.config.enums.ParameterInterface;
 import org.kitodo.exceptions.ConfigParameterException;
 
 public class ConfigCore extends KitodoConfig {
@@ -173,5 +176,26 @@ public class ConfigCore extends KitodoConfig {
      */
     public static String getKitodoDiagramDirectory() {
         return getParameter(ParameterCore.DIR_DIAGRAMS);
+    }
+
+    /**
+     * Returns the URL of the search server.
+     * 
+     * @return the URL
+     * @throws MalformedURLException
+     *             if an unknown protocol, or the port is a negative number
+     *             other than -1
+     */
+    public static URL getSearchServerUrl() throws MalformedURLException {
+        String host = getParameter("elasticsearch.host", "localhost");
+        int port = getIntParameter(new ParameterInterface() {
+            @Override
+            public String getName() {
+                return "elasticsearch.port";
+            }
+        }, 9200);
+        String protocol = getParameter("elasticsearch.protocol", "http");
+        String path = getParameter("elasticsearch.path", "/");
+        return new URL(protocol, host, port, path);
     }
 }
