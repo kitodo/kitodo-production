@@ -205,7 +205,7 @@ public class Project extends BaseBean implements Comparable<Project> {
 
     @PostLoad
     @PostUpdate
-    private void onPostLoad() {
+    private void setHasProcesses() {
         this.hasProcesses = CollectionUtils.isNotEmpty(processes);
     }
 
