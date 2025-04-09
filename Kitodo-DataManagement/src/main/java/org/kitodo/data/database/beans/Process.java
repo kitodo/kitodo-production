@@ -46,7 +46,6 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDe
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
 
 @Entity
@@ -922,27 +921,6 @@ public class Process extends BaseTemplateBean {
             return CollectionUtils.isNotEmpty(children);
         } catch (LazyInitializationException e) {
             return hasChildren;
-        }
-    }
-
-    /**
-     * Sets whether the process is a parent. The setter can be used when
-     * representing data from a third-party source. Internally, parenthood
-     * results from a parent relationship of the process in the database.
-     * Setting this to true cannot insert child processes into the database.
-     *
-     * @param hasChildren
-     *            whether the process has children
-     * @throws UnsupportedOperationException
-     *             when trying to set this to true for a process without
-     *             children
-     */
-    public void setHasChildren(boolean hasChildren) {
-        if (!hasChildren && Objects.nonNull(children)) {
-            children.forEach(child -> child.setParent(null));
-            children.clear();
-        } else if (hasChildren && CollectionUtils.isEmpty(children)) {
-            throw new UnsupportedOperationException("cannot insert child processes");
         }
     }
 
