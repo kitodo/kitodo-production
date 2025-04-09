@@ -913,27 +913,6 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Returns the record number of the parent process, if any. Is {@code null}
-     * if there is no parent process above.
-     *
-     * @return record number of the parent process
-     */
-    public Integer getParentID() {
-        return Objects.nonNull(parent) ? parent.getId() : null;
-    }
-
-    /**
-     * Sets a parent process based on its record number. Or {@code null} to not
-     * set a parent process.
-     *
-     * @param parentID
-     *            record number of the parent process
-     */
-    public void setParentID(Integer parentID) {
-        this.parent = HibernateUtil.getSession().get(Process.class, parentID);
-    }
-
-    /**
      * Returns whether the process has children.
      *
      * @return whether the process has children
