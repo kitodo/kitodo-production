@@ -613,13 +613,9 @@ public class NewspaperProcessesMigrator {
      *             if the process cannot be generated
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
-<<<<<<< HEAD
      * @throws DAOException
-     *             if there is an error saving the process
-=======
->>>>>>> 80a7a29a9de389218f293e4b7366f0bff4a2e5f0
-     * @throws DAOException
-     *             if a process cannot be load from the database
+     *             if there is an error saving the process or if a process
+     *             cannot be load from the database
      */
     public void createNextYearProcess() throws ProcessGenerationException, IOException, DAOException,
             CommandException {
