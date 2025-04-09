@@ -40,7 +40,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FilterDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
@@ -98,7 +97,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
      * @return list of JSON objects with properties
      */
     @Deprecated
-    List<Map<String, Object>> findByValue(String value, boolean contains) throws DataException {
+    List<Map<String, Object>> findByValue(String value, boolean contains) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }

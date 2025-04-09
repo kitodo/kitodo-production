@@ -20,7 +20,6 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -123,7 +122,7 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
      * @return search result
      */
     @Deprecated
-    Map<String, Object> findByFile(String file) throws DataException {
+    Map<String, Object> findByFile(String file) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -136,7 +135,7 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
      * @return search result
      */
     @Deprecated
-    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
+    List<Map<String, Object>> findByClientId(Integer clientId) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -151,7 +150,7 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
      * @return search result
      */
     @Deprecated
-    Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
+    Map<String, Object> findByTitleAndFile(String title, String file) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -166,7 +165,7 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
      * @return search result
      */
     @Deprecated
-    List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
+    List<Map<String, Object>> findByTitleOrFile(String title, String file) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }

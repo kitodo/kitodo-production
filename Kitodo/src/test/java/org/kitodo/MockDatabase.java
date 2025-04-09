@@ -86,7 +86,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
@@ -1148,7 +1147,6 @@ public class MockDatabase {
      * Add test process for moving pages via mouse drag'n'drop.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
      */
     public static int insertTestProcessForDragNDropTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(DRAG_N_DROP_TEST_PROCESS_TITLE);
@@ -1158,7 +1156,6 @@ public class MockDatabase {
      * Add test process for moving pages via mouse drag'n'drop.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
      */
     public static int insertTestProcessForCreateStructureAndDragNDropTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(CREATE_STRUCTURE_AND_DRAG_N_DROP_TEST_PROCESS_TITLE);
@@ -1168,7 +1165,6 @@ public class MockDatabase {
      * Add test process for creating structure elements.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
      */
     public static int insertTestProcessForCreatingStructureElementIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(CREATE_STRUCTURE_PROCESS_TITLE);
@@ -2317,9 +2313,8 @@ public class MockDatabase {
      * Add simple template with one task that can be used to create processes.
      *
      * @throws DAOException when loading role or template fails
-     * @throws DataException when saving template task fails
      */
-    public static void insertTestTemplateForCreatingProcesses() throws DAOException, DataException {
+    public static void insertTestTemplateForCreatingProcesses() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
         Client client = ServiceManager.getClientService().getById(1);
 

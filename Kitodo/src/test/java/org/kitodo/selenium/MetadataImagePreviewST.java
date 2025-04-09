@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -63,11 +62,10 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
-     * @throws DataException when retrieving test project for test processes fails.
      * @throws IOException when copying test metadata or image files fails.
      */
     @BeforeAll
-    public static void prepare() throws DAOException, DataException, IOException {
+    public static void prepare() throws DAOException, IOException {
         MockDatabase.insertFoldersForSecondProject();
         processId = MockDatabase.insertTestProcessIntoSecondProject(PROCESS_TITLE);
         ProcessTestUtils.copyTestFiles(processId, TEST_RENAME_MEDIA_FILE);
@@ -295,11 +293,10 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      * Cleanup test environment by removing temporal dummy processes from database and index.
      * @throws DAOException when dummy process cannot be removed from database
      * @throws CustomResponseException when dummy process cannot be removed from index
-     * @throws DataException when dummy process cannot be removed from index
      * @throws IOException when deleting test files fails.
      */
     @AfterAll
-    public static void cleanup() throws DAOException, DataException, IOException {
+    public static void cleanup() throws DAOException, IOException {
         ProcessService.deleteProcess(processId);
     }
 

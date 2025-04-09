@@ -27,7 +27,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.test.utils.ProcessTestUtils;
@@ -58,7 +57,7 @@ public class CommentFormIT {
     }
 
     @Test
-    public void shouldAddComment() throws DAOException, DataException, IOException {
+    public void shouldAddComment() throws DAOException, IOException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = addTestProcess("Test process for adding comment");
         commentForm.setProcessById(testProcess.getId());
@@ -71,7 +70,7 @@ public class CommentFormIT {
     }
 
     @Test
-    public void shouldRemoveComment() throws DAOException, DataException, IOException {
+    public void shouldRemoveComment() throws DAOException, IOException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = addTestProcess("Test process for removing comment");
         commentForm.setProcessById(testProcess.getId());
@@ -83,7 +82,7 @@ public class CommentFormIT {
     }
 
     @Test
-    public void shouldGetPreviousStepsForProblemReporting() throws DAOException, DataException, IOException {
+    public void shouldGetPreviousStepsForProblemReporting() throws DAOException, IOException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = ServiceManager.getProcessService().getById(1);
         commentForm.setProcessById(testProcess.getId());
@@ -99,14 +98,14 @@ public class CommentFormIT {
                 " reporting should contain at least one more task than before after setting up the process status");
     }
 
-    private Process addTestProcess(String processTitle) throws DAOException, DataException, IOException {
+    private Process addTestProcess(String processTitle) throws DAOException, IOException {
         Process testProcess = ProcessTestUtils.addProcess(processTitle);
         testProcessId = testProcess.getId();
         ProcessTestUtils.copyTestMetadataFile(testProcessId, "testmeta.xml");
         return testProcess;
     }
 
-    private Comment addTestComment(Process process) throws DAOException, DataException {
+    private Comment addTestComment(Process process) throws DAOException {
         Comment comment = new Comment();
         comment.setMessage("This is a comment");
         comment.setProcess(process);

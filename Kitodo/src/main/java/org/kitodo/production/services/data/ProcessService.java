@@ -115,7 +115,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
@@ -502,7 +501,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     @Deprecated
-    List<Map<String, Object>> findForCurrentSessionClient() throws DataException {
+    List<Map<String, Object>> findForCurrentSessionClient() {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -559,7 +558,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *            key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
-    public List<Process> findByMetadataInAllProjects(Map<String, String> metadata, boolean exactMatch) throws DataException {
+    public List<Process> findByMetadataInAllProjects(Map<String, String> metadata, boolean exactMatch) {
         BeanQuery query = new BeanQuery(Process.class);
         if (!exactMatch) {
             query.setIndexFiltersAsAlternatives();
@@ -605,7 +604,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * functionality must be provided in countResults() and loadData().)
      */
     @Deprecated
-    public List<Process> findByAnything(String searchQuery) throws DataException {
+    public List<Process> findByAnything(String searchQuery) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -709,7 +708,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @return found processes
      * @throws DAOException
      *             if the search engine fails
-     * @throws DataException if the search engine fails
      * @throws DAOException when loading ruleset from database fails
      * @throws IOException when opening ruleset file fails
      */
@@ -738,13 +736,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @return list of JSON objects with processes for specific property
      */
     @Deprecated
-    public List<Process> findByProperty(String title, String value) throws DataException {
+    public List<Process> findByProperty(String title, String value) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
 
     @Deprecated
-    List<Process> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
+    List<Process> findByProjectIds(Set<Integer> projectIds, boolean related) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }

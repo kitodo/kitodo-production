@@ -21,7 +21,6 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.primefaces.model.SortOrder;
 
@@ -97,7 +96,7 @@ public class BatchService extends BaseBeanService<Batch, BatchDAO> {
      * @return list of JSON objects with batches for specific process id
      */
     @Deprecated
-    public List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+    public List<Map<String, Object>> findByProcessId(Integer id) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -110,7 +109,7 @@ public class BatchService extends BaseBeanService<Batch, BatchDAO> {
      * @return list of JSON objects with batches for specific process title
      */
     @Deprecated
-    public List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
+    public List<Map<String, Object>> findByProcessTitle(String title) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }

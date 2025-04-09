@@ -52,7 +52,6 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -279,8 +278,6 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if the configuration is wrong
      * @throws DAOException
      *             if an error occurs while saving in the database
-     * @throws DAOException
-     *             if an error occurs while saving in the database
      * @throws IOException
      *             if something goes wrong when reading or writing one of the
      *             affected files
@@ -288,7 +285,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
      */
-    public boolean nextStep() throws ConfigurationException, DAOException, DataException, IOException,
+    public boolean nextStep() throws ConfigurationException, DAOException, IOException,
             ProcessGenerationException, DoctypeMissingException, CommandException {
 
         if (currentStep == 0) {
@@ -502,7 +499,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                     (one, another) -> one + ", " + another));
     }
 
-    private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
+    private void createProcess(int index) throws DAOException, IOException, ProcessGenerationException,
             CommandException {
         final long begin = System.nanoTime();
 

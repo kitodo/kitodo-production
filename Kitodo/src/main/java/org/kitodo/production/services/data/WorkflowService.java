@@ -141,8 +141,6 @@ public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
      * or if it is a new workflow and no workflow with the same name exists.
      *
      * @param workflow the object to save
-     *
-     * @throws DataException if the given workflow is a new workflow and a workflow with the same name already exists
      */
     public void saveWorkflow(Workflow workflow) throws DAOException {
         if (Objects.nonNull(workflow.getId())) {

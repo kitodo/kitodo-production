@@ -42,7 +42,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -149,7 +148,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      *            of the searched ruleset
      * @return search result
      */
-    public Map<String, Object> findByFile(String file) throws DataException {
+    public Map<String, Object> findByFile(String file) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -161,7 +160,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      *            of the searched rulesets
      * @return search result
      */
-    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
+    List<Map<String, Object>> findByClientId(Integer clientId) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -175,7 +174,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      *            of the searched ruleset
      * @return search result
      */
-    public Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
+    public Map<String, Object> findByTitleAndFile(String title, String file) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }
@@ -189,7 +188,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      *            of the searched ruleset
      * @return search result
      */
-    public List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
+    public List<Map<String, Object>> findByTitleOrFile(String title, String file) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }

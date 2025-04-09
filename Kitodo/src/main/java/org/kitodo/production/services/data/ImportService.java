@@ -83,7 +83,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
@@ -1121,20 +1120,16 @@ public class ImportService {
             if (Objects.isNull(parentProcess)) {
                 HashMap<String, String> parentIDMetadata = new HashMap<>();
                 parentIDMetadata.put(identifierMetadata, parentId);
-                try {
-                    for (Process process : sortProcessesByProjectID(ServiceManager.getProcessService()
-                            .findByMetadataInAllProjects(parentIDMetadata, true), projectId)) {
-                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
-                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                                    + process.getId() + " is null!");
-                        }
-                        if (process.getRuleset().getId().equals(ruleset.getId())) {
-                            parentProcess = process;
-                            break;
-                        }
+                for (Process process : sortProcessesByProjectID(ServiceManager.getProcessService()
+                        .findByMetadataInAllProjects(parentIDMetadata, true), projectId)) {
+                    if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                        throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                                + process.getId() + " is null!");
                     }
-                } catch (DataException e) {
-                    logger.error(e.getLocalizedMessage(), e);
+                    if (process.getRuleset().getId().equals(ruleset.getId())) {
+                        parentProcess = process;
+                        break;
+                    }
                 }
             }
         }

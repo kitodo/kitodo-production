@@ -80,7 +80,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -312,8 +311,6 @@ public class ImportServiceIT {
      *             when test ruleset cannot be loaded from database
      * @throws IOException
      *             when checking for parent process fails
-     * @throws DataException
-     *             when copying test metadata file fails
      */
     @Test
     public void shouldCheckForParent() throws Exception {

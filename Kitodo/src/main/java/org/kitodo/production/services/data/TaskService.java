@@ -45,7 +45,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
@@ -686,7 +685,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      *            of process
      * @return list of JSON objects with tasks for specific process id
      */
-    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+    List<Map<String, Object>> findByProcessId(Integer id) {
         // TODO delete method stub
         throw new UnsupportedOperationException("no longer used function");
     }

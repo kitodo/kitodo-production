@@ -37,7 +37,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -102,7 +101,7 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             Process parentProcess = formProcessTitle(order, tempProcess, process);
             createProcess(tempProcess, process, parentProcess);
 
-        } catch (CommandException | DataException | DAOException | InvalidMetadataValueException | IOException
+        } catch (CommandException | DAOException | InvalidMetadataValueException | IOException
                 | NoRecordFoundException | NoSuchMetadataFieldException | ParserConfigurationException
                 | ProcessGenerationException | SAXException | TransformerException | UnsupportedFormatException
                 | URISyntaxException | XPathExpressionException e) {

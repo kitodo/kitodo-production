@@ -24,7 +24,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -73,7 +72,7 @@ public class WorkflowServiceIT {
         String expectedExceptionMessage = Helper.getTranslation("duplicateWorkflowTitle", "test");
         DAOException dataException = assertThrows(DAOException.class,
                 () -> workflowService.saveWorkflow(workflow),
-                "Expected DataException to be thrown when saving a new workflow with an existing title");
+            "Expected DAOException to be thrown when saving a new workflow with an existing title");
         assertEquals(expectedExceptionMessage, dataException.getMessage());
     }
 }
