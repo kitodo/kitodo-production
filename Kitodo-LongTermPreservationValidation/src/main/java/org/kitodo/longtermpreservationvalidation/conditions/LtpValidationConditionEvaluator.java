@@ -30,6 +30,147 @@ public class LtpValidationConditionEvaluator {
         return LtpValidationResultState.ERROR;        
     }
 
+    private static LtpValidationConditionResult getConditionFalseResult(String value) {
+        return new LtpValidationConditionResult(
+            false, 
+            LtpValidationConditionError.CONDITION_FALSE, 
+            value
+        );
+    }
+
+    private static LtpValidationConditionResult getConditionIncorrectNumberOfValuesResult(String value) {
+        return new LtpValidationConditionResult(
+            false, 
+            LtpValidationConditionError.INCORRECT_NUMBER_OF_CONDITION_VALUES, 
+            value
+        );
+    }
+
+    private static LtpValidationConditionResult getConditionNotANumberResult(String value) {
+        return new LtpValidationConditionResult(
+            false, 
+            LtpValidationConditionError.NOT_A_NUMBER, 
+            value
+        );
+    }
+
+    private static LtpValidationConditionResult evaluateEqualCondition(
+        String value,
+        LtpValidationConditionInterface condition, 
+        Map<String, String> properties
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() != 1) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        if (value.equals(condition.getValues().get(0).toLowerCase())) {
+            return new LtpValidationConditionResult(true, null, value);
+        }
+
+        return getConditionFalseResult(value);
+    }
+
+    private static LtpValidationConditionResult evaluateOneOfCondition(
+        String value,
+        LtpValidationConditionInterface condition, 
+        Map<String, String> properties
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() == 0) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        if (condition.getValues().stream().anyMatch(value::equalsIgnoreCase)) {
+            return new LtpValidationConditionResult(true, null, value);
+        }
+
+        return getConditionFalseResult(value);
+    }
+
+    private static LtpValidationConditionResult evaluateNoneOfCondition(
+        String value,
+        LtpValidationConditionInterface condition, 
+        Map<String, String> properties
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() == 0) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        if (condition.getValues().stream().noneMatch(value::equalsIgnoreCase)) {
+            return new LtpValidationConditionResult(true, null, value);
+        }
+
+        return getConditionFalseResult(value);
+    }
+
+    private static LtpValidationConditionResult evaluateLargerThanCondition(
+        String value,
+        LtpValidationConditionInterface condition, 
+        Map<String, String> properties
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() != 1) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        try {
+            Float valueFloat = Float.parseFloat(value);
+            Float conditionFloat = Float.parseFloat(condition.getValues().get(0));
+            if (valueFloat >= conditionFloat) {
+                return new LtpValidationConditionResult(true, null, value);
+            }
+        } catch (NumberFormatException e) {
+            return getConditionNotANumberResult(value);
+        }
+
+        return getConditionFalseResult(value);
+    }
+
+    private static LtpValidationConditionResult evaluateSmallerThanCondition(
+        String value,
+        LtpValidationConditionInterface condition, 
+        Map<String, String> properties
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() != 1) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        try {
+            Float valueFloat = Float.parseFloat(value);
+            Float conditionFloat = Float.parseFloat(condition.getValues().get(0));
+            if (valueFloat <= conditionFloat) {
+                return new LtpValidationConditionResult(true, null, value);
+            }
+        } catch (NumberFormatException e) {
+            return getConditionNotANumberResult(value);
+        }
+
+        return getConditionFalseResult(value);
+    }
+
+    private static LtpValidationConditionResult evaluateInBetweenThanCondition(
+        String value,
+        LtpValidationConditionInterface condition, 
+        Map<String, String> properties
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() != 2) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        try {
+            Float valueFloat = Float.parseFloat(value);
+            Float fromFloat = Float.parseFloat(condition.getValues().get(0));
+            Float toFloat = Float.parseFloat(condition.getValues().get(1));
+            if (valueFloat >= fromFloat && valueFloat <= toFloat) {
+                return new LtpValidationConditionResult(true, null, value);
+            }
+        } catch (NumberFormatException e) {
+            return getConditionNotANumberResult(value);
+        }
+
+        return getConditionFalseResult(value);
+    }
+
+
+
     public static LtpValidationConditionResult evaluateValidationCondition(
         LtpValidationConditionInterface condition, 
         Map<String, String> properties
@@ -49,23 +190,17 @@ public class LtpValidationConditionEvaluator {
 
         // check equal operation
         if (condition.getOperation().equals(LtpValidationConditionOperation.EQUAL)) {
-            if (Objects.isNull(condition.getValues()) || condition.getValues().size() != 1) {
-                return new LtpValidationConditionResult(
-                    false, 
-                    LtpValidationConditionError.INCORRECT_NUMBER_OF_CONDITION_VALUES, 
-                    value
-                );
-            }
-
-            if (value.equals(condition.getValues().get(0).toLowerCase())) {
-                return new LtpValidationConditionResult(true, null, value);
-            }
-
-            return new LtpValidationConditionResult(
-                false, 
-                LtpValidationConditionError.CONDITION_FALSE, 
-                value
-            );
+            return evaluateEqualCondition(value, condition, properties);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.ONE_OF)) {
+            return evaluateOneOfCondition(value, condition, properties);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.NONE_OF)) {
+            return evaluateNoneOfCondition(value, condition, properties);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.LARGER_THAN)) {
+            return evaluateLargerThanCondition(value, condition, properties);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.SMALLER_THAN)) {
+            return evaluateSmallerThanCondition(value, condition, properties);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.IN_BETWEEN)) {
+            return evaluateInBetweenThanCondition(value, condition, properties);
         }
 
         // unknown operation
@@ -75,6 +210,8 @@ public class LtpValidationConditionEvaluator {
             value
         );
     }
+
+    
 
     public static LtpValidationResultState summarizeValidationState(
         List<? extends LtpValidationConditionInterface> conditions, 

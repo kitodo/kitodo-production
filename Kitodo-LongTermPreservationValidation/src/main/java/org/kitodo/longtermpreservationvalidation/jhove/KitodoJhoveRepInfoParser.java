@@ -3,6 +3,7 @@ package org.kitodo.longtermpreservationvalidation.jhove;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -118,7 +119,23 @@ public class KitodoJhoveRepInfoParser {
     }
 
     public static List<String> repInfoMessagesToStringList(RepInfo info) {
-        return info.getMessage().stream().map((m) -> m.getMessage()).collect(Collectors.toList());
+        return info.getMessage().stream().map((m) -> repoInfoMessageToString(m)).collect(Collectors.toList());
+    }
+
+    public static String repoInfoMessageToString(Message message) {
+        String offset = "";
+        String subMessage = "";
+        String prefix = "";
+        if (message.getOffset() != Message.NULL) {
+            offset = " (offset " + String.valueOf(message.getOffset()) + ")";
+        }
+        if (Objects.nonNull(message.getSubMessage()) && !message.getSubMessage().isEmpty()) {
+            subMessage = " - " + message.getSubMessage();
+        }
+        if (Objects.nonNull(message.getPrefix()) && !message.getPrefix().isEmpty()) {
+            prefix = message.getPrefix() + ": ";
+        }
+        return prefix + message.getMessage() + subMessage + offset;
     }
     
     public static String repInfoToString(RepInfo info) {

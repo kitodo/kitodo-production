@@ -18,7 +18,8 @@ public class KitodoJhoveNisoImageMetadataHelper {
     );
 
     public static final Map<String, Function<NisoImageMetadata, Integer>> INTEGER_PROPERTIES_MAP = Map.ofEntries(
-        Map.entry("CompressionLevel", (metadata) -> metadata.getCompressionLevel())
+        Map.entry("CompressionLevel", (metadata) -> metadata.getCompressionLevel()),
+        Map.entry("SamplesPerPixel", (metadata) -> metadata.getSamplesPerPixel())
     );
 
     public static final Map<String, Function<NisoImageMetadata, String>> STRING_PROPERTIES_MAP = Map.ofEntries(

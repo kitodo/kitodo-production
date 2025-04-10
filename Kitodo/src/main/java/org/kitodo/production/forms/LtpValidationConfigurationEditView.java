@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.validation.LtpValidationHelper;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("LtpValidationConfigurationEditView")
@@ -92,20 +93,19 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     }
 
 
-    public Map<String, String> getPossibleOperations() {
+    public Map<String, String> getPossibleOperationsSelectMap() {
         Map<String, String> map = new TreeMap<>();
-        map.put("Equal to", LtpValidationConditionOperation.EQUAL.name());
-        map.put("Not equal to", LtpValidationConditionOperation.NOT_EQUAL.name());
-        map.put("Larger than", LtpValidationConditionOperation.LARGER_THAN.name());
-        map.put("Smaller than", LtpValidationConditionOperation.SMALLER_THAN.name());
-        map.put("contained in", LtpValidationConditionOperation.CONTAINED_IN.name());
+        for (LtpValidationConditionOperation operation : LtpValidationConditionOperation.values()) {
+            map.put(LtpValidationHelper.translateConditionOperation(operation), operation.name());
+        }
         return map;
     }
 
-    public Map<String, String> getPossibleSeverities() {
+    public Map<String, String> getPossibleSeveritiesSelectMap() {
         Map<String, String> map = new TreeMap<>();
-        map.put("Warning", LtpValidationConditionSeverity.WARNING.name());
-        map.put("Error", LtpValidationConditionSeverity.ERROR.name());
+        for (LtpValidationConditionSeverity severity : LtpValidationConditionSeverity.values()) {
+            map.put(LtpValidationHelper.translateConditionSeverity(severity), severity.name());
+        }
         return map;
     }
 

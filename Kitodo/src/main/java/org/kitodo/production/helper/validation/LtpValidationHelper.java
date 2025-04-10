@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionError;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionResult;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeverity;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationError;
@@ -22,6 +22,7 @@ import org.kitodo.config.KitodoConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.LtpValidationCondition;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -44,21 +45,67 @@ public class LtpValidationHelper {
             .collect(Collectors.toMap((uri) -> absoluteFolderURI.relativize(uri).getPath(), (uri) -> uri));
     }
 
+    public static String translateConditionOperation(LtpValidationConditionOperation operation) {
+        if (operation.equals(LtpValidationConditionOperation.EQUAL)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.equal");
+        } else if (operation.equals(LtpValidationConditionOperation.ONE_OF)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.oneOf");
+        } else if (operation.equals(LtpValidationConditionOperation.NONE_OF)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.noneOf");
+        } else if (operation.equals(LtpValidationConditionOperation.LARGER_THAN)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.largerThan");
+        } else if (operation.equals(LtpValidationConditionOperation.SMALLER_THAN)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.smallerThan");
+        } else if (operation.equals(LtpValidationConditionOperation.IN_BETWEEN)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.inBetween");
+        }
+        // should never happen
+        return "unknown operation";
+    }
+
+    public static String translateConditionSeverity(LtpValidationConditionSeverity severity) {
+        if (severity.equals(LtpValidationConditionSeverity.WARNING)) {
+            return Helper.getTranslation("ltpValidation.condition.severity.warning");
+        } else if (severity.equals(LtpValidationConditionSeverity.ERROR)) {
+            return Helper.getTranslation("ltpValidation.condition.severity.error");
+        }
+        return "unknown severity";
+    }
     
     public static String translateConditionResult(LtpValidationConditionResult result, LtpValidationCondition condition) {
         if (result.getPassed()) {
+            // currently never displayed (only warnings and errors are shown)
             return "Condition passed";
         } else {
             String severity = translateConditionSeverity(condition.getSeverity()) + ": ";
             if (result.getError().equals(LtpValidationConditionError.PROPERTY_DOES_NOT_EXIST)) {
-                return severity + "Property '" + condition.getProperty() + "'' does not exist";
+                return severity + Helper.getTranslation(
+                    "ltpValidation.condition.error.propertyDoesNotExist", 
+                    condition.getProperty()
+                );
             } else if (result.getError().equals(LtpValidationConditionError.INCORRECT_NUMBER_OF_CONDITION_VALUES)) {
-                return severity + "Incorrect number (" + condition.getValues().size() + ") of values for condition of type '" + condition.getOperation().name() +  "'";
+                return severity + Helper.getTranslation(
+                    "ltpValidation.condition.error.incorrectNumberOfValues", 
+                    String.valueOf(condition.getValues().size()), 
+                    translateConditionOperation(condition.getOperation())
+                );
+            } else if (result.getError().equals(LtpValidationConditionError.NOT_A_NUMBER)) {
+                return severity + Helper.getTranslation(
+                    "ltpValidation.condition.error.notANumber", 
+                    result.getValue(), 
+                    translateCondition(condition)
+                );
             } else if (result.getError().equals(LtpValidationConditionError.CONDITION_FALSE)) {
-                return severity + "Value '" + result.getValue() + "' does not match condition (" + translateCondition(condition) + ")";
+                return severity + Helper.getTranslation(
+                    "ltpValidation.condition.error.conditionFalse", 
+                    result.getValue(), 
+                    translateCondition(condition)
+                );
             } else if (result.getError().equals(LtpValidationConditionError.UNKNOWN_OPERATION)) {
-                return severity + "Condition operation '" + condition.getOperation().name() +  "' not supported";
+                // should never happen
+                return severity + "Condition operation '" + condition.getOperation().name() +  "' not supported"; 
             }
+            // should never happen
             return severity + "Unknown condition error";
         }
     }
@@ -72,20 +119,32 @@ public class LtpValidationHelper {
     }
 
     public static String translateGeneralError(LtpValidationError error) {
-        return error.name();
+        if (error.equals(LtpValidationError.FILE_NOT_FOUND)) {
+            return Helper.getTranslation("ltpValidation.result.error.fileNotFound");
+        } else if (error.equals(LtpValidationError.FILE_TYPE_NOT_SUPPORTED)) {
+            return Helper.getTranslation("ltpValidation.result.error.fileTypeNotSupported");
+        } else if (error.equals(LtpValidationError.IO_ERROR)) {
+            return Helper.getTranslation("ltpValidation.result.error.ioError");
+        } else if (error.equals(LtpValidationError.UNKNOWN_ERROR)) {
+            return Helper.getTranslation("ltpValidation.result.error.unknownError");
+        }
+        // should never happen
+        return "unknown error";
     }
 
     public static String translateCondition(LtpValidationCondition condition) {
-        return condition.getProperty() + " " + condition.getOperation().name() + " " + StringUtils.join(condition.getValues(), ","); 
+        return Helper.getTranslation(
+            "ltpValidation.condition", 
+            condition.getProperty(), 
+            translateConditionOperation(condition.getOperation()),
+            StringUtils.join(condition.getValues(), ",")
+        );
     }
 
-    public static String translateConditionSeverity(LtpValidationConditionSeverity severity) {
-        return severity.name();
-    }
-
-    public static List<String> translateValidationResultToMessageList(LtpValidationResult result, List<LtpValidationCondition> conditions, String fileName) {
+    public static String translateValidationResult(LtpValidationResult result, List<LtpValidationCondition> conditions, String fileName) {
         if (result.getState().equals(LtpValidationResultState.VALID)) {
-            return Collections.singletonList("File " + fileName.toString() + " passed validation");
+            // currently never displayed (only warnings and errors are shown)
+            return "File '" + fileName.toString() + "'' passed validation";
         } else { 
             List<String> errorMessages = translateGeneralErrorsList(result.getErrors());
             List<String> conditionMessages = translateConditionResults(result.getConditionResults(), conditions);
@@ -94,12 +153,14 @@ public class LtpValidationHelper {
             List<String> allMessages = Stream.of(errorMessages, conditionMessages, additionalMessages)
                 .flatMap(Collection::stream).collect(Collectors.toList());
 
-            return allMessages;
-        }
-    }
+            String allMessagesString = StringUtils.join(allMessages, ", ");
 
-    public static String translateValidationResult(LtpValidationResult results, List<LtpValidationCondition> conditions, String fileName) {
-        return StringUtils.join(translateValidationResultToMessageList(results, conditions, fileName), ", ");
+            if (result.getState().equals(LtpValidationResultState.ERROR)) {
+                return Helper.getTranslation("ltpValidation.result.description.error", fileName, allMessagesString);
+            } else {
+                return Helper.getTranslation("ltpValidation.result.description.warning", fileName, allMessagesString);
+            }
+        }
     }
 
     public static List<String> translateGeneralErrorsList(List<LtpValidationError> errors) {
