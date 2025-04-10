@@ -96,8 +96,8 @@ public class LoginForm implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         SessionClientController controller = new SessionClientController();
 
-        if (controller.getAvailableClientsOfCurrentUser().size() > 1
-                && Objects.isNull(controller.getCurrentSessionClient())) {
+        if (Objects.isNull(controller.getCurrentSessionClient())
+                && controller.getAvailableClientsOfCurrentUser().size() > 1) {
             controller.showClientSelectDialog();
         } else {
             redirect(context);
