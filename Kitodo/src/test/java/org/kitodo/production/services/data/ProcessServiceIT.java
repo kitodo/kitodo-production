@@ -221,10 +221,7 @@ public class ProcessServiceIT {
     @Test
     @Disabled("Only used in SearchResultForm, which was thrown out. No new implementation here")
     public void shouldFindByMetadataContent() throws Exception {
-        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
-        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        assertEquals(1, processService.findByAnything("SecondMetaShort").size(), processNotFound);
-        ProcessTestUtils.removeTestProcess(testProcessId);
+        // TODO delete test stub
     }
 
     @Test
