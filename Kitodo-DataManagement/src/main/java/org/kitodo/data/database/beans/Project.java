@@ -855,24 +855,4 @@ public class Project extends BaseBean implements Comparable<Project> {
             return this.hasProcesses;
         }
     }
-
-    /**
-     * Set whether project has processes. The setter can be used when
-     * representing data from a third-party source. Internally it depends on,
-     * whether there are process objects in the database for a project. Setting
-     * this to true cannot insert processes into the database.
-     *
-     * @param hasProcesses
-     *            as boolean
-     * @throws UnsupportedOperationException
-     *             when trying to set this to true for a project without
-     *             processes
-     */
-    public void setHasProcesses(boolean hasProcesses) {
-        if (!hasProcesses && CollectionUtils.isNotEmpty(processes)) {
-            processes.clear();
-        } else if (hasProcesses && CollectionUtils.isEmpty(processes)) {
-            throw new UnsupportedOperationException("cannot add processes");
-        }
-    }
 }
