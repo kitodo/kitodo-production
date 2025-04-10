@@ -11,103 +11,59 @@
 
 package org.kitodo.longtermpreservationvalidation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-import org.kitodo.api.validation.State;
-import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationCondition;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeverity;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
+
 
 public class LongTermPreservationValidationIT {
-    private static final String NEITHER_WELL_FORMED_NOR_VALID = "Examination result: not well-formed, not valid";
-    private static final List<String> WELL_FORMED_AND_VALID = Collections
-            .singletonList("Examination result: well-formed, valid");
-    private static final URI CORRUPTED_TIF_URI, GIF_URI, JAVA_URI, JP2_URI, JPG_URI, PDF_URI, PNG_URI, TIF_URI;
 
-    static {
-        try {
-            CORRUPTED_TIF_URI = new URI("src/test/resources/corrupted.tif");
-            GIF_URI = new URI("src/test/resources/rose.gif");
-            JAVA_URI = new URI(
-                    "src/test/java/org/kitodo/longtermpreservationvalidation/LongTermPreservationValidationIT.java");
-            JP2_URI = new URI("src/test/resources/rose.jp2");
-            JPG_URI = new URI("src/test/resources/rose.jpg");
-            PDF_URI = new URI("src/test/resources/rose.pdf");
-            PNG_URI = new URI("src/test/resources/rose.png");
-            TIF_URI = new URI("src/test/resources/rose.tif");
-        } catch (URISyntaxException e) {
-            throw new UndeclaredThrowableException(e);
-        }
-    }
+    private static final URI CORRUPTED_TIF_URI = URI.create("src/test/resources/corrupted.tif");
+    private static final URI TIF_URI = URI.create("src/test/resources/rose.tif");
+    private static final URI GIF_URI = URI.create("src/test/resources/rose.gif");
+    private static final URI JP2_URI = URI.create("src/test/resources/rose.jp2");
+    private static final URI JPG_URI = URI.create("src/test/resources/rose.jpg");
+    private static final URI PDF_URI = URI.create("src/test/resources/rose.pdf");
+    private static final URI PNG_URI = URI.create("src/test/resources/rose.png");
 
     @Test
-    public void testThatACorruptedFileDoesNotValidate() {
-        LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
-        ValidationResult validationResult = validator.validate(CORRUPTED_TIF_URI, FileType.TIFF);
-        assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "IFD offset not word-aligned:  110423"), validationResult.getResultMessages());
+    public void testSimpleValidationScnearios() {        
+        assert(simpleValidateFile(CORRUPTED_TIF_URI, FileType.TIFF).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(TIF_URI, FileType.TIFF).equals(LtpValidationResultState.VALID));
+        assert(simpleValidateFile(GIF_URI, FileType.GIF).equals(LtpValidationResultState.VALID));
+        assert(simpleValidateFile(JP2_URI, FileType.JPEG_2000).equals(LtpValidationResultState.VALID));
+        assert(simpleValidateFile(JPG_URI, FileType.JPEG).equals(LtpValidationResultState.VALID));
+        assert(simpleValidateFile(PDF_URI, FileType.PDF).equals(LtpValidationResultState.VALID));
+        assert(simpleValidateFile(PNG_URI, FileType.PNG).equals(LtpValidationResultState.VALID));
     }
 
     @Test
     public void testThatFilesOfTheWrongTypeDoNotValidate() {
-        final String offset = "Offset: 0";
-        LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
-
-        ValidationResult validationResult = validator.validate(JAVA_URI, FileType.PDF);
-        assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No PDF header", offset), validationResult.getResultMessages());
-
-        validationResult = validator.validate(PDF_URI, FileType.GIF);
-        assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid GIF header", offset), validationResult.getResultMessages());
-
-        validationResult = validator.validate(JP2_URI, FileType.JPEG);
-        assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid JPEG header", offset), validationResult.getResultMessages());
-
-        validationResult = validator.validate(PNG_URI, FileType.JPEG_2000);
-        assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No JPEG 2000 header", offset), validationResult.getResultMessages());
+        assert(simpleValidateFile(TIF_URI, FileType.JPEG).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(GIF_URI, FileType.TIFF).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(JP2_URI, FileType.GIF).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(JPG_URI, FileType.JPEG_2000).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(PDF_URI, FileType.PNG).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(PNG_URI, FileType.PDF).equals(LtpValidationResultState.ERROR));
     }
 
-    @Test
-    public void testThatValidFilesValidateWithDefaultModules() {
+    private LtpValidationResultState simpleValidateFile(URI file, FileType fileType) {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
-        ValidationResult validationResult = validator.validate(GIF_URI, FileType.GIF);
-        assertEquals(State.SUCCESS, validationResult.getState());
-        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
 
-        validationResult = validator.validate(JP2_URI, FileType.JPEG_2000);
-        assertEquals(State.SUCCESS, validationResult.getState());
-        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
+        LtpValidationCondition condition = new LtpValidationCondition(
+            "valid",
+            LtpValidationConditionOperation.EQUAL,
+            Collections.singletonList("true"),
+            LtpValidationConditionSeverity.ERROR
+        );
 
-        validationResult = validator.validate(JPG_URI, FileType.JPEG);
-        assertEquals(State.SUCCESS, validationResult.getState());
-        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
-
-        validationResult = validator.validate(PDF_URI, FileType.PDF);
-        assertEquals(State.SUCCESS, validationResult.getState());
-        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
-
-        validationResult = validator.validate(TIF_URI, FileType.TIFF);
-        assertEquals(State.SUCCESS, validationResult.getState());
-        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
-    }
-
-    @Test
-    public void testThatValidFilesValidateWithExtendedModules() {
-        LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
-        ValidationResult validationResult = validator.validate(PNG_URI, FileType.PNG);
-        assertEquals(State.SUCCESS, validationResult.getState());
-        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
+        return validator.validate(file, fileType, Collections.singletonList(condition)).getState();
     }
 
 }
