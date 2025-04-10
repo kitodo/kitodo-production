@@ -25,6 +25,7 @@ public enum ObjectType {
     FOLDER("folder", "folders", false),
     LDAP_GROUP("ldapGroup", "ldapGroups", false),
     LDAP_SERVER("ldapServer", "ldapServers", false),
+    LTP_VALIDATION_CONFIGURATION("ltpValidationConfiguration", "ltpValidationConfigurations", false),
     PROCESS("process", "processes", true),
     PROJECT("project", "projects", true),
     PROPERTY("property", "properties", false),

@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +28,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.validation.ValidationResult;
-import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -63,7 +59,6 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
-import org.kitodo.production.services.validation.LongTermPreservationValidationService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
 
@@ -596,28 +591,6 @@ public class CurrentTaskForm extends BaseForm {
         return currentTask.getValidationFolders().size() > 0;
     }
 
-    public void validateImages() {
-        logger.error("validateImages task action clicked");
-        for (Folder folder : currentTask.getValidationFolders()) {
-            Subfolder subfolder = new Subfolder(currentTask.getProcess(), folder);
-            Optional<FileType> fileType = subfolder.getFileFormat().getFileType();
-
-            if (!(fileType.isPresent())) {
-                logger.error("image folder does have a file type: " + folder.getRelativePath());
-                continue;
-            }
-            logger.error("validating images in folder: " + folder.getRelativePath() + " containing files of type: " + fileType);
-            for (Map.Entry<String, URI> fileEntry : subfolder.listContents(true).entrySet()) {
-                String filePath = fileEntry.getKey();
-                URI fileURI = fileEntry.getValue();
-                logger.error("validate file: "  + filePath + " with URI: " + fileURI);
-
-                LongTermPreservationValidationService service = new LongTermPreservationValidationService();
-                ValidationResult validationResult = service.validate(fileURI, fileType.get());
-                logger.error("validation result: " + validationResult);
-            }
-        }
-    }
 
     /**
      * Set show automatic tasks.

@@ -133,6 +133,20 @@
                                 </p:selectBooleanCheckbox>
                             </p:column>
                             <p:column>
+                                <p:outputLabel for="ltpValidationConfiguration" value="LTP Validation Configuration"/>
+                                <p:selectOneMenu id="ltpValidationConfiguration" 
+                                                 converter="#{ltpValidationConfigurationConverter}"
+                                                 value="#{ProjectForm.myFolder.ltpValidationConfiguration}">
+                                    <f:selectItem itemLabel="-- #{msgs.notSelected} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{ProjectForm.possibleLtpValidationConfigurations}" 
+                                                   var="ltpValidationConfiguration"
+                                                   itemValue="#{ltpValidationConfiguration}" 
+                                                   itemLabel="#{ltpValidationConfiguration.title}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
                                 <p:outputLabel for="copyFolder" value="#{msgs['editFolderDialog.copyFolder']}"/>
                                 <p:selectBooleanCheckbox id="copyFolder" styleClass="switch input"
                                                          value="#{ProjectForm.myFolder.copyFolder}">

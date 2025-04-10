@@ -171,6 +171,15 @@ public class Folder extends BaseBean {
     private boolean validateFolder = true;
 
     /**
+     * The long-term-preservation validation configuration that we will be used
+     * to validate files of this folder.
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "ltp_validation_configuration_id", 
+        foreignKey = @ForeignKey(name = "FK_folder_ltp_validation_configuration_id"))
+    private LtpValidationConfiguration ltpValidationConfiguration = null;
+
+    /**
      * Returns the number of DPI to change the resolution of the contents of the
      * folder form the content of another folder, if any. If absent, the
      * function is disabled.
@@ -308,6 +317,16 @@ public class Folder extends BaseBean {
     }
 
     /**
+     * Returns the validation configuration that shall be used to validate
+     * files of this folder.
+     *
+     * @return the validation configuration
+     */
+    public LtpValidationConfiguration getLtpValidationConfiguration() {
+        return ltpValidationConfiguration;
+    }
+
+    /**
      * Sets whether the folder is copied on DMS import.
      *
      * @param copyFolder
@@ -434,6 +453,16 @@ public class Folder extends BaseBean {
      */
     public void setValidateFolder(boolean validateFolder) {
         this.validateFolder = validateFolder;
+    }
+
+    /**
+     * Sets the validation configuration that is used to validate 
+     * files of this folder.
+     * 
+     * @param ltpValidationConfiguration the configuration
+     */
+    public void setLtpValidationConfiguration(LtpValidationConfiguration ltpValidationConfiguration) {
+        this.ltpValidationConfiguration = ltpValidationConfiguration;
     }
 
     @Override

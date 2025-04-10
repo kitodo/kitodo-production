@@ -12,21 +12,31 @@
 package org.kitodo.production.services.validation;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
-import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionInterface;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
+import org.kitodo.data.database.beans.LtpValidationConfiguration;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.LtpValidationConfigurationDAO;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.primefaces.model.SortOrder;
 
 /**
  * This class does nothing more than call the methods on the long term
  * preservation validation interface.
  */
-public class LongTermPreservationValidationService {
+public class LongTermPreservationValidationService extends SearchDatabaseService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
 
     private final LongTermPreservationValidationInterface longTermPreservationValidation;
 
     public LongTermPreservationValidationService() {
+        super(new LtpValidationConfigurationDAO());
         longTermPreservationValidation = getValidationModule();
     }
 
@@ -50,7 +60,46 @@ public class LongTermPreservationValidationService {
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    public ValidationResult validate(URI fileUri, FileType fileType) {
-        return longTermPreservationValidation.validate(fileUri, fileType);
+    public LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions) {
+        return longTermPreservationValidation.validate(fileUri, fileType, conditions);
+    }
+
+    /**
+     * Load data for frontend lists. Data can be loaded from database or index.
+     *
+     * @param first     searched objects
+     * @param pageSize  size of page
+     * @param sortField field by which data should be sorted
+     * @param sortOrder order ascending or descending
+     * @param filters   for search query
+     * @return loaded data
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<LtpValidationConfiguration> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return dao.getByQuery("FROM LtpValidationConfiguration"  + getSort(sortField, sortOrder), filters, first, pageSize);
+    }
+
+    /**
+     * Count all rows in database.
+     *
+     * @return amount of all rows
+     */
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM LtpValidationConfiguration");
+    }
+
+    /**
+     * This function is used for count amount of results for frontend lists.
+     *
+     * @param filters Map of parameters used for filtering
+     * @return amount of results
+     * @throws DAOException  that can be caused by Hibernate
+     * @throws DataException that can be caused by ElasticSearch
+     */
+    @Override
+    public Long countResults(Map filters) throws DAOException, DataException {
+        return countDatabaseRows();
     }
 }
