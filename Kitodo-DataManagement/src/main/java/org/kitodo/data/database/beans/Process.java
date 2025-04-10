@@ -47,6 +47,7 @@ import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
+import org.kitodo.utils.Stopwatch;
 
 @Entity
 @Indexed(index = "kitodo-process")
@@ -912,15 +913,28 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
+     * Returns the record number of the parent process, if any. Is {@code null}
+     * if there is no parent process above.
+     * 
+     * @return record number of the parent process
+     */
+    public Integer getParentID() {
+        Stopwatch stopwatch = new Stopwatch(this, "getParentID");
+        return stopwatch.stop(Objects.nonNull(parent) ? parent.getId() : null);
+
+    }
+
+    /**
      * Returns whether the process has children.
      *
      * @return whether the process has children
      */
     public boolean hasChildren() {
+        Stopwatch stopwatch = new Stopwatch(this, "hasChildren");
         try {
-            return CollectionUtils.isNotEmpty(children);
+            return stopwatch.stop(CollectionUtils.isNotEmpty(children));
         } catch (LazyInitializationException e) {
-            return hasChildren;
+            return stopwatch.stop(hasChildren);
         }
     }
 

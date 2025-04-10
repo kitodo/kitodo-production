@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Comment;
@@ -31,6 +32,7 @@ import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.utils.Stopwatch;
 
 /**
  * This class provides static methods that derive basic information from a process, 
@@ -245,6 +247,8 @@ public class ProcessConverter {
      * @return a map providing the percentage of tasks having a certain status (done, open, locked, inwork)
      */
     public static Map<TaskStatus, Double> getTaskProgressPercentageOfProcess(Process process, boolean considerChildren) {
+        Stopwatch stopwatch = new Stopwatch(ProcessConverter.class, process, "getTaskProgressPercentageOfProcess",
+                "considerChildren", Boolean.toString(considerChildren));
         Map<TaskStatus, Integer> counts = countTaskStatusOfProcess(process, considerChildren);
         int total = counts.values().stream().mapToInt(Integer::intValue).sum();
         
@@ -259,7 +263,7 @@ public class ProcessConverter {
         percentages.put(TaskStatus.INWORK, 100.0 * (double)counts.get(TaskStatus.INWORK) / (double) total);
         percentages.put(TaskStatus.OPEN, 100.0 * (double)counts.get(TaskStatus.OPEN) / (double) total);
         percentages.put(TaskStatus.LOCKED, 100.0 * (double)counts.get(TaskStatus.LOCKED) / (double) total);
-        return percentages;
+        return stopwatch.stop(percentages);
     }
 
     /**
