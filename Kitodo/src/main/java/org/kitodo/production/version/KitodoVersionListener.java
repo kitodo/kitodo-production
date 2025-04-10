@@ -21,6 +21,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.kitodo.data.database.persistence.HibernateUtil;
+
 /**
  * Listener to set up Kitodo versioning information from Manifest on application
  * startup.
@@ -46,6 +48,8 @@ public class KitodoVersionListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // nothing is done here
+        // close connection to database on shutdown.
+        // must be adjusted on switching to JPA or another connection layer.
+        HibernateUtil.getSession().getSessionFactory().close();
     }
 }
