@@ -310,7 +310,7 @@ public class Helper {
 
         String compoundMessage = msg.replaceFirst(":\\s*$", "");
         if (createCompoundMessage) {
-            if (StringUtils.isNotEmpty(descript)) {
+            if (StringUtils.isNotBlank(descript)) {
                 compoundMessage += ": " + descript;
             }
             detail = null;

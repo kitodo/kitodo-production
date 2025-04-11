@@ -30,18 +30,17 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
-import org.kitodo.production.model.LazyProcessDTOModel;
+import org.kitodo.production.model.LazyProcessModel;
 import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
+import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.data.PageEvent;
@@ -59,7 +58,7 @@ public class ProcessListBaseView extends BaseForm {
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
-    List<? extends Object> selectedProcessesOrProcessDTOs = new ArrayList<>();
+    List<Process> selectedProcesses = new ArrayList<>();
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
@@ -73,7 +72,9 @@ public class ProcessListBaseView extends BaseForm {
      */
     public ProcessListBaseView() {
         super();
-        super.setLazyDTOModel(new LazyProcessDTOModel(ServiceManager.getProcessService()));
+        Stopwatch stopwatch = new Stopwatch(this, "ProcessListBaseView");
+        super.setLazyBeanModel(new LazyProcessModel(ServiceManager.getProcessService()));
+        stopwatch.stop();
     }
 
     /**
@@ -82,7 +83,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return value of excludedProcessIds
      */
     public HashSet<Integer> getExcludedProcessIds() {
-        return excludedProcessIds;
+        Stopwatch stopwatch = new Stopwatch(this, "getExcludedProcessIds");
+        return stopwatch.stop(excludedProcessIds);
     }
 
     /**
@@ -91,7 +93,10 @@ public class ProcessListBaseView extends BaseForm {
      * @param excludedProcessIds value of excludedProcessIds
      */
     public void setExcludedProcessIds(HashSet<Integer> excludedProcessIds) {
+        Stopwatch stopwatch = new Stopwatch(this, "setExcludedProcessIds", "excludedProcessIds", Objects.toString(
+            excludedProcessIds));
         this.excludedProcessIds = excludedProcessIds;
+        stopwatch.stop();
     }
 
     /**
@@ -100,7 +105,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return value of allSelected
      */
     public boolean isAllSelected() {
-        return allSelected;
+        Stopwatch stopwatch = new Stopwatch(this, "isAllSelected");
+        return stopwatch.stop(allSelected);
     }
 
     /**
@@ -109,45 +115,31 @@ public class ProcessListBaseView extends BaseForm {
      * @param allSelected value of allSelected
      */
     public void setAllSelected(boolean allSelected) {
+        Stopwatch stopwatch = new Stopwatch(this, "setAllSelected", "allSelected", Boolean.toString(allSelected));
         this.allSelected = allSelected;
         excludedProcessIds.clear();
+        stopwatch.stop();
     }
 
     /**
      * Returns the list of the processes currently selected in the user interface.
-     * Converts ProcessDTO instances to Process instances in case of displaying search results.
+     * Converts Process instances to Process instances in case of displaying search results.
      *
      * @return value of selectedProcesses
      */
-    @SuppressWarnings("unchecked")
     public List<Process> getSelectedProcesses() {
-        List<Process> selectedProcesses = new ArrayList<>();
+        Stopwatch stopwatch = new Stopwatch(this, "getSelectedProcesses");
         ProcessService processService = ServiceManager.getProcessService();
         if (allSelected) {
             try {
-                this.selectedProcessesOrProcessDTOs = processService.findByQuery(processService.getQueryForFilter(
-                                this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter())
-                        .mustNot(processService.createSetQueryForIds(new ArrayList<>(excludedProcessIds))), false);
-            } catch (DataException e) {
+                this.selectedProcesses = processService.findSelectedProcesses(
+                    this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter(),
+                    new ArrayList<>(excludedProcessIds));
+            } catch (DAOException e) {
                 logger.error(e.getMessage());
             }
         }
-        if (!selectedProcessesOrProcessDTOs.isEmpty()) {
-            if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
-                // list contains ProcessDTO instances
-                try {
-                    selectedProcesses = ServiceManager.getProcessService()
-                            .convertDtosToBeans((List<ProcessDTO>) selectedProcessesOrProcessDTOs);
-                } catch (DAOException e) {
-                    Helper.setErrorMessage(ERROR_LOADING_MANY,
-                            new Object[]{ObjectType.PROCESS.getTranslationPlural()}, logger, e);
-                }
-            } else if (selectedProcessesOrProcessDTOs.get(0) instanceof Process) {
-                // list contains Process instances
-                selectedProcesses = (List<Process>) selectedProcessesOrProcessDTOs;
-            }
-        }
-        return selectedProcesses;
+        return stopwatch.stop(selectedProcesses);
     }
 
     /**
@@ -156,34 +148,40 @@ public class ProcessListBaseView extends BaseForm {
      * @return value of stackedBarModel
      */
     public HorizontalBarChartModel getStackedBarModel() {
-        return stackedBarModel;
+        Stopwatch stopwatch = new Stopwatch(this, "getStackedBarModel");
+        return stopwatch.stop(stackedBarModel);
     }
 
     /**
      * Shows the state of volumes from the selected processes.
      */
     public void showDurationOfTasks() {
+        final Stopwatch stopwatch = new Stopwatch(this, "showDurationOfTasks");
         chartMode = ChartMode.BAR;
         stackedBarModel = ServiceManager.getProcessService().getBarChartModel(getSelectedProcesses());
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
+        stopwatch.stop();
     }
 
     /**
      * Shows the state of volumes from the selected processes.
      */
     public void showStateOfVolume() {
+        final Stopwatch stopwatch = new Stopwatch(this, "showStateOfVolume");
         chartMode = ChartMode.PIE;
         statisticResult = ServiceManager.getProcessService().getProcessTaskStates(getSelectedProcesses());
         pieModel = ServiceManager.getProcessService().getPieChardModel(statisticResult);
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
+        stopwatch.stop();
     }
 
     /**
      * Shows the number of images, metadata and structuralElements.
      */
     public void showProcessMetadataStatistic() {
+        final Stopwatch stopwatch = new Stopwatch(this, "showProcessMetadataStatistic");
         chartMode = ChartMode.METADATA_STATISTIC;
         processMetadataStatistics = new ArrayList<>();
         resetGlobalStatisticValues();
@@ -211,6 +209,7 @@ public class ProcessListBaseView extends BaseForm {
         }
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
+        stopwatch.stop();
     }
 
     /**
@@ -219,7 +218,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return whether to display bar model or not
      */
     public boolean showBarModel() {
-        return ChartMode.BAR.equals(chartMode);
+        Stopwatch stopwatch = new Stopwatch(this, "showBarModel");
+        return stopwatch.stop(ChartMode.BAR.equals(chartMode));
     }
 
     /**
@@ -228,7 +228,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return whether to display pie model or not
      */
     public boolean showPieModel() {
-        return ChartMode.PIE.equals(chartMode);
+        Stopwatch stopwatch = new Stopwatch(this, "showPieModel");
+        return stopwatch.stop(ChartMode.PIE.equals(chartMode));
     }
 
     /**
@@ -237,7 +238,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return whether to display metadata statistics or not
      */
     public boolean showProcessMetadataStatisticTable() {
-        return ChartMode.METADATA_STATISTIC.equals(chartMode);
+        Stopwatch stopwatch = new Stopwatch(this, "showProcessMetadataStatisticTable");
+        return stopwatch.stop(ChartMode.METADATA_STATISTIC.equals(chartMode));
     }
 
     /**
@@ -246,7 +248,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return statistic result
      */
     public Map<String, Integer> getStatisticResult() {
-        return statisticResult;
+        Stopwatch stopwatch = new Stopwatch(this, "getStatisticResult");
+        return stopwatch.stop(statisticResult);
     }
 
     /**
@@ -255,7 +258,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return pie model
      */
     public PieChartModel getPieModel() {
-        return pieModel;
+        Stopwatch stopwatch = new Stopwatch(this, "getPieModel");
+        return stopwatch.stop(pieModel);
     }
 
     /**
@@ -264,7 +268,9 @@ public class ProcessListBaseView extends BaseForm {
      * @param pieModel as org.primefaces.model.charts.piePieChardModel
      */
     public void setPieModel(PieChartModel pieModel) {
+        Stopwatch stopwatch = new Stopwatch(this, "setPieModel", "pieModel", Objects.toString(pieModel));
         this.pieModel = pieModel;
+        stopwatch.stop();
     }
 
     /**
@@ -273,7 +279,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return process metadata statistics
      */
     public List<ProcessMetadataStatistic> getProcessMetadataStatistics() {
-        return processMetadataStatistics;
+        Stopwatch stopwatch = new Stopwatch(this, "getProcessMetadataStatistics");
+        return stopwatch.stop(processMetadataStatistics);
     }
 
     /**
@@ -283,7 +290,9 @@ public class ProcessListBaseView extends BaseForm {
      * @return relative image amount
      */
     public int getRelativeImageAmount(int numberOfImages) {
-        return numberOfImages == 0 ? 0 : numberOfImages * 100 / this.numberOfGlobalImages;
+        Stopwatch stopwatch = new Stopwatch(this, "getRelativeImageAmount", "numberOfImages", Integer.toString(
+            numberOfImages));
+        return stopwatch.stop(numberOfImages == 0 ? 0 : numberOfImages * 100 / this.numberOfGlobalImages);
     }
 
     /**
@@ -293,8 +302,10 @@ public class ProcessListBaseView extends BaseForm {
      * @return relative structural element amount
      */
     public int getRelativeStructuralElementAmount(int numberOfStructuralElements) {
-        return numberOfStructuralElements == 0 ? 0
-                : numberOfStructuralElements * 100 / this.numberOfGlobalStructuralElements;
+        Stopwatch stopwatch = new Stopwatch(this, "getRelativeStructuralElementAmount", "numberOfStructuralElements",
+                Integer.toString(numberOfStructuralElements));
+        return stopwatch.stop(numberOfStructuralElements == 0 ? 0
+                : numberOfStructuralElements * 100 / this.numberOfGlobalStructuralElements);
     }
 
     /**
@@ -304,7 +315,9 @@ public class ProcessListBaseView extends BaseForm {
      * @return relative metadata amount
      */
     public int getRelativeMetadataAmount(int numberOfMetadata) {
-        return numberOfMetadata == 0 ? 0 : numberOfMetadata * 100 / this.numberOfGlobalMetadata;
+        Stopwatch stopwatch = new Stopwatch(this, "getRelativeMetadataAmount", "numberOfMetadata", Integer.toString(
+            numberOfMetadata));
+        return stopwatch.stop(numberOfMetadata == 0 ? 0 : numberOfMetadata * 100 / this.numberOfGlobalMetadata);
     }
 
     /**
@@ -314,7 +327,8 @@ public class ProcessListBaseView extends BaseForm {
      *         not
      */
     public boolean isShowClosedProcesses() {
-        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowClosedProcesses();
+        Stopwatch stopwatch = new Stopwatch(this, "isShowClosedProcesses");
+        return stopwatch.stop(((LazyProcessModel) this.lazyBeanModel).isShowClosedProcesses());
     }
 
     /**
@@ -325,7 +339,10 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
-        ((LazyProcessDTOModel)this.lazyDTOModel).setShowClosedProcesses(showClosedProcesses);
+        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses", "showClosedProcesses", Boolean.toString(
+            showClosedProcesses));
+        ((LazyProcessModel)this.lazyBeanModel).setShowClosedProcesses(showClosedProcesses);
+        stopwatch.stop();
     }
 
     /**
@@ -336,7 +353,10 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
-        ((LazyProcessDTOModel)this.lazyDTOModel).setShowInactiveProjects(showInactiveProjects);
+        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects", "showInactiveProjects", Boolean.toString(
+            showInactiveProjects));
+        ((LazyProcessModel)this.lazyBeanModel).setShowInactiveProjects(showInactiveProjects);
+        stopwatch.stop();
     }
 
     /**
@@ -346,68 +366,81 @@ public class ProcessListBaseView extends BaseForm {
      *         or not
      */
     public boolean isShowInactiveProjects() {
-        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowInactiveProjects();
+        Stopwatch stopwatch = new Stopwatch(this, "isShowInactiveProjects");
+        return stopwatch.stop(((LazyProcessModel) this.lazyBeanModel).isShowInactiveProjects());
     }
 
     /**
      * Export DMS for selected processes.
      */
     public void exportDMSForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "exportDMSForSelection");
         exportDMSForProcesses(getSelectedProcesses());
+        stopwatch.stop();
     }
 
     /**
      * Generate result set.
      */
     public void generateResult() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateResult");
         try {
             ServiceManager.getProcessService().generateResult(this.filter, this.isShowClosedProcesses(),
                     this.isShowInactiveProjects());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Generate result as PDF.
      */
     public void generateResultAsPdf() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
         try {
             ServiceManager.getProcessService().generateResultAsPdf(this.filter, this.isShowClosedProcesses(),
                     this.isShowInactiveProjects());
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Download to home for selected processes.
      */
     public void downloadToHomeForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "downloadToHomeForSelection");
         try {
             ProcessService.downloadToHome(this.getSelectedProcesses());
             Helper.setMessage("createdInUserHomeAll");
         } catch (DAOException e) {
             Helper.setErrorMessage("Error downloading processes to home directory!");
         }
+        stopwatch.stop();
     }
 
     /**
      * Upload selected processes from home.
      */
     public void uploadFromHomeForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "uploadFromHomeForSelection");
         ProcessService.uploadFromHome(this.getSelectedProcesses());
         Helper.setMessage("directoryRemovedSelected");
+        stopwatch.stop();
     }
 
     /**
      * Upload all processes from home.
      */
     public void uploadFromHomeForAll() {
+        Stopwatch stopwatch = new Stopwatch(this, "uploadFromHomeForAll");
         WebDav myDav = new WebDav();
         List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
         myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
         Helper.setMessage("directoryRemovedAll", doneDirectoryName);
+        stopwatch.stop();
     }
 
     void resetGlobalStatisticValues() {
@@ -422,7 +455,7 @@ public class ProcessListBaseView extends BaseForm {
             try {
 
                 export.startExport(processToExport);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             }
@@ -432,35 +465,37 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * If processes are generated with calendar.
      *
-     * @param processDTO
+     * @param process
      *            the process dto to check.
      * @return true if processes are created with calendar, false otherwise
      */
-    public boolean createProcessesWithCalendar(ProcessDTO processDTO) {
+    public boolean createProcessesWithCalendar(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createProcessesWithCalendar");
         try {
-            return ProcessService.canCreateProcessWithCalendar(processDTO);
+            return stopwatch.stop(ProcessService.canCreateProcessWithCalendar(process));
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
         }
-        return false;
+        return stopwatch.stop(false);
     }
 
     /**
      * If a process can be created as child.
      *
-     * @param processDTO
+     * @param process
      *            the process dto to check.
      * @return true if processes can be created as child, false otherwise
      */
-    public boolean createProcessAsChildPossible(ProcessDTO processDTO) {
+    public boolean createProcessAsChildPossible(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createProcessAsChildPossible");
         try {
-            return ProcessService.canCreateChildProcess(processDTO);
+            return stopwatch.stop(ProcessService.canCreateChildProcess(process));
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
         }
-        return false;
+        return stopwatch.stop(false);
     }
 
     /**
@@ -469,102 +504,104 @@ public class ProcessListBaseView extends BaseForm {
      * download.
      */
     public void downloadToHome(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "downloadToHome");
         try {
             ProcessService.downloadToHome(new WebDav(), processId);
         } catch (DAOException e) {
             Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
         }
+        stopwatch.stop();
     }
 
     /**
      * Starts generation of xml logfile for current process.
      */
-    public void createXML(ProcessDTO processDTO) {
+    public void createXML(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createXML");
         try {
-            ProcessService.createXML(ServiceManager.getProcessService().getById(processDTO.getId()), getUser());
-        } catch (IOException | DAOException e) {
+            ProcessService.createXML(process, getUser());
+        } catch (IOException e) {
             Helper.setErrorMessage("Error creating log file in home directory", logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Export METS.
      */
     public void exportMets(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "exportMets");
         try {
             ProcessService.exportMets(processId);
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Export DMS.
      */
     public void exportDMS(int id) {
+        Stopwatch stopwatch = new Stopwatch(this, "exportDMS", "id", Integer.toString(id));
         ExportDms export = new ExportDms();
         try {
             export.startExport(ServiceManager.getProcessService().getById(id));
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
-        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Downloads a docket for process.
      */
     public void downloadDocket(int id) {
+        Stopwatch stopwatch = new Stopwatch(this, "downloadDocket", "id", Integer.toString(id));
         try {
             ServiceManager.getProcessService().downloadDocket(ServiceManager.getProcessService().getById(id));
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Upload from home for single process.
      */
-    public void uploadFromHome(ProcessDTO processDTO) {
-        try {
-            WebDav myDav = new WebDav();
-            myDav.uploadFromHome(ServiceManager.getProcessService().getById(processDTO.getId()));
-            Helper.setMessage("directoryRemoved", processDTO.getTitle());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processDTO.getId() }, logger, e);
-        }
+    public void uploadFromHome(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "uploadFromHome");
+        WebDav myDav = new WebDav();
+        myDav.uploadFromHome(process);
+        Helper.setMessage("directoryRemoved", process.getTitle());
+        stopwatch.stop();
     }
 
     /**
      * Delete Process.
      *
-     * @param processDTO
+     * @param process
      *            process to delete.
      */
-    public void delete(ProcessDTO processDTO) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (process.getChildren().isEmpty()) {
-                try {
-                    ProcessService.deleteProcess(process);
-                } catch (DataException | IOException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                            logger, e);
-                }
-            } else {
-                this.deleteProcessDialog = new DeleteProcessDialog();
-                this.deleteProcessDialog.setProcess(process);
-                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+    public void delete(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "delete");
+        if (process.getChildren().isEmpty()) {
+            try {
+                ProcessService.deleteProcess(process.getId());
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+        } else {
+            this.deleteProcessDialog = new DeleteProcessDialog();
+            this.deleteProcessDialog.setProcess(process);
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
+        stopwatch.stop();
     }
 
     /**
@@ -573,7 +610,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return delete process dialog
      */
     public DeleteProcessDialog getDeleteProcessDialog() {
-        return this.deleteProcessDialog;
+        Stopwatch stopwatch = new Stopwatch(this, "getDeleteProcessDialog");
+        return stopwatch.stop(this.deleteProcessDialog);
     }
 
     /**
@@ -583,30 +621,29 @@ public class ProcessListBaseView extends BaseForm {
      * @return whether process with given ID can be exported or not
      */
     public boolean canBeExported(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "canBeExported");
         try {
             if (!exportable.containsKey(processId)) {
                 exportable.put(processId, ProcessService.canBeExported(processId));
             }
-            return exportable.get(processId);
+            return stopwatch.stop(exportable.get(processId));
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(e);
-            return false;
+            return stopwatch.stop(false);
         }
     }
 
     /**
-     * Returns the list of currently selected processes. This list is used both when displaying search results 
-     * and when displaying the process list, which is why it may contain either instances of Process or 
-     * instances of ProcessDTO.
+     * Specifies the selected processes.
      * 
-     * @return list of instances of Process or ProcessDTO
+     * @param selectedProcesses
+     *            the selected processes
      */
-    public List<? extends Object> getSelectedProcessesOrProcessDTOs() {
-        return selectedProcessesOrProcessDTOs;
-    }
-
-    public void setSelectedProcessesOrProcessDTOs(List<? extends Object> selectedProcessesOrProcessDTOs) {
-        this.selectedProcessesOrProcessDTOs = selectedProcessesOrProcessDTOs;
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
+        Stopwatch stopwatch = new Stopwatch(this, "setSelectedProcesses", "selectedProcesses", Objects.toString(
+            selectedProcesses));
+        this.selectedProcesses = selectedProcesses;
+        stopwatch.stop();
     }
 
     /**
@@ -615,6 +652,7 @@ public class ProcessListBaseView extends BaseForm {
      */
     @Override
     public void onPageChange(PageEvent pageEvent) {
+        Stopwatch stopwatch = new Stopwatch(this, "onPageChange");
         this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
         if (allSelected) {
             PrimeFaces.current()
@@ -622,6 +660,7 @@ public class ProcessListBaseView extends BaseForm {
             excludedProcessIds.forEach(processId -> PrimeFaces.current()
                     .executeScript("PF('processesTable').unselectRow($('tr[data-rk=\"" + processId + "\"]'), true);"));
         }
+        stopwatch.stop();
     }
 
     /**
@@ -630,7 +669,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return the number of global images
      */
     public int getNumberOfGlobalImages() {
-        return numberOfGlobalImages;
+        Stopwatch stopwatch = new Stopwatch(this, "getNumberOfGlobalImages");
+        return stopwatch.stop(numberOfGlobalImages);
     }
 
     /**
@@ -640,7 +680,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return the number of global structural elements
      */
     public int getNumberOfGlobalStructuralElements() {
-        return numberOfGlobalStructuralElements;
+        Stopwatch stopwatch = new Stopwatch(this, "getNumberOfGlobalStructuralElements");
+        return stopwatch.stop(numberOfGlobalStructuralElements);
     }
 
     /**
@@ -649,7 +690,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return the number of global metadata
      */
     public int getNumberOfGlobalMetadata() {
-        return numberOfGlobalMetadata;
+        Stopwatch stopwatch = new Stopwatch(this, "getNumberOfGlobalMetadata");
+        return stopwatch.stop(numberOfGlobalMetadata);
     }
 
     /**
@@ -659,6 +701,7 @@ public class ProcessListBaseView extends BaseForm {
      * @return the number of global process metadata statistics
      */
     public int getNumberOfGlobalProcessMetadataStatistics() {
-        return processMetadataStatistics.size();
+        Stopwatch stopwatch = new Stopwatch(this, "getNumberOfGlobalProcessMetadataStatistics");
+        return stopwatch.stop(processMetadataStatistics.size());
     }
 }

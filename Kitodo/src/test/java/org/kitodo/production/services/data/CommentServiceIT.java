@@ -71,7 +71,7 @@ public class CommentServiceIT {
         comment.setAuthor(ServiceManager.getUserService().getById(1));
         comment.setCreationDate(new Date());
         comment.setType(CommentType.INFO);
-        commentService.saveToDatabase(comment);
+        commentService.save(comment);
         Comment newComment = commentService.getAll().get(0);
         assertEquals(newComment.getMessage(), "TEST_MESSAGE", "Comment was not found in database!");
 

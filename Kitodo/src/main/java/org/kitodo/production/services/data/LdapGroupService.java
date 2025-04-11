@@ -18,23 +18,22 @@ import java.util.Map;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LdapGroupDAO;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroupDAO> {
+public class LdapGroupService extends BaseBeanService<LdapGroup, LdapGroupDAO> {
 
     public LdapGroupService() {
         super(new LdapGroupDAO());
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM LdapGroup");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM LdapGroup");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     @Override

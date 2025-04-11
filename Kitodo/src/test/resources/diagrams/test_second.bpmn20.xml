@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:template="http://www.kitodo.org/template" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.2">
+<bpmn:process id="say_hello" name="say-hello" isExecutable="true">
+<bpmn:startEvent id="StartEvent_1" name="Start Event">
+<bpmn:outgoing>SequenceFlow_0f2vwms</bpmn:outgoing>
+</bpmn:startEvent>
+<bpmn:endEvent id="EndEvent_1" name="End Event">
+<bpmn:incoming>SequenceFlow_1jf1dm1</bpmn:incoming>
+</bpmn:endEvent>
+<bpmn:sequenceFlow id="SequenceFlow_0f2vwms" sourceRef="StartEvent_1" targetRef="ScriptTask_1" />
+<bpmn:sequenceFlow id="SequenceFlow_1jf1dm1" sourceRef="ScriptTask_1" targetRef="EndEvent_1" />
+<bpmn:scriptTask id="ScriptTask_1" name="Say hello" template:permittedUserRole="1">
+<bpmn:extensionElements>
+<camunda:inputOutput>
+<camunda:inputParameter name="name" />
+<camunda:outputParameter name="Output" />
+</camunda:inputOutput>
+</bpmn:extensionElements>
+<bpmn:incoming>SequenceFlow_0f2vwms</bpmn:incoming>
+<bpmn:outgoing>SequenceFlow_1jf1dm1</bpmn:outgoing>
+<bpmn:script><![CDATA[kcontext.setVariable("welcomeText","Hello, " + name);
+
+System.out.println("Hello, " + name);]]></bpmn:script>
+</bpmn:scriptTask>
+</bpmn:process>
+</bpmn:definitions>

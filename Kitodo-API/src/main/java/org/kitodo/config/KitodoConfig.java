@@ -12,7 +12,9 @@
 package org.kitodo.config;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 import java.util.Optional;

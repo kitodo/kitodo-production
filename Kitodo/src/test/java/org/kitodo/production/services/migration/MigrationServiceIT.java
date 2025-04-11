@@ -13,7 +13,6 @@ package org.kitodo.production.services.migration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,6 +24,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -34,7 +34,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
@@ -168,6 +167,7 @@ public class MigrationServiceIT {
     }
 
     @Test
+    @Disabled("functionality nowhere used, no longer implemented")
     public void getMatchingTemplatesTest() throws DAOException {
         Template template = new Template();
         template.setDocket(ServiceManager.getDocketService().getById(2));
@@ -183,15 +183,10 @@ public class MigrationServiceIT {
 
         assertNotNull(matchingTemplates.get(template));
         assertEquals(existingTemplates.get(0), matchingTemplates.get(template));
-
-        template.setDocket(null);
-
-        assertNull(matchingTemplates.get(template));
-        assertNotEquals(existingTemplates.get(0), matchingTemplates.get(template));
     }
 
     @Test
-    public void testAddToTemplate() throws DAOException, DataException {
+    public void testAddToTemplate() throws DAOException {
         ProcessService processService = ServiceManager.getProcessService();
         Project project = ServiceManager.getProjectService().getById(1);
         Process firstProcess = new Process();
@@ -217,14 +212,14 @@ public class MigrationServiceIT {
 
         migrationService.addProcessesToTemplate(template, processes);
 
-        template = ServiceManager.getTemplateService().getById(template.getId());
+        ServiceManager.getTemplateService().refresh(template);
         assertEquals(2, template.getProcesses().size());
         assertEquals(5, (long) firstProcess.getTemplate().getId());
         assertEquals(5, (long) secondProcess.getTemplate().getId());
     }
 
     @Test
-    public void addProcessesToTemplateTest() throws DAOException, DataException {
+    public void addProcessesToTemplateTest() throws DAOException {
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Template secondTemplate = ServiceManager.getTemplateService().getById(2);
 

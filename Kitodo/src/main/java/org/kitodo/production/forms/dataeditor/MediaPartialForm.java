@@ -79,7 +79,7 @@ public class MediaPartialForm implements Serializable {
      * @return True if validation error is not empty.
      */
     public boolean hasValidationError() {
-        return StringUtils.isNotEmpty(validationError);
+        return StringUtils.isNotBlank(validationError);
     }
 
     /**

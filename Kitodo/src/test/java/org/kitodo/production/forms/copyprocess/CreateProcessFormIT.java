@@ -35,6 +35,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
@@ -83,7 +84,7 @@ public class CreateProcessFormIT {
     @AfterEach
     public void cleanUpAfterEach() throws Exception {
         if (createdProcess != null && createdProcess.getId() != null) {
-            processService.remove(createdProcess.getId());
+            ProcessService.deleteProcess(createdProcess);
             fileService.delete(URI.create(createdProcess.getId().toString()));
         }
         createdProcess = null;
@@ -126,6 +127,10 @@ public class CreateProcessFormIT {
         setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
+        Process newProcess = underTest.getMainProcess();
+        Project project = newProcess.getProject();
+        project.getProcesses().add(newProcess);
+        ServiceManager.getProjectService().save(project);
         setScriptPermissions(false);
 
         long after = processService.count();
@@ -140,6 +145,10 @@ public class CreateProcessFormIT {
         setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
+        Process newProcess = underTest.getMainProcess();
+        Project project = newProcess.getProject();
+        project.getProcesses().add(newProcess);
+        ServiceManager.getProjectService().save(project);
         setScriptPermissions(false);
         long after = processService.count();
         createdProcess = underTest.getMainProcess();

@@ -11,6 +11,8 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
@@ -19,8 +21,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.awaitility.Awaitility.await;
 
 public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
 

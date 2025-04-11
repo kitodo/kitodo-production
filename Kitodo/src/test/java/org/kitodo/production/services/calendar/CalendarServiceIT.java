@@ -28,7 +28,6 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -62,7 +61,7 @@ public class CalendarServiceIT {
     }
 
     @Test
-    public void shouldGetAddableMetadata() throws DAOException, DataException, IOException {
+    public void shouldGetAddableMetadata() throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         List<MetadataViewInterface> actualMetadata = CalendarService.getAddableMetadata(process);
 
@@ -104,7 +103,7 @@ public class CalendarServiceIT {
     }
 
     @Test
-    public void shouldGetMetadataSummary() throws DAOException, DataException, IOException {
+    public void shouldGetMetadataSummary() throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         List<ProcessDetail> addableMetadata = CalendarService.getAddableMetadataTable(process);
         Course course = new Course();
@@ -138,7 +137,7 @@ public class CalendarServiceIT {
     }
 
     @Test
-    public void shouldGetAddableMetadataTable() throws DAOException, DataException, IOException {
+    public void shouldGetAddableMetadataTable() throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         List<ProcessDetail> actualMetadata = CalendarService.getAddableMetadataTable(process);
 

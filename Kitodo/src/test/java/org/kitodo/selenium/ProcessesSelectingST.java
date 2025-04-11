@@ -36,7 +36,7 @@ public class ProcessesSelectingST extends BaseTestSelenium {
 
         User user = ServiceManager.getUserService().getById(1);
         user.setTableSize(1);
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
         processesPage = Pages.getProcessesPage();
     }
 

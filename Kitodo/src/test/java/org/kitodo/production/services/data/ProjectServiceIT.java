@@ -16,23 +16,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.services.ServiceManager;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
 
 /**
  * Tests for ProjectService class.
@@ -52,7 +49,7 @@ public class ProjectServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         await().until(() -> {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
-            return !projectService.findByTitle(firstProject, true).isEmpty();
+            return !Collections.singleton(projectService.getById(1)).isEmpty();
         });
     }
 
@@ -63,34 +60,35 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldCountAllProjects() throws DataException {
+    public void shouldCountAllProjects() throws DAOException {
         assertEquals(Long.valueOf(3), projectService.count(), "Projects were not counted correctly!");
     }
 
     @Test
-    public void shouldCountAllProjectsAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", firstProject).operator(Operator.AND);
-        assertEquals(Long.valueOf(1), projectService.count(query), "Projects were not counted correctly!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldCountAllProjectsAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForProjects() throws Exception {
-        Long amount = projectService.countDatabaseRows();
+        Long amount = projectService.count();
         assertEquals(Long.valueOf(3), amount, "Projects were not counted correctly!");
     }
 
     @Test
-    public void shouldFindById() throws DataException {
-        assertTrue(projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1), projectNotFound);
-        assertTrue(projectService.findById(1).isActive(), projectNotFound);
-        assertEquals(2, projectService.findById(1).getTemplates().size(), projectNotFound);
+    public void shouldFindById() throws DAOException {
+        assertTrue(projectService.getById(1).getTitle().equals(firstProject) && projectService.getById(1).getId()
+                .equals(1), projectNotFound);
+        assertTrue(projectService.getById(1).isActive(), projectNotFound);
+        assertEquals(2, projectService.getById(1).getTemplates().size(), projectNotFound);
 
-        assertFalse(projectService.findById(3).isActive(), projectNotFound);
+        assertFalse(projectService.getById(3).isActive(), projectNotFound);
     }
 
     @Test
-    public void shouldFindAllProjects() throws DataException {
-        assertEquals(3, projectService.findAll().size(), "Not all projects were found in index!");
+    public void shouldFindAllProjects() throws DAOException {
+        assertEquals(3, projectService.getAll().size(), "Not all projects were found in index!");
     }
 
     @Test
@@ -144,20 +142,21 @@ public class ProjectServiceIT {
         Project foundProject = projectService.getById(projectId);
         assertEquals("To remove", foundProject.getTitle(), "Additional project was not inserted in database!");
 
-        projectService.remove(projectId);
+        projectService.remove(foundProject);
         assertThrows(DAOException.class, () -> projectService.getById(projectId));
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
-        assertEquals(1, projectService.findByTitle(firstProject, true).size(), projectNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindByTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldNotSaveProjectWithAlreadyExistingTitle() {
         Project project = new Project();
         project.setTitle(firstProject);
-        assertThrows(DataException.class,  () -> projectService.save(project));
+        assertThrows(DAOException.class, () -> projectService.save(project));
     }
 
     @Test
@@ -167,10 +166,8 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void findByIds() throws DataException {
-        ProjectService projectService = ServiceManager.getProjectService();
-        QueryBuilder projectsForCurrentUserQuery = projectService.getProjectsForCurrentUserQuery();
-        List<ProjectDTO> byQuery = projectService.findByQuery(projectsForCurrentUserQuery, true);
+    public void findByIds() throws Exception {
+        List<Project> byQuery = ServiceManager.getUserService().getCurrentUser().getProjects();
         assertEquals(2, byQuery.size(), "Wrong amount of projects found");
     }
 }

@@ -20,11 +20,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
-import org.kitodo.production.services.ServiceManager;
 
 public class ListingSessionClientST extends BaseTestSelenium {
 
@@ -86,7 +86,7 @@ public class ListingSessionClientST extends BaseTestSelenium {
         int templatesDisplayed = projectsPage.countListedTemplates();
         assertEquals(2, templatesDisplayed, "Displayed wrong number of templates");
 
-        int workflowsInDatabase = ServiceManager.getWorkflowService().getAllForSelectedClient().size();
+        int workflowsInDatabase = ServiceManager.getWorkflowService().countResults(null).intValue();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals(workflowsInDatabase, workflowsDisplayed, "Displayed wrong number of workflows");
 

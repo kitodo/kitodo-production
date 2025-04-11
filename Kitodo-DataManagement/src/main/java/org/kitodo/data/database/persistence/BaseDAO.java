@@ -11,9 +11,13 @@
 
 package org.kitodo.data.database.persistence;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+
 import java.io.Serializable;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.PersistenceException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -30,15 +36,14 @@ import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.database.beans.BaseIndexedBean;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Base class for DAOs.
  */
 public abstract class BaseDAO<T extends BaseBean> implements Serializable {
-
+    private static final Logger logger = LogManager.getLogger(BaseDAO.class);
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
     private static final Object lockObject = new Object();
 
     /**
@@ -92,19 +97,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void save(T baseBean) throws DAOException {
         storeObject(baseBean);
-    }
-
-    /**
-     * Saves base bean objects as indexed.
-     *
-     * @param baseBeans
-     *            list of base beans
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
-     */
-    public void saveAsIndexed(List<T> baseBeans) throws DAOException {
-        storeAsIndexed(baseBeans);
     }
 
     /**
@@ -164,6 +156,18 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Merge given bean object.
+     *
+     * @param baseBean
+     *            bean to merge
+     * @return the merged bean
+     */
+    @CheckReturnValue
+    public T merge(T baseBean) {
+        return mergeObject(baseBean);
+    }
+
+    /**
      * Retrieves BaseBean objects from database by given query.
      *
      * @param query
@@ -179,6 +183,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters, int first, int max) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters, first, max);
             Query<T> q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
@@ -201,6 +206,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
             Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
             return q.list();
@@ -217,11 +223,31 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, Collections.emptyMap());
             List<T> baseBeanObjects = session.createQuery(query).list();
             if (Objects.isNull(baseBeanObjects)) {
                 baseBeanObjects = new ArrayList<>();
             }
             return baseBeanObjects;
+        }
+    }
+
+    /**
+     * Retrieves String objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @param parameters
+     *            for query
+     * @return list of beans objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getStringsByQuery(String query, Map<String, Object> parameters) {
+        try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
+            Query<String> queryObject = session.createQuery(query);
+            addParameters(queryObject, parameters);
+            return queryObject.list();
         }
     }
 
@@ -236,6 +262,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public Long count(String query, Map<String, Object> parameters) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
             Query<?> q = session.createQuery(query);
             addParameters(q, parameters);
             return (Long) q.uniqueResult();
@@ -253,6 +280,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public Long count(String query) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, Collections.emptyMap());
             return (Long) session.createQuery(query).uniqueResult();
         } catch (PersistenceException e) {
             throw new DAOException(e);
@@ -296,7 +324,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 transaction.commit();
             }
         } catch (PersistenceException e) {
-            throw new DAOException(e);
+            if (e.getMessage().startsWith("No row with the given identifier exists")) {
+                return;
+            } else {
+                throw new DAOException(e);
+            }
         }
     }
 
@@ -347,6 +379,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, int first, int max) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, Collections.emptyMap(), first, max);
             Query<T> sessionQuery = session.createQuery(query);
             sessionQuery.setFirstResult(first);
             sessionQuery.setMaxResults(max);
@@ -366,8 +399,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveAllObjects(Class<T> cls) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query<T> query = session.createQuery(String.format("FROM %s ORDER BY id ASC", cls.getSimpleName()));
-            return query.list();
+            String query = String.format("FROM %s ORDER BY id ASC", cls.getSimpleName());
+            debugLogQuery(query, Collections.emptyMap());
+            return session.createQuery(query).list();
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
@@ -387,14 +421,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             transaction.commit();
         } catch (PersistenceException e) {
             throw new DAOException(e);
-        }
-    }
-
-    void storeAsIndexed(List<T> baseBeans) throws DAOException {
-        for (BaseBean baseBean : baseBeans) {
-            BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
-            entity.setIndexAction(IndexAction.DONE);
-            storeObject((T) entity);
         }
     }
 
@@ -426,6 +452,22 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     private void evictObject(T object) {
         try (Session session = HibernateUtil.getSession()) {
             session.evict(object);
+        }
+    }
+
+    /**
+     * Merge object into the session.
+     *
+     * @param object
+     *            to be associated with the session
+     * @return a new object in the current session, with the data from the input
+     *         object
+     */
+    @SuppressWarnings("unchecked")
+    @CheckReturnValue
+    private T mergeObject(T object) {
+        try (Session session = HibernateUtil.getSession()) {
+            return (T) session.merge(object);
         }
     }
 
@@ -497,4 +539,64 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     * @param initPointer
+     *            can initialize the object pointer to a later object (sets
+     *            {@linkplain Query#setFirstResult(int)})
+     * @param stopCount
+     *            the search stops after count hits (sets
+     *            {@linkplain Query#setMaxResults(int)})
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters, int initPointer, int stopCount) {
+        if (logger.isDebugEnabled()) {
+            String resolved = PARAMETER_PATTERN.matcher(query).replaceAll(matchResult -> {
+                Object parameter = parameters.get(matchResult.group(1));
+                if (Objects.isNull(parameter)) {
+                    return matchResult.group();
+                }
+                if (parameter instanceof String) {
+                    return '\'' + ((String) parameter) + '\'';
+                }
+                if (parameter instanceof Collection) {
+                    int size = ((Collection<?>) parameter).size();
+                    /* Up to a dozen numbers are written out, but for a larger
+                    number (and that can be 500,000 IDs) only the number of
+                    elements is logged, otherwise the logging is unreadable. */
+                    if (size > 12) {
+                        return "... " + size + " elements ...";
+                    }
+                    return Objects.toString(parameter).replaceFirst("^\\[(.*)\\]$", "$1");
+                }
+                return Objects.toString(parameter);
+            });
+            if (initPointer != Integer.MIN_VALUE || stopCount != Integer.MIN_VALUE) {
+                if (stopCount != Integer.MIN_VALUE) {
+                    resolved = String.format("%s (limit=%d)", resolved, stopCount);
+                } else {
+                    resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
+                }
+            }
+            logger.debug(resolved);
+        }
+    }
 }

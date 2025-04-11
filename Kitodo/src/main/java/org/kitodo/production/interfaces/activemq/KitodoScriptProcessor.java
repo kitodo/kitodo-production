@@ -23,7 +23,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.ProcessorException;
@@ -63,7 +62,7 @@ public class KitodoScriptProcessor extends ActiveMQProcessor {
                 processes.add(processService.getById(id));
             }
             kitodoScriptService.execute(processes, script);
-        } catch (DAOException | DataException | IOException | InvalidImagesException | MediaNotFoundException e) {
+        } catch (DAOException | IOException | InvalidImagesException | MediaNotFoundException e) {
             throw new ProcessorException(e);
         }
     }

@@ -80,8 +80,8 @@ public class ConfigConversionST extends BaseTestSelenium {
         importConfigurationsTab.closeResultsDialog();
 
         // assert number of ImportConfigurations and MappingFiles in database
-        assertEquals(Long.valueOf(3), ServiceManager.getImportConfigurationService().countDatabaseRows());
-        assertEquals(Long.valueOf(2), ServiceManager.getMappingFileService().countDatabaseRows());
+        assertEquals(Long.valueOf(3), ServiceManager.getImportConfigurationService().count());
+        assertEquals(Long.valueOf(2), ServiceManager.getMappingFileService().count());
 
         // assert that lists have been updated properly (counts include table header row, therefore each +1!)
         assertEquals(Long.valueOf(4), importConfigurationsTab.getNumberOfImportConfigurations());
