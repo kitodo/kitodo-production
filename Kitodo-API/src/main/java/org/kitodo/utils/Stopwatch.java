@@ -24,6 +24,17 @@ public class Stopwatch {
     private String[] args;
     private long start;
 
+    /**
+     * Creates a new stopwatch.
+     * 
+     * @param object
+     *            object for which the time should be taken
+     * @param functionName
+     *            function whose runtime is measured
+     * @param args
+     *            function arguments, optional. Specify them in pairs: string
+     *            name, string value, string name, string value, etc.
+     */
     public Stopwatch(Object object, String functionName, String... args) {
         this.executor = object.getClass();
         this.object = object;
@@ -32,6 +43,19 @@ public class Stopwatch {
         this.start = System.nanoTime();
     }
 
+    /**
+     * Creates a new stopwatch.
+     * 
+     * @param executor
+     *            object class for which the time should be taken
+     * @param object
+     *            processed object
+     * @param functionName
+     *            function whose runtime is measured
+     * @param args
+     *            function arguments, optional. Specify them in pairs: string
+     *            name, string value, string name, string value, etc.
+     */
     public Stopwatch(Class<?> executor, Object object, String functionName, String... args) {
         this.executor = executor;
         this.object = object;
@@ -40,6 +64,9 @@ public class Stopwatch {
         this.start = System.nanoTime();
     }
 
+    /**
+     * Take the time and leave it in the log.
+     */
     public void stop() {
         long millis = MILLISECONDS.convert(System.nanoTime() - this.start, NANOSECONDS);
         String args = "";
@@ -53,6 +80,7 @@ public class Stopwatch {
                     case 2:
                         args = args.concat(", ");
                         mater = 0;
+                        break;
                     default:
                 }
                 args = args.concat(arg);
