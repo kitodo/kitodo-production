@@ -554,7 +554,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Sets the template property.
      * 
-     * @param workpieceProperty
+     * @param templateProperty
      *            template property to set
      */
     public void setTemplateProperty(Property templateProperty) {
