@@ -2145,6 +2145,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         String baseType = process.getBaseType();
         if (Objects.isNull(baseType)) {
             baseType = getBaseType(process);
+            process.setBaseType(baseType);
         }
         return functionalDivisions.contains(baseType);
     }
