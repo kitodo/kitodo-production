@@ -156,7 +156,7 @@ public class ProcessListBaseView extends BaseForm {
      * Shows the state of volumes from the selected processes.
      */
     public void showDurationOfTasks() {
-        Stopwatch stopwatch = new Stopwatch(this, "showDurationOfTasks");
+        final Stopwatch stopwatch = new Stopwatch(this, "showDurationOfTasks");
         chartMode = ChartMode.BAR;
         stackedBarModel = ServiceManager.getProcessService().getBarChartModel(getSelectedProcesses());
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
@@ -168,7 +168,7 @@ public class ProcessListBaseView extends BaseForm {
      * Shows the state of volumes from the selected processes.
      */
     public void showStateOfVolume() {
-        Stopwatch stopwatch = new Stopwatch(this, "showStateOfVolume");
+        final Stopwatch stopwatch = new Stopwatch(this, "showStateOfVolume");
         chartMode = ChartMode.PIE;
         statisticResult = ServiceManager.getProcessService().getProcessTaskStates(getSelectedProcesses());
         pieModel = ServiceManager.getProcessService().getPieChardModel(statisticResult);
@@ -181,7 +181,7 @@ public class ProcessListBaseView extends BaseForm {
      * Shows the number of images, metadata and structuralElements.
      */
     public void showProcessMetadataStatistic() {
-        Stopwatch stopwatch = new Stopwatch(this, "showProcessMetadataStatistic");
+        final Stopwatch stopwatch = new Stopwatch(this, "showProcessMetadataStatistic");
         chartMode = ChartMode.METADATA_STATISTIC;
         processMetadataStatistics = new ArrayList<>();
         resetGlobalStatisticValues();
@@ -633,6 +633,12 @@ public class ProcessListBaseView extends BaseForm {
         }
     }
 
+    /**
+     * Specifies the selected processes.
+     * 
+     * @param selectedProcesses
+     *            the selected processes
+     */
     public void setSelectedProcesses(List<Process> selectedProcesses) {
         Stopwatch stopwatch = new Stopwatch(this, "setSelectedProcesses", "selectedProcesses", Objects.toString(
             selectedProcesses));

@@ -120,7 +120,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @PostConstruct
     public void init() {
-        Stopwatch stopwatch = new Stopwatch(this, "init");
+        final Stopwatch stopwatch = new Stopwatch(this, "init");
         columns = new ArrayList<>();
 
         SelectItemGroup processColumnGroup;
@@ -297,7 +297,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove template properties.
      */
     public void deleteTemplateProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "deleteTemplateProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "deleteTemplateProperty");
         this.templateProperty.getProcesses().clear();
         this.process.getTemplates().remove(this.templateProperty);
         loadTemplateProperties();
@@ -308,7 +308,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove workpiece properties.
      */
     public void deleteWorkpieceProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "deleteWorkpieceProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "deleteWorkpieceProperty");
         this.workpieceProperty.getProcesses().clear();
         this.process.getWorkpieces().remove(this.workpieceProperty);
         loadWorkpieceProperties();
@@ -319,7 +319,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new template property.
      */
     public void createTemplateProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "createTemplateProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "createTemplateProperty");
         if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
@@ -334,7 +334,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new workpiece property.
      */
     public void createWorkpieceProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "createWorkpieceProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "createWorkpieceProperty");
         if (Objects.isNull(this.workpieces)) {
             this.workpieces = new ArrayList<>();
         }
@@ -385,7 +385,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove task.
      */
     public void removeTask() {
-        Stopwatch stopwatch = new Stopwatch(this, "removeTask");
+        final Stopwatch stopwatch = new Stopwatch(this, "removeTask");
         this.process.getTasks().remove(this.task);
 
         List<Role> roles = this.task.getRoles();
@@ -468,7 +468,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Task status up.
      */
     public void setTaskStatusUp() throws DAOException, IOException {
-        Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUp");
+        final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUp");
         workflowControllerService.setTaskStatusUp(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
@@ -479,7 +479,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Task status down.
      */
     public void setTaskStatusDown() {
-        Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDown");
+        final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDown");
         workflowControllerService.setTaskStatusDown(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
@@ -514,7 +514,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            Process object
      */
     public void setProcess(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "setProcess");
+        final Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "setProcess");
         this.process = process;
         this.newProcessTitle = process.getTitle();
         loadProcessProperties();
@@ -551,6 +551,12 @@ public class ProcessForm extends TemplateBaseForm {
         return stopwatch.stop(this.templateProperty);
     }
 
+    /**
+     * Sets the template property.
+     * 
+     * @param workpieceProperty
+     *            template property to set
+     */
     public void setTemplateProperty(Property templateProperty) {
         Stopwatch stopwatch = new Stopwatch(this, "setTemplateProperty", "templateProperty", Objects.toString(
             templateProperty));
@@ -563,6 +569,12 @@ public class ProcessForm extends TemplateBaseForm {
         return stopwatch.stop(this.workpieceProperty);
     }
 
+    /**
+     * Sets the workpiece property.
+     * 
+     * @param workpieceProperty
+     *            workpiece property to set
+     */
     public void setWorkpieceProperty(Property workpieceProperty) {
         Stopwatch stopwatch = new Stopwatch(this, "setWorkpieceProperty", "workpieceProperty", Objects.toString(
             workpieceProperty));
@@ -618,6 +630,12 @@ public class ProcessForm extends TemplateBaseForm {
         return stopwatch.stop(this.newProcessTitle);
     }
 
+    /**
+     * Sets a new process title.
+     * 
+     * @param newProcessTitle
+     *            new process title to set
+     */
     public void setNewProcessTitle(String newProcessTitle) {
         Stopwatch stopwatch = new Stopwatch(this, "setNewProcessTitle", "newProcessTitle", newProcessTitle);
         this.newProcessTitle = newProcessTitle;
@@ -728,7 +746,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new property.
      */
     public void createNewProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "createNewProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "createNewProperty");
         if (Objects.isNull(this.properties)) {
             this.properties = new ArrayList<>();
         }
@@ -755,7 +773,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Delete property.
      */
     public void deleteProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "deleteProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "deleteProperty");
         this.property.getProcesses().clear();
         this.process.getProperties().remove(this.property);
 
@@ -769,7 +787,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Duplicate property.
      */
     public void duplicateProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "duplicateProperty");
+        final Stopwatch stopwatch = new Stopwatch(this, "duplicateProperty");
         Property newProperty = ServiceManager.getPropertyService().transfer(this.property);
         newProperty.getProcesses().add(this.process);
         this.process.getProperties().add(newProperty);
@@ -1281,7 +1299,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param importConfigurationId ID of import configuration to assign to selected processes
      */
     public void startSettingImportConfigurations(int importConfigurationId) {
-        Stopwatch stopwatch = new Stopwatch(this, "startSettingImportConfigurations");
+        final Stopwatch stopwatch = new Stopwatch(this, "startSettingImportConfigurations");
         PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').hide();");
         try {
             String configName = ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(
