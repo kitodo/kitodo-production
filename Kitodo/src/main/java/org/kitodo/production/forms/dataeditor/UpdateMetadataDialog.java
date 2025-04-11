@@ -70,7 +70,7 @@ public class UpdateMetadataDialog {
     private HashSet<Metadata> getMetadata(TreeNode treeNode) throws InvalidMetadataValueException {
         HashSet<Metadata> processDetails = new HashSet<>();
         for (TreeNode child : treeNode.getChildren()) {
-            processDetails.addAll(((ProcessDetail) child.getData()).getMetadata(false));
+            processDetails.addAll(((ProcessDetail) child.getData()).getMetadata(true));
         }
         return processDetails;
     }
