@@ -330,7 +330,7 @@ public class BeanQuery {
                     } else {
                         groupFilters.add(query);
                     }
-                    if (query != DatabaseQueryPart.SQL_FALSE) {
+                    if (!Objects.equals(query, DatabaseQueryPart.SQL_FALSE)) {
                         databaseSearchQueryPart.addParameters(parameterName, parameters);
                     }
                 } else {
