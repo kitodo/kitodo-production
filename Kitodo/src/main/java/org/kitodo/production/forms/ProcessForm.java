@@ -1041,7 +1041,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return List of Processes
      */
     public List<Process> getAllParentProcesses(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this, "getAllParentProcesses");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "getAllParentProcesses");
         try {
             return stopwatch.stop(ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(
                 processId)));

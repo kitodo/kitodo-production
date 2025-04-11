@@ -37,6 +37,7 @@ public class Stopwatch {
         this.object = object;
         this.functionName = functionName;
         this.args = args;
+        this.start = System.nanoTime();
     }
 
     public void stop() {
@@ -58,7 +59,9 @@ public class Stopwatch {
                 mater++;
             }
         }
-        LogManager.getLogger(executor).trace("{}: {}({}) took {} ms", object, functionName, args, millis);
+        String objectName = object.toString();
+        LogManager.getLogger(executor).trace("{}: {}({}) took {} ms", objectName.contains("@") ? object.getClass()
+                .getSimpleName() : objectName, functionName, args, millis);
     }
 
     public <T> T stop(T t) {

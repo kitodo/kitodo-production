@@ -23,6 +23,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
@@ -67,7 +68,9 @@ public class LazyProcessModel extends LazyBeanModel {
      *            as boolean
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
+        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses");
         this.showClosedProcesses = showClosedProcesses;
+        stopwatch.stop();
     }
 
     /**
@@ -76,7 +79,8 @@ public class LazyProcessModel extends LazyBeanModel {
      * @return value of showClosedProcesses
      */
     public boolean isShowClosedProcesses() {
-        return showClosedProcesses;
+        Stopwatch stopwatch = new Stopwatch(this, "isShowClosedProcesses");
+        return stopwatch.stop(showClosedProcesses);
     }
 
     /**
@@ -86,7 +90,9 @@ public class LazyProcessModel extends LazyBeanModel {
      *            as boolean
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
+        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects");
         this.showInactiveProjects = showInactiveProjects;
+        stopwatch.stop();
     }
 
     /**
@@ -95,13 +101,15 @@ public class LazyProcessModel extends LazyBeanModel {
      * @return value of showInactiveProjects
      */
     public boolean isShowInactiveProjects() {
-        return showInactiveProjects;
+        Stopwatch stopwatch = new Stopwatch(this, "isShowInteractiveProjects");
+        return stopwatch.stop(showInactiveProjects);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, FilterMeta> filters) {
+        Stopwatch stopwatch = new Stopwatch(this, "load");
         // reverse sort order for some process list columns such that first click on column yields more useful ordering
         if (sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) || sortField.equals(PROGRESS_COMBINED_FIELD)
                 || sortField.equals(CREATION_DATE_FIELD)) {
@@ -118,7 +126,7 @@ public class LazyProcessModel extends LazyBeanModel {
                 entities = ((ProcessService)searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
                         this.showClosedProcesses, this.showInactiveProjects);
                 logger.trace("{} entities loaded!", entities.size());
-                return entities;
+                return stopwatch.stop(entities);
             } catch (DAOException e) {
                 setRowCount(0);
                 logger.error(e.getMessage(), e);
@@ -131,16 +139,17 @@ public class LazyProcessModel extends LazyBeanModel {
         } else {
             logger.info("Index not found!");
         }
-        return new LinkedList<>();
+        return stopwatch.stop(new LinkedList<>());
     }
 
     @Override
     public Object getRowData() {
+        Stopwatch stopwatch = new Stopwatch(this, "getRowData");
         List<Object> data = getWrappedData();
         if (isRowAvailable()) {
-            return data.get(getRowIndex());
+            return stopwatch.stop(data.get(getRowIndex()));
         } else {
-            return null;
+            return stopwatch.stop(null);
         }
     }
 }
