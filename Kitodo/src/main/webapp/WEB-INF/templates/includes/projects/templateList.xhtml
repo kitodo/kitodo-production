@@ -83,7 +83,7 @@
                     <h:panelGroup styleClass="action"
                                   title="#{item.isActive() and item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
                         <p:commandLink id="createProcessFromTemplate"
-                                       actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
+                                       actionListener="#{SelectProjectDialogView.setTemplate(item)}"
                                        action="#{SelectProjectDialogView.createProcessFromTemplate()}"
                                        disabled="#{item.projects.size() lt 1 or not item.active}"
                                        rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
