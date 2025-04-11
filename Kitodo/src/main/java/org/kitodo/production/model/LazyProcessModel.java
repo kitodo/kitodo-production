@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -68,7 +69,8 @@ public class LazyProcessModel extends LazyBeanModel {
      *            as boolean
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
-        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses");
+        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses", "showClosedProcesses", Boolean.toString(
+            showClosedProcesses));
         this.showClosedProcesses = showClosedProcesses;
         stopwatch.stop();
     }
@@ -90,7 +92,8 @@ public class LazyProcessModel extends LazyBeanModel {
      *            as boolean
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
-        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects");
+        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects", "showInactiveProjects", Boolean.toString(
+            showInactiveProjects));
         this.showInactiveProjects = showInactiveProjects;
         stopwatch.stop();
     }
@@ -109,7 +112,9 @@ public class LazyProcessModel extends LazyBeanModel {
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, FilterMeta> filters) {
-        Stopwatch stopwatch = new Stopwatch(this, "load");
+        Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
+                .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
+                Objects.toString(filters));
         // reverse sort order for some process list columns such that first click on column yields more useful ordering
         if (sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) || sortField.equals(PROGRESS_COMBINED_FIELD)
                 || sortField.equals(CREATION_DATE_FIELD)) {

@@ -93,7 +93,8 @@ public class ProcessListBaseView extends BaseForm {
      * @param excludedProcessIds value of excludedProcessIds
      */
     public void setExcludedProcessIds(HashSet<Integer> excludedProcessIds) {
-        Stopwatch stopwatch = new Stopwatch(this, "setExcludedProcessIds");
+        Stopwatch stopwatch = new Stopwatch(this, "setExcludedProcessIds", "excludedProcessIds", Objects.toString(
+            excludedProcessIds));
         this.excludedProcessIds = excludedProcessIds;
         stopwatch.stop();
     }
@@ -114,7 +115,7 @@ public class ProcessListBaseView extends BaseForm {
      * @param allSelected value of allSelected
      */
     public void setAllSelected(boolean allSelected) {
-        Stopwatch stopwatch = new Stopwatch(this, "setAllSelected");
+        Stopwatch stopwatch = new Stopwatch(this, "setAllSelected", "allSelected", Boolean.toString(allSelected));
         this.allSelected = allSelected;
         excludedProcessIds.clear();
         stopwatch.stop();
@@ -267,7 +268,7 @@ public class ProcessListBaseView extends BaseForm {
      * @param pieModel as org.primefaces.model.charts.piePieChardModel
      */
     public void setPieModel(PieChartModel pieModel) {
-        Stopwatch stopwatch = new Stopwatch(this, "setPieModel");
+        Stopwatch stopwatch = new Stopwatch(this, "setPieModel", "pieModel", Objects.toString(pieModel));
         this.pieModel = pieModel;
         stopwatch.stop();
     }
@@ -289,7 +290,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return relative image amount
      */
     public int getRelativeImageAmount(int numberOfImages) {
-        Stopwatch stopwatch = new Stopwatch(this, "getRelativeImageAmount");
+        Stopwatch stopwatch = new Stopwatch(this, "getRelativeImageAmount", "numberOfImages", Integer.toString(
+            numberOfImages));
         return stopwatch.stop(numberOfImages == 0 ? 0 : numberOfImages * 100 / this.numberOfGlobalImages);
     }
 
@@ -300,7 +302,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return relative structural element amount
      */
     public int getRelativeStructuralElementAmount(int numberOfStructuralElements) {
-        Stopwatch stopwatch = new Stopwatch(this, "getRelativeStructuralElementAmount");
+        Stopwatch stopwatch = new Stopwatch(this, "getRelativeStructuralElementAmount", "numberOfStructuralElements",
+                Integer.toString(numberOfStructuralElements));
         return stopwatch.stop(numberOfStructuralElements == 0 ? 0
                 : numberOfStructuralElements * 100 / this.numberOfGlobalStructuralElements);
     }
@@ -312,7 +315,8 @@ public class ProcessListBaseView extends BaseForm {
      * @return relative metadata amount
      */
     public int getRelativeMetadataAmount(int numberOfMetadata) {
-        Stopwatch stopwatch = new Stopwatch(this, "getRelativeMetadataAmount");
+        Stopwatch stopwatch = new Stopwatch(this, "getRelativeMetadataAmount", "numberOfMetadata", Integer.toString(
+            numberOfMetadata));
         return stopwatch.stop(numberOfMetadata == 0 ? 0 : numberOfMetadata * 100 / this.numberOfGlobalMetadata);
     }
 
@@ -335,7 +339,8 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
-        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses");
+        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses", "showClosedProcesses", Boolean.toString(
+            showClosedProcesses));
         ((LazyProcessModel)this.lazyBeanModel).setShowClosedProcesses(showClosedProcesses);
         stopwatch.stop();
     }
@@ -348,7 +353,8 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
-        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects");
+        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects", "showInactiveProjects", Boolean.toString(
+            showInactiveProjects));
         ((LazyProcessModel)this.lazyBeanModel).setShowInactiveProjects(showInactiveProjects);
         stopwatch.stop();
     }
@@ -498,7 +504,7 @@ public class ProcessListBaseView extends BaseForm {
      * download.
      */
     public void downloadToHome(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this, "downloadToHome");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "downloadToHome");
         try {
             ProcessService.downloadToHome(new WebDav(), processId);
         } catch (DAOException e) {
@@ -511,7 +517,7 @@ public class ProcessListBaseView extends BaseForm {
      * Starts generation of xml logfile for current process.
      */
     public void createXML(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this, "createXML");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createXML");
         try {
             ProcessService.createXML(process, getUser());
         } catch (IOException e) {
@@ -524,7 +530,7 @@ public class ProcessListBaseView extends BaseForm {
      * Export METS.
      */
     public void exportMets(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this, "exportMets");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "exportMets");
         try {
             ProcessService.exportMets(processId);
         } catch (DAOException | IOException e) {
@@ -538,7 +544,7 @@ public class ProcessListBaseView extends BaseForm {
      * Export DMS.
      */
     public void exportDMS(int id) {
-        Stopwatch stopwatch = new Stopwatch(this, "exportDMS");
+        Stopwatch stopwatch = new Stopwatch(this, "exportDMS", "id", Integer.toString(id));
         ExportDms export = new ExportDms();
         try {
             export.startExport(ServiceManager.getProcessService().getById(id));
@@ -555,7 +561,7 @@ public class ProcessListBaseView extends BaseForm {
      * Downloads a docket for process.
      */
     public void downloadDocket(int id) {
-        Stopwatch stopwatch = new Stopwatch(this, "downloadDocket");
+        Stopwatch stopwatch = new Stopwatch(this, "downloadDocket", "id", Integer.toString(id));
         try {
             ServiceManager.getProcessService().downloadDocket(ServiceManager.getProcessService().getById(id));
         } catch (IOException | DAOException e) {
@@ -582,7 +588,7 @@ public class ProcessListBaseView extends BaseForm {
      *            process to delete.
      */
     public void delete(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this, "delete");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "delete");
         if (process.getChildren().isEmpty()) {
             try {
                 ProcessService.deleteProcess(process.getId());
@@ -615,7 +621,7 @@ public class ProcessListBaseView extends BaseForm {
      * @return whether process with given ID can be exported or not
      */
     public boolean canBeExported(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this, "canBeExported");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "canBeExported");
         try {
             if (!exportable.containsKey(processId)) {
                 exportable.put(processId, ProcessService.canBeExported(processId));
@@ -628,7 +634,8 @@ public class ProcessListBaseView extends BaseForm {
     }
 
     public void setSelectedProcesses(List<Process> selectedProcesses) {
-        Stopwatch stopwatch = new Stopwatch(this, "setSelectedProcesses");
+        Stopwatch stopwatch = new Stopwatch(this, "setSelectedProcesses", "selectedProcesses", Objects.toString(
+            selectedProcesses));
         this.selectedProcesses = selectedProcesses;
         stopwatch.stop();
     }

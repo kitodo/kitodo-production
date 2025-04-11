@@ -167,7 +167,8 @@ public class ProcessForm extends TemplateBaseForm {
      *         empty String otherwise
      */
     public static String getPropertyValue(Process process, String propertyName) {
-        Stopwatch stopwatch = new Stopwatch(ProcessForm.class, process, "getPropertyValue");
+        Stopwatch stopwatch = new Stopwatch(ProcessForm.class, process, "getPropertyValue", "propertyName",
+                propertyName);
         return stopwatch.stop(ProcessService.getPropertyValue(process, propertyName));
     }
 
@@ -215,7 +216,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return path to createProcessForm
      */
     public String createProcessAsChild(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this, "createProcessAsChild");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createProcessAsChild");
         if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
             return stopwatch.stop(CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
                     + process.getProject().getId() + "&parentId=" + process.getId());
@@ -245,7 +246,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return translated message for given task status title
      */
     public String getTaskStatusTitle(String taskStatusTitle) {
-        Stopwatch stopwatch = new Stopwatch(this, "getTaskStatusTitle");
+        Stopwatch stopwatch = new Stopwatch(this, "getTaskStatusTitle", "taskStatusTitle", taskStatusTitle);
         return stopwatch.stop(Helper.getTranslation(taskStatusTitle));
     }
 
@@ -513,7 +514,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            Process object
      */
     public void setProcess(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this, "setProcess");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "setProcess");
         this.process = process;
         this.newProcessTitle = process.getTitle();
         loadProcessProperties();
@@ -539,7 +540,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            Task object
      */
     public void setTask(Task task) {
-        Stopwatch stopwatch = new Stopwatch(this, "setTask");
+        Stopwatch stopwatch = new Stopwatch(this, "setTask", "task", Objects.toString(task));
         this.task = task;
         this.task.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
         stopwatch.stop();
@@ -551,7 +552,8 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     public void setTemplateProperty(Property templateProperty) {
-        Stopwatch stopwatch = new Stopwatch(this, "setTemplateProperty");
+        Stopwatch stopwatch = new Stopwatch(this, "setTemplateProperty", "templateProperty", Objects.toString(
+            templateProperty));
         this.templateProperty = templateProperty;
         stopwatch.stop();
     }
@@ -562,7 +564,8 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     public void setWorkpieceProperty(Property workpieceProperty) {
-        Stopwatch stopwatch = new Stopwatch(this, "setWorkpieceProperty");
+        Stopwatch stopwatch = new Stopwatch(this, "setWorkpieceProperty", "workpieceProperty", Objects.toString(
+            workpieceProperty));
         this.workpieceProperty = workpieceProperty;
         stopwatch.stop();
     }
@@ -604,7 +607,8 @@ public class ProcessForm extends TemplateBaseForm {
      *            the kitodoScript
      */
     public void setKitodoScriptSelection(String kitodoScriptSelection) {
-        Stopwatch stopwatch = new Stopwatch(this, "setKitodoScriptSelection");
+        Stopwatch stopwatch = new Stopwatch(this, "setKitodoScriptSelection", "kitodoScriptSelection",
+                kitodoScriptSelection);
         this.kitodoScriptSelection = kitodoScriptSelection;
         stopwatch.stop();
     }
@@ -615,7 +619,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     public void setNewProcessTitle(String newProcessTitle) {
-        Stopwatch stopwatch = new Stopwatch(this, "setNewProcessTitle");
+        Stopwatch stopwatch = new Stopwatch(this, "setNewProcessTitle", "newProcessTitle", newProcessTitle);
         this.newProcessTitle = newProcessTitle;
         stopwatch.stop();
     }
@@ -637,7 +641,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property object
      */
     public void setProperty(Property property) {
-        Stopwatch stopwatch = new Stopwatch(this, "setProperty");
+        Stopwatch stopwatch = new Stopwatch(this, "setProperty", "property", Objects.toString(property));
         this.property = property;
         stopwatch.stop();
     }
@@ -659,7 +663,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property objects
      */
     public void setProperties(List<Property> properties) {
-        Stopwatch stopwatch = new Stopwatch(this, "setProperties");
+        Stopwatch stopwatch = new Stopwatch(this, "setProperties", "properties", Objects.toString(properties));
         this.properties = properties;
         stopwatch.stop();
     }
@@ -681,7 +685,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property objects
      */
     public void setTemplates(List<Property> templates) {
-        Stopwatch stopwatch = new Stopwatch(this, "setTemplates");
+        Stopwatch stopwatch = new Stopwatch(this, "setTemplates", "templates", Objects.toString(templates));
         this.templates = templates;
         stopwatch.stop();
     }
@@ -703,7 +707,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property objects
      */
     public void setWorkpieces(List<Property> workpieces) {
-        Stopwatch stopwatch = new Stopwatch(this, "setWorkpieces");
+        Stopwatch stopwatch = new Stopwatch(this, "setWorkpieces", "workpieces", Objects.toString(workpieces));
         this.workpieces = workpieces;
         stopwatch.stop();
     }
@@ -943,7 +947,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            the referring view
      */
     public void setTaskEditReferer(String referer) {
-        Stopwatch stopwatch = new Stopwatch(this, "setTaskEditReferer");
+        Stopwatch stopwatch = new Stopwatch(this, "setTaskEditReferer", "referer", referer);
         if (referer.equals("tasks") || referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
             this.taskEditReferer = referer;
         } else {
@@ -970,7 +974,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            the referring view
      */
     public void setProcessEditReferer(String referer) {
-        Stopwatch stopwatch = new Stopwatch(this, "setProcessEditReferer");
+        Stopwatch stopwatch = new Stopwatch(this, "setProcessEditReferer", "referer", referer);
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
                 this.processEditReferer = referer;
@@ -1015,7 +1019,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     @Override
     public void setFilter(String filter) {
-        Stopwatch stopwatch = new Stopwatch(this, "setFilter");
+        Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
         stopwatch.stop();
@@ -1030,7 +1034,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return String containing titles of current tasks of given process
      */
     public String getCurrentTaskTitles(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this, "getCurrentTaskTitles");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTaskTitles");
         return stopwatch.stop(ServiceManager.getProcessService().createProgressTooltip(process));
 
     }
@@ -1059,7 +1063,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return number of child processes
      */
     public int getNumberOfChildProcesses(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this, "getNumberOfChildProcesses");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "getNumberOfChildProcesses");
         try {
             return stopwatch.stop(ServiceManager.getProcessService().getNumberOfChildren(processId));
         } catch (DAOException e) {
@@ -1093,7 +1097,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return List of filtered tasks as Interface objects
      */
     public List<Task> getCurrentTasksForUser(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this, "getCurrentTasksForUser");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTasksForUser");
         return stopwatch.stop(ServiceManager.getProcessService().getCurrentTasksForUser(process, ServiceManager
                 .getUserService().getCurrentUser()));
     }
@@ -1130,7 +1134,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @param resetTableViewState whether to reset table view state
      */
     public String navigateToProcessesList(boolean resetTableViewState) {
-        Stopwatch stopwatch = new Stopwatch(this, "navigateToProcessesList");
+        Stopwatch stopwatch = new Stopwatch(this, "navigateToProcessesList", "resetTableViewState", Boolean.toString(
+            resetTableViewState));
         if (resetTableViewState) {
             setFirstRow(0);
             resetProcessListMultiViewState();
@@ -1239,7 +1244,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return whether process belongs to project assigned to current user or not
      */
     public boolean processInAssignedProject(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this, "processInAssignedProject");
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "processInAssignedProject");
         try {
             if (!assignedProcesses.containsKey(processId)) {
                 assignedProcesses.put(processId, ImportService.processInAssignedProject(processId));

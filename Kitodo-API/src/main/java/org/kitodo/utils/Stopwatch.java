@@ -14,6 +14,8 @@ package org.kitodo.utils;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
+import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 
 public class Stopwatch {
@@ -83,7 +85,7 @@ public class Stopwatch {
                         break;
                     default:
                 }
-                args = args.concat(arg);
+                args = args.concat(Objects.nonNull(arg) ? arg : "null");
                 mater++;
             }
         }
