@@ -830,7 +830,7 @@ public class Project extends BaseBean implements Comparable<Project> {
         Map<Integer, Template> activeTemplatesMap = activeTemplates.stream()
                 .collect(Collectors.toMap(Template::getId, Function.identity()));
 
-        if (Objects.isNull(this.templates) && CollectionUtils.isNotEmpty(activeTemplates)) {
+        if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
         for (Template assignedTemplate : this.templates) {
