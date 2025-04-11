@@ -247,7 +247,7 @@ public class ProcessConverter {
      * @return a map providing the percentage of tasks having a certain status (done, open, locked, inwork)
      */
     public static Map<TaskStatus, Double> getTaskProgressPercentageOfProcess(Process process, boolean considerChildren) {
-        Stopwatch stopwatch = new Stopwatch(ProcessConverter.class, process, "getTaskProgressPercentageOfProcess",
+        final Stopwatch stopwatch = new Stopwatch(ProcessConverter.class, process, "getTaskProgressPercentageOfProcess",
                 "considerChildren", Boolean.toString(considerChildren));
         Map<TaskStatus, Integer> counts = countTaskStatusOfProcess(process, considerChildren);
         int total = counts.values().stream().mapToInt(Integer::intValue).sum();
