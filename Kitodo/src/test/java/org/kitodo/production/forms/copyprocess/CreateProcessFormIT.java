@@ -127,10 +127,6 @@ public class CreateProcessFormIT {
         setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
-        Process newProcess = underTest.getMainProcess();
-        Project project = newProcess.getProject();
-        project.getProcesses().add(newProcess);
-        ServiceManager.getProjectService().save(project);
         setScriptPermissions(false);
 
         long after = processService.count();
