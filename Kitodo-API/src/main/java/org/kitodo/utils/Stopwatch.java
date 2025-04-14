@@ -71,27 +71,30 @@ public class Stopwatch {
      */
     public void stop() {
         long millis = MILLISECONDS.convert(System.nanoTime() - this.start, NANOSECONDS);
-        String args = "";
-        if (this.args != null) {
-            short mater = 0;
-            for (String arg : this.args) {
-                switch (mater) {
-                    case 1:
-                        args = args.concat(": ");
-                        break;
-                    case 2:
-                        args = args.concat(", ");
-                        mater = 0;
-                        break;
-                    default:
+        if (millis > 0) {
+            StringBuilder args = new StringBuilder();
+            if (this.args != null) {
+                short mater = 0;
+                for (String arg : this.args) {
+                    switch (mater) {
+                        case 1:
+                            args = args.append(": ");
+                            break;
+                        case 2:
+                            args = args.append(", ");
+                            mater = 0;
+                            break;
+                        default:
+                    }
+                    args = args.append(arg);
+                    mater++;
                 }
-                args = args.concat(Objects.nonNull(arg) ? arg : "null");
-                mater++;
             }
+            String objectName = object.toString();
+            LogManager.getLogger(executor).trace("{}: {}({}) took {} ms",
+                    objectName.contains("@") ? object.getClass().getSimpleName() : objectName,
+                    functionName, args, millis);
         }
-        String objectName = object.toString();
-        LogManager.getLogger(executor).trace("{}: {}({}) took {} ms", objectName.contains("@") ? object.getClass()
-                .getSimpleName() : objectName, functionName, args, millis);
     }
 
     public <T> T stop(T t) {
