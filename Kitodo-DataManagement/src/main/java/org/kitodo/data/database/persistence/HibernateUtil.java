@@ -20,6 +20,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.kitodo.utils.Stopwatch;
 
 /**
  * Current version of HibernateUtil.
@@ -47,11 +48,15 @@ public class HibernateUtil {
         if (Objects.isNull(session)) {
             SessionFactory sessionFactory = getSessionFactory();
             if (Objects.nonNull(sessionFactory)) {
+                Stopwatch stopwatch = new Stopwatch(HibernateUtil.class, sessionFactory, "getSession");
                 session = sessionFactory.openSession();
+                stopwatch.stop();
             }
         } else {
             if (!session.isOpen()) {
+                Stopwatch stopwatch = new Stopwatch(HibernateUtil.class, session, "getSession");
                 session = sessionFactory.openSession();
+                stopwatch.stop();
             }
         }
         threadSession.set(session);
@@ -66,11 +71,13 @@ public class HibernateUtil {
      */
     private static SessionFactory getSessionFactory() {
         if (Objects.isNull(sessionFactory)) {
+            Stopwatch stopwatch = new Stopwatch(HibernateUtil.class, (Object) "", "getSessionFactory");
             try {
                 registry = new StandardServiceRegistryBuilder().configure().build();
                 MetadataSources sources = new MetadataSources(registry);
                 Metadata metadata = sources.getMetadataBuilder().build();
                 sessionFactory = metadata.getSessionFactoryBuilder().build();
+                stopwatch.stop();
             } catch (RuntimeException e) {
                 shutdown();
                 throw new HibernateException(e.getMessage(), e);
