@@ -42,6 +42,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
+import org.kitodo.utils.Stopwatch;
 
 @Entity
 @Table(name = "project")
@@ -98,11 +99,11 @@ public class Project extends BaseBean implements Comparable<Project> {
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Process> processes;
 
     @Transient
-    private boolean hasProcesses;
+    private boolean hasProcesses = true;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
@@ -206,7 +207,8 @@ public class Project extends BaseBean implements Comparable<Project> {
     @PostLoad
     @PostUpdate
     private void setHasProcesses() {
-        this.hasProcesses = CollectionUtils.isNotEmpty(processes);
+        Stopwatch stopwatch = new Stopwatch(this, "setHasProcesses");
+        stopwatch.stop();
     }
 
     /**
@@ -849,10 +851,13 @@ public class Project extends BaseBean implements Comparable<Project> {
      * @return whether processes exist in the project
      */
     public boolean hasProcesses() {
+        Stopwatch stopwatch = new Stopwatch(this, "hasProcesses");
         try {
-            return CollectionUtils.isNotEmpty(processes);
+            return stopwatch.stop(CollectionUtils.isNotEmpty(processes));
         } catch (LazyInitializationException e) {
-            return this.hasProcesses;
+            return stopwatch.stop(count(new ProjectDAO(),
+                "FROM Process AS process WHERE process.project.id = :project_id",
+                Collections.singletonMap("project_id", this.id)) > 0);
         }
     }
 }

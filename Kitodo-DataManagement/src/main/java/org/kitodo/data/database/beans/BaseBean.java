@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -20,10 +21,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PersistenceException;
 
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
+import org.kitodo.data.database.persistence.ProjectDAO;
 
 /**
  * Base bean class.
@@ -66,6 +71,15 @@ public abstract class BaseBean implements Serializable {
     void initialize(BaseDAO baseDAO, List<? extends BaseBean> list) {
         if (Objects.nonNull(this.id) && !Hibernate.isInitialized(list)) {
             baseDAO.initialize(this, list);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    Long count(BaseDAO baseDAO, String query, Map<String, Object> parameters) {
+        try {
+            return baseDAO.count("SELECT COUNT (*) ".concat(query), parameters);
+        } catch (DAOException e) {
+            throw (PersistenceException) e.getCause();
         }
     }
 

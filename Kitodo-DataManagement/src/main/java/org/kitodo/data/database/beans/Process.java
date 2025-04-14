@@ -14,6 +14,7 @@ package org.kitodo.data.database.beans;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
+import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.utils.Stopwatch;
 
 @Entity
@@ -99,7 +101,7 @@ public class Process extends BaseTemplateBean {
     private List<Process> children;
 
     @Transient
-    private boolean hasChildren = true;
+    private Boolean hasChildren;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ordering")
@@ -178,12 +180,6 @@ public class Process extends BaseTemplateBean {
         this.tasks = new ArrayList<>();
         this.inChoiceListShown = false;
         this.creationDate = new Date();
-    }
-
-    @PostLoad
-    @PostUpdate
-    private void onPostLoad() {
-        this.hasChildren = CollectionUtils.isNotEmpty(children);
     }
 
     /**
@@ -934,6 +930,11 @@ public class Process extends BaseTemplateBean {
         try {
             return stopwatch.stop(CollectionUtils.isNotEmpty(children));
         } catch (LazyInitializationException e) {
+            if(Objects.isNull(hasChildren)) {
+                this.hasChildren = count(new ProjectDAO(),
+                    "FROM Process AS process WHERE process.parent.id = :project_id",
+                    Collections.singletonMap("project_id", this.id)) > 0;
+            }
             return stopwatch.stop(hasChildren);
         }
     }
