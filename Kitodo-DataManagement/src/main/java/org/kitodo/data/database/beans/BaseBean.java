@@ -68,4 +68,9 @@ public abstract class BaseBean implements Serializable {
             baseDAO.initialize(this, list);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " [" + id + "]";
+    }
 }
