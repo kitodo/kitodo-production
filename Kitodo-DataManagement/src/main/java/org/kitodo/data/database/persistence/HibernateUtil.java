@@ -71,7 +71,7 @@ public class HibernateUtil {
      */
     private static SessionFactory getSessionFactory() {
         if (Objects.isNull(sessionFactory)) {
-            Stopwatch stopwatch = new Stopwatch(HibernateUtil.class, (Object) "", "getSessionFactory");
+            Stopwatch stopwatch = new Stopwatch(HibernateUtil.class, sessionFactory, "getSessionFactory");
             try {
                 registry = new StandardServiceRegistryBuilder().configure().build();
                 MetadataSources sources = new MetadataSources(registry);

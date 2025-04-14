@@ -90,7 +90,7 @@ public class Stopwatch {
                     mater++;
                 }
             }
-            String objectName = object.toString();
+            String objectName = Objects.toString(object);
             LogManager.getLogger(executor).trace("{}: {}({}) took {} ms",
                     objectName.contains("@") ? object.getClass().getSimpleName() : objectName,
                     functionName, args, millis);
