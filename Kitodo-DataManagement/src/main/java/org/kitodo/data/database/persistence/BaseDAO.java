@@ -14,7 +14,6 @@ package org.kitodo.data.database.persistence;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 
 import java.io.Serializable;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -37,6 +37,7 @@ import org.hibernate.query.Query;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.utils.Stopwatch;
 
 /**
  * Base class for DAOs.
@@ -188,7 +189,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             q.setFirstResult(first);
             q.setMaxResults(max);
             addParameters(q, parameters);
-            return q.list();
+            Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "parameters",
+                    new TreeMap<>(parameters).toString(), "first", Integer.toString(first), "max", Integer.toString(
+                        max));
+            return stopwatch.stop(q.list());
         } catch (SQLGrammarException e) {
             return Collections.emptyList();
         }
@@ -209,7 +213,12 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
-            return q.list();
+            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+                logger.trace(new IllegalMonitorStateException("Code loads ALL object instances!"));
+            }
+            Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "parameters",
+                    new TreeMap<>(parameters).toString());
+            return stopwatch.stop(q.list());
         }
     }
 
@@ -224,7 +233,12 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     public List<T> getByQuery(String query) {
         try (Session session = HibernateUtil.getSession()) {
             debugLogQuery(query, Collections.emptyMap());
-            List<T> baseBeanObjects = session.createQuery(query).list();
+            Query<T> queryObject = session.createQuery(query);
+            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+                logger.trace(new IllegalMonitorStateException("Code loads ALL object instances!"));
+            }
+            Stopwatch stopwatch = new Stopwatch(this.getClass(), (Object) query, "getByQuery");
+            List<T> baseBeanObjects = stopwatch.stop(queryObject.list());
             if (Objects.isNull(baseBeanObjects)) {
                 baseBeanObjects = new ArrayList<>();
             }
@@ -247,7 +261,12 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<String> queryObject = session.createQuery(query);
             addParameters(queryObject, parameters);
-            return queryObject.list();
+            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+                logger.trace(new IllegalMonitorStateException("Code loads ALL object instances!"));
+            }
+            Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "parameters",
+                    new TreeMap<>(parameters).toString());
+            return stopwatch.stop(queryObject.list());
         }
     }
 
@@ -265,7 +284,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<?> q = session.createQuery(query);
             addParameters(q, parameters);
-            return (Long) q.uniqueResult();
+            Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "count",
+                    "parameters", new TreeMap<>(parameters).toString());
+            return stopwatch.stop((Long) q.uniqueResult());
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
@@ -359,7 +380,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     T retrieveObject(Class<T> cls, Integer id) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            return session.get(cls, id);
+            Stopwatch stopwatch = new Stopwatch(cls, id, "retrieveObject");
+            return stopwatch.stop(session.get(cls, id));
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
@@ -383,14 +405,16 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Query<T> sessionQuery = session.createQuery(query);
             sessionQuery.setFirstResult(first);
             sessionQuery.setMaxResults(max);
-            return sessionQuery.list();
+            Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "first", Integer
+                    .toString(first), "max", Integer.toString(max));
+            return stopwatch.stop(sessionQuery.list());
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
 
     /**
-     * Retrieve all objects fro given class.
+     * Retrieve all objects of the given class.
      *
      * @param cls
      *            class
@@ -401,7 +425,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             String query = String.format("FROM %s ORDER BY id ASC", cls.getSimpleName());
             debugLogQuery(query, Collections.emptyMap());
-            return session.createQuery(query).list();
+            logger.trace(() -> new IllegalMonitorStateException("Code loads ALL object instances!"));
+            Query<T> queryObject = session.createQuery(query);
+            Stopwatch stopwatch = new Stopwatch(cls, (Object) query, "retrieveAllObjects");
+            return stopwatch.stop(queryObject.list());
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
