@@ -63,7 +63,7 @@ public class Comment extends BaseBean {
     /**
      * This field contains information about user, which create the comment.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_comment_user_id"))
     private User author;
 
