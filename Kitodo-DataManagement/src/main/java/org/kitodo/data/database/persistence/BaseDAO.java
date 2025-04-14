@@ -363,8 +363,15 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void initialize(T object, List<? extends BaseBean> list) {
         try (Session session = HibernateUtil.getSession()) {
+            Stopwatch stopwatch = new Stopwatch(object, "initialize");
             session.update(object);
             Hibernate.initialize(list);
+            stopwatch.stop();
+            if (logger.isTraceEnabled() && !list.isEmpty()) {
+                BaseBean sample = list.iterator().next();
+                logger.trace("{} initialized {} {} instances", object, list.size(),
+                    sample.getClass().getSimpleName());
+            }
         }
     }
 
