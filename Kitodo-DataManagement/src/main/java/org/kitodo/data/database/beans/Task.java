@@ -16,13 +16,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -33,9 +33,12 @@ import javax.persistence.Transient;
 
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
+import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.utils.Stopwatch;
 
 @Entity
 @Table(name = "task")
@@ -787,6 +790,26 @@ public class Task extends BaseBean {
      */
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
+    }
+
+    /**
+     * Get the correction comment status, see CorrectionComments enum, as int
+     * value.
+     * 
+     * @return the correction comment status as integer
+     */
+    public Integer getCorrectionCommentStatus() {
+        Stopwatch stopwatch = new Stopwatch(this, "getCorrectionCommentStatus");
+        AtomicBoolean foundCorrectionComment = new AtomicBoolean(false);
+        CorrectionComments correctionComments = process.getComments().parallelStream()
+            .filter(comment -> Objects.equals(comment.getType(), CommentType.ERROR))
+            .peek(unused -> foundCorrectionComment.lazySet(true))
+            .noneMatch(Comment::isCorrected)
+                ? CorrectionComments.OPEN_CORRECTION_COMMENTS
+                : foundCorrectionComment.get()
+                    ? CorrectionComments.NO_OPEN_CORRECTION_COMMENTS
+                    : CorrectionComments.NO_CORRECTION_COMMENTS;
+        return stopwatch.stop(correctionComments.getValue());
     }
 
     /**
