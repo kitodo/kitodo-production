@@ -930,7 +930,7 @@ public class Process extends BaseTemplateBean {
         try {
             return stopwatch.stop(CollectionUtils.isNotEmpty(children));
         } catch (LazyInitializationException e) {
-            if(Objects.isNull(hasChildren)) {
+            if (Objects.isNull(hasChildren)) {
                 this.hasChildren = count(new ProjectDAO(),
                     "FROM Process AS process WHERE process.parent.id = :project_id",
                     Collections.singletonMap("project_id", this.id)) > 0;
