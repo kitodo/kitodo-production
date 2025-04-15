@@ -64,7 +64,7 @@ public class SearchResultGeneration {
             query.restrictToNotCompletedProcesses();
         }
         if (!this.showInactiveProjects) {
-            query.addBooleanRestriction("project.active", Boolean.FALSE);
+            query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
         query.performIndexSearches();
         return ServiceManager.getProcessService().getByQuery(query.formQueryForAll(), query.getQueryParameters());
