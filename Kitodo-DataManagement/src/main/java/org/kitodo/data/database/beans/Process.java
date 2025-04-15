@@ -851,7 +851,7 @@ public class Process extends BaseTemplateBean {
      * @return percentage of tasks completed
      */
     public Double getProgressClosed() {
-        if (CollectionUtils.isEmpty(tasks)) {
+        if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
             return 0.0;
         }
         return getProgressPercentageExact(TaskStatus.DONE);
@@ -865,7 +865,7 @@ public class Process extends BaseTemplateBean {
      * @return percentage of tasks in progress
      */
     public Double getProgressInProcessing() {
-        if (CollectionUtils.isEmpty(tasks)) {
+        if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
             return 0.0;
         }
         return getProgressPercentageExact(TaskStatus.INWORK);
@@ -880,7 +880,7 @@ public class Process extends BaseTemplateBean {
      * @return percentage of startable tasks
      */
     public Double getProgressOpen() {
-        if (CollectionUtils.isEmpty(tasks)) {
+        if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
             return 0.0;
         }
         return getProgressPercentageExact(TaskStatus.OPEN);
