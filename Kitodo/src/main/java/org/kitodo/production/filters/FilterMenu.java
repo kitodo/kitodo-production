@@ -308,8 +308,9 @@ public class FilterMenu {
     public String getFilterInEditMode() {
         Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
-        if (parameters.containsKey("input") && StringUtils.isBlank(filterInEditMode)) {
-            filterInEditMode = parameters.get("input");
+        String input = parameters.get("input");
+        if (StringUtils.isNotBlank(input) && StringUtils.isBlank(filterInEditMode)) {
+            filterInEditMode = input;
             parsedFilters.clear();
             submitFilters();
         }
