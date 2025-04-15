@@ -376,6 +376,26 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Initialize child object for given base bean.
+     *
+     * @param baseBean
+     *            for update
+     * @param list
+     *            child to initialize
+     */
+    public void initialize(T baseBean, BaseBean child) {
+        try (Session session = HibernateUtil.getSession()) {
+            Stopwatch stopwatch = new Stopwatch(baseBean, "initialize");
+            session.update(baseBean);
+            Hibernate.initialize(child);
+            stopwatch.stop();
+            if (logger.isTraceEnabled() && Objects.nonNull(child)) {
+                logger.trace("{} initialized a {}", baseBean, child.getClass().getSimpleName());
+            }
+        }
+    }
+
+    /**
      * Retrieves an object of the class type specified by {@code cls}, and
      * having the given {@code id}.
      *

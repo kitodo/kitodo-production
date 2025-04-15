@@ -41,6 +41,7 @@ import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
+import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.utils.Stopwatch;
 
@@ -732,6 +733,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      * @return value of defaultImportConfiguration
      */
     public ImportConfiguration getDefaultImportConfiguration() {
+        initialize(new ProjectDAO(), defaultImportConfiguration);
         return defaultImportConfiguration;
     }
 
@@ -750,6 +752,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      * @return value of defaultChildProcessImportConfiguration
      */
     public ImportConfiguration getDefaultChildProcessImportConfiguration() {
+        initialize(new ProjectDAO(), defaultImportConfiguration);
         return defaultChildProcessImportConfiguration;
     }
 

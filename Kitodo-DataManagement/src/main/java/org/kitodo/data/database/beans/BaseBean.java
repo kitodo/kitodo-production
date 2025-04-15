@@ -75,6 +75,13 @@ public abstract class BaseBean implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
+    void initialize(BaseDAO baseDAO, BaseBean bean) {
+        if (Objects.nonNull(this.id) && !Hibernate.isInitialized(bean)) {
+            baseDAO.initialize(this, bean);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     Long count(BaseDAO baseDAO, String query, Map<String, Object> parameters) {
         try {
             return baseDAO.count("SELECT COUNT (*) ".concat(query), parameters);
