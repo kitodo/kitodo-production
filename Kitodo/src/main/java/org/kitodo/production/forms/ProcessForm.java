@@ -470,6 +470,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setTaskStatusUp() throws DAOException, IOException {
         final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUp");
         workflowControllerService.setTaskStatusUp(this.task);
+        processService.refresh(this.task.getProcess());
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
         stopwatch.stop();
@@ -481,6 +482,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setTaskStatusDown() {
         final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDown");
         workflowControllerService.setTaskStatusDown(this.task);
+        processService.refresh(this.task.getProcess());
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
         stopwatch.stop();
