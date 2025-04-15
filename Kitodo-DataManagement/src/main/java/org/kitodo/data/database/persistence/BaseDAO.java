@@ -214,7 +214,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
             if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
-                logger.trace(new IllegalMonitorStateException("Code loads ALL object instances!"));
+                logger.trace("Probable performance issue:", new Throwable(
+                        "Location where the code loads ALL object instances"));
             }
             Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "parameters",
                     new TreeMap<>(parameters).toString());
@@ -235,7 +236,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, Collections.emptyMap());
             Query<T> queryObject = session.createQuery(query);
             if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
-                logger.trace(new IllegalMonitorStateException("Code loads ALL object instances!"));
+                logger.trace("Probable performance issue:", new Throwable(
+                        "Location where the code loads ALL object instances"));
             }
             Stopwatch stopwatch = new Stopwatch(this.getClass(), (Object) query, "getByQuery");
             List<T> baseBeanObjects = stopwatch.stop(queryObject.list());
@@ -262,7 +264,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Query<String> queryObject = session.createQuery(query);
             addParameters(queryObject, parameters);
             if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
-                logger.trace(new IllegalMonitorStateException("Code loads ALL object instances!"));
+                logger.trace("Probable performance issue:", new Throwable(
+                        "Location where the code loads ALL object instances"));
             }
             Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "parameters",
                     new TreeMap<>(parameters).toString());
@@ -452,7 +455,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             String query = String.format("FROM %s ORDER BY id ASC", cls.getSimpleName());
             debugLogQuery(query, Collections.emptyMap());
-            logger.trace(() -> new IllegalMonitorStateException("Code loads ALL object instances!"));
+            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+                logger.trace("Probable performance issue:", new Throwable(
+                        "Location where the code loads ALL object instances"));
+            }
             Query<T> queryObject = session.createQuery(query);
             Stopwatch stopwatch = new Stopwatch(cls, (Object) query, "retrieveAllObjects");
             return stopwatch.stop(queryObject.list());
