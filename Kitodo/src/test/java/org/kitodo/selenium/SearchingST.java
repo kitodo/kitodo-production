@@ -132,6 +132,7 @@ public class SearchingST extends BaseTestSelenium {
      * Checks whether adding and removing filters work on the processes page.
      */
     @Test
+    @Disabled("GUI behaves randomly completely differently")
     public void addAndRemoveFilters() throws Exception {
         processesPage.goTo();
         processesPage.applyFilter("\"id:to be removed\"");

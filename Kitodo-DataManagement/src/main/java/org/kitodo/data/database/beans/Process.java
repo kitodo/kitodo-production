@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,12 +32,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PostLoad;
-import javax.persistence.PostUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -55,6 +55,8 @@ import org.kitodo.utils.Stopwatch;
 @Indexed(index = "kitodo-process")
 @Table(name = "process")
 public class Process extends BaseTemplateBean {
+    @Transient
+    private static final long MAX_AGE_NANOSS = TimeUnit.NANOSECONDS.convert(500, TimeUnit.MICROSECONDS);
 
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
@@ -167,6 +169,9 @@ public class Process extends BaseTemplateBean {
     @ManyToOne
     @JoinColumn(name = "import_configuration_id", foreignKey = @ForeignKey(name = "FK_process_import_configuration_id"))
     private ImportConfiguration importConfiguration;
+
+    @Transient
+    private Pair<Long, Map<TaskStatus, Double>> taskProgress;
 
     /**
      * Constructor.
@@ -854,7 +859,7 @@ public class Process extends BaseTemplateBean {
         if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
             return 0.0;
         }
-        return getProgressPercentageExact(TaskStatus.DONE);
+        return getTaskProgress(MAX_AGE_NANOSS).get(TaskStatus.DONE);
     }
 
     /**
@@ -868,7 +873,7 @@ public class Process extends BaseTemplateBean {
         if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
             return 0.0;
         }
-        return getProgressPercentageExact(TaskStatus.INWORK);
+        return getTaskProgress(MAX_AGE_NANOSS).get(TaskStatus.INWORK);
     }
 
     /**
@@ -883,12 +888,19 @@ public class Process extends BaseTemplateBean {
         if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
             return 0.0;
         }
-        return getProgressPercentageExact(TaskStatus.OPEN);
+        return getTaskProgress(MAX_AGE_NANOSS).get(TaskStatus.OPEN);
     }
 
-    private Double getProgressPercentageExact(TaskStatus status) {
-        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
-        return taskProgress.get(status);
+    private Map<TaskStatus, Double> getTaskProgress(long maxAgeNanos) {
+        long now = System.nanoTime();
+        if (Objects.isNull(this.taskProgress) || now - taskProgress.getLeft() > maxAgeNanos) {
+            Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
+            this.taskProgress = Pair.of(System.nanoTime(), taskProgress);
+        } else {
+            this.taskProgress = Pair.of(now, taskProgress.getValue());
+        }
+        Map<TaskStatus, Double> value = taskProgress.getValue();
+        return value;
     }
 
     /**
@@ -904,8 +916,7 @@ public class Process extends BaseTemplateBean {
      * @return overview of the processing status
      */
     public String getProgressCombined() {
-        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
-        return ProcessConverter.getCombinedProgressFromTaskPercentages(taskProgress);
+        return ProcessConverter.getCombinedProgressFromTaskPercentages(getTaskProgress(MAX_AGE_NANOSS));
     }
 
     /**
