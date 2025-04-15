@@ -30,6 +30,18 @@
         <Logger name="org.kitodo" level="info" additivity="false">
             <AppenderRef ref="LOGFILE"/>
         </Logger>
+
+        <!-- These loggers report the loading times of objects from the database -->
+        <!-- Logger name="org.kitodo.data.database" level="trace" additivity="false">
+            <AppenderRef ref="LOGFILE"/>
+        </Logger>
+        <Logger name="org.kitodo.production.forms" level="trace" additivity="false">
+            <AppenderRef ref="LOGFILE"/>
+        </Logger>
+        <Logger name="org.kitodo.production.model" level="trace" additivity="false">
+            <AppenderRef ref="LOGFILE"/>
+        </Logger -->
+
         <Root level="error">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="LOGFILE"/>
