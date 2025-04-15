@@ -384,7 +384,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
     private static UserSpecifiedFilter parseQueryPart(String item, boolean indexed) {
         boolean substract = item.startsWith(NOT_SEARCH_PREFIX);
         if (substract) {
-            item = item.substring(1, item.length());
+            item = item.substring(1);
         }
         boolean operand = !substract;
 
