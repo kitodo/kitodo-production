@@ -383,7 +383,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *
      * @param baseBean
      *            for update
-     * @param list
+     * @param child
      *            child to initialize
      */
     public void initialize(T baseBean, BaseBean child) {
