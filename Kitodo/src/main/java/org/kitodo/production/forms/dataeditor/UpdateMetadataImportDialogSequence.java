@@ -34,6 +34,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.constants.StringConstants;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
@@ -96,7 +97,21 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
         int templateId = dataEditorForm.getProcess().getTemplate().getId();
         int projectId = dataEditorForm.getProcess().getProject().getId();
 
-        createProcessForm.prepareProcess(templateId, projectId, null, null);
+        String previouslySelectedField = createProcessForm.getCatalogImportDialog().getSelectedField();
+        ImportConfiguration previouslySelectedImportConfiguration = createProcessForm.getCurrentImportConfiguration();
+
+        createProcessForm.prepareProcess(templateId, projectId, null, null, false);
+
+        // recover previously selected import configuration and search field
+        if (Objects.nonNull(previouslySelectedImportConfiguration)) {
+            createProcessForm.setCurrentImportConfiguration(previouslySelectedImportConfiguration);
+        }
+        if (Objects.nonNull(previouslySelectedField) && !previouslySelectedField.isEmpty()) {
+            createProcessForm.getCatalogImportDialog().setSelectedField(previouslySelectedField);
+        }
+
+        // always reset search term to empty value
+        createProcessForm.getCatalogImportDialog().setSearchTerm("");
 
         PrimeFaces.current().executeScript("PF('catalogSearchDialog').show();");
     }

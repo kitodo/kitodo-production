@@ -49,6 +49,7 @@
                                      styleClass="secondary"
                                      action="#{UpdateMetadataDialog.onUpdateCatalogMetadataClick()}"
                                      disabled="#{not UpdateMetadataDialog.canUpdateMetadata() and not UpdateMetadataImportDialogSequence.canImportMetadata()}"
+                                     update="catalogSearchForm"
                                      onstart="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"/>
                 </h:panelGroup>
