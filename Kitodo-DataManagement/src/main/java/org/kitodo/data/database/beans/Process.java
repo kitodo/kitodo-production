@@ -421,6 +421,7 @@ public class Process extends BaseTemplateBean {
      * @return value of template
      */
     public Template getTemplate() {
+        initialize(new ProcessDAO(), template);
         return template;
     }
 
