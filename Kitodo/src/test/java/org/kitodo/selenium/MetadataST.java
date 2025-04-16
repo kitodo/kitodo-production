@@ -23,12 +23,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
@@ -46,6 +48,7 @@ import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Tests for functions in the metadata editor.
@@ -61,6 +64,7 @@ public class MetadataST extends BaseTestSelenium {
     private static int parentProcessId = -1;
     private static int renamingMediaProcessId = -1;
     private static int dragndropProcessId = -1;
+    private static int createStructureAndDragndropProcessId = -1;
     private static int createStructureProcessId = -1;
     private static int linkPageToNextDivisionProcessId = -1;
     private static final String PARENT_PROCESS_TITLE = "Parent process";
@@ -100,6 +104,11 @@ public class MetadataST extends BaseTestSelenium {
         copyTestFilesForDragAndDrop();
     }
 
+    private static void prepareCreateStructureAndDragNDropProcess() throws DAOException, DataException, IOException {
+        insertTestProcessForCreateStructureAndDragAndDrop();
+        copyTestFilesForCreateStructureAndDragAndDrop();
+    }
+
     private static void prepareCreateStructureProcess() throws DAOException, DataException, IOException {
         insertTestProcessForCreatingStructureElement();
         copyTestFilesForCreateStructure();
@@ -124,6 +133,7 @@ public class MetadataST extends BaseTestSelenium {
         prepareProcessHierarchyProcesses();
         prepareMediaRenamingProcess();
         prepareDragNDropProcess();
+        prepareCreateStructureAndDragNDropProcess();
         prepareCreateStructureProcess();
         prepareLinkPageToNextDivision();
     }
@@ -284,20 +294,167 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
-     * Verifies drag and drop functionality in gallery.
+     * Verifies single thumbnail drag and drop functionality in gallery.
+     * 
      * @throws Exception when page navigation or process saving fails.
      */
     @Test
-    public void dragAndDropPageTest() throws Exception {
+    public void singleDragAndDropPageGalleryTest() throws Exception {
         login("kowal");
+
+        // open metadata editor
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
-        String targetPositionId = "imagePreviewForm:unstructuredMediaList:2:unstructuredPageDropArea";
-        String targetElementId = "imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel";
-        String expectedOverlay = "Bild 1, Seite -";
-        WebElement target = Pages.getMetadataEditorPage().performDragAndDrop(targetPositionId, targetElementId,
-                expectedOverlay);
-        assertEquals("Bild 2, Seite -", target.getText().strip(),
-                "Last thumbnail has wrong overlay after drag'n'drop action");
+
+        // wait until gallery is visible, page order should be 2-1-3
+        WebElement unstructuredMedia = Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(unstructuredMedia::isDisplayed);
+
+        // wait until first page is visible in unstructured media stripe
+        WebElement dragThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:0:unstructuredMediaPanel"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(dragThumbnail::isDisplayed);
+
+        // hover over second thumbnail to verify overlay text before drag'n'drop
+        metaDataEditor.checkGalleryThumbnailOverlayText(
+            "imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel",
+            "Bild 1, Seite -",
+            "Second thumbnail has wrong overlay before drag'n'drop action"
+        );
+
+        // drop position for drag'n'drop action
+        WebElement dropPosition = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:2:unstructuredPageDropArea"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(dropPosition::isDisplayed);
+
+        // drag'n'drop action
+        Actions dragAndDropAction = new Actions(Browser.getDriver());
+        dragAndDropAction.dragAndDrop(dragThumbnail, dropPosition).build().perform();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
+
+        // page order should now be 1-2-3
+
+        // save process
+        Pages.getMetadataEditorPage().saveAndExit();
+
+        // check whether new position has been saved correctly
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        metaDataEditor.checkGalleryThumbnailOverlayText(
+            "imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel",
+            "Bild 2, Seite -",
+            "Second thumbnail has wrong overlay after drag'n'drop action"
+        );
+
+        // move page 2 back to first position
+        dragThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel"));
+        dropPosition = Browser.getDriver()
+            .findElement(By.id("imagePreviewForm:unstructuredMediaList:0:unstructuredPageDropArea"));
+        dragAndDropAction = new Actions(Browser.getDriver());
+        dragAndDropAction.dragAndDrop(dragThumbnail, dropPosition).build().perform();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
+    
+        // page order should now be 2-1-3 again
+    
+        // save process
+        Pages.getMetadataEditorPage().saveAndExit();
+
+        // check whether original position was saved correctly
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        metaDataEditor.checkGalleryThumbnailOverlayText(
+            "imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel",
+            "Bild 1, Seite -",
+            "Second thumbnail has wrong overlay after drag'n'drop action"
+        );
+    }
+
+    /**
+     * Verifies multi-select drag and drop functionality in the logical structure tree.
+     * 
+     * @throws Exception when page navigation or process saving fails.
+     */
+    @Test
+    @Disabled
+    public void multiDragAndDropStructureTreeTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+
+        // wait until logical tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // wait until gallery is visible
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia")).isDisplayed());
+
+        // page order is 2-1-3
+
+        // select page 1 and 3 in structure tree
+        metaDataEditor.selectStructureTreeNode("0_1", false, false);
+        metaDataEditor.selectStructureTreeNode("0_2", true, false);
+
+        // verify two images are selected in gallery and pagination panel
+        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkGallerySelection(2);
+
+        // drag and drop them to first drop position inside structure tree
+        WebElement dragElement = Browser.getDriver()
+            .findElement(By.cssSelector("#logicalTree\\:0_1 .ui-treenode-content"));
+        WebElement dropPosition = Browser.getDriver()
+                .findElement(By.cssSelector("li.ui-tree-droppoint:has(+ #logicalTree\\:0_0)"));
+        new Actions(Browser.getDriver()).dragAndDrop(dragElement, dropPosition).build().perform();
+
+        // verify selection in gallery and pagination panel remains active after drag and drop
+        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkGallerySelection(2);
+
+        // page order should now be 1-3-2
+
+        // save process
+        Pages.getMetadataEditorPage().saveAndExit();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+
+        // wait until gallery is visible
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia")).isDisplayed());
+
+        metaDataEditor.checkGalleryThumbnailOverlayText(
+            "imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel",
+            "Bild 3, Seite -",
+            "Second thumbnail has wrong overlay after multi-select drag'n'drop action"
+        );
+
+        // revert page order to original order such that test is idempotent
+        metaDataEditor.selectStructureTreeNode("0_2", false, false);
+
+        // drag and drop page 2 to first drop position
+        dragElement = Browser.getDriver()
+            .findElement(By.cssSelector("#logicalTree\\:0_2 .ui-treenode-content"));
+        dropPosition = Browser.getDriver()
+            .findElement(By.cssSelector("li.ui-tree-droppoint:has(+ #logicalTree\\:0_0)"));
+        new Actions(Browser.getDriver()).dragAndDrop(dragElement, dropPosition).build().perform();
+
+        // save process
+        Pages.getMetadataEditorPage().saveAndExit();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+
+        // wait until gallery is visible
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia")).isDisplayed());
+
+        metaDataEditor.checkGalleryThumbnailOverlayText(
+            "imagePreviewForm:unstructuredMediaList:2:unstructuredMediaPanel",
+            "Bild 3, Seite -",
+            "Last thumbnail has wrong overlay after reverting drag'n'drop actions"
+        );
     }
 
     /**
@@ -321,14 +478,14 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void movePagesToUnsavedStructureTest() throws Exception {
         login("kowal");
-        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_AND_DRAG_N_DROP_TEST_PROCESS_TITLE);
         Pages.getMetadataEditorPage().createStructureElement();
         String dropId = "imagePreviewForm:structuredPages:1:structureElementDataList_content";
         String targetId = "imagePreviewForm:structuredPages:1:structureElementDataList:0:structuredPagePanel";
-        String expectedOverlay = "Bild 2, Seite -";
+        String expectedOverlay = "Bild 1, Seite -";
         WebElement target = Pages.getMetadataEditorPage().performDragAndDrop(dropId, targetId, expectedOverlay);
-        assertEquals("Bild 1, Seite -", target.getText().strip(),
-                "Last thumbnail has wrong overlay after drag'n'drop action");
+        assertEquals("Bild 2, Seite -", target.getText().strip(),
+                "Dragged thumbnail in new structure has wrong overlay after drag'n'drop action");
     }
 
     /**
@@ -477,11 +634,61 @@ public class MetadataST extends BaseTestSelenium {
         // click on 2nd menu entry "remove assignment"
         metaDataEditor.clickStructureTreeContextMenuEntry("unassign");
 
-        // check page "2" is not marked as "linked" any more
+        // check page "2" is not marked as "linked" anymore
         assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
 
         // check page "3" is now only child of folder again
         assertTrue(Browser.getDriver().findElements(By.cssSelector("#logicalTree\\:0_1_0_1")).isEmpty());
+    }
+
+    /*
+     * Check if media can be linked to next structure element via thumbnail context menu in gallery when media is hidden
+     * in structure tree.
+     */
+    @Test
+    public void linkPageToNextDivisionViaGalleryWhileMediaIsHiddenInStructureTreeTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
+
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+
+        // wait until structure tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(metaDataEditor::isLogicalTreeVisible);
+
+        String menuButtonId = "logicalStructureMenuButton";
+        String hideMediaOptionId ="logicalStructureMenuForm:hideMediaCheckbox";
+
+        // hide media!
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id(menuButtonId)).isDisplayed());
+        Browser.getDriver().findElement(By.id(menuButtonId)).click();
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id(hideMediaOptionId)).isDisplayed());
+        Browser.getDriver().findElement(By.id(hideMediaOptionId)).click();
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id(menuButtonId)).isDisplayed());
+        Browser.getDriver().findElement(By.id(menuButtonId)).click();
+
+        String thumbnailId = "#imagePreviewForm\\:structuredPages\\:2\\:structureElementDataList\\:0\\:structuredPagePanel";
+
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.cssSelector(thumbnailId)).isDisplayed());
+
+        // assert first thumbnail is not yet linked
+        assertTrue(Browser.getDriver().findElements(By.cssSelector(thumbnailId + " .assigned-several-times")).isEmpty());
+
+        // open context menu of first thumbnail
+        Actions rightClickAction = new Actions(Browser.getDriver());
+        rightClickAction.contextClick(Browser.getDriver().findElement(By.cssSelector(thumbnailId))).build().perform();
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id("imagePreviewForm:mediaContextMenu")).isDisplayed());
+
+        // link to next structure via gallery
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.className("assignToNextElement")).isDisplayed());
+        Browser.getDriver().findElement(By.className("assignToNextElement")).click();
+
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.cssSelector(thumbnailId)).isDisplayed());
+
+        // assert first thumbnail is linked
+        assertFalse(Browser.getDriver().findElements(By.cssSelector(thumbnailId + " .assigned-several-times")).isEmpty());
     }
 
     /**
@@ -594,6 +801,59 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Checks that multiple elements can be selected in the logical structure tree using the 
+     * ctrl and shift keys. Verifies that selection is applied to pagination panel and gallery.
+     */
+    @Test
+    public void multiSelectInLogicalStructureTreeTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until logical structure tree is available
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // select first page
+        metaDataEditor.selectStructureTreeNode("0_0", false, false);
+
+        // verify metadata shows of first page is displayed
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(
+                By.id("metadataAccordion:metadata:metadataTable:0:inputText")
+            ).getAttribute("value").equals("-"));
+
+        // select second page with ctrl
+        metaDataEditor.selectStructureTreeNode("0_1", true, false);
+
+        // verify metadata panel is empty
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(
+                By.id("metadataAccordion:metadata:metadataTable")
+            ).getText().equals("No records found."));
+        
+        // verify both pages are selected in pagination panel
+        metaDataEditor.checkPaginationSelection(2);
+
+        // verify both pages are selected in gallery
+        metaDataEditor.checkGallerySelection(2);
+
+        // select last page
+        metaDataEditor.selectStructureTreeNode("0_2", false, false);
+
+        // select first page with shift (range select)
+        metaDataEditor.selectStructureTreeNode("0_0", false, true);
+
+        // verify all pages are selected in pagination panel
+        metaDataEditor.checkPaginationSelection(3);
+
+        // verify all pages are selected in gallery
+        metaDataEditor.checkGallerySelection(3);
+    }
+
+    /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */
@@ -619,6 +879,7 @@ public class MetadataST extends BaseTestSelenium {
         ProcessService.deleteProcess(metadataLockProcessId);
         ProcessService.deleteProcess(renamingMediaProcessId);
         ProcessService.deleteProcess(dragndropProcessId);
+        ProcessService.deleteProcess(createStructureAndDragndropProcessId);
         ProcessService.deleteProcess(createStructureProcessId);
         ProcessService.deleteProcess(linkPageToNextDivisionProcessId);
     }
@@ -642,6 +903,10 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void insertTestProcessForDragAndDrop() throws DAOException, DataException {
         dragndropProcessId = MockDatabase.insertTestProcessForDragNDropTestIntoSecondProject();
+    }
+
+    private static void insertTestProcessForCreateStructureAndDragAndDrop() throws DAOException, DataException {
+        createStructureAndDragndropProcessId = MockDatabase.insertTestProcessForCreateStructureAndDragNDropTestIntoSecondProject();
     }
 
     private static void insertTestProcessForCreatingStructureElement() throws DAOException, DataException {
@@ -683,6 +948,10 @@ public class MetadataST extends BaseTestSelenium {
         ProcessTestUtils.copyTestFiles(dragndropProcessId, TEST_RENAME_MEDIA_FILE);
     }
 
+    private static void copyTestFilesForCreateStructureAndDragAndDrop() throws IOException, DAOException, DataException {
+        ProcessTestUtils.copyTestFiles(createStructureAndDragndropProcessId, TEST_RENAME_MEDIA_FILE);
+    }
+
     private static void copyTestFilesForCreateStructure() throws DAOException, DataException, IOException {
         ProcessTestUtils.copyTestFiles(createStructureProcessId, TEST_RENAME_MEDIA_FILE);
     }
@@ -700,5 +969,13 @@ public class MetadataST extends BaseTestSelenium {
         xmlContent = xmlContent.replaceAll(FIRST_CHILD_ID, String.valueOf(firstChildId));
         xmlContent = xmlContent.replaceAll(SECOND_CHILD_ID, String.valueOf(secondChildId));
         Files.write(metaXml, xmlContent.getBytes());
+    }
+
+    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
+        await().ignoreExceptions()
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(conditionEvaluator);
     }
 }

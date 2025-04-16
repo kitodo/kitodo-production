@@ -1686,6 +1686,14 @@ Import form
     background: var(--blue);
 }
 
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .ui-button.validation-error {
+    background: var(--orange);
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .selected.validation-error {
+    background: var(--focused-orange);
+}
+
 #editForm\:processFromTemplateTabView\:processChildren {
     margin: auto;
 }
@@ -2866,6 +2874,11 @@ Column content
     margin-right: 3px;
 }
 
+#structureTreeForm .hidden-tree-node + .ui-tree-droppoint,
+#structureTreeForm .hidden-tree-node {
+    display: none;
+}
+
 #structureTreeForm .ui-treenode .pageRange {
     margin-left: 0.3em;
 }
@@ -3247,6 +3260,16 @@ button.settings-loaded-task::after {
 #editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter {
     padding-right: 26px;
+}
+
+#editForm\:validateWrapper {
+    margin: 12px var(--default-full-size) -31px auto;
+    z-index: 1;
+}
+
+#editForm\:validateWrapper .ui-outputlabel {
+    display: inline-block;
+    margin-left: var(--default-half-size);
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {

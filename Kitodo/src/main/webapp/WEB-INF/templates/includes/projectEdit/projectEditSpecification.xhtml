@@ -24,9 +24,9 @@
                 <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportPath}" />
                 <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportPath}" styleClass="input-with-button" value="#{ProjectForm.project.dmsImportRootPath}"
                              disabled="#{ProjectForm.locked}">
-                    <p:ajax event="blur"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                    <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportImageDirButton"/>
+                    <p:ajax event="keyup"
+                            delay="300"
+                            update="editForm:projectTabView:copyDmsExportImageDirButton"/>
                 </p:inputText>
                 <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.project.dmsImportRootPath}"/>
             </div>
