@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.BaseBeanService;
 import org.kitodo.production.services.data.FilterService;
+import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
@@ -50,6 +52,7 @@ public class LazyBeanModel extends LazyDataModel<Object> {
      *            source
      */
     public LazyBeanModel(BaseBeanService searchService) {
+        Stopwatch stopwatch = new Stopwatch(this, "LazyBeanModel");
         this.searchService = searchService;
 
         try {
@@ -58,31 +61,37 @@ public class LazyBeanModel extends LazyDataModel<Object> {
             logger.error(e.getMessage());
             this.setRowCount(0);
         }
+        stopwatch.stop();
     }
 
     @Override
     public Object getRowData(String rowKey) {
+        Stopwatch stopwatch = new Stopwatch(this, "getRowData");
         try {
-            return searchService.getById(Integer.parseInt(rowKey));
+            return stopwatch.stop(searchService.getById(Integer.parseInt(rowKey)));
         } catch (DAOException | NumberFormatException e) {
             logger.error(e.getMessage());
-            return null;
+            return stopwatch.stop(null);
         }
     }
 
     @Override
     public Object getRowKey(Object inObject) {
+        Stopwatch stopwatch = new Stopwatch(this, "getRowKey");
         if (inObject instanceof BaseBean) {
             BaseBean bean = (BaseBean) inObject;
-            return bean.getId();
+            return stopwatch.stop(bean.getId());
         }
-        return 0;
+        return stopwatch.stop(0);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, FilterMeta> filters) {
+        Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
+                .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
+                Objects.toString(filters));
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -92,7 +101,7 @@ public class LazyBeanModel extends LazyDataModel<Object> {
                 setRowCount(toIntExact(searchService.countResults(filterMap)));
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
                 logger.info("{} entities loaded!", entities.size());
-                return entities;
+                return stopwatch.stop(entities);
             } catch (DAOException
                     | SQLGrammarException e) {
                 setRowCount(0);
@@ -106,7 +115,7 @@ public class LazyBeanModel extends LazyDataModel<Object> {
         } else {
             logger.info("Index not found!");
         }
-        return new LinkedList<>();
+        return stopwatch.stop(new LinkedList<>());
     }
 
     /**
@@ -130,7 +139,8 @@ public class LazyBeanModel extends LazyDataModel<Object> {
      * @return value of entities
      */
     public List getEntities() {
-        return entities;
+        Stopwatch stopwatch = new Stopwatch(this, "getEntities");
+        return stopwatch.stop(entities);
     }
 
     /**
@@ -140,6 +150,8 @@ public class LazyBeanModel extends LazyDataModel<Object> {
      *      as String
      */
     public void setFilterString(String filter) {
+        Stopwatch stopwatch = new Stopwatch(this, "setFilterString");
         this.filterString = filter;
+        stopwatch.stop();
     }
 }
