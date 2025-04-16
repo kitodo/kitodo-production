@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -24,6 +25,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.TaskService;
+import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
@@ -61,14 +63,19 @@ public class LazyTaskModel extends LazyBeanModel {
      */
     public LazyTaskModel(TaskService taskService) {
         super(taskService);
+        Stopwatch stopwatch = new Stopwatch(this, "LazyTaskModel", "taskService", Objects.toString(taskService));
         this.taskStatusRestriction.add(TaskStatus.OPEN);
         this.taskStatusRestriction.add(TaskStatus.INWORK);
+        stopwatch.stop();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, FilterMeta> filters) {
+        Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
+                .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
+                Objects.toString(filters));
         // reverse sort order for some task list columns such that first click on column yields more useful ordering
         if (sortField.equals(TASK_STATUS_FIELD) || sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) 
                 || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
@@ -86,7 +93,7 @@ public class LazyTaskModel extends LazyBeanModel {
                         this.onlyOwnTasks, this.hideCorrectionTasks, this.showAutomaticTasks,
                         this.taskStatusRestriction);
                 logger.trace("{} entities loaded!", entities.size());
-                return entities;
+                return stopwatch.stop(entities);
             } catch (DAOException e) {
                 setRowCount(0);
                 logger.error(e.getMessage(), e);
@@ -99,7 +106,7 @@ public class LazyTaskModel extends LazyBeanModel {
         } else {
             logger.info("Index not found!");
         }
-        return new LinkedList<>();
+        return stopwatch.stop(new LinkedList<>());
     }
 
     /**
@@ -108,7 +115,9 @@ public class LazyTaskModel extends LazyBeanModel {
      * @param onlyOwnTasks as boolean
      */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
+        Stopwatch stopwatch = new Stopwatch(this, "setOnlyOwnTasks");
         this.onlyOwnTasks = onlyOwnTasks;
+        stopwatch.stop();
     }
 
     /**
@@ -117,7 +126,10 @@ public class LazyTaskModel extends LazyBeanModel {
      * @param taskStatusRestriction as org.kitodo.data.database.enums.TaskStatus
      */
     public void setTaskStatusRestriction(List<TaskStatus> taskStatusRestriction) {
+        Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusRestriction", "taskStatusRestriction", Objects.toString(
+            taskStatusRestriction));
         this.taskStatusRestriction = taskStatusRestriction;
+        stopwatch.stop();
     }
 
     /**
@@ -126,7 +138,10 @@ public class LazyTaskModel extends LazyBeanModel {
      * @param showAutomaticTasks as boolean
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
+        Stopwatch stopwatch = new Stopwatch(this, "setShowAutomaticTasks", "showAutomaticTasks", Boolean.toString(
+            showAutomaticTasks));
         this.showAutomaticTasks = showAutomaticTasks;
+        stopwatch.stop();
     }
 
     /**
@@ -135,7 +150,8 @@ public class LazyTaskModel extends LazyBeanModel {
      * @return value of hideCorrectionTasks
      */
     public boolean isHideCorrectionTasks() {
-        return hideCorrectionTasks;
+        Stopwatch stopwatch = new Stopwatch(this, "isHideCorrectionTasks");
+        return stopwatch.stop(hideCorrectionTasks);
     }
 
     /**
@@ -144,7 +160,10 @@ public class LazyTaskModel extends LazyBeanModel {
      * @param hideCorrectionTasks as boolean
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
+        Stopwatch stopwatch = new Stopwatch(this, "setHideCorrectionTasks", "hideCorrectionTasks", Boolean.toString(
+            hideCorrectionTasks));
         this.hideCorrectionTasks = hideCorrectionTasks;
+        stopwatch.stop();
     }
 
 }
