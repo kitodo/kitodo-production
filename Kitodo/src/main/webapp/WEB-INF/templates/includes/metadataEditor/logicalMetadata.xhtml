@@ -24,37 +24,39 @@
 
     <p:outputPanel id="logicalMetadataHeader"
                    styleClass="metadata-column-menu">
-        <p:panelGrid styleClass="ui-noborder full-width"
-                     rendered="#{not readOnly}">
-            <p:row>
-                <h:panelGroup id="addMetadataButtonWrapper"
-                              title="#{DataEditorForm.metadataPanel.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
-                    <p:commandButton id="addMetadataButton"
-                                     icon="fa fa-plus"
-                                     styleClass="secondary"
-                                     update="addMetadataForm"
-                                     disabled="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked or not DataEditorForm.metadataPanel.metadataAddableToStructureElement()}"
-                                     action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForStructure(DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
-                                     oncomplete="PF('addMetadataDialog').show();metadataTable.focusMetadataRow.remember(this.source);">
-                        <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
-                    </p:commandButton>
-                </h:panelGroup>
-                <h:panelGroup id="updateMetadataButtonWrapper"
-                              rendered="#{SecurityAccessController.hasAuthorityToReimportMetadata()}"
-                              title="#{UpdateMetadataDialog.canUpdateMetadata() ? 
-                                        msgs['dataEditor.updateMetadata.canUpdate'] : UpdateMetadataImportDialogSequence.canImportMetadata() ? 
-                                        msgs['dataEditor.updateMetadata.canImport'] : msgs['dataEditor.updateMetadata.canNotImport']}">
-                    <p:commandButton id="updateMetadataButton"
-                                     icon="fa fa-refresh"
-                                     styleClass="secondary"
-                                     action="#{UpdateMetadataDialog.onUpdateCatalogMetadataClick()}"
-                                     disabled="#{not UpdateMetadataDialog.canUpdateMetadata() and not UpdateMetadataImportDialogSequence.canImportMetadata()}"
-                                     update="catalogSearchForm"
-                                     onstart="$('#loadingScreen').show()"
-                                     oncomplete="$('#loadingScreen').hide()"/>
-                </h:panelGroup>
-            </p:row>
-        </p:panelGrid>
+        <h:form id="logicalMetadataHeaderForm">
+            <p:panelGrid styleClass="ui-noborder full-width"
+                        rendered="#{not readOnly}">
+                <p:row>
+                    <h:panelGroup id="addMetadataButtonWrapper"
+                                title="#{DataEditorForm.metadataPanel.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
+                        <p:commandButton id="addMetadataButton"
+                                        icon="fa fa-plus"
+                                        styleClass="secondary"
+                                        update="addMetadataForm"
+                                        disabled="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked or not DataEditorForm.metadataPanel.metadataAddableToStructureElement()}"
+                                        action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForStructure(DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
+                                        oncomplete="PF('addMetadataDialog').show();metadataTable.focusMetadataRow.remember(this.source);">
+                            <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
+                        </p:commandButton>
+                    </h:panelGroup>
+                    <h:panelGroup id="updateMetadataButtonWrapper"
+                                rendered="#{SecurityAccessController.hasAuthorityToReimportMetadata()}"
+                                title="#{UpdateMetadataDialog.canUpdateMetadata() ? 
+                                            msgs['dataEditor.updateMetadata.canUpdate'] : UpdateMetadataImportDialogSequence.canImportMetadata() ? 
+                                            msgs['dataEditor.updateMetadata.canImport'] : msgs['dataEditor.updateMetadata.canNotImport']}">
+                        <p:commandButton id="updateMetadataButton"
+                                        icon="fa fa-refresh"
+                                        styleClass="secondary"
+                                        action="#{UpdateMetadataDialog.onUpdateCatalogMetadataClick()}"
+                                        disabled="#{not UpdateMetadataDialog.canUpdateMetadata() and not UpdateMetadataImportDialogSequence.canImportMetadata()}"
+                                        update="catalogSearchForm"
+                                        onstart="$('#loadingScreen').show()"
+                                        oncomplete="$('#loadingScreen').hide()"/>
+                    </h:panelGroup>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
     </p:outputPanel>
 
     <p:panel id="logicalMetadataWrapperPanel" styleClass="wrapperPanel">
