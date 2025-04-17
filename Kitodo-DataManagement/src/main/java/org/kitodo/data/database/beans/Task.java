@@ -39,6 +39,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.utils.Stopwatch;
+import org.kitodo.utils.Tee;
 
 @Entity
 @Table(name = "task")
@@ -803,7 +804,7 @@ public class Task extends BaseBean {
         AtomicBoolean foundCorrectionComment = new AtomicBoolean(false);
         CorrectionComments correctionComments = process.getComments().parallelStream()
             .filter(comment -> Objects.equals(comment.getType(), CommentType.ERROR))
-            .peek(unused -> foundCorrectionComment.lazySet(true))
+            .filter(new Tee<>(unused -> foundCorrectionComment.lazySet(true)))
             .noneMatch(Comment::isCorrected)
                 ? CorrectionComments.OPEN_CORRECTION_COMMENTS
                 : foundCorrectionComment.get()
