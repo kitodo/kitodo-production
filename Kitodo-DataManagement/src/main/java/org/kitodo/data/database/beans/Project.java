@@ -858,9 +858,9 @@ public class Project extends BaseBean implements Comparable<Project> {
         try {
             return stopwatch.stop(CollectionUtils.isNotEmpty(processes));
         } catch (LazyInitializationException e) {
-            return stopwatch.stop(count(new ProjectDAO(),
+            return stopwatch.stop(has(new ProjectDAO(),
                 "FROM Process AS process WHERE process.project.id = :project_id",
-                Collections.singletonMap("project_id", this.id)) > 0);
+                Collections.singletonMap("project_id", this.id)));
         }
     }
 }

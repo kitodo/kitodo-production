@@ -943,9 +943,9 @@ public class Process extends BaseTemplateBean {
             return stopwatch.stop(CollectionUtils.isNotEmpty(children));
         } catch (LazyInitializationException e) {
             if (Objects.isNull(hasChildren)) {
-                this.hasChildren = count(new ProjectDAO(),
+                this.hasChildren = has(new ProjectDAO(),
                     "FROM Process AS process WHERE process.parent.id = :process_id",
-                    Collections.singletonMap("process_id", this.id)) > 0;
+                    Collections.singletonMap("process_id", this.id));
             }
             return stopwatch.stop(hasChildren);
         }

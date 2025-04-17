@@ -82,9 +82,9 @@ public abstract class BaseBean implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    Long count(BaseDAO baseDAO, String query, Map<String, Object> parameters) {
+    boolean has(BaseDAO baseDAO, String query, Map<String, Object> parameters) {
         try {
-            return baseDAO.count("SELECT COUNT (*) ".concat(query), parameters);
+            return baseDAO.has(query, parameters);
         } catch (DAOException e) {
             throw (PersistenceException) e.getCause();
         }

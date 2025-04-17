@@ -312,11 +312,37 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
-     * Executes an HQL query that returns scalar projections (e.g., specific fields or aggregate results)
-     * instead of full entity objects.
+     * Check if there is at least one row in the database.
      *
-     * @param hql the HQL query string
-     * @param parameters query parameters
+     * @param query
+     *            for possible objects
+     * @param parameters
+     *            for query
+     * @return whether there is a rows in the database according to given query
+     */
+    public boolean has(String query, Map<String, Object> parameters) throws DAOException {
+        try (Session session = HibernateUtil.getSession()) {
+            query = "SELECT id ".concat(query);
+            debugLogQuery(query, parameters);
+            Query<?> q = session.createQuery(query);
+            addParameters(q, parameters);
+            q.setMaxResults(1);
+            Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "has", "parameters",
+                    new TreeMap<>(parameters).toString());
+            return stopwatch.stop(Objects.nonNull(q.uniqueResult()));
+        } catch (PersistenceException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    /**
+     * Executes an HQL query that returns scalar projections (e.g., specific
+     * fields or aggregate results) instead of full entity objects.
+     *
+     * @param hql
+     *            the HQL query string
+     * @param parameters
+     *            query parameters
      * @return list of scalar projection results
      */
     public List<Object[]> getProjectionByQuery(String hql, Map<String, Object> parameters) {
