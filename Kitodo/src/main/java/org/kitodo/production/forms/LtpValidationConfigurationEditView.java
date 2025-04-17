@@ -92,7 +92,11 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         this.configuration = configuration;
     }
 
-
+    /**
+     * Return Primefaces select map with all possible operations for a validation condition.
+     * 
+     * @return the map of translated label to operation name of all possible operations
+     */
     public Map<String, String> getPossibleOperationsSelectMap() {
         Map<String, String> map = new TreeMap<>();
         for (LtpValidationConditionOperation operation : LtpValidationConditionOperation.values()) {
@@ -101,6 +105,11 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         return map;
     }
 
+    /**
+     * Return Primefaces select map with all possible failure severities for a validation condition.
+     * 
+     * @return the map of translated severity label to severity name
+     */
     public Map<String, String> getPossibleSeveritiesSelectMap() {
         Map<String, String> map = new TreeMap<>();
         for (LtpValidationConditionSeverity severity : LtpValidationConditionSeverity.values()) {
@@ -109,6 +118,10 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         return map;
     }
 
+    /**
+     * Adds an empty validation condition to the list of conditions if the user clicks on the 
+     * add validation condition buttton.
+     */
     public void addValidationCondition() {
         LtpValidationCondition condition = new LtpValidationCondition();
         condition.setProperty("");
@@ -122,6 +135,12 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         this.configuration.getValidationConditions().add(condition);
     }
 
+    /**
+     * Removes a validation condition from the list of conditions if the user clicks on the 
+     * tash icon for a validation condition.
+     * 
+     * @param condition the validation condition to be removed
+     */
     public void removeValidationCondition(LtpValidationCondition condition) {
         if (Objects.nonNull(condition) 
                 && Objects.nonNull(configuration.getValidationConditions()) 

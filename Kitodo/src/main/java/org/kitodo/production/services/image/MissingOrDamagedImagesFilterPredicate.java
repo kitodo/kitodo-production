@@ -22,8 +22,8 @@ import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationCondition;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeverity;
-import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.validation.LongTermPreservationValidationService;
 
@@ -106,7 +106,11 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
                 Collections.singletonList("true"), 
                 LtpValidationConditionSeverity.ERROR
             );
-            LtpValidationResult validationResult = serviceLoader.validate(imageURI.get(), fileType.get(), Collections.singletonList(condition));
+            LtpValidationResult validationResult = serviceLoader.validate(
+                imageURI.get(), 
+                fileType.get(), 
+                Collections.singletonList(condition)
+            );
             if (validationResult.getState().equals(LtpValidationResultState.VALID)) {
                 logger.info(VALIDATION_SUCCESS, canonical, folder);
                 return false;

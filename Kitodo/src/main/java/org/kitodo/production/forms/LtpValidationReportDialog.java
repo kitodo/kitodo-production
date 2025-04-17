@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.forms;
 
 import java.io.Serializable;
@@ -6,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
@@ -15,7 +24,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 import org.kitodo.data.database.beans.Folder;
@@ -23,62 +31,57 @@ import org.kitodo.data.database.beans.LtpValidationCondition;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.validation.LtpValidationHelper;
-import org.kitodo.production.model.Subfolder;
-import org.kitodo.production.services.validation.LongTermPreservationValidationService;
 
+/**
+ * Backend bean for the LTP validation report dialog that is shown if the user clicks on
+ * the "validate images" link of an image validation task.
+ */
 @Named("LtpValidationReportDialog")
 @ViewScoped
 public class LtpValidationReportDialog implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(LtpValidationReportDialog.class);
 
-    private final LongTermPreservationValidationService ltpService = new LongTermPreservationValidationService();
-
+    /**
+     * The maximum number of folders (that contain validation errors) that are shown in the dialog.
+     * 
+     * <p>The maximum prevents the dialog from containing thousands of errors messages in case the 
+     * validation configuration is set up incorrectly by the user and all files in all folders
+     * have validation errors.</p>
+     */
     private static final int MAX_NUMBER_OF_REPORTED_FOLDERS = 3;
+
+    /**
+     * The maximum number of files (that contain validation errors) that are shown in the dialog.
+     * 
+     * <p>The maximum prevents the dialog from containing thousands of errors messages in case the 
+     * validation configuration is set up incorrectly by the user and all files in all folders
+     * have validation errors.</p>
+     */
     private static final int MAX_NUMBER_OF_REPORTED_FILES_PER_FOLDER = 5;
 
-    private Map<Folder, Map<String, LtpValidationResult>> resultsByFolder;
+    /**
+     * Contains all validation results for all folders and files.
+     */
+    private Map<Folder, Map<URI, LtpValidationResult>> resultsByFolder;
     
+    /**
+     * Is called when the user clicks on the "validate images" link in an image validation task.
+     * 
+     * @param currentTask the task
+     */
     public void open(Task currentTask) {
-        logger.info("initialize validation report by performing validation");
-        
-        resultsByFolder = new TreeMap<>((f1, f2) -> f1.getRelativePath().compareTo(f2.getRelativePath()));
+        logger.debug("open validation report");
 
-        for (Folder folder : currentTask.getValidationFolders()) {
-            if (!folder.isValidateFolder()) {
-                logger.debug("folder has validation disabled");
-                continue;
-            }
-
-            if (Objects.isNull(folder.getLtpValidationConfiguration())) {
-                logger.debug("folder has no validation configuration assigned");
-                continue;
-            }
-
-            Subfolder subfolder = new Subfolder(currentTask.getProcess(), folder);
-            Optional<FileType> fileType = subfolder.getFileFormat().getFileType();
-
-            if (!(fileType.isPresent())) {
-                logger.debug("folder has unknown mime type: " + folder.getMimeType());
-                continue;
-            }
-
-            List<LtpValidationCondition> conditions = folder.getLtpValidationConfiguration().getValidationConditions();
-            resultsByFolder.put(folder, new TreeMap<>());
-
-            logger.info("validating images in folder: " + folder.getRelativePath() + " containing files of type: " + fileType.get());
-            Map<String, URI> filesOfFolder = LtpValidationHelper.getMapOfFilesInFolder(folder, currentTask.getProcess());
-            for (Map.Entry<String, URI> fileEntry : filesOfFolder.entrySet()) {
-                String fileName = fileEntry.getKey();
-                URI absoluteFileURI = fileEntry.getValue();
-                logger.info("validate file: " + absoluteFileURI);
-                LtpValidationResult result = ltpService.validate(absoluteFileURI, fileType.get(), conditions);
-                logger.info("validation result: " + result);
-                resultsByFolder.get(folder).put(fileName, result);
-            }
-        }
+        // trigger validation of all folder and files
+        resultsByFolder = LtpValidationHelper.validateImageFoldersForTask(currentTask);
     }
 
+    /**
+     * Return the number of files in all folders that were deemed valid.
+     * 
+     * @return the number of valid files
+     */
     public int getNumberOfValidFiles() {
         if (Objects.isNull(resultsByFolder)) {
             return 0;
@@ -90,6 +93,11 @@ public class LtpValidationReportDialog implements Serializable {
                 Integer::sum);
     }
 
+    /**
+     * Return the total number of files in all folders.
+     * 
+     * @return the total number of files in all folders
+     */
     public int getTotalNumberOfFiles() {
         if (Objects.isNull(resultsByFolder)) {
             return 0;
@@ -99,6 +107,11 @@ public class LtpValidationReportDialog implements Serializable {
                 Integer::sum);
     }
 
+    /**
+     * Return the number of invalid files (with warnings or errors) in all folders.
+     * 
+     * @return the number of invalid files (with warnings or errors) in all folders
+     */
     public int getNumberOfInvalidFiles() {
         if (Objects.isNull(resultsByFolder)) {
             return 0;
@@ -106,6 +119,12 @@ public class LtpValidationReportDialog implements Serializable {
         return getTotalNumberOfFiles() - getNumberOfValidFiles();
     }
 
+    /**
+     * Return a list of folders with at least one file that has validation issues 
+     * (capped by the maximum number of reported folders).
+     * 
+     * @return the list of folder with at least one file that has validation issues
+     */
     public List<Folder> getFoldersWithValidationIssues() {
         if (Objects.isNull(resultsByFolder)) {
             return Collections.emptyList();
@@ -116,50 +135,86 @@ public class LtpValidationReportDialog implements Serializable {
             .collect(Collectors.toList());
     }
 
-    public List<String> getFilesWithValidationIssues(Folder folder) {
+    /**
+     * Return the list of files that have validation issues for a given folder 
+     * (capped at the maximum number of reported files).
+     * 
+     * @param folder the folder
+     * @return the list of files that have validation issues for the provided folder
+     */
+    public List<URI> getFilesWithValidationIssues(Folder folder) {
         if (Objects.isNull(resultsByFolder) || !resultsByFolder.containsKey(folder)) {
             return Collections.emptyList();
         }
         return this.resultsByFolder.get(folder).keySet().stream()
-            .filter((fileName) -> !resultsByFolder.get(folder).get(fileName).getState().equals(LtpValidationResultState.VALID))
+            .filter((filepath) -> !resultsByFolder.get(folder).get(filepath).getState().equals(LtpValidationResultState.VALID))
             .limit(MAX_NUMBER_OF_REPORTED_FILES_PER_FOLDER)
             .collect(Collectors.toList());
     }
 
-    public LtpValidationResult getValidationResultForFile(Folder folder, String fileName) {
+    /**
+     * Return the validation result for a specific file in a specific folder.
+     * 
+     * @param folder the folder
+     * @param filepath the filepath
+     * @return the validation result for that file
+     */
+    public LtpValidationResult getValidationResultForFile(Folder folder, URI filepath) {
         if (Objects.isNull(resultsByFolder) 
                 || !resultsByFolder.containsKey(folder) 
-                || !resultsByFolder.get(folder).containsKey(fileName)) {
+                || !resultsByFolder.get(folder).containsKey(filepath)) {
             return null;
         }
-        return resultsByFolder.get(folder).get(fileName);
+        return resultsByFolder.get(folder).get(filepath);
     }
 
-    public List<String> getGeneralErrorMessagesForFile(Folder folder, String fileName) {
-        LtpValidationResult result = getValidationResultForFile(folder, fileName);
+    /**
+     * Return a list of translated general validation error messages for a file.
+     * 
+     * @param folder the folder
+     * @param filepath the filepath
+     * @return a list of translated general validation error message for the file
+     */
+    public List<String> getGeneralErrorMessagesForFile(Folder folder, URI filepath) {
+        LtpValidationResult result = getValidationResultForFile(folder, filepath);
         if (Objects.isNull(result)) {
             return Collections.emptyList();
         }
         return LtpValidationHelper.translateGeneralErrorsList(result.getErrors()); 
     }
 
-    public List<String> getValidationConditionMessagesForFile(Folder folder, String fileName) {
-        LtpValidationResult result = getValidationResultForFile(folder, fileName);
+    /**
+     * Return a list of translated condition failure messages.
+     */
+    public List<String> getValidationConditionMessagesForFile(Folder folder, URI filepath) {
+        LtpValidationResult result = getValidationResultForFile(folder, filepath);
         if (Objects.isNull(result)) {
             return Collections.emptyList();
         }
         List<LtpValidationCondition> conditions = folder.getLtpValidationConfiguration().getValidationConditions();
-        return LtpValidationHelper.translateConditionResults(result.getConditionResults(), conditions);
+        return LtpValidationHelper.translateConditionResultsThatDidNotPass(result.getConditionResults(), conditions);
     }
 
-    public List<String> getAdditionalMessagesForFile(Folder folder, String fileName) {
-        LtpValidationResult result = getValidationResultForFile(folder, fileName);
+    /**
+     * Return any additional (untranslated) validation message for a file.
+     * 
+     * @param folder the folder
+     * @param filepath the filepath
+     * @return the list of (untranslated) additional validation message 
+     */
+    public List<String> getAdditionalMessagesForFile(Folder folder, URI filepath) {
+        LtpValidationResult result = getValidationResultForFile(folder, filepath);
         if (Objects.isNull(result)) {
             return Collections.emptyList();
         }
         return result.getAdditionalMessages();
     }
 
+    /**
+     * Return a translated message describing that all files were deemed as valid.
+     * 
+     * @return the translated message
+     */
     public String getTranslatedAllFilesValidMessage() {
         return Helper.getTranslation(
             "ltpValidation.report.allFilesValid", 
@@ -167,6 +222,11 @@ public class LtpValidationReportDialog implements Serializable {
         );
     }
 
+    /**
+     * Return a translated message describing that validation issues were found.
+     * 
+     * @return the translated message
+     */
     public String getTranslatedIssuesFoundMessage() {
         return Helper.getTranslation(
             "ltpValidation.report.issuesFound", 

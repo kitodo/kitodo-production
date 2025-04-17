@@ -31,7 +31,8 @@ import org.primefaces.model.SortOrder;
  * This class does nothing more than call the methods on the long term
  * preservation validation interface.
  */
-public class LongTermPreservationValidationService extends SearchDatabaseService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
+public class LongTermPreservationValidationService 
+        extends SearchDatabaseService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
 
     private final LongTermPreservationValidationInterface longTermPreservationValidation;
 

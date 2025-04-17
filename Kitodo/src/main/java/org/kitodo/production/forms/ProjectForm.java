@@ -874,6 +874,12 @@ public class ProjectForm extends BaseForm {
         return hasProcesses;
     }
 
+    /**
+     * Return the list of validation configurations that can be assigned to a folder based
+     * on the folders mimeType.
+     * 
+     * @return the list of possible validation configurations that can be assigned to a folder
+     */
     public List<LtpValidationConfiguration> getPossibleLtpValidationConfigurations() {
         if (Objects.isNull(myFolder) || Objects.isNull(myFolder.getMimeType())) {
             return Collections.emptyList();
