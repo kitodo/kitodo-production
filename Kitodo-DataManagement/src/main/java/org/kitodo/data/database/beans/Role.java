@@ -207,6 +207,14 @@ public class Role extends BaseBean implements Comparable<Role> {
         return title + '[' + client.getName() + ']';
     }
 
+    /**
+     * Returns whether the role is used in any task of the workflow engine.
+     * There are roles that are assigned to tasks and roles that are only used
+     * to grant permissions. This can save us from searching for tasks with
+     * roles that would never find anything anyway.
+     * 
+     * @return whether the role is used in any task of the workflow engine
+     */
     public boolean isUsedInWorkflow() {
         Stopwatch stopwatch = new Stopwatch(this, "isUsedInWorkflow");
         if (Objects.isNull(this.usedInWorkflow)) {
@@ -216,6 +224,16 @@ public class Role extends BaseBean implements Comparable<Role> {
         return stopwatch.stop(usedInWorkflow);
     }
 
+    /**
+     * Sets whether the role is used in a task of the workflow engine. This is
+     * not a property of the role; it is determined dynamically in the database
+     * and then stored transiently. This setter is there to change the cached
+     * value when a role is assigned to a task for the first time, so that the
+     * newly created tasks do not first go invisible.
+     * 
+     * @param usedInWorkflow
+     *            whether the role is used in a task of the workflow engine
+     */
     public void setUsedInWorkflow(boolean usedInWorkflow) {
         Stopwatch stopwatch = new Stopwatch(this, "setUsedInWorkflow", "usedInWorkflow", Boolean.toString(
             usedInWorkflow));
