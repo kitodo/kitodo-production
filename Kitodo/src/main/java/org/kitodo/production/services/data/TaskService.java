@@ -160,7 +160,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      *            whether automatic tasks should be included (usually not)
      * @param taskStatus
      *            tasks in what status Tasks in what status. Must not be
-     *            {@code} null. One of: [OPEN, INWORK], [OPEN], [INWORK] or [].
+     *            {@code null}. One of: [OPEN, INWORK], [OPEN], [INWORK] or [].
      * @return the number of matching objects
      * @throws DAOException
      *             database access error
@@ -239,7 +239,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * @param showAutomaticTasks
      *            whether automatic tasks should be included (usually not)
      * @param taskStatus
-     *            Tasks in what status. Must not be {@code} null. One of: [OPEN,
+     *            Tasks in what status. Must not be {@code null}. One of: [OPEN,
      *            INWORK], [OPEN], [INWORK] or [].
      * @return the data objects to be displayed
      * @throws DAOException

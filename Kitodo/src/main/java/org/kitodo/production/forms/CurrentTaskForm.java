@@ -107,7 +107,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     @PostConstruct
     public void init() {
-        Stopwatch stopwatch = new Stopwatch(this, "init");
+        final Stopwatch stopwatch = new Stopwatch(this, "init");
         columns = new ArrayList<>();
         try {
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("task"));
@@ -381,6 +381,12 @@ public class CurrentTaskForm extends BaseForm {
         return stopwatch.stop(this.scriptPath);
     }
 
+    /**
+     * Sets the script path.
+     *
+     * @param scriptPath
+     *            script path to set
+     */
     public void setScriptPath(String scriptPath) {
         Stopwatch stopwatch = new Stopwatch(this, "setScriptPath", "scriptPath", scriptPath);
         this.scriptPath = scriptPath;
@@ -420,7 +426,7 @@ public class CurrentTaskForm extends BaseForm {
      *            Object
      */
     public void setCurrentTask(Task task) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), task, "setCurrentTask");
+        final Stopwatch stopwatch = new Stopwatch(this.getClass(), task, "setCurrentTask");
         this.currentTask = task;
         this.currentTask.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
         this.myProcess = this.currentTask.getProcess();
@@ -486,6 +492,14 @@ public class CurrentTaskForm extends BaseForm {
         stopwatch.stop();
     }
 
+    /**
+     * Sets the task status constraint.
+     * 
+     * @param taskStatus
+     *            Status of the tasks to be displayed. If empty, all tasks are
+     *            displayed; otherwise, only those in one of the given statuses
+     *            are displayed. Must not be {@code null}.
+     */
     public void setTaskStatusRestriction(List<TaskStatus> taskStatus) {
         Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusRestriction", "taskStatus", Objects.toString(
             taskStatus));
@@ -552,7 +566,7 @@ public class CurrentTaskForm extends BaseForm {
      * Event listener for task filter changed event.
      */
     public void taskFiltersChanged() {
-        Stopwatch stopwatch = new Stopwatch(this, "taskFiltersChanged");
+        final Stopwatch stopwatch = new Stopwatch(this, "taskFiltersChanged");
         this.setShowAutomaticTasks(this.selectedTaskFilters.contains(AUTOMATIC_TASKS_FILTER));
         this.setHideCorrectionTasks(!this.selectedTaskFilters.contains(CORRECTION_TASKS_FILTER));
         this.setOnlyOwnTasks(!this.selectedTaskFilters.contains(OTHER_USERS_TASKS_FILTER));

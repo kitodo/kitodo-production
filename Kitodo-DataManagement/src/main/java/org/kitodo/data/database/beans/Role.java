@@ -210,8 +210,8 @@ public class Role extends BaseBean implements Comparable<Role> {
     public boolean isUsedInWorkflow() {
         Stopwatch stopwatch = new Stopwatch(this, "isUsedInWorkflow");
         if (Objects.isNull(this.usedInWorkflow)) {
-            this.usedInWorkflow = has(new RoleDAO(), "FROM Task AS task WHERE :role_id  IN elements(task.roles)",
-                Collections.singletonMap("role_id", this.id));
+            this.usedInWorkflow = has(new RoleDAO(), "FROM Task AS task WHERE :role IN elements(task.roles)",
+                Collections.singletonMap("role", this));
         }
         return stopwatch.stop(usedInWorkflow);
     }
