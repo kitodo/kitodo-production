@@ -24,10 +24,9 @@ import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class AuthorityService extends SearchDatabaseService<Authority, AuthorityDAO> {
+public class AuthorityService extends BaseBeanService<Authority, AuthorityDAO> {
 
     private static final Logger logger = LogManager.getLogger(AuthorityService.class);
 
@@ -86,25 +85,19 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
         return CLIENT_AUTHORITY_SUFFIX;
     }
 
-    /**
-     * Refresh user's group object after update.
-     *
-     * @param authority
-     *            object
-     */
     @Override
     public void refresh(Authority authority) {
         dao.refresh(authority);
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Authority");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Authority");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     @Override

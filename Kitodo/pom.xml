@@ -27,7 +27,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <maxAllowedViolations>3</maxAllowedViolations>
+        <maxAllowedViolations>2</maxAllowedViolations>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
         <jsf.projectStage>Production</jsf.projectStage>
         <myfaces.resourceMaxTimeExpires>604800000</myfaces.resourceMaxTimeExpires>
@@ -170,12 +170,8 @@
             <artifactId>avalon-framework-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opensearch</groupId>
-            <artifactId>opensearch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opensearch.plugin</groupId>
-            <artifactId>transport-netty4-client</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
@@ -227,6 +223,16 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch</groupId>
+            <artifactId>opensearch</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch.plugin</groupId>
+            <artifactId>transport-netty4-client</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>

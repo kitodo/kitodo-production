@@ -34,7 +34,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -121,7 +120,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldGetValue() throws DAOException, DataException {
+    public void shouldGetValue() throws DAOException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         countableMetadata.setMetadataDetail(metadataTypes.get(0));
         countableMetadata.setStartValue(METADATA_START_VALUE);
@@ -131,7 +130,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldMatch() throws DAOException, DataException {
+    public void shouldMatch() throws DAOException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.get(0);
         countableMetadata.setMetadataDetail(firstMetadataType);
@@ -142,7 +141,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldGetAllMetadataTypes() throws DAOException, DataException {
+    public void shouldGetAllMetadataTypes() throws DAOException {
         List<ProcessDetail> allMetadataTypes = getMetadataTypes();
         assertEquals(EXPECTED_NUMBER_OF_METADATA_TYPES, allMetadataTypes.size());
         List<String> labels = allMetadataTypes.stream().map(ProcessDetail::getLabel).collect(Collectors.toList());
@@ -150,7 +149,7 @@ public class CountableMetadataIT {
         assertTrue(labels.contains(TestConstants.METS_LABEL));
     }
 
-    private List<ProcessDetail> getMetadataTypes() throws DAOException, DataException {
+    private List<ProcessDetail> getMetadataTypes() throws DAOException {
         processId = MockDatabase.insertTestProcess(PROCESS_TITLE, 1, 1, 1);
         List<ProcessDetail> allMetadataTypes = countableMetadata.getAllMetadataTypes(processId);
         assertTrue(Objects.nonNull(allMetadataTypes));

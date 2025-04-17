@@ -48,12 +48,12 @@ public class PropertyServiceIT {
     @Test
     public void shouldCountAllProperties() {
         await().untilAsserted(
-            () -> assertEquals(Long.valueOf(8), propertyService.countDatabaseRows(), "Properties were not counted correctly!"));
+            () -> assertEquals(Long.valueOf(8), propertyService.count(), "Properties were not counted correctly!"));
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForProperties() throws Exception {
-        Long amount = propertyService.countDatabaseRows();
+        Long amount = propertyService.count();
         assertEquals(Long.valueOf(8), amount, "Properties were not counted correctly!");
     }
 
@@ -125,17 +125,17 @@ public class PropertyServiceIT {
     public void shouldRemoveProperty() throws Exception {
         Property property = new Property();
         property.setTitle("To Remove");
-        propertyService.saveToDatabase(property);
+        propertyService.save(property);
         Property foundProperty = propertyService.getById(property.getId());
         assertEquals("To Remove", foundProperty.getTitle(), "Additional property was not inserted in database!");
 
         property = new Property();
         property.setTitle("To remove");
-        propertyService.saveToDatabase(property);
+        propertyService.save(property);
         foundProperty = propertyService.getById(10);
         assertEquals("To remove", foundProperty.getTitle(), "Additional property was not inserted in database!");
 
-        propertyService.removeFromDatabase(10);
+        propertyService.remove(10);
         assertThrows(DAOException.class, () -> propertyService.getById(10));
     }
 

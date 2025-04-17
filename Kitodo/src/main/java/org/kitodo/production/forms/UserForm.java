@@ -54,13 +54,11 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.password.KitodoPassword;
@@ -102,17 +100,17 @@ public class UserForm extends BaseForm {
     private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
     /**
-     * Default constructor with inject login form that also sets the LazyDTOModel
-     * instance of this bean.
+     * Default constructor with inject login form that also sets the
+     * LazyBeanModel instance of this bean.
      *
      * @param loginForm
-     *            is used for update logged user in case updated user is currently
-     *            logged user
+     *            is used for update logged user in case updated user is
+     *            currently logged user
      */
     @Inject
     public UserForm(LoginForm loginForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(userService));
+        super.setLazyBeanModel(new LazyBeanModel(userService));
         this.loginForm = loginForm;
     }
 
@@ -206,7 +204,7 @@ public class UserForm extends BaseForm {
             if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
                 userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
             }
-            userService.saveToDatabase(userObject);
+            userService.save(userObject);
 
             if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                 loginForm.setLoggedUser(this.userObject);
@@ -260,7 +258,7 @@ public class UserForm extends BaseForm {
             taskInProgress.setProcessingStatus(TaskStatus.OPEN);
             try {
                 ServiceManager.getTaskService().save(taskInProgress);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TASK.getTranslationSingular()}, logger, e);
             }
         }
@@ -292,7 +290,7 @@ public class UserForm extends BaseForm {
 
     void deleteUser(User user) {
         try {
-            userService.removeFromDatabase(user);
+            userService.remove(user);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.USER.getTranslationSingular()}, logger, e);
         }
@@ -567,11 +565,11 @@ public class UserForm extends BaseForm {
      *
      * @return list of projects available for assignment to the user
      */
-    public List<ProjectDTO> getProjects() {
+    public List<Project> getProjects() {
         try {
             return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject)
-                    .stream().sorted(Comparator.comparing(ProjectDTO::getTitle)).collect(Collectors.toList());
-        } catch (DataException e) {
+                    .stream().sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
@@ -630,11 +628,11 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Check and return whether given UserDTO 'user' is logged in.
+     * Check and return whether given User 'user' is logged in.
      *
      * @param user
-     *            UserDTO to check
-     * @return whether given UserDTO is checked in
+     *            User to check
+     * @return whether given User is checked in
      */
     public static boolean checkUserLoggedIn(User user) {
         for (SecuritySession securitySession : ServiceManager.getSessionService().getActiveSessions()) {
@@ -736,7 +734,7 @@ public class UserForm extends BaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
     }
 
     /**

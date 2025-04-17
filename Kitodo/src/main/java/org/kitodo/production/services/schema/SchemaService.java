@@ -114,7 +114,7 @@ public class SchemaService {
     }
 
     private void set(Workpiece workpiece, MdSec domain, String key, String value) {
-        if (StringUtils.isNotEmpty(value)) {
+        if (StringUtils.isNotBlank(value)) {
             MetadataEntry entry = new MetadataEntry();
             entry.setKey(key);
             entry.setDomain(domain);

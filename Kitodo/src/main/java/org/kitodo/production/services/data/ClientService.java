@@ -24,10 +24,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
+public class ClientService extends BaseBeanService<Client, ClientDAO> {
 
     private static volatile ClientService instance = null;
 
@@ -58,13 +57,13 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Client");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Client");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     @Override
@@ -73,12 +72,6 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
         return dao.getByQuery("FROM Client" + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
-    /**
-     * Refresh project object after update.
-     *
-     * @param client
-     *            object
-     */
     @Override
     public void refresh(Client client) {
         dao.refresh(client);

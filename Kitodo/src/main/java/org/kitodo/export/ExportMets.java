@@ -35,7 +35,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -62,7 +61,7 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process) throws DAOException, DataException, IOException {
+    public boolean startExport(Process process) throws DAOException, IOException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         boolean exportSuccessful = startExport(process, userHome);

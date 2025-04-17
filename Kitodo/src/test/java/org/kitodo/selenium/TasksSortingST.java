@@ -90,9 +90,10 @@ public class TasksSortingST extends BaseTestSelenium {
     public void sortByTaskStatus() throws Exception {
         tasksPage.goTo();
 
-        // first click on status header should have top task "Progress" or "Processed Some" (both having the same status)
+        // first click on status header should have top task "Progress" or "Processed and Some" (both having the same status)
         tasksPage.clickTaskTableColumnHeaderForSorting(4);
-        assertTrue(tasksPage.getFirstRowTaskTitle().matches("Progress|Processed Some"), "Sorting tasks by status not correct");
+        assertTrue(tasksPage.getFirstRowTaskTitle().matches("Progress|Processed and Some"),
+            "Sorting tasks by status not correct");
 
         // second click on status header should have top task "Open" or "Next Open" (both having the same status)
         tasksPage.clickTaskTableColumnHeaderForSorting(4);

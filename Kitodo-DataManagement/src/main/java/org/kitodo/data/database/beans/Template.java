@@ -27,6 +27,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.persistence.TemplateDAO;
 
 @Entity
@@ -55,6 +58,7 @@ public class Template extends BaseTemplateBean {
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
@@ -78,9 +82,11 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Check if template is active.
+     * Returns whether this production template is active. Production templates
+     * that are no not to be used (anymore) can be deactivated. If processes
+     * exist from them, they cannot be deleted.
      *
-     * @return true or false
+     * @return whether this production template is active
      */
     public boolean isActive() {
         if (Objects.isNull(this.active)) {
@@ -90,9 +96,10 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Set workflow as active.
+     * Sets whether this production template is active.
      *
-     * @param active as Boolean
+     * @param active
+     *            whether this production template is active
      */
     public void setActive(boolean active) {
         this.active = active;
@@ -118,59 +125,67 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get docket.
+     * Returns the docket generation statement to use when creating dockets for
+     * processes derived from this process template.
      *
-     * @return value of docket
+     * @return the docket generation statement
      */
     public Docket getDocket() {
         return docket;
     }
 
     /**
-     * Set docket.
+     * Sets the docket generation statement to use when creating dockets for
+     * processes derived from this process template.
      *
-     * @param docket as Docket object
+     * @param docket
+     *            the docket generation statement
      */
     public void setDocket(Docket docket) {
         this.docket = docket;
     }
 
     /**
-     * Get ruleset.
+     * Returns the business domain specification derived from this process
+     * template template shall be using.
      *
-     * @return value of ruleset
+     * @return the business domain specification
      */
     public Ruleset getRuleset() {
         return this.ruleset;
     }
 
     /**
-     * Set ruleset.
+     * Sets the business domain specification derived from this process template
+     * template shall be using.
      *
-     * @param ruleset as Ruleset object
+     * @param ruleset
+     *            the business domain specification
      */
     public void setRuleset(Ruleset ruleset) {
         this.ruleset = ruleset;
     }
-
+    
     /**
-     * Get workflow.
+     * Returns the workflow from which the production template was created. The
+     * tasks of the production template are not created directly in the
+     * production template, but are edited using the workflow.
      *
-     * @return value of workflow
+     * @return the workflow
      */
     public Workflow getWorkflow() {
         return workflow;
     }
 
     /**
-     * Set workflow.
+     * Sets the workflow from which the production template was created.
      *
-     * @param workflow as Workflow object
+     * @param workflow
+     *            workflow to set
      */
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
     }
-
 
     /**
      * Get OCR-D workflow identifier.
@@ -192,9 +207,11 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get projects list.
+     * Returns the list of all projects that use this production template. A
+     * production template can be used in multiple projects, even across
+     * multiple clients. This list is not guaranteed to be in reliable order.
      *
-     * @return list of projects
+     * @return the list of all projects that use this production template
      */
     public List<Project> getProjects() {
         initialize(new TemplateDAO(), this.projects);
@@ -205,9 +222,11 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Set list of projects.
+     * Sets the list of all projects that use this production template. The list
+     * should not contain duplicates, and must not contain {@code null}s.
      *
-     * @param projects as Project list
+     * @param projects
+     *            projects list to set
      */
     public void setProjects(List<Project> projects) {
         this.projects = projects;
@@ -236,9 +255,9 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get list of task.
+     * Returns the task list of this process template.
      *
-     * @return list of Task objects or empty list
+     * @return the task list
      */
     public List<Task> getTasks() {
         initialize(new TemplateDAO(), this.tasks);
@@ -249,9 +268,10 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Set tasks.
+     * Sets the task list of this process template.
      *
-     * @param tasks as list of task
+     * @param tasks
+     *            the task list
      */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
@@ -282,6 +302,20 @@ public class Template extends BaseTemplateBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(client, docket, ruleset, workflow);
+        return Objects.nonNull(id) ? id : super.hashCode();
+    }
+
+    /**
+     * Returns whether the production template is valid. To do this, it must
+     * contain at least one task and each task must have at least one role
+     * assigned to it.
+     *
+     * @return whether the production template is valid
+     */
+    public boolean isCanBeUsedForProcess() {
+        if (Objects.isNull(tasks)) {
+            return false;
+        }
+        return tasks.stream().allMatch(task -> CollectionUtils.isNotEmpty(task.getRoles()));
     }
 }
