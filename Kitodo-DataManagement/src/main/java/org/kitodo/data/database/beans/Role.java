@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +25,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.kitodo.data.database.persistence.RoleDAO;
+import org.kitodo.utils.Stopwatch;
 
 @Entity
 @Table(name = "role")
@@ -50,6 +53,9 @@ public class Role extends BaseBean implements Comparable<Role> {
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_role_client_id"))
     private Client client;
+
+    @Transient
+    private Boolean usedInWorkflow = null;
 
     /**
      * The Constructor.
@@ -199,5 +205,21 @@ public class Role extends BaseBean implements Comparable<Role> {
     @Override
     public String toString() {
         return title + '[' + client.getName() + ']';
+    }
+
+    public boolean isUsedInWorkflow() {
+        Stopwatch stopwatch = new Stopwatch(this, "isUsedInWorkflow");
+        if (Objects.isNull(this.usedInWorkflow)) {
+            this.usedInWorkflow = has(new RoleDAO(), "FROM Task AS task WHERE :role_id  IN elements(task.roles)",
+                Collections.singletonMap("role_id", this.id));
+        }
+        return stopwatch.stop(usedInWorkflow);
+    }
+
+    public void setUsedInWorkflow(boolean usedInWorkflow) {
+        Stopwatch stopwatch = new Stopwatch(this, "setUsedInWorkflow", "usedInWorkflow", Boolean.toString(
+            usedInWorkflow));
+        this.usedInWorkflow = usedInWorkflow;
+        stopwatch.stop();
     }
 }
