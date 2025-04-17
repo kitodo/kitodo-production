@@ -28,5 +28,12 @@ public interface LongTermPreservationValidationInterface {
      */
     LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions);
 
+    /**
+     * Based on a file type, return a list of possible properties that can be validated. 
+     * The list is used for auto-suggesting property candiates to the user.
+     * 
+     * @param filetype the file type
+     * @return a list of properties that can be extracted for a file type
+     */
     List<String> getPossibleValidationConditionProperties(FileType filetype);
 }

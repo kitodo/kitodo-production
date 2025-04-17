@@ -21,25 +21,64 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     private List<String> values;
     private LtpValidationConditionSeverity severity;
 
-    public LtpValidationCondition(String property, LtpValidationConditionOperation operation, List<String> values, LtpValidationConditionSeverity severity) {
+    /**
+     * Create a new (immutable, no-setters) validation condition.
+     * 
+     * @param property the property that is checked
+     * @param operation the operation a property is checked against
+     * @param values the values that a property is checked against
+     * @param severity the failure severity of this condition
+     */
+    public LtpValidationCondition(
+        String property, 
+        LtpValidationConditionOperation operation, 
+        List<String> values, 
+        LtpValidationConditionSeverity severity
+    ) {
         this.property = property;
         this.operation = operation;
         this.values = values;
         this.severity = severity;
     }
 
+    /**
+     * Return the property of the file that is checked (e.g., ImageWidth, ColorSpace, etc.)
+     * 
+     * @return the property of the the file that is checked
+     */
     public String getProperty() {
         return property;
-    };
+    }
 
+    /**
+     * Return the operation that is used to check the property against the condition values
+     * (e.g., equal, not_equal, smaller_than, etc.)
+     * 
+     * @return the operation that is used to check the property against the condition values
+     */
     public LtpValidationConditionOperation getOperation() {
         return operation;
-    };
+    }
 
+    /**
+     * Return a list of values that are checked against the property of the file.
+     * 
+     * <p>May be a single value (comparing via equal), two values (comparing as interval) or 
+     * multiple values (comparing as set) depending on the operation</p>
+     * 
+     * @return the list of values
+     */
     public List<String> getValues() {
         return values;
-    };
+    }
 
+    /**
+     * Return the severity of the validation condition, whether the condition is critical
+     * and should be treated as an error, or whether the condition is optional and should
+     * be treated as a warning.
+     * 
+     * @return the severity of the validation condition
+     */
     public LtpValidationConditionSeverity getSeverity() {
         return severity;
     }
