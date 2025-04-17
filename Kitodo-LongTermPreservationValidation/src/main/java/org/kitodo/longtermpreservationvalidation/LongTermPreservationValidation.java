@@ -13,6 +13,7 @@ package org.kitodo.longtermpreservationvalidation;
 
 import java.net.URI;
 import java.util.List;
+
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionInterface;

@@ -37,7 +37,7 @@ import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 import org.kitodo.longtermpreservationvalidation.conditions.LtpValidationConditionEvaluator;
 
 /**
- * A programmatically initializable {@code JHoveBase} class.
+ * Manages Jhove.
  */
 public class KitodoJhoveBase {
 
@@ -74,9 +74,9 @@ public class KitodoJhoveBase {
     private static final JhoveBase initBase() {
         logger.debug("initialize jhove base class and load jhove modules");
         try {
-			JhoveBase base = new JhoveBase();
+            JhoveBase base = new JhoveBase();
             base.setEncoding("utf-8");
-            for(String moduleClass : JHOVE_MODULE_CLASSES) {
+            for (String moduleClass : JHOVE_MODULE_CLASSES) {
                 try {
                     Class<?> cl = Class.forName(moduleClass);
                     Module module = (Module) cl.getDeclaredConstructor().newInstance();
@@ -88,10 +88,10 @@ public class KitodoJhoveBase {
                     throw new UndeclaredThrowableException(e);
                 }
             }
-			return base;
-		} catch (JhoveException e) {
-			throw new IllegalStateException("Couldn't initialise JHOVE base", e);
-		}
+            return base;
+        } catch (JhoveException e) {
+            throw new IllegalStateException("Couldn't initialise JHOVE base", e);
+        }
     }
 
     private static JhoveBase getJhoveBase() {
@@ -104,12 +104,19 @@ public class KitodoJhoveBase {
 
     /**
      * Return Kitodo file types that are supported to be validated by Jhove.
-     * @return
+     * 
+     * @return the list of file types supported to be validated by Jhove
      */
     public static Set<FileType> getSupportedFileTypes() {
         return MODULE_NAMES_BY_FILE_TYPE.keySet();
     }
 
+    /**
+     * Return a list of supported properties for each file type to be suggested to the user.
+     * 
+     * @param fileType the file type
+     * @return a list of supported porperties for this file type
+     */
     public static List<String> getListOfProperties(FileType fileType) {
         if (fileType.equals(FileType.TIFF)) {
             return Arrays.asList(new String[] {
@@ -125,16 +132,15 @@ public class KitodoJhoveBase {
     /**
      * Validates a file.
      *
-     * @param filepath
-     *            filepath of file that is validated
-     * @param moduleName
-     *            name of validation module
-     * @param handler
-     *            handler to write the output to
-     * @throws Exception
-     *             if something goes wrong
+     * @param filepath filepath of file that is validated
+     * @param fileType target file type that the file is supposed to be
+     * @param conditions list of validation conditions that need to be checked
      */
-    public static LtpValidationResult validate(String filepath, FileType fileType, List<? extends LtpValidationConditionInterface> conditions) {
+    public static LtpValidationResult validate(
+        String filepath, 
+        FileType fileType, 
+        List<? extends LtpValidationConditionInterface> conditions
+    ) {
         if (!getSupportedFileTypes().contains(fileType)) {
             return new LtpValidationResult(
                 LtpValidationResultState.ERROR, 
@@ -173,7 +179,8 @@ public class KitodoJhoveBase {
         }
 
         Map<String, String> properties = KitodoJhoveRepInfoParser.repInfoToPropertyMap(info);
-        List<LtpValidationConditionResult> conditionResults = LtpValidationConditionEvaluator.evaluateValidationConditions(conditions, properties);
+        List<LtpValidationConditionResult> conditionResults = 
+            LtpValidationConditionEvaluator.evaluateValidationConditions(conditions, properties);
 
         return new LtpValidationResult(
             LtpValidationConditionEvaluator.summarizeValidationState(conditions, conditionResults), 
