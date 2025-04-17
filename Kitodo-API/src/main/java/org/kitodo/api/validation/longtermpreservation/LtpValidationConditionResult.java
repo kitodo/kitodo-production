@@ -76,6 +76,7 @@ public class LtpValidationConditionResult {
     /**
      * Simplified string representation of this condition result for debugging.
      */
+    @Override
     public String toString() {
         String errorName = Objects.nonNull(error) ? error.name() : "none";
         return "[LtpValidationConditionResult passed=" + passed + " error=" + errorName + " value='" + value + "']";

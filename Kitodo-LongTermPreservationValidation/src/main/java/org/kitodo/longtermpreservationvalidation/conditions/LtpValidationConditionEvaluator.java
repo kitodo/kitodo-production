@@ -187,8 +187,8 @@ public class LtpValidationConditionEvaluator {
         }
 
         try {
-            Float valueFloat = Float.parseFloat(value);
-            Float conditionFloat = Float.parseFloat(condition.getValues().get(0));
+            float valueFloat = Float.parseFloat(value);
+            float conditionFloat = Float.parseFloat(condition.getValues().get(0));
             if (valueFloat >= conditionFloat) {
                 return new LtpValidationConditionResult(true, null, value);
             }
@@ -216,8 +216,8 @@ public class LtpValidationConditionEvaluator {
         }
 
         try {
-            Float valueFloat = Float.parseFloat(value);
-            Float conditionFloat = Float.parseFloat(condition.getValues().get(0));
+            float valueFloat = Float.parseFloat(value);
+            float conditionFloat = Float.parseFloat(condition.getValues().get(0));
             if (valueFloat <= conditionFloat) {
                 return new LtpValidationConditionResult(true, null, value);
             }
@@ -245,9 +245,9 @@ public class LtpValidationConditionEvaluator {
         }
 
         try {
-            Float valueFloat = Float.parseFloat(value);
-            Float fromFloat = Float.parseFloat(condition.getValues().get(0));
-            Float toFloat = Float.parseFloat(condition.getValues().get(1));
+            float valueFloat = Float.parseFloat(value);
+            float fromFloat = Float.parseFloat(condition.getValues().get(0));
+            float toFloat = Float.parseFloat(condition.getValues().get(1));
             if (valueFloat >= fromFloat && valueFloat <= toFloat) {
                 return new LtpValidationConditionResult(true, null, value);
             }

@@ -232,7 +232,7 @@ public class LtpValidationHelper {
     public static String translateValidationResult(LtpValidationResult result, List<LtpValidationCondition> conditions, URI filepath) {
         if (result.getState().equals(LtpValidationResultState.VALID)) {
             // currently never displayed (only warnings and errors are shown)
-            return "File '" + filepath.getPath().toString() + "'' passed validation";
+            return "File '" + filepath.getPath() + "'' passed validation";
         } else { 
             List<String> errorMessages = translateGeneralErrorsList(result.getErrors());
             List<String> conditionMessages = translateConditionResultsThatDidNotPass(result.getConditionResults(), conditions);

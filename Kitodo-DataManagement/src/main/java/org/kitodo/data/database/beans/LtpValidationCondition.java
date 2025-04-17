@@ -63,6 +63,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
      * 
      * @return the property of the the file that is checked
      */
+    @Override
     public String getProperty() {
         return property;
     }
@@ -73,6 +74,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
      * 
      * @return the operation that is used to check the property against the condition values
      */
+    @Override
     public LtpValidationConditionOperation getOperation() {
         return operation;
     }
@@ -85,6 +87,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
      * 
      * @return the list of values
      */
+    @Override
     public List<String> getValues() {
         return values;
     }
@@ -96,6 +99,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
      * 
      * @return the severity of the validation condition
      */
+    @Override
     public LtpValidationConditionSeverity getSeverity() {
         return severity;
     }
