@@ -115,6 +115,7 @@ public class LtpValidationResult {
      * 
      * @return the string representation of this validation result
      */
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         String joinedErrors  = StringUtils.join(errors.stream().map((e) -> e.name()).collect(Collectors.toList()), ", ");

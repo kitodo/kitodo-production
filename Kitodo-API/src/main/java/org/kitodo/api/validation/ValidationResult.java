@@ -47,6 +47,7 @@ public class ValidationResult {
         return resultMessages;
     }
 
+    @Override
     public String toString() {
         return "[ValidationResult state='" + state.name() + "' messages=(" + StringUtils.join(resultMessages, "," + ")]");
     }
