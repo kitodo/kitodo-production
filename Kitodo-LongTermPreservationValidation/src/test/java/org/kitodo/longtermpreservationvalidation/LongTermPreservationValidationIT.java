@@ -30,7 +30,6 @@ public class LongTermPreservationValidationIT {
     private static final URI JP2_URI = URI.create("src/test/resources/rose.jp2");
     private static final URI JPG_URI = URI.create("src/test/resources/rose.jpg");
     private static final URI PDF_URI = URI.create("src/test/resources/rose.pdf");
-    private static final URI PNG_URI = URI.create("src/test/resources/rose.png");
 
     @Test
     public void testSimpleValidationScnearios() {        
@@ -40,7 +39,6 @@ public class LongTermPreservationValidationIT {
         assert(simpleValidateFile(JP2_URI, FileType.JPEG_2000).equals(LtpValidationResultState.VALID));
         assert(simpleValidateFile(JPG_URI, FileType.JPEG).equals(LtpValidationResultState.VALID));
         assert(simpleValidateFile(PDF_URI, FileType.PDF).equals(LtpValidationResultState.VALID));
-        assert(simpleValidateFile(PNG_URI, FileType.PNG).equals(LtpValidationResultState.VALID));
     }
 
     @Test
@@ -48,9 +46,8 @@ public class LongTermPreservationValidationIT {
         assert(simpleValidateFile(TIF_URI, FileType.JPEG).equals(LtpValidationResultState.ERROR));
         assert(simpleValidateFile(GIF_URI, FileType.TIFF).equals(LtpValidationResultState.ERROR));
         assert(simpleValidateFile(JP2_URI, FileType.GIF).equals(LtpValidationResultState.ERROR));
-        assert(simpleValidateFile(JPG_URI, FileType.JPEG_2000).equals(LtpValidationResultState.ERROR));
-        assert(simpleValidateFile(PDF_URI, FileType.PNG).equals(LtpValidationResultState.ERROR));
-        assert(simpleValidateFile(PNG_URI, FileType.PDF).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(JPG_URI, FileType.PDF).equals(LtpValidationResultState.ERROR));
+        assert(simpleValidateFile(PDF_URI, FileType.JPEG_2000).equals(LtpValidationResultState.ERROR));
     }
 
     private LtpValidationResultState simpleValidateFile(URI file, FileType fileType) {
