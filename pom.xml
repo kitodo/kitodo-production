@@ -633,11 +633,6 @@ from system library in Java 11+ -->
                 <version>${jhove.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openpreservation.jhove</groupId>
-                <artifactId>jhove-ext-modules</artifactId>
-                <version>${jhove.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.openpreservation.jhove.modules</groupId>
                 <artifactId>gif-hul</artifactId>
                 <version>${jhove.modules.gif.hul.version}</version>

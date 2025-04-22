@@ -38,6 +38,10 @@ import org.kitodo.longtermpreservationvalidation.conditions.LtpValidationConditi
 
 /**
  * Manages Jhove.
+ * 
+ * <p>The png module is disabled, because it depends on the package "jhove-ext-modules". 
+ * For some reason, including this jar interfers with the xml processing in Kitodo.Production 
+ * somehow. Specifically, mods2kitodo schema conversion does not work correctly.</p>
  */
 public class KitodoJhoveBase {
 
@@ -51,7 +55,7 @@ public class KitodoJhoveBase {
         Map.entry(FileType.JPEG, "JPEG-hul"),
         Map.entry(FileType.JPEG_2000, "JPEG2000-hul"),
         Map.entry(FileType.PDF, "PDF-hul"),
-        Map.entry(FileType.PNG, "PNG-gdm"),
+        // Map.entry(FileType.PNG, "PNG-gdm"), 
         Map.entry(FileType.TIFF, "TIFF-hul")
     );
 
@@ -63,7 +67,7 @@ public class KitodoJhoveBase {
         "edu.harvard.hul.ois.jhove.module.Jpeg2000Module", 
         "edu.harvard.hul.ois.jhove.module.JpegModule",
         "edu.harvard.hul.ois.jhove.module.PdfModule", 
-        "com.mcgath.jhove.module.PngModule",
+        // "com.mcgath.jhove.module.PngModule",
         "edu.harvard.hul.ois.jhove.module.TiffModule"
     );
 
