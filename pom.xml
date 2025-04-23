@@ -631,6 +631,16 @@ from system library in Java 11+ -->
                 <groupId>org.openpreservation.jhove</groupId>
                 <artifactId>jhove-core</artifactId>
                 <version>${jhove.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit-vintage-engine</groupId>
+                        <artifactId>org.junit.vintage</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.parsson</groupId>
+                        <artifactId>parsson</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.openpreservation.jhove.modules</groupId>
