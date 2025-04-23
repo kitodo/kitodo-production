@@ -55,6 +55,7 @@ public class IndexingFormIT {
     @AfterAll
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 
     @Test
