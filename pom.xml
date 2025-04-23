@@ -636,6 +636,16 @@ from system library in Java 11+ -->
                 <groupId>org.openpreservation.jhove.modules</groupId>
                 <artifactId>gif-hul</artifactId>
                 <version>${jhove.modules.gif.hul.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.openpreservation.jhove.modules</groupId>
