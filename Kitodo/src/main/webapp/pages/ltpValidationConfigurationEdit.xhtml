@@ -108,7 +108,8 @@
                             <div class="selectOneMenuWithHelp">
                                 <p:selectOneMenu id="mimeType"
                                                 value="#{LtpValidationConfigurationEditView.configuration.mimeType}"
-                                                styleClass="input">
+                                                styleClass="input"
+                                                onchange="toggleSave()">
                                     <f:selectItems value="#{ProjectForm.mimeTypes}"/>
                                 </p:selectOneMenu>
                                 <p:commandButton id="mimeTypeHelp"
@@ -143,28 +144,31 @@
                             <p:inputText 
                                 styleClass="input"
                                 value="#{condition.property}"
-                                placeholder="Name of Property"/>
+                                placeholder="Name of Property"
+                                onchange="toggleSave()"/>
                         </div>
                     </p:column>
                     <p:column headerText="Operation"
                               width="200">
                         <div>
                             <p:selectOneMenu value="#{condition.operation}"
-                                            styleClass="input">
+                                            styleClass="input"
+                                            onchange="toggleSave()">
                                 <f:selectItems value="#{LtpValidationConfigurationEditView.possibleOperationsSelectMap}"/>
                             </p:selectOneMenu>
                         </div>
                     </p:column>
                     <p:column headerText="Values">
                         <div>
-                            <p:chips value="#{condition.values}"/>
+                            <p:chips value="#{condition.values}" onchange="toggleSave()"/>
                         </div>
                     </p:column>
                     <p:column headerText="Severity"
                               width="150">
                         <div>
                             <p:selectOneMenu value="#{condition.severity}"
-                                            styleClass="input">
+                                            styleClass="input"
+                                            onchange="toggleSave()">
                                 <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
                             </p:selectOneMenu>
                         </div>
@@ -176,7 +180,8 @@
                            action="#{LtpValidationConfigurationEditView.removeValidationCondition(condition)}"
                            styleClass="action"
                            title="#{msgs.delete}"
-                           update="ltpValidationConditionsTable">
+                           update="ltpValidationConditionsTable"
+                           oncomplete="toggleSave()">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         </p:commandLink>
                     </p:column>
@@ -184,7 +189,8 @@
 
                 <p:commandButton value="Add validation condition" 
                                  action="#{LtpValidationConfigurationEditView.addValidationCondition()}" 
-                                 update="ltpValidationConditionsTable" />
+                                 update="ltpValidationConditionsTable"
+                                 oncomplete="toggleSave()" />
             </p:tab>
         </p:tabView>
     </ui:define>
