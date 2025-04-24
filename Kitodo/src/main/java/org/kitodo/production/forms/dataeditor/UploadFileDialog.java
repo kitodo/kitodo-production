@@ -370,10 +370,10 @@ public class UploadFileDialog {
                         && !LtpValidationHelper.validateUploadedFile(uploadFileUri, sourceFolder, generatorSource, validationResults)
                         && sourceFolder.getLtpValidationConfiguration().getRequireNoErrorToUploadImage()
                 ) {
-                        // validation is required and failed, delete file
-                        logger.debug("delete uploaded file after validation error");
-                        ServiceManager.getFileService().delete(uploadFileUri);
-                        return;
+                    // validation is required and failed, delete file
+                    logger.debug("delete uploaded file after validation error");
+                    ServiceManager.getFileService().delete(uploadFileUri);
+                    return;
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

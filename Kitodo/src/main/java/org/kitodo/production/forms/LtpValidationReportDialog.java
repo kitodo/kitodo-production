@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 import org.kitodo.data.database.beans.Folder;
@@ -40,8 +38,6 @@ import org.primefaces.PrimeFaces;
 @Named("LtpValidationReportDialog")
 @ViewScoped
 public class LtpValidationReportDialog implements Serializable {
-
-    private static final Logger logger = LogManager.getLogger(LtpValidationReportDialog.class);
 
     /**
      * The maximum number of folders (that contain validation errors) that are shown in the dialog.
@@ -85,9 +81,9 @@ public class LtpValidationReportDialog implements Serializable {
      * @param currentTask the task
      */
     public void validateTaskAndOpen(Task currentTask) {
-         // trigger validation of all folder and files
-         this.resultsByFolder = LtpValidationHelper.validateImageFoldersForTask(currentTask);
-         PrimeFaces.current().executeScript("PF('ltpValidationReportDialog').show();");
+        // trigger validation of all folder and files
+        this.resultsByFolder = LtpValidationHelper.validateImageFoldersForTask(currentTask);
+        PrimeFaces.current().executeScript("PF('ltpValidationReportDialog').show();");
     }
 
     /**
