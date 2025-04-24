@@ -52,7 +52,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
             return ServiceManager.getLongTermPreservationValidationService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY,
-                    new Object[] {ObjectType.MAPPING_FILE.getTranslationPlural() }, logger, e);
+                    new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationPlural() }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -75,7 +75,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
         try {
             ServiceManager.getLongTermPreservationValidationService().removeFromDatabase(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);
         }
     }
 

@@ -26,13 +26,13 @@
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{LtpValidationConfigurationEditView.configuration.id ne null}"/>
+              value="#{LtpValidationConfigurationEditView.configuration.id ne null and SecurityAccessController.hasAuthorityToEditLtpValidationConfiguration()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{LtpValidationConfigurationEditView.configuration.id eq null}"/>
+              value="#{LtpValidationConfigurationEditView.configuration.id eq null and SecurityAccessController.hasAuthorityToAddLtpValidationConfiguration()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewLtpValidationConfiguration()}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
@@ -95,6 +95,7 @@
                             <p:outputLabel for="requireNoErrorToFinishTask"
                                            value="#{msgs['ltpValidation.edit.requireNoErrorToFinishTask']}"/>
                             <p:selectBooleanCheckbox id="requireNoErrorToFinishTask" 
+                                                     disabled="#{isViewMode}"
                                                      styleClass="switch input" 
                                                      value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToFinishTask}">
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
@@ -107,10 +108,10 @@
                                             value="Mime Type"/>
                             <div class="selectOneMenuWithHelp">
                                 <p:selectOneMenu id="mimeType"
-                                                value="#{LtpValidationConfigurationEditView.configuration.mimeType}"
-                                                disabled="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0}"
-                                                styleClass="input"
-                                                onchange="toggleSave()">
+                                                 value="#{LtpValidationConfigurationEditView.configuration.mimeType}"
+                                                 disabled="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0 or isViewMode}"
+                                                 styleClass="input"
+                                                 onchange="toggleSave()">
                                     <f:selectItems value="#{ProjectForm.mimeTypes}"/>
                                 </p:selectOneMenu>
                                 <p:commandButton id="mimeTypeHelp"
@@ -129,6 +130,7 @@
                             <p:outputLabel for="requireNoErrorToUploadImage"
                                            value="#{msgs['ltpValidation.edit.requireNoErrorToUploadImage']}"/>
                             <p:selectBooleanCheckbox id="requireNoErrorToUploadImage" 
+                                                     disabled="#{isViewMode}"
                                                      styleClass="switch input" 
                                                      value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToUploadImage}">
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
@@ -149,6 +151,7 @@
                             <p:inputText 
                                 styleClass="input"
                                 value="#{condition.property}"
+                                disabled="#{isViewMode}"
                                 placeholder="#{msgs['ltpValidation.edit.conditions.property.placeholder']}"
                                 onchange="toggleSave()"/>
                         </div>
@@ -157,23 +160,27 @@
                               width="200">
                         <div>
                             <p:selectOneMenu value="#{condition.operation}"
-                                            styleClass="input"
-                                            onchange="toggleSave()">
+                                             disabled="#{isViewMode}"
+                                             styleClass="input"
+                                             onchange="toggleSave()">
                                 <f:selectItems value="#{LtpValidationConfigurationEditView.possibleOperationsSelectMap}"/>
                             </p:selectOneMenu>
                         </div>
                     </p:column>
                     <p:column headerText="#{msgs['ltpValidation.edit.conditions.values.header']}">
                         <div>
-                            <p:chips value="#{condition.values}" onchange="toggleSave()"/>
+                            <p:chips value="#{condition.values}"
+                                     disabled="#{isViewMode}"
+                                     onchange="toggleSave()" />
                         </div>
                     </p:column>
                     <p:column headerText="#{msgs['ltpValidation.edit.conditions.severity.header']}"
                               width="150">
                         <div>
                             <p:selectOneMenu value="#{condition.severity}"
-                                            styleClass="input"
-                                            onchange="toggleSave()">
+                                             disabled="#{isViewMode}"
+                                             styleClass="input"
+                                             onchange="toggleSave()">
                                 <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
                             </p:selectOneMenu>
                         </div>
@@ -185,6 +192,7 @@
                            action="#{LtpValidationConfigurationEditView.removeValidationCondition(condition)}"
                            styleClass="action"
                            title="#{msgs.delete}"
+                           rendered="#{isEditMode or isCreateMode}"
                            update="ltpValidationConditionsTable"
                            oncomplete="toggleSave()">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
@@ -194,6 +202,7 @@
 
                 <p:commandButton id="addConditionButton"
                                  value="#{msgs['ltpValidation.edit.conditions.add']}" 
+                                 rendered="#{isEditMode or isCreateMode}"
                                  action="#{LtpValidationConfigurationEditView.addValidationCondition()}" 
                                  update="ltpValidationConditionsTable"
                                  oncomplete="toggleSave()" />

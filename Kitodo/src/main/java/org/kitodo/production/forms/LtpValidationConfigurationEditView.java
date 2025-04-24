@@ -55,7 +55,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
             setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] { ObjectType.MAPPING_FILE.getTranslationSingular(), id }, logger, e);
+                    new Object[] { ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular(), id }, logger, e);
         }
     }
 
@@ -69,7 +69,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
             ServiceManager.getLongTermPreservationValidationService().saveToDatabase(configuration);
             return projectsPage;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
     }

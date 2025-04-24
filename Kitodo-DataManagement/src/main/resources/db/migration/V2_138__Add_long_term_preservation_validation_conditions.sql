@@ -67,3 +67,10 @@ CREATE TABLE IF NOT EXISTS ltp_validation_condition_value
         FOREIGN KEY (ltp_validation_condition_id) REFERENCES ltp_validation_condition (id)
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
+
+-- add authorities
+INSERT IGNORE INTO authority (title) VALUES ('addLtpValidationConfiguration_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('editLtpValidationConfiguration_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewLtpValidationConfiguration_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewAllLtpValidationConfigurations_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('deleteLtpValidationConfiguration_clientAssignable');

@@ -50,10 +50,20 @@
                 width="70"
                 styleClass="actionsColumn">
          <h:form id="actionForm">
+            <h:link id="viewLtpValidationConfiguration"
+                    outcome="ltpValidationConfigurationEdit"
+                    styleClass="action"
+                    title="#{msgs.view}"
+                    rendered="#{SecurityAccessController.hasAuthorityToViewLtpValidationConfiguration() and not SecurityAccessController.hasAuthorityToEditLtpValidationConfiguration()}">
+               <f:param name="id" value="#{item.id}"/>
+               <i class="fa fa-eye fa-lg"/>
+            </h:link>
+
             <h:link id="editLtpValidationConfiguration"
                     outcome="ltpValidationConfigurationEdit"
                     styleClass="action"
-                    title="#{msgs.edit}">
+                    title="#{msgs.edit}"
+                    rendered="#{SecurityAccessController.hasAuthorityToEditLtpValidationConfiguration()}">
                <f:param name="id" value="#{item.id}"/>
                <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
@@ -61,11 +71,12 @@
             <p:commandLink id="deleteLtpValidationConfiguration"
                            action="#{LtpValidationConfigurationListView.deleteById(item.id)}"
                            styleClass="action"
+                           rendered="#{SecurityAccessController.hasAuthorityToDeleteLtpValidationConfiguration()}"
                            title="#{msgs.delete}"
                            update="ltpValidationConfigurationsTable">
                <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                <p:confirm header="#{msgs.confirmDelete}"
-                          message="#{mappingFileEditView.formatString('confirmDeleteMappingFile', item.title)}"
+                          message="#{LtpValidationConfigurationEditView.formatString('ltpValidation.confirmDelete', item.title)}"
                           icon="ui-icon-alert"/>
             </p:commandLink>
          </h:form>

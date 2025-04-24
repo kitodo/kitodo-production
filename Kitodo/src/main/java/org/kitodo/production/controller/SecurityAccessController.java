@@ -155,11 +155,19 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to add new LTP validation configuration.
+     *
+     * @return true if the current user has the authority to add new LTP validation configuration.
+     */
+    public boolean hasAuthorityToAddLtpValidationConfiguration() {
+        return securityAccessService.hasAuthorityToAddLtpValidationConfiguration();
+    }
+
+    /**
      * Check if the current user has the authority to add new mapping file.
      *
      * @return true if the current user has the authority to add new mapping file.
      */
-
     public boolean hasAuthorityToAddMappingFile() {
         return securityAccessService.hasAuthorityToAddMappingFile();
     }
@@ -310,6 +318,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToDeleteImportConfiguration() {
         return securityAccessService.hasAuthorityToDeleteImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the authority to delete a LTP validation configuration.
+     *
+     * @return true if the current user has the authority to delete a LTP validation configuration
+     */
+    public boolean hasAuthorityToDeleteLtpValidationConfiguration() {
+        return securityAccessService.hasAuthorityToDeleteLtpValidationConfiguration();
     }
 
     /**
@@ -478,6 +495,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit a LTP validation configuration.
+     *
+     * @return True if the current user has the authority to edit a LTP validation configuration
+     */
+    public boolean hasAuthorityToEditLtpValidationConfiguration() {
+        return securityAccessService.hasAuthorityToEditLtpValidationConfiguration();
+    }
+
+    /**
      * Check if the current user has the authority to edit mapping file.
      *
      * @return True if the current user has the authority to edit mapping file
@@ -631,6 +657,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewImportConfiguration() {
         return securityAccessService.hasAuthorityToViewImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the authority to view LTP validation configurations.
+     * 
+     * @return true if the current user has the authority to view LTP validation configurations
+     */
+    public boolean hasAuthorityToViewLtpValidationConfiguration() {
+        return securityAccessService.hasAuthorityToViewLtpValidationConfiguration();
     }
 
     /**
@@ -874,6 +909,16 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewImportConfigurationList() {
         return securityAccessService.hasAuthorityToViewImportConfigurationList();
+    }
+
+    /**
+     * Check if current user has authority to view LTP validation configurations list. It returns true if
+     * user has "viewAllLtpValidationConfigurations" authority for client.
+     *
+     * @return true if user has authority 'viewAllLtpValidationConfigurations' for client
+     */
+    public boolean hasAuthorityToViewLtpValidationConfigurationsList() {
+        return securityAccessService.hasAuthorityToViewLtpValidationConfigurationsList();
     }
 
     /**
