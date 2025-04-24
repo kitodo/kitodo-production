@@ -75,7 +75,11 @@ public class LtpValidationConfigurationListView extends BaseForm {
         try {
             ServiceManager.getLongTermPreservationValidationService().removeFromDatabase(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(
+                ERROR_DELETING, 
+                new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, 
+                logger, e
+            );
         }
     }
 
