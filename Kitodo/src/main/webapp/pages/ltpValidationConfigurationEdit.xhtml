@@ -105,7 +105,7 @@
                     <p:row>
                         <div>
                             <p:outputLabel for="mimeType"
-                                            value="Mime Type"/>
+                                            value="#{msgs['ltpValidation.edit.mimeType.label']}"/>
                             <div class="selectOneMenuWithHelp">
                                 <p:selectOneMenu id="mimeType"
                                                  value="#{LtpValidationConfigurationEditView.configuration.mimeType}"
@@ -135,6 +135,52 @@
                                                      value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToUploadImage}">
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectBooleanCheckbox>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+
+                <h4><h:outputText value="#{msgs['ltpValidation.edit.commonValidationConditions']}" /></h4>
+                <p:panelGrid columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="simpleWellFormed"
+                                            value="#{msgs['ltpValidation.edit.wellFormed.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="simpleWellFormed" 
+                                                 value="#{LtpValidationConfigurationEditView.simpleWellFormedCondition}"
+                                                 onchange="toggleSave()">
+                                    <f:selectItem itemLabel="-- #{msgs['ltpValidation.edit.noValidation']} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                                    <p:ajax event="valueChange" listener="#{LtpValidationConfigurationEditView.onSimpleWellFormedConditionChange}" update="editForm" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="simpleWellFormedHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="simpleWellFormedHelp"
+                                           value="#{msgs['ltpValidation.edit.wellFormed.tooltip']}"/>
+                            </div>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="simpleValid"
+                                            value="#{msgs['ltpValidation.edit.valid.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="simpleValid" 
+                                                 value="#{LtpValidationConfigurationEditView.simpleValidCondition}"
+                                                 onchange="toggleSave()">
+                                    <f:selectItem itemLabel="-- #{msgs['ltpValidation.edit.noValidation']} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                                    <p:ajax event="valueChange" listener="#{LtpValidationConfigurationEditView.onSimpleValidConditionChange}" update="editForm" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="simpleValidHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="simpleValidHelp"
+                                           value="#{msgs['ltpValidation.edit.valid.tooltip']}"/>
+                            </div>
                         </div>
                     </p:row>
                 </p:panelGrid>
@@ -186,14 +232,13 @@
                         </div>
                     </p:column>
                     <p:column headerText="#{msgs['actions']}" 
-                              width="70"
-                              styleClass="actionsColumn">
+                              width="75">
                         <p:commandLink 
                            action="#{LtpValidationConfigurationEditView.removeValidationCondition(condition)}"
                            styleClass="action"
                            title="#{msgs.delete}"
                            rendered="#{isEditMode or isCreateMode}"
-                           update="ltpValidationConditionsTable"
+                           update="editForm"
                            oncomplete="toggleSave()">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         </p:commandLink>

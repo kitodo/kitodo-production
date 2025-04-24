@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -39,6 +40,13 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     private static final Logger logger = LogManager.getLogger(LtpValidationConfigurationEditView.class);
     private LtpValidationConfiguration configuration = new LtpValidationConfiguration();
 
+    private static final String PROPERTY_WELLFORMED = "wellformed";
+    private static final String PROPERTY_VALID = "valid";
+    private static final String VALUE_TRUE = "true";
+
+    private LtpValidationConditionSeverity simpleWellFormedSeverity;
+    private LtpValidationConditionSeverity simpleValidSeverity;
+
     /**
      * Load mapping file by ID.
      *
@@ -51,6 +59,8 @@ public class LtpValidationConfigurationEditView extends BaseForm {
                 configuration = ServiceManager.getLongTermPreservationValidationService().getByIdWithFolders(id);
             } else {
                 configuration = new LtpValidationConfiguration();
+                configuration.setFolders(new ArrayList<>());
+                configuration.setValidationConditions(new ArrayList<>());
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -147,9 +157,146 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      */
     public void removeValidationCondition(LtpValidationCondition condition) {
         if (Objects.nonNull(condition) 
-                && Objects.nonNull(configuration.getValidationConditions()) 
+                && Objects.nonNull(configuration.getValidationConditions())
                 && configuration.getValidationConditions().contains(condition)) {
             configuration.getValidationConditions().remove(condition);
+            condition.setLtpValidationConfiguration(null);
         }
+    }
+
+    /**
+     * Adds a simple equals validation condition to the list of conditions.
+     * 
+     * @param property the property of the validation condition
+     * @param value the value to be checked against
+     * @param severity the severity of the validation condition
+     */
+    private void addSimpleEqualCondition(String property, String value, LtpValidationConditionSeverity severity) {
+        LtpValidationCondition condition = new LtpValidationCondition();
+        condition.setProperty(property);
+        condition.setOperation(LtpValidationConditionOperation.EQUAL);
+        condition.setValues(Collections.singletonList(value));
+        condition.setLtpValidationConfiguration(configuration);
+        condition.setSeverity(severity);
+        if (Objects.isNull(this.configuration.getValidationConditions())) {
+            this.configuration.setValidationConditions(new ArrayList<>());
+        }
+        this.configuration.getValidationConditions().add(condition);
+    }
+
+    /**
+     * Returns true if the provided validation condition is an equals condition on the given property and value.
+     * @param condition the condition to be checked
+     * @param property the expected property 
+     * @param value the expected value
+     * @return true if the condition is an equals conditions for the given property and value
+     */
+    private boolean isSimpleEqualCondition(LtpValidationCondition condition, String property, String value) {
+        if (Objects.nonNull(condition)
+                && Objects.nonNull(condition.getProperty()) 
+                && condition.getProperty().toLowerCase().equals(property.toLowerCase()) 
+                && Objects.nonNull(condition.getOperation())
+                && condition.getOperation().equals(LtpValidationConditionOperation.EQUAL)
+                && Objects.nonNull(condition.getValues())
+                && condition.getValues().size() == 1
+                && Objects.nonNull(condition.getValues().get(0))
+                && condition.getValues().get(0).toLowerCase().equals(value.toLowerCase())
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Finds and returns an equals validation condition matching a property and value.
+     * 
+     * @param property the property 
+     * @param value the value
+     * @return the validation condition that matches the given property and value, or null if not found
+     */
+    private LtpValidationCondition findSimpleEqualCondition(String property, String value) {
+        if (Objects.isNull(configuration.getValidationConditions())) {
+            return null;
+        }
+        for (LtpValidationCondition condition : configuration.getValidationConditions()) {
+            if (isSimpleEqualCondition(condition, property, value)) {
+                return condition;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Add, edits or removes a simple equals condition depending on the severity level.
+     * @param property the property of the condition
+     * @param value the value of the condition
+     * @param severity the severity of the condition (if null, condition will be removed)
+     */
+    private void addOrRemoveSimpleEqualCondition(String property, String value, LtpValidationConditionSeverity severity) {
+        if (Objects.isNull(configuration.getValidationConditions())) {
+            configuration.setValidationConditions(new ArrayList<>());
+        }
+        LtpValidationCondition condition = findSimpleEqualCondition(property, value);
+        if (Objects.nonNull(severity)) {
+            // user requires condition on file, add or edit it
+            if (Objects.nonNull(condition)) {
+                condition.setSeverity(severity);
+            } else {
+                addSimpleEqualCondition(property, value, severity);
+            }
+        } else {
+            // remove condition
+            removeValidationCondition(condition);
+        }
+    }
+
+    /**
+     * Returns the severity of a validation conditions that checks whether a file is considered well-formed. 
+     * 
+     * @return the severity of a validation condition that checks the well-formed property or null if not such condition exists
+     */
+    public LtpValidationConditionSeverity getSimpleWellFormedCondition() {
+        LtpValidationCondition condition = findSimpleEqualCondition(PROPERTY_WELLFORMED, VALUE_TRUE);
+        if (Objects.nonNull(condition)) {
+            return condition.getSeverity();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the severity of a validation condition that checks whether a file is considered well-formed.
+     * @param severity the severity or null (if condition is not wanted and should be removed)
+     */
+    public void setSimpleWellFormedCondition(LtpValidationConditionSeverity severity) {
+        simpleWellFormedSeverity = severity;
+    }
+
+    public void onSimpleWellFormedConditionChange(AjaxBehaviorEvent event) {
+        addOrRemoveSimpleEqualCondition(PROPERTY_WELLFORMED, VALUE_TRUE, simpleWellFormedSeverity);
+    }
+
+    /**
+     * Returns the severity of a validation conditions that checks whether a file is considered valid. 
+     * 
+     * @return the severity of a validation condition that checks the valid property or null if not such condition exists
+     */
+    public LtpValidationConditionSeverity getSimpleValidCondition() {
+        LtpValidationCondition condition = findSimpleEqualCondition(PROPERTY_VALID, VALUE_TRUE);
+        if (Objects.nonNull(condition)) {
+            return condition.getSeverity();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the severity of a validation condition that checks whether a file is considered valid.
+     * @param severity the severity or null (if condition is not wanted and should be removed)
+     */
+    public void setSimpleValidCondition(LtpValidationConditionSeverity severity) {
+        simpleValidSeverity = severity;
+    }
+
+    public void onSimpleValidConditionChange(AjaxBehaviorEvent event) {
+        addOrRemoveSimpleEqualCondition(PROPERTY_VALID, VALUE_TRUE, simpleValidSeverity);
     }
 }
