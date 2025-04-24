@@ -85,6 +85,16 @@ public class LtpValidationHelper {
     }
 
     /**
+     * Return relative URI for absolute URI with respect to Kitodo's data directory.
+     * 
+     * @param absoluteUri the absolute filepath to a file inside Kitodo's data directory
+     * @return the relative uri to the file
+     */
+    private static URI getRelativeFileUri(URI absoluteUri) {
+        return new File(KitodoConfig.getKitodoDataDirectory()).toURI().relativize(absoluteUri);
+    }
+
+    /**
      * Translate a condition operation to a string that is presented to the user.
      * 
      * @param operation the condition operation
@@ -272,7 +282,7 @@ public class LtpValidationHelper {
         logger.debug("validating images in folder: " + folder.getRelativePath());
 
         Subfolder subfolder = new Subfolder(task.getProcess(), folder);
-        Optional<FileType> fileType = subfolder.getFileFormat().getFileType();        
+        Optional<FileType> fileType = subfolder.getFileFormat().getFileType();
         List<LtpValidationCondition> conditions = folder.getLtpValidationConfiguration().getValidationConditions();
         Map<URI, LtpValidationResult> resultsByFile = new TreeMap<>();
         URI absoluteFolderUri = getAbsoluteFolderUri(folder, task.getProcess());
@@ -378,6 +388,50 @@ public class LtpValidationHelper {
                 }
             }
         }
+        return true;
+    }
+
+    /**
+     * Validate a single file that was uploaded by a user inside of the metadata editor.
+     * 
+     * @param absoluteFilePath the absolute filepath of the uploaded file
+     * @param folder the folder the file was uploaded to
+     * @param subfolder the subfolder instance the file was uploaded to
+     * @param validationResults the map that will be filled with a new validation result
+     * @return false if there were errors during validation and the uploaded file needs to be deleted
+     */
+    public static boolean validateUploadedFile(
+        URI absoluteFilePath, 
+        Folder folder, 
+        Subfolder subfolder, 
+        Map<URI, LtpValidationResult> validationResults
+    ) {
+        if (Objects.isNull(folder)) {
+            // no valid folder provided
+            return true;
+        }
+        if (!folder.isValidateFolder()) {
+            // validation is not enabled for folder
+            return true;
+        }
+        if (Objects.isNull(folder.getLtpValidationConfiguration())) {
+            // no validation configuration assigned to folder
+            return true;
+        }
+
+        logger.debug("validate uploaded file: " + absoluteFilePath);
+        Optional<FileType> fileType = subfolder.getFileFormat().getFileType();
+        List<LtpValidationCondition> conditions = folder.getLtpValidationConfiguration().getValidationConditions();
+        LtpValidationResult result = ltpService.validate(absoluteFilePath, fileType.orElse(null), conditions);
+        URI relativeFilePath = getRelativeFileUri(absoluteFilePath);
+        validationResults.put(relativeFilePath, result);
+
+        if (validationResultHasError(result, conditions, LtpValidationConditionSeverity.ERROR)) {
+            logger.error("uploaded file has validation errors: " + result);
+            return false;
+        }
+
+        // there are no validation errors (maybe warnings)
         return true;
     }
 }

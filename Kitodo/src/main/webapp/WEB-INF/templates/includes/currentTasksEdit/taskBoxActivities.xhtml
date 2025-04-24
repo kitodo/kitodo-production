@@ -129,10 +129,9 @@
 
                     <p:commandLink id="validateImages"
                                    rendered="#{CurrentTaskForm.showingImageValidationAction and process.blockedUser == null}"
-                                   action="#{LtpValidationReportDialog.open(CurrentTaskForm.currentTask)}"
+                                   action="#{LtpValidationReportDialog.validateTaskAndOpen(CurrentTaskForm.currentTask)}"
                                    disabled="#{!CurrentTaskForm.isImageValidationPossible()}"
                                    title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs['currentTaskEdit.validateImages'] : msgs['currentTaskEdit.imageValidationNotPossible']}"
-                                   oncomplete="PF('ltpValidationReportDialog').show()"
                                    update=":ltpValidationReportDialogForm">
                         <h:outputText><i class="fa fa-cog"/> #{msgs['currentTaskEdit.validateImages']}</h:outputText>
                     </p:commandLink>

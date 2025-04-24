@@ -45,7 +45,7 @@ public class LtpValidationConfiguration extends BaseBean {
     @OrderColumn(name = "sorting")
     private List<LtpValidationCondition> validationConditions;
 
-    @OneToMany(mappedBy = "ltpValidationConfiguration", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ltpValidationConfiguration", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Folder> folders;
 
     /**

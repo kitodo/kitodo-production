@@ -31,6 +31,7 @@ import org.kitodo.data.database.beans.LtpValidationCondition;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.validation.LtpValidationHelper;
+import org.primefaces.PrimeFaces;
 
 /**
  * Backend bean for the LTP validation report dialog that is shown if the user clicks on
@@ -66,15 +67,27 @@ public class LtpValidationReportDialog implements Serializable {
     private Map<Folder, Map<URI, LtpValidationResult>> resultsByFolder;
     
     /**
+     * Is called after uploading files from the metadata editor.
+     * 
+     * @param resultsByFile the validation results for each uploaded file
+     * @param folder the folder to which files were uploaded
+     */
+    public void openAfterFileUpload(Map<URI, LtpValidationResult> resultsByFile, Folder folder) {
+        this.resultsByFolder = Collections.singletonMap(folder, resultsByFile);
+        if (!resultsByFile.isEmpty()) {
+            PrimeFaces.current().executeScript("PF('ltpValidationReportDialog').show();");
+        }
+    }
+
+    /**
      * Is called when the user clicks on the "validate images" link in an image validation task.
      * 
      * @param currentTask the task
      */
-    public void open(Task currentTask) {
-        logger.debug("open validation report");
-
-        // trigger validation of all folder and files
-        resultsByFolder = LtpValidationHelper.validateImageFoldersForTask(currentTask);
+    public void validateTaskAndOpen(Task currentTask) {
+         // trigger validation of all folder and files
+         this.resultsByFolder = LtpValidationHelper.validateImageFoldersForTask(currentTask);
+         PrimeFaces.current().executeScript("PF('ltpValidationReportDialog').show();");
     }
 
     /**

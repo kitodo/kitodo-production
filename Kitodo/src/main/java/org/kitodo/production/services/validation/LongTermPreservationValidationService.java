@@ -12,9 +12,12 @@
 package org.kitodo.production.services.validation;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionInterface;
@@ -33,6 +36,8 @@ import org.primefaces.model.SortOrder;
  */
 public class LongTermPreservationValidationService 
         extends SearchDatabaseService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
+
+    private static final Logger logger = LogManager.getLogger(LongTermPreservationValidationService.class);
 
     private final LongTermPreservationValidationInterface longTermPreservationValidation;
 
@@ -79,6 +84,28 @@ public class LongTermPreservationValidationService
     @SuppressWarnings("unchecked")
     public List<LtpValidationConfiguration> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return dao.getByQuery("FROM LtpValidationConfiguration"  + getSort(sortField, sortOrder), filters, first, pageSize);
+    }
+
+    /**
+     * Return a ltp validation configuration for a specific id but also load the list of attched folders,
+     * which is not loaded by default due to the lazy fetch strategy.
+     * 
+     * @param id the id of the validation configuration that is supposed to be loaded
+     * @return the validation configuration including the list of attached folders
+     * @throws DAOException in case something goes wrong
+     */
+    public LtpValidationConfiguration getByIdWithFolders(int id) throws DAOException {
+        logger.error("getByIdWithFolders: id=" + id);
+        List<LtpValidationConfiguration> results = dao.getByQuery(
+            "SELECT c FROM LtpValidationConfiguration c LEFT JOIN FETCH c.folders WHERE c.id = :id", 
+            Collections.singletonMap("id", id)
+        );
+        logger.error("results: " + results);
+        logger.error("results size: " + results.size());
+        if (results.size() != 1) {
+            throw new DAOException("Unable to find ltp validation configuration object with ID " + id + "!");
+        }
+        return results.get(0);
     }
 
     /**

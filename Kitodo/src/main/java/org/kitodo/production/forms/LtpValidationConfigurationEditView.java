@@ -48,7 +48,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     public void load(int id) {
         try {
             if (id > 0) {
-                configuration = ServiceManager.getLongTermPreservationValidationService().getById(id);
+                configuration = ServiceManager.getLongTermPreservationValidationService().getByIdWithFolders(id);
             } else {
                 configuration = new LtpValidationConfiguration();
             }
@@ -148,5 +148,4 @@ public class LtpValidationConfigurationEditView extends BaseForm {
             configuration.getValidationConditions().remove(condition);
         }
     }
-
 }
