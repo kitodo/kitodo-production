@@ -19,7 +19,8 @@
         xmlns:p="http://primefaces.org/ui">
     <h:body>
         <!-- edit dialog -->
-        <p:dialog widgetVar="editFolderDialog"
+        <p:dialog id="editFolderDialog"
+                  widgetVar="editFolderDialog"
                   width="700px"
                   modal="true"
                   dynamic="true"
@@ -133,7 +134,7 @@
                                 </p:selectBooleanCheckbox>
                             </p:column>
                             <p:column>
-                                <p:outputLabel for="ltpValidationConfiguration" value="LTP Validation Configuration"/>
+                                <p:outputLabel for="ltpValidationConfiguration" value="#{msgs['ltpValidation.folder.label']}"/>
                                 <p:selectOneMenu id="ltpValidationConfiguration" 
                                                  converter="#{ltpValidationConfigurationConverter}"
                                                  value="#{ProjectForm.myFolder.ltpValidationConfiguration}">

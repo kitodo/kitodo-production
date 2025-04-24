@@ -37,9 +37,9 @@
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h3 id="headerText">
-            <h:outputText value="Add new LTP validation configuration" rendered="#{isCreateMode}"/>
-            <h:outputText value="Edit LTP validation configuration (#{LtpValidationConfigurationEditView.configuration.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="View LTP validation configuration (#{LtpValidationConfigurationEditView.configuration.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs['ltpValidation.edit.mode.create']}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs['ltpValidation.edit.mode.edit']} (#{LtpValidationConfigurationEditView.configuration.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs['ltpValidation.edit.mode.view']} (#{LtpValidationConfigurationEditView.configuration.title})" rendered="#{isViewMode}"/>
         </h3>
 
         <p:button id="cancel" value="#{msgs.cancel}"
@@ -89,11 +89,11 @@
                                             styleClass="help-button"
                                             icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="titleHelp"
-                                        value="#{msgs['tooltip.ltpValidationConfiguration.title']}"/>
+                                        value="#{msgs['ltpValidation.edit.title.tooltip']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="requireNoErrorToFinishTask"
-                                           value="Prevent image validation task from completion if there is a validation error"/>
+                                           value="#{msgs['ltpValidation.edit.requireNoErrorToFinishTask']}"/>
                             <p:selectBooleanCheckbox id="requireNoErrorToFinishTask" 
                                                      styleClass="switch input" 
                                                      value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToFinishTask}">
@@ -108,6 +108,7 @@
                             <div class="selectOneMenuWithHelp">
                                 <p:selectOneMenu id="mimeType"
                                                 value="#{LtpValidationConfigurationEditView.configuration.mimeType}"
+                                                disabled="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0}"
                                                 styleClass="input"
                                                 onchange="toggleSave()">
                                     <f:selectItems value="#{ProjectForm.mimeTypes}"/>
@@ -117,12 +118,16 @@
                                                 styleClass="help-button"
                                                 icon="fa fa-lg fa-question-circle-o"/>
                                 <p:tooltip for="mimeTypeHelp"
-                                            value="#{msgs['tooltip.ltpValidationConfiguration.mimeType']}"/>
+                                           rendered="#{LtpValidationConfigurationEditView.configuration.folders.size() eq 0}"
+                                           value="#{msgs['ltpValidation.edit.mimeType.editable.tooltip']}"/>
+                                <p:tooltip for="mimeTypeHelp"
+                                           rendered="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0}"
+                                           value="#{msgs['ltpValidation.edit.mimeType.disabled.tooltip']}"/>
                             </div>
                         </div>
                         <div>
                             <p:outputLabel for="requireNoErrorToUploadImage"
-                                           value="Prevent uploading new image if there is a validation error"/>
+                                           value="#{msgs['ltpValidation.edit.requireNoErrorToUploadImage']}"/>
                             <p:selectBooleanCheckbox id="requireNoErrorToUploadImage" 
                                                      styleClass="switch input" 
                                                      value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToUploadImage}">
@@ -133,22 +138,22 @@
                 </p:panelGrid>
             </p:tab>
             <p:tab id="conditionsTab"
-                   title="Validation Conditions">
+                   title="#{msgs['ltpValidation.edit.conditions.title']}">
 
                 <p:dataTable id="ltpValidationConditionsTable" 
                              var="condition" 
                              value="#{LtpValidationConfigurationEditView.configuration.validationConditions}"
                              styleClass="default-layout">
-                    <p:column headerText="Property">
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.property.header']}">
                         <div>
                             <p:inputText 
                                 styleClass="input"
                                 value="#{condition.property}"
-                                placeholder="Name of Property"
+                                placeholder="#{msgs['ltpValidation.edit.conditions.property.placeholder']}"
                                 onchange="toggleSave()"/>
                         </div>
                     </p:column>
-                    <p:column headerText="Operation"
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.operation.header']}"
                               width="200">
                         <div>
                             <p:selectOneMenu value="#{condition.operation}"
@@ -158,12 +163,12 @@
                             </p:selectOneMenu>
                         </div>
                     </p:column>
-                    <p:column headerText="Values">
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.values.header']}">
                         <div>
                             <p:chips value="#{condition.values}" onchange="toggleSave()"/>
                         </div>
                     </p:column>
-                    <p:column headerText="Severity"
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.severity.header']}"
                               width="150">
                         <div>
                             <p:selectOneMenu value="#{condition.severity}"
@@ -173,7 +178,7 @@
                             </p:selectOneMenu>
                         </div>
                     </p:column>
-                    <p:column headerText="Actions" 
+                    <p:column headerText="#{msgs['actions']}" 
                               width="70"
                               styleClass="actionsColumn">
                         <p:commandLink 
@@ -187,7 +192,8 @@
                     </p:column>
                 </p:dataTable>
 
-                <p:commandButton value="Add validation condition" 
+                <p:commandButton id="addConditionButton"
+                                 value="#{msgs['ltpValidation.edit.conditions.add']}" 
                                  action="#{LtpValidationConfigurationEditView.addValidationCondition()}" 
                                  update="ltpValidationConditionsTable"
                                  oncomplete="toggleSave()" />
@@ -198,9 +204,9 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
-        <p:menuitem value="Edit LTP validation configuration" rendered="#{isEditMode}" icon="fa fa-cogs"/>
-        <p:menuitem value="Add LTP validation configuration" rendered="#{isCreateMode}" icon="fa fa-cogs"/>
-        <p:menuitem value="View LTP validation configuration" rendered="#{isViewMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['ltpValidation.edit.mode.edit']}" rendered="#{isEditMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['ltpValidation.edit.mode.create']}" rendered="#{isCreateMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['ltpValidation.edit.mode.view']}" rendered="#{isViewMode}" icon="fa fa-cogs"/>
     </ui:define>
 
 </ui:composition>

@@ -119,7 +119,7 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
             </p:tab>
-            <p:tab title="LTP Validation Configurations" id="ltpValidationConfigurationsTab">
+            <p:tab title="#{msgs['ltpValidation.tab.title']}" id="ltpValidationConfigurationsTab">
                 <ui:include src="/WEB-INF/templates/includes/projects/ltpValidationConfigurations.xhtml"/>
             </p:tab>
         </p:tabView>
