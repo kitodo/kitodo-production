@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionInterface;
@@ -36,8 +34,6 @@ import org.primefaces.model.SortOrder;
  */
 public class LongTermPreservationValidationService 
         extends SearchDatabaseService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
-
-    private static final Logger logger = LogManager.getLogger(LongTermPreservationValidationService.class);
 
     private final LongTermPreservationValidationInterface longTermPreservationValidation;
 
@@ -95,13 +91,10 @@ public class LongTermPreservationValidationService
      * @throws DAOException in case something goes wrong
      */
     public LtpValidationConfiguration getByIdWithFolders(int id) throws DAOException {
-        logger.error("getByIdWithFolders: id=" + id);
         List<LtpValidationConfiguration> results = dao.getByQuery(
             "SELECT c FROM LtpValidationConfiguration c LEFT JOIN FETCH c.folders WHERE c.id = :id", 
             Collections.singletonMap("id", id)
         );
-        logger.error("results: " + results);
-        logger.error("results size: " + results.size());
         if (results.size() != 1) {
             throw new DAOException("Unable to find ltp validation configuration object with ID " + id + "!");
         }
