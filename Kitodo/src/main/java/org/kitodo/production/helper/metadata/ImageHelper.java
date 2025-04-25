@@ -36,7 +36,6 @@ public class ImageHelper {
      * Die Images eines Prozesses auf Vollständigkeit prüfen.
      */
     public boolean checkIfImagesValid(String title, URI folder) {
-        logger.error("checkIfImagesValid: " + title + " folder: " + folder);
         boolean isValid = true;
 
         /*
