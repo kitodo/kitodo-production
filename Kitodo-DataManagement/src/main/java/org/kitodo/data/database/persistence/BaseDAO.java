@@ -492,7 +492,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             String query = String.format("FROM %s ORDER BY id ASC", cls.getSimpleName());
             debugLogQuery(query, Collections.emptyMap());
-            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
@@ -693,7 +693,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                     resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
                 }
             }
-            logger.debug(resolved);
+            logger.debug(resolved.replaceAll("[^ -~\u0160-\uFFFD]", ""));
         }
     }
 }
