@@ -235,7 +235,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @param query
      *            as String
      * @return list of beans objects
+     * @deprecated Form the query with placeholders and pass parameters. Use
+     *             {@code BeanQuery(Bean.class)} and
+     *             {@link #getByQuery(String, Map)}.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query) {
         try (Session session = HibernateUtil.getSession()) {

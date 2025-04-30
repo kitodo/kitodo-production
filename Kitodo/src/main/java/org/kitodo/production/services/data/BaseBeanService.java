@@ -223,7 +223,11 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @param query
      *            query in Hibernate Query Language
      * @return list of exact bean objects
+     * @deprecated Form the query with placeholders and pass parameters. Use
+     *             {@code BeanQuery(Bean.class)} and
+     *             {@link #getByQuery(String, Map)}.
      */
+    @Deprecated
     public List<T> getByQuery(String query) {
         return dao.getByQuery(query);
     }
