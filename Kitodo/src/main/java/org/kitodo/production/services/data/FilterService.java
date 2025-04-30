@@ -290,7 +290,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
      * @return search token
      */
     static List<UserSpecifiedFilter> parseFilters(String filter, boolean indexed) {
-        List<UserSpecifiedFilter> queryTokens = new ArrayList<>();
+        List<UserSpecifiedFilter> userSpecifiedFilters = new ArrayList<>();
         StringBuilder tokenCollector = new StringBuilder();
         boolean inQuotes = false;
         for (int offset = 0; offset < filter.length(); offset += charCount(filter.codePointAt(offset))) {
@@ -299,7 +299,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
                 inQuotes = !inQuotes;
             } else if (!inQuotes && glyph <= ' ') {
                 if (tokenCollector.length() > 0) {
-                    queryTokens.addAll(parseParentheses(tokenCollector, indexed));
+                    userSpecifiedFilters.addAll(parseParentheses(tokenCollector, indexed));
                     tokenCollector = new StringBuilder();
                 }
             } else {
@@ -313,11 +313,11 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
         if (tokenCollector.length() > 0) {
             UserSpecifiedFilter userSpecifiedFilter = parseQueryPart(tokenCollector.toString(), indexed);
             if (Objects.nonNull(userSpecifiedFilter)) {
-                queryTokens.add(userSpecifiedFilter);
+                userSpecifiedFilters.add(userSpecifiedFilter);
             }
         }
-        logger.debug("`{}´ -> {}", filter, queryTokens);
-        return queryTokens;
+        logger.debug("`{}´ -> {}", filter, userSpecifiedFilters);
+        return userSpecifiedFilters;
     }
 
     /**
