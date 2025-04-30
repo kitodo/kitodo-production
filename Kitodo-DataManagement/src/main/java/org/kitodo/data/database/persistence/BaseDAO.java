@@ -676,7 +676,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 return Objects.toString(parameter);
             });
             if (initPointer != Integer.MIN_VALUE || stopCount != Integer.MIN_VALUE) {
-                if (stopCount != Integer.MIN_VALUE) {
+                if (initPointer == Integer.MIN_VALUE) {
                     resolved = String.format("%s (limit=%d)", resolved, stopCount);
                 } else {
                     resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
