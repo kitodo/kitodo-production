@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.PersistenceException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -219,7 +220,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
-            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
@@ -245,7 +246,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             debugLogQuery(query, Collections.emptyMap());
             Query<T> queryObject = session.createQuery(query);
-            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
@@ -273,7 +274,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<String> queryObject = session.createQuery(query);
             addParameters(queryObject, parameters);
-            if (logger.isTraceEnabled() && !query.matches(".*?\\s[Ww][Hh][Ee][Rr][Ee]\\s.*")) {
+            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
