@@ -192,7 +192,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Stopwatch stopwatch = new Stopwatch(BaseDAO.class, (Object) query, "retrieveObjects", "parameters",
                     new TreeMap<>(parameters).toString(), "first", Integer.toString(first), "max", Integer.toString(
                         max));
-            return stopwatch.stop(q.list());
+            List<?> objects = q.list();
+            if (objects.isEmpty() || objects.get(0) instanceof BaseBean) {
+                return stopwatch.stop((List<T>) objects);
+            } else {
+                return stopwatch.stop((List<T>) (List<?>) ((List<Object[]>) objects).stream().map(array -> array[0])
+                        .collect(Collectors.toList()));
+            }
         } catch (SQLGrammarException e) {
             return Collections.emptyList();
         }

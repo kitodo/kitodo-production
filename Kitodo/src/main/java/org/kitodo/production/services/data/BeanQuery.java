@@ -29,6 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
@@ -45,7 +46,8 @@ public class BeanQuery {
     private final Class<? extends BaseBean> beanClass;
     private final String className;
     private final String varName;
-    private final Collection<String> extensions = new ArrayList<>();
+    private final Collection<String> innerJoins = new ArrayList<>();
+    private final Collection<String> leftJoins = new ArrayList<>();
     private final Collection<String> restrictions = new ArrayList<>();
     private final List<String> restrictionAlternatives = new ArrayList<>();
     private boolean indexFiltersAsAlternatives = false;
@@ -159,7 +161,7 @@ public class BeanQuery {
     public void addXIdRestriction(String xField, Integer id) {
         String otherName = varName(xField).replaceFirst("s$", "");
         String joker = otherName.concat("Id");
-        extensions.add(varName + "." + xField + " AS " + otherName + " WITH " + otherName + ".id = :" + joker);
+        innerJoins.add(varName + "." + xField + " AS " + otherName + " WITH " + otherName + ".id = :" + joker);
         parameters.put(joker, id);
     }
 
@@ -275,36 +277,13 @@ public class BeanQuery {
      * Requires that the search only finds tasks that are allowed to be
      * processed by one of the specified roles.
      * 
-     * <!-- As far as I can tell, there is no way to formulate an is-one-in
-     * relationship in HQL. So this has to be expanded into an OR query. That's
-     * possible, but if there's a nicer query solution, that would be nice too.
-     * Cf. https://stackoverflow.com/a/14020432/1503237 -->
-     * 
      * @param roles
-     *            roles of the task
+     *            roles of the user
      */
     public void restrictToRoles(List<Role> roles) {
-        int rolesSize = roles.size();
-        boolean multipleRoles = rolesSize > 1;
-        StringBuilder restriction = new StringBuilder();
-        for (int i = 0; i < rolesSize; i++) {
-            String roleVarName = "role" + (i + 1);
-            if (multipleRoles) {
-                boolean firstIteration = (i == 0);
-                restriction.append(firstIteration ? "(" : " OR ");
-            }
-            restriction.append(':');
-            restriction.append(roleVarName);
-            restriction.append(" IN elements(");
-            restriction.append(varName);
-            restriction.append(".roles)");
-            boolean lastIteration = (i == rolesSize - 1);
-            if (multipleRoles && lastIteration) {
-                restriction.append(')');
-            }
-            parameters.put(roleVarName, roles.get(i));
-        }
-        restrictions.add(restriction.toString());
+        leftJoins.add("task.roles AS taskRoles");
+        restrictions.add("taskRoles IN (:userRoles)");
+        parameters.put("userRoles", roles);
     }
 
     /**
@@ -326,7 +305,7 @@ public class BeanQuery {
                     DatabaseQueryPart databaseSearchQueryPart = (DatabaseQueryPart) searchFilter;
                     String query = databaseSearchQueryPart.getDatabaseQuery(className, varName, parameterName);
                     if (query.contains(" AS ")) {
-                        extensions.add(query);
+                        innerJoins.add(query);
                     } else {
                         groupFilters.add(query);
                     }
@@ -388,7 +367,7 @@ public class BeanQuery {
      */
     public String formQueryForAll() {
         StringBuilder query = new StringBuilder(512);
-        if (!extensions.isEmpty()) {
+        if (!innerJoins.isEmpty()) {
             query.append("SELECT ").append(varName).append(' ');
         }
         innerFormQuery(query);
@@ -416,8 +395,11 @@ public class BeanQuery {
 
     private void innerFormQuery(StringBuilder query) {
         query.append("FROM ").append(className).append(" AS ").append(varName);
-        for (String extension : extensions) {
-            query.append(" INNER JOIN ").append(extension);
+        for (String innerJoin : innerJoins) {
+            query.append(" INNER JOIN ").append(innerJoin);
+        }
+        for (String leftJoin : leftJoins) {
+            query.append(" LEFT JOIN ").append(leftJoin);
         }
         if (restrictionAlternatives.size() == 1) {
             restrictions.add(restrictionAlternatives.get(0));
