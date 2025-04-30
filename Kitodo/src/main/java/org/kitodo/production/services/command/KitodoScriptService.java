@@ -255,7 +255,7 @@ public class KitodoScriptService {
 
     private void deleteData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        script = script.replaceFirst("\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
         DeleteDataScript deleteDataScript = new DeleteDataScript();
         for (Process process : processes) {
             try {
@@ -274,7 +274,7 @@ public class KitodoScriptService {
 
     private void copyDataToChildren(List<Process> processes, String script) {
         String currentProcessTitle;
-        script = script.replaceFirst("\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
         AddDataScript addDataScript = new AddDataScript();
         for (Process parentProcess : processes) {
             currentProcessTitle = parentProcess.getTitle();
@@ -304,7 +304,7 @@ public class KitodoScriptService {
 
     private void overwriteData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        script = script.replaceFirst("\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
         OverwriteDataScript overwriteDataScript = new OverwriteDataScript();
         for (Process process : processes) {
             try {
@@ -375,7 +375,7 @@ public class KitodoScriptService {
 
     private void addData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        script = script.replaceFirst("\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
         AddDataScript addDataScript = new AddDataScript();
         for (Process process : processes) {
             try {
