@@ -108,9 +108,9 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
         String delimiter = "\"";
         StringTokenizer tokenizer = new StringTokenizer(filter, delimiter, true);
         while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            if (!token.equals(delimiter) && !token.equals(" ")) {
-                filters.add(token);
+            String substring = tokenizer.nextToken();
+            if (!substring.equals(delimiter) && !substring.equals(" ")) {
+                filters.add(substring);
             }
         }
         return filters;

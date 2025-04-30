@@ -72,20 +72,20 @@ public class TitleGenerator extends Generator {
         StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
         // parse the band title
         while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
+            String substring = tokenizer.nextToken();
             // if the string begins with ' and ends with ' then take over the content
-            if (token.startsWith("'") && token.endsWith("'")) {
-                newTitle.append(token, 1, token.length() - 1);
-            } else if (token.startsWith("#")) {
+            if (substring.startsWith("'") && substring.endsWith("'")) {
+                newTitle.append(substring, 1, substring.length() - 1);
+            } else if (substring.startsWith("#")) {
                 // resolve strings beginning with # from generic fields
                 if (Objects.nonNull(genericFields)) {
-                    String genericValue = genericFields.get(token);
+                    String genericValue = genericFields.get(substring);
                     if (Objects.nonNull(genericValue)) {
                         newTitle.append(genericValue);
                     }
                 }
             } else {
-                newTitle.append(evaluateAdditionalDetailsRows(title, currentAuthors, token));
+                newTitle.append(evaluateAdditionalDetailsRows(title, currentAuthors, substring));
             }
         }
 
