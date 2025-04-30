@@ -46,6 +46,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
@@ -531,8 +532,10 @@ public class KitodoScriptService {
         }
 
         try {
-            List<Ruleset> rulesets = ServiceManager.getRulesetService()
-                    .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
+            BeanQuery query = new BeanQuery(Ruleset.class);
+            query.addStringRestriction("title", this.parameters.get(RULESET));
+            List<Ruleset> rulesets = ServiceManager.getRulesetService().getByQuery(query.formQueryForAll(), query
+                    .getQueryParameters());
             if (rulesets.isEmpty()) {
                 Helper.setErrorMessage("Could not find ruleset: ", RULESET);
                 return;
@@ -700,8 +703,10 @@ public class KitodoScriptService {
 
         // check if role exists
         Role role;
-        List<Role> foundRoles = ServiceManager.getRoleService()
-                .getByQuery("FROM Role WHERE title='" + this.parameters.get(ROLE) + "'");
+        BeanQuery query = new BeanQuery(Role.class);
+        query.addStringRestriction("title", this.parameters.get(ROLE));
+        List<Role> foundRoles = ServiceManager.getRoleService().getByQuery(query.formQueryForAll(), query
+                .getQueryParameters());
         if (!foundRoles.isEmpty()) {
             role = foundRoles.get(0);
         } else {

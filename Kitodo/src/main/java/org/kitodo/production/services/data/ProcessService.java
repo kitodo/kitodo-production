@@ -563,9 +563,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * Only used in NewspaperProcessesGenerator and only checked there on
      * .isEmpty(), to see if a process title already exists.
      */
-    @SuppressWarnings("unchecked")
     public Collection<Process> findByTitle(String title) throws DAOException {
-        return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
+        BeanQuery query = new BeanQuery(Process.class);
+        query.addStringRestriction("title", title);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
     /**
