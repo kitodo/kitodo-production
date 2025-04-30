@@ -86,7 +86,19 @@ public class Stopwatch {
                             break;
                         default:
                     }
-                    args = args.append(arg);
+                    int argLength = arg.length();
+                    for (int pos = 0; pos < argLength;) {
+                        int codePoint = arg.codePointAt(pos);
+                        if (codePoint >= ' ' && codePoint <= '~' || codePoint >= '¡' && codePoint <= 'ÿ'
+                                || Character.isLetterOrDigit(codePoint)) {
+                            args.appendCodePoint(codePoint);
+                        } else if (Character.isWhitespace(codePoint)) {
+                            args.append(' ');
+                        } else {
+                            args.append(65533);
+                        }
+                        pos += Character.charCount(codePoint);
+                    }
                     mater++;
                 }
             }
