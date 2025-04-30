@@ -552,16 +552,15 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
     /**
      * Finds all processes with the specified name.
+     * 
+     * <!-- Only used in NewspaperProcessesGenerator and only checked there on
+     * .isEmpty(), to see if a process title already exists. -->
      *
      * @param title
      *            process name to search for
      * @return all processes with the specified name
      * @throws DAOException
      *             when there is an error on conversation
-     */
-    /*
-     * Only used in NewspaperProcessesGenerator and only checked there on
-     * .isEmpty(), to see if a process title already exists.
      */
     public Collection<Process> findByTitle(String title) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
