@@ -124,8 +124,10 @@ public class MetadataValidation implements MetadataValidationInterface {
         }
 
         for (LogicalDivision logicalDivision : workpiece.getAllLogicalDivisions()) {
-            results.addAll(checkMetadataRules(logicalDivision.toString(), logicalDivision.getType(),
-                getMetadata(logicalDivision), ruleset, metadataLanguage, translations));
+            if (Objects.isNull(logicalDivision.getLink())) {
+                results.addAll(checkMetadataRules(logicalDivision.toString(), logicalDivision.getType(),
+                        getMetadata(logicalDivision), ruleset, metadataLanguage, translations));
+            }
         }
 
         for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisions()) {
@@ -196,9 +198,12 @@ public class MetadataValidation implements MetadataValidationInterface {
         Collection<String> messages = new HashSet<>();
 
         Collection<String> structuresWithoutMedia = Workpiece.treeStream(workpiece.getLogicalStructure())
-                .filter(struc -> Objects.nonNull(struc.getType()) && struc.getViews().isEmpty() && struc.getChildren().isEmpty())
-                    .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
-                    .collect(Collectors.toSet());
+                .filter(struc -> Objects.isNull(struc.getLink())
+                        && Objects.nonNull(struc.getType())
+                        && struc.getViews().isEmpty()
+                        && struc.getChildren().isEmpty())
+                .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
+                .collect(Collectors.toSet());
         if (!structuresWithoutMedia.isEmpty()) {
             messages.addAll(structuresWithoutMedia);
             warning = true;
