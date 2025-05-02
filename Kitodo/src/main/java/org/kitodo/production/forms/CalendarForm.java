@@ -226,10 +226,12 @@ public class CalendarForm implements Serializable {
      * @param granularity as org.kitodo.production.model.bibliography.course.Granularity
      */
     public void setGranularity(Granularity granularity) {
-        this.granularity = granularity;
-        course.splitInto(granularity);
-        if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
-            PrimeFaces.current().ajax().update("createProcessesConfirmDialog");
+        if (Objects.nonNull(granularity)) {
+            this.granularity = granularity;
+            course.splitInto(granularity);
+            if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
+                PrimeFaces.current().ajax().update("createProcessesConfirmDialog");
+            }
         }
     }
 
