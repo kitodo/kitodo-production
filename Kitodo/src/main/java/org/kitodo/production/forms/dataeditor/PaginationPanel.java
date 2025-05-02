@@ -355,6 +355,7 @@ public class PaginationPanel {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage("paginationFormatError", new Object[] { paginationStartValue });
         }
+        dataEditor.getMetadataPanel().update();
         dataEditor.refreshStructurePanel();
         preparePaginationSelectionItems();
         preparePaginationSelectionSelectedItems();
