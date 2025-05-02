@@ -78,6 +78,15 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
     @Inject
     private UpdateMetadataDialog updateMetadataDialog;
 
+    /** 
+     * Is called when a user clicks on the import metadata button of the logical metadata panel.
+     */
+    public void onImportMetadataClick() {
+        if (canImportMetadata()) {
+            importMetadata();
+        }
+    }
+
     /**
      * Return true if any logical division is selected such that catalog metadata can be imported.
      * 

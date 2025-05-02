@@ -51,9 +51,6 @@ public class UpdateMetadataDialog implements Serializable {
     @Inject
     private DataEditorForm dataEditor;
 
-    @Inject
-    private UpdateMetadataImportDialogSequence updateMetadataImportDialogSequence;
-
     private List<MetadataComparison> metadataComparisons = new LinkedList<>();
 
     private String recordIdentifier = "";
@@ -125,8 +122,6 @@ public class UpdateMetadataDialog implements Serializable {
         if (canUpdateMetadata()) {
             // update metadata from catalog using existing record identifier and import configuration
             updateCatalogMetadata();
-        } else if (updateMetadataImportDialogSequence.canImportMetadata()) {
-            updateMetadataImportDialogSequence.importMetadata();
         }
     }
 

@@ -804,10 +804,10 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
-     * Test that the catalog search dialog appears when clicking on the update metadata button for a logical division.
+     * Test that the catalog search dialog appears when clicking on the import metadata button for a logical division.
      */
     @Test
-    public void updateMetadataDialogAppearsTest() throws Exception {
+    public void importMetadataDialogAppearsTest() throws Exception {
         login("kowal");
 
         // open the metadata editor
@@ -818,13 +818,13 @@ public class MetadataST extends BaseTestSelenium {
             () -> Browser.getDriver().findElement(By.id("metadataAccordion:metadata:metadataTable")).isDisplayed()
         );
 
-        // check update metadata button is visible and enabled
-        WebElement updateMetadataButton = Browser.getDriver().findElement(By.id("metadataAccordion:updateMetadataButton"));
-        assertTrue(updateMetadataButton.isDisplayed());
-        assertTrue(updateMetadataButton.isEnabled());
+        // check import metadata button is visible and enabled
+        WebElement importMetadataButton = Browser.getDriver().findElement(By.id("metadataAccordion:importMetadataButton"));
+        assertTrue(importMetadataButton.isDisplayed());
+        assertTrue(importMetadataButton.isEnabled());
 
         // click on button 
-        updateMetadataButton.click();
+        importMetadataButton.click();
 
         // wait until catalog search dialog is shown
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
@@ -842,9 +842,9 @@ public class MetadataST extends BaseTestSelenium {
         // select first tree node containing a page
         Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0_0 .ui-treenode-content")).click();
 
-        // check update metadata button is disabled
+        // check import metadata button is disabled
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
-            () -> !Browser.getDriver().findElement(By.id("metadataAccordion:updateMetadataButton")).isEnabled()
+            () -> !Browser.getDriver().findElement(By.id("metadataAccordion:importMetadataButton")).isEnabled()
         );
     }
 

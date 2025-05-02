@@ -42,14 +42,25 @@
                     </h:panelGroup>
                     <h:panelGroup id="updateMetadataButtonWrapper"
                                 rendered="#{SecurityAccessController.hasAuthorityToReimportMetadata()}"
-                                title="#{UpdateMetadataDialog.canUpdateMetadata() ? 
-                                            msgs['dataEditor.updateMetadata.canUpdate'] : UpdateMetadataImportDialogSequence.canImportMetadata() ? 
-                                            msgs['dataEditor.updateMetadata.canImport'] : msgs['dataEditor.updateMetadata.canNotImport']}">
+                                title="#{msgs['dataEditor.updateMetadata.canUpdate']}">
                         <p:commandButton id="updateMetadataButton"
                                         icon="fa fa-refresh"
                                         styleClass="secondary"
                                         action="#{UpdateMetadataDialog.onUpdateCatalogMetadataClick()}"
-                                        disabled="#{not UpdateMetadataDialog.canUpdateMetadata() and not UpdateMetadataImportDialogSequence.canImportMetadata()}"
+                                        disabled="#{not UpdateMetadataDialog.canUpdateMetadata()}"
+                                        update="catalogSearchForm"
+                                        onstart="$('#loadingScreen').show()"
+                                        oncomplete="$('#loadingScreen').hide()"/>
+                    </h:panelGroup>
+                    <h:panelGroup id="importMetadataButtonWrapper"
+                                rendered="#{SecurityAccessController.hasAuthorityToReimportMetadata()}"
+                                title="#{UpdateMetadataImportDialogSequence.canImportMetadata() ? 
+                                            msgs['dataEditor.updateMetadata.canImport'] : msgs['dataEditor.updateMetadata.canNotImport']}">
+                        <p:commandButton id="importMetadataButton"
+                                        icon="fa fa-book"
+                                        styleClass="secondary"
+                                        action="#{UpdateMetadataImportDialogSequence.onImportMetadataClick()}"
+                                        disabled="#{not UpdateMetadataImportDialogSequence.canImportMetadata()}"
                                         update="catalogSearchForm"
                                         onstart="$('#loadingScreen').show()"
                                         oncomplete="$('#loadingScreen').hide()"/>
