@@ -27,7 +27,7 @@
                 var="physicalNode"
                 styleClass="focusable"
                 selectionMode="multiple"
-                multipleDrag="false"
+                multipleDrag="true"
                 selection="#{DataEditorForm.structurePanel.selectedPhysicalNodesAsArray}"
                 draggable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                 droppable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
