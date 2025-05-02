@@ -60,7 +60,7 @@ import org.xml.sax.SAXException;
  * 
  * <p>First, the catalog search dialog is shown, where the user can select an import configuration and 
  * search parameters. If the catalog search matches multiple records, the hit list dialog is shown. 
- * Finally, the metadata comparison dialog allows to select the specific metadata information that is 
+ * Finally, the metadata comparison dialog allows selecting the specific metadata information
  * imported for a logical structure element.</p>
  */
 @Named("UpdateMetadataImportDialogSequence")
