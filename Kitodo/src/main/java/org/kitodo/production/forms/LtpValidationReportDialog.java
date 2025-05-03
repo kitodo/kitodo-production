@@ -117,6 +117,21 @@ public class LtpValidationReportDialog implements Serializable {
     }
 
     /**
+     * Return the number of files with validation errors for a given folder.
+     * 
+     * @param folder the folder
+     * @return the number of files with validation errors
+     */
+    public int getNumberOfFilesWithValidationErrorsForFolder(Folder folder) {
+        if (Objects.isNull(folder) || Objects.isNull(resultsByFolder) || !resultsByFolder.containsKey(folder)) {
+            return 0;
+        }
+        return (int) resultsByFolder.get(folder).values().stream()
+            .filter((result) -> result.getState().equals(LtpValidationResultState.ERROR))
+            .count();
+    }
+
+    /**
      * Return the number of invalid files (with warnings or errors) in all folders.
      * 
      * @return the number of invalid files (with warnings or errors) in all folders
@@ -140,6 +155,7 @@ public class LtpValidationReportDialog implements Serializable {
         }
         return this.resultsByFolder.keySet().stream()
             .filter((folder) -> getFilesWithValidationIssues(folder).size() > 0)
+            .sorted((fA, fB) -> getNumberOfFilesWithValidationErrorsForFolder(fB) - getNumberOfFilesWithValidationErrorsForFolder(fA))
             .limit(MAX_NUMBER_OF_REPORTED_FOLDERS)
             .collect(Collectors.toList());
     }
@@ -157,6 +173,7 @@ public class LtpValidationReportDialog implements Serializable {
         }
         return this.resultsByFolder.get(folder).keySet().stream()
             .filter((filepath) -> !resultsByFolder.get(folder).get(filepath).getState().equals(LtpValidationResultState.VALID))
+            .sorted((fA, fB) -> -resultsByFolder.get(folder).get(fA).getState().compareTo(resultsByFolder.get(folder).get(fB).getState()))
             .limit(MAX_NUMBER_OF_REPORTED_FILES_PER_FOLDER)
             .collect(Collectors.toList());
     }
