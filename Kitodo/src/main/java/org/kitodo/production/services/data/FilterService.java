@@ -390,7 +390,8 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
 
         int colon = item.indexOf(":");
         if (colon < 0) {
-            return new IndexQueryPart(FilterField.SEARCH, item, operand);
+            return indexed ? new IndexQueryPart(FilterField.SEARCH, item, operand)
+                    : new DatabaseQueryPart(FilterField.SEARCH, item, operand);
         }
         String fieldName = item.substring(0, colon).toLowerCase();
         String value = item.substring(colon + 1);

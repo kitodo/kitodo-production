@@ -71,7 +71,7 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
             return SQL_FALSE;
         }
         query = query.contains("~") ? query.replace("~", varName) : varName + '.' + query;
-        query = query.contains("#") ? query.replace("#", parameterName) : query + " = " + parameterName;
+        query = query.contains("#") ? query.replace("#", parameterName) : query + " = :" + parameterName;
         return operand ? query : "NOT (" + query + ')';
     }
 
