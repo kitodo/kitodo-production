@@ -921,14 +921,14 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Returns the record number of the parent process, if any. Is {@code null}
-     * if there is no parent process above.
+     * Returns the record number of the parent process, if any. Is {@code 0} if
+     * there is no parent process above.
      * 
      * @return record number of the parent process
      */
     public Integer getParentID() {
         Stopwatch stopwatch = new Stopwatch(this, "getParentID");
-        return stopwatch.stop(Objects.nonNull(parent) ? parent.getId() : null);
+        return stopwatch.stop(Objects.nonNull(parent) ? parent.getId() : 0);
 
     }
 
