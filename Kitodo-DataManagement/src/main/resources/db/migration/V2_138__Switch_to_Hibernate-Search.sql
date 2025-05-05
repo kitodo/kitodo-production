@@ -21,3 +21,8 @@ ALTER TABLE ruleset DROP COLUMN indexAction;
 ALTER TABLE task DROP COLUMN indexAction;
 ALTER TABLE template DROP COLUMN indexAction;
 ALTER TABLE workflow DROP COLUMN indexAction;
+
+--
+-- Add index for better task search
+
+CREATE INDEX idx_task_filtering_title ON task (process_id, typeAutomatic, processingStatus, title);
