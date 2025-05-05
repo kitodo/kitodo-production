@@ -23,6 +23,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 enum FilterField {
     SEARCH(null, null, null, null, null, "search", null),
     PROCESS_ID(null, null, "id", "process.id", null, null, null),
+    PARENT_PROCESS_ID(null, null, "parent.id", "process.parent.id", null, null, null),
     PROCESS_TITLE("title", "process.title", null, null, null, "searchTitle", null),
     PROJECT("project.title", "process.project.title", "project.id", "process.project.id", null, "searchProject", null),
     PROJECT_EXACT("project.title", "process.project.title", "project.id", "process.project.id", null, null, null),
@@ -72,6 +73,8 @@ enum FilterField {
         switch (fieldName.toLowerCase()) {
             case "": return null;
             case "id": return PROCESS_ID;
+            case "parentprocessid":
+                return PARENT_PROCESS_ID;
             case "process": return PROCESS_TITLE;
             case "project": return PROJECT;
             case "projectexact": return PROJECT;
@@ -86,6 +89,8 @@ enum FilterField {
             case "stepdoneuser": return TASK_FINISHED_USER;
 
             case "prozess": return PROCESS_TITLE;
+            case "elternprozessid":
+                return PARENT_PROCESS_ID;
             case "projekt": return PROJECT;
             case "projektexakt": return PROJECT_EXACT;
             case "gruppe": return BATCH;
