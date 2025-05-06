@@ -76,7 +76,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title", "title");
         SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("processForTask.id", "process_id");
+        SORT_FIELD_MAPPING.put("processForTask.id", "process.id");
         SORT_FIELD_MAPPING.put("processForTask.title.keyword", "process.title");
         SORT_FIELD_MAPPING.put("processingStatus", "processingStatus");
         SORT_FIELD_MAPPING.put("processingUser.name.keyword", "task.processingUser.surname");
@@ -276,10 +276,10 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             }
         }
         if (onlyOwnTasks) {
-            query.addIntegerRestriction("user.id", ServiceManager.getUserService().getCurrentUser().getId());
+            query.addIntegerRestriction("processingUser.id", ServiceManager.getUserService().getCurrentUser().getId());
         }
         if (hideCorrectionTasks) {
-            query.addIntegerRestriction("correction", 0);
+            query.addBooleanRestriction("correction", Boolean.FALSE);
         }
         if (!showAutomaticTasks) {
             query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);

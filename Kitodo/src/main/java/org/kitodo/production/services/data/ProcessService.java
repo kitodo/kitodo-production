@@ -161,7 +161,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         SORT_FIELD_MAPPING.put("processingBeginLastTask", "id"); // FIXME
         SORT_FIELD_MAPPING.put("processingEndLastTask", "id"); // FIXME
         SORT_FIELD_MAPPING.put("correctionCommentStatus", "id"); // FIXME
-        SORT_FIELD_MAPPING.put("project.title.keyword", "project_id");
+        SORT_FIELD_MAPPING.put("project.title.keyword", "project.title");
         SORT_FIELD_MAPPING.put("creationDate", "creationDate");
     }
 

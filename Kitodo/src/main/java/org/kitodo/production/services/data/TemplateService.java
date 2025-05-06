@@ -45,7 +45,7 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("ruleset.title.keyword", "ruleset_id");
+        SORT_FIELD_MAPPING.put("ruleset.title.keyword", "ruleset.id");
         SORT_FIELD_MAPPING.put("active", "active");
     }
 
