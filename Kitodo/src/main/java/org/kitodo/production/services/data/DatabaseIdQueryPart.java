@@ -11,18 +11,24 @@
 
 package org.kitodo.production.services.data;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A part of the filter searching on the database for an ID or ID range.
  */
 class DatabaseIdQueryPart extends DatabaseQueryPart {
 
+    private static final Pattern NON_DIGITS = Pattern.compile("\\D+");
     private static final String SECOND_PARAMETER_EXTENSION = "upTo";
 
-    private Integer firstId;
-    private Integer upToId;
+    private final Integer firstId;
+    private final Integer upToId;
+    private final List<Integer> idList;
 
     /**
      * Constructor, creates a new DatabaseQueryPart.
@@ -33,11 +39,35 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
      *            first or only ID
      * @param upToId
      *            {@code null} or last ID
+     * @param operand
+     *            include in search
      */
     DatabaseIdQueryPart(FilterField filterField, String firstId, String upToId, boolean operand) {
         super(filterField, operand);
         this.firstId = Integer.valueOf(firstId);
         this.upToId = Objects.nonNull(upToId) ? Integer.valueOf(upToId) : null;
+        this.idList = null;
+    }
+
+    /**
+     * Constructor, creates a new DatabaseQueryPart.
+     * 
+     * @param filterField
+     *            field to search on
+     * @param ids
+     *            one or more IDs, separated by non-digit characters (such as
+     *            space)
+     * @param operand
+     *            include in search
+     */
+    DatabaseIdQueryPart(FilterField filterField, String ids, boolean operand) {
+        super(filterField, operand);
+        List<Integer> idList = NON_DIGITS.splitAsStream(ids).filter(Predicate.not(String::isEmpty)).map(
+            Integer::valueOf).collect(Collectors.toList());
+        boolean multipleIDs = idList.size() > 1;
+        this.firstId = multipleIDs ? null : idList.get(0);
+        this.idList = multipleIDs ? idList : null;
+        this.upToId = null;
     }
 
     /**
@@ -57,9 +87,9 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
     String getDatabaseQuery(String className, String varName, String parameterName) {
         String query = Objects.equals(className, "Task") ? filterField.getTaskIdQuery()
                 : filterField.getProcessIdQuery();
-        return varName + '.' + query + (upToId == null ? (operand ? " = :" : " != :") + parameterName
+        return varName + '.' + query + (idList == null ? (upToId == null ? (operand ? " = :" : " != :") + parameterName
                 : (operand ? " BETWEEN :" : " NOT BETWEEN :") + parameterName + " AND :" + parameterName
-                        + SECOND_PARAMETER_EXTENSION);
+                        + SECOND_PARAMETER_EXTENSION) : (operand ? " IN (:" : " NOT IN (:") + parameterName + ')');
     }
 
     /**
@@ -75,7 +105,7 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
         if (Objects.nonNull(filterField.getQueryObject())) {
             parameters.put("queryObject", filterField.getQueryObject());
         }
-        parameters.put(parameterName, firstId);
+        parameters.put(parameterName, firstId != null ? firstId : idList);
         if (Objects.nonNull(upToId)) {
             parameters.put(parameterName.concat(SECOND_PARAMETER_EXTENSION), upToId);
         }
@@ -83,7 +113,8 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
 
     @Override
     public String toString() {
-        return filterField + (upToId == null ? (operand ? " = " : " != ") + firstId
-                : (operand ? " BETWEEN " : " NOT BETWEEN ") + firstId + " AND " + upToId);
+        return filterField + (firstId != null ? (upToId == null ? (operand ? " = " : " != ") + firstId
+                : (operand ? " BETWEEN " : " NOT BETWEEN ") + firstId + " AND " + upToId)
+                : (operand ? " IN " : " NOT IN ") + idList);
     }
 }

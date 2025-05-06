@@ -407,6 +407,8 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
 
         if (indexed && Objects.nonNull(filterField.getSearchField())) {
             return new IndexQueryPart(filterField, value, operand);
+        } else if (Objects.equals(filterField, FilterField.PROCESS_ID)) {
+            return new DatabaseIdQueryPart(filterField, value, operand);
         } else {
             return new DatabaseQueryPart(filterField, value, operand);
         }
