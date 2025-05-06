@@ -35,7 +35,6 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -122,7 +121,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldGetValue() throws DAOException, DataException, InvalidMetadataValueException {
+    public void shouldGetValue() throws Exception {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         countableMetadata.setMetadataDetail(metadataTypes.get(0));
         countableMetadata.setStartValue(METADATA_START_VALUE);
@@ -132,7 +131,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldMatch() throws DAOException, DataException, InvalidMetadataValueException {
+    public void shouldMatch() throws Exception {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.get(0);
         countableMetadata.setMetadataDetail(firstMetadataType);
