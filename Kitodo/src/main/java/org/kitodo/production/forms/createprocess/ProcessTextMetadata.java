@@ -122,6 +122,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         return getValue();
     }
 
+    @Override
     public void setValue(String value) {
         this.value = addLeadingZeros(value);
     }
