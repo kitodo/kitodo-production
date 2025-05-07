@@ -113,6 +113,7 @@ public class IndexingService {
         if (Objects.nonNull(monitor)) {
             massIndexer.monitor(monitor);
         }
+        massIndexer.idFetchSize(Integer.MIN_VALUE).batchSizeToLoadObjects(1000);
         return massIndexer.start();
     }
 
