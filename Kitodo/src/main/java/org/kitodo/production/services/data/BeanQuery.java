@@ -377,15 +377,16 @@ public class BeanQuery {
      * @return a query for all objects
      */
     public String formQueryForAll() {
+        boolean sorted = Objects.nonNull(sorting);
         StringBuilder query = new StringBuilder(512);
         if (!innerJoins.isEmpty()) {
             query.append("SELECT ").append(varName).append(' ');
         }
-        if (sorting.getKey().startsWith("lastTask")) {
+        if (sorted && sorting.getKey().startsWith("lastTask")) {
             leftJoins.add(JOIN_LAST_TASK);
         }
         innerFormQuery(query);
-        if (Objects.nonNull(sorting)) {
+        if (sorted) {
             query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
         }
         return query.toString();
