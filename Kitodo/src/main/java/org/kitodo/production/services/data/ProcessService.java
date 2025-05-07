@@ -157,10 +157,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         SORT_FIELD_MAPPING.put("id", "id");
         SORT_FIELD_MAPPING.put("title.keyword", "title");
         SORT_FIELD_MAPPING.put("progressCombined", "sortHelperStatus");
-        SORT_FIELD_MAPPING.put("lastEditingUser", "id"); // FIXME
-        SORT_FIELD_MAPPING.put("processingBeginLastTask", "id"); // FIXME
-        SORT_FIELD_MAPPING.put("processingEndLastTask", "id"); // FIXME
-        SORT_FIELD_MAPPING.put("correctionCommentStatus", "id"); // FIXME
+        SORT_FIELD_MAPPING.put("lastEditingUser", "lastTask.processingUser.surname");
+        SORT_FIELD_MAPPING.put("processingBeginLastTask", "lastTask.processingBegin");
+        SORT_FIELD_MAPPING.put("processingEndLastTask", "lastTask.processingEnd");
+        SORT_FIELD_MAPPING.put("correctionCommentStatus", "CASE WHEN (SELECT COUNT(comment) FROM Comment comment WHERE"
+                + " comment.process = process AND comment.type = 'ERROR' AND comment.corrected = false) > 0 THEN 2 WHEN"
+                + " (SELECT COUNT(comment) FROM Comment comment WHERE comment.process = process AND comment.type = "
+                + "'ERROR') > 0 THEN 1 ELSE 0 END");
         SORT_FIELD_MAPPING.put("project.title.keyword", "project.title");
         SORT_FIELD_MAPPING.put("creationDate", "creationDate");
     }

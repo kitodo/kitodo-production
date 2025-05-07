@@ -29,7 +29,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
@@ -41,6 +40,17 @@ import org.primefaces.model.SortOrder;
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
     private static final Collection<Integer> NO_HIT = Collections.singletonList(0);
+    private static final String JOIN_LAST_TASK = "process.tasks lastTask WITH "
+            + "(lastTask.processingBegin IS NOT NULL OR lastTask.processingEnd IS NOT NULL) "
+            + "AND (CASE WHEN lastTask.processingBegin IS NOT NULL AND lastTask.processingEnd IS NOT NULL "
+            + "THEN CASE WHEN lastTask.processingBegin > lastTask.processingEnd THEN lastTask.processingBegin ELSE lastTask.processingEnd "
+            + "END WHEN lastTask.processingBegin IS NOT NULL THEN lastTask.processingBegin "
+            + "ELSE lastTask.processingEnd END) = (SELECT MAX(CASE "
+            + "WHEN task.processingBegin IS NOT NULL AND task.processingEnd IS NOT NULL "
+            + "THEN CASE WHEN task.processingBegin > task.processingEnd THEN task.processingBegin ELSE task.processingEnd END "
+            + "WHEN task.processingBegin IS NOT NULL THEN task.processingBegin "
+            + "ELSE task.processingEnd END) FROM Task task WHERE task.process = process "
+            + "AND (task.processingBegin IS NOT NULL OR task.processingEnd IS NOT NULL))";
     private final FilterService fileterService = ServiceManager.getFilterService();
     private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;
@@ -328,7 +338,8 @@ public class BeanQuery {
     }
 
     public void defineSorting(String sortField, SortOrder sortOrder) {
-        sorting = Pair.of(varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
+        sorting = Pair.of(sortField.startsWith("lastTask") || sortField.startsWith("CASE") ? sortField
+                : varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
     }
 
     /**
@@ -369,6 +380,9 @@ public class BeanQuery {
         StringBuilder query = new StringBuilder(512);
         if (!innerJoins.isEmpty()) {
             query.append("SELECT ").append(varName).append(' ');
+        }
+        if (sorting.getKey().startsWith("lastTask")) {
+            leftJoins.add(JOIN_LAST_TASK);
         }
         innerFormQuery(query);
         if (Objects.nonNull(sorting)) {
