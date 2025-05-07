@@ -25,4 +25,6 @@ ALTER TABLE workflow DROP COLUMN indexAction;
 --
 -- Add index for better task search
 
-CREATE INDEX idx_task_filtering_title ON task (process_id, typeAutomatic, processingStatus, title);
+CREATE INDEX index_task_processingstatus ON task(processingStatus);
+CREATE INDEX index_task_title ON task (title);
+CREATE INDEX index_process_title ON process (title);
