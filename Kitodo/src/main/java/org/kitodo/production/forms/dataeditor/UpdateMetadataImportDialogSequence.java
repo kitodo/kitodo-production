@@ -200,7 +200,7 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
                     PrimeFaces.current().executeScript("PF('updateMetadataDialog').show();");
                 }
 
-            };
+            }
         } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException | ProcessGenerationException e) {
             logger.error("error trying to compile metadata for the metadata comparison dialog", e);
         }

@@ -39,7 +39,7 @@ import org.primefaces.model.TreeNode;
  * Manages the dialog when a user clicks on the update metadata button.
  * 
  * <p>Re-imports the catalog record for a known record identifier and import configuration
- * and viusalizes the differences between the current metadata and re-imported metadata of the
+ * and visualizes the differences between the current metadata and re-imported metadata of the
  * catalog.</p>
  */
 @Named("UpdateMetadataDialog")
