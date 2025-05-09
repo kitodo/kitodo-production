@@ -66,6 +66,6 @@ public class DataEditorSettingServiceIT {
     @Test
     public void shouldNotGetById() {
         DataEditorSetting setting = dataEditorSettingService.loadDataEditorSetting(1, 5);
-        assertEquals(setting, null, "No setting should be found for these ids!");
+        assertEquals(null, setting, "No setting should be found for these ids!");
     }
 }
