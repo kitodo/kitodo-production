@@ -121,7 +121,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldGetValue() throws DAOException, DataException {
+    public void shouldGetValue() throws Exception {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         countableMetadata.setMetadataDetail(metadataTypes.get(0));
         countableMetadata.setStartValue(METADATA_START_VALUE);
@@ -131,7 +131,7 @@ public class CountableMetadataIT {
     }
 
     @Test
-    public void shouldMatch() throws DAOException, DataException {
+    public void shouldMatch() throws Exception {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.get(0);
         countableMetadata.setMetadataDetail(firstMetadataType);
