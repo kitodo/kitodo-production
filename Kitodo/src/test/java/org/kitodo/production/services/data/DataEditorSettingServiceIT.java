@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -66,6 +67,6 @@ public class DataEditorSettingServiceIT {
     @Test
     public void shouldNotGetById() {
         DataEditorSetting setting = dataEditorSettingService.loadDataEditorSetting(1, 5);
-        assertEquals(null, setting, "No setting should be found for these ids!");
+        assertNull(setting, "No setting should be found for these ids!");
     }
 }
