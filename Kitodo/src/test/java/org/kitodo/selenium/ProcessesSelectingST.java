@@ -59,10 +59,10 @@ public class ProcessesSelectingST extends BaseTestSelenium {
         processesPage.goTo();
 
         processesPage.selectAllRowsOnPage();
-        assertEquals(processesPage.countListedSelectedProcesses(), 1);
+        assertEquals(1, processesPage.countListedSelectedProcesses());
 
         processesPage.goToNextPage();
-        assertEquals(processesPage.countListedSelectedProcesses(), 0);
+        assertEquals(0, processesPage.countListedSelectedProcesses());
     }
 
     /**
@@ -74,9 +74,9 @@ public class ProcessesSelectingST extends BaseTestSelenium {
         processesPage.goTo();
 
         processesPage.selectAllRows();
-        assertEquals(processesPage.countListedSelectedProcesses(), 1);
+        assertEquals(1, processesPage.countListedSelectedProcesses());
 
         processesPage.goToNextPage();
-        assertEquals(processesPage.countListedSelectedProcesses(), 1);
+        assertEquals(1, processesPage.countListedSelectedProcesses());
     }
 }

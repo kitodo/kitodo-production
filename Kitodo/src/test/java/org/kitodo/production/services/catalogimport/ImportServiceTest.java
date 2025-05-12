@@ -133,7 +133,7 @@ public class ImportServiceTest {
         assertEquals(delimited, searchTermOfConfigurationWithDelimiter, String.format("Delimited search term should be %s", SEARCH_TERM));
         ImportConfiguration configurationWithoutDelimiter = createImportConfiguration(SearchInterfaceType.SRU);
         String searchTermOfConfigurationWithoutDelimiter = ServiceManager.getImportService().getSearchTermWithDelimiter(SEARCH_TERM, configurationWithoutDelimiter);
-        assertEquals(searchTermOfConfigurationWithoutDelimiter, SEARCH_TERM, "Search term should not be delimited");
+        assertEquals(SEARCH_TERM, searchTermOfConfigurationWithoutDelimiter, "Search term should not be delimited");
     }
 
     /**
