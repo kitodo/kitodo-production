@@ -786,4 +786,14 @@ public class UserForm extends BaseForm {
     private void deselectRoleClientColumn() {
         selectedColumns = ServiceManager.getListColumnService().removeColumnByTitle(selectedColumns, "role.client");
     }
+
+    /**
+     * Retrieves the list of clients associated with the current user, sorted
+     * based on predefined criteria.
+     *
+     * @return a list of sorted {@code Client} objects associated with the user
+     */
+    public List<Client> getUserClientsSorted() {
+        return UserService.getClientsOfUserSorted(userObject);
+    }
 }
