@@ -87,7 +87,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
-    ProcessSelectMetadata getClone() {
+    public ProcessSelectMetadata getClone() {
         return new ProcessSelectMetadata(this);
     }
 
@@ -225,5 +225,13 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     @Override
     public String getMetadataID() {
         return settings.getId();
+    }
+
+    @Override
+    public void setValue(String value) throws InvalidMetadataValueException {
+        if (!items.parallelStream().anyMatch(selectItem -> Objects.equals(value, selectItem.getValue()))) {
+            throw new InvalidMetadataValueException(super.label, value);
+        }
+        setSelectedItem(value);
     }
 }

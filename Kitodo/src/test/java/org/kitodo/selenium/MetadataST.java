@@ -594,6 +594,9 @@ public class MetadataST extends BaseTestSelenium {
             Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0 .ui-treenode-label")).getText());
     }
     
+    /**
+     * Test that page can be linked to next logicial division even if it is not just a sibling division.
+     */
     @Test
     public void linkPageToNextDivision() throws Exception {
         login("kowal");
@@ -798,6 +801,51 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Test that the catalog search dialog appears when clicking on the import metadata button for a logical division.
+     */
+    @Test
+    public void importMetadataDialogAppearsTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until metadata table is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("metadataAccordion:metadata:metadataTable")).isDisplayed()
+        );
+
+        // check import metadata button is visible and enabled
+        WebElement importMetadataButton = Browser.getDriver().findElement(By.id("metadataAccordion:importMetadataButton"));
+        assertTrue(importMetadataButton.isDisplayed());
+        assertTrue(importMetadataButton.isEnabled());
+
+        // click on button 
+        importMetadataButton.click();
+
+        // wait until catalog search dialog is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("catalogSearchDialog")).isDisplayed()
+        );
+
+        // click on cancel
+        Browser.getDriver().findElement(By.id("catalogSearchForm:cancel")).click();
+        
+        // wait until catalog search dialog disappears
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> !Browser.getDriver().findElement(By.id("catalogSearchDialog")).isDisplayed()
+        );
+
+        // select first tree node containing a page
+        Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0_0 .ui-treenode-content")).click();
+
+        // check import metadata button is disabled
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> !Browser.getDriver().findElement(By.id("metadataAccordion:importMetadataButton")).isEnabled()
+        );
+    }
+
+    /*
      * Checks that multiple elements can be selected in the logical structure tree using the 
      * ctrl and shift keys. Verifies that selection is applied to pagination panel and gallery.
      */

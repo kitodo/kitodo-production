@@ -500,16 +500,16 @@ public class ImportServiceIT {
         String expectedSignature = "222";
         ImportConfiguration importConfiguration = MockDatabase.getGbvImportConfiguration();
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_METADATA_WITH_AUTHOR_FILE_PATH);
-        String exemplarDataOwner = getProcessDetailByMetadataId(importConfiguration.getItemFieldOwnerMetadata(), processDetails);
-        String exemplarDataSignature = getProcessDetailByMetadataId(importConfiguration.getItemFieldSignatureMetadata(), processDetails);
-        assertNotEquals(exemplarDataOwner, expectedOwner, "Wrong exemplar data owner BEFORE selecting exemplar");
-        assertNotEquals(exemplarDataSignature, expectedSignature, "Wrong exemplar data signature BEFORE selecting exemplar");
+        String actualOwner = getProcessDetailByMetadataId(importConfiguration.getItemFieldOwnerMetadata(), processDetails);
+        String actualSignature = getProcessDetailByMetadataId(importConfiguration.getItemFieldSignatureMetadata(), processDetails);
+        assertNotEquals(expectedOwner, actualOwner, "Wrong exemplar data owner BEFORE selecting exemplar");
+        assertNotEquals(expectedSignature, actualSignature, "Wrong exemplar data signature BEFORE selecting exemplar");
         ExemplarRecord exemplarRecord = new ExemplarRecord(expectedOwner, expectedSignature);
         ImportService.setSelectedExemplarRecord(exemplarRecord, importConfiguration, processDetails);
-        exemplarDataOwner = getProcessDetailByMetadataId(importConfiguration.getItemFieldOwnerMetadata(), processDetails);
-        exemplarDataSignature = getProcessDetailByMetadataId(importConfiguration.getItemFieldSignatureMetadata(), processDetails);
-        assertEquals(exemplarDataOwner, expectedOwner, "Wrong exemplar data owner AFTER selecting exemplar");
-        assertEquals(exemplarDataSignature, expectedSignature, "Wrong exemplar data signature AFTER selecting exemplar");
+        actualOwner = getProcessDetailByMetadataId(importConfiguration.getItemFieldOwnerMetadata(), processDetails);
+        actualSignature = getProcessDetailByMetadataId(importConfiguration.getItemFieldSignatureMetadata(), processDetails);
+        assertEquals(expectedOwner, actualOwner, "Wrong exemplar data owner AFTER selecting exemplar");
+        assertEquals(expectedSignature, actualSignature, "Wrong exemplar data signature AFTER selecting exemplar");
     }
 
     /**

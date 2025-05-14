@@ -97,8 +97,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     private final AddMetadataDialog addMetadataDialog;
 
-    private final UpdateMetadataDialog updateMetadataDialog;
-
     /**
      * Backing bean for the add PhysicalDivision dialog.
      */
@@ -240,7 +238,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         this.paginationPanel = new PaginationPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMetadataDialog = new AddMetadataDialog(this);
-        this.updateMetadataDialog = new UpdateMetadataDialog(this);
         this.addPhysicalDivisionDialog = new AddPhysicalDivisionDialog(this);
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
@@ -668,16 +665,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public AddMetadataDialog getAddMetadataDialog() {
         return addMetadataDialog;
     }
-
-    /**
-     * Get updateMetadataDialog.
-     *
-     * @return value of updateMetadataDialog
-     */
-    public UpdateMetadataDialog getUpdateMetadataDialog() {
-        return updateMetadataDialog;
-    }
-
 
     /**
      * Returns the backing bean for the add media dialog. This function is used
@@ -1292,28 +1279,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public String getMetadataFileLoadingError() {
         return metadataFileLoadingError;
-    }
-
-    /**
-     * Check and return whether conditions for metadata update are met or not.
-     *
-     * @return whether metadata of process can be updated
-     */
-    public boolean canUpdateMetadata() {
-        try {
-            return DataEditorService.canUpdateCatalogMetadata(process, workpiece, structurePanel.getSelectedLogicalNodeIfSingle());
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return false;
-        }
-    }
-
-    /**
-     * Perform metadata update for current process.
-     */
-    public void applyMetadataUpdate() {
-        DataEditorService.updateMetadataWithNewValues(workpiece, updateMetadataDialog.getMetadataComparisons());
-        metadataPanel.update();
     }
 
     /**

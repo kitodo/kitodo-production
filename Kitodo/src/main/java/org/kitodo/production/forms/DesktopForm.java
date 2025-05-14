@@ -39,7 +39,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
-    private static final String SORT_TITLE = "title";
+    private static final String SORT_TITLE = "title.keyword";
     private static final String SORT_ID = "id";
     private List<Task> taskList = new ArrayList<>();
     private List<Process> processList = new ArrayList<>();

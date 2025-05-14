@@ -501,8 +501,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      *            id of project to query from database
      * @param referringView
      *            view the user was coming from
+     * @param showDialog
+     *            whether to show the appropriate dialog for the default import configuration
      */
-    public void prepareProcess(int templateId, int projectId, String referringView, Integer parentId) {
+    public void prepareProcess(int templateId, int projectId, String referringView, Integer parentId, boolean showDialog) {
         this.referringView = referringView;
         ProcessGenerator processGenerator = new ProcessGenerator();
         try {
@@ -544,15 +546,15 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     }
                 }
                 processDataTab.prepare();
-                showDialogForImportConfiguration(currentImportConfiguration);
+                showDialogForImportConfiguration(currentImportConfiguration, showDialog);
             }
         } catch (ProcessGenerationException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
-    private void showDialogForImportConfiguration(ImportConfiguration importConfiguration) {
-        if (Objects.nonNull(importConfiguration)) {
+    private void showDialogForImportConfiguration(ImportConfiguration importConfiguration, boolean showDialog) {
+        if (Objects.nonNull(importConfiguration) && showDialog) {
             if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
                 PrimeFaces.current().executeScript("PF('catalogSearchDialog').show();");
             } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {

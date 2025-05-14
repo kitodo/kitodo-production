@@ -28,6 +28,7 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -103,7 +104,7 @@ public class CalendarServiceIT {
     }
 
     @Test
-    public void shouldGetMetadataSummary() throws DAOException, IOException {
+    public void shouldGetMetadataSummary() throws DAOException, IOException, InvalidMetadataValueException {
         Process process = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         List<ProcessDetail> addableMetadata = CalendarService.getAddableMetadataTable(process);
         Course course = new Course();
