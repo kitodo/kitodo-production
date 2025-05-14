@@ -333,7 +333,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
      * @return search token
      */
     private static List<UserSpecifiedFilter> parseParentheses(StringBuilder input, boolean indexed) {
-        List<UserSpecifiedFilter> queryTokens = new ArrayList<>();
+        List<UserSpecifiedFilter> queryElements = new ArrayList<>();
         StringBuilder tokenCollector = new StringBuilder();
         boolean inParentheses = false;
         for (int offset = 0; offset < input.length(); offset += charCount(input.codePointAt(offset))) {
@@ -345,7 +345,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
             } else if (!inParentheses && glyph == '|') {
                 if (tokenCollector.length() > 0) {
                     trimRight(tokenCollector);
-                    queryTokens.add(parseQueryPart(tokenCollector.toString(), indexed));
+                    queryElements.add(parseQueryPart(tokenCollector.toString(), indexed));
                     tokenCollector = new StringBuilder();
                 }
             } else {
@@ -357,9 +357,9 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
         }
         if (tokenCollector.length() > 0) {
             trimRight(tokenCollector);
-            queryTokens.add(parseQueryPart(tokenCollector.toString(), indexed));
+            queryElements.add(parseQueryPart(tokenCollector.toString(), indexed));
         }
-        return queryTokens;
+        return queryElements;
     }
 
     /**
