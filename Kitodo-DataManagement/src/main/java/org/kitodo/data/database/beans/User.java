@@ -361,7 +361,7 @@ public class User extends BaseBean {
      *            list to set
      */
     public void setRoles(List<Role> roles) {
-        this.roles = (List<Role>) roles;
+        this.roles = roles;
     }
 
     /**
@@ -524,7 +524,7 @@ public class User extends BaseBean {
      *            list of saved search queries to set
      */
     public void setFilters(List<Filter> filters) {
-        this.filters = (List<Filter>) filters;
+        this.filters = filters;
     }
 
     /**
