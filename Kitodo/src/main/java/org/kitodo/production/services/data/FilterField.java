@@ -77,7 +77,7 @@ enum FilterField {
                 return PARENT_PROCESS_ID;
             case "process": return PROCESS_TITLE;
             case "project": return PROJECT;
-            case "projectexact": return PROJECT;
+            case "projectexact": return PROJECT_EXACT;
             case "batch": return BATCH;
             case "step": return TASK;
             case "stepautomatic": return TASK_AUTOMATIC;
