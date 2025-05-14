@@ -334,38 +334,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         return parents;
     }
 
-    private int getNumberOfImagesForIndex(Workpiece workpiece) {
-        return Math.toIntExact(Workpiece.treeStream(workpiece.getPhysicalStructure())
-                .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count());
-    }
-
-    private int getNumberOfMetadata(Workpiece workpiece) {
-        return Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
-    }
-
-    private int getNumberOfStructures(Workpiece workpiece) {
-        return Math.toIntExact(Workpiece.treeStream(workpiece.getLogicalStructure()).count());
-    }
-
-    private void enrichProcessData(Process process, boolean forIndexingAll) throws IOException {
-        process.setMetadata(getMetadataForIndex(process, forIndexingAll));
-        URI metadataFilePath = fileService.getMetadataFilePath(process, false, forIndexingAll);
-        if (!fileService.fileExist(metadataFilePath)) {
-            logger.info("No metadata file for indexing: {}", metadataFilePath);
-        } else {
-            try {
-                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-                process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
-                process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
-                process.setNumberOfStructures(getNumberOfStructures(workpiece));
-                process.setBaseType(getBaseType(workpiece));
-            } catch (IllegalArgumentException | IOException e) {
-                logger.warn("Cannot read metadata file for indexing: {}", metadataFilePath);
-                logger.catching(Level.DEBUG, e);
-            }
-        }
-    }
-
     /**
      * MetadataType aus Preferences eines Prozesses ermitteln.
      *
@@ -1660,37 +1628,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             commentsForDocket.add(commentString);
         }
         return commentsForDocket;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> getMetadataForIndex(Process process, boolean forIndexingAll) {
-        try {
-            URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process, false, true);
-            if (!ServiceManager.getFileService().fileExist(metadataFileUri)) {
-                logger.info("No metadata file for indexing: {}", metadataFileUri);
-                return Collections.emptyList();
-            }
-            String metadataFile;
-            try (InputStream inputStream = ServiceManager.getFileService().readMetadataFile(process, forIndexingAll)) {
-                metadataFile = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            }
-            JSONObject xmlJSONObject = XML.toJSONObject(metadataFile);
-            Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
-            if (json.containsKey("mets")) {
-                Map<String, Object> mets = (Map<String, Object>) json.get("mets");
-                Object dmdSec = mets.get("dmdSec");
-                List<Map<String, Object>> metadata = new ArrayList<>();
-                if (dmdSec instanceof List) {
-                    metadata = (List<Map<String, Object>>) dmdSec;
-                } else if (dmdSec instanceof Map) {
-                    metadata.add((Map<String, Object>) dmdSec);
-                }
-                return metadata;
-            }
-        } catch (NullPointerException | IOException e) {
-            logger.warn(e.getMessage(), e);
-        }
-        return Collections.emptyList();
     }
 
     private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {

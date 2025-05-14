@@ -113,9 +113,9 @@ public class SearchResultGeneration {
         row.createCell(0).setCellValue(process.getTitle());
         row.createCell(1).setCellValue(process.getId());
         row.createCell(2).setCellValue(dateFormatter.format(process.getCreationDate()));
-        row.createCell(3).setCellValue(process.getNumberOfImages());
-        row.createCell(4).setCellValue(process.getNumberOfStructures());
-        row.createCell(5).setCellValue(process.getNumberOfMetadata());
+        row.createCell(3).setCellValue(process.getSortHelperImages());
+        row.createCell(4).setCellValue(process.getSortHelperDocstructs());
+        row.createCell(5).setCellValue(process.getSortHelperMetadata());
         row.createCell(6).setCellValue(process.getProject().getTitle());
         row.createCell(7).setCellValue(process.getSortHelperStatus());
     }

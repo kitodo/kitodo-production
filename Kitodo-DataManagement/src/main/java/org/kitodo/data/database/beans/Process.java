@@ -152,15 +152,6 @@ public class Process extends BaseTemplateBean {
     private List<Map<String, Object>> metadata;
 
     @Transient
-    private int numberOfMetadata;
-
-    @Transient
-    private int numberOfImages;
-
-    @Transient
-    private int numberOfStructures;
-
-    @Transient
     private String baseType;
 
     @Transient
@@ -765,69 +756,6 @@ public class Process extends BaseTemplateBean {
     @Override
     public int hashCode() {
         return Objects.hash(this.getId());
-    }
-
-    /**
-     * Returns the number of outline elements in a process. Can be {@code null}
-     * if no runtime value is available.
-     *
-     * @return the number of outline elements in a process
-     */
-    public Integer getNumberOfStructures() {
-        return numberOfStructures;
-    }
-
-    /**
-     * Returns the amount of metadata of the process at runtime. Can be
-     * {@code null} if no runtime value is available.
-     *
-     * @return the amount of metadata
-     */
-    public Integer getNumberOfMetadata() {
-        return numberOfMetadata;
-    }
-
-    /**
-     * Sets the number of metadata entries in a process. This is a transient
-     * value that is not persisted.
-     *
-     * @param numberOfMetadata
-     *            the number of metadata entries in a process
-     */
-    public void setNumberOfMetadata(Integer numberOfMetadata) {
-        this.numberOfMetadata = numberOfMetadata;
-    }
-
-    /**
-     * Returns the number of media in a process at runtime. Can be {@code null}
-     * if no runtime value is available.
-     *
-     * @return the number of media in a process
-     */
-    public Integer getNumberOfImages() {
-        return numberOfImages;
-    }
-
-    /**
-     * Sets the number of media in a process. This is a transient value that is
-     * not persisted.
-     *
-     * @param numberOfImages
-     *            the number of media in a process
-     */
-    public void setNumberOfImages(Integer numberOfImages) {
-        this.numberOfImages = numberOfImages;
-    }
-
-    /**
-     * Sets the number of outline elements in a process at runtime. This is a
-     * transient value that is not persisted.
-     *
-     * @param numberOfStructures
-     *            the number of outline elements in a process
-     */
-    public void setNumberOfStructures(Integer numberOfStructures) {
-        this.numberOfStructures = numberOfStructures;
     }
 
     /**
