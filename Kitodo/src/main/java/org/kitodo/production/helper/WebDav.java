@@ -224,10 +224,11 @@ public class WebDav implements Serializable {
                 }
             }
         }
+        String allowedCharacters = ConfigCore.getParameterOrDefaultValue(ParameterCore.ALLOWED_CHARACTERS_FOR_SYMLINK);
         if (propertyValue.isEmpty()) {
-            return Helper.getNormalizedTitle(process.getTitle()).replaceAll("[^A-Za-z0-9]", "_") + "__[" + process.getId() + "]";
+            return Helper.getNormalizedTitle(process.getTitle()).replaceAll(allowedCharacters, "_") + "__[" + process.getId() + "]";
         } else {
-            return Helper.getNormalizedTitle(propertyValue.replaceAll("[^A-Za-z0-9]", "_") + "_" + process.getId());
+            return Helper.getNormalizedTitle(propertyValue.replaceAll(allowedCharacters, "_") + "_" + process.getId());
         }
     }
 
