@@ -175,6 +175,10 @@ public enum ParameterCore implements ParameterInterface {
      */
     PROCESS_PROPERTY_SYMLINK_NAME(new Parameter<>("processProperty_symLinkName", "")),
 
+    /**
+     * Define the allowed characters used in symbolic link name generation.
+     */
+    ALLOWED_CHARACTERS_FOR_SYMLINK(new Parameter<>("allowedCharactersForSymLink", "[^A-Za-z0-9]")),
     /*
      * Runnotes
      */
