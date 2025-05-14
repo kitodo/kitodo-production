@@ -26,7 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "filter")
-public class Filter extends BaseIndexedBean {
+public class Filter extends BaseBean {
 
     @Column(name = "value", columnDefinition = "longtext")
     private String value;
@@ -39,19 +39,19 @@ public class Filter extends BaseIndexedBean {
     private User user;
 
     /**
-     * Get filter value.
-     *
-     * @return filter value
+     * Returns the search query string.
+     * 
+     * @return the search query
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * Set filter value.
-     *
+     * Sets the search query string.
+     * 
      * @param value
-     *            filter
+     *            query string to specify
      */
     public void setValue(String value) {
         this.value = value;

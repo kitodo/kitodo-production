@@ -69,10 +69,9 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
 import org.kitodo.production.security.AESUtil;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
+public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO> {
 
     private static final Logger logger = LogManager.getLogger(LdapServerService.class);
     private static volatile LdapServerService instance = null;
@@ -101,13 +100,13 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM LdapServer");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM LdapServer");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     @Override

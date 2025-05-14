@@ -29,7 +29,7 @@ import org.kitodo.data.database.persistence.PropertyDAO;
 
 @Entity
 @Table(name = "property")
-public class Property extends BaseIndexedBean implements Comparable<Property> {
+public class Property extends BaseBean implements Comparable<Property> {
 
     @Column(name = "title")
     private String title;
@@ -69,38 +69,38 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     }
 
     /**
-     * Get title.
+     * Returns the key of the property's key-value pair.
      *
-     * @return title as String
+     * @return the key
      */
     public String getTitle() {
         return this.title;
     }
 
     /**
-     * Set title.
+     * Sets the key of the property's key-value pair.
      *
      * @param title
-     *            as String
+     *            key to set
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * Get value.
+     * Returns the value of the property's key-value pair.
      *
-     * @return value as String
+     * @return the value
      */
     public String getValue() {
         return this.value;
     }
 
     /**
-     * Set value.
+     * Sets the value of the property's key-value pair.
      *
      * @param value
-     *            as String
+     *            value to set
      */
     public void setValue(String value) {
         this.value = value;
@@ -148,19 +148,20 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     }
 
     /**
-     * Get creation date.
+     * Returns the creation time of the property. {@link Date} is a specific
+     * instant in time, with millisecond precision.
      *
-     * @return creation date as Date
+     * @return the creation time
      */
     public Date getCreationDate() {
         return this.creationDate;
     }
 
     /**
-     * Set creation date.
+     * Sets the creation time of the property.
      *
      * @param creationDate
-     *            as Date
+     *            creation time to set
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;

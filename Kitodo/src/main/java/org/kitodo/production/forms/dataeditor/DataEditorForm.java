@@ -572,7 +572,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
-                ServiceManager.getProcessService().saveToIndex(process,false);
                 unsavedUploadedMedia.clear();
                 deleteUnsavedDeletedMedia();
                 if (close) {
@@ -1120,7 +1119,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 dataEditorSetting.setTaskId(templateTask.getId());
             }
             try {
-                ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                ServiceManager.getDataEditorSettingService().save(dataEditorSetting);
                 loadDataEditorSettings();
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
@@ -1140,7 +1139,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void deleteDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting)) {
             try {
-                ServiceManager.getDataEditorSettingService().removeFromDatabase(dataEditorSetting);
+                ServiceManager.getDataEditorSettingService().remove(dataEditorSetting);
                 this.loadDataEditorSettings();
                 PrimeFaces.current().executeScript("PF('dataEditorDeletedResultDialog').show();");
             } catch (DAOException e) {

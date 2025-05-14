@@ -22,7 +22,7 @@
                  widgetVar="templateTable"
                  styleClass="default-layout"
                  var="item"
-                 value="#{TemplateForm.lazyDTOModel}"
+                 value="#{TemplateForm.lazyBeanModel}"
                  first="#{TemplateForm.firstRow}"
                  lazy="true"
                  paginator="true"
@@ -83,7 +83,7 @@
                     <h:panelGroup styleClass="action"
                                   title="#{item.isActive() and item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
                         <p:commandLink id="createProcessFromTemplate"
-                                       actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
+                                       actionListener="#{SelectProjectDialogView.setTemplate(item)}"
                                        action="#{SelectProjectDialogView.createProcessFromTemplate()}"
                                        disabled="#{item.projects.size() lt 1 or not item.active}"
                                        rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
@@ -173,9 +173,10 @@
                                     <div class="project-template-action">
                                         <h:outputText value="#{project.title}"
                                                       title="#{project.title}"
-                                                      styleClass="expansion-list-item-title"/>
+                                                      styleClass="expansion-list-item-title"
+                                                      rendered="#{project.active}"/>
                                         <h:panelGroup class="expansion-list-item-actions">
-                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and item.isActive()}">
+                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and item.isActive() and project.active}">
                                                 <h:link id="createProcess"
                                                         outcome="/pages/processFromTemplate?faces-redirect=true"
                                                         styleClass="action"
@@ -197,7 +198,7 @@
                 <o:graphicImage title="#{item.workflow.title}"
                                 styleClass="workflow-diagram"
                                 rendered="#{item.workflow ne null}"
-                                value="#{item.diagramImage}"
+                                value="#{TemplateForm.getDiagramImage(item.workflow.title)}"
                                 dataURI="true" />
             </div>
         </p:rowExpansion>

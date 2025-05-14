@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 public class Updater {
@@ -35,7 +35,7 @@ public class Updater {
     /**
      * Update all processes assigned to given template.
      */
-    public void updateProcessesAssignedToTemplate() throws DataException {
+    public void updateProcessesAssignedToTemplate() throws DAOException {
         List<Process> processes = this.template.getProcesses();
 
         for (Process process : processes) {

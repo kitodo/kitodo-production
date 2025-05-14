@@ -11,6 +11,8 @@
 
 package org.kitodo.selenium.testframework;
 
+import static org.awaitility.Awaitility.await;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -347,4 +349,12 @@ public class Browser {
         return DELAY_AFTER_CATALOG_SELECTION;
     }
 
+    /**
+     * Pauses program execution until the browser ensures that the loading
+     * screen has been hidden.
+     */
+    public static void waitForLoadingScreenToDisappear() {
+        await("Wait for loading screen to disappear").pollDelay(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> !webDriver.findElement(By.id("loadingScreen")).isDisplayed());
+    }
 }

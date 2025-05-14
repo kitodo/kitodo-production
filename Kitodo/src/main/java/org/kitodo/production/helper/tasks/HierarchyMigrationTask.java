@@ -233,11 +233,11 @@ public class HierarchyMigrationTask extends EmptyTask {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();
-        processService.saveToDatabase(parentProcess);
+        processService.save(parentProcess);
         fileService.createProcessLocation(parentProcess);
         createParentMetsFile(childProcess);
         checkTaskAndId(parentProcess);
-        processService.saveToDatabase(parentProcess);
+        processService.save(parentProcess);
         parentProcess = ServiceManager.getProcessService().getById(parentProcess.getId());
         ArrayList<Integer> parentData = new ArrayList<>();
         parentData.add(parentProcess.getId());
@@ -291,8 +291,8 @@ public class HierarchyMigrationTask extends EmptyTask {
 
         parentProcess.getChildren().add(childProcess);
         childProcess.setParent(parentProcess);
-        processService.saveToDatabase(childProcess);
-        processService.saveToDatabase(parentProcess);
+        processService.save(childProcess);
+        processService.save(parentProcess);
     }
 
     /**

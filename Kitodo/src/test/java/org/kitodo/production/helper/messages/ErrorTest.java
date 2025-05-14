@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper.messages;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,6 +21,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 
 import org.junit.jupiter.api.Test;
+
 
 public class ErrorTest {
 

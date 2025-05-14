@@ -30,7 +30,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DualListModel;
 
@@ -43,11 +43,12 @@ public class RoleForm extends BaseForm {
     private final String roleEditPath = MessageFormat.format(REDIRECT_PATH, "roleEdit");
 
     /**
-     * Default constructor that also sets the LazyDTOModel instance of this bean.
+     * Default constructor that also sets the LazyBeanModel instance of this
+     * bean.
      */
     public RoleForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRoleService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRoleService()));
     }
 
     /**
@@ -75,7 +76,7 @@ public class RoleForm extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getRoleService().saveToDatabase(this.role);
+            ServiceManager.getRoleService().save(this.role);
             return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
@@ -93,7 +94,7 @@ public class RoleForm extends BaseForm {
                     user.getRoles().remove(this.role);
                 }
                 this.role.setUsers(new ArrayList<>());
-                ServiceManager.getRoleService().saveToDatabase(this.role);
+                ServiceManager.getRoleService().save(this.role);
             }
             if (!this.role.getTasks().isEmpty()) {
                 Helper.setErrorMessage("roleAssignedError");
@@ -101,9 +102,9 @@ public class RoleForm extends BaseForm {
             }
             if (!this.role.getAuthorities().isEmpty()) {
                 this.role.setAuthorities(new ArrayList<>());
-                ServiceManager.getRoleService().saveToDatabase(this.role);
+                ServiceManager.getRoleService().save(this.role);
             }
-            ServiceManager.getRoleService().removeFromDatabase(this.role);
+            ServiceManager.getRoleService().remove(this.role);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
         }

@@ -92,7 +92,7 @@ public class TemplateDAO extends BaseDAO<Template> {
     public List<Template> getActiveTemplates(int clientId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientId", clientId);
-        return getByQuery("SELECT t FROM Template AS t WHERE active = 1 AND client_id = :clientId",
+        return getByQuery("SELECT t FROM Template AS t WHERE active = true AND client_id = :clientId",
             parameters);
     }
 }

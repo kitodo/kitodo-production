@@ -834,9 +834,9 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize IndexingService if it is not yet initialize and return it.
+     * Returns a service instance for indexing.
      *
-     * @return IndexingService object
+     * @return an indexing service
      */
     public static IndexingService getIndexingService() {
         initializeIndexingService();

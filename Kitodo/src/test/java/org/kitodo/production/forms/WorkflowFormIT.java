@@ -30,7 +30,6 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
@@ -72,7 +71,7 @@ public class WorkflowFormIT {
      *
      */
     @Test
-    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException, DataException,
+    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException,
             WorkflowException, IOException {
         //Get first template which already has template tasks assigned and assign it to the new workflow
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
@@ -122,24 +121,25 @@ public class WorkflowFormIT {
         assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getGalleryWidth(), 0);
     }
 
-    private Task createAndSaveTemplateTask(TaskStatus taskStatus, int ordering, Template template) throws DataException {
+    private Task createAndSaveTemplateTask(TaskStatus taskStatus, int ordering, Template template) throws DAOException {
         Task task = new Task();
         task.setProcessingStatus(taskStatus);
         task.setEditType(TaskEditType.MANUAL_SINGLE);
         task.setOrdering(ordering);
         task.setTemplate(template);
+        template.getTasks().add(task);
         taskService.save(task);
         return task;
     }
 
-    private void createAndSaveDataEditorSetting(int templateTaskId) throws DataException, DAOException {
+    private void createAndSaveDataEditorSetting(int templateTaskId) throws DAOException {
         DataEditorSetting dataEditorSetting = new DataEditorSetting();
         dataEditorSetting.setUserId(1);
         dataEditorSetting.setTaskId(templateTaskId);
         dataEditorSetting.setStructureWidth(0.5f);
         dataEditorSetting.setMetadataWidth(0.6f);
         dataEditorSetting.setGalleryWidth(0.6f);
-        dataEditorSettingService.saveToDatabase(dataEditorSetting);
+        dataEditorSettingService.save(dataEditorSetting);
     }
 
 }

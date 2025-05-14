@@ -29,8 +29,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
@@ -69,8 +67,7 @@ public class CommentForm extends BaseForm {
     public void removeComment(Comment comment) {
         try {
             ServiceManager.getCommentService().removeComment(comment);
-            saveProcessAndTasksToIndex();
-        } catch (CustomResponseException | DAOException | DataException | IOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[]{ObjectType.COMMENT.getTranslationSingular()},
                     logger, e);
         }
@@ -136,14 +133,6 @@ public class CommentForm extends BaseForm {
     public Comment getEditedComment() {
         return this.editedComment;
     }
-    
-    private void saveProcessAndTasksToIndex() throws CustomResponseException, DataException, IOException {
-        ServiceManager.getProcessService().saveToIndex(this.process, true);
-        for (Task task : this.process.getTasks()) {
-            // update tasks in elastic search index, which includes correction comment status 
-            ServiceManager.getTaskService().saveToIndex(task, true);
-        }
-    }
 
     /**
      * Add a new comment to the process.
@@ -169,9 +158,8 @@ public class CommentForm extends BaseForm {
             comment.setType(CommentType.INFO);
         }
         try {
-            ServiceManager.getCommentService().saveToDatabase(comment);
-            saveProcessAndTasksToIndex();
-        } catch (CustomResponseException | DAOException | DataException | IOException e) {
+            ServiceManager.getCommentService().save(comment);
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
         newComment(false);
@@ -188,9 +176,8 @@ public class CommentForm extends BaseForm {
     public void saveEditedComment() {
         if (Objects.nonNull(this.editedComment) && this.editedComment.getType().equals(CommentType.INFO)) {
             try {
-                ServiceManager.getCommentService().saveToDatabase(this.editedComment);
-                saveProcessAndTasksToIndex();
-            } catch (CustomResponseException | DAOException | DataException | IOException e) {
+                ServiceManager.getCommentService().save(this.editedComment);
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, logger, e);
             }
         }
@@ -214,7 +201,7 @@ public class CommentForm extends BaseForm {
     private void reportProblem(Comment comment) {
         try {
             this.workflowControllerService.reportProblem(comment, TaskEditType.MANUAL_SINGLE);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }
         refreshProcess(this.currentTask.getProcess());
@@ -280,7 +267,7 @@ public class CommentForm extends BaseForm {
     public String solveProblem(Comment comment) {
         try {
             this.workflowControllerService.solveProblem(comment, TaskEditType.MANUAL_SINGLE);
-        } catch (DataException | DAOException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
         refreshProcess(comment.getCurrentTask().getProcess());
@@ -328,16 +315,9 @@ public class CommentForm extends BaseForm {
      * @param process Object process to refresh
      */
     private void refreshProcess(Process process) {
-        try {
-            if (!Objects.equals(process.getId(), 0)) {
-                if (Objects.nonNull(this.currentTask)) {
-                    this.currentTask.setProcess(ServiceManager.getProcessService().getById(process.getId()));
-                }
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.currentTask.getProcess().getId()},
-                    logger, e);
+        if (!Objects.equals(process.getId(), 0) && Objects.nonNull(this.currentTask)) {
+            ServiceManager.getProcessService().refresh(process);
+            this.currentTask.setProcess(process);
         }
     }
 

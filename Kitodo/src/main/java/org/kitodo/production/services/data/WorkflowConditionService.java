@@ -18,10 +18,9 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowConditionDAO;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowConditionService extends SearchDatabaseService<WorkflowCondition, WorkflowConditionDAO> {
+public class WorkflowConditionService extends BaseBeanService<WorkflowCondition, WorkflowConditionDAO> {
 
     private static volatile WorkflowConditionService instance = null;
 
@@ -52,13 +51,13 @@ public class WorkflowConditionService extends SearchDatabaseService<WorkflowCond
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM WorkflowCondition");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM WorkflowCondition");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     @Override

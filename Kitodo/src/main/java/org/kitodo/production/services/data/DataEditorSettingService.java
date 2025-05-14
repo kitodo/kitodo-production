@@ -20,10 +20,9 @@ import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DataEditorSettingDAO;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class DataEditorSettingService extends SearchDatabaseService<DataEditorSetting, DataEditorSettingDAO> {
+public class DataEditorSettingService extends BaseBeanService<DataEditorSetting, DataEditorSettingDAO> {
 
     private static volatile DataEditorSettingService instance = null;
 
@@ -60,13 +59,13 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM DataEditorSetting");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM DataEditorSetting");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     /**
