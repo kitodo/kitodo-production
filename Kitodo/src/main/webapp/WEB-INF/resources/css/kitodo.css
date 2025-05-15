@@ -1363,6 +1363,7 @@ main i.fa {
     content: '\f0db';
 }
 
+#configureColumnsForm.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header,
 #configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-trigger {
     display: none;
 }
@@ -2272,7 +2273,8 @@ Metadata Editor
     position: relative;
 }
 
-#errorMessagesClose {
+#errorMessagesClose,
+#error-messages .ui-messages-close {
     position: absolute;
     top: calc(var(--input-padding) + 10px);
     right: var(--default-full-size);
