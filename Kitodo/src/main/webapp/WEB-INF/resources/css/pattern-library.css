@@ -803,9 +803,8 @@ body .ui-chkbox.switch .ui-chkbox-icon {
     border-radius: 25px;
     box-sizing: border-box;
     height: 40%;
-    left: 15%;
     position: relative;
-    top: 10%;
+    transform: translate(-50%, -50%);
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
