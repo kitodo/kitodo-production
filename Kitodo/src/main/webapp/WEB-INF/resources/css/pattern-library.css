@@ -1577,16 +1577,24 @@ body .ui-tabmenu .ui-tabmenu-nav {
     padding: 0;
 }
 
+body .ui-tabs.ui-tabs-top>.ui-tabs-nav:before {
+    display: none;
+}
+
 body .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header,
 body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
+    border-bottom: none;
     border-right: solid var(--default-border-width) var(--medium-gray);
-    top: 0;
+    box-sizing: content-box;
+    height: var(--input-height);
+    top: calc(var(--contrast-border-width) * -1);
 }
 
 body .ui-tabs .ui-tabs-nav,
 body .ui-tabmenu .ui-widget-header {
-    border-top: solid var(--contrast-border-width) var(--medium-gray);
     background: var(--cloudy-gray);
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
+    height: calc(var(--input-height) + var(--contrast-border-width));
 }
 
 body .ui-tabs .ui-tabs-nav li,
@@ -1607,9 +1615,15 @@ body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
 body .ui-tabs .ui-tabs-nav .ui-state-default a,
 body .ui-tabs .ui-tabs-nav .ui-state-default a:link,
 body .ui-tabs .ui-tabs-nav .ui-state-default a:visited,
+body .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-active a,
 body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
     color: var(--blue);
 }
+
+body .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-hover a {
+    color: var(--blue);
+}
+
 
 body .ui-tabs .ui-tabs-nav .ui-state-default a:hover,
 body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a:hover {
@@ -1625,7 +1639,7 @@ body .ui-tabmenu .ui-widget-header .ui-state-default {
 }
 
 body .ui-tabs .ui-tabs-nav li.ui-tabs-selected,
-body .ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
+body .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header.ui-state-active {
     border: 0;
     border-top: solid var(--contrast-border-width) var(--orange);
 }
