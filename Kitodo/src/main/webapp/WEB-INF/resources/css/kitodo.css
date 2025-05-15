@@ -636,7 +636,7 @@ td.actionsColumn {
     text-align: right;
 }
 
-.ui-datatable tbody td.actionsColumn {
+body .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
     padding-right: calc(var(--default-full-size) - 10px);
     position: relative;
 }
@@ -1406,13 +1406,16 @@ main i.fa {
 }
 
 .hierarchy-info {
+    position: relative;
     width: calc(var(--default-double-size) + var(--default-full-size));
 }
 
 .hierarchy-info > i {
     color: var(--blue);
-    transform: rotate(45deg);
-    vertical-align: middle;
+    left: 42px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
 }
 
 .allSelectableOverlayPanel {
@@ -1461,7 +1464,13 @@ main i.fa {
 }
 
 #processesTabView\:processesForm\:processesTable .row-expansion-wrapper > div .ui-panel-titlebar {
+    border: none;
     padding: 0 10px;
+}
+
+#processesTabView\:processesForm\:processesTable .row-expansion-wrapper > div .ui-datalist-content {
+    border: none;
+    padding: 0;
 }
 
 
@@ -1471,6 +1480,18 @@ main i.fa {
 
 #processesTabView\:processesForm\:processesTable .row-expansion-wrapper > div li i {
     margin-left: 1em;
+}
+
+#processesTabView\:batchForm\:detailForm_content .ui-panel {
+    margin: 0;
+}
+
+#processesTabView\:batchForm\:detailForm_content .ui-panel > .ui-panel-content {
+    padding: 0;
+}
+
+#processesTabView\:batchForm\:detailForm_content .ui-panel > .ui-panel-content > * {
+    margin-bottom: 1.3em;
 }
 
 .kitodoScript button {
@@ -4419,6 +4440,12 @@ body .ui-panel .ui-widget-content.ui-panel-content {
 
 .ui-datatable tr td.checkboxListColumn .ui-chkbox-box {
     vertical-align: middle;
+}
+
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table > thead > tr > th.rowTogglerColumn,
+.ui-datatable.default-layout > div.ui-datatable-tablewrapper > table > tbody > tr > td.rowTogglerColumn {
+    text-overflow: initial;
+    width: 20px;
 }
 
 .ui-datatable tr th.checkboxColumn,
