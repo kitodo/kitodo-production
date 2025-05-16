@@ -73,6 +73,7 @@
                 <p:panelGrid id="mappingFile-grid"
                              columns="2"
                              layout="grid">
+                    <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="title"
                                            value="#{msgs.title} *"/>
@@ -125,6 +126,8 @@
                             <p:tooltip for="prestructuredImportHelp"
                                        value="#{msgs['tooltip.mappingFile.prestructuredImport']}"/>
                         </div>
+                    </p:panel>
+                    <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="inputFormat"
                                            value="#{msgs['mappingFile.inputFormat']}"/>
@@ -165,6 +168,7 @@
                             <p:tooltip for="outputFormatHelp"
                                        value="#{msgs['tooltip.mappingFile.outputFormat']}"/>
                         </div>
+                    </p:panel>
                 </p:panelGrid>
             </p:tab>
         </p:tabView>

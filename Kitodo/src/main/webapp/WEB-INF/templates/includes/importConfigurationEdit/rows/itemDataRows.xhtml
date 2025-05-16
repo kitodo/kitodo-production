@@ -18,6 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view>
         <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="itemFieldXPath" value="#{msgs['importConfig.field.itemField.xPath']}"/>
                 <p:inputText id="itemFieldXPath" styleClass="input-with-button"
@@ -68,7 +69,8 @@
                 <p:tooltip for="itemFieldXPathSignatureSubPathHelpButton"
                            value="#{msgs['tooltip.importConfig.itemFieldXPathSignatureHelp']}"/>
             </div>
-        <p:outputPanel id="itemFieldMetadata">
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <h:panelGroup layout="block"
                           class="ui-panelgrid-cell cell-dummy"/>
             <div>
@@ -101,6 +103,6 @@
                 <p:tooltip for="itemFieldXPathSignatureMetadataHelpButton"
                            value="#{msgs['tooltip.importConfig.itemFieldSignatureMetadataHelp']}"/>
             </div>
-        </p:outputPanel>
+        </p:panel>
     </f:view>
 </ui:composition>
