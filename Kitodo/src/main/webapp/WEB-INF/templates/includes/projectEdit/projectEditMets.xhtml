@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
-
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
                 <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjectForm.project.metsRightsOwner}"
@@ -69,7 +69,8 @@
                 </p:inputText>
                 <p:commandButton id="copyMetsPurlButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPurl', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPurl}"/>
             </div>
-
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
                 <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjectForm.project.metsRightsOwnerLogo}"
@@ -110,6 +111,7 @@
                 </p:inputText>
                 <p:commandButton id="copyMetsContentIdButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsContentId', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsContentIDs}"/>
             </div>
+        </p:panel>
     </p:panelGrid>
     <!-- mets file groups -->
     <p:panel id="mets-file-groups" styleClass="mets-file-groups">

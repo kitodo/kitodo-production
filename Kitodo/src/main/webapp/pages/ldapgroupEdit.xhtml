@@ -69,6 +69,7 @@
         <p:tabView id="ldapGroupTabView">
             <p:tab id="labgroupTab" title="#{msgs.details}">
                 <p:panelGrid columns="2" layout="grid">
+                    <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title" class="input" value="#{LdapGroupForm.myLdapGruppe.title}"
@@ -133,6 +134,8 @@
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
+                    </p:panel>
+                    <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="ldapServer" value="#{msgs.ldapServer}"/>
                             <p:selectOneMenu id="ldapServer" converter="#{ldapServerConverter}"
@@ -204,6 +207,7 @@
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
+                    </p:panel>
                 </p:panelGrid>
                 <p:panel styleClass="content-header"
                          rendered="#{not isViewMode}">

@@ -16,7 +16,7 @@
     xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
-
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="title" value="#{msgs.title}" />
                 <p:inputText id="title" placeholder="#{msgs.title}" class="input"
@@ -37,7 +37,28 @@
                              disabled="#{ProjectForm.locked}">
                 </p:inputText>
             </div>
-
+            <ui:fragment rendered="#{ProjectForm.copyTemplates}">
+                <div>
+                    <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
+                    <p:selectBooleanCheckbox id="copyTemplates"
+                                             styleClass="switch input"
+                                             value="#{ProjectForm.copyTemplates}"
+                                             disabled="#{ProjectForm.locked}">
+                        <p:ajax event="change" oncomplete="toggleSave()" />
+                    </p:selectBooleanCheckbox>
+                </div>
+            </ui:fragment>
+            <div>
+                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
+                <p:selectBooleanCheckbox id="projectIsActive"
+                                         styleClass="switch input"
+                                         value="#{ProjectForm.project.active}"
+                                         disabled="#{ProjectForm.locked}">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
                 <p:datePicker id="startdate"
@@ -70,24 +91,7 @@
                                disabled="#{ProjectForm.locked}">
                 </p:inputNumber>
             </div>
-
-            <ui:fragment rendered="#{ProjectForm.copyTemplates}">
-                <div>
-                    <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
-                    <p:selectBooleanCheckbox id="copyTemplates" styleClass="switch input" value="#{ProjectForm.copyTemplates}"
-                                             disabled="#{ProjectForm.locked}">
-                        <p:ajax event="change" oncomplete="toggleSave()" />
-                    </p:selectBooleanCheckbox>
-                </div>
-            </ui:fragment>
-
-            <div>
-                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
-                <p:selectBooleanCheckbox id="projectIsActive" styleClass="switch input" value="#{ProjectForm.project.active}"
-                                         disabled="#{ProjectForm.locked}">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
+        </p:panel>
 
     </p:panelGrid>
 </ui:composition>

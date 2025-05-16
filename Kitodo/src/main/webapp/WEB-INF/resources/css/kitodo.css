@@ -676,9 +676,11 @@ section#content-section {
 #editForm > .ui-tabs,
 #listWrapper_content > .ui-tabs {
     flex: 1 1 auto;
+    overflow: hidden;
 }
 
 #editForm > .ui-tabs > .ui-tabs-nav {
+    box-sizing: content-box;
     height: var(--input-height);
 }
 
@@ -829,8 +831,8 @@ body .content-header > .ui-panel-content {
     width: 100%;
 }
 
-.input-with-button,
-.input-with-button:not(.ui-spinner) > input,
+body .input-with-button,
+body .input-with-button:not(.ui-spinner) > input,
 .ui-panelgrid-cell .ui-selectonemenu.input-with-button {
     width: calc(100% - 44px);
 }
@@ -849,6 +851,15 @@ body .content-header > .ui-panel-content {
     margin-right: 0;
 }
 
+.input-with-button.ui-calendar {
+    width: 100%;
+}
+
+body .input-with-button.ui-calendar input.hasDatepicker {
+    border-bottom-right-radius: var(--default-border-radius);
+    border-top-right-radius: var(--default-border-radius);
+}
+
 .input-with-button.ui-calendar > button {
     position: relative;
 }
@@ -857,13 +868,8 @@ body .content-header > .ui-panel-content {
     background: transparent;
 }
 
-.input-with-button.ui-calendar > button::before {
-    content: '\f073';
-    font-family: 'FontAwesome';
-    font-weight: lighter;
-    position: absolute;
-    left: 0;
-    padding: .7em;
+.input-with-button.ui-calendar .ui-button.ui-button-icon-only {
+    border-radius: var(--default-border-radius);
 }
 
 .ui-widget-content .ui-button.help-button {
@@ -1146,21 +1152,27 @@ main i.fa {
     width: 90px;
 }
 
-.statusColumn,
-.statusColumn div,
-.statusColumn .ui-panel-content {
+body .statusColumn,
+body .statusColumn div,
+body .statusColumn .ui-panel-content {
+    background: transparent;
     padding: 0;
     vertical-align: middle;
 }
 
-.statusColumn img {
+body .statusColumn img {
     display: inline-block;
     vertical-align: middle;
     margin: 10px;
 }
 
-.statusColumn .ui-panel-content .ui-panel {
+body .statusColumn .ui-panel-content .ui-panel {
     display: inline-block;
+}
+
+body .statusColumn .ui-button {
+    margin-left: var(--default-half-size);
+    margin-right: var(--default-half-size);
 }
 
 #login-section {
@@ -1482,15 +1494,15 @@ main i.fa {
     margin-left: 1em;
 }
 
-#processesTabView\:batchForm\:detailForm_content .ui-panel {
+.ui-panel.column-wrapper {
     margin: 0;
 }
 
-#processesTabView\:batchForm\:detailForm_content .ui-panel > .ui-panel-content {
+.ui-panel.column-wrapper > .ui-panel-content {
     padding: 0;
 }
 
-#processesTabView\:batchForm\:detailForm_content .ui-panel > .ui-panel-content > * {
+.ui-panel.column-wrapper > .ui-panel-content > * {
     margin-bottom: 1.3em;
 }
 
@@ -4258,36 +4270,6 @@ Workflow Editor
     padding-right: 10px;
     padding-top: 16px;
     width: auto;
-}
-
-/*----------------------------------------------------------------------
-Role authority picklist
-----------------------------------------------------------------------*/
-
-.ui-picklist-buttons-cell .ui-button-icon-left.ui-icon {
-    background: none;
-    font-size: larger;
-    text-indent: 0;
-}
-
-.ui-picklist-buttons-cell .ui-button-icon-left::before {
-    font-family: FontAwesome;
-}
-
-.ui-picklist-buttons-cell .ui-picklist-button-add .ui-button-icon-left::before {
-    content: '\f105';
-}
-
-.ui-picklist-buttons-cell .ui-picklist-button-add-all .ui-button-icon-left::before {
-    content: '\f101';
-}
-
-.ui-picklist-buttons-cell .ui-picklist-button-remove .ui-button-icon-left::before {
-    content: '\f104';
-}
-
-.ui-picklist-buttons-cell .ui-picklist-button-remove-all .ui-button-icon-left::before {
-    content: '\f100';
 }
 
 /*----------------------------------------------------------------------

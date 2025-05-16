@@ -17,6 +17,7 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view>
         <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="parentElementTrimMode" value="#{msgs['importConfig.field.parentElementTrimMode']}" />
                 <p:selectOneMenu id="parentElementTrimMode"
@@ -34,5 +35,6 @@
                 <p:tooltip for="parentElementTrimModeHelp"
                            value="#{msgs['tooltip.importConfig.parentElementTrimModeHelp']}"/>
             </div>
+        </p:panel>
     </f:view>
 </ui:composition>

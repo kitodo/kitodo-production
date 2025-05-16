@@ -18,6 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="isViewMode" type="boolean"-->
     <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="title" value="#{msgs.processTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.processTitle}"
@@ -61,6 +62,17 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
+
+            <div>
+                <p:outputLabel for="templateSwitch" value="#{msgs.processTemplate}"/>
+                <p:selectBooleanCheckbox styleClass="switch input"
+                                         disabled="#{isViewMode}"
+                                         id="templateSwitch"
+                                         onchange="toggleSave()"
+                                         value="#{ProcessForm.process.inChoiceListShown}"/>
+            </div>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
 
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
@@ -109,15 +121,7 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </p:outputPanel>
-
-            <div>
-                <p:outputLabel for="templateSwitch" value="#{msgs.processTemplate}"/>
-                <p:selectBooleanCheckbox styleClass="switch input"
-                                         disabled="#{isViewMode}"
-                                         id="templateSwitch"
-                                         onchange="toggleSave()"
-                                         value="#{ProcessForm.process.inChoiceListShown}"/>
-            </div>
+        </p:panel>
 
     </p:panelGrid>
 </ui:composition>

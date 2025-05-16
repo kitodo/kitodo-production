@@ -18,7 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="isViewMode" type="boolean"-->
     <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
-
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="title" value="#{msgs.templateTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.templateTitle}"
@@ -51,8 +51,8 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
-
-
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
                 <p:selectOneMenu id="ruleset" value="#{TemplateForm.template.ruleset}"
@@ -108,6 +108,6 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </p:outputPanel>
-
+        </p:panel>
     </p:panelGrid>
 </ui:composition>

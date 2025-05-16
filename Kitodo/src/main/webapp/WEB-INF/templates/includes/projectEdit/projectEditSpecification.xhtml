@@ -18,7 +18,7 @@
 
     <h:outputScript name="js/clipboard.js" target="body" />
     <p:panelGrid id="technischeDatenForm" columns="2" cellpadding="10" layout="grid">
-
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportPath}" />
                 <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportPath}" styleClass="input-with-button" value="#{ProjectForm.project.dmsImportRootPath}"
@@ -29,6 +29,6 @@
                 </p:inputText>
                 <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.project.dmsImportRootPath}"/>
             </div>
-
+        </p:panel>
     </p:panelGrid>
 </ui:composition>

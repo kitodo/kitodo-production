@@ -18,6 +18,7 @@
     <f:view>
         <p:panelGrid columns="2"
                      layout="grid">
+            <p:panel styleClass="column-wrapper">
                 <div>
                     <p:outputLabel for="uploadFileFormat" value="#{msgs['importConfig.fileupload.fileformat']} *"/>
                     <p:selectOneMenu id="uploadFileFormat"
@@ -33,21 +34,6 @@
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="uploadFileFormatHelp"
                                value="#{msgs['tooltip.importConfig.uploadFileFormatHelp']}"/>
-                </div>
-                <div>
-                    <p:outputLabel for="uploadMetadataFormat" value="#{msgs['importConfig.fileupload.metadataformat']} *"/>
-                    <p:selectOneMenu id="uploadMetadataFormat"
-                                     styleClass="input-with-button"
-                                     required="#{not empty param['editForm:save']}"
-                                     value="#{importConfigurationEditView.importConfiguration.metadataFormat}">
-                        <f:selectItems value="#{importConfigurationEditView.metadataFormats}"/>
-                        <p:ajax event="change"
-                                oncomplete="toggleSave()"/>
-                    </p:selectOneMenu>
-                    <p:commandButton id="uploadMetadataFormatHelp" type="button"
-                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                    <p:tooltip for="uploadMetadataFormatHelp"
-                               value="#{msgs['tooltip.importConfig.uploadMetadataFormatHelp']}"/>
                 </div>
                 <div>
                     <p:outputLabel for="uploadParentMappingFile" value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
@@ -72,6 +58,24 @@
                     <p:tooltip for="uploadParentMappingFileHelp"
                                value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
                 </div>
+            </p:panel>
+            <p:panel styleClass="column-wrapper">
+                <div>
+                    <p:outputLabel for="uploadMetadataFormat" value="#{msgs['importConfig.fileupload.metadataformat']} *"/>
+                    <p:selectOneMenu id="uploadMetadataFormat"
+                                     styleClass="input-with-button"
+                                     required="#{not empty param['editForm:save']}"
+                                     value="#{importConfigurationEditView.importConfiguration.metadataFormat}">
+                        <f:selectItems value="#{importConfigurationEditView.metadataFormats}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="uploadMetadataFormatHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="uploadMetadataFormatHelp"
+                               value="#{msgs['tooltip.importConfig.uploadMetadataFormatHelp']}"/>
+                </div>
+            </p:panel>
         </p:panelGrid>
     </f:view>
 </ui:composition>

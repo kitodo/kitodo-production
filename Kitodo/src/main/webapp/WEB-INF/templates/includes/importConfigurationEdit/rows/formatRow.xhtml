@@ -17,6 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:view>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="fileFormat"
                                value="#{msgs['importConfig.field.fileFormat']} *"/>
@@ -81,6 +82,8 @@
                 <p:tooltip for="parentMappingFileHelp"
                            value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
             </div>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="metadataFormat"
                                value="#{msgs['importConfig.field.metadataFormat']} *"/>
@@ -135,5 +138,6 @@
                 <p:tooltip for="defaultImportDepthHelpButton"
                            value="#{msgs['tooltip.importConfig.defaultImportDepthHelp']}"/>
             </div>
+        </p:panel>
     </f:view>
 </ui:composition>

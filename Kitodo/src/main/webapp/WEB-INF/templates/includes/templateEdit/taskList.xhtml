@@ -20,7 +20,8 @@
     <p:dataTable id="taskTable"
                  var="item"
                  value="#{TemplateForm.template.tasks}"
-                 sortBy="#{item.ordering}">
+                 sortBy="#{item.ordering}"
+                 rowKey="#{item.id}">
 
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
