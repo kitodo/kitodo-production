@@ -380,8 +380,8 @@ public class StructurePanel implements Serializable {
      *
      * @return TreeNode instance if it is the only selected node or null
      */
-    public TreeNode getSelectedPhysicalNodeIfSingle() {
-        List<TreeNode> nodes = getSelectedPhysicalNodes();
+    public TreeNode<Object> getSelectedPhysicalNodeIfSingle() {
+        List<TreeNode<Object>> nodes = getSelectedPhysicalNodes();
         if (Objects.nonNull(nodes) && nodes.size() == 1) {
             return nodes.get(0);
         }
