@@ -17,7 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:view>
-
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="urlParameterTable"
                                value="#{msgs['importConfig.urlParameters']}"/>
@@ -69,6 +69,6 @@
                                  update="addUrlParameterDialog"
                                  oncomplete="PF('addUrlParameterDialog').show();"/>
             </div>
-
+        </p:panel>
     </f:view>
 </ui:composition>

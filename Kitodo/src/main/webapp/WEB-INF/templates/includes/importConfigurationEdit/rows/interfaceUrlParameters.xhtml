@@ -17,7 +17,8 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view>
         <!--@elvariable id="isViewMode" type="boolean"-->
-        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                       styleClass="m-0">
             <div>
                 <p:outputLabel for="sruVersion"
                                value="#{msgs['importConfig.field.urlparameter.sruversion']}"/>
@@ -42,7 +43,8 @@
             </div>
         </p:outputPanel>
 
-        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                       styleClass="m-0">
             <div>
                 <p:outputLabel for="sruRecordSchema"
                                value="#{msgs['importConfig.field.urlparameter.srurecordschema']}"/>
@@ -64,7 +66,8 @@
             </div>
         </p:outputPanel>
 
-        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}"
+                       styleClass="m-0">
             <div>
                 <p:outputLabel for="oaiMetadataPrefix"
                                value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']} *"/>
@@ -85,7 +88,8 @@
                            value="#{msgs['tooltip.importConfig.oaiMetadataPrefixHelp']}"/>
             </div>
         </p:outputPanel>
-        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}"
+                       styleClass="m-0">
             <div>
                 <p:outputLabel for="oaiIdParameterPrefix"
                                value="#{msgs['importConfig.searchFields.idPrefix']}"/>
