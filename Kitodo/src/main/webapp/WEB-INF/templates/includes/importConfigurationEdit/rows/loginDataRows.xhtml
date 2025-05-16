@@ -17,6 +17,7 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view>
         <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="username" value="#{msgs['username']}"/>
                 <p:inputText id="username"
@@ -52,6 +53,8 @@
                 <p:tooltip for="passwordHelp"
                            value="#{msgs['tooltip.importConfig.passwordHelp']}"/>
             </div>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="anonymousAccess" value="#{msgs['importConfig.field.anonymousAccess']}" />
                 <p:selectBooleanCheckbox id="anonymousAccess" styleClass="switch input-with-button"
@@ -66,5 +69,6 @@
                 <p:tooltip for="anonymousAccessHelp"
                            value="#{msgs['tooltip.importConfig.anonymousAccessHelp']}"/>
             </div>
+        </p:panel>
     </f:view>
 </ui:composition>
