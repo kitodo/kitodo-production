@@ -117,6 +117,7 @@ public class FileXmlElementAccess {
             this.physicalDivision.setOrder(physicalDivision.getOrder());
             this.physicalDivision.setOrderlabel(physicalDivision.getOrderlabel());
             this.physicalDivision.setType(physicalDivision.getType());
+
             if (physicalDivision.hasMediaPartial()) {
                 this.physicalDivision.setMediaPartial(physicalDivision.getMediaPartial());
             }
@@ -133,20 +134,15 @@ public class FileXmlElementAccess {
      * @param mediaFilesToIDFiles
      *            map containing the corresponding XML file element for each
      *            physical division, necessary for linking
-     * @param physicalDivisionIDs
-     *            map with the assigned identifier for each physical division to form
-     *            the link pairs of the struct link section
      * @param mets
      *            the METS structure in which the metadata is added
      * @return a new {@code <div>} element for this physical division
      */
-    DivType toDiv(Map<URI, FileType> mediaFilesToIDFiles,
-            Map<PhysicalDivision, String> physicalDivisionIDs, MetsType mets) {
+    DivType toDiv(Map<URI, FileType> mediaFilesToIDFiles, MetsType mets) {
 
         DivType div = new DivType();
         String divId = physicalDivision.getDivId();
         div.setID(divId);
-        physicalDivisionIDs.put(physicalDivision, divId);
         if (physicalDivision.getOrder() > 0) {
             div.setORDER(BigInteger.valueOf(physicalDivision.getOrder()));
         }

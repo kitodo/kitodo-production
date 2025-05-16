@@ -410,7 +410,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
 
     private DivType generatePhysicalStructMapRecursive(PhysicalDivision physicalDivision, Map<URI, FileType> mediaFilesToIDFiles,
             Map<PhysicalDivision, String> physicalDivisionIDs, MetsType mets) {
-        DivType div = new FileXmlElementAccess(physicalDivision).toDiv(mediaFilesToIDFiles, physicalDivisionIDs, mets);
+        DivType div = new FileXmlElementAccess(physicalDivision).toDiv(mediaFilesToIDFiles, mets);
+        physicalDivisionIDs.put(physicalDivision, div.getID());
         for (PhysicalDivision child : physicalDivision.getChildren()) {
             div.getDiv().add(generatePhysicalStructMapRecursive(child, mediaFilesToIDFiles, physicalDivisionIDs, mets));
         }

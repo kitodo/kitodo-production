@@ -257,9 +257,13 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
-        smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision)
-            .sorted(Comparator.comparing(PhysicalDivision::getOrder)).map(physicalDivisionIDs::get)
-            .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId)).collect(Collectors.toList()));
+        if (!super.getViews().isEmpty()) {
+            smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision)
+                    .sorted(Comparator.comparing(PhysicalDivision::getOrder)).map(physicalDivisionIDs::get)
+                    .filter(Objects::nonNull)
+                    .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId))
+                    .collect(Collectors.toList()));
+        }
 
         Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
