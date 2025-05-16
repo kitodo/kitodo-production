@@ -503,6 +503,10 @@ body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui
     transition: .3s;
 }
 
+.ui-menu {
+    width: 300px;
+}
+
 .ui-menu,
 .ui-menu .ui-menu-child {
     background: var(--light-gray);
