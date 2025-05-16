@@ -20,6 +20,7 @@
         <!--@elvariable id="isViewMode" type="boolean"-->
         <p:panelGrid columns="2"
                      layout="grid">
+            <p:panel styleClass="column-wrapper">
                 <div>
                     <p:outputLabel for="interfaceType" value="#{msgs['importConfig.field.interfaceType']} *"/>
                     <p:selectOneMenu id="interfaceType" styleClass="input-with-button"
@@ -64,6 +65,8 @@
                     <p:tooltip for="prestructuredImportHelp"
                                value="#{msgs['tooltip.importConfig.prestructuredImportHelp']}"/>
                 </div>
+            </p:panel>
+            <p:panel styleClass="column-wrapper">
                 <div>
                     <p:outputLabel for="url" value="#{msgs['importConfig.field.url']}"/>
                     <p:panelGrid id="url" columns="4" styleClass="input-with-button">
@@ -108,6 +111,7 @@
                     <p:tooltip for="urlHelp"
                                value="#{msgs['tooltip.importConfig.urlHelp']}"/>
                 </div>
+            </p:panel>
         </p:panelGrid>
 
         <!-- SRU or OAI specific settings -->
