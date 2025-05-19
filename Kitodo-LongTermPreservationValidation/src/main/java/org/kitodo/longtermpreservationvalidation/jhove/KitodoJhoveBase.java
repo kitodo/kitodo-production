@@ -183,6 +183,8 @@ public class KitodoJhoveBase {
         }
 
         Map<String, String> properties = KitodoJhoveRepInfoParser.repInfoToPropertyMap(info);
+        properties.put("filename", file.getName());
+
         List<LtpValidationConditionResult> conditionResults = 
             LtpValidationConditionEvaluator.evaluateValidationConditions(conditions, properties);
 

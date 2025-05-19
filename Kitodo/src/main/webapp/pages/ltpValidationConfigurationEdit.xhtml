@@ -91,16 +91,6 @@
                             <p:tooltip for="titleHelp"
                                         value="#{msgs['ltpValidation.edit.title.tooltip']}"/>
                         </div>
-                        <div>
-                            <p:outputLabel for="requireNoErrorToFinishTask"
-                                           value="#{msgs['ltpValidation.edit.requireNoErrorToFinishTask']}"/>
-                            <p:selectBooleanCheckbox id="requireNoErrorToFinishTask" 
-                                                     disabled="#{isViewMode}"
-                                                     styleClass="switch input" 
-                                                     value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToFinishTask}">
-                                <p:ajax event="change" oncomplete="toggleSave()"/>
-                            </p:selectBooleanCheckbox>
-                        </div>
                     </p:row>
                     <p:row>
                         <div>
@@ -126,6 +116,24 @@
                                            value="#{msgs['ltpValidation.edit.mimeType.disabled.tooltip']}"/>
                             </div>
                         </div>
+                    </p:row>
+                </p:panelGrid>
+
+                <h4><h:outputText value="#{msgs['ltpValidation.edit.workflowOptions']}" /></h4>
+                <p:panelGrid columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="requireNoErrorToFinishTask"
+                                           value="#{msgs['ltpValidation.edit.requireNoErrorToFinishTask']}"/>
+                            <p:selectBooleanCheckbox id="requireNoErrorToFinishTask" 
+                                                     disabled="#{isViewMode}"
+                                                     styleClass="switch input" 
+                                                     value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToFinishTask}">
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
+                    </p:row>
+                    <p:row>
                         <div>
                             <p:outputLabel for="requireNoErrorToUploadImage"
                                            value="#{msgs['ltpValidation.edit.requireNoErrorToUploadImage']}"/>
@@ -161,6 +169,24 @@
                                            value="#{msgs['ltpValidation.edit.wellFormed.tooltip']}"/>
                             </div>
                         </div>
+                        <div>
+                            <p:outputLabel for="simpleFilenamePattern"
+                                            value="#{msgs['ltpValidation.edit.filenamePattern.label']}"/>
+                            <p:inputText id="simpleFilenamePattern"
+                                        styleClass="input-with-button input"
+                                        value="#{LtpValidationConfigurationEditView.simpleFilenamePattern}"
+                                        placeholder="#{msgs['ltpValidation.edit.filenamePattern.placeholder']}"
+                                        disabled="#{isViewMode}"
+                                        onchange="toggleSave()">
+                                <p:ajax event="keyup" delay="300" listener="#{LtpValidationConfigurationEditView.onSimpleFilenamePatternChange}" update="editForm" />
+                            </p:inputText>
+                            <p:commandButton id="simpleFilenamePatternHelp"
+                                            type="button"
+                                            styleClass="help-button"
+                                            icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="simpleFilenamePatternHelp"
+                                        value="#{msgs['ltpValidation.edit.filenamePattern.tooltip']}"/>
+                        </div>
                     </p:row>
                     <p:row>
                         <div>
@@ -180,6 +206,25 @@
                                                 icon="fa fa-lg fa-question-circle-o"/>
                                 <p:tooltip for="simpleValidHelp"
                                            value="#{msgs['ltpValidation.edit.valid.tooltip']}"/>
+                            </div>
+                        </div>
+                        <div>
+                            <p:outputLabel for="simpleFilenamePatternSeverity"
+                                            value="#{msgs['ltpValidation.edit.filenamePatternSeverity.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="simpleFilenamePatternSeverity" 
+                                                 value="#{LtpValidationConfigurationEditView.simpleFilenamePatternSeverity}"
+                                                 onchange="toggleSave()">
+                                    <f:selectItem itemLabel="-- #{msgs['ltpValidation.edit.noValidation']} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                                    <p:ajax event="valueChange" listener="#{LtpValidationConfigurationEditView.onSimpleFilenamePatternSeverityChange}" update="editForm" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="simpleFilenamePatternSeverityHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="simpleFilenamePatternSeverityHelp"
+                                           value="#{msgs['ltpValidation.edit.filenamePatternSeverity.tooltip']}"/>
                             </div>
                         </div>
                     </p:row>

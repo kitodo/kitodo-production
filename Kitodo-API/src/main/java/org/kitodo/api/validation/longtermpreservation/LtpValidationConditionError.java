@@ -39,6 +39,11 @@ public enum LtpValidationConditionError {
     CONDITION_FALSE,
 
     /**
+     * The condition contains a regular expression with invalid syntax.
+     */
+    PATTERN_INVALID_SYNTAX,
+
+    /**
      * The condition operation is is not supported by the backend implementation.
      */
     UNKNOWN_OPERATION

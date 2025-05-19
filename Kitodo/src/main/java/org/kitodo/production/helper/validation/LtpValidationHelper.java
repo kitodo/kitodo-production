@@ -105,6 +105,8 @@ public class LtpValidationHelper {
             return Helper.getTranslation("ltpValidation.condition.operation.equal");
         } else if (operation.equals(LtpValidationConditionOperation.ONE_OF)) {
             return Helper.getTranslation("ltpValidation.condition.operation.oneOf");
+        } else if (operation.equals(LtpValidationConditionOperation.MATCHES)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.matches");
         } else if (operation.equals(LtpValidationConditionOperation.NONE_OF)) {
             return Helper.getTranslation("ltpValidation.condition.operation.noneOf");
         } else if (operation.equals(LtpValidationConditionOperation.LARGER_THAN)) {
@@ -161,6 +163,11 @@ public class LtpValidationHelper {
                 return severity + Helper.getTranslation(
                     "ltpValidation.condition.error.notANumber", 
                     result.getValue(), 
+                    translateCondition(condition)
+                );
+            } else if (result.getError().equals(LtpValidationConditionError.PATTERN_INVALID_SYNTAX)) {
+                return severity + Helper.getTranslation(
+                    "ltpValidation.condition.error.patternInvalidSyntax", 
                     translateCondition(condition)
                 );
             } else if (result.getError().equals(LtpValidationConditionError.CONDITION_FALSE)) {

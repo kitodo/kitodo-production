@@ -14,6 +14,8 @@ package org.kitodo.longtermpreservationvalidation.conditions;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionError;
@@ -259,6 +261,37 @@ public class LtpValidationConditionEvaluator {
     }
 
     /**
+     * Evaluates an validation condition that where the extracted value needs to match a regular expression.
+     * 
+     * @param value the value extracted from the image
+     * @param condition the condition
+     * @return the condition result
+     */
+    private static LtpValidationConditionResult evaluateMatchesCondition(
+        String value,
+        LtpValidationConditionInterface condition
+    ) {
+        if (Objects.isNull(condition.getValues()) || condition.getValues().size() != 1) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        try {
+            Pattern pattern = Pattern.compile(condition.getValues().get(0), Pattern.CASE_INSENSITIVE);
+            if (pattern.matcher(value).matches()) {
+                return new LtpValidationConditionResult(true, null, value);
+            }
+            
+            return getConditionFalseResult(value);
+        } catch (PatternSyntaxException e) {
+            return new LtpValidationConditionResult(
+                false, 
+                LtpValidationConditionError.PATTERN_INVALID_SYNTAX, 
+                value
+            );
+        }        
+    }
+
+    /**
      * Evaluates a single validation condition against the property values extracted from an image.
      * 
      * @param condition the condition to be checked
@@ -287,6 +320,8 @@ public class LtpValidationConditionEvaluator {
             return evaluateEqualCondition(value, condition);
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.ONE_OF)) {
             return evaluateOneOfCondition(value, condition);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.MATCHES)) {
+            return evaluateMatchesCondition(value, condition);        
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.NONE_OF)) {
             return evaluateNoneOfCondition(value, condition);
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.LARGER_THAN)) {

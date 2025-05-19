@@ -44,5 +44,10 @@ public enum LtpValidationConditionOperation {
     /**
      * The extracted value is verified to be in between the interval of two condition values.
      */
-    IN_BETWEEN
+    IN_BETWEEN,
+
+    /** 
+     * The extracted value matches the provided regular expression without considering letter casing.
+     */
+    MATCHES
 }

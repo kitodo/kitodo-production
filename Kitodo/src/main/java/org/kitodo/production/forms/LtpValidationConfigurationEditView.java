@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -42,10 +41,25 @@ public class LtpValidationConfigurationEditView extends BaseForm {
 
     private static final String PROPERTY_WELLFORMED = "wellformed";
     private static final String PROPERTY_VALID = "valid";
+    private static final String PROPERTY_FILENAME = "filename";
     private static final String VALUE_TRUE = "true";
 
+    /**
+     * The following variables (prefixed with "simple") are used for providing simplified options to the 
+     * user, such that a user does not need to learn how validation conditions work and how they need to 
+     * be specified.
+     * 
+     * If a non-null value is selected by a user, a corresponding validation condition is added to the 
+     * list of conditions. If a user removes the option (sets it to null), the corresponding validation 
+     * condition is removed from the list of validation conditions.
+     * 
+     * Simplified options take precedence over manually specifying the same condition in the list of 
+     * validation conditions.
+     */
     private LtpValidationConditionSeverity simpleWellFormedSeverity;
     private LtpValidationConditionSeverity simpleValidSeverity;
+    private LtpValidationConditionSeverity simpleFilenamePatternSeverity;
+    private String simpleFilenamePattern;
 
     /**
      * Load mapping file by ID.
@@ -168,13 +182,19 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      * Adds a simple equals validation condition to the list of conditions.
      * 
      * @param property the property of the validation condition
+     * @param operation the operation of the validation condition
      * @param value the value to be checked against
      * @param severity the severity of the validation condition
      */
-    private void addSimpleEqualCondition(String property, String value, LtpValidationConditionSeverity severity) {
+    private void addSimpleCondition(
+        String property, 
+        LtpValidationConditionOperation operation, 
+        String value, 
+        LtpValidationConditionSeverity severity
+    ) {
         LtpValidationCondition condition = new LtpValidationCondition();
         condition.setProperty(property);
-        condition.setOperation(LtpValidationConditionOperation.EQUAL);
+        condition.setOperation(operation);
         condition.setValues(Collections.singletonList(value));
         condition.setLtpValidationConfiguration(configuration);
         condition.setSeverity(severity);
@@ -185,22 +205,24 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     }
 
     /**
-     * Returns true if the provided validation condition is an equals condition on the given property and value.
+     * Returns true if the provided validation condition is a condition matching the given property and operation, 
+     * independent of its value.
+     * 
      * @param condition the condition to be checked
      * @param property the expected property 
-     * @param value the expected value
-     * @return true if the condition is an equals conditions for the given property and value
+     * @param operation the expected operation
+     * @return true if the condition is a condition matching the given property and operation, indepedent of its value
      */
-    private boolean isSimpleEqualCondition(LtpValidationCondition condition, String property, String value) {
+    private boolean isSimpleCondition(
+        LtpValidationCondition condition, 
+        String property, 
+        LtpValidationConditionOperation operation
+    ) {
         if (Objects.nonNull(condition)
                 && Objects.nonNull(condition.getProperty()) 
                 && condition.getProperty().toLowerCase().equals(property.toLowerCase()) 
                 && Objects.nonNull(condition.getOperation())
-                && condition.getOperation().equals(LtpValidationConditionOperation.EQUAL)
-                && Objects.nonNull(condition.getValues())
-                && condition.getValues().size() == 1
-                && Objects.nonNull(condition.getValues().get(0))
-                && condition.getValues().get(0).toLowerCase().equals(value.toLowerCase())
+                && condition.getOperation().equals(operation)
         ) {
             return true;
         }
@@ -208,18 +230,18 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     }
 
     /**
-     * Finds and returns an equals validation condition matching a property and value.
+     * Finds and returns a validation condition matching a property and operation, independent of its value.
      * 
      * @param property the property 
-     * @param value the value
-     * @return the validation condition that matches the given property and value, or null if not found
+     * @param operation the operation
+     * @return the validation condition that matches the given property, operation and value, or null if not found
      */
-    private LtpValidationCondition findSimpleEqualCondition(String property, String value) {
+    private LtpValidationCondition findSimpleCondition(String property, LtpValidationConditionOperation operation) {
         if (Objects.isNull(configuration.getValidationConditions())) {
             return null;
         }
         for (LtpValidationCondition condition : configuration.getValidationConditions()) {
-            if (isSimpleEqualCondition(condition, property, value)) {
+            if (isSimpleCondition(condition, property, operation)) {
                 return condition;
             }
         }
@@ -228,21 +250,29 @@ public class LtpValidationConfigurationEditView extends BaseForm {
 
     /**
      * Add, edits or removes a simple equals condition depending on the severity level.
+     * 
      * @param property the property of the condition
+     * @param operation the operation of the condition
      * @param value the value of the condition
      * @param severity the severity of the condition (if null, condition will be removed)
      */
-    private void addOrRemoveSimpleEqualCondition(String property, String value, LtpValidationConditionSeverity severity) {
+    private void addOrRemoveSimpleCondition(
+        String property, 
+        LtpValidationConditionOperation operation, 
+        String value, 
+        LtpValidationConditionSeverity severity
+    ) {
         if (Objects.isNull(configuration.getValidationConditions())) {
             configuration.setValidationConditions(new ArrayList<>());
         }
-        LtpValidationCondition condition = findSimpleEqualCondition(property, value);
+        LtpValidationCondition condition = findSimpleCondition(property, operation);
         if (Objects.nonNull(severity)) {
             // user requires condition on file, add or edit it
-            if (Objects.nonNull(condition)) {
+            if (Objects.nonNull(condition) && Objects.nonNull(value)) {
                 condition.setSeverity(severity);
+                condition.setValues(Collections.singletonList(value));
             } else {
-                addSimpleEqualCondition(property, value, severity);
+                addSimpleCondition(property, operation, value, severity);
             }
         } else {
             // remove condition
@@ -256,7 +286,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      * @return the severity of a validation condition that checks the well-formed property or null if not such condition exists
      */
     public LtpValidationConditionSeverity getSimpleWellFormedCondition() {
-        LtpValidationCondition condition = findSimpleEqualCondition(PROPERTY_WELLFORMED, VALUE_TRUE);
+        LtpValidationCondition condition = findSimpleCondition(PROPERTY_WELLFORMED, LtpValidationConditionOperation.EQUAL);
         if (Objects.nonNull(condition)) {
             return condition.getSeverity();
         }
@@ -271,8 +301,12 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         simpleWellFormedSeverity = severity;
     }
 
-    public void onSimpleWellFormedConditionChange(AjaxBehaviorEvent event) {
-        addOrRemoveSimpleEqualCondition(PROPERTY_WELLFORMED, VALUE_TRUE, simpleWellFormedSeverity);
+    /**
+     * Is called after the wellformed option was changed by the user. 
+     * The new value is already stored in <em>simpleWellFormedSeverity</em>.
+     */
+    public void onSimpleWellFormedConditionChange() {
+        addOrRemoveSimpleCondition(PROPERTY_WELLFORMED, LtpValidationConditionOperation.EQUAL, VALUE_TRUE, simpleWellFormedSeverity);
     }
 
     /**
@@ -281,7 +315,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      * @return the severity of a validation condition that checks the valid property or null if not such condition exists
      */
     public LtpValidationConditionSeverity getSimpleValidCondition() {
-        LtpValidationCondition condition = findSimpleEqualCondition(PROPERTY_VALID, VALUE_TRUE);
+        LtpValidationCondition condition = findSimpleCondition(PROPERTY_VALID, LtpValidationConditionOperation.EQUAL);
         if (Objects.nonNull(condition)) {
             return condition.getSeverity();
         }
@@ -296,7 +330,78 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         simpleValidSeverity = severity;
     }
 
-    public void onSimpleValidConditionChange(AjaxBehaviorEvent event) {
-        addOrRemoveSimpleEqualCondition(PROPERTY_VALID, VALUE_TRUE, simpleValidSeverity);
+    /**
+     * Is called after the user changed the severity of the valid option.
+     */
+    public void onSimpleValidConditionChange() {
+        addOrRemoveSimpleCondition(PROPERTY_VALID, LtpValidationConditionOperation.EQUAL, VALUE_TRUE, simpleValidSeverity);
+    }
+
+    /**
+     * Return the filename pattern that needs to match each file of a folder.
+     * 
+     * @return the filename pattern
+     */
+    public String getSimpleFilenamePattern() {
+        LtpValidationCondition condition = findSimpleCondition(PROPERTY_FILENAME, LtpValidationConditionOperation.MATCHES);
+        if (Objects.nonNull(condition) && Objects.nonNull(condition.getValues()) && condition.getValues().size() == 1) {
+            return condition.getValues().get(0);
+        }
+        return simpleFilenamePattern;
+    }
+
+    /**
+     * Sets the filename pattern that needs to match each file of a folder.
+     * 
+     * @param simpleFilenamePattern the filname pattern
+     */
+    public void setSimpleFilenamePattern(String simpleFilenamePattern) {
+        this.simpleFilenamePattern = simpleFilenamePattern;
+    }
+
+    /**
+     * Is called when the user changes the provided filename pattern.
+     */
+    public void onSimpleFilenamePatternChange() {
+        addOrRemoveSimpleCondition(
+            PROPERTY_FILENAME, 
+            LtpValidationConditionOperation.MATCHES, 
+            simpleFilenamePattern, 
+            simpleFilenamePatternSeverity
+        );
+    }
+
+    /**
+     * Return the severity of a validation condition matching the filename to a provided pattern.
+     * 
+     * @return the severity of a validation condition matching the filename to a provided pattern
+     */
+    public LtpValidationConditionSeverity getSimpleFilenamePatternSeverity() {
+        LtpValidationCondition condition = findSimpleCondition(PROPERTY_FILENAME, LtpValidationConditionOperation.MATCHES);
+        if (Objects.nonNull(condition)) {
+            return condition.getSeverity();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the severity of the validation condition matching the filename to a provided pattern.
+     * 
+     * @param severity the severity
+     */
+    public void setSimpleFilenamePatternSeverity(LtpValidationConditionSeverity severity) {
+        simpleFilenamePatternSeverity = severity;
+    }
+
+    /**
+     * Is called when the user changes the severity for the validation condition matching the filename to a provided pattern.
+     */
+    public void onSimpleFilenamePatternSeverityChange() {
+        addOrRemoveSimpleCondition(
+            PROPERTY_FILENAME, 
+            LtpValidationConditionOperation.MATCHES, 
+            simpleFilenamePattern, 
+            simpleFilenamePatternSeverity
+        );
     }
 }
