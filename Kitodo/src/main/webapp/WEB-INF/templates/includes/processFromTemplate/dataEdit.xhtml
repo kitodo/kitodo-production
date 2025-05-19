@@ -60,12 +60,12 @@
     <p:panelGrid id="processData"
                  layout="grid"
                  columns="2">
-
+        <p:panel styleClass="column-wrapper">
             <div class="import-table-section-title">
                 <h:outputText value="#{msgs.basicData}"/>
             </div>
             <p:panelGrid id="processDataEditGrid" layout="grid" columns="1">
-
+                <p:panel styleClass="column-wrapper">
                     <div>
                         <!-- process title -->
                         <p:outputLabel for="processTitle"
@@ -148,9 +148,10 @@
                             <p:ajax event="change"/>
                         </p:inputText>
                     </div>
-
+                </p:panel>
             </p:panelGrid>
-
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div class="import-table-section-title">
                 <h:outputText value="#{msgs.metadata}"/>
                 <h:panelGroup id="addMetadataButtonWrapper"
@@ -158,6 +159,7 @@
                     <p:commandButton id="addMetadataButton"
                                      value="#{msgs['dataEditor.addMetadata.newMetadata']}"
                                      icon="fa fa-plus"
+                                     iconPos="right"
                                      styleClass="secondary"
                                      update="addMetadataDialog"
                                      disabled="#{not CreateProcessForm.addMetadataDialog.metadataAddableToStructureElement()}"
@@ -174,6 +176,7 @@
                     <ui:param name="Form" value="#{CreateProcessForm}"/>
                 </ui:include>
             </h:panelGroup>
+        </p:panel>
     </p:panelGrid>
 
     <p:remoteCommand name="preserveMetadata"

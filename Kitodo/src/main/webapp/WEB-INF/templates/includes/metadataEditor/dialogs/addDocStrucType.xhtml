@@ -47,6 +47,7 @@
                 <!-- option to link to existing process -->
                 <h:panelGrid rendered="#{not viewsSelected}">
                     <p:selectBooleanCheckbox itemLabel="#{msgs.link}"
+                                             styleClass="switch"
                                              title="#{msgs.link}"
                                              value="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
                         <p:ajax event="change"

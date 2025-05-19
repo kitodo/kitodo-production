@@ -1510,6 +1510,10 @@ body .statusColumn .ui-button {
     margin: 0 0 5px 5px;
 }
 
+#changeShortcutsDialog {
+    max-height: calc(100% - 100px);
+}
+
 #changeShortcutsDialog_content {
     overflow: visible;
 }
@@ -1648,9 +1652,8 @@ Import form
 #editForm\:processFromTemplateTabView\:processData_content,
 #editForm\:processFromTemplateTabView\:processData_content > div.ui-g,
 #editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell,
-#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panelgrid > .ui-panelgrid-content,
-#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panelgrid > .ui-panelgrid-content > .ui-g,
-#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panelgrid > .ui-panelgrid-content > .ui-g > div.ui-panelgrid-cell {
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panel,
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panel > .ui-panel-content {
     height: 100%;
 }
 
@@ -2430,18 +2433,6 @@ Metadata Editor
     display: block;
     overflow: hidden;
     position: relative;
-}
-
-#errorMessagesClose,
-#error-messages .ui-messages-close {
-    position: absolute;
-    top: calc(var(--input-padding) + 10px);
-    right: var(--default-full-size);
-    color: white;
-}
-
-#errorMessagesClose:hover {
-    cursor: pointer;
 }
 
 #messagesWrapper #error-messages {
@@ -3465,22 +3456,6 @@ button.settings-loaded-task::after {
     max-width: unset;
 }
 
-#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-icon-search,
-#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search {
-    top: 8px;
-    right: 6px;
-    text-indent: unset;
-    background: none;
-}
-
-#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-icon-search::after,
-#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search::after {
-    font-family: FontAwesome;
-    content: "\f002";
-    text-indent: unset;
-    color: var(--blue);
-}
-
 #editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter {
     padding-right: 26px;
@@ -3563,6 +3538,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 }
 
 #imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
+    background: transparent;
     padding: 0;
 }
 
@@ -4546,8 +4522,7 @@ body .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon::before {
     padding: .75em 1.5em;
 }
 
-.import-table-section-title,
-.ui-panelgrid-cell > .import-table-section-title {
+.ui-panel.column-wrapper > .ui-panel-content > .import-table-section-title {
     font-weight: bold;
     height: 36px;
     margin-bottom: 0.5em;
