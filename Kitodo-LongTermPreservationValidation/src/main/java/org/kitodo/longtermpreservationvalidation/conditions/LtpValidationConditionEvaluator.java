@@ -280,7 +280,6 @@ public class LtpValidationConditionEvaluator {
             if (pattern.matcher(value).matches()) {
                 return new LtpValidationConditionResult(true, null, value);
             }
-            
             return getConditionFalseResult(value);
         } catch (PatternSyntaxException e) {
             return new LtpValidationConditionResult(
@@ -288,7 +287,7 @@ public class LtpValidationConditionEvaluator {
                 LtpValidationConditionError.PATTERN_INVALID_SYNTAX, 
                 value
             );
-        }        
+        }
     }
 
     /**
@@ -321,7 +320,7 @@ public class LtpValidationConditionEvaluator {
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.ONE_OF)) {
             return evaluateOneOfCondition(value, condition);
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.MATCHES)) {
-            return evaluateMatchesCondition(value, condition);        
+            return evaluateMatchesCondition(value, condition);
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.NONE_OF)) {
             return evaluateNoneOfCondition(value, condition);
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.LARGER_THAN)) {

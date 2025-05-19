@@ -49,12 +49,12 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      * user, such that a user does not need to learn how validation conditions work and how they need to 
      * be specified.
      * 
-     * If a non-null value is selected by a user, a corresponding validation condition is added to the 
+     * <p>If a non-null value is selected by a user, a corresponding validation condition is added to the 
      * list of conditions. If a user removes the option (sets it to null), the corresponding validation 
-     * condition is removed from the list of validation conditions.
+     * condition is removed from the list of validation conditions.</p>
      * 
-     * Simplified options take precedence over manually specifying the same condition in the list of 
-     * validation conditions.
+     * <p>Simplified options take precedence over manually specifying the same condition in the list of 
+     * validation conditions.</p>
      */
     private LtpValidationConditionSeverity simpleWellFormedSeverity;
     private LtpValidationConditionSeverity simpleValidSeverity;

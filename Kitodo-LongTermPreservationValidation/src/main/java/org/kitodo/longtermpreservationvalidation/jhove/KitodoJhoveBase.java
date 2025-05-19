@@ -134,41 +134,15 @@ public class KitodoJhoveBase {
     }
 
     /**
-     * Validates a file.
-     *
-     * @param filepath filepath of file that is validated
-     * @param fileType target file type that the file is supposed to be
-     * @param conditions list of validation conditions that need to be checked
+     * Validate an existing file.
+     * 
+     * @param module the JHove module that is used to validate the exsting file
+     * @param file the existing file
+     * @param conditions the validation conditions that are checked
+     * @return the validation result
      */
-    public static LtpValidationResult validate(
-        String filepath, 
-        FileType fileType, 
-        List<? extends LtpValidationConditionInterface> conditions
-    ) {
-        if (!getSupportedFileTypes().contains(fileType)) {
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.FILE_TYPE_NOT_SUPPORTED)
-            );
-        }
-
-        Module module = getJhoveBase().getModule(MODULE_NAMES_BY_FILE_TYPE.get(fileType));
-        RepInfo info = new RepInfo(filepath);
-        File file = new File(filepath);
-
-        if (!file.exists()) {
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.FILE_NOT_FOUND)
-            );
-        }
-
-        if (!file.canRead()) {
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.IO_ERROR)
-            );
-        }
+    private static LtpValidationResult validateFile(Module module, File file, List<? extends LtpValidationConditionInterface> conditions) {
+        RepInfo info = new RepInfo(file.getAbsolutePath());
 
         try {
             base.processFile(app, module, false, file, info);
@@ -194,5 +168,45 @@ public class KitodoJhoveBase {
             conditionResults, 
             KitodoJhoveRepInfoParser.repInfoMessagesToStringList(info)
         );
+    }
+
+    /**
+     * Validates a file.
+     *
+     * @param filepath filepath of file that is validated
+     * @param fileType target file type that the file is supposed to be
+     * @param conditions list of validation conditions that need to be checked
+     * @return the validation result
+     */
+    public static LtpValidationResult validate(
+        String filepath, 
+        FileType fileType, 
+        List<? extends LtpValidationConditionInterface> conditions
+    ) {
+        if (!getSupportedFileTypes().contains(fileType)) {
+            return new LtpValidationResult(
+                LtpValidationResultState.ERROR, 
+                Collections.singletonList(LtpValidationError.FILE_TYPE_NOT_SUPPORTED)
+            );
+        }
+
+        File file = new File(filepath);
+
+        if (!file.exists()) {
+            return new LtpValidationResult(
+                LtpValidationResultState.ERROR, 
+                Collections.singletonList(LtpValidationError.FILE_NOT_FOUND)
+            );
+        }
+
+        if (!file.canRead()) {
+            return new LtpValidationResult(
+                LtpValidationResultState.ERROR, 
+                Collections.singletonList(LtpValidationError.IO_ERROR)
+            );
+        }
+
+        Module module = getJhoveBase().getModule(MODULE_NAMES_BY_FILE_TYPE.get(fileType));
+        return validateFile(module, file, conditions);
     }
 }
