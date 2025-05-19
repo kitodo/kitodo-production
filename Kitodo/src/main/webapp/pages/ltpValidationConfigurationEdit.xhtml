@@ -102,7 +102,7 @@
                                                  disabled="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0 or isViewMode}"
                                                  styleClass="input"
                                                  onchange="toggleSave()">
-                                    <f:selectItems value="#{ProjectForm.mimeTypes}"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.mimeTypes}"/>
                                 </p:selectOneMenu>
                                 <p:commandButton id="mimeTypeHelp"
                                                 type="button"

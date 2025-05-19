@@ -13,17 +13,25 @@ package org.kitodo.production.forms;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeverity;
+import org.kitodo.config.xml.fileformats.FileFormat;
+import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.LtpValidationCondition;
 import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -43,6 +51,11 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     private static final String PROPERTY_VALID = "valid";
     private static final String PROPERTY_FILENAME = "filename";
     private static final String VALUE_TRUE = "true";
+
+    /**
+     * Cash for the list of possible mime types.
+     */
+    private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
      * The following variables (prefixed with "simple") are used for providing simplified options to the 
@@ -118,6 +131,31 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      */
     public void setConfiguration(LtpValidationConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * Returns the list of possible mime types that are currently supported for validation.
+     *
+     * @return possible mime types
+     */
+    public Map<String, String> getMimeTypes() {
+        if (mimeTypes.isEmpty()) {
+            try {
+                Locale language = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+                List<LanguageRange> languages = Collections.singletonList(new LanguageRange(language.toLanguageTag()));
+                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream()
+                        .filter((ff) -> ff.getFileType().isPresent())
+                        .collect(Collectors.toMap(
+                            locale -> locale.getLabel(languages), 
+                            FileFormat::getMimeType, 
+                            (prior, recent) -> recent,
+                            TreeMap::new
+                        ));
+            } catch (JAXBException | RuntimeException e) {
+                Helper.setErrorMessage(ERROR_READING, new Object[] {e.getMessage() }, logger, e);
+            }
+        }
+        return mimeTypes;
     }
 
     /**
