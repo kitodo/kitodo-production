@@ -188,11 +188,6 @@ body .ui-widget-content .ui-button {
     margin-right: 0;
 }
 
-.ui-button .ui-icon,
-.ui-widget-content .ui-button .ui-icon {
-    right: 10px;
-}
-
 body .ui-button.ui-button-text-icon-right .ui-button-text {
     padding: 0 calc(1em + 20px) 0 var(--input-padding);
 }
@@ -455,9 +450,15 @@ body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui
 
 .ui-treenode-icon.ui-icon {
     background-image: none;
+    height: 2rem;
     margin-right: 5px;
     overflow: visible;
     text-indent: 0;
+    width: 1rem;
+}
+
+body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-tree-toggler {
+    margin: 0;
 }
 
 .ui-tree-toggler.ui-icon {
@@ -469,7 +470,8 @@ body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui
 .ui-treenode-icon.ui-icon::after,
 .ui-tree-toggler.ui-icon::after {
     font-family: FontAwesome;
-    position: absolute;
+    line-height: 2rem;
+    text-align: center;
 }
 
 .ui-icon.ui-icon-document::after {
@@ -494,12 +496,13 @@ body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui
 .ui-tree-toggler.ui-icon.ui-icon-triangle-1-s::after {
     color: var(--blue);
     content: "\f107";
+    display: inline-block;
     transition: .3s;
     font-size: large;
 }
 
-.ui-tree-toggler.ui-icon.ui-icon-triangle-1-s::after {
-    transform: rotateX(180deg);
+.ui-tree-toggler.ui-icon.ui-icon-triangle-1-e::after {
+    transform: rotateZ(-90deg);
     transition: .3s;
 }
 
@@ -642,6 +645,10 @@ body .ui-picklist-list-wrapper {
     color: var(--pure-white);
 }
 
+body .ui-selectonemenu.ui-widget {
+    background: var(--pure-white);
+}
+
 .ui-selectonemenu .ui-selectonemenu-trigger {
     width: auto;
     box-sizing: border-box;
@@ -662,17 +669,20 @@ body .ui-selectonemenu .ui-selectonemenu-trigger {
     padding: .5em var(--input-padding);
 }
 
+body .ui-selectonemenu .ui-selectonemenu-trigger {
+    background: var(--pure-white);
+    border: solid var(--default-border-width) var(--blue);
+}
+
 .ui-selectcheckboxmenu.ui-state-hover .ui-selectcheckboxmenu-label,
-.ui-selectonemenu.ui-state-hover .ui-selectonemenu-label,
-.ui-selectonemenu.ui-state-hover .ui-selectonemenu-trigger {
+.ui-selectonemenu.ui-state-hover .ui-selectonemenu-label {
     background: transparent;
     border-color: var(--focused-blue);
     color: var(--focused-blue);
 }
 
 .ui-selectcheckboxmenu.ui-state-focus .ui-selectcheckboxmenu-label,
-.ui-selectonemenu.ui-state-focus .ui-selectonemenu-label,
-.ui-selectonemenu.ui-state-focus .ui-selectonemenu-trigger {
+.ui-selectonemenu.ui-state-focus .ui-selectonemenu-label {
     background: transparent;
     border-color: var(--focused-blue);
     color: var(--focused-blue);
@@ -999,6 +1009,14 @@ tbody.ui-widget-content {
     color: var(--carbon-blue);
 }
 
+body .ui-tree .ui-tree-container .ui-treenode {
+    padding: 0;
+}
+
+body .ui-tree .ui-tree-container .ui-treenode-outline {
+    box-shadow: none;
+}
+
 .ui-datatable th.ui-state-default,
 .ui-treetable th.ui-state-default,
 .ui-treenode .ui-state-default {
@@ -1006,6 +1024,24 @@ tbody.ui-widget-content {
     background: var(--cloudy-gray);
     text-align: left !important;
     border: 0;
+}
+
+body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content.ui-state-highlight,
+body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-label.ui-state-highlight {
+    background: transparent;
+}
+
+body .ui-tree .ui-treenode.ui-treenode-selected > .ui-treenode-content,
+body .ui-tree .ui-treenode.ui-treenode-selected > .ui-treenode-content.ui-state-highlight,
+body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content.ui-state-highlight .ui-tree-toggler,
+body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content.ui-state-highlight .ui-treenode-icon,
+body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content .ui-treenode-label.ui-state-highlight {
+    background: var(--blue);
+    color: var(--pure-white);
+}
+
+body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content.ui-state-highlight .ui-tree-toggler::after {
+    color: var(--pure-white);
 }
 
 .ui-treenode .ui-state-hover {
@@ -1476,7 +1512,6 @@ body .ui-dialog .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
 }
 
 .ui-dialog div.dialogFieldWrapper {
-    max-height: calc(100% - 100px);
     overflow-y: auto;
 }
 
@@ -1802,50 +1837,90 @@ body .m-0{
 }
 
 /* Messages */
-.ui-messages-error.ui-corner-all,
-.ui-messages-warn.ui-corner-all,
-.ui-messages-info.ui-corner-all {
+body .ui-messages .ui-messages-error,
+body .ui-messages .ui-messages-warn,
+body .ui-messages .ui-messages-info {
     border: 0;
     border-radius: 0;
-    color: var(--pure-white);
 }
 
-.ui-messages-error.ui-corner-all ul,
-.ui-messages-warn.ui-corner-all ul,
-.ui-messages-info.ui-corner-all ul {
+body .ui-messages .ui-messages-error.ui-corner-all ul,
+body .ui-messages .ui-messages-warn.ui-corner-all ul,
+body .ui-messages .ui-messages-info.ui-corner-all ul {
     max-height: 80px;
     overflow-y: auto;
 }
 
-.ui-messages-error.ui-corner-all span.ui-icon-close,
-.ui-messages-warn.ui-corner-all span.ui-icon-close,
-.ui-messages-info.ui-corner-all span.ui-icon-close {
-    background: none;
+#messagesWrapper .ui-messages-close,
+body .ui-messages .ui-messages-close,
+body .ui-messages .ui-messages-info .ui-messages-close,
+body .ui-messages .ui-messages-warn .ui-messages-close,
+body .ui-messages .ui-messages-error .ui-messages-close {
+    background: transparent;
+    color: var(--pure-white);
+    position: absolute;
+    right: var(--default-full-size);
+    top: calc(var(--input-padding) + 10px);
 }
 
-.ui-messages-error.ui-corner-all span.ui-icon-close:before,
-.ui-messages-warn.ui-corner-all span.ui-icon-close:before,
-.ui-messages-info.ui-corner-all span.ui-icon-close:before {
-    color: var(--pure-white);
-    content: "\f00d";
-    display: inherit;
-    font: normal normal normal large/1 FontAwesome;
-    text-indent: 0;
+#messagesWrapper .ui-messages-close:hover,
+body .ui-messages .ui-messages-close:hover,
+body .ui-messages .ui-messages-info .ui-messages-close:hover,
+body .ui-messages .ui-messages-warn .ui-messages-close:hover,
+body .ui-messages .ui-messages-error .ui-messages-close:hover {
+    background: var(--pure-white);
 }
 
 /* Info messages */
-.ui-messages-info {
+body .ui-message-info,
+body .ui-messages-info,
+body .ui-messages .ui-messages-info {
     background-color: var(--green);
+    color: var(--pure-white);
+}
+
+body .ui-messages .ui-messages-info .ui-messages-close:hover {
+    color: var(--green);
 }
 
 /* Warning messages */
-.ui-messages-warn {
+body .ui-message-warn,
+body .ui-messages-warn,
+body .ui-messages .ui-messages-warn {
     background-color: var(--light-orange);
+    color: var(--pure-white);
+}
+
+body .ui-messages .ui-messages-warn .ui-messages-close:hover {
+    color: var(--light-orange);
 }
 
 /* Error messages */
-.ui-messages-error {
+body .ui-message-error,
+body .ui-messages-error,
+body .ui-messages .ui-messages-error {
     background-color: var(--orange);
+    color: var(--pure-white);
+}
+
+body .ui-messages .ui-messages-error .ui-messages-close:hover {
+    color: var(--orange);
+}
+
+#messagesWrapper .ui-messages-close {
+    border-radius: 50%;
+    height: 2rem;
+    text-align: center;
+    width: 2rem;
+}
+
+#messagesWrapper .ui-messages-close > i {
+    line-height: 2rem;
+}
+
+#messagesWrapper .ui-messages-close:hover {
+    color: var(--orange);
+    cursor: pointer;
 }
 
 .pagination-select-items .ui-chkbox {
