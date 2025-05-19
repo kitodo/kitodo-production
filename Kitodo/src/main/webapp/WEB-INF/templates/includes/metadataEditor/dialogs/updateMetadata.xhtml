@@ -29,7 +29,7 @@
         <h:form id="updateMetadataForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <h3>#{msgs['updateMetadata']}<h:panelGroup> <h:outputText styleClass="set-apart" value="(#{DataEditorForm.getProcessRecordIdentifier()})"/></h:panelGroup>
+                    <h3>#{msgs['updateMetadata']}<h:panelGroup> <h:outputText styleClass="set-apart" value="(#{UpdateMetadataDialog.recordIdentifier})"/></h:panelGroup>
                         <p:commandButton id="updateMetadataHelp"
                                          type="button"
                                          styleClass="help-button"
@@ -44,7 +44,7 @@
                                   styleClass="not-scrollable dialogFieldWrapper">
                         <p:dataTable id="metadataUpdateTable"
                                      widgetVar="metadataUpdateTable"
-                                     value="#{DataEditorForm.updateMetadataDialog.metadataComparisons}"
+                                     value="#{UpdateMetadataDialog.metadataComparisons}"
                                      scrollable="#{true}"
                                      scrollHeight="400"
                                      rowIndexVar="rowIdx"
@@ -189,7 +189,7 @@
                           styleClass="dialogButtonWrapper">
                 <p:commandButton value="#{msgs['apply']}"
                                  id="apply"
-                                 action="#{DataEditorForm.applyMetadataUpdate()}"
+                                 action="#{UpdateMetadataDialog.applyMetadataUpdate()}"
                                  update="metadataAccordion:metadata:metadataTable
                                          metadataAccordion:addMetadataButtonWrapper
                                          @(.ui-tree, .stripe)"

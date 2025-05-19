@@ -421,7 +421,8 @@ public class UploadFileDialog {
         if (progress != 100) {
             Helper.setErrorMessage("generateMediaFailed");
             PrimeFaces.current().executeScript("PF('uploadFileDialog').hide();openValidationReport();");
-            PrimeFaces.current().ajax().update("numberOfScans", "logicalTree", "metadataAccordion:logicalMetadataWrapperPanel",
+            PrimeFaces.current().ajax().update("numberOfScans", "logicalTree", 
+                    "metadataAccordion:logicalMetadataWrapperPanel", "metadataAccordion:logicalMetadataHeader",
                     "paginationForm:paginationWrapperPanel", "galleryWrapperPanel");
         } else {
             Helper.setMessage(Helper.getTranslation("uploadMediaCompleted"));

@@ -104,7 +104,7 @@ public class CalendarServiceIT {
     }
 
     @Test
-    public void shouldGetMetadataSummary() throws DAOException, DataException, IOException {
+    public void shouldGetMetadataSummary() throws Exception {
         Process process = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         List<ProcessDetail> addableMetadata = CalendarService.getAddableMetadataTable(process);
         Course course = new Course();

@@ -11,11 +11,22 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataformat.Division;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
@@ -24,15 +35,25 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
 
-public class UpdateMetadataDialog {
+/**
+ * Manages the dialog when a user clicks on the update metadata button.
+ * 
+ * <p>Re-imports the catalog record for a known record identifier and import configuration
+ * and visualizes the differences between the current metadata and re-imported metadata of the
+ * catalog.</p>
+ */
+@Named("UpdateMetadataDialog")
+@ViewScoped
+public class UpdateMetadataDialog implements Serializable {
 
-    private final DataEditorForm dataEditor;
+    private static final Logger logger = LogManager.getLogger(UpdateMetadataDialog.class);
+
+    @Inject
+    private DataEditorForm dataEditor;
 
     private List<MetadataComparison> metadataComparisons = new LinkedList<>();
 
-    UpdateMetadataDialog(DataEditorForm dataEditor) {
-        this.dataEditor = dataEditor;
-    }
+    private String recordIdentifier = "";
 
     /**
      * Get list of metadata comparisons displayed in 'UpdateMetadataDialog'.
@@ -44,10 +65,72 @@ public class UpdateMetadataDialog {
     }
 
     /**
+     * Return catalog identifier of record whose metadata is imported.
+     * 
+     * <p>The record identifier is shown to the user in the metadata comparison dialog.</p>
+     * 
+     * @return the record identifier
+     */
+    public String getRecordIdentifier() {
+        return this.recordIdentifier;
+    }
+
+    /**
+     * Set record identifier of record whose metadata is imported.
+     * 
+     * <p>The record identifier is shown to the user in the metadata comparison dialog.</p>
+     * 
+     * @param recordIdentifier the record identifier
+     */
+    public void setRecordIdentifier(String recordIdentifier) {
+        this.recordIdentifier = recordIdentifier;
+    }
+
+    /**
+     * Perform metadata update for current process.
+     */
+    public void applyMetadataUpdate() {
+        Division<?> division = dataEditor.getMetadataPanel().getLogicalMetadataTable().getDivision();
+        if (Objects.nonNull(division) && division instanceof LogicalDivision) {
+            DataEditorService.updateMetadataWithNewValues((LogicalDivision) division, getMetadataComparisons());
+            dataEditor.getMetadataPanel().update();
+        } else {
+            Helper.setErrorMessage("cannot update metadata of non-logical division");
+        }        
+    }
+
+    /**
+     * Check and return whether conditions for metadata update are met or not.
+     *
+     * @return whether metadata of process can be updated
+     */
+    public boolean canUpdateMetadata() {
+        try {
+            return DataEditorService.canUpdateCatalogMetadata(
+                dataEditor.getProcess(), dataEditor.getWorkpiece(), dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle()
+            );
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return false;
+        }
+    }
+
+    /**
+     * Is called when a user clicks on the update metadata button of the logical metadata panel.
+     */
+    public void onUpdateCatalogMetadataClick() {
+        if (canUpdateMetadata()) {
+            // update metadata from catalog using existing record identifier and import configuration
+            updateCatalogMetadata();
+        }
+    }
+
+    /**
      * Trigger re-import of metadata of current process.
      */
     public void updateCatalogMetadata() {
         if (dataEditor.getSelectedStructure().isPresent()) {
+            setRecordIdentifier(dataEditor.getProcessRecordIdentifier());
             try {
                 HashSet<Metadata> existingMetadata = getMetadata(dataEditor.getMetadataPanel().getLogicalMetadataRows());
                 metadataComparisons = DataEditorService.reimportCatalogMetadata(dataEditor.getProcess(),

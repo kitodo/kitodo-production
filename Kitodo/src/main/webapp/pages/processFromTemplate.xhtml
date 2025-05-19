@@ -28,7 +28,7 @@
         <f:viewParam name="parentId"/>
         <!--@elvariable id="referrer" type="java.lang.String"-->
         <f:viewParam name="referrer"/>
-        <f:viewAction action="#{CreateProcessForm.prepareProcess(templateId, projectId, referrer, parentId)}"/>
+        <f:viewAction action="#{CreateProcessForm.prepareProcess(templateId, projectId, referrer, parentId, true)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -124,9 +124,18 @@
 
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/recordIdentifierMissingDialog.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/import.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/import.xhtml">
+            <ui:param name="searchActionBean" value="#{CreateProcessForm.catalogImportDialog}" />
+            <ui:param name="searchActionMethod" value="search" />
+            <ui:param name="searchUpdate" value="editForm hitlist" />
+            <ui:param name="showImportOptions" value="true" />
+        </ui:include>
+        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/hitlistDialog.xhtml">
+            <ui:param name="selectRecordActionBean" value="#{CreateProcessForm.catalogImportDialog}" />
+            <ui:param name="selectRecordActionMethod" value="getSelectedRecord" />
+            <ui:param name="selectRecordUpdate" value="editForm" />
+        </ui:include>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/fileUpload.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/hitlistDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/exemplarRecords.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/errorPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/manyChildrenWarning.xhtml"/>

@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -46,8 +48,10 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessSimpleMetadata;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
@@ -223,10 +227,12 @@ public class CalendarForm implements Serializable {
      * @param granularity as org.kitodo.production.model.bibliography.course.Granularity
      */
     public void setGranularity(Granularity granularity) {
-        this.granularity = granularity;
-        course.splitInto(granularity);
-        if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
-            PrimeFaces.current().ajax().update("createProcessesConfirmDialog");
+        if (Objects.nonNull(granularity)) {
+            this.granularity = granularity;
+            course.splitInto(granularity);
+            if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
+                PrimeFaces.current().ajax().update("createProcessesConfirmDialog");
+            }
         }
     }
 
@@ -614,12 +620,17 @@ public class CalendarForm implements Serializable {
                 return;
             }
             Document xml = XMLUtils.load(uploadedFile.getInputStream());
-            course = new Course(xml);
+            List<ProcessDetail> processDetails = CalendarService
+                    .getAddableMetadataTable(ServiceManager.getProcessService().getById(parentId));
+            Map<String, ProcessSimpleMetadata> processDetailsByMetadataID = processDetails.stream()
+                    .filter(ProcessSimpleMetadata.class::isInstance).map(ProcessSimpleMetadata.class::cast)
+                    .collect(Collectors.toMap(ProcessDetail::getMetadataID, Function.identity()));
+            course = new Course(xml, processDetailsByMetadataID);
             Helper.removeManagedBean("GranularityForm");
             navigate(course.get(0));
         } catch (SAXException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, "errorSAXException", logger, e);
-        } catch (IOException e) {
+        } catch (IOException | DataException | DAOException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, e.getLocalizedMessage(), logger, e);
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage("calendar.upload.overlappingDateRanges", logger, e);
@@ -627,6 +638,8 @@ public class CalendarForm implements Serializable {
             Helper.setErrorMessage(UPLOAD_ERROR, "calendar.upload.missingMandatoryElement", logger, e);
         } catch (NullPointerException e) {
             Helper.setErrorMessage("calendar.upload.missingMandatoryValue", logger, e);
+        } catch (InvalidMetadataValueException e) {
+            Helper.setErrorMessage("calendar.upload.invalidMetadata", logger, e);
         } finally {
             uploadedFile = null;
         }
