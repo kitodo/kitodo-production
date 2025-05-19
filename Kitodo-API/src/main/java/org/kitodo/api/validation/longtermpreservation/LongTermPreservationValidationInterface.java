@@ -12,12 +12,10 @@
 package org.kitodo.api.validation.longtermpreservation;
 
 import java.net.URI;
-
-import org.kitodo.api.validation.ValidationInterface;
-import org.kitodo.api.validation.ValidationResult;
+import java.util.List;
 
 /** Validation for long-term preservation. */
-public interface LongTermPreservationValidationInterface extends ValidationInterface {
+public interface LongTermPreservationValidationInterface {
 
     /**
      * Validates a file for long-term preservation.
@@ -26,8 +24,16 @@ public interface LongTermPreservationValidationInterface extends ValidationInter
      *            The uri to the image, which should be validated.
      * @param fileType
      *            The fileType of the image at the given path.
-     * @return A validation result.
+     * @return A validation result. 
      */
-    ValidationResult validate(URI fileUri, FileType fileType);
+    LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions);
 
+    /**
+     * Based on a file type, return a list of possible properties that can be validated. 
+     * The list is used for auto-suggesting property candiates to the user.
+     * 
+     * @param filetype the file type
+     * @return a list of properties that can be extracted for a file type
+     */
+    List<String> getPossibleValidationConditionProperties(FileType filetype);
 }

@@ -405,6 +405,13 @@ public class MockDatabase {
         authorities.add(new Authority("viewAllImportConfigurations" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("deleteImportConfiguration" + CLIENT_ASSIGNABLE));
 
+        // LTP validation configurations
+        authorities.add(new Authority("addLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllLtpValidationConfigurations" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+
         // MappingFiles
         authorities.add(new Authority("addMappingFile" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editMappingFile" + CLIENT_ASSIGNABLE));
