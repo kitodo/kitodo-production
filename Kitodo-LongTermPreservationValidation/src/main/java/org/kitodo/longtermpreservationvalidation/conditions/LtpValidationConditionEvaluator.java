@@ -119,7 +119,7 @@ public class LtpValidationConditionEvaluator {
             return getConditionIncorrectNumberOfValuesResult(value);
         }
 
-        if (value.equals(condition.getValues().get(0).toLowerCase())) {
+        if (value.toLowerCase().equals(condition.getValues().get(0).toLowerCase())) {
             return new LtpValidationConditionResult(true, null, value);
         }
 
@@ -312,7 +312,7 @@ public class LtpValidationConditionEvaluator {
             );
         }
 
-        String value = properties.get(property).toLowerCase();
+        String value = properties.get(property);
 
         // check equal operation
         if (condition.getOperation().equals(LtpValidationConditionOperation.EQUAL)) {
