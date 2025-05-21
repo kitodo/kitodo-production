@@ -120,29 +120,25 @@ public class LazyProcessModel extends LazyBeanModel {
                 || sortField.equals(CREATION_DATE_FIELD)) {
             sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
         }
-        if (indexRunning()) {
-            try {
-                HashMap<String, String> filterMap = new HashMap<>();
-                if (!StringUtils.isBlank(this.filterString)) {
-                    filterMap.put(FilterService.FILTER_STRING, this.filterString);
-                }
-                setRowCount(toIntExact(((ProcessService)searchService).countResults(filterMap, this.showClosedProcesses,
-                        this.showInactiveProjects)));
-                entities = ((ProcessService)searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
-                        this.showClosedProcesses, this.showInactiveProjects);
-                logger.trace("{} entities loaded!", entities.size());
-                return stopwatch.stop(entities);
-            } catch (DAOException e) {
-                setRowCount(0);
-                logger.error(e.getMessage(), e);
-            } catch (FilterException e) {
-                setRowCount(0);
-                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
-                        + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
-                logger.error(e.getMessage(), e);
+        try {
+            HashMap<String, String> filterMap = new HashMap<>();
+            if (!StringUtils.isBlank(this.filterString)) {
+                filterMap.put(FilterService.FILTER_STRING, this.filterString);
             }
-        } else {
-            logger.info("Index not found!");
+            setRowCount(toIntExact(((ProcessService) searchService).countResults(filterMap, this.showClosedProcesses,
+                this.showInactiveProjects)));
+            entities = ((ProcessService) searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
+                this.showClosedProcesses, this.showInactiveProjects);
+            logger.trace("{} entities loaded!", entities.size());
+            return stopwatch.stop(entities);
+        } catch (DAOException e) {
+            setRowCount(0);
+            logger.error(e.getMessage(), e);
+        } catch (FilterException e) {
+            setRowCount(0);
+            PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
+                    + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
+            logger.error(e.getMessage(), e);
         }
         return stopwatch.stop(new LinkedList<>());
     }

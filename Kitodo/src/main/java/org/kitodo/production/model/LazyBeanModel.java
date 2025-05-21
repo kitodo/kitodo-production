@@ -92,45 +92,25 @@ public class LazyBeanModel extends LazyDataModel<Object> {
         Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
                 .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
                 Objects.toString(filters));
-        if (indexRunning()) {
-            try {
-                HashMap<String, String> filterMap = new HashMap<>();
-                if (!StringUtils.isBlank(this.filterString)) {
-                    filterMap.put(FilterService.FILTER_STRING, this.filterString);
-                }
-                setRowCount(toIntExact(searchService.countResults(filterMap)));
-                entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
-                logger.info("{} entities loaded!", entities.size());
-                return stopwatch.stop(entities);
-            } catch (DAOException
-                    | SQLGrammarException e) {
-                setRowCount(0);
-                logger.error(e.getMessage(), e);
-            } catch (FilterException e) {
-                setRowCount(0);
-                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
-                        + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
-                logger.error(e.getMessage(), e);
+        try {
+            HashMap<String, String> filterMap = new HashMap<>();
+            if (!StringUtils.isBlank(this.filterString)) {
+                filterMap.put(FilterService.FILTER_STRING, this.filterString);
             }
-        } else {
-            logger.info("Index not found!");
+            setRowCount(toIntExact(searchService.countResults(filterMap)));
+            entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
+            logger.info("{} entities loaded!", entities.size());
+            return stopwatch.stop(entities);
+        } catch (DAOException | SQLGrammarException e) {
+            setRowCount(0);
+            logger.error(e.getMessage(), e);
+        } catch (FilterException e) {
+            setRowCount(0);
+            PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
+                    + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
+            logger.error(e.getMessage(), e);
         }
         return stopwatch.stop(new LinkedList<>());
-    }
-
-    /**
-     * Checks and returns whether the ElasticSearch index is running or not.
-     *
-     * <p>
-     * NOTE: This wrapper function is necessary because the calling "load" function
-     * overwrites a function from the PrimeFaces LazyDataModel and therefore its
-     * method signature cannot be changed, e.g. now thrown exceptions can be added
-     * to it.
-     *
-     * @return whether the ElasticSearch index is running or not
-     */
-    boolean indexRunning() {
-        return true;
     }
 
     /**

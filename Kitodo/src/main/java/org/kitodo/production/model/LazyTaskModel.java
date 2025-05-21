@@ -81,30 +81,25 @@ public class LazyTaskModel extends LazyBeanModel {
                 || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
             sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
         }
-        if (indexRunning()) {
-            try {
-                HashMap<String, String> filterMap = new HashMap<>();
-                if (!StringUtils.isBlank(this.filterString)) {
-                    filterMap.put(FilterService.FILTER_STRING, this.filterString);
-                }
-                setRowCount(toIntExact(((TaskService)searchService).countResults(filterMap, this.onlyOwnTasks,
-                        this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction)));
-                entities = ((TaskService)searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
-                        this.onlyOwnTasks, this.hideCorrectionTasks, this.showAutomaticTasks,
-                        this.taskStatusRestriction);
-                logger.trace("{} entities loaded!", entities.size());
-                return stopwatch.stop(entities);
-            } catch (DAOException e) {
-                setRowCount(0);
-                logger.error(e.getMessage(), e);
-            } catch (FilterException e) {
-                setRowCount(0);
-                PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
-                        + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
-                logger.error(e.getMessage(), e);
+        try {
+            HashMap<String, String> filterMap = new HashMap<>();
+            if (!StringUtils.isBlank(this.filterString)) {
+                filterMap.put(FilterService.FILTER_STRING, this.filterString);
             }
-        } else {
-            logger.info("Index not found!");
+            setRowCount(toIntExact(((TaskService) searchService).countResults(filterMap, this.onlyOwnTasks,
+                this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction)));
+            entities = ((TaskService) searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
+                this.onlyOwnTasks, this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction);
+            logger.trace("{} entities loaded!", entities.size());
+            return stopwatch.stop(entities);
+        } catch (DAOException e) {
+            setRowCount(0);
+            logger.error(e.getMessage(), e);
+        } catch (FilterException e) {
+            setRowCount(0);
+            PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage("
+                    + "{'summary':'Filter error','detail':'" + e.getMessage() + "','severity':'error'});");
+            logger.error(e.getMessage(), e);
         }
         return stopwatch.stop(new LinkedList<>());
     }
