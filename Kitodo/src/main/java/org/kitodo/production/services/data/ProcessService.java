@@ -1450,7 +1450,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      */
     public void downloadImages(Process process, URI userHome, String atsPpnBand, final String directorySuffix)
             throws IOException {
-        process.getProject();
 
         // determine the output path
         URI tifDirectory = getImagesTifDirectory(true, process.getId(), process.getTitle(),
