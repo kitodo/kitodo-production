@@ -51,7 +51,7 @@ public class BeanQuery {
             + "WHEN task.processingBegin IS NOT NULL THEN task.processingBegin "
             + "ELSE task.processingEnd END) FROM Task task WHERE task.process = process "
             + "AND (task.processingBegin IS NOT NULL OR task.processingEnd IS NOT NULL))";
-    private final FilterService fileterService = ServiceManager.getFilterService();
+    private final FilterService filterService = ServiceManager.getFilterService();
     private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;
     private final String className;
@@ -305,7 +305,7 @@ public class BeanQuery {
      */
     public void restrictWithUserFilterString(String filterString) {
         int userFilterCount = 0;
-        for (var groupFilter : fileterService.parse(filterString, beanClass.isAssignableFrom(Process.class))
+        for (var groupFilter : filterService.parse(filterString, beanClass.isAssignableFrom(Process.class))
                 .entrySet()) {
             List<String> groupFilters = new ArrayList<>();
             for (UserSpecifiedFilter searchFilter : groupFilter.getValue()) {
