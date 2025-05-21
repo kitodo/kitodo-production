@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
@@ -46,6 +47,8 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     }
 
     private static volatile ProjectService instance = null;
+
+    private final UserService userService = ServiceManager.getUserService();
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -233,7 +236,11 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
      *             on errors
      */
     public List<Project> findAllProjectsForCurrentUser() throws DAOException {
-        return ServiceManager.getUserService().getCurrentUser().getProjects();
+        List<Project> allUsersProjects = userService.getCurrentUser().getProjects();
+        Client sessionClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        List<Project> usersProjectsForSelectedClient = allUsersProjects.stream().filter(project -> Objects.equals(
+            project.getClient(), sessionClient)).collect(Collectors.toList());
+        return usersProjectsForSelectedClient;
     }
 
     /**
