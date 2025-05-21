@@ -76,7 +76,7 @@ class ServerConnectionChecker implements Runnable {
     /**
      * Get search server information.
      */
-    private static final String downloadServerInformation() {
+    private static String downloadServerInformation() {
         try (InputStream greetStream = ConfigCore.getSearchServerUrl().openStream();
                 Scanner scanner = new Scanner(greetStream, StandardCharsets.US_ASCII)) {
             scanner.useDelimiter("\\A");
