@@ -404,7 +404,9 @@ public class BeanQuery {
         StringBuilder query = new StringBuilder(512);
         query.append("SELECT DISTINCT ").append(varName).append('.').append(field).append(' ');
         innerFormQuery(query);
-        query.append(" ORDER BY ").append(varName).append('.').append(field).append(" ASC");
+        if (sorted) {
+            query.append(" ORDER BY ").append(varName).append('.').append(field).append(" ASC");
+        }
         return query.toString();
     }
 
