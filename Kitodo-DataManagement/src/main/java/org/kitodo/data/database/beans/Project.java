@@ -34,7 +34,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PostUpdate;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
@@ -101,9 +100,6 @@ public class Project extends BaseBean implements Comparable<Project> {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Process> processes;
-
-    @Transient
-    private boolean hasProcesses = true;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
