@@ -132,7 +132,7 @@ enum FilterField {
      * @param pseudoword
      *            auxiliary term for searching the index
      */
-    private FilterField(String processTitleQuery, String taskTitleQuery, String processIdQuery, String taskIdQuery,
+    FilterField(String processTitleQuery, String taskTitleQuery, String processIdQuery, String taskIdQuery,
             Object queryObject, String searchField, String pseudoword) {
         this.processTitleQuery = processTitleQuery;
         this.taskTitleQuery = taskTitleQuery;
