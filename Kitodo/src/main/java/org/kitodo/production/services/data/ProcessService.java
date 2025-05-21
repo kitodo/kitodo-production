@@ -282,6 +282,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public Long countResults(Map<?, String> filters, boolean showClosedProcesses, boolean showInactiveProjects)
             throws DAOException {
 
+        BeanQuery query = createProcessQuery(filters, showClosedProcesses, showInactiveProjects);
+        return count(query.formCountQuery(), query.getQueryParameters());
+    }
+
+    private BeanQuery createProcessQuery(Map<?, String> filters, boolean showClosedProcesses,
+            boolean showInactiveProjects) {
+
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
         if (Objects.nonNull(filters)) {
@@ -300,7 +307,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             project -> showInactiveProjects || project.isActive()).map(Project::getId).collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
         query.performIndexSearches();
-        return count(query.formCountQuery(), query.getQueryParameters());
+        return query;
     }
 
     @Override
@@ -413,27 +420,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *             if processes cannot be loaded from search index
      */
     public List<Process> loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters,
-                                     boolean showClosedProcesses, boolean showInactiveProjects) throws DAOException {
-        BeanQuery query = new BeanQuery(Process.class);
-        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        if (Objects.nonNull(filters)) {
-            Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
-            if (filtersIterator.hasNext()) {
-                String filterString = filtersIterator.next().getValue();
-                if (StringUtils.isNotBlank(filterString)) {
-                    query.restrictWithUserFilterString(filterString);
-                }
-            }
-        }
-        if (!showClosedProcesses) {
-            query.restrictToNotCompletedProcesses();
-        }
-        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
-                .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
-                .collect(Collectors.toList());
-        query.restrictToProjects(projectIDs);
+            boolean showClosedProcesses, boolean showInactiveProjects) throws DAOException {
+
+        BeanQuery query = createProcessQuery(filters, showClosedProcesses, showInactiveProjects);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        query.performIndexSearches();
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
