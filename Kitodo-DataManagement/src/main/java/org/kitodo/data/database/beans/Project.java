@@ -41,7 +41,6 @@ import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
-import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.utils.Stopwatch;
 
