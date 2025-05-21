@@ -548,9 +548,9 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Specifies the batches to which the process is assigned. A process can
-     * belong to several batches, but for batch automation to work, a process
-     * must be assigned to exactly one batch.
+     * Returns the list that specifies the batches to which the process is
+     * assigned. A process can belong to several batches, but for batch
+     * automation to work, a process must be assigned to exactly one batch.
      *
      * @return the batches to which the process is assigned
      */
@@ -564,7 +564,7 @@ public class Process extends BaseTemplateBean {
 
     /**
      * Sets the list that specifies the batches to which the process is
-     * associated. A process can belong to several batches, but but for batch
+     * associated. A process can belong to several batches, but for batch
      * automation to work, a process must be assigned to exactly one batch. The
      * list should not contain duplicates, and must not contain {@code null}s.
      *
