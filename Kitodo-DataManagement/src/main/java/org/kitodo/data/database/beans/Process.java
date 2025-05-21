@@ -367,19 +367,19 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Returns the business domain specification this process is using.
+     * Returns the ruleset.
      *
-     * @return the business domain specification
+     * @return the ruleset
      */
     public Ruleset getRuleset() {
         return this.ruleset;
     }
 
     /**
-     * Sets the business domain specification this process is using.
+     * Sets the ruleset.
      *
      * @param ruleset
-     *            the business domain specification
+     *            ruleset to set
      */
     public void setRuleset(Ruleset ruleset) {
         this.ruleset = ruleset;
