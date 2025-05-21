@@ -217,8 +217,8 @@ public class BeanQuery {
     public void performIndexSearches() {
         for (var iterator = indexQueries.entrySet().iterator(); iterator.hasNext();) {
             Entry<String, Pair<FilterField, String>> entry = iterator.next();
-            Collection<Integer> ids = indexingService.searchIds(beanClass, entry.getValue().getLeft().getSearchField(),
-                entry.getValue().getRight());
+            Collection<Integer> ids = indexingService.searchIds(Process.class, entry.getValue().getLeft()
+                    .getSearchField(), entry.getValue().getRight());
             parameters.put(entry.getKey(), ids.isEmpty() ? NO_HIT : ids);
             iterator.remove();
         }
@@ -324,9 +324,9 @@ public class BeanQuery {
                     }
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
-                    indexQueryPart.putQueryParameters(varName, parameterName, indexQueries, indexFiltersAsAlternatives
-                            ? restrictionAlternatives
-                            : restrictions);
+                    indexQueryPart.putQueryParameters(varName, parameterName, (className.equals("Process") ? "id"
+                            : "process.id"), indexQueries, indexFiltersAsAlternatives ? restrictionAlternatives
+                                    : restrictions);
                 }
             }
             if (groupFilters.size() == 1) {

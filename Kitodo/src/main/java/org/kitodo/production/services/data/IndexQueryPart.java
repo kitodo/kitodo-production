@@ -96,15 +96,18 @@ class IndexQueryPart implements UserSpecifiedFilter {
      *            variable name of the HQL search
      * @param parameterName
      *            name of the search parameter for the results
+     * @param idField
+     *            field name of the process ID
      * @param indexQueries
      *            puts the prepared tokens for the search queries here
      * @param restrictions
      *            puts the HQL restrictions here
      */
-    void putQueryParameters(String varName, String parameterName, Map<String, Pair<FilterField, String>> indexQueries,
+    void putQueryParameters(String varName, String parameterName, String idField,
+            Map<String, Pair<FilterField, String>> indexQueries,
             Collection<String> restrictions) {
         if (lookfor.size() == 1) {
-            restrictions.add(varName + (operand ? ".id IN (:" : ".id NOT IN (:") + parameterName + ')');
+            restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + parameterName + ')');
             indexQueries.put(parameterName, Pair.of(filterField, lookfor.get(0)));
         } else {
             int queryCount = 0;
