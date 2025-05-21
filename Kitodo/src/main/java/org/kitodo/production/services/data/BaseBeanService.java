@@ -14,7 +14,6 @@ package org.kitodo.production.services.data;
 import io.reactivex.annotations.CheckReturnValue;
 
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
