@@ -841,7 +841,7 @@ public class Project extends BaseBean implements Comparable<Project> {
         for (Template assignedTemplate : this.templates) {
             assignedTemplate.setActive(Objects.nonNull(activeTemplatesMap.remove(assignedTemplate.getId())));
         }
-        for (Template unassignedTemplate : ((Map<Integer, Template>) activeTemplatesMap).values()) {
+        for (Template unassignedTemplate : activeTemplatesMap.values()) {
             unassignedTemplate.setActive(true);
             this.templates.add(unassignedTemplate);
         }
