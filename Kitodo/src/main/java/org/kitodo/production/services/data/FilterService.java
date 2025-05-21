@@ -42,7 +42,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FilterDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.primefaces.model.SortOrder;
 
 /**
  * Service for Filter bean.
