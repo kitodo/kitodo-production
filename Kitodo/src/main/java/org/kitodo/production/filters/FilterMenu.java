@@ -53,6 +53,7 @@ public class FilterMenu {
             FilterString.TASKINWORK,
             FilterString.TASKOPEN,
             FilterString.PROJECT,
+            FilterString.PROJECT_EXACT,
             FilterString.ID,
             FilterString.PROCESS,
             FilterString.BATCH,
@@ -256,6 +257,7 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initStepTitles(), FilterPart.VALUE));
                 break;
             case PROJECT:
+            case PROJECT_EXACT:
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
                 break;
             case PROPERTY:
