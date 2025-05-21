@@ -137,7 +137,7 @@ class ProcessKeywords {
      *            the input string
      * @return keywords
      */
-    private static final Set<String> initSimpleKeywords(String input) {
+    private static Set<String> initSimpleKeywords(String input) {
         Set<String> tokens = new HashSet<>();
         for (String term : splitValues(input)) {
             tokens.add(normalize(term));
@@ -175,7 +175,7 @@ class ProcessKeywords {
      *            tasks for the words to be generated
      * @return search terms and pseudo search terms
      */
-    private static final Pair<Set<String>, Set<String>> initTaskKeywords(Collection<Task> tasks) {
+    private static Pair<Set<String>, Set<String>> initTaskKeywords(Collection<Task> tasks) {
         Set<String> taskKeywords = new HashSet<>();
         Set<String> taskPseudoKeywords = new HashSet<>();
         for (Task task : tasks) {
@@ -222,7 +222,7 @@ class ProcessKeywords {
      *            process of the METS file
      * @return metadata keywords, and metadata pseudo keywords
      */
-    private static final Set<String> initMetadataKeywords(Process process) {
+    private static Set<String> initMetadataKeywords(Process process) {
         try {
             String processId = Integer.toString(process.getId());
             Path path = Paths.get(KitodoConfig.getKitodoDataDirectory(), processId, "meta.xml");
@@ -311,7 +311,7 @@ class ProcessKeywords {
      *            the comments of a process
      * @return keywords
      */
-    private static final Set<String> initCommentKeywords(List<Comment> comments) {
+    private static Set<String> initCommentKeywords(List<Comment> comments) {
         Set<String> tokens = new HashSet<>();
         for (Comment comment : comments) {
             String message = comment.getMessage();
@@ -480,7 +480,7 @@ class ProcessKeywords {
      * @param processId
      *            metadata directory
      */
-    private final void logKeywords(Integer processId) {
+    private void logKeywords(Integer processId) {
         try {
             File log = Paths.get(KitodoConfig.getKitodoDataDirectory(), Objects.toString(processId), "keywords.log").toFile();
             traceLogCollection("[defaultKeywords]", defaultKeywords, log, true);
@@ -495,7 +495,7 @@ class ProcessKeywords {
         }
     }
 
-    private static final void traceLogCollection(String caption, Collection<String> tokens, File log, boolean append)
+    private static void traceLogCollection(String caption, Collection<String> tokens, File log, boolean append)
             throws IOException {
         FileUtils.write(log, caption.concat(System.lineSeparator()), StandardCharsets.UTF_8, append);
         FileUtils.writeLines(log, StandardCharsets.UTF_8.toString(), new TreeSet<>(tokens), true);
