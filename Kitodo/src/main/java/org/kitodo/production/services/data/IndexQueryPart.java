@@ -29,7 +29,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
     private static final String UNIQUE_PARAMETER_EXTENSION = "query";
 
     private static final char VALUE_SEPARATOR = 'q';
-    private List<String> lookfor = new ArrayList<>();
+    private final List<String> lookfor = new ArrayList<>();
     private final FilterField filterField;
     private final boolean operand;
 
