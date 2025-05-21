@@ -250,7 +250,7 @@ public class Task extends BaseBean {
     /**
      * Returns the processing type of the task. Possible are:
      * <dl>
-     * <dt>UNNOWKN</dt>
+     * <dt>UNKNOWN</dt>
      * <dd>The processing type of the task is not defined.</dd>
      * <dt>MANUAL_SINGLE</dt>
      * <dd>The task was taken over and carried out by a user.</dd>
