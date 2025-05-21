@@ -265,7 +265,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         List<Role> userRoles = ServiceManager.getUserService().getCurrentUser().getRoles();
         final Client currentClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
         List<Role> userClientRoles = userRoles.stream().filter(role -> Objects.equals(role.getClient(), currentClient))
-                .filter(role -> role.isUsedInWorkflow()).collect(Collectors.toList());
+                .filter(Role::isUsedInWorkflow).collect(Collectors.toList());
         query.restrictToRoles(userClientRoles);
         Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
         if (filtersIterator.hasNext()) {
