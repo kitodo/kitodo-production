@@ -154,7 +154,7 @@ class ProcessKeywords {
      *            batches containing the process
      * @return batch search terms
      */
-    private static final Set<String> initBatchKeywords(Collection<Batch> batches) {
+    private static Set<String> initBatchKeywords(Collection<Batch> batches) {
         if (batches.isEmpty()) {
             return Collections.emptySet();
         }
