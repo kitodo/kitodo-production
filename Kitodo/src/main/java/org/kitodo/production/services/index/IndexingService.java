@@ -92,7 +92,7 @@ public class IndexingService {
             new Thread(new ServerConnectionChecker(this)).start();
         }
         if (this.serverInformation.isEmpty()) {
-            Helper.setErrorMessage("elasticSearchNotRunning");
+            Helper.setErrorMessage("searchServerNotRunning");
         }
         return this.serverInformation;
     }

@@ -90,7 +90,7 @@ class ServerConnectionChecker implements Runnable {
                 throw new InvalidPropertiesFormatException(body);
             }
         } catch (IOException | RuntimeException e) {
-            logger.error("elasticSearchNotRunning", e);
+            logger.error("searchServerNotRunning", e);
         }
         return "";
     }
