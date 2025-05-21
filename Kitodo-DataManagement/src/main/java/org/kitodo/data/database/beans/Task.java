@@ -794,26 +794,6 @@ public class Task extends BaseBean {
     }
 
     /**
-     * Get the correction comment status, see CorrectionComments enum, as int
-     * value.
-     * 
-     * @return the correction comment status as integer
-     */
-    public Integer getCorrectionCommentStatus() {
-        Stopwatch stopwatch = new Stopwatch(this, "getCorrectionCommentStatus");
-        AtomicBoolean foundCorrectionComment = new AtomicBoolean(false);
-        CorrectionComments correctionComments = process.getComments().parallelStream()
-            .filter(comment -> Objects.equals(comment.getType(), CommentType.ERROR))
-            .filter(new Tee<>(unused -> foundCorrectionComment.lazySet(true)))
-            .noneMatch(Comment::isCorrected)
-                ? CorrectionComments.OPEN_CORRECTION_COMMENTS
-                : foundCorrectionComment.get()
-                    ? CorrectionComments.NO_OPEN_CORRECTION_COMMENTS
-                    : CorrectionComments.NO_CORRECTION_COMMENTS;
-        return stopwatch.stop(correctionComments.getValue());
-    }
-
-    /**
      * Get information if task should be repeated on correction.
      *
      * @return value of repeatOnCorrection
