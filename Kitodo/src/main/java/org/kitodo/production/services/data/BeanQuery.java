@@ -177,7 +177,7 @@ public class BeanQuery {
 
     /**
      * Requires that the search only finds objects where the user input either
-     * matches the record number, or is part of the <i>title</i>. Title here
+     * matches the record number or is part of the <i>title</i>. Title here
      * means the label. If the input is not a number, the first option is
      * omitted.
      * 
