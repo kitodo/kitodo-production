@@ -396,6 +396,16 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
         String value = item.substring(colon + 1);
         FilterField filterField = FilterField.ofString(fieldName);
         if (Objects.isNull(filterField)) {
+            if (Objects.equals(fieldName, "property") || Objects.equals(fieldName, "eigenschaft")) {
+                colon = value.indexOf(":");
+                if (colon >= 0) {
+                    fieldName = value.substring(0, colon);
+                    value = value.substring(colon + 1);
+                } else {
+                    fieldName = value;
+                    value = "";
+                }
+            }
             return new IndexQueryPart(fieldName, FilterField.SEARCH, value, operand);
         }
 
