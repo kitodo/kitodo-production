@@ -32,6 +32,7 @@ CREATE INDEX index_process_title ON process (title);
 --
 -- Auto-update process.sortHelperStatus on task change
 
+SET GLOBAL log_bin_trust_function_creators = 1;
 DELIMITER //
 CREATE TRIGGER update_sortHelperStatus_on_task_update
 AFTER UPDATE ON task
@@ -69,3 +70,4 @@ BEGIN
       WHERE id = NEW.process_id;
 END;//
 DELIMITER ;
+SET GLOBAL log_bin_trust_function_creators = 0;
