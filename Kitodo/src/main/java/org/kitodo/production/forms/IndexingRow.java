@@ -89,7 +89,7 @@ public class IndexingRow implements MassIndexingMonitor {
      * @return the number of indexed objects
      */
     long getIndexed() {
-        return documentsAdded.get();
+        return indexingService.getAllIndexed();
     }
 
     /**
@@ -111,7 +111,7 @@ public class IndexingRow implements MassIndexingMonitor {
             objectCount = numberOfObjects;
         }
         if (IndexStates.NO_STATE.equals(objectIndexState)) {
-            return Long.toString(objectCount);
+            return indexingService.getAllIndexed() + " / " + objectCount;
         } else {
             StringBuilder numberOfObjects = new StringBuilder(40);
             numberOfObjects.append(entitiesLoaded.get());

@@ -13,19 +13,26 @@ package org.kitodo.production.services.index;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.DataException;
+import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.hibernate.search.engine.search.projection.SearchProjection;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.hibernate.search.mapper.pojo.massindexing.MassIndexingMonitor;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
 
 public class IndexingService {
 
@@ -137,5 +144,24 @@ public class IndexingService {
         logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
             value, ids.size());
         return ids;
+    }
+
+    public boolean isIndexCorrupted() throws DAOException, DataException {
+        BeanQuery beanQuery = new BeanQuery(Process.class);
+        Long totalCount = ServiceManager.getProcessService().count(beanQuery.formCountQuery(), beanQuery
+                .getQueryParameters());
+        return totalCount != getAllIndexed();
+    }
+
+    /**
+     * Return the number of all objects processed during the current indexing
+     * progress.
+     *
+     * @return long number of all currently indexed objects
+     */
+    public long getAllIndexed() {
+        SearchSession searchSession = Search.session(HibernateUtil.getSession());
+        long allIndexed = searchSession.search(Process.class).where(f -> f.matchAll()).fetchTotalHitCount();
+        return allIndexed;
     }
 }
