@@ -146,6 +146,11 @@ public class IndexingService {
         return ids;
     }
 
+    /**
+     * Returns whether the search index is corrupted.
+     * 
+     * @return whether the index is corrupted
+     */
     public boolean isIndexCorrupted() throws DAOException, DataException {
         BeanQuery beanQuery = new BeanQuery(Process.class);
         Long totalCount = ServiceManager.getProcessService().count(beanQuery.formCountQuery(), beanQuery

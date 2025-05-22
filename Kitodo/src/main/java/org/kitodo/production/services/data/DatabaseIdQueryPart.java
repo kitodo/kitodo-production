@@ -88,9 +88,9 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
         StringBuilder query = new StringBuilder();
         query.append(varName);
         query.append('.');
-        if(Objects.equals(className, "Task")) {
+        if (Objects.equals(className, "Task")) {
             query.append(filterField.getTaskIdQuery());
-        }else {
+        } else {
             query.append(filterField.getProcessIdQuery());
         }
         if (Objects.nonNull(idList)) {
