@@ -304,4 +304,18 @@ public class Template extends BaseTemplateBean {
     public int hashCode() {
         return Objects.nonNull(id) ? id : super.hashCode();
     }
+
+    /**
+     * Returns whether the production template is valid. To do this, it must
+     * contain at least one task and each task must have at least one role
+     * assigned to it.
+     *
+     * @return whether the production template is valid
+     */
+    public boolean isCanBeUsedForProcess() {
+        if (Objects.isNull(tasks)) {
+            return false;
+        }
+        return tasks.stream().allMatch(task -> CollectionUtils.isNotEmpty(task.getRoles()));
+    }
 }
