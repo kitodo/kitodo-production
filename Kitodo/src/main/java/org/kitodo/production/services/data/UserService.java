@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -214,7 +215,12 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
      * @return the User object
      */
     public User getCurrentUser() {
-        return new User(getAuthenticatedUser());
+        SecurityUserDetails authenticatedUser = getAuthenticatedUser();
+        if (Objects.nonNull(authenticatedUser)) {
+            return new User(authenticatedUser);
+        } else {
+            throw new NoSuchElementException("There is currently no authenticated user for this thread");
+        }
     }
 
     /**
