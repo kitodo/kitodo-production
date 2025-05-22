@@ -85,11 +85,37 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
      */
     @Override
     String getDatabaseQuery(String className, String varName, String parameterName) {
-        String query = Objects.equals(className, "Task") ? filterField.getTaskIdQuery()
-                : filterField.getProcessIdQuery();
-        return varName + '.' + query + (idList == null ? (upToId == null ? (operand ? " = :" : " != :") + parameterName
-                : (operand ? " BETWEEN :" : " NOT BETWEEN :") + parameterName + " AND :" + parameterName
-                        + SECOND_PARAMETER_EXTENSION) : (operand ? " IN (:" : " NOT IN (:") + parameterName + ')');
+        StringBuilder query = new StringBuilder();
+        query.append(varName);
+        query.append('.');
+        if(Objects.equals(className, "Task")) {
+            query.append(filterField.getTaskIdQuery());
+        }else {
+            query.append(filterField.getProcessIdQuery());
+        }
+        if (Objects.nonNull(idList)) {
+            if (!operand) {
+                query.append(" NOT");
+            }
+            query.append(" IN (:");
+            query.append(parameterName);
+            query.append(')');
+        } else {
+            if (upToId == null) {
+                query.append(operand ? " = :" : " != :");
+                query.append(parameterName);
+            } else {
+                if (!operand) {
+                    query.append(" NOT");
+                }
+                query.append(" BETWEEN :");
+                query.append(parameterName);
+                query.append(" AND :");
+                query.append(parameterName);
+                query.append(SECOND_PARAMETER_EXTENSION);
+            }
+        }
+        return query.toString();
     }
 
     /**
@@ -113,8 +139,32 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
 
     @Override
     public String toString() {
-        return filterField + (firstId != null ? (upToId == null ? (operand ? " = " : " != ") + firstId
-                : (operand ? " BETWEEN " : " NOT BETWEEN ") + firstId + " AND " + upToId)
-                : (operand ? " IN " : " NOT IN ") + idList);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(filterField);
+        if (Objects.isNull(firstId)) {
+            if (!operand) {
+                stringBuilder.append(" NOT");
+            }
+            stringBuilder.append(" IN ");
+            stringBuilder.append(idList);
+        } else {
+            if (Objects.isNull(upToId)) {
+                if (operand) {
+                    stringBuilder.append(" = ");
+                } else {
+                    stringBuilder.append(" != ");
+                }
+                stringBuilder.append(firstId);
+            } else {
+                if (!operand) {
+                    stringBuilder.append(" NOT");
+                }
+                stringBuilder.append(" BETWEEN ");
+                stringBuilder.append(firstId);
+                stringBuilder.append(" AND ");
+                stringBuilder.append(upToId);
+            }
+        }
+        return stringBuilder.toString();
     }
 }
