@@ -205,6 +205,16 @@ public class IndexingForm {
     }
 
     /**
+     * Return whether any indexing process in currently in progress or not.
+     * 
+     * @return boolean Value indicating whether any indexing process is
+     *         currently in progress or not
+     */
+    public boolean indexingInProgress() {
+        return indexingRows.values().parallelStream().anyMatch(IndexingRow::isIndexingInProgress);
+    }
+
+    /**
      * Return whether all indexing processes are currently in progress or not.
      *
      * @return boolean Value indicating whether all indexing processes are
