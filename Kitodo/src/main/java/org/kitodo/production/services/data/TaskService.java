@@ -891,6 +891,16 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     @Override
     public void save(Task taskBean) throws DAOException {
         super.save(taskBean);
+
+        Process processBean = taskBean.getProcess();
+        if (Objects.nonNull(processBean)) {
+            String sortHelperStatus = processBean.getSortHelperStatus();
+            WorkflowControllerService.updateProcessSortHelperStatus(processBean);
+            if (!Objects.equals(sortHelperStatus, processBean.getSortHelperStatus())) {
+                ServiceManager.getProcessService().save(processBean);
+            }
+        }
+
         taskBean.getRoles().parallelStream().forEach(role -> role.setUsedInWorkflow(true));
     }
 }
