@@ -43,6 +43,7 @@ import org.kitodo.test.utils.TestConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
+@Disabled("Breaks ListingSessionClientST due to incomplete clean-up")
 public class ImportingST extends BaseTestSelenium {
 
     private static StubServer server;
