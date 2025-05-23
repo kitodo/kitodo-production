@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
@@ -69,12 +70,14 @@ public class RemovingST extends BaseTestSelenium {
 
     @Test
     public void removeRoleTest() throws Exception {
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
         int rolesDisplayed = usersPage.countListedRoles();
-        long rolesInDatabase = ServiceManager.getRoleService().countDatabaseRows();
-        assertTrue(rolesDisplayed > 0 && rolesInDatabase > 0, "Role list is empty");
+        long clientRoles = ServiceManager.getRoleService().getNumberOfRolesOfCurrentClient();
+        assertTrue(rolesDisplayed > 0 && clientRoles > 0, "Role list or umber of current clients roles is empty");
         usersPage.deleteRemovableRole();
         assertTrue(usersPage.countListedRoles() == rolesDisplayed - 1
-                && ServiceManager.getRoleService().countDatabaseRows() == rolesInDatabase - 1, "Removal of first role was not successful!");
+                && ServiceManager.getRoleService().getNumberOfRolesOfCurrentClient() == clientRoles - 1, "Removal of first role was not successful!");
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test
