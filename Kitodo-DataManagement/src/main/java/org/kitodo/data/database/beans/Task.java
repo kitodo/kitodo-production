@@ -927,9 +927,9 @@ public class Task extends BaseBean {
     }
 
     /**
-     * Return whether there is a correction comment and whether it has been corrected as status.
+     * Return whether there is a correction comment and whether it has been
+     * corrected as status.
      * 
-     * @param process the process being checked for its correction comment status
      * @return an enum representing the status
      */
     public int getCorrectionCommentStatus() {
