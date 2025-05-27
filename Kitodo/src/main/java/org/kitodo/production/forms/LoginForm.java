@@ -33,6 +33,7 @@ import org.primefaces.PrimeFaces;
 public class LoginForm implements Serializable {
     private User loggedUser;
     private boolean firstVisit = true;
+    private static final String INDEXING_PAGE = "system.jsf?tabIndex=";
     private static final String DESKTOP_VIEW = "desktop.jsf";
     private final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
@@ -97,13 +98,23 @@ public class LoginForm implements Serializable {
 
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         SessionClientController controller = new SessionClientController();
+        PrimeFaces.current().executeScript("PF('indexWarningDialog').hide();");
 
-        if (Objects.isNull(controller.getCurrentSessionClient())
-                && controller.getAvailableClientsOfCurrentUser().size() > 1) {
-            controller.showClientSelectDialog();
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
+            if (controller.getAvailableClientsOfCurrentUser().size() > 1
+                    && Objects.isNull(controller.getCurrentSessionClient())) {
+                controller.showClientSelectDialog();
+            } else if (ServiceManager.getIndexingService().isIndexCorrupted()) {
+                context.redirect(INDEXING_PAGE + determineIndexingTab());
+            } else {
+                redirect(context);
+            }
         } else {
             if (ServiceManager.getIndexingService().isIndexCorrupted()) {
                 PrimeFaces.current().executeScript("PF('indexWarningDialog').show();");
+            } else if (controller.getAvailableClientsOfCurrentUser().size() > 1
+                    && Objects.isNull(controller.getCurrentSessionClient())) {
+                controller.showClientSelectDialog();
             } else {
                 redirect(context);
             }
