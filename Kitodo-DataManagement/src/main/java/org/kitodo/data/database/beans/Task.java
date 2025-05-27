@@ -925,4 +925,25 @@ public class Task extends BaseBean {
         }
         return getRoles().stream().map(Role::getId).collect(Collectors.toList());
     }
+
+    /**
+     * Return whether there is a correction comment and whether it has been corrected as status.
+     * 
+     * @param process the process being checked for its correction comment status
+     * @return an enum representing the status
+     */
+    public int getCorrectionCommentStatus() {
+        if (Objects.isNull(this.process)) {
+            return CorrectionComments.NO_CORRECTION_COMMENTS.getValue();
+        }
+        List<Comment> correctionComments = process.getComments()
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        if (correctionComments.size() < 1) {
+            return CorrectionComments.NO_CORRECTION_COMMENTS.getValue();
+        } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
+            return CorrectionComments.OPEN_CORRECTION_COMMENTS.getValue();
+        } else {
+            return CorrectionComments.NO_OPEN_CORRECTION_COMMENTS.getValue();
+        }
+    }
 }
