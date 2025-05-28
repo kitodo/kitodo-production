@@ -87,8 +87,7 @@ class ProcessKeywords {
 
         // keywords for task search, partly in default search
         var taskKeywords = initTaskKeywords(process.getTasksUnmodified());
-        this.taskKeywords = filterMinLength(taskKeywords.getLeft(), LENGTH_MIN_DEFAULT); // in
-                                                                                         // default
+        this.taskKeywords = filterMinLength(taskKeywords.getLeft(), LENGTH_MIN_DEFAULT);
         this.taskPseudoKeywords = filterMinLength(taskKeywords.getRight(), LENGTH_MIN_DEFAULT);
 
         // more keywords for default search only
