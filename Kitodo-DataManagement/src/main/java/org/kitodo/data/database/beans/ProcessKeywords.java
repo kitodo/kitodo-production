@@ -77,7 +77,7 @@ class ProcessKeywords {
 
         // keywords for project search + default search
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
-        this.projectKeywords = initSimpleKeywords(projectTitle, true);
+        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle));
 
         // keywords for batch search + default search
         this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()));
@@ -135,17 +135,12 @@ class ProcessKeywords {
      * 
      * @param input
      *            the input string
-     * @param compound
-     *            whether to add a compound keyword for the whole input string
      * @return keywords
      */
-    private static Set<String> initSimpleKeywords(String input, boolean compound) {
+    private static Set<String> initSimpleKeywords(String input) {
         Set<String> tokens = new HashSet<>();
         for (String term : splitValues(input)) {
             tokens.add(normalize(term));
-        }
-        if (compound) {
-            tokens.add(normalize(input));
         }
         return tokens;
     }
@@ -167,7 +162,7 @@ class ProcessKeywords {
         for (Batch batch : batches) {
             String optionalTitle = batch.getTitle();
             if (StringUtils.isNotBlank(optionalTitle)) {
-                tokens.addAll(initSimpleKeywords(optionalTitle, true));
+                tokens.addAll(initSimpleKeywords(optionalTitle));
             }
         }
         return tokens;
@@ -321,7 +316,7 @@ class ProcessKeywords {
         for (Comment comment : comments) {
             String message = comment.getMessage();
             if (StringUtils.isNotBlank(message)) {
-                tokens.addAll(initSimpleKeywords(message, false));
+                tokens.addAll(initSimpleKeywords(message));
             }
         }
         return tokens;
