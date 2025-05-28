@@ -47,6 +47,9 @@ import org.kitodo.data.database.enums.TaskStatus;
 class ProcessKeywords {
     private static final Logger logger = LogManager.getLogger(ProcessKeywords.class);
 
+    private static final int LENGTH_MIN_REASONABLE = 1;
+    private static final int LENGTH_MIN_DEFAULT = 3;
+
     private static final String PSEUDOWORD_TASK_AUTOMATIC = "automatic";
     private static final String PSEUDOWORD_TASK_DONE = "closed";
     private static final String PSEUDOWORD_TASK_DONE_PROCESSING_USER = "closeduser";
@@ -73,27 +76,28 @@ class ProcessKeywords {
 
     public ProcessKeywords(Process process) {
         // keywords for title search + default search
-        this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()));
+        this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()), LENGTH_MIN_DEFAULT);
 
         // keywords for project search + default search
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
-        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle));
+        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle, true), LENGTH_MIN_REASONABLE);
 
         // keywords for batch search + default search
-        this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()));
+        this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()), LENGTH_MIN_DEFAULT);
 
         // keywords for task search, partly in default search
         var taskKeywords = initTaskKeywords(process.getTasksUnmodified());
-        this.taskKeywords = filterMinLength(taskKeywords.getLeft()); // in default
-        this.taskPseudoKeywords = filterMinLength(taskKeywords.getRight());
+        this.taskKeywords = filterMinLength(taskKeywords.getLeft(), LENGTH_MIN_DEFAULT); // in
+                                                                                         // default
+        this.taskPseudoKeywords = filterMinLength(taskKeywords.getRight(), LENGTH_MIN_DEFAULT);
 
         // more keywords for default search only
         this.defaultKeywords = new HashSet<String>();
         if (Objects.nonNull(process.getId())) {
             defaultKeywords.add(process.getId().toString());
         }
-        defaultKeywords.addAll(filterMinLength(initCommentKeywords(process.getComments())));
-        defaultKeywords.addAll(filterMinLength(initMetadataKeywords(process)));
+        defaultKeywords.addAll(filterMinLength(initCommentKeywords(process.getComments()), LENGTH_MIN_DEFAULT));
+        defaultKeywords.addAll(filterMinLength(initMetadataKeywords(process), LENGTH_MIN_DEFAULT));
 
         if (logger.isTraceEnabled()) {
             logKeywords(process.getId());
@@ -135,12 +139,17 @@ class ProcessKeywords {
      * 
      * @param input
      *            the input string
+     * @param compound
+     *            whether to add a compound keyword for the whole input string
      * @return keywords
      */
-    private static Set<String> initSimpleKeywords(String input) {
+    private static Set<String> initSimpleKeywords(String input, boolean compound) {
         Set<String> tokens = new HashSet<>();
         for (String term : splitValues(input)) {
             tokens.add(normalize(term));
+        }
+        if (compound) {
+            tokens.add(normalize(input));
         }
         return tokens;
     }
@@ -162,7 +171,7 @@ class ProcessKeywords {
         for (Batch batch : batches) {
             String optionalTitle = batch.getTitle();
             if (StringUtils.isNotBlank(optionalTitle)) {
-                tokens.addAll(initSimpleKeywords(optionalTitle));
+                tokens.addAll(initSimpleKeywords(optionalTitle, true));
             }
         }
         return tokens;
@@ -316,7 +325,7 @@ class ProcessKeywords {
         for (Comment comment : comments) {
             String message = comment.getMessage();
             if (StringUtils.isNotBlank(message)) {
-                tokens.addAll(initSimpleKeywords(message));
+                tokens.addAll(initSimpleKeywords(message, false));
             }
         }
         return tokens;
@@ -353,11 +362,13 @@ class ProcessKeywords {
      * 
      * @param tokens
      *            input set, is changed!
+     * @param minLength
+     *            minimum length of contained strings
      * @return input set
      */
-    private static Set<String> filterMinLength(Set<String> tokens) {
+    private static Set<String> filterMinLength(Set<String> tokens, int minLength) {
         for (Iterator<String> iterator = tokens.iterator(); iterator.hasNext();) {
-            if (iterator.next().length() < 3) {
+            if (iterator.next().length() < minLength) {
                 iterator.remove();
             }
         }
