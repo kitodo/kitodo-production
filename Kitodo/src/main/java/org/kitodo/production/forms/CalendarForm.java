@@ -46,7 +46,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -630,7 +629,7 @@ public class CalendarForm implements Serializable {
             navigate(course.get(0));
         } catch (SAXException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, "errorSAXException", logger, e);
-        } catch (IOException | DataException | DAOException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, e.getLocalizedMessage(), logger, e);
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage("calendar.upload.overlappingDateRanges", logger, e);
@@ -869,7 +868,7 @@ public class CalendarForm implements Serializable {
     /**
      * Check if process with the same processtitle already exists.
      */
-    public void checkDuplicatedTitles() throws ProcessGenerationException, DataException, DAOException,
+    public void checkDuplicatedTitles() throws ProcessGenerationException, DAOException,
             ConfigurationException, IOException, DoctypeMissingException {
         if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
             Process process = ServiceManager.getProcessService().getById(parentId);

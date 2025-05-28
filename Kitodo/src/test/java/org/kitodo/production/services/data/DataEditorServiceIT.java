@@ -44,7 +44,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.services.ServiceManager;
@@ -92,11 +91,10 @@ public class DataEditorServiceIT {
     /**
      * Test retrieving title value.
      * @throws DAOException when adding test process fails.
-     * @throws DataException when adding test process fails.
      * @throws IOException when adding test process fails.
      */
     @Test
-    public void shouldGetTitleValue() throws DAOException, DataException, IOException {
+    public void shouldGetTitleValue() throws DAOException, IOException {
         LogicalDivision logicalRoot = getLogicalRoot();
         assertEquals(EXPECTED_TITLE, DataEditorService.getTitleValue(logicalRoot, TITLE_DOC_MAIN),
                 String.format("Title value of logical root should be '%s'", EXPECTED_TITLE));
@@ -105,11 +103,10 @@ public class DataEditorServiceIT {
     /**
      * Test retrieving addable metadata for metadata group.
      * @throws DAOException when adding test process fails.
-     * @throws DataException when adding test process fails.
      * @throws IOException when adding test process fails.
      */
     @Test
-    public void shouldGetAddableMetadataForGroup() throws DAOException, DataException, IOException {
+    public void shouldGetAddableMetadataForGroup() throws DAOException, IOException {
         LogicalDivision logicalRoot = getLogicalRoot();
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
@@ -134,10 +131,9 @@ public class DataEditorServiceIT {
      * Test retrieving addable metadata for logical structure element.
      * @throws IOException when adding test process fails.
      * @throws DAOException when adding test process fails.
-     * @throws DataException when adding test process fails.
      */
     @Test
-    public void shouldGetAddableMetadataForStructureElement() throws IOException, DAOException, DataException {
+    public void shouldGetAddableMetadataForStructureElement() throws IOException, DAOException {
         LogicalDivision logicalRoot = getLogicalRoot();
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
@@ -156,10 +152,9 @@ public class DataEditorServiceIT {
      * Test retrieving functional metadata of type 'recordIdentifier' from process.
      * @throws DAOException when adding or loading test process fails
      * @throws IOException when loading meta xml or ruleset file fails
-     * @throws DataException when adding test processes fails
      */
     @Test
-    public void shouldGetRecordIdentifierValueOfProcess() throws DAOException, IOException, DataException {
+    public void shouldGetRecordIdentifierValueOfProcess() throws DAOException, IOException {
         addTestProcess();
         Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
@@ -175,11 +170,10 @@ public class DataEditorServiceIT {
      * Test throwing 'MetadataException' when re-importing metadata is attempted without all necessary conditions for
      * metadata re-import being met.
      * @throws DAOException when adding or loading test process fails
-     * @throws DataException when adding test processes fails
      * @throws IOException when loading meta xml or ruleset file fails
      */
     @Test
-    public void shouldFailToUpdateMetadata() throws DAOException, DataException, IOException {
+    public void shouldFailToUpdateMetadata() throws DAOException, IOException {
         addTestProcess();
         Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
@@ -189,13 +183,13 @@ public class DataEditorServiceIT {
         assertEquals(thrown.getMessage(), String.format(EXPECTED_EXCEPTION_MESSAGE, testProcessId));
     }
 
-    private Process addTestProcess() throws DAOException, DataException, IOException {
+    private Process addTestProcess() throws DAOException, IOException {
         testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         return ServiceManager.getProcessService().getById(testProcessId);
     }
 
-    private LogicalDivision getLogicalRoot() throws DAOException, DataException, IOException {
+    private LogicalDivision getLogicalRoot() throws DAOException, IOException {
         Process testProcess = addTestProcess();
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);

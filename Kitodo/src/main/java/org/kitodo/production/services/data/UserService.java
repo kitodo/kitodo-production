@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,20 +45,17 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.FilterException;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
 import org.primefaces.model.SortOrder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserService extends ClientSearchDatabaseService<User, UserDAO> implements UserDetailsService {
+public class UserService extends BaseBeanService<User, UserDAO> implements UserDetailsService {
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static volatile UserService instance = null;
@@ -93,8 +91,8 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM User WHERE deleted = false");
     }
 
     @Override
@@ -107,22 +105,26 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0" + sqlFilterString, filterMap);
+            return count("SELECT COUNT(*) FROM User WHERE deleted = false" + sqlFilterString, filterMap);
         }
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             filterMap.put(CLIENT_ID, getSessionClientId());
-            return countDatabaseRows(
-                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
+            return count(
+                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = false"
                         + sqlFilterString, filterMap);
         }
         return 0L;
     }
 
-    @Override
+    /**
+     * Get list of all objects for selected client from database.
+     *
+     * @return list of all objects for selected client from database
+     */
     public List<User> getAllForSelectedClient() {
         return getByQuery(
-            "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+            "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = false",
             Collections.singletonMap(CLIENT_ID, getSessionClientId()));
     }
 
@@ -141,13 +143,13 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return dao.getByQuery("FROM User WHERE deleted = 0" + sqlFilterString + getSort(sortField, sortOrder),
+            return dao.getByQuery("FROM User WHERE deleted = false" + sqlFilterString + getSort(sortField, sortOrder),
                     filterMap, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             filterMap.put(CLIENT_ID, getSessionClientId());
             return dao.getByQuery(
-                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
+                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = false"
                         + sqlFilterString + getSort(sortField, sortOrder),
                 filterMap, first, pageSize);
         }
@@ -213,7 +215,12 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @return the User object
      */
     public User getCurrentUser() {
-        return new User(getAuthenticatedUser());
+        SecurityUserDetails authenticatedUser = getAuthenticatedUser();
+        if (Objects.nonNull(authenticatedUser)) {
+            return new User(authenticatedUser);
+        } else {
+            throw new NoSuchElementException("There is currently no authenticated user for this thread");
+        }
     }
 
     /**
@@ -314,10 +321,6 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         return false;
     }
 
-    public String getFullName(User user) {
-        return user.getSurname() + ", " + user.getName();
-    }
-
     /**
      * At that moment only add this method.
      *
@@ -325,7 +328,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      *            object as UserDTo
      * @return full name of the user as String
      */
-    public String getFullName(UserDTO user) {
+    public String getFullName(User user) {
         return user.getSurname() + ", " + user.getName();
     }
 
@@ -370,7 +373,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         try {
             addFilterToUser(user, filter);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             logger.error("Cannot not add filter to user with id {}", user.getId(), e);
         }
     }
@@ -389,7 +392,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         try {
             removeFilterFromUser(user, filter);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             logger.error("Cannot not remove filter from user with id {}", user.getId(), e);
         }
     }
@@ -413,7 +416,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @param userFilter
      *            String
      */
-    private void addFilterToUser(User user, String userFilter) throws DataException {
+    private void addFilterToUser(User user, String userFilter) throws DAOException {
         Filter filter = new Filter();
         filter.setValue(userFilter);
         filter.setCreationDate(new Date());
@@ -445,7 +448,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @param userFilter
      *            String
      */
-    private void removeFilterFromUser(User user, String userFilter) throws DataException {
+    private void removeFilterFromUser(User user, String userFilter) throws DAOException {
         List<Filter> filters = user.getFilters();
         for (Filter filter : filters) {
             if (filter.getValue().equals(userFilter)) {
@@ -484,7 +487,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
             userWithNewPassword = user;
         }
         userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
-        saveToDatabase(userWithNewPassword);
+        save(userWithNewPassword);
     }
 
     /**

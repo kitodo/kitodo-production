@@ -27,7 +27,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.test.utils.ProcessTestUtils;
@@ -58,32 +57,32 @@ public class CommentFormIT {
     }
 
     @Test
-    public void shouldAddComment() throws DAOException, DataException, IOException {
+    public void shouldAddComment() throws DAOException, IOException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = addTestProcess("Test process for adding comment");
         commentForm.setProcessById(testProcess.getId());
         commentForm.setCorrectionComment(false);
         commentForm.setCommentMessage("This is a comment");
-        long numberOfCommentsBeforeAddingComment = ServiceManager.getCommentService().countDatabaseRows();
+        long numberOfCommentsBeforeAddingComment = ServiceManager.getCommentService().count();
         commentForm.addComment();
-        long numberOfCommentsAfterAddingComment = ServiceManager.getCommentService().countDatabaseRows();
+        long numberOfCommentsAfterAddingComment = ServiceManager.getCommentService().count();
         Assertions.assertEquals(numberOfCommentsAfterAddingComment, numberOfCommentsBeforeAddingComment + 1);
     }
 
     @Test
-    public void shouldRemoveComment() throws DAOException, DataException, IOException {
+    public void shouldRemoveComment() throws DAOException, IOException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = addTestProcess("Test process for removing comment");
         commentForm.setProcessById(testProcess.getId());
         Comment testComment = addTestComment(testProcess);
-        long numberOfCommentsBeforeRemovingComment = ServiceManager.getCommentService().countDatabaseRows();
+        long numberOfCommentsBeforeRemovingComment = ServiceManager.getCommentService().count();
         commentForm.removeComment(testComment);
-        long numberOfCommentsAfterRemovingComment = ServiceManager.getCommentService().countDatabaseRows();
+        long numberOfCommentsAfterRemovingComment = ServiceManager.getCommentService().count();
         Assertions.assertEquals(numberOfCommentsAfterRemovingComment, numberOfCommentsBeforeRemovingComment - 1);
     }
 
     @Test
-    public void shouldGetPreviousStepsForProblemReporting() throws DAOException, DataException, IOException {
+    public void shouldGetPreviousStepsForProblemReporting() throws DAOException, IOException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = ServiceManager.getProcessService().getById(1);
         commentForm.setProcessById(testProcess.getId());
@@ -99,18 +98,18 @@ public class CommentFormIT {
                 " reporting should contain at least one more task than before after setting up the process status");
     }
 
-    private Process addTestProcess(String processTitle) throws DAOException, DataException, IOException {
+    private Process addTestProcess(String processTitle) throws DAOException, IOException {
         Process testProcess = ProcessTestUtils.addProcess(processTitle);
         testProcessId = testProcess.getId();
         ProcessTestUtils.copyTestMetadataFile(testProcessId, "testmeta.xml");
         return testProcess;
     }
 
-    private Comment addTestComment(Process process) throws DAOException, DataException {
+    private Comment addTestComment(Process process) throws DAOException {
         Comment comment = new Comment();
         comment.setMessage("This is a comment");
         comment.setProcess(process);
-        ServiceManager.getCommentService().saveToDatabase(comment);
+        ServiceManager.getCommentService().save(comment);
         ServiceManager.getProcessService().save(process);
         return comment;
     }

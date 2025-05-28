@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -59,7 +59,7 @@ public class DeleteProcessDialog {
                 ProcessService.deleteProcess(child);
             }
             ProcessService.deleteProcess(process);
-        } catch (DataException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
@@ -77,7 +77,7 @@ public class DeleteProcessDialog {
             try {
                 ServiceManager.getProcessService().save(child);
                 ProcessService.deleteProcess(process);
-            } catch (DataException | IOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger,
                         e);
             }

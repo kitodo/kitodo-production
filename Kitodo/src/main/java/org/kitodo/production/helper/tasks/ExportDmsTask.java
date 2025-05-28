@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -84,14 +83,14 @@ public class ExportDmsTask extends EmptyTask {
                 setProgress(100);
                 new WorkflowControllerService().close(exportDms.getWorkflowTask());
             }
-        } catch (RuntimeException | DataException | IOException | DAOException e) {
+        } catch (RuntimeException | DAOException | IOException e) {
             setException(e);
             exportSuccessful = false;
         }
         try {
             process.setExported(exportSuccessful);
             ServiceManager.getProcessService().save(process);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             logger.error(e.getMessage(), e);
         }
     }

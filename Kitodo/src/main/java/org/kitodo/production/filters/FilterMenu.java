@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.forms.CurrentTaskForm;
@@ -40,6 +41,7 @@ public class FilterMenu {
             FilterString.TASKOPEN,
             FilterString.TASKDONE,
             FilterString.PROJECT,
+            FilterString.PROJECT_EXACT,
             FilterString.ID,
             FilterString.PARENTPROCESSID,
             FilterString.PROCESS,
@@ -51,6 +53,7 @@ public class FilterMenu {
             FilterString.TASKINWORK,
             FilterString.TASKOPEN,
             FilterString.PROJECT,
+            FilterString.PROJECT_EXACT,
             FilterString.ID,
             FilterString.PROCESS,
             FilterString.BATCH,
@@ -217,6 +220,7 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initStepTitles(), FilterPart.VALUE));
                 break;
             case PROJECT:
+            case PROJECT_EXACT:
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
                 break;
             case PROPERTY:
@@ -253,6 +257,7 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initStepTitles(), FilterPart.VALUE));
                 break;
             case PROJECT:
+            case PROJECT_EXACT:
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
                 break;
             case PROPERTY:
@@ -305,6 +310,14 @@ public class FilterMenu {
      * @return value of filterInEditMode
      */
     public String getFilterInEditMode() {
+        Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap();
+        String input = parameters.get("input");
+        if (StringUtils.isNotBlank(input) && StringUtils.isBlank(filterInEditMode)) {
+            filterInEditMode = input;
+            parsedFilters.clear();
+            submitFilters();
+        }
         return filterInEditMode;
     }
 

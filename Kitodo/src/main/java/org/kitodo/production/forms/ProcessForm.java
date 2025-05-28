@@ -50,12 +50,9 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.helper.CustomListColumnInitializer;
@@ -67,6 +64,7 @@ import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.kitodo.utils.Stopwatch;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -122,6 +120,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @PostConstruct
     public void init() {
+        final Stopwatch stopwatch = new Stopwatch(this, "init");
         columns = new ArrayList<>();
 
         SelectItemGroup processColumnGroup;
@@ -142,6 +141,7 @@ public class ProcessForm extends TemplateBaseForm {
 
         selectedColumns =
                 ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
+        stopwatch.stop();
     }
 
     /**
@@ -151,33 +151,37 @@ public class ProcessForm extends TemplateBaseForm {
      * @return array of process property names
      */
     public String[] getProcessPropertyNames() {
-        return initializer.getProcessProperties();
+        Stopwatch stopwatch = new Stopwatch(this, "getProcessPropertyNames");
+        return stopwatch.stop(initializer.getProcessProperties());
     }
 
     /**
      * Retrieve and return process property value of property with given name
-     * 'propertyName' from given ProcessDTO 'process'.
+     * 'propertyName' from given Process 'process'.
      *
      * @param process
-     *            the ProcessDTO object from which the property value is retrieved
+     *            the Process object from which the property value is retrieved
      * @param propertyName
      *            name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName',
      *         empty String otherwise
      */
-    public static String getPropertyValue(ProcessDTO process, String propertyName) {
-        return ProcessService.getPropertyValue(process, propertyName);
+    public static String getPropertyValue(Process process, String propertyName) {
+        Stopwatch stopwatch = new Stopwatch(ProcessForm.class, process, "getPropertyValue", "propertyName",
+                propertyName);
+        return stopwatch.stop(ProcessService.getPropertyValue(process, propertyName));
     }
 
     /**
      * Calculate and return age of given process as a String.
      *
-     * @param processDTO
-     *            ProcessDTO object whose duration/age is calculated
+     * @param process
+     *            Process object whose duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessDTO processDTO) {
-        return ProcessService.getProcessDuration(processDTO);
+    public static String getProcessDuration(Process process) {
+        Stopwatch stopwatch = new Stopwatch(ProcessForm.class, process, "getProcessDuration");
+        return stopwatch.stop(ProcessService.getProcessDuration(process));
     }
 
     /**
@@ -186,6 +190,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String save() {
+        Stopwatch stopwatch = new Stopwatch(this, "save");
         if (Objects.nonNull(process) && Objects.nonNull(newProcessTitle)) {
             if (!process.getTitle().equals(newProcessTitle)
                     && !renameAfterProcessTitleChanged()) {
@@ -193,35 +198,30 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                ServiceManager.getProcessService().save(this.process, true);
+                ServiceManager.getProcessService().save(this.process);
                 return processesPage;
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
             }
         } else {
             Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "processTitleEmpty");
         }
-        return this.stayOnCurrentPage;
+        return stopwatch.stop(this.stayOnCurrentPage);
     }
 
     /**
      * Create Child for given Process.
-     * @param processDTO the process to create a child for.
+     * @param process the process to create a child for.
      * @return path to createProcessForm
      */
-    public String createProcessAsChild(ProcessDTO processDTO) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
-                return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
-                        + process.getProject().getId() + "&parentId=" + process.getId();
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
+    public String createProcessAsChild(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createProcessAsChild");
+        if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
+            return stopwatch.stop(CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
+                    + process.getProject().getId() + "&parentId=" + process.getId());
         }
-        return "processes";
+        return stopwatch.stop("processes");
     }
 
     /**
@@ -230,11 +230,12 @@ public class ProcessForm extends TemplateBaseForm {
      * @return diagram image file
      */
     public InputStream getTasksDiagram() {
+        Stopwatch stopwatch = new Stopwatch(this, "getTasksDiagram");
         Workflow workflow = this.process.getTemplate().getWorkflow();
         if (Objects.nonNull(workflow)) {
             return ServiceManager.getTemplateService().getTasksDiagram(workflow.getTitle());
         }
-        return ServiceManager.getTemplateService().getTasksDiagram("");
+        return stopwatch.stop(ServiceManager.getTemplateService().getTasksDiagram(""));
     }
 
     /**
@@ -245,7 +246,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return translated message for given task status title
      */
     public String getTaskStatusTitle(String taskStatusTitle) {
-        return Helper.getTranslation(taskStatusTitle);
+        Stopwatch stopwatch = new Stopwatch(this, "getTaskStatusTitle", "taskStatusTitle", taskStatusTitle);
+        return stopwatch.stop(Helper.getTranslation(taskStatusTitle));
     }
 
     /**
@@ -254,6 +256,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return String
      */
     public String deleteContent() {
+        Stopwatch stopwatch = new Stopwatch(this, "deleteContent");
         try {
             URI ocr = fileService.getOcrDirectory(this.process);
             if (fileService.fileExist(ocr)) {
@@ -269,7 +272,7 @@ public class ProcessForm extends TemplateBaseForm {
         }
 
         Helper.setMessage("Content deleted");
-        return this.stayOnCurrentPage;
+        return stopwatch.stop(this.stayOnCurrentPage);
     }
 
     private boolean renameAfterProcessTitleChanged() {
@@ -294,24 +297,29 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove template properties.
      */
     public void deleteTemplateProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "deleteTemplateProperty");
         this.templateProperty.getProcesses().clear();
         this.process.getTemplates().remove(this.templateProperty);
         loadTemplateProperties();
+        stopwatch.stop();
     }
 
     /**
      * Remove workpiece properties.
      */
     public void deleteWorkpieceProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "deleteWorkpieceProperty");
         this.workpieceProperty.getProcesses().clear();
         this.process.getWorkpieces().remove(this.workpieceProperty);
         loadWorkpieceProperties();
+        stopwatch.stop();
     }
 
     /**
      * Create new template property.
      */
     public void createTemplateProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "createTemplateProperty");
         if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
@@ -319,12 +327,14 @@ public class ProcessForm extends TemplateBaseForm {
         newProperty.setDataType(PropertyType.STRING);
         this.templates.add(newProperty);
         this.templateProperty = newProperty;
+        stopwatch.stop();
     }
 
     /**
      * Create new workpiece property.
      */
     public void createWorkpieceProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "createWorkpieceProperty");
         if (Objects.isNull(this.workpieces)) {
             this.workpieces = new ArrayList<>();
         }
@@ -332,26 +342,31 @@ public class ProcessForm extends TemplateBaseForm {
         newProperty.setDataType(PropertyType.STRING);
         this.workpieces.add(newProperty);
         this.workpieceProperty = newProperty;
+        stopwatch.stop();
     }
 
     /**
      * Save template property.
      */
     public void saveTemplateProperty() {
+        Stopwatch stopwatch = new Stopwatch(this, "saveTemplateProperty");
         if (!this.process.getTemplates().contains(this.templateProperty)) {
             this.process.getTemplates().add(this.templateProperty);
         }
         loadTemplateProperties();
+        stopwatch.stop();
     }
 
     /**
      * Save workpiece property.
      */
     public void saveWorkpieceProperty() {
+        Stopwatch stopwatch = new Stopwatch(this, "saveWorkpieceProperty");
         if (!this.process.getWorkpieces().contains(this.workpieceProperty)) {
             this.process.getWorkpieces().add(this.workpieceProperty);
         }
         loadWorkpieceProperties();
+        stopwatch.stop();
     }
 
     /**
@@ -360,14 +375,17 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
+        Stopwatch stopwatch = new Stopwatch(this, "saveTaskAndRedirect");
         saveTask(this.task);
-        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
+        return stopwatch.stop(processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0
+                : this.process.getId()));
     }
 
     /**
      * Remove task.
      */
     public void removeTask() {
+        final Stopwatch stopwatch = new Stopwatch(this, "removeTask");
         this.process.getTasks().remove(this.task);
 
         List<Role> roles = this.task.getRoles();
@@ -375,6 +393,7 @@ public class ProcessForm extends TemplateBaseForm {
             role.getTasks().remove(this.task);
         }
         ProcessService.deleteSymlinksFromUserHomes(this.task);
+        stopwatch.stop();
     }
 
     /**
@@ -383,6 +402,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return stay on the same page
      */
     public String deleteRole() {
+        Stopwatch stopwatch = new Stopwatch(this, "deleteRole");
         String idParameter = Helper.getRequestParameter(ID_PARAMETER);
         if (Objects.nonNull(idParameter)) {
             try {
@@ -394,7 +414,7 @@ public class ProcessForm extends TemplateBaseForm {
         } else {
             Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
-        return this.stayOnCurrentPage;
+        return stopwatch.stop(this.stayOnCurrentPage);
     }
 
     /**
@@ -403,6 +423,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return stay on the same page
      */
     public String addRole() {
+        Stopwatch stopwatch = new Stopwatch(this, "addRole");
         String idParameter = Helper.getRequestParameter(ID_PARAMETER);
         if (Objects.nonNull(idParameter)) {
             int roleId = 0;
@@ -422,39 +443,48 @@ public class ProcessForm extends TemplateBaseForm {
         } else {
             Helper.setErrorMessage(ERROR_PARAMETER_MISSING, new Object[] {ID_PARAMETER});
         }
-        return this.stayOnCurrentPage;
+        return stopwatch.stop(this.stayOnCurrentPage);
     }
 
     /**
      * Set up processing status selection.
      */
     public void setTaskStatusUpForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUpForSelection");
         workflowControllerService.setTaskStatusUpForProcesses(getSelectedProcesses());
+        stopwatch.stop();
     }
 
     /**
      * Set down processing status selection.
      */
     public void setTaskStatusDownForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDownForSelection");
         workflowControllerService.setTaskStatusDownForProcesses(getSelectedProcesses());
+        stopwatch.stop();
     }
 
     /**
      * Task status up.
      */
-    public void setTaskStatusUp() throws DataException, IOException, DAOException {
+    public void setTaskStatusUp() throws DAOException, IOException {
+        final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUp");
         workflowControllerService.setTaskStatusUp(this.task);
+        processService.refresh(this.process);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
+        stopwatch.stop();
     }
 
     /**
      * Task status down.
      */
     public void setTaskStatusDown() {
+        final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDown");
         workflowControllerService.setTaskStatusDown(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
+        stopwatch.stop();
     }
 
     private void refreshParent() {
@@ -474,7 +504,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return process object
      */
     public Process getProcess() {
-        return this.process;
+        Stopwatch stopwatch = new Stopwatch(this, "getProcess");
+        return stopwatch.stop(this.process);
     }
 
     /**
@@ -484,11 +515,13 @@ public class ProcessForm extends TemplateBaseForm {
      *            Process object
      */
     public void setProcess(Process process) {
+        final Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "setProcess");
         this.process = process;
         this.newProcessTitle = process.getTitle();
         loadProcessProperties();
         loadTemplateProperties();
         loadWorkpieceProperties();
+        stopwatch.stop();
     }
 
     /**
@@ -497,7 +530,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return Task object
      */
     public Task getTask() {
-        return this.task;
+        Stopwatch stopwatch = new Stopwatch(this, "getTask");
+        return stopwatch.stop(this.task);
     }
 
     /**
@@ -507,38 +541,62 @@ public class ProcessForm extends TemplateBaseForm {
      *            Task object
      */
     public void setTask(Task task) {
+        Stopwatch stopwatch = new Stopwatch(this, "setTask", "task", Objects.toString(task));
         this.task = task;
         this.task.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
+        stopwatch.stop();
     }
 
     public Property getTemplateProperty() {
-        return this.templateProperty;
+        Stopwatch stopwatch = new Stopwatch(this, "getTemplateProperty");
+        return stopwatch.stop(this.templateProperty);
     }
 
+    /**
+     * Sets the template property.
+     * 
+     * @param templateProperty
+     *            template property to set
+     */
     public void setTemplateProperty(Property templateProperty) {
+        Stopwatch stopwatch = new Stopwatch(this, "setTemplateProperty", "templateProperty", Objects.toString(
+            templateProperty));
         this.templateProperty = templateProperty;
+        stopwatch.stop();
     }
 
     public Property getWorkpieceProperty() {
-        return this.workpieceProperty;
+        Stopwatch stopwatch = new Stopwatch(this, "getWorkpieceProperty");
+        return stopwatch.stop(this.workpieceProperty);
     }
 
+    /**
+     * Sets the workpiece property.
+     * 
+     * @param workpieceProperty
+     *            workpiece property to set
+     */
     public void setWorkpieceProperty(Property workpieceProperty) {
+        Stopwatch stopwatch = new Stopwatch(this, "setWorkpieceProperty", "workpieceProperty", Objects.toString(
+            workpieceProperty));
         this.workpieceProperty = workpieceProperty;
+        stopwatch.stop();
     }
 
     /**
      * Execute Kitodo script for selected processes.
      */
     public void executeKitodoScriptSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "executeKitodoScriptSelection");
         executeKitodoScriptForProcesses(getSelectedProcesses(), this.kitodoScriptSelection);
+        stopwatch.stop();
     }
 
     private void executeKitodoScriptForProcesses(List<Process> processes, String kitodoScript) {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DataException | IOException | InvalidImagesException e) {
+        } catch (DAOException | IOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
@@ -551,7 +609,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return kitodo script for selected results
      */
     public String getKitodoScriptSelection() {
-        return this.kitodoScriptSelection;
+        Stopwatch stopwatch = new Stopwatch(this, "getKitodoScriptSelection");
+        return stopwatch.stop(this.kitodoScriptSelection);
     }
 
     /**
@@ -561,15 +620,27 @@ public class ProcessForm extends TemplateBaseForm {
      *            the kitodoScript
      */
     public void setKitodoScriptSelection(String kitodoScriptSelection) {
+        Stopwatch stopwatch = new Stopwatch(this, "setKitodoScriptSelection", "kitodoScriptSelection",
+                kitodoScriptSelection);
         this.kitodoScriptSelection = kitodoScriptSelection;
+        stopwatch.stop();
     }
 
     public String getNewProcessTitle() {
-        return this.newProcessTitle;
+        Stopwatch stopwatch = new Stopwatch(this, "getNewProcessTitle");
+        return stopwatch.stop(this.newProcessTitle);
     }
 
+    /**
+     * Sets a new process title.
+     * 
+     * @param newProcessTitle
+     *            new process title to set
+     */
     public void setNewProcessTitle(String newProcessTitle) {
+        Stopwatch stopwatch = new Stopwatch(this, "setNewProcessTitle", "newProcessTitle", newProcessTitle);
         this.newProcessTitle = newProcessTitle;
+        stopwatch.stop();
     }
 
     /**
@@ -578,7 +649,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return property for process
      */
     public Property getProperty() {
-        return this.property;
+        Stopwatch stopwatch = new Stopwatch(this, "getProperty");
+        return stopwatch.stop(this.property);
     }
 
     /**
@@ -588,7 +660,9 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property object
      */
     public void setProperty(Property property) {
+        Stopwatch stopwatch = new Stopwatch(this, "setProperty", "property", Objects.toString(property));
         this.property = property;
+        stopwatch.stop();
     }
 
     /**
@@ -597,7 +671,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of process properties
      */
     public List<Property> getProperties() {
-        return this.properties;
+        Stopwatch stopwatch = new Stopwatch(this, "getProperties");
+        return stopwatch.stop(this.properties);
     }
 
     /**
@@ -607,7 +682,9 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property objects
      */
     public void setProperties(List<Property> properties) {
+        Stopwatch stopwatch = new Stopwatch(this, "setProperties", "properties", Objects.toString(properties));
         this.properties = properties;
+        stopwatch.stop();
     }
 
     /**
@@ -616,7 +693,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of templates for process
      */
     public List<Property> getTemplates() {
-        return this.templates;
+        Stopwatch stopwatch = new Stopwatch(this, "getTemplates");
+        return stopwatch.stop(this.templates);
     }
 
     /**
@@ -626,7 +704,9 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property objects
      */
     public void setTemplates(List<Property> templates) {
+        Stopwatch stopwatch = new Stopwatch(this, "setTemplates", "templates", Objects.toString(templates));
         this.templates = templates;
+        stopwatch.stop();
     }
 
     /**
@@ -635,7 +715,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of workpieces for process
      */
     public List<Property> getWorkpieces() {
-        return this.workpieces;
+        Stopwatch stopwatch = new Stopwatch(this, "getWorkpieces");
+        return stopwatch.stop(this.workpieces);
     }
 
     /**
@@ -645,7 +726,9 @@ public class ProcessForm extends TemplateBaseForm {
      *            for process as Property objects
      */
     public void setWorkpieces(List<Property> workpieces) {
+        Stopwatch stopwatch = new Stopwatch(this, "setWorkpieces", "workpieces", Objects.toString(workpieces));
         this.workpieces = workpieces;
+        stopwatch.stop();
     }
 
     private void loadProcessProperties() {
@@ -664,6 +747,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new property.
      */
     public void createNewProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "createNewProperty");
         if (Objects.isNull(this.properties)) {
             this.properties = new ArrayList<>();
         }
@@ -671,38 +755,45 @@ public class ProcessForm extends TemplateBaseForm {
         newProperty.setDataType(PropertyType.STRING);
         this.properties.add(newProperty);
         this.property = newProperty;
+        stopwatch.stop();
     }
 
     /**
      * Save current property.
      */
     public void saveCurrentProperty() {
+        Stopwatch stopwatch = new Stopwatch(this, "saveCurrentProperty");
         if (!this.process.getProperties().contains(this.property)) {
             this.process.getProperties().add(this.property);
         }
         loadProcessProperties();
+        stopwatch.stop();
     }
 
     /**
      * Delete property.
      */
     public void deleteProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "deleteProperty");
         this.property.getProcesses().clear();
         this.process.getProperties().remove(this.property);
 
         List<Property> propertiesToFilterTitle = this.process.getProperties();
         processService.removePropertiesWithEmptyTitle(propertiesToFilterTitle, this.process);
         loadProcessProperties();
+        stopwatch.stop();
     }
 
     /**
      * Duplicate property.
      */
     public void duplicateProperty() {
+        final Stopwatch stopwatch = new Stopwatch(this, "duplicateProperty");
         Property newProperty = ServiceManager.getPropertyService().transfer(this.property);
         newProperty.getProcesses().add(this.process);
         this.process.getProperties().add(newProperty);
         loadProcessProperties();
+        stopwatch.stop();
     }
 
     /**
@@ -711,7 +802,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of dockets
      */
     public List<Docket> getDockets() {
-        return ServiceManager.getDocketService().getAllForSelectedClient();
+        Stopwatch stopwatch = new Stopwatch(this, "getDockets");
+        return stopwatch.stop(ServiceManager.getDocketService().getAllForSelectedClient());
     }
 
     /**
@@ -720,7 +812,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of projects
      */
     public List<Project> getProjects() {
-        return ServiceManager.getProjectService().getAllForSelectedClient();
+        Stopwatch stopwatch = new Stopwatch(this, "getProjects");
+        return stopwatch.stop(ServiceManager.getProjectService().getAllForSelectedClient());
     }
 
     /**
@@ -729,7 +822,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of OCR-D workflows
      */
     public List<Pair<?, ?>> getOcrdWorkflows() {
-        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflows();
+        Stopwatch stopwatch = new Stopwatch(this, "getOcrdWorkflows");
+        return stopwatch.stop(ServiceManager.getOcrdWorkflowService().getOcrdWorkflows());
     }
 
     /**
@@ -738,7 +832,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return Immutable key value pair
      */
     public Pair<?, ?> getOcrdWorkflow() {
-        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getOcrdWorkflowId());
+        Stopwatch stopwatch = new Stopwatch(this, "getOcrdWorkflow");
+        return stopwatch.stop(ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getOcrdWorkflowId()));
     }
 
     /**
@@ -747,7 +842,9 @@ public class ProcessForm extends TemplateBaseForm {
      * @return Immutable key value pair
      */
     public Pair<?, ?> getOcrdWorkflowOfTemplate() {
-        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getTemplate().getOcrdWorkflowId());
+        Stopwatch stopwatch = new Stopwatch(this, "getOcrdWorkflowOfTemplate");
+        return stopwatch.stop(ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getTemplate()
+                .getOcrdWorkflowId()));
     }
 
     /**
@@ -757,11 +854,13 @@ public class ProcessForm extends TemplateBaseForm {
      *         The immutable key value pair
      */
     public void setOcrdWorkflow(Pair<?, ?> ocrdWorkflow) {
+        Stopwatch stopwatch = new Stopwatch(this, "setOcrdWorkflow");
         String ocrdWorkflowId = StringUtils.EMPTY;
         if (Objects.nonNull(ocrdWorkflow)) {
             ocrdWorkflowId = ocrdWorkflow.getKey().toString();
         }
         process.setOcrdWorkflowId(ocrdWorkflowId);
+        stopwatch.stop();
     }
 
     /**
@@ -770,7 +869,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of rulesets
      */
     public List<Ruleset> getRulesets() {
-        return ServiceManager.getRulesetService().getAllForSelectedClient();
+        Stopwatch stopwatch = new Stopwatch(this, "getRulesets");
+        return stopwatch.stop(ServiceManager.getRulesetService().getAllForSelectedClient());
     }
 
     /**
@@ -779,11 +879,12 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of all import configurations.
      */
     public List<ImportConfiguration> getImportConfigurations() {
+        Stopwatch stopwatch = new Stopwatch(this, "getImportConfigurations");
         try {
-            return ServiceManager.getImportConfigurationService().getAll();
+            return stopwatch.stop(ServiceManager.getImportConfigurationService().getAll());
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
-            return Collections.emptyList();
+            return stopwatch.stop(Collections.emptyList());
         }
     }
 
@@ -793,7 +894,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return array of task statuses
      */
     public TaskStatus[] getTaskStatuses() {
-        return TaskStatus.values();
+        Stopwatch stopwatch = new Stopwatch(this, "getTaskStatuses");
+        return stopwatch.stop(TaskStatus.values());
     }
 
     /**
@@ -805,6 +907,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            ID of the process to load
      */
     public void load(int id) {
+        Stopwatch stopwatch = new Stopwatch(this, "load");
         SecurityAccessController securityAccessController = new SecurityAccessController();
         try {
             if (!securityAccessController.hasAuthorityToEditProcess(id)
@@ -812,7 +915,7 @@ public class ProcessForm extends TemplateBaseForm {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
-        } catch (IOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
                 logger, e);
         }
@@ -825,19 +928,21 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
                 logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
      * Method being used as viewAction for task form.
      */
     public void loadTask(int id) {
+        Stopwatch stopwatch = new Stopwatch(this, "loadTask");
         SecurityAccessController securityAccessController = new SecurityAccessController();
         try {
             if (!securityAccessController.hasAuthorityToEditTask(id)) {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
-        } catch (IOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                     logger, e);
         }
@@ -850,6 +955,7 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                 logger, e);
         }
+        stopwatch.stop();
     }
 
     /**
@@ -860,11 +966,13 @@ public class ProcessForm extends TemplateBaseForm {
      *            the referring view
      */
     public void setTaskEditReferer(String referer) {
+        Stopwatch stopwatch = new Stopwatch(this, "setTaskEditReferer", "referer", referer);
         if (referer.equals("tasks") || referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
             this.taskEditReferer = referer;
         } else {
             this.taskEditReferer = DEFAULT_LINK;
         }
+        stopwatch.stop();
     }
 
     /**
@@ -873,7 +981,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return task eit page referring view
      */
     public String getTaskEditReferer() {
-        return this.taskEditReferer;
+        Stopwatch stopwatch = new Stopwatch(this, "getTaskEditReferer");
+        return stopwatch.stop(this.taskEditReferer);
     }
 
     /**
@@ -884,6 +993,7 @@ public class ProcessForm extends TemplateBaseForm {
      *            the referring view
      */
     public void setProcessEditReferer(String referer) {
+        Stopwatch stopwatch = new Stopwatch(this, "setProcessEditReferer", "referer", referer);
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
                 this.processEditReferer = referer;
@@ -893,6 +1003,7 @@ public class ProcessForm extends TemplateBaseForm {
                 this.processEditReferer = DEFAULT_LINK;
             }
         }
+        stopwatch.stop();
     }
 
     /**
@@ -901,7 +1012,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return process edit page referring view
      */
     public String getProcessEditReferer() {
-        return this.processEditReferer;
+        Stopwatch stopwatch = new Stopwatch(this, "getProcessEditReferer");
+        return stopwatch.stop(this.processEditReferer);
     }
 
     /**
@@ -912,32 +1024,38 @@ public class ProcessForm extends TemplateBaseForm {
      * @return reloadpath of th page.
      */
     public String changeFilter(String filter) {
+        Stopwatch stopwatch = new Stopwatch(this, "changeFilter");
         filterMenu.parseFilters(filter);
         setFilter(filter);
-        return filterList();
+        return stopwatch.stop(filterList());
     }
 
+    // $$$$
     private String filterList() {
-        this.selectedProcessesOrProcessDTOs.clear();
+        this.selectedProcesses.clear();
         return processesPage;
     }
 
     @Override
     public void setFilter(String filter) {
+        Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
+        stopwatch.stop();
     }
 
     /**
      * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
      * "INWORK".
      *
-     * @param processDTO
+     * @param process
      *          process for which current task titles are returned
      * @return String containing titles of current tasks of given process
      */
-    public String getCurrentTaskTitles(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().createProgressTooltip(processDTO);
+    public String getCurrentTaskTitles(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTaskTitles");
+        return stopwatch.stop(ServiceManager.getProcessService().createProgressTooltip(process));
+
     }
 
     /**
@@ -946,11 +1064,13 @@ public class ProcessForm extends TemplateBaseForm {
      * @return List of Processes
      */
     public List<Process> getAllParentProcesses(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "getAllParentProcesses");
         try {
-            return ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(processId));
+            return stopwatch.stop(ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(
+                processId)));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
-            return new ArrayList<>();
+            return stopwatch.stop(new ArrayList<>());
         }
     }
 
@@ -962,11 +1082,12 @@ public class ProcessForm extends TemplateBaseForm {
      * @return number of child processes
      */
     public int getNumberOfChildProcesses(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "getNumberOfChildProcesses");
         try {
-            return ServiceManager.getProcessService().getNumberOfChildren(processId);
+            return stopwatch.stop(ServiceManager.getProcessService().getNumberOfChildren(processId));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
-            return 0;
+            return stopwatch.stop(0);
         }
     }
 
@@ -975,7 +1096,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return path to processes page
      */
     public String getProcessesPage() {
-        return this.processesPage;
+        Stopwatch stopwatch = new Stopwatch(this, "getProcessesPage");
+        return stopwatch.stop(this.processesPage);
     }
 
     /**
@@ -984,36 +1106,36 @@ public class ProcessForm extends TemplateBaseForm {
      * @return the converted date as string
      */
     public String convertProcessingDate(Date date) {
-        return Helper.getDateAsFormattedString(date);
+        Stopwatch stopwatch = new Stopwatch(this, "convertProcessingDate");
+        return stopwatch.stop(Helper.getDateAsFormattedString(date));
     }
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * @param processDTO process as DTO object
-     * @return List of filtered tasks as DTO objects
+     * @param process process as Interface object
+     * @return List of filtered tasks as Interface objects
      */
-    public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getCurrentTasksForUser(processDTO, ServiceManager.getUserService().getCurrentUser());
+    public List<Task> getCurrentTasksForUser(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTasksForUser");
+        return stopwatch.stop(ServiceManager.getProcessService().getCurrentTasksForUser(process, ServiceManager
+                .getUserService().getCurrentUser()));
     }
 
     /**
      * Gets the amount of processes for the current filter.
+     * 
      * @return amount of processes
      */
-    public String getAmount() {
-        try {
-            return ServiceManager.getProcessService().count(ServiceManager.getProcessService()
-                    .getQueryForFilter(isShowClosedProcesses(), isShowInactiveProjects(), filter)).toString();
-        } catch (DataException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
+    public String getAmount() throws DAOException {
+        Stopwatch stopwatch = new Stopwatch(this, "getAmount");
+        return stopwatch.stop(Integer.toString(lazyBeanModel.getRowCount()));
     }
 
     /**
      * Resets the process list multi view state such that the sort order and pagination is reset to their defaults.
      */
     public void resetProcessListMultiViewState() {
+        Stopwatch stopwatch = new Stopwatch(this, "resetProcessListMultiViewState");
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             // check whether there is a multi view state registered (to avoid warning log message in case there is not)
             Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
@@ -1022,6 +1144,7 @@ public class ProcessForm extends TemplateBaseForm {
                 PrimeFaces.current().multiViewState().clear(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID);
             }
         }
+        stopwatch.stop();
     }
 
     /**
@@ -1030,11 +1153,13 @@ public class ProcessForm extends TemplateBaseForm {
      * @param resetTableViewState whether to reset table view state
      */
     public String navigateToProcessesList(boolean resetTableViewState) {
+        Stopwatch stopwatch = new Stopwatch(this, "navigateToProcessesList", "resetTableViewState", Boolean.toString(
+            resetTableViewState));
         if (resetTableViewState) {
             setFirstRow(0);
             resetProcessListMultiViewState();
         }
-        return "/pages/processes?tabIndex=0&faces-redirect=true";
+        return stopwatch.stop("/pages/processes?tabIndex=0&faces-redirect=true");
     }
 
     /**
@@ -1043,9 +1168,11 @@ public class ProcessForm extends TemplateBaseForm {
      * @param unselectEvent as UnUnselectEvent
      */
     public void onRowUnselect(UnselectEvent<?> unselectEvent) {
+        Stopwatch stopwatch = new Stopwatch(this, "onRowUnselect");
         if (allSelected) {
-            excludedProcessIds.add(getProcessId(unselectEvent.getObject()));
+            excludedProcessIds.add(((Process) unselectEvent.getObject()).getId());
         }
+        stopwatch.stop();
     }
 
     /**
@@ -1054,26 +1181,22 @@ public class ProcessForm extends TemplateBaseForm {
      * @param selectEvent as SelectEvent
      */
     public void onRowSelect(SelectEvent<?> selectEvent) {
+        Stopwatch stopwatch = new Stopwatch(this, "onRowSelect");
         if (allSelected) {
-            excludedProcessIds.remove(getProcessId(selectEvent.getObject()));
+            excludedProcessIds.remove(((Process) selectEvent.getObject()).getId());
             PrimeFaces.current().executeScript("PF('processesTable').selection=new Array('@all')");
             PrimeFaces.current().executeScript("$(PF('processesTable').selectionHolder).val('@all')");
         }
+        stopwatch.stop();
     }
 
     /**
      * Callback function triggered when all processes are selected or unselected in the data table.
      */
     public void selectAll() {
+        Stopwatch stopwatch = new Stopwatch(this, "selectAll");
         setAllSelected(false);
-    }
-
-    private int getProcessId(Object process) {
-        if (process instanceof Process) {
-            return ((Process) process).getId();
-        } else {
-            return ((ProcessDTO) process).getId();
-        }
+        stopwatch.stop();
     }
 
     /**
@@ -1082,13 +1205,15 @@ public class ProcessForm extends TemplateBaseForm {
      * @return value of filterMenu
      */
     public FilterMenu getFilterMenu() {
-        return filterMenu;
+        Stopwatch stopwatch = new Stopwatch(this, "getFilterMenu");
+        return stopwatch.stop(filterMenu);
     }
 
     /**
      * Rename media files of all selected processes.
      */
     public void renameMedia() {
+        Stopwatch stopwatch = new Stopwatch(this, "renameMedia");
         List<Process> processes = getSelectedProcesses();
         errorMessage = ServiceManager.getFileService().tooManyProcessesSelectedForMediaRenaming(processes.size());
         if (StringUtils.isBlank(errorMessage)) {
@@ -1097,16 +1222,19 @@ public class ProcessForm extends TemplateBaseForm {
             Ajax.update("errorDialog");
             PrimeFaces.current().executeScript("PF('errorDialog').show();");
         }
+        stopwatch.stop();
     }
 
     /**
      * Start renaming media files of selected processes.
      */
     public void startRenaming() {
+        Stopwatch stopwatch = new Stopwatch(this, "startRenaming");
         ServiceManager.getFileService().renameMedia(getSelectedProcesses());
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("renamingMediaFilesOfSelectedProcessesStarted")
                 + "','severity':'info'})");
+        stopwatch.stop();
     }
 
     /**
@@ -1115,8 +1243,9 @@ public class ProcessForm extends TemplateBaseForm {
      * @return media renaming confirmation message
      */
     public String getMediaRenamingConfirmMessage() {
-        return Helper.getTranslation("renameMediaForProcessesConfirmMessage",
-                String.valueOf(getSelectedProcesses().size()));
+        Stopwatch stopwatch = new Stopwatch(this, "getMediaRenamingConfirmMessage");
+        return stopwatch.stop(Helper.getTranslation("renameMediaForProcessesConfirmMessage", String.valueOf(
+            getSelectedProcesses().size())));
     }
 
     /**
@@ -1124,7 +1253,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return error message
      */
     public String getErrorMessage() {
-        return errorMessage;
+        Stopwatch stopwatch = new Stopwatch(this, "getErrorMessage");
+        return stopwatch.stop(errorMessage);
     }
 
     /**
@@ -1133,15 +1263,16 @@ public class ProcessForm extends TemplateBaseForm {
      * @return whether process belongs to project assigned to current user or not
      */
     public boolean processInAssignedProject(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "processInAssignedProject");
         try {
             if (!assignedProcesses.containsKey(processId)) {
                 assignedProcesses.put(processId, ImportService.processInAssignedProject(processId));
             }
-            return assignedProcesses.get(processId);
+            return stopwatch.stop(assignedProcesses.get(processId));
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
         }
-        return false;
+        return stopwatch.stop(false);
     }
 
     /**
@@ -1150,14 +1281,17 @@ public class ProcessForm extends TemplateBaseForm {
      * @return boolean
      */
     public boolean showLastComment() {
-        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT);
+        Stopwatch stopwatch = new Stopwatch(this, "showLastComment");
+        return stopwatch.stop(ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT));
     }
 
     /**
      * Display dialog to set import configuration for selected processes.
      */
     public void setImportConfiguration() {
+        Stopwatch stopwatch = new Stopwatch(this, "setImportConfiguration");
         PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').show();");
+        stopwatch.stop();
     }
 
     /**
@@ -1166,12 +1300,13 @@ public class ProcessForm extends TemplateBaseForm {
      * @param importConfigurationId ID of import configuration to assign to selected processes
      */
     public void startSettingImportConfigurations(int importConfigurationId) {
+        final Stopwatch stopwatch = new Stopwatch(this, "startSettingImportConfigurations");
         PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').hide();");
         try {
             String configName = ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(
                     getSelectedProcesses(), importConfigurationId);
             settingImportConfigurationResultMessage = Helper.getTranslation("setImportConfigurationSuccessfulDescription",
-                    configName, String.valueOf(selectedProcessesOrProcessDTOs.size()));
+                configName, String.valueOf(selectedProcesses.size()));
             importConfigurationsSetSuccessfully = true;
         } catch (DAOException e) {
             settingImportConfigurationResultMessage = e.getLocalizedMessage();
@@ -1179,6 +1314,7 @@ public class ProcessForm extends TemplateBaseForm {
         }
         Ajax.update("importConfigurationsSelectedDialog");
         PrimeFaces.current().executeScript("PF('importConfigurationsSelectedDialog').show();");
+        stopwatch.stop();
     }
 
     /**
@@ -1187,7 +1323,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return value of 'settingImportConfigurationResultMessage'
      */
     public String getSettingImportConfigurationResultMessage() {
-        return settingImportConfigurationResultMessage;
+        Stopwatch stopwatch = new Stopwatch(this, "getSettingImportConfigurationResultMessage");
+        return stopwatch.stop(settingImportConfigurationResultMessage);
     }
 
     /**
@@ -1196,6 +1333,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return value of 'importConfigurationsSetSuccessfully'
      */
     public boolean isImportConfigurationsSetSuccessfully() {
-        return importConfigurationsSetSuccessfully;
+        Stopwatch stopwatch = new Stopwatch(this, "isImportConfigurationsSetSuccessfully");
+        return stopwatch.stop(importConfigurationsSetSuccessfully);
     }
 }

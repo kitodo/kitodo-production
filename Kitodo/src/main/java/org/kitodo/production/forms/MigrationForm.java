@@ -48,7 +48,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -336,7 +335,7 @@ public class MigrationForm extends BaseForm {
 
         try {
             ServiceManager.getWorkflowService().save(workflowToUse);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger,
                 e);
             return this.stayOnCurrentPage;
@@ -406,7 +405,7 @@ public class MigrationForm extends BaseForm {
         List<Process> processesToAddToTemplate = templatesToCreate.get(template);
         try {
             migrationService.addProcessesToTemplate(existingTemplate, processesToAddToTemplate);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                 e);
         }
@@ -432,13 +431,13 @@ public class MigrationForm extends BaseForm {
             List<Process> processesToAddToTemplate = templatesToCreate.get(template);
             try {
                 ServiceManager.getTemplateService().save(template);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TEMPLATE.getTranslationSingular()}, logger,
                         e);
             }
             try {
                 migrationService.addProcessesToTemplate(template, processesToAddToTemplate);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger,
                         e);
             }
@@ -584,7 +583,7 @@ public class MigrationForm extends BaseForm {
             if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEncrypted(managerPassword)) {
                 try {
                     ldapServer.setManagerPassword(AESUtil.encrypt(managerPassword, securitySecret));
-                    ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+                    ServiceManager.getLdapServerService().save(ldapServer);
                 } catch (DAOException | NoSuchPaddingException | NoSuchAlgorithmException
                         | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
                         | IllegalBlockSizeException | InvalidKeySpecException e) {

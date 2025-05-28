@@ -14,13 +14,15 @@ package org.kitodo.production.services.data;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -36,28 +39,16 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.TaskType;
-import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TaskDTO;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.GenerationMode;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -66,13 +57,9 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.command.KitodoScriptService;
-import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -80,7 +67,28 @@ import org.primefaces.model.SortOrder;
  * functions on the task because the task itself is a database bean and
  * therefore may not include functionality.
  */
-public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
+public class TaskService extends BaseBeanService<Task, TaskDAO> {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title", "title");
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("processForTask.id", "process.id");
+        SORT_FIELD_MAPPING.put("processForTask.title.keyword", "process.title");
+        SORT_FIELD_MAPPING.put("processingStatus", "processingStatus");
+        SORT_FIELD_MAPPING.put("processingUser.name.keyword", "task.processingUser.surname");
+        SORT_FIELD_MAPPING.put("processingBegin", "processingBegin");
+        SORT_FIELD_MAPPING.put("processingEnd", "processingEnd");
+        SORT_FIELD_MAPPING.put("correctionCommentStatus", "CASE WHEN task.process IS NOT NULL AND EXISTS ("
+                + "SELECT 1 FROM task.process.comments AS comment WHERE comment.type = 'ERROR' "
+                + "AND comment.corrected = false) THEN 4 WHEN task.process IS NOT NULL AND EXISTS ("
+                + "SELECT 1 FROM task.process.comments AS comment WHERE comment.type = 'ERROR') THEN 3 "
+                + "WHEN task.process IS NOT NULL AND EXISTS (SELECT 1 FROM task.process.comments) THEN 2 ELSE 1 END");
+        SORT_FIELD_MAPPING.put("projectForTask.title.keyword", "process.project.title");
+        SORT_FIELD_MAPPING.put("processForTask.creationDate", "process.creationDate");
+    }
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
@@ -89,8 +97,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * Constructor with Searcher and Indexer assigning.
      */
     private TaskService() {
-        super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class),
-                TaskTypeField.CLIENT_ID.getKey(), TaskTypeField.RELATED_PROJECT_IDS.getKey());
+        super(new TaskDAO());
     }
 
     /**
@@ -112,152 +119,178 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         return localReference;
     }
 
-    /**
-     * Creates and returns a query to retrieve tasks for which the currently
-     * logged in user is eligible.
-     *
-     * @return query to retrieve tasks for which the user eligible.
-     */
-    private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-                                                 boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForTemplate(0));
-        if (Objects.isNull(filter)) {
-            filter = "";
-        }
-        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
-        query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
-
-        query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
-                .map(TaskStatus::getValue).collect(Collectors.toSet())));
-
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-
-        if (onlyOwnTasks) {
-            query.must(getQueryForProcessingUser(user.getId()));
-        } else {
-            BoolQueryBuilder subQuery = new BoolQueryBuilder();
-            subQuery.should(getQueryForProcessingUser(user.getId()));
-            for (Role role : user.getRoles()) {
-                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
-            }
-            query.must(subQuery);
-        }
-
-        if (hideCorrectionTasks) {
-            query.must(createSimpleQuery(TaskTypeField.CORRECTION.getKey(), false, true));
-        }
-
-        if (!showAutomaticTasks) {
-            query.must(getQueryForTypeAutomatic(false));
-        }
-
-        return query;
+    @Override
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin"));
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin"));
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
-                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
-    }
-
-    @Override
-    public Long countResults(Map filters) throws DataException {
+    public Long countResults(Map filters) throws DAOException {
         return countResults(new HashMap<String, String>(filters), false, false, false, null);
     }
 
-    public Long countResults(HashMap<String, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-                             boolean showAutomaticTasks, List<TaskStatus> taskStatus)
-            throws DataException {
-        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
-                onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus));
+    /**
+     * Returns the number of objects of the implementing type that the filter
+     * matches.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function counts the data records for the client, for which the
+     * logged-in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     *
+     * <!-- Here, an additional function countResults() is specified with
+     * additional parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future. -->
+     * 
+     * @param filters
+     *            a map with exactly one entry, only the value is important, in
+     *            which the content of the filter field is passed
+     * @param onlyOwnTasks
+     *            whether only tasks, to which the current user is already
+     *            assigned as processor (usually not)
+     * @param hideCorrectionTasks
+     *            whether tasks in correction runs should be hidden (usually
+     *            not)
+     * @param showAutomaticTasks
+     *            whether automatic tasks should be included (usually not)
+     * @param taskStatus
+     *            tasks in what status Tasks in what status. Must not be
+     *            {@code null}. One of: [OPEN, INWORK], [OPEN], [INWORK] or [].
+     * @return the number of matching objects
+     * @throws DAOException
+     *             database access error
+     * @throws DAOException
+     *             index access error
+     */
+    public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+            boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
+
+        BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
+        query.performIndexSearches();
+        return count(query.formCountQuery(), query.getQueryParameters());
     }
 
     @Override
-    public List<Task> getAllNotIndexed() {
-        return getByQuery("FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
-                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
-    }
-
-    @Override
-    public List<Task> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
-            throws DataException {
+    public List<Task> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DAOException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false,
                 Arrays.asList(TaskStatus.OPEN, TaskStatus.INWORK));
     }
 
     /**
-     * Load tasks with given parameters.
-     * @param first index of first task to load
-     * @param pageSize number of tasks to load
-     * @param sortField name of field by which tasks are sorted
-     * @param sortOrder SortOrder by which tasks are sorted - either ascending or descending
-     * @param filters filter map
-     * @param onlyOwnTasks boolean controlling whether to load only tasks assigned to current user or not
-     * @param hideCorrectionTasks boolean controlling whether to load correction tasks or not
-     * @param showAutomaticTasks boolean controlling whether to load automatic tasks or not
-     * @param taskStatus list of TaskStatus by which tasks are filtered
-     * @return List of loaded tasks
-     * @throws DataException if tasks cannot be loaded from search index
+     * Provides a window onto the task objects. This makes it possible to
+     * navigate through the tasks page by page, without having to load all
+     * objects into memory.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function filters the data according to the client, for which the
+     * logged-in user is currently working.
+     *
+     * <!-- Here, an additional function loadData() is specified with additional
+     * parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future. -->
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     * 
+     * @param offset
+     *            number of objects to be skipped at the list head
+     * @param limit
+     *            maximum number of objects to return
+     * @param sortField
+     *            by which column the data should be sorted. Must not be
+     *            {@code null} or empty.<br>
+     *            One of:<br>
+     *            <ul>
+     *            <li>"title.keyword": Title</li>
+     *            <li>"processForTask.id": Process ID</li>
+     *            <li>"processForTask.title.keyword": Process</li>
+     *            <li>"processingStatus": Status</li>
+     *            <li>"processingUser.name.keyword": Last editing user</li>
+     *            <li>"processingBegin": Start of work</li>
+     *            <li>"processingEnd": End of work</li>
+     *            <li>"correctionCommentStatus": Comments</li>
+     *            <li>"projectForTask.title.keyword": Project</li>
+     *            <li>"processForTask.creationDate": Duration (Process)
+     *            [sic!]</li>
+     *            </ul>
+     * @param sortOrder
+     *            sort ascending or descending?
+     * @param filters
+     *            a map with exactly one entry, only the value is important, in
+     *            which the content of the filter field is passed
+     * @param onlyOwnTasks
+     *            whether only tasks, to which the current user is already
+     *            assigned as processor (usually not)
+     * @param hideCorrectionTasks
+     *            whether tasks in correction runs should be hidden (usually
+     *            not)
+     * @param showAutomaticTasks
+     *            whether automatic tasks should be included (usually not)
+     * @param taskStatus
+     *            Tasks in what status. Must not be {@code null}. One of: [OPEN,
+     *            INWORK], [OPEN], [INWORK] or [].
+     * @return the data objects to be displayed
+     * @throws DAOException
+     *             if processes cannot be loaded from search index
      */
-    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters,
+    public List<Task> loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
-            throws DataException {
-        if ("process.creationDate".equals(sortField)) {
-            sortField = "processForTask.creationDate";
-        }
-        String filter = ServiceManager.getFilterService().parseFilterString(filters);
-        return findByQuery(createUserTaskQuery(filter, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks,
-                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
+            throws DAOException {
+
+        BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
+        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        query.performIndexSearches();
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
-    /**
-     * Method saves or removes dependencies with process, users and user's
-     * groups related to modified task.
-     *
-     * @param task
-     *            object
-     */
-    @Override
-    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
-        if (Objects.nonNull(task.getProcess())) {
-            manageProcessDependenciesForIndex(task);
-        } else if (Objects.nonNull(task.getTemplate())) {
-            manageTemplateDependenciesForIndex(task);
+    private BeanQuery formBeanQuery(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+            boolean showAutomaticTasks, List<TaskStatus> taskStatus) {
+        BeanQuery query = new BeanQuery(Task.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects()
+                .stream().filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        List<Role> userRoles = ServiceManager.getUserService().getCurrentUser().getRoles();
+        final Client currentClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        List<Role> userClientRoles = userRoles.stream().filter(role -> Objects.equals(role.getClient(), currentClient))
+                .filter(Role::isUsedInWorkflow).collect(Collectors.toList());
+        query.restrictToRoles(userClientRoles);
+        Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+        if (filtersIterator.hasNext()) {
+            String filterString = filtersIterator.next().getValue();
+            if (StringUtils.isNotBlank(filterString)) {
+                query.restrictWithUserFilterString(filterString);
+            }
         }
-    }
-
-    private void manageProcessDependenciesForIndex(Task task)
-            throws CustomResponseException, DataException, IOException {
-        Process process = task.getProcess();
-        if (task.getIndexAction() == IndexAction.DELETE) {
-            process.getTasks().remove(task);
-            ServiceManager.getProcessService().saveToIndex(process, false);
-        } else {
-            ServiceManager.getProcessService().saveToIndex(process, false);
+        if (onlyOwnTasks) {
+            query.addIntegerRestriction("processingUser.id", ServiceManager.getUserService().getCurrentUser().getId());
         }
-    }
-
-    private void manageTemplateDependenciesForIndex(Task task)
-            throws CustomResponseException, DataException, IOException {
-        Template template = task.getTemplate();
-        if (task.getIndexAction().equals(IndexAction.DELETE)) {
-            template.getTasks().remove(task);
-            ServiceManager.getTemplateService().saveToIndex(template, false);
-        } else {
-            ServiceManager.getTemplateService().saveToIndex(template, false);
+        if (hideCorrectionTasks) {
+            query.addBooleanRestriction("correction", Boolean.FALSE);
         }
+        if (!showAutomaticTasks) {
+            query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
+        }
+        if (!taskStatus.isEmpty()) {
+            query.addInCollectionRestriction("processingStatus", taskStatus);
+        }
+        return query;
     }
 
     /**
@@ -290,85 +323,21 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Find the distinct task titles.
+     * Finds all task names that each differ from any other. That means, no
+     * doubles.
      *
-     * @return a list of titles
+     * <p>
+     * <b>API Note:</b><br>
+     * This method actually returns all task names of all clients and is
+     * therefore more suitable for operational purposes, rather not for display
+     * purposes.
+     *
+     * @return all different task names
      */
-    public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
-        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
-    }
-
-    @Override
-    public TaskDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        TaskDTO taskDTO = new TaskDTO();
-        taskDTO.setId(getIdFromJSONObject(jsonObject));
-        taskDTO.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
-        taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
-        taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
-        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
-        taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
-        taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
-        int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
-        taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
-        taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
-        taskDTO.setProcessingTime(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
-        taskDTO.setProcessingBegin(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
-        taskDTO.setProcessingEnd(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
-        taskDTO.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
-        taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
-        taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
-        taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
-        taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
-        taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
-        taskDTO.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
-        taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
-        taskDTO.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-        convertTaskProjectFromJsonObjectToDTO(jsonObject, taskDTO);
-
-        /*
-         * We read the list of the process but not the list of templates, because only process tasks
-         * are displayed in the task list and reading the template list would result in
-         * never-ending loops as the list of templates reads the list of tasks.
-         */
-        int process = TaskTypeField.PROCESS_ID.getIntValue(jsonObject);
-        if (process > 0 && !related) {
-            taskDTO.setProcess(ServiceManager.getProcessService().findById(process, true));
-            taskDTO.setBatchAvailable(ServiceManager.getProcessService()
-                    .isProcessAssignedToOnlyOneBatch(taskDTO.getProcess().getBatches()));
-        }
-
-        int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(jsonObject);
-        if (processingUser > 0) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(processingUser);
-            userDTO.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(jsonObject));
-            userDTO.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(jsonObject));
-            userDTO.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(jsonObject));
-            userDTO.setFullName(TaskTypeField.PROCESSING_USER_FULLNAME.getStringValue(jsonObject));
-            taskDTO.setProcessingUser(userDTO);
-        }
-        return taskDTO;
-    }
-
-    /**
-     * Parses and adds properties related to the project of a task to the taskDTO.
-     * 
-     * @param jsonObject the jsonObject retrieved from the ElasticSearch index for a task
-     * @param taskDTO the taskDTO
-     */
-    private void convertTaskProjectFromJsonObjectToDTO(Map<String, Object> jsonObject, TaskDTO taskDTO) throws DataException {
-        ProjectDTO projectDTO = new ProjectDTO();
-        projectDTO.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
-        projectDTO.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-        taskDTO.setProject(projectDTO);
-    }
-
-    private List<Integer> convertJSONValuesToList(List<Map<String, Object>> jsonObject) {
-        return jsonObject.stream()
-                .flatMap(map -> map.values().stream())
-                .filter(o -> StringUtils.isNumeric(o.toString()))
-                .map(o -> (Integer) o)
-                .collect(Collectors.toList());
+    public List<String> findTaskTitlesDistinct() throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Task.class);
+        return super.dao.getStringsByQuery(beanQuery.formQueryForDistinct("title", true),
+                beanQuery.getQueryParameters());
     }
 
     /**
@@ -475,17 +444,34 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Execute script for task.
+     * Runs a script for a task. The script can be a programmatic branch into
+     * the application, a so-called Kitodo Script, or a command line call. If it
+     * is an automatic task, depending on the result of the script, the task is
+     * completed or set to open and the changed state is immediately saved to
+     * the database.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * In previous versions, up to five scripts could be available in a task,
+     * and the operator would then start one or another of them manually.
+     * Therefore, the script can still be passed here (because there were
+     * several of them). Actually, this is no longer necessary, since there is
+     * only one script per task remaining, and that can be cleaned up one day.
      *
      * @param task
-     *            object
+     *            task in which the script is executed
      * @param script
-     *            String
+     *            The command to be executed. If it starts with "action:", it is
+     *            an internal function call, otherwise a command line that the
+     *            JVM executes with the user it runs under.
      * @param automatic
-     *            boolean
-     * @return int
+     *            if so, the task is set to completed if the outcome is positive
+     *            (without errors, for a command line call with the return code
+     *            0), and if the outcome is negative it is set to open; and the
+     *            object is then immediately updated in the database.
+     * @return whether it had a successful outcome
      */
-    public boolean executeScript(Task task, String script, boolean automatic) throws DataException {
+    public boolean executeScript(Task task, String script, boolean automatic) throws DAOException {
         if (Objects.isNull(script) || script.isEmpty()) {
             return false;
         }
@@ -534,14 +520,21 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Execute all scripts for step.
+     * Runs a script for a task. The script can be a programmatic branch into
+     * the application, a so-called Kitodo Script, or a command line call. If it
+     * is an automatic task, depending on the result of the script, the task is
+     * completed or set to open and the changed state is immediately saved to
+     * the database.
      *
      * @param task
-     *            StepObject
+     *            task in which the script is executed
      * @param automatic
-     *            boolean
+     *            if so, the task is set to completed if the outcome is positive
+     *            (without errors, for a command line call with the return code
+     *            0), and if the outcome is negative it is set to open; and the
+     *            object is then immediately updated in the database.
      */
-    public void executeScript(Task task, boolean automatic) throws DataException {
+    public void executeScript(Task task, boolean automatic) throws DAOException {
         String script = task.getScriptPath();
         boolean scriptFinishedSuccessful = true;
         logger.debug("starting script {}", script);
@@ -562,13 +555,13 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *            if it is an automatic task
      * @param successful
      *            if the processing was successful
-     * @throws DataException
+     * @throws DAOException
      *             if the task cannot be saved
      * @throws IOException
      *             if the task cannot be closed
      */
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
-            throws DataException, IOException, DAOException {
+            throws DAOException, IOException {
         if (automatic) {
             task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
@@ -581,25 +574,30 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void abortTask(Task task) throws DataException {
+    private void abortTask(Task task) throws DAOException {
         task.setProcessingStatus(TaskStatus.OPEN);
         task.setEditType(TaskEditType.AUTOMATIC);
         save(task);
     }
 
     /**
-     * Performs creating images when this happens automatically in a task.
+     * Generates browser-friendly images. (thumbnails, or even full images in
+     * any format used by browsers)
      *
      * @param executingThread
-     *            Executing thread (displayed in the taskmanager)
+     *            Background thread that controls image generation. In this
+     *            thread, display fields are updated so that the user can see
+     *            the progress.
      * @param task
-     *            Task that generates images
+     *            task whose status should be set upon completion
      * @param automatic
-     *            Whether it is an automatic task
-     * @throws DataException
+     *            if so, the task is set to completed if the processing was
+     *            completed without errors, and else it is set to open; and the
+     *            object is then immediately updated in the database.
+     * @throws DAOException
      *             if the task cannot be saved
      */
-    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
+    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DAOException {
         try {
             Process process = task.getProcess();
             Subfolder sourceFolder = new Subfolder(process, process.getProject().getGeneratorSource());
@@ -619,36 +617,39 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @param task
      *            as Task object
      */
-    public void executeDmsExport(Task task) throws DataException, IOException, DAOException {
+    public void executeDmsExport(Task task) throws DAOException, IOException {
         new ExportDms(task).startExport(task);
     }
 
     /**
-     * Get current tasks with exact title for batch with exact id.
+     * Returns all tasks in the batch with the specified name.
      *
      * @param title
-     *            of task as String
+     *            task title
      * @param batchId
-     *            id of batch as Integer
-     * @return list of Task objects
+     *            batch number
+     * @return all identified tasks
      */
     public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
         return dao.getCurrentTasksOfBatch(title, batchId);
     }
 
     /**
-     * Get all tasks between two given ordering of tasks for given process id.
+     * Returns all tasks that lie between the two specified tasks in the
+     * processing sequence.
      *
-     * @param orderingMax
-     *            as Integer
-     * @param orderingMin
-     *            as Integer
+     * @param previousOrdering
+     *            processing sequence number of the previous task, that is the
+     *            task in which the error can be corrected
+     * @param laterOrdering
+     *            processing sequence number of the later task, that is the task
+     *            in which the error was discovered
      * @param processId
-     *            id of process for which tasks are searched as Integer
-     * @return list of Task objects
+     *            record number of the process whose tasks are being searched
+     * @return the tasks in between
      */
-    public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
-        return dao.getAllTasksInBetween(orderingMax, orderingMin, processId);
+    public List<Task> getAllTasksInBetween(Integer previousOrdering, Integer laterOrdering, Integer processId) {
+        return dao.getAllTasksInBetween(previousOrdering, laterOrdering, processId);
     }
 
     /**
@@ -665,104 +666,19 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get previous tasks for problem solution for given process id.
+     * Finds all tasks that preceded the current one. This is used when a user
+     * wants to send an error message to a previous task, so the user can choose
+     * which task they want to send the message to.
      *
      * @param ordering
-     *            of Task for which it searches previous ones as Integer
+     *            processing sequence number of the task in which the error was
+     *            discovered
      * @param processId
-     *            id of process for which tasks are searched as Integer
+     *            record number of the process whose tasks are being searched
      * @return list of Task objects
      */
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
-    }
-
-    /**
-     * Find tasks by id of process.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with tasks for specific process id
-     */
-    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-        return findDocuments(getQueryForProcess(id));
-    }
-
-    /**
-     * Find tasks by id of template.
-     *
-     * @param id
-     *            of template
-     * @return list of JSON objects with tasks for specific template id
-     */
-    List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
-        return findDocuments(getQueryForTemplate(id));
-    }
-
-    /**
-     * Get query for automatic type of task.
-     *
-     * @param typeAutomatic
-     *            automatic type of task as boolean
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForTypeAutomatic(boolean typeAutomatic) {
-        return createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true);
-    }
-
-    /**
-     * Get query for process.
-     *
-     * @param processId
-     *            process id as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcess(int processId) {
-        return createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), processId, true);
-    }
-
-    /**
-     * Get query for processing user.
-     *
-     * @param processingUserId
-     *            processing user id as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingUser(int processingUserId) {
-        return createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUserId, true);
-    }
-
-    /**
-     * Get query for processing status.
-     *
-     * @param processingStatus
-     *            processing status as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingStatus(int processingStatus) {
-        return createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-    }
-
-    /**
-     * Get query for processing statuses.
-     *
-     * @param processingStatus
-     *            set of processing statuses as Integer
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingStatuses(Set<Integer> processingStatus) {
-        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-    }
-
-    /**
-     * Get query for template.
-     *
-     * @param templateId
-     *            template id as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForTemplate(int templateId) {
-        return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
     }
 
     /**
@@ -968,5 +884,17 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             return templateTasks.get(0).getId();
         }
         return -1;
+    }
+
+    /**
+     * Stores a task in the database.
+     *
+     * @param taskBean
+     *            task to save
+     */
+    @Override
+    public void save(Task taskBean) throws DAOException {
+        super.save(taskBean);
+        taskBean.getRoles().parallelStream().forEach(role -> role.setUsedInWorkflow(true));
     }
 }

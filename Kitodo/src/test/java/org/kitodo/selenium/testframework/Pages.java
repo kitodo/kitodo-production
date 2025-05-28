@@ -31,7 +31,6 @@ import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.RoleEditPage;
 import org.kitodo.selenium.testframework.pages.RulesetEditPage;
-import org.kitodo.selenium.testframework.pages.SearchResultPage;
 import org.kitodo.selenium.testframework.pages.StartPage;
 import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
@@ -60,10 +59,6 @@ public class Pages {
 
     public static DesktopPage getDesktopPage() throws InstantiationException, IllegalAccessException {
         return getPage(DesktopPage.class);
-    }
-
-    public static SearchResultPage getSearchResultPage() throws InstantiationException, IllegalAccessException {
-        return getPage(SearchResultPage.class);
     }
 
     public static ExtendedSearchPage getExtendedSearchPage() throws InstantiationException, IllegalAccessException {

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -32,13 +33,17 @@ import javax.persistence.Transient;
 
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
+import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.utils.Stopwatch;
+import org.kitodo.utils.Tee;
 
 @Entity
 @Table(name = "task")
-public class Task extends BaseIndexedBean {
+public class Task extends BaseBean {
 
     @Column(name = "title")
     private String title;
@@ -149,6 +154,12 @@ public class Task extends BaseIndexedBean {
     @Transient
     private String localizedTitle;
 
+    @Transient
+    private String processingStatusTitle;
+
+    @Transient
+    private String editTypeTitle;
+
     /**
      * Constructor.
      */
@@ -191,80 +202,170 @@ public class Task extends BaseIndexedBean {
         this.roles = new ArrayList<>(templateTask.getRoles());
     }
 
+    /**
+     * Returns the name of the task. This is usually a human-readable,
+     * aphoristic summary of the activity to be performed.
+     *
+     * @return the name
+     */
     public String getTitle() {
         return this.title;
     }
 
+    /**
+     * Sets the name of the task.
+     *
+     * @param title
+     *            name to set
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Returns the ordinal number of the task. Tasks can be processed
+     * sequentially. When a task with a lower ordinal number is completed, the
+     * task with the next higher ordinal number can be processed. If several
+     * tasks share the same ordinal number, they can be processed in parallel.
+     *
+     * @return ordinal number of the task
+     */
     public Integer getOrdering() {
         return this.ordering;
     }
 
+    /**
+     * Sets the ordinal number of the task. This sets the consecutive execution
+     * point relative to the other tasks in the process. May be the same as the
+     * number of another task if they are to be processed in parallel. Must not
+     * be {@code null}.
+     *
+     * @param ordering
+     *            ordinal number of the task
+     */
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
 
     /**
-     * Get editType as {@link TaskEditType}.
+     * Returns the processing type of the task. Possible are:
+     * <dl>
+     * <dt>UNKNOWN</dt>
+     * <dd>The processing type of the task is not defined.</dd>
+     * <dt>MANUAL_SINGLE</dt>
+     * <dd>The task was taken over and carried out by a user.</dd>
+     * <dt>MANUAL_MULTI</dt>
+     * <dd>The task was taken over and carried out by a user as part of the
+     * batch processing functionality.</dd>
+     * <dt>ADMIN</dt>
+     * <dd>The task status has been changed administratively using the status
+     * increase or status decrease functions.</dd>
+     * <dt>AUTOMATIC</dt>
+     * <dd>The automatic task was carried out by the workflow system.</dd>
+     * <dt>QUEUE</dt>
+     * <dd>The task status was changed via the Active MQ interface.</dd>
+     * </dl>
      *
-     * @return current edit type
+     * @return the processing type
      */
     public TaskEditType getEditType() {
         return this.editType;
     }
 
     /**
-     * Set editType to specific value from {@link TaskEditType}.
+     * Sets the processing type of the task.
      *
-     * @param inputType
-     *            as {@link TaskEditType}
+     * @param editType
+     *            processing type to set
      */
-    public void setEditType(TaskEditType inputType) {
-        this.editType = inputType;
+    public void setEditType(TaskEditType editType) {
+        this.editType = editType;
     }
 
     /**
-     * Set processing status to specific value from {@link TaskStatus}.
+     * Sets the processing status of the task.
      *
-     * @param inputStatus
-     *            as {@link TaskStatus}
+     * @param processingStatus
+     *            processing status to set
      */
-    public void setProcessingStatus(TaskStatus inputStatus) {
-        this.processingStatus = inputStatus;
+    public void setProcessingStatus(TaskStatus processingStatus) {
+        this.processingStatus = processingStatus;
     }
 
     /**
-     * Get processing status as {@link TaskStatus}.
+     * Returns the processing status of the task. A task can:
+     * <dl>
+     * <dt>LOCKED</dt>
+     * <dd>wait for previous tasks to complete to become ready to start</dd>
+     * <dt>OPEN</dt>
+     * <dd>ready to go and waiting to be taken over</dd>
+     * <dt>INWORK</dt>
+     * <dd>currently being carried out</dd>
+     * <dt>DONE</dt>
+     * <dd>be finished</dd>
+     * </dl>
      *
-     * @return current processing status
+     * @return the processing status
      */
     public TaskStatus getProcessingStatus() {
         return this.processingStatus;
     }
 
+    /**
+     * Returns the time the task status was last changed. This references
+     * <i>any</i> activity on the task that involves a change in status.
+     * {@link Date} is a specific instant in time, with millisecond precision.
+     *
+     * @return the time the task status was last changed
+     */
     public Date getProcessingTime() {
         return this.processingTime;
     }
 
+    /**
+     * Sets the time the task status was last changed.
+     *
+     * @param processingTime
+     *            time to set
+     */
     public void setProcessingTime(Date processingTime) {
         this.processingTime = processingTime;
     }
 
+    /**
+     * Returns the time when the task was accepted for processing.
+     *
+     * @return the time when the task was accepted for processing
+     */
     public Date getProcessingBegin() {
         return this.processingBegin;
     }
 
+    /**
+     * Sets the time the task was accepted for processing.
+     *
+     * @param processingBegin
+     *            time to set
+     */
     public void setProcessingBegin(Date processingBegin) {
         this.processingBegin = processingBegin;
     }
 
+    /**
+     * Returns the time when the task was completed.
+     *
+     * @return the time when the task was completed
+     */
     public Date getProcessingEnd() {
         return this.processingEnd;
     }
 
+    /**
+     * Sets the time the task was completed.
+     *
+     * @param processingEnd
+     *            time to set
+     */
     public void setProcessingEnd(Date processingEnd) {
         this.processingEnd = processingEnd;
     }
@@ -316,53 +417,82 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get correction.
+     * Returns whether the task is in a correction run. In a five-step workflow,
+     * if a correction request occurs from the fourth step to the second step,
+     * steps two and three are in the correction run.
      *
-     * @return value of correction
+     * @return whether the task is in a correction run
      */
     public boolean isCorrection() {
         return correction;
     }
 
     /**
-     * Set correction.
+     * Sets whether the task is in a correction run.
      *
-     * @param correction as boolean
+     * @param correction
+     *            whether the task is in a correction run
      */
     public void setCorrection(boolean correction) {
         this.correction = correction;
     }
 
+    /**
+     * Returns the user who last worked on the task.
+     *
+     * @return the user who last worked on the task
+     */
     public User getProcessingUser() {
         return this.processingUser;
     }
 
+    /**
+     * Sets the user who last worked on the task.
+     *
+     * @param processingUser
+     *            user to set
+     */
     public void setProcessingUser(User processingUser) {
         this.processingUser = processingUser;
     }
 
+    /**
+     * Returns the process this task belongs to. Can be {@code null} if the task
+     * belongs to a production template, and not a process.
+     *
+     * @return the process this task belongs to
+     */
     public Process getProcess() {
         return this.process;
     }
 
+    /**
+     * Sets the process this task belongs to. A task can only ever be assigned
+     * to <i>either</i> a process <i>or</i> a production template.
+     *
+     * @param process
+     *            process this task belongs to
+     */
     public void setProcess(Process process) {
         this.process = process;
     }
 
     /**
-     * Get template.
+     * Returns the production template this task belongs to. Can be {@code null}
+     * if the task belongs to a process, and not a production template.
      *
-     * @return value of template
+     * @return the production template this task belongs to
      */
     public Template getTemplate() {
         return this.template;
     }
 
     /**
-     * Set template.
+     * Sets the production template this task belongs to. A task can only ever
+     * be assigned to <i>either</i> a production template <i>or</i> a process.
      *
      * @param template
-     *            as Template
+     *            template this task belongs to
      */
     public void setTemplate(Template template) {
         this.template = template;
@@ -379,6 +509,16 @@ public class Task extends BaseIndexedBean {
             this.roles = new ArrayList<>();
         }
         return this.roles;
+    }
+
+    /**
+     * Returns how many roles are allowed to take on this task.
+     *
+     * @return how many roles are allowed to take on this task
+     */
+    public int getRolesSize() {
+        List<Integer> roles = getRoleIds();
+        return Objects.nonNull(roles) ? roles.size() : 0;
     }
 
     /**
@@ -420,24 +560,44 @@ public class Task extends BaseIndexedBean {
         return validationFolders;
     }
 
+    /**
+     * Returns whether this task gives the user file system access. They can
+     * then access the folder for or containing the digitized files and create,
+     * view or edit files.
+     *
+     * @return whether the user gets file access
+     */
     public boolean isTypeImagesRead() {
         return this.typeImagesRead;
     }
 
+    /**
+     * Sets whether this task gives the user file system access.
+     *
+     * @param typeImagesRead
+     *            whether the user gets file access
+     */
     public void setTypeImagesRead(boolean typeImagesRead) {
         this.typeImagesRead = typeImagesRead;
     }
 
+    /**
+     * Returns whether the user is allowed to create or modify files. When
+     * digitizing, the user probably needs write access to the file area of the
+     * process, but perhaps not for control tasks.
+     *
+     * @return whether the user gets write access
+     */
     public boolean isTypeImagesWrite() {
         return this.typeImagesWrite;
     }
 
     /**
-     * Set task type images. If types is true, it also sets type images read to
-     * true.
+     * Sets whether the user is allowed to create or modify files. If true, the
+     * user is also given file system access.
      *
      * @param typeImagesWrite
-     *            true or false
+     *            whether the user gets write access
      */
     public void setTypeImagesWrite(boolean typeImagesWrite) {
         this.typeImagesWrite = typeImagesWrite;
@@ -490,10 +650,23 @@ public class Task extends BaseIndexedBean {
         this.typeExportDMS = typeExportDMS;
     }
 
+    /**
+     * Returns whether the editor for the digital copy is made available to the
+     * user. The editor offers a UI in which the structure of the previously
+     * loosely digitized media can be detailed.
+     *
+     * @return whether the editor is available
+     */
     public boolean isTypeMetadata() {
         return this.typeMetadata;
     }
 
+    /**
+     * Sets whether the editor is available in the task.
+     *
+     * @param typeMetadata
+     *            whether the editor is available
+     */
     public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
     }
@@ -506,10 +679,24 @@ public class Task extends BaseIndexedBean {
         this.typeAcceptClose = typeAcceptClose;
     }
 
+    /**
+     * Returns whether the task is of automatic type. Automatic tasks are taken
+     * over by the workflow system itself, the actions selected in it are
+     * carried out, such as an export or a script call, and then the task is
+     * completed.
+     *
+     * @return whether the task is automatic
+     */
     public boolean isTypeAutomatic() {
         return this.typeAutomatic;
     }
 
+    /**
+     * Sets whether the task is of automatic type.
+     *
+     * @param typeAutomatic
+     *            whether the task is automatic
+     */
     public void setTypeAutomatic(boolean typeAutomatic) {
         this.typeAutomatic = typeAutomatic;
     }
@@ -578,10 +765,30 @@ public class Task extends BaseIndexedBean {
         this.workflowCondition = workflowCondition;
     }
 
+    /**
+     * Returns whether accepting or completing this task applies to the batch.
+     * If so, with a single UI interaction, the user automatically executes an
+     * action for all tasks of all processes in the batch, that have the same
+     * name and are in the same state. This saves users from a lot of mouse
+     * work.
+     *
+     * @return whether actions apply to the batch
+     */
     public boolean isBatchStep() {
         return this.batchStep;
     }
 
+    /**
+     * Sets whether batch automation is possible for this task. The setter can
+     * be used when representing data from a third-party source. Internally it
+     * depends on, whether the process containing the task is assigned to
+     * exactly one batch.
+     *
+     * @param batchStep
+     *            whether batch automation is possible
+     * @throws UnsupportedOperationException
+     *             when the value doesn't match the background database
+     */
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
     }
@@ -605,19 +812,23 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get localized title.
+     * Returns the translated name of the task at runtime. This can be
+     * translated at runtime for the user currently performing this task via the
+     * application's language resource files. Can be {@code null} if currently
+     * no value is available.
      *
-     * @return localized title as String
+     * @return translated name
      */
     public String getLocalizedTitle() {
         return this.localizedTitle;
     }
 
     /**
-     * Set localized titles as String.
+     * Sets the translated name of the task at runtime. This is a transient
+     * value that is not persisted.
      *
      * @param localizedTitle
-     *            as String
+     *            translated name to set
      */
     public void setLocalizedTitle(String localizedTitle) {
         this.localizedTitle = localizedTitle;
@@ -656,5 +867,83 @@ public class Task extends BaseIndexedBean {
     @Override
     public int hashCode() {
         return Objects.hash(title, processingTime, processingBegin, processingEnd, process, template);
+    }
+
+    /**
+     * Returns the translated processing status of the task at runtime. This can
+     * be translated at runtime for the user currently displaying this task. Can
+     * be {@code null} if currently no value is available.
+     *
+     * @return translated processing status
+     */
+    public String getProcessingStatusTitle() {
+        return processingStatusTitle;
+    }
+
+    /**
+     * Sets the translated processing status of the task at runtime. This is a
+     * transient value that is not persisted.
+     *
+     * @param processingStatusTitle
+     *            translated processing status to set
+     */
+    public void setProcessingStatusTitle(String processingStatusTitle) {
+        this.processingStatusTitle = processingStatusTitle;
+    }
+
+    /**
+     * Returns the translated processing type of the task at runtime. This can
+     * be translated at runtime for the user currently displaying this task. Can
+     * be {@code null} if currently no value is available.
+     *
+     * @return translated processing status
+     */
+    public String getEditTypeTitle() {
+        return editTypeTitle;
+    }
+
+    /**
+     * Sets the translated processing type of the task at runtime. This is a
+     * transient value that is not persisted.
+     *
+     * @param editTypeTitle
+     *            translated processing type to set
+     */
+    public void setEditTypeTitle(String editTypeTitle) {
+        this.editTypeTitle = editTypeTitle;
+    }
+
+    /**
+     * Returns a list of the IDs of the roles, whose holders are allowed to
+     * perform this task. This list is not guaranteed to be in reliable order.
+     *
+     * @return list of the IDs of the roles
+     */
+    public List<Integer> getRoleIds() {
+        if (Objects.isNull(roles)) {
+            return Collections.emptyList();
+        }
+        return getRoles().stream().map(Role::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * Return whether there is a correction comment and whether it has been
+     * corrected as status.
+     * 
+     * @return an enum representing the status
+     */
+    public int getCorrectionCommentStatus() {
+        if (Objects.isNull(this.process)) {
+            return CorrectionComments.NO_CORRECTION_COMMENTS.getValue();
+        }
+        List<Comment> correctionComments = process.getComments()
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
+        if (correctionComments.size() < 1) {
+            return CorrectionComments.NO_CORRECTION_COMMENTS.getValue();
+        } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
+            return CorrectionComments.OPEN_CORRECTION_COMMENTS.getValue();
+        } else {
+            return CorrectionComments.NO_OPEN_CORRECTION_COMMENTS.getValue();
+        }
     }
 }

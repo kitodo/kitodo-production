@@ -22,19 +22,17 @@ import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
-import org.opensearch.OpenSearchStatusException;
 import org.primefaces.model.SortOrder;
 
 @Named("DesktopForm")
@@ -43,9 +41,9 @@ public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private static final String SORT_TITLE = "title.keyword";
     private static final String SORT_ID = "id";
-    private List<TaskDTO> taskList = new ArrayList<>();
-    private List<ProcessDTO> processList = new ArrayList<>();
-    private List<ProjectDTO> projectList = new ArrayList<>();
+    private List<Task> taskList = new ArrayList<>();
+    private List<Process> processList = new ArrayList<>();
+    private List<Project> projectList = new ArrayList<>();
 
     /**
      * Default constructor.
@@ -78,12 +76,12 @@ public class DesktopForm extends BaseForm {
      *
      * @return task list
      */
-    public List<TaskDTO> getTasks() {
+    public List<Task> getTasks() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList() && taskList.isEmpty()) {
                 taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap<>());
             }
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
                 e);
         }
@@ -95,12 +93,12 @@ public class DesktopForm extends BaseForm {
      *
      * @return process list
      */
-    public List<ProcessDTO> getProcesses() {
+    public List<Process> getProcesses() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
                 processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
             }
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
                 logger, e);
         }
@@ -112,12 +110,12 @@ public class DesktopForm extends BaseForm {
      *
      * @return project list
      */
-    public List<ProjectDTO> getProjects() {
+    public List<Project> getProjects() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList() && projectList.isEmpty()) {
                 projectList = ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
             }
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
         }
@@ -133,7 +131,7 @@ public class DesktopForm extends BaseForm {
         try {
             ProcessService.deleteProcess(processID);
             emptyCache();
-        } catch (DataException | DAOException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
@@ -148,7 +146,7 @@ public class DesktopForm extends BaseForm {
         try {
             ProjectService.delete(projectID);
             emptyCache();
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
                     e);
         } catch (ProjectDeletionException e) {
@@ -162,7 +160,7 @@ public class DesktopForm extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
         }
@@ -192,28 +190,28 @@ public class DesktopForm extends BaseForm {
         try {
             switch (objectType) {
                 case TASK:
-                    return ServiceManager.getTaskService().countDatabaseRows();
+                    return ServiceManager.getTaskService().count();
                 case USER:
-                    return ServiceManager.getUserService().countDatabaseRows();
+                    return ServiceManager.getUserService().count();
                 case DOCKET:
-                    return ServiceManager.getDocketService().countDatabaseRows();
+                    return ServiceManager.getDocketService().count();
                 case PROCESS:
-                    return ServiceManager.getProcessService().countDatabaseRows();
+                    return ServiceManager.getProcessService().count();
                 case PROJECT:
-                    return ServiceManager.getProjectService().countDatabaseRows();
+                    return ServiceManager.getProjectService().count();
                 case RULESET:
-                    return ServiceManager.getRulesetService().countDatabaseRows();
+                    return ServiceManager.getRulesetService().count();
                 case TEMPLATE:
-                    return ServiceManager.getTemplateService().countDatabaseRows();
+                    return ServiceManager.getTemplateService().count();
                 case ROLE:
-                    return ServiceManager.getRoleService().countDatabaseRows();
+                    return ServiceManager.getRoleService().count();
                 case WORKFLOW:
-                    return ServiceManager.getWorkflowService().countDatabaseRows();
+                    return ServiceManager.getWorkflowService().count();
                 default:
                     return 0L;
             }
 
-        } catch (DAOException | JsonException | OpenSearchStatusException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;

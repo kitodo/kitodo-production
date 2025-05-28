@@ -15,24 +15,20 @@ import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import java.util.List;
 import java.util.Objects;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
 
 /**
  * Tests for DocketService class.
@@ -54,7 +50,7 @@ public class DocketServiceIT {
         MockDatabase.insertDockets();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(new User(), 1);
-        given().ignoreExceptions().await().until(() -> Objects.nonNull(docketService.findByTitle(defaultDocket, true)));
+        given().ignoreExceptions().await().until(() -> Objects.nonNull(docketService.getByTitle(defaultDocket)));
     }
 
     @AfterAll
@@ -64,19 +60,19 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldCountAllDockets() throws DataException {
+    public void shouldCountAllDockets() throws DAOException {
         assertEquals(Long.valueOf(4), docketService.count(), "Dockets were not counted correctly!");
     }
 
     @Test
-    public void shouldCountAllDocketsAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", defaultDocket).operator(Operator.AND);
-        assertEquals(Long.valueOf(1), docketService.count(query), "Dockets were not counted correctly!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldCountAllDocketsAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForDockets() throws Exception {
-        Long amount = docketService.countDatabaseRows();
+        Long amount = docketService.count();
         assertEquals(Long.valueOf(4), amount, "Dockets were not counted correctly!");
     }
 
@@ -100,62 +96,68 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         String expected = defaultDocket;
-        assertEquals(expected, docketService.findById(1).getTitle(), docketNotFound);
+        assertEquals(expected, docketService.getById(1).getTitle(), docketNotFound);
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
-        assertEquals(1, docketService.findByTitle(defaultDocket, true).size(), docketNotFound);
+    public void shouldFindByTitle() throws DAOException {
+        assertEquals(1, docketService.getByTitle(defaultDocket).size(), docketNotFound);
     }
 
     @Test
-    public void shouldFindByFile() throws DataException {
-        String expected = fileName;
-        assertEquals(expected, docketService.findByFile(fileName).get(DocketTypeField.FILE.getKey()), docketNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindByFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindManyByClientId() throws DataException {
-        assertEquals(3, docketService.findByClientId(1).size(), "Dockets were not found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByClientId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByClientId() throws DataException {
-        assertEquals(0, docketService.findByClientId(3).size(), "Docket was found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByClientId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindByTitleAndFile() throws DataException {
-        Integer expected = 1;
-        assertEquals(expected, docketService.getIdFromJSONObject(docketService.findByTitleAndFile(defaultDocket, fileName)), docketNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByTitleAndFile() throws DataException {
-        Integer expected = 0;
-        assertEquals(expected, docketService.getIdFromJSONObject(docketService.findByTitleAndFile(defaultDocket, none)), "Docket was found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindManyByTitleOrFile() throws DataException {
-        assertEquals(2, docketService.findByTitleOrFile(defaultDocket, fileName).size(), "Dockets were not found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindOneByTitleOrFile() throws DataException {
-        assertEquals(1, docketService.findByTitleOrFile(defaultDocket, none).size(), docketNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByTitleOrFile() throws DataException {
-        assertEquals(0, docketService.findByTitleOrFile(none, none).size(), "Some dockets were found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindAllDocketsDocuments() throws DataException {
-        assertEquals(4, docketService.findAllDocuments().size(), "Not all dockets were found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindAllDocketsDocuments() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
@@ -175,7 +177,7 @@ public class DocketServiceIT {
         foundDocket = docketService.getById(6);
         assertEquals("To remove", foundDocket.getTitle(), "Additional docket was not inserted in database!");
 
-        docketService.remove(6);
+        docketService.remove(foundDocket);
         assertThrows(DAOException.class, () -> docketService.getById(6));
     }
 }

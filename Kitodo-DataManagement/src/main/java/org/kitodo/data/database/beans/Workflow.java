@@ -31,7 +31,7 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BaseIndexedBean {
+public class Workflow extends BaseBean {
 
     @Column(name = "title")
     private String title;
@@ -67,37 +67,47 @@ public class Workflow extends BaseIndexedBean {
     }
 
     /**
-     * Get title.
+     * Returns the label of the workflow.
      *
-     * @return value of title
+     * @return the label
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * Set title.
+     * Sets the label of the workflow.
      *
      * @param title
-     *            as String
+     *            label to set
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * Get status of the workflow.
+     * Returns the stage of the workflow. Statuses:
      *
-     * @return value of status
+     * <dl>
+     * <dt>DRAFT</dt>
+     * <dd>the workflow is being created</dd>
+     * <dt>ACTIVE</dt>
+     * <dd>the workflow is in use</dd>
+     * <dt>ARCHIVED</dt>
+     * <dd>the workflow is no longer used</dd>
+     * </dl>
+     *
+     * @return the stage
      */
     public WorkflowStatus getStatus() {
         return status;
     }
 
     /**
-     * Set status of the workflow.
+     * Sets the stage of the workflow.
      *
-     * @param status as org.kitodo.data.database.beans.Workflow.Status
+     * @param status
+     *            as String
      */
     public void setStatus(WorkflowStatus status) {
         this.status = status;

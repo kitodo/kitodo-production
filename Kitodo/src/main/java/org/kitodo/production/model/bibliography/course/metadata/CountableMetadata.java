@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessSimpleMetadata;
@@ -339,7 +338,7 @@ public class CountableMetadata {
                 Process process = ServiceManager.getProcessService().getById(processId);
                 allMetadataTypes = new ArrayList<>(CalendarService.getAddableMetadataTable(process));
 
-            } catch (DAOException | DataException | IOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
             }
         }

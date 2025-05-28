@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -102,7 +102,7 @@ public class BatchProcessHelper extends BatchHelper {
         try {
             ServiceManager.getProcessService().save(this.currentProcess);
             Helper.setMessage("propertySaved");
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
                 e);
         }
@@ -116,7 +116,7 @@ public class BatchProcessHelper extends BatchHelper {
             try {
                 ServiceManager.getProcessService().save(process);
                 Helper.setMessage("propertiesSaved");
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 String value = Helper.getTranslation("propertiesForProcessNotSaved", process.getTitle());
                 Helper.setErrorMessage(value, logger, e);
             }
