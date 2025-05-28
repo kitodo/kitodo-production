@@ -81,7 +81,11 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         SORT_FIELD_MAPPING.put("processingUser.name.keyword", "task.processingUser.surname");
         SORT_FIELD_MAPPING.put("processingBegin", "processingBegin");
         SORT_FIELD_MAPPING.put("processingEnd", "processingEnd");
-        SORT_FIELD_MAPPING.put("correctionCommentStatus", "correction");
+        SORT_FIELD_MAPPING.put("correctionCommentStatus", "CASE WHEN task.process IS NOT NULL AND EXISTS ("
+                + "SELECT 1 FROM task.process.comments AS comment WHERE comment.type = 'ERROR' "
+                + "AND comment.corrected = false) THEN 4 WHEN task.process IS NOT NULL AND EXISTS ("
+                + "SELECT 1 FROM task.process.comments AS comment WHERE comment.type = 'ERROR') THEN 3 "
+                + "WHEN task.process IS NOT NULL AND EXISTS (SELECT 1 FROM task.process.comments) THEN 2 ELSE 1 END");
         SORT_FIELD_MAPPING.put("projectForTask.title.keyword", "process.project.title");
         SORT_FIELD_MAPPING.put("processForTask.creationDate", "process.creationDate");
     }
