@@ -77,8 +77,8 @@ public class UIInteractionsST extends BaseTestSelenium {
     }
 
     /**
-     * Verifies that roles are filtered by current client by default and that activating the roles filter switch
-     * shows
+     * Verifies that roles are unfiltered by default and that deactivating the roles filter switch
+     * filters the roles to the ones assigned to the current client.
      *
      * @throws Exception when navigating to the roles tab of the users pages fails.
      */
@@ -94,21 +94,21 @@ public class UIInteractionsST extends BaseTestSelenium {
 
         usersPage.switchToTabByIndex(TabIndex.ROLES.getIndex());
 
-        // verify that switch to show other clients roles is off initially
+        // verify that switch to show other clients roles is on initially
         WebElement roleSwitch = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
-        assertFalse(roleSwitch.getAttribute("class").contains("ui-state-active"));
-
-        int rolesDisplayedUnfiltered = usersPage.countListedRoles();
-        assertEquals(8, rolesDisplayedUnfiltered, "Displayed wrong number of roles unfiltered");
-
-        Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR)).click();
-
-        // verify that switch to show other clients roles is on after clicking
-        WebElement roleSwitchClicked = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
-        assertTrue(roleSwitchClicked.getAttribute("class").contains("ui-state-active"));
+        assertTrue(roleSwitch.getAttribute("class").contains("ui-state-active"));
 
         int rolesDisplayedFiltered = usersPage.countListedRoles();
         assertEquals(rolesInDatabase, rolesDisplayedFiltered, "Displayed wrong number of roles filtered");
+
+        Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR)).click();
+
+        // verify that switch to show other clients roles is off after clicking
+        WebElement roleSwitchClicked = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
+        assertTrue(roleSwitchClicked.getAttribute("class").contains("ui-state-active"));
+
+        int rolesDisplayedUnfiltered = usersPage.countListedRoles();
+        assertEquals(8, rolesDisplayedUnfiltered, "Displayed wrong number of roles unfiltered");
 
         // reset test user "nowak" to original state
         nowak.setRoles(existingRoles);

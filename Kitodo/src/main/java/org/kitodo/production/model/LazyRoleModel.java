@@ -24,7 +24,7 @@ import org.primefaces.model.SortOrder;
 
 public class LazyRoleModel extends LazyBeanModel {
 
-    private boolean showRolesOfAllAvailableClients = false;
+    private boolean showRolesOfAllAvailableClients = true;
 
     public LazyRoleModel(RoleService roleService) {
         super(roleService);
