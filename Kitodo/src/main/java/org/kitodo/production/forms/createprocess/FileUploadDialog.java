@@ -90,8 +90,8 @@ public class FileUploadDialog extends MetadataImportDialog {
         } else {
             createProcessForm.setProcesses(processes);
             TempProcess currentTempProcess = processes.getFirst();
-            attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
             createProcessForm.fillCreateProcessForm(currentTempProcess);
+            attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
             Ajax.update(FORM_CLIENTID);
         }
     }
