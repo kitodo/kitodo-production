@@ -105,7 +105,7 @@ public class UIInteractionsST extends BaseTestSelenium {
 
         // verify that switch to show other clients roles is off after clicking
         WebElement roleSwitchClicked = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
-        assertTrue(roleSwitchClicked.getAttribute("class").contains("ui-state-active"));
+        assertFalse(roleSwitchClicked.getAttribute("class").contains("ui-state-active"));
 
         int rolesDisplayedUnfiltered = usersPage.countListedRoles();
         assertEquals(8, rolesDisplayedUnfiltered, "Displayed wrong number of roles unfiltered");
