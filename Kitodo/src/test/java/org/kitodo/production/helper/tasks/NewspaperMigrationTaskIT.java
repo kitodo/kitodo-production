@@ -123,7 +123,7 @@ public class NewspaperMigrationTaskIT {
         Process yearProcess = processService.getById(5);
         processService.save(yearProcess);
         assertEquals(1, processService.findByTitle("NewsMiTe-1850").size(), "should have created year process");
-        assertEquals(1, processService.findByTitle("NewsMiTe", true, true).size(), "should have created overall process");
+        assertEquals(1, processService.findByTitle("NewsMiTe").size(), "should have created overall process");
         assertTrue(newspaperProcess.getChildren().contains(yearProcess), "should have added link from newspaper process to year process");
         List<Process> linksInYear = yearProcess.getChildren();
         assertTrue(linksInYear.contains(issueOne) && linksInYear.contains(issueTwo), "should have added links from year process to issues");

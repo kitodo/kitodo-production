@@ -15,7 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.helper.TempProcess;
@@ -24,6 +27,17 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.primefaces.model.DefaultTreeNode;
 
 public class ProcessDataTabTest {
+
+    @BeforeAll
+    public static void setUp() throws Exception {
+        MockDatabase.startNode();
+    }
+
+    @AfterAll
+    public static void tearDown() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
+    }
 
     /**
      * Test the generation of atstsl fields.

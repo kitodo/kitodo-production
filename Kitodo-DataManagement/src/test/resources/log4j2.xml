@@ -18,6 +18,12 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger name="org.kitodo" level="debug" additivity="false">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+        <Logger name="org.opensearch.node" level="info" additivity="false">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
         <Root level="warning">
             <AppenderRef ref="STDOUT"/>
         </Root>

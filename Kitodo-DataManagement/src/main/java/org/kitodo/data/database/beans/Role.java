@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +25,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.kitodo.data.database.persistence.RoleDAO;
+import org.kitodo.utils.Stopwatch;
 
 @Entity
 @Table(name = "role")
@@ -51,6 +54,9 @@ public class Role extends BaseBean implements Comparable<Role> {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_role_client_id"))
     private Client client;
 
+    @Transient
+    private Boolean usedInWorkflow = null;
+
     /**
      * The Constructor.
      */
@@ -61,9 +67,9 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Gets title.
+     * Returns the name of the role.
      *
-     * @return The title.
+     * @return the name of the role
      */
     public String getTitle() {
         if (this.title == null) {
@@ -74,10 +80,10 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Sets title.
+     * Sets the name of the role.
      *
      * @param title
-     *            The title.
+     *            name of the role to set
      */
     public void setTitle(String title) {
         this.title = title;
@@ -107,9 +113,10 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Gets users.
+     * Specifies the users who hold this role. This list is not guaranteed to be
+     * in reliable order.
      *
-     * @return The users.
+     * @return list of users who hold this role
      */
     public List<User> getUsers() {
         initialize(new RoleDAO(), this.users);
@@ -120,10 +127,10 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Sets users.
+     * Sets the list of users who hold this role.
      *
      * @param users
-     *            The users.
+     *            list of users who hold this role to set
      */
     public void setUsers(List<User> users) {
         this.users = users;
@@ -153,19 +160,19 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Get client.
+     * Returns the client in whose realm this role grants permissions.
      *
-     * @return the client bean
+     * @return the client in whose realm this role grants permissions
      */
     public Client getClient() {
         return client;
     }
 
     /**
-     * Set client.
+     * Sets the client in whose realm this role grants permissions.
      *
      * @param client
-     *            bean
+     *            client in whose realm this role grants permissions to set.
      */
     public void setClient(Client client) {
         this.client = client;
@@ -195,4 +202,42 @@ public class Role extends BaseBean implements Comparable<Role> {
         return this.getTitle().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return title + '[' + client.getName() + ']';
+    }
+
+    /**
+     * Returns whether the role is used in any task of the workflow engine.
+     * There are roles that are assigned to tasks and roles that are only used
+     * to grant permissions. This can save us from searching for tasks with
+     * roles that would never find anything anyway.
+     * 
+     * @return whether the role is used in any task of the workflow engine
+     */
+    public boolean isUsedInWorkflow() {
+        Stopwatch stopwatch = new Stopwatch(this, "isUsedInWorkflow");
+        if (Objects.isNull(this.usedInWorkflow)) {
+            this.usedInWorkflow = has(new RoleDAO(), "FROM Task AS task WHERE :role IN elements(task.roles)",
+                Collections.singletonMap("role", this));
+        }
+        return stopwatch.stop(usedInWorkflow);
+    }
+
+    /**
+     * Sets whether the role is used in a task of the workflow engine. This is
+     * not a property of the role; it is determined dynamically in the database
+     * and then stored transiently. This setter is there to change the cached
+     * value when a role is assigned to a task for the first time, so that the
+     * newly created tasks do not first go invisible.
+     * 
+     * @param usedInWorkflow
+     *            whether the role is used in a task of the workflow engine
+     */
+    public void setUsedInWorkflow(boolean usedInWorkflow) {
+        Stopwatch stopwatch = new Stopwatch(this, "setUsedInWorkflow", "usedInWorkflow", Boolean.toString(
+            usedInWorkflow));
+        this.usedInWorkflow = usedInWorkflow;
+        stopwatch.stop();
+    }
 }

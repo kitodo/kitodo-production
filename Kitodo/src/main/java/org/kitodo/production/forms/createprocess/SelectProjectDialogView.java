@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -39,26 +38,26 @@ public class SelectProjectDialogView implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(SelectProjectDialogView.class);
     private int selectedProjectId = 0;
-    private TemplateDTO templateDTO;
+    private Template template;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
 
     /**
      * Get template.
      *
-     * @return value of templateDTO
+     * @return value of template
      */
-    public TemplateDTO getTemplate() {
-        return templateDTO;
+    public Template getTemplate() {
+        return template;
     }
 
     /**
-     * Set templateDTO.
+     * Set template.
      *
-     * @param templateDTO as org.kitodo.production.dto.TemplateDTO
+     * @param template as org.kitodo.data.interfaces.Template
      */
-    public void setTemplateDTO(TemplateDTO templateDTO) {
-        this.templateDTO = templateDTO;
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 
     /**
@@ -86,12 +85,12 @@ public class SelectProjectDialogView implements Serializable {
      */
     public List<Project> getTemplateProjects() {
         try {
-            Template template = ServiceManager.getTemplateService().getById(this.templateDTO.getId());
+            Template template = ServiceManager.getTemplateService().getById(this.template.getId());
             return template.getProjects().stream().sorted(Comparator.comparing(Project::getTitle))
                     .filter(Project::isActive).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(),
-                    this.templateDTO.getId()}, logger, e);
+                    this.template.getId()}, logger, e);
         }
         return Collections.emptyList();
     }
@@ -103,20 +102,20 @@ public class SelectProjectDialogView implements Serializable {
      * Display error message if the current template is not used in any project.
      */
     public void createProcessFromTemplate() {
-        if (this.templateDTO.getProjects().size() == 1) {
-            this.selectedProjectId = this.templateDTO.getProjects().get(0).getId();
+        if (this.template.getProjects().size() == 1) {
+            this.selectedProjectId = this.template.getProjects().get(0).getId();
         }
         if (this.selectedProjectId > 0) {
             try {
                 FacesContext context = FacesContext.getCurrentInstance();
                 String path = context.getExternalContext().getRequestContextPath() + CREATE_PROCESS_PATH
-                        + "&templateId=" + this.templateDTO.getId() + "&projectId=" + this.selectedProjectId
+                        + "&templateId=" + this.template.getId() + "&projectId=" + this.selectedProjectId
                         + "&referrer=" + context.getViewRoot().getViewId();
                 context.getExternalContext().redirect(path);
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage());
             }
-        } else if (templateDTO.getProjects().size() > 1) {
+        } else if (template.getProjects().size() > 1) {
             PrimeFaces.current().ajax().update("selectProjectDialog");
             PrimeFaces.current().executeScript("PF('selectProjectDialog').show();");
         } else {

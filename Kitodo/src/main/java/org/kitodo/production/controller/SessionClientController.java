@@ -159,11 +159,6 @@ public class SessionClientController {
     public List<Client> getAvailableClientsOfCurrentUser() {
         User currentUser = ServiceManager.getUserService().getCurrentUser();
         List<Client> clients = currentUser.getClients();
-        for (Project project : currentUser.getProjects()) {
-            if (!clients.contains(project.getClient())) {
-                clients.add(project.getClient());
-            }
-        }
         return clients;
     }
 

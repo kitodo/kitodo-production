@@ -123,7 +123,7 @@ public class CustomListColumnInitializer {
                     logger.info("Custom column '{}' already saved to database as custom list column!", ccn);
                 } else {
                     ListColumn customColumn = new ListColumn(ccn, true);
-                    ServiceManager.getListColumnService().saveToDatabase(customColumn);
+                    ServiceManager.getListColumnService().save(customColumn);
                     logger.info("Custom column '{}' successfully saved to database as custom list column!", ccn);
                 }
             }

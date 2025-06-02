@@ -17,13 +17,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class PropertyDaoIT {
+
+    @BeforeAll
+    public static void setUp() throws Exception {
+        MockIndex.startNode();
+    }
+
+    @AfterAll
+    public static void tearDown() throws Exception {
+        MockIndex.stopNode();
+    }
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
@@ -54,11 +66,9 @@ public class PropertyDaoIT {
         Property firstProperty = new Property();
         firstProperty.setTitle("first_property");
         firstProperty.setDataType(null);
-        firstProperty.setIndexAction(IndexAction.DONE);
 
         Property secondProperty = new Property();
         secondProperty.setTitle("second_property");
-        secondProperty.setIndexAction(IndexAction.INDEX);
 
         Property thirdProperty = new Property();
         thirdProperty.setTitle("third_property");

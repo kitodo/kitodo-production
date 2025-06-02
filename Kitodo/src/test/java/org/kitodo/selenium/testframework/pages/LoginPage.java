@@ -14,8 +14,8 @@ package org.kitodo.selenium.testframework.pages;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 

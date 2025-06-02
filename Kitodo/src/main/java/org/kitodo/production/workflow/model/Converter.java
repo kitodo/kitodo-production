@@ -70,7 +70,7 @@ public class Converter {
 
         for (org.kitodo.data.database.beans.Task validatedTask : validatedTasks) {
             if (Objects.nonNull(validatedTask.getWorkflowCondition())) {
-                ServiceManager.getWorkflowConditionService().saveToDatabase(validatedTask.getWorkflowCondition());
+                ServiceManager.getWorkflowConditionService().save(validatedTask.getWorkflowCondition());
             }
             validatedTask.setTemplate(template);
             template.getTasks().add(validatedTask);

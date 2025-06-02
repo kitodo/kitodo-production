@@ -283,6 +283,6 @@ public abstract class Page<T> {
     public void searchInSearchField(String query) throws Exception {
         searchField.clear();
         searchField.sendKeys(query);
-        clickButtonAndWaitForRedirect(searchButton, Pages.getSearchResultPage().getUrl());
+        clickButtonAndWaitForRedirect(searchButton, Pages.getProcessesPage().getUrl());
     }
 }

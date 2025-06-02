@@ -593,7 +593,7 @@ public class NewspaperProcessesMigrator {
         overallProcess = processGenerator.getGeneratedProcess();
         overallProcess.setTitle(getTitle());
         ProcessService.checkTasks(overallProcess, overallWorkpiece.getLogicalStructure().getType());
-        processService.saveToDatabase(overallProcess);
+        processService.save(overallProcess);
         ServiceManager.getFileService().createProcessLocation(overallProcess);
         overallWorkpiece.setId(overallProcess.getId().toString());
         overallWorkpiece.getLogicalStructure().getMetadata().addAll(overallMetadata);
@@ -614,7 +614,8 @@ public class NewspaperProcessesMigrator {
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
      * @throws DAOException
-     *             if a process cannot be load from the database
+     *             if there is an error saving the process or if a process
+     *             cannot be load from the database
      */
     public void createNextYearProcess() throws ProcessGenerationException, IOException, DAOException,
             CommandException {
@@ -629,7 +630,7 @@ public class NewspaperProcessesMigrator {
         ProcessService.checkTasks(yearProcess, yearToCreate.getValue().getType());
         // remove metadata from year (which originally relates to issue and was copied there)
         yearToCreate.getValue().getMetadata().clear();
-        processService.saveToDatabase(yearProcess);
+        processService.save(yearProcess);
 
         MetadataEditor.addLink(overallWorkpiece.getLogicalStructure(), yearProcess.getId());
         if (!yearsIterator.hasNext()) {
@@ -638,7 +639,7 @@ public class NewspaperProcessesMigrator {
 
         yearProcess.setParent(overallProcess);
         overallProcess.getChildren().add(yearProcess);
-        processService.saveToDatabase(yearProcess);
+        processService.save(yearProcess);
 
         ServiceManager.getFileService().createProcessLocation(yearProcess);
 
@@ -649,12 +650,12 @@ public class NewspaperProcessesMigrator {
             Process child = processService.getById(childId);
             child.setParent(yearProcess);
             yearProcess.getChildren().add(child);
-            processService.saveToDatabase(child);
+            processService.save(child);
         }
         if (WorkflowControllerService.allChildrenClosed(yearProcess)) {
             yearProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         }
-        processService.saveToDatabase(yearProcess);
+        processService.save(yearProcess);
         addToBatch(yearProcess);
 
         logger.info("Process {} (ID {}) successfully created.", yearProcess.getTitle(), yearProcess.getId());
@@ -689,8 +690,8 @@ public class NewspaperProcessesMigrator {
         Batch batch = batchService.getById(batchNumber);
         process.getBatches().add(batch);
         batch.getProcesses().add(process);
-        processService.saveToDatabase(process);
-        batchService.saveToDatabase(batch);
+        processService.save(process);
+        batchService.save(batch);
     }
 
     /**

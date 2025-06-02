@@ -68,7 +68,7 @@ public class MappingFileEditView extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getMappingFileService().saveToDatabase(mappingFile);
+            ServiceManager.getMappingFileService().save(mappingFile);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);

@@ -57,19 +57,19 @@ public class TaskServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
-        Long amount = taskService.countDatabaseRows();
+        Long amount = taskService.count();
         assertEquals(Long.valueOf(AMOUNT_TASKS), amount, "Tasks were not counted correctly!");
     }
 
     @Test
     public void shouldFindTask() {
-        await().untilAsserted(() -> assertEquals("Finished", taskService.findById(1).getTitle(), "Task was not found in index!"));
+        await().untilAsserted(() -> assertEquals("Finished", taskService.getById(1).getTitle(), "Task was not found in index!"));
     }
 
     @Test
     public void shouldFindAllTasks() {
         await().untilAsserted(
-            () -> assertEquals(AMOUNT_TASKS, taskService.findAll().size(), "Not all tasks were found in index!"));
+            () -> assertEquals(AMOUNT_TASKS, taskService.getAll().size(), "Not all tasks were found in index!"));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TaskServiceIT {
         foundTask = taskService.getById(15);
         assertEquals("To remove", foundTask.getTitle(), "Additional task was not inserted in database!");
 
-        taskService.remove(15);
+        taskService.remove(foundTask);
         assertThrows(DAOException.class, () -> taskService.getById(14));
     }
 
@@ -264,12 +264,12 @@ public class TaskServiceIT {
         assertEquals(9, size, "Incorrect size of distinct titles for tasks!");
 
         String title = taskTitlesDistinct.get(0);
-        assertEquals("additional", title, "Incorrect sorting of distinct titles for tasks!");
+        assertEquals("Additional", title, "Incorrect sorting of distinct titles for tasks!");
 
         title = taskTitlesDistinct.get(1);
-        assertEquals("blocking", title, "Incorrect sorting of distinct titles for tasks!");
+        assertEquals("Blocking", title, "Incorrect sorting of distinct titles for tasks!");
 
         title = taskTitlesDistinct.get(2);
-        assertEquals("closed", title, "Incorrect sorting of distinct titles for tasks!");
+        assertEquals("Closed", title, "Incorrect sorting of distinct titles for tasks!");
     }
 }

@@ -37,12 +37,11 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.WorkflowCondition;
+import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -53,6 +52,8 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.CommentService;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.thread.TaskScriptThread;
 
@@ -64,6 +65,8 @@ public class WorkflowControllerService {
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
     private final TaskService taskService = ServiceManager.getTaskService();
+    private final CommentService commentService = ServiceManager.getCommentService();
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * Set Task status up.
@@ -71,7 +74,7 @@ public class WorkflowControllerService {
      * @param task
      *            to change status up
      */
-    public void setTaskStatusUp(Task task) throws DataException, IOException, DAOException {
+    public void setTaskStatusUp(Task task) throws DAOException, IOException {
         setTaskStatusUp(Collections.singletonList(task));
     }
 
@@ -81,7 +84,7 @@ public class WorkflowControllerService {
      * @param tasks
      *            to change status up
      */
-    public void setTaskStatusUp(List<Task> tasks) throws DataException, IOException, DAOException {
+    public void setTaskStatusUp(List<Task> tasks) throws DAOException, IOException {
         for (Task task : tasks) {
             if (task.getProcessingStatus() != TaskStatus.DONE) {
                 setProcessingStatusUp(task);
@@ -135,7 +138,7 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusUp(Process process) throws DataException, IOException, DAOException {
+    public void setTasksStatusUp(Process process) throws DAOException, IOException {
         List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
         if (currentTask.isEmpty()) {
             activateNextTasks(process.getTasks());
@@ -201,7 +204,7 @@ public class WorkflowControllerService {
      * @param task
      *            object
      */
-    public void closeTaskByUser(Task task) throws DataException, IOException, DAOException {
+    public void closeTaskByUser(Task task) throws DAOException, IOException {
         // if the result of the task is to be verified first, then if necessary,
         // cancel the completion
         if (task.isTypeCloseVerify()) {
@@ -209,7 +212,7 @@ public class WorkflowControllerService {
             if (task.isTypeMetadata()
                     && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
                     && !validateMetadata(task)) {
-                throw new DataException("Error on metadata validation!");
+                throw new DAOException("Error on metadata validation!");
             }
 
             // image validation
@@ -217,7 +220,7 @@ public class WorkflowControllerService {
                 ImageHelper mih = new ImageHelper();
                 URI imageFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
-                    throw new DataException("Error on image validation!");
+                    throw new DAOException("Error on image validation!");
                 }
             }
         }
@@ -237,7 +240,7 @@ public class WorkflowControllerService {
      * @param task
      *            as Task object
      */
-    public void close(Task task) throws DataException, IOException, DAOException {
+    public void close(Task task) throws DAOException, IOException {
         task.setProcessingStatus(TaskStatus.DONE);
         task.setCorrection(false);
         task.setProcessingTime(new Date());
@@ -249,6 +252,7 @@ public class WorkflowControllerService {
         task.setProcessingEnd(new Date());
 
         taskService.save(task);
+        processService.refresh(task.getProcess());
 
         automaticTasks = new ArrayList<>();
 
@@ -311,7 +315,7 @@ public class WorkflowControllerService {
                 Helper.setErrorMessage("stepInWorkError");
             }
             this.flagWait = false;
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("stepSaveError", logger, e);
         } finally {
             this.flagWaitLock.unlock();
@@ -324,7 +328,7 @@ public class WorkflowControllerService {
      * @param task
      *            object
      */
-    public void unassignTaskFromUser(Task task) throws DataException {
+    public void unassignTaskFromUser(Task task) throws DAOException {
         if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
             this.webDav.uploadFromHome(task.getProcess());
         }
@@ -353,7 +357,7 @@ public class WorkflowControllerService {
      * @param taskEditType
      *         of task change
      */
-    public void reportProblem(Comment comment, TaskEditType taskEditType) throws DataException {
+    public void reportProblem(Comment comment, TaskEditType taskEditType) throws DAOException {
         Task currentTask = comment.getCurrentTask();
         if (currentTask.isTypeImagesRead() || currentTask.isTypeImagesWrite()) {
             this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
@@ -373,7 +377,11 @@ public class WorkflowControllerService {
             correctionTask.setProcessingEnd(null);
             correctionTask.setCorrection(true);
             taskService.save(correctionTask);
-            lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+            if (lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask)
+                    && Objects.nonNull(comment.getId())) {
+                commentService.refresh(comment);
+                currentTask = comment.getCurrentTask();
+            }
         }
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
@@ -385,11 +393,11 @@ public class WorkflowControllerService {
      *         as Comment object
      */
     public void solveProblem(Comment comment, TaskEditType taskEditType)
-            throws DataException, DAOException, IOException {
+            throws DAOException, IOException {
         comment.setCorrected(Boolean.TRUE);
         comment.setCorrectionDate(new Date());
         try {
-            ServiceManager.getCommentService().saveToDatabase(comment);
+            ServiceManager.getCommentService().save(comment);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
         }
@@ -441,7 +449,7 @@ public class WorkflowControllerService {
         }
     }
 
-    private void activateTasksForClosedTask(Task closedTask) throws DataException, IOException, DAOException {
+    private void activateTasksForClosedTask(Task closedTask) throws DAOException, IOException {
         Process process = closedTask.getProcess();
 
         // check if there are tasks that take place in parallel but are not yet
@@ -457,8 +465,6 @@ public class WorkflowControllerService {
             activateConcurrentTasks(concurrentTasksForOpen);
         }
 
-        process = ServiceManager.getProcessService().getById(process.getId());
-
         URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(true, process);
         Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!process.getSortHelperImages().equals(numberOfFiles)) {
@@ -466,7 +472,6 @@ public class WorkflowControllerService {
         }
 
         ServiceManager.getProcessService().save(process);
-        process = ServiceManager.getProcessService().getById(process.getId());
 
         for (Task automaticTask : automaticTasks) {
             automaticTask.setProcessingBegin(new Date());
@@ -477,7 +482,7 @@ public class WorkflowControllerService {
         closeParent(process);
     }
 
-    private void closeParent(Process process) throws DataException {
+    private void closeParent(Process process) throws DAOException {
         if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
             process.getParent().setSortHelperStatus(ProcessState.COMPLETED.getValue());
             ServiceManager.getProcessService().save(process.getParent());
@@ -485,7 +490,8 @@ public class WorkflowControllerService {
         }
     }
 
-    private void lockTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
+    private boolean lockTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask)
+            throws DAOException {
         List<Task> allTasksInBetween = taskService.getAllTasksInBetween(correctionTask.getOrdering(),
             currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
@@ -494,6 +500,7 @@ public class WorkflowControllerService {
             taskInBetween.setProcessingEnd(null);
             taskService.save(taskInBetween);
         }
+        return !allTasksInBetween.isEmpty();
     }
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
@@ -550,7 +557,7 @@ public class WorkflowControllerService {
     /**
      * Activate the concurrent tasks.
      */
-    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException, IOException, DAOException {
+    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DAOException, IOException {
         for (Task concurrentTask : concurrentTasks) {
             if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
                 activateTask(concurrentTask);
@@ -561,7 +568,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    public void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException, DAOException {
+    public void activateNextTasks(List<Task> allHigherTasks) throws DAOException, IOException {
         List<Task> nextTasks = getNextTasks(allHigherTasks);
 
         for (Task nextTask : nextTasks) {
@@ -618,7 +625,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    private void activateTask(Task task) throws DataException, IOException, DAOException {
+    private void activateTask(Task task) throws DAOException, IOException {
         if ((!task.isCorrection() || task.isRepeatOnCorrection())
                 && isWorkflowConditionFulfilled(task.getProcess(), task.getWorkflowCondition())) {
             // activate the task if it is not fully automatic
@@ -699,7 +706,10 @@ public class WorkflowControllerService {
     public static void updateProcessSortHelperStatus(Process process) {
         if (!process.getTasks().isEmpty()) {
             String value = ProcessConverter.getCombinedProgressAsString(process, false);
+            logger.trace("Setting sortHelperStatus for process {} to '{}'", process, value);
             process.setSortHelperStatus(value);
+        } else {
+            logger.trace("Cannot set sortHelperStatus for process {}: process has no tasks", process);
         }
     }
 
@@ -728,7 +738,7 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusUp(processForStatus);
-            } catch (DataException | IOException | DAOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                         new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
             }
@@ -742,9 +752,9 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusDown(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus, true);
+                ServiceManager.getProcessService().save(processForStatus);
                 updateProcessSortHelperStatus(processForStatus);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                         new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
             }

@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Process;
 
 public class ImportServiceTest {
 
@@ -31,24 +31,24 @@ public class ImportServiceTest {
     @Test
     public void shouldSortProcessesWithProvidedProjectIdFirst()  {
 
-        ProjectDTO projectOne = new ProjectDTO();
+        Project projectOne = new Project();
         projectOne.setId(10);
-        ProjectDTO projectTwo = new ProjectDTO();
+        Project projectTwo = new Project();
         projectTwo.setId(9);
-        ProjectDTO projectThree = new ProjectDTO();
+        Project projectThree = new Project();
         projectThree.setId(8);
 
-        ProcessDTO processOne = new ProcessDTO();
+        Process processOne = new Process();
         processOne.setProject(projectOne);
-        ProcessDTO processTwo = new ProcessDTO();
+        Process processTwo = new Process();
         processTwo.setProject(projectTwo);
-        ProcessDTO processThree = new ProcessDTO();
+        Process processThree = new Process();
         processThree.setProject(projectThree);
 
-        List<ProcessDTO> processes = new ArrayList<>(Arrays.asList(processOne, processTwo, processThree));
+        List<Process> processes = new ArrayList<>(Arrays.asList(processOne, processTwo, processThree));
 
         ImportService importService = new ImportService();
-        List<ProcessDTO> sortedProcesses = importService.sortProcessesByProjectID(processes, 9);
+        List<Process> sortedProcesses = importService.sortProcessesByProjectID(processes, 9);
 
         int projectIdOfFirstProcess = sortedProcesses.get(0).getProject().getId();
 

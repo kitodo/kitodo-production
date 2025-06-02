@@ -39,13 +39,6 @@ public class ImportConfigurationListView extends BaseForm {
     private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this bean.
-     */
-    public ImportConfigurationListView() {
-        super();
-    }
-
-    /**
      * Get import configurations.
      *
      * @return import configurations
@@ -76,7 +69,7 @@ public class ImportConfigurationListView extends BaseForm {
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getImportConfigurationService().removeFromDatabase(id);
+            ServiceManager.getImportConfigurationService().remove(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.IMPORT_CONFIGURATION.getTranslationSingular() }, logger, e);
         } catch (ImportConfigurationInUseException e) {

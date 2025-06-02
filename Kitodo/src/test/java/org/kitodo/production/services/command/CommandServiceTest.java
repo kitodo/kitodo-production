@@ -159,7 +159,7 @@ public class CommandServiceTest {
         String commandString = scriptPath + "not_existing_script" + scriptExtension;
         CommandService service = new CommandService();
         service.runCommandAsync(commandString);
-        Thread.sleep(1000); // wait for async thread to finish;
+        Thread.sleep(2000); // wait for async thread to finish;
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
         assertNotNull(result, "There were no results!");
         assertTrue(result.getMessages().get(0).contains("IOException"), "result message should contain IOException");
@@ -173,7 +173,7 @@ public class CommandServiceTest {
         parameter.add("HelloWorld");
         CommandService service = new CommandService();
         service.runCommandAsync(file, parameter);
-        Thread.sleep(1000); // wait for async thread to finish;
+        Thread.sleep(2000); // wait for async thread to finish;
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
 
         ArrayList<String> expectedMessages = new ArrayList<>();

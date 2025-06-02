@@ -265,7 +265,7 @@ public class TaskActionProcessorIT {
         MapMessageObjectReader mapMessageObjectReader = mock(MapMessageObjectReader.class);
         when(mapMessageObjectReader.getMandatoryInteger(TaskActionProcessor.KEY_TASK_ID)).thenReturn(taskId);
         when(mapMessageObjectReader.getMandatoryString(TaskActionProcessor.KEY_TASK_ACTION)).thenReturn(action);
-        if (StringUtils.isNotEmpty(message)) {
+        if (StringUtils.isNotBlank(message)) {
             when(mapMessageObjectReader.hasField(TaskActionProcessor.KEY_MESSAGE)).thenReturn(Boolean.TRUE);
             when(mapMessageObjectReader.getMandatoryString(TaskActionProcessor.KEY_MESSAGE)).thenReturn(message);
         }

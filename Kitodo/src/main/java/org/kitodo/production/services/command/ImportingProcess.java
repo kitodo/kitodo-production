@@ -20,6 +20,7 @@ import static org.kitodo.constants.StringConstants.CREATE;
 // base Java
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -57,7 +58,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -398,7 +398,7 @@ final class ImportingProcess {
      *             if accessing the file system fails
      * @throws DAOException
      *             if accessing the database fails
-     * @throws DataException
+     * @throws DAOException
      *             if accessing the database fails
      * @throws ProcessGenerationException
      *             if creating the process fails
@@ -408,7 +408,7 @@ final class ImportingProcess {
      * @throws MediaNotFoundException
      *             if media files are missing
      */
-    void executeAction(int action) throws IOException, DAOException, DataException, ProcessGenerationException,
+    void executeAction(int action) throws IOException, DAOException, ProcessGenerationException,
             MediaNotFoundException, InvalidImagesException {
 
         assert action >= 0 && action <= numberOfFileSystemItems + 1
@@ -431,7 +431,7 @@ final class ImportingProcess {
      * @param action
      *            processing step
      */
-    private void executeActionForCorrectProcess(int action) throws IOException, DataException,
+    private void executeActionForCorrectProcess(int action) throws IOException, DAOException,
             ProcessGenerationException, DAOException, InvalidImagesException, MediaNotFoundException {
 
         if (action == 0) {
@@ -471,12 +471,14 @@ final class ImportingProcess {
      * 
      * @return database number of the created process
      */
-    private Integer createDatabaseProcess() throws ProcessGenerationException, DataException {
+    private Integer createDatabaseProcess() throws ProcessGenerationException, DAOException {
         ProcessGenerator processGenerator = new ProcessGenerator();
         processGenerator.generateProcess(template.getId(), project.getId());
         Process process = processGenerator.getGeneratedProcess();
         process.setTitle(title);
         process.setBaseType(baseType);
+        processService.save(process);
+        process.setProcessBaseUri(URI.create(process.getId().toString()));
         processService.save(process);
         for (Task task : process.getTasks()) {
             taskService.save(task);
@@ -493,7 +495,7 @@ final class ImportingProcess {
      *            the newly created process
      */
     private void copyAndAdjustMetsFile(Process process)
-            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException, DataException {
+            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException {
 
         Workpiece workpiece = metsService.loadWorkpiece(sourceDir.resolve(META_FILE_NAME).toUri());
         workpiece.setId(processId.toString());
@@ -511,7 +513,7 @@ final class ImportingProcess {
         logger.info("Wrote METS file " + outputMetsFile);
     }
 
-    private void addLinkInDatabase(Process parent, Integer childProcessId) throws DAOException, DataException {
+    private void addLinkInDatabase(Process parent, Integer childProcessId) throws DAOException {
         Process child = processService.getById(childProcessId);
         child.setParent(parent);
         parent.getChildren().add(child);

@@ -83,7 +83,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
@@ -96,7 +95,6 @@ import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
@@ -1122,21 +1120,16 @@ public class ImportService {
             if (Objects.isNull(parentProcess)) {
                 HashMap<String, String> parentIDMetadata = new HashMap<>();
                 parentIDMetadata.put(identifierMetadata, parentId);
-                try {
-                    for (ProcessDTO processDTO : sortProcessesByProjectID(ServiceManager.getProcessService()
-                            .findByMetadataInAllProjects(parentIDMetadata, true), projectId)) {
-                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
-                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                                    + process.getId() + " is null!");
-                        }
-                        if (process.getRuleset().getId().equals(ruleset.getId())) {
-                            parentProcess = process;
-                            break;
-                        }
+                for (Process process : sortProcessesByProjectID(ServiceManager.getProcessService()
+                        .findByMetadataInAllProjects(parentIDMetadata, true), projectId)) {
+                    if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                        throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                                + process.getId() + " is null!");
                     }
-                } catch (DataException e) {
-                    logger.error(e.getLocalizedMessage());
+                    if (process.getRuleset().getId().equals(ruleset.getId())) {
+                        parentProcess = process;
+                        break;
+                    }
                 }
             }
         }
@@ -1144,14 +1137,14 @@ public class ImportService {
     }
 
     /**
-     * Sorts a list of process DTOs based on a provided projectId.
-     * Processes which match the provided projectId should come first.
-     * @param processDTOs list of process DTOs
-     * @param projectId projectId by which the list gets sorted
+     * Sorts a list of processes based on a provided project ID.
+     * Processes which match the provided project ID should come first.
+     * @param processes list of processes
+     * @param projectId project ID by which the list gets sorted
      */
-    public List<ProcessDTO> sortProcessesByProjectID(List<ProcessDTO> processDTOs, int projectId) {
-        List<ProcessDTO> sortedList = new ArrayList<>(processDTOs);
-        Comparator<ProcessDTO> comparator = Comparator.comparingInt(obj -> {
+    public List<Process> sortProcessesByProjectID(List<Process> processes, int projectId) {
+        List<Process> sortedList = new ArrayList<>(processes);
+        Comparator<Process> comparator = Comparator.comparingInt(obj -> {
             if (obj.getProject().getId() == projectId) {
                 return 0; // Matching value should come first
             } else {
@@ -1209,7 +1202,7 @@ public class ImportService {
      *
      * @param mainProcess main process to which list of child processes are attached
      * @param childProcesses list of child processes that are attached to the main process
-     * @throws DataException thrown if saving a process fails
+     * @throws DAOException thrown if saving a process fails
      * @throws InvalidMetadataValueException thrown if process workpiece contains invalid metadata
      * @throws NoSuchMetadataFieldException thrown if process workpiece contains undefined metadata
      * @throws ProcessGenerationException thrown if process title cannot be created
@@ -1217,7 +1210,7 @@ public class ImportService {
     public static void processProcessChildren(Process mainProcess, LinkedList<TempProcess> childProcesses,
                                               RulesetManagementInterface rulesetManagement, String acquisitionStage,
                                               List<Locale.LanguageRange> priorityList)
-            throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
+            throws DAOException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             ProcessGenerationException, IOException {
         for (TempProcess tempProcess : childProcesses) {
             if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
@@ -1226,7 +1219,7 @@ public class ImportService {
             }
             processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
             Process childProcess = tempProcess.getProcess();
-            ServiceManager.getProcessService().save(childProcess, true);
+            ServiceManager.getProcessService().save(childProcess);
             ProcessService.setParentRelations(mainProcess, childProcess);
         }
     }
@@ -1393,7 +1386,7 @@ public class ImportService {
             } else if (ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title) > 0) {
                 throw new ProcessGenerationException(Helper.getTranslation("processTitleAlreadyInUse", title));
             }
-            ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
+            ServiceManager.getProcessService().save(tempProcess.getProcess());
             URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
             tempProcess.getProcess().setProcessBaseUri(processBaseUri);
             OutputStream out = ServiceManager.getFileService()
@@ -1405,7 +1398,7 @@ public class ImportService {
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | DataException | CommandException | TransformerException | CatalogException e) {
+                | CommandException | TransformerException | CatalogException e) {
             logger.error(e);
             throw new ImportException(e.getLocalizedMessage());
         }
@@ -1622,10 +1615,10 @@ public class ImportService {
      * @return list of "SelectItem" objects corresponding to given "ProcessDTO" objects.
      * @throws DAOException when checking whether user can link to given "ProcessDTO"s fails
      */
-    public ArrayList<SelectItem> getPotentialParentProcesses(List<ProcessDTO> parentCandidates, int maxNumber)
+    public ArrayList<SelectItem> getPotentialParentProcesses(List<Process> parentCandidates, int maxNumber)
             throws DAOException {
         ArrayList<SelectItem> possibleParentProcesses = new ArrayList<>();
-        for (ProcessDTO process : parentCandidates.subList(0, Math.min(parentCandidates.size(), maxNumber))) {
+        for (Process process : parentCandidates.subList(0, Math.min(parentCandidates.size(), maxNumber))) {
             SelectItem selectItem = new SelectItem(process.getId().toString(), process.getTitle());
             selectItem.setDisabled(!userMayLinkToParent(process.getId()));
             if (!processInAssignedProject(process.getId())) {

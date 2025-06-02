@@ -50,60 +50,66 @@ public class RemovingST extends BaseTestSelenium {
     @Test
     public void removeBatchTest() throws Exception {
         int batchesDisplayed = processesPage.countListedBatches();
-        long batchesInDatabase = ServiceManager.getBatchService().countDatabaseRows();
+        long batchesInDatabase = ServiceManager.getBatchService().count();
         assertTrue(batchesDisplayed > 0 && batchesInDatabase > 0, "Batch list is empty");
         processesPage.deleteBatch();
         assertTrue(processesPage.countListedBatches() == batchesDisplayed - 1
-                && ServiceManager.getBatchService().countDatabaseRows() == batchesInDatabase - 1, "Removal of batch was not successful!");
+                && ServiceManager.getBatchService().count() == batchesInDatabase - 1,
+            "Removal of batch was not successful!");
     }
 
     @Test
     public void removeUserTest() throws Exception {
         int usersDisplayed = usersPage.countListedUsers();
-        long usersInDatabase = ServiceManager.getUserService().countDatabaseRows();
+        long usersInDatabase = ServiceManager.getUserService().count();
         assertTrue(usersDisplayed > 0 && usersInDatabase > 0, "User list is empty");
         usersPage.deleteRemovableUser();
         assertTrue(usersPage.countListedUsers() == usersDisplayed - 1
-                && ServiceManager.getUserService().countDatabaseRows() == usersInDatabase - 1, "Removal of first user was not successful!");
+                && ServiceManager.getUserService().count() == usersInDatabase - 1,
+            "Removal of first user was not successful!");
     }
 
     @Test
     public void removeRoleTest() throws Exception {
         int rolesDisplayed = usersPage.countListedRoles();
-        long rolesInDatabase = ServiceManager.getRoleService().countDatabaseRows();
+        long rolesInDatabase = ServiceManager.getRoleService().count();
         assertTrue(rolesDisplayed > 0 && rolesInDatabase > 0, "Role list is empty");
         usersPage.deleteRemovableRole();
         assertTrue(usersPage.countListedRoles() == rolesDisplayed - 1
-                && ServiceManager.getRoleService().countDatabaseRows() == rolesInDatabase - 1, "Removal of first role was not successful!");
+                && ServiceManager.getRoleService().count() == rolesInDatabase - 1,
+            "Removal of first role was not successful!");
     }
 
     @Test
     public void removeClientTest() throws Exception {
         int clientsDisplayed = usersPage.countListedClients();
-        long clientsInDatabase = ServiceManager.getClientService().countDatabaseRows();
+        long clientsInDatabase = ServiceManager.getClientService().count();
         assertTrue(clientsDisplayed > 0 && clientsInDatabase > 0, "Client list is empty");
         usersPage.deleteRemovableClient();
         assertTrue(usersPage.countListedClients() == clientsDisplayed - 1
-                && ServiceManager.getClientService().countDatabaseRows() == clientsInDatabase - 1, "Removal of first client was not successful!");
+                && ServiceManager.getClientService().count() == clientsInDatabase - 1,
+            "Removal of first client was not successful!");
     }
 
     @Test
     public void removeDocketTest() throws Exception {
         int docketsDisplayed = projectsPage.countListedDockets();
-        long docketsInDatabase = ServiceManager.getDocketService().countDatabaseRows();
+        long docketsInDatabase = ServiceManager.getDocketService().count();
         assertTrue(docketsDisplayed > 0 && docketsInDatabase > 0, "Docket list is empty");
         projectsPage.deleteDocket();
         assertTrue(projectsPage.countListedDockets() == docketsDisplayed - 1
-                && ServiceManager.getDocketService().countDatabaseRows() == docketsInDatabase - 1, "Removal of first docket was not successful!");
+                && ServiceManager.getDocketService().count() == docketsInDatabase - 1,
+            "Removal of first docket was not successful!");
     }
 
     @Test
     public void removeRulesetTest() throws Exception {
         int rulesetsDisplayed = projectsPage.countListedRulesets();
-        long rulesetsInDatabase = ServiceManager.getRulesetService().countDatabaseRows();
+        long rulesetsInDatabase = ServiceManager.getRulesetService().count();
         assertTrue(rulesetsDisplayed > 0 && rulesetsInDatabase > 0, "Ruleset list is empty");
         projectsPage.deleteRuleset();
         assertTrue(projectsPage.countListedRulesets() == rulesetsDisplayed - 1
-                && ServiceManager.getRulesetService().countDatabaseRows() == rulesetsInDatabase - 1, "Removal of ruleset was not successful!");
+                && ServiceManager.getRulesetService().count() == rulesetsInDatabase - 1,
+            "Removal of ruleset was not successful!");
     }
 }

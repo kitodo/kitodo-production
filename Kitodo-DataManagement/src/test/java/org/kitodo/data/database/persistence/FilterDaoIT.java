@@ -17,12 +17,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class FilterDaoIT {
+
+    @BeforeAll
+    public static void setUp() throws Exception {
+        MockIndex.startNode();
+    }
+
+    @AfterAll
+    public static void tearDown() throws Exception {
+        MockIndex.stopNode();
+    }
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
@@ -49,11 +61,9 @@ public class FilterDaoIT {
     private List<Filter> getAuthorities() {
         Filter firstFilter = new Filter();
         firstFilter.setValue("first_filter");
-        firstFilter.setIndexAction(IndexAction.DONE);
 
         Filter secondFilter = new Filter();
         secondFilter.setValue("second_filter");
-        secondFilter.setIndexAction(IndexAction.INDEX);
 
         Filter thirdFilter = new Filter();
         thirdFilter.setValue("third_filter");
