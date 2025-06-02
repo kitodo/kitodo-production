@@ -27,6 +27,12 @@
         <o:viewAction action="#{ProcessForm.changeFilter('project:' += projecttitle)}"
                       if="#{not empty projecttitle}"
                       update="parsedFiltersForm:parsedFilters"/>
+
+        <!--@elvariable id="input" type="java.lang.String"-->
+        <f:viewParam name="input"/>
+        <o:viewAction action="#{ProcessForm.changeFilter('process:'.concat(input))}"
+                      if="#{not empty input}"
+                      update="parsedFiltersForm:parsedFilters"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
