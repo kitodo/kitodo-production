@@ -228,9 +228,9 @@ public class ListingST extends BaseTestSelenium {
         int usersDisplayed = usersPage.countListedUsers();
         assertEquals(usersInDatabase, usersDisplayed, "Displayed wrong number of users");
 
-        int clientRolesInDatabase = ServiceManager.getRoleService().getNumberOfRolesOfCurrentClient();
+        int rolesInDatabase = ServiceManager.getRoleService().getAll().size();
         int rolesDisplayed = usersPage.countListedRoles();
-        assertEquals(clientRolesInDatabase, rolesDisplayed, "Displayed wrong number of roles");
+        assertEquals(rolesInDatabase, rolesDisplayed, "Displayed wrong number of roles");
 
         int clientsInDatabase = ServiceManager.getClientService().getAll().size();
         int clientsDisplayed = usersPage.countListedClients();
