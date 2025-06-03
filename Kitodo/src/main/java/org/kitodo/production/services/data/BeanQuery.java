@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
@@ -338,8 +339,10 @@ public class BeanQuery {
     }
 
     public void defineSorting(String sortField, SortOrder sortOrder) {
-        sorting = Pair.of(sortField.startsWith("lastTask") || sortField.startsWith("CASE") ? sortField
-                : varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
+        if (StringUtils.isNotBlank(sortField) && Objects.nonNull(sortOrder)) {
+            sorting = Pair.of(sortField.startsWith("lastTask") || sortField.startsWith("CASE") ? sortField
+                    : varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
+        }
     }
 
     /**
