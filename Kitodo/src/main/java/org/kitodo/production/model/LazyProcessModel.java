@@ -112,7 +112,7 @@ public class LazyProcessModel extends LazyBeanModel {
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
-        String sortField = null;
+        String sortField = "";
         SortOrder sortOrder = SortOrder.ASCENDING;
         Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
                 .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
