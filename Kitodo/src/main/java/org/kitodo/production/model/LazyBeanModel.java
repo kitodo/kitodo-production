@@ -104,7 +104,7 @@ public class LazyBeanModel extends LazyDataModel<Object> {
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
-        String sortField = null;
+        String sortField = "";
         SortOrder sortOrder = SortOrder.ASCENDING;
         if (!sortBy.isEmpty()) {
             SortMeta sortMeta = sortBy.values().iterator().next();

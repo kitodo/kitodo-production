@@ -126,7 +126,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countResults(new HashMap<String, String>(filters), false, false, false, null);
+        return countResults(new HashMap<String, String>(filters), false, false, false, Collections.emptyList());
     }
 
     /**
@@ -287,7 +287,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         if (!showAutomaticTasks) {
             query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
         }
-        if (!taskStatus.isEmpty()) {
+        if (Objects.nonNull(taskStatus) && !taskStatus.isEmpty()) {
             query.addInCollectionRestriction("processingStatus", taskStatus);
         }
         return query;
