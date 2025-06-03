@@ -262,7 +262,8 @@
                         <div>
                             <p:chips value="#{condition.values}"
                                      disabled="#{isViewMode}"
-                                     onchange="toggleSave()" />
+                                     addOnBlur="true"
+                                     onkeydown="toggleSave()"/>
                         </div>
                     </p:column>
                     <p:column headerText="#{msgs['ltpValidation.edit.conditions.severity.header']}"
