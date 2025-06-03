@@ -50,6 +50,14 @@
                              placeholder="#{msgs.location}"
                              value="#{UserForm.userObject.location}"/>
             </div>
+            <h:panelGroup layout="block" style="position:absolute; left:-9999px; top:-9999px;">
+                <h:inputText value="" readonly="true">
+                    <f:passThroughAttribute name="autocomplete" value="username"/>
+                </h:inputText>
+                <h:inputSecret value="" readonly="true">
+                    <f:passThroughAttribute name="autocomplete" value="new-password"/>
+                </h:inputSecret>
+            </h:panelGroup>
             <div>
                 <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
                 <p:inputText id="ldapLogin" class="input" disabled="#{isViewMode || isConfigMode}"
