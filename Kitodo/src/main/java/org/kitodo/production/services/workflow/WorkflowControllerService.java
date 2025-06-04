@@ -457,16 +457,8 @@ public class WorkflowControllerService {
             activateConcurrentTasks(concurrentTasksForOpen);
         }
 
-        process = ServiceManager.getProcessService().getById(process.getId());
-
-        URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(true, process);
-        Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
-        if (!process.getSortHelperImages().equals(numberOfFiles)) {
-            process.setSortHelperImages(numberOfFiles);
-        }
-
-        ServiceManager.getProcessService().save(process);
-        process = ServiceManager.getProcessService().getById(process.getId());
+        // update internal data
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
 
         for (Task automaticTask : automaticTasks) {
             automaticTask.setProcessingBegin(new Date());
