@@ -83,7 +83,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     public void load(int id) {
         try {
             if (id > 0) {
-                configuration = ServiceManager.getLongTermPreservationValidationService().getByIdWithFolders(id);
+                configuration = ServiceManager.getLtpValidationConfigurationService().getByIdWithFolders(id);
             } else {
                 configuration = new LtpValidationConfiguration();
                 configuration.setFolders(new ArrayList<>());
@@ -103,7 +103,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getLongTermPreservationValidationService().save(configuration);
+            ServiceManager.getLtpValidationConfigurationService().save(configuration);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(

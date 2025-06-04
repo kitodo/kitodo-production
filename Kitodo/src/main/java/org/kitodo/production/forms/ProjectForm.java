@@ -878,13 +878,9 @@ public class ProjectForm extends BaseForm {
      * @return the list of possible validation configurations that can be assigned to a folder
      */
     public List<LtpValidationConfiguration> getPossibleLtpValidationConfigurations() {
-        if (Objects.isNull(myFolder) || Objects.isNull(myFolder.getMimeType())) {
+        if (Objects.isNull(myFolder)) {
             return Collections.emptyList();
         }
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("mimeType", myFolder.getMimeType());
-        return ServiceManager.getLongTermPreservationValidationService()
-            .getByQuery("FROM LtpValidationConfiguration WHERE mimeType = :mimeType", parameters);
-        
+        return ServiceManager.getLtpValidationConfigurationService().listByMimeType(myFolder.getMimeType());
     }
 }

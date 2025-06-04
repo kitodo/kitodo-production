@@ -39,7 +39,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
      */
     public LtpValidationConfigurationListView() {
         super();
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getLongTermPreservationValidationService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getLtpValidationConfigurationService()));
     }
 
     /**
@@ -49,7 +49,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
      */
     public List<LtpValidationConfiguration> getLtpValidationConfigurations() {
         try {
-            return ServiceManager.getLongTermPreservationValidationService().getAll();
+            return ServiceManager.getLtpValidationConfigurationService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY,
                     new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationPlural() }, logger, e);
@@ -73,7 +73,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getLongTermPreservationValidationService().remove(id);
+            ServiceManager.getLtpValidationConfigurationService().remove(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(
                 ERROR_DELETING, 

@@ -25,7 +25,7 @@ public class LtpValidationConfigurationConverter extends BeanConverter implement
     @Override
     public LtpValidationConfiguration getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) 
             throws ConverterException {
-        return (LtpValidationConfiguration) getAsObject(ServiceManager.getLongTermPreservationValidationService(), value);
+        return (LtpValidationConfiguration) getAsObject(ServiceManager.getLtpValidationConfigurationService(), value);
     }
 
     @Override

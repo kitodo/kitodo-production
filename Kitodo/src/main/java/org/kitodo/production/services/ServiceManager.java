@@ -30,6 +30,7 @@ import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.LdapGroupService;
 import org.kitodo.production.services.data.LdapServerService;
 import org.kitodo.production.services.data.ListColumnService;
+import org.kitodo.production.services.data.LtpValidationConfigurationService;
 import org.kitodo.production.services.data.MappingFileService;
 import org.kitodo.production.services.data.MassImportService;
 import org.kitodo.production.services.data.ProcessService;
@@ -81,6 +82,7 @@ public class ServiceManager {
     private static LdapServerService ldapServerService;
     private static ListColumnService listColumnService;
     private static LongTermPreservationValidationService longTermPreservationValidationService;
+    private static LtpValidationConfigurationService ltpValidationConfigurationService;
     private static MetadataValidationService metadataValidationService;
     private static MappingFileService mappingFileService;
     private static MassImportService massImportService;
@@ -331,6 +333,13 @@ public class ServiceManager {
         if (Objects.isNull(longTermPreservationValidationService)) {
             logServiceInitialization();
             longTermPreservationValidationService = new LongTermPreservationValidationService();
+        }
+    }
+
+    private static void initializeLtpValidationConfigurationService() {
+        if (Objects.isNull(ltpValidationConfigurationService)) {
+            logServiceInitialization();
+            ltpValidationConfigurationService = new LtpValidationConfigurationService();
         }
     }
 
@@ -773,6 +782,18 @@ public class ServiceManager {
         initializeLongTermPreservationValidationService();
         logServiceDelivery();
         return longTermPreservationValidationService;
+    }
+
+    /**
+     * Initialize LtpValidationConfigurationService if it is not yet
+     * initialized and next return it.
+     *
+     * @return LtpValidationConfigurationService object
+     */
+    public static LtpValidationConfigurationService getLtpValidationConfigurationService() {
+        initializeLtpValidationConfigurationService();
+        logServiceDelivery();
+        return ltpValidationConfigurationService;
     }
 
     /**
