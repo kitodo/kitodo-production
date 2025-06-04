@@ -294,7 +294,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 super.save(parent, updateRelatedObjectsInIndex);
             }
         }
-        
+
+        // do not update if process was not saved yet
+        if (Objects.nonNull(process.getId())) {
+            this.updateAmountOfInternalMetaInformation(process, false);
+        }
+
         super.save(process, updateRelatedObjectsInIndex);
 
         // save parent processes in order to refresh ElasticSearch index
@@ -2888,5 +2893,31 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             saveToDatabase(process);
         }
         return configuration.getTitle();
+    }
+
+    /**
+     * Update amount of references files, document structure elements and metadata fields in database.
+     * @param process Process to update
+     * @param save Save process in method call itself or not.
+     * @throws DataException Thrown if storing of process data in database is not possible
+     */
+    public void updateAmountOfInternalMetaInformation(Process process, boolean save) throws DataException {
+        if (Objects.isNull(process) || Objects.isNull(process.getId())) {
+            logger.debug("Process was not saved yet so no meta information are available.");
+            return;
+        }
+
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
+        try {
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+            process.setSortHelperImages(getNumberOfImagesForIndex(workpiece));
+            process.setSortHelperDocstructs(getNumberOfStructures(workpiece));
+            process.setSortHelperMetadata(getNumberOfMetadata(workpiece));
+            if (save) {
+                super.save(process);
+            }
+        } catch (IOException e) {
+            logger.debug("Could not load meta file {} for gathering meta information!", metadataFileUri.toString());
+        }
     }
 }
