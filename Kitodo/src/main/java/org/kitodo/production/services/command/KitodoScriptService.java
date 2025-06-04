@@ -262,8 +262,6 @@ public class KitodoScriptService {
                 LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
                 deleteDataScript.process(metadataFile, process, script);
-                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
-                        ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("deleteDataOk", currentProcessTitle);
             } catch (IOException | KitodoScriptExecutionException e) {
                 Helper.setErrorMessage("deleteDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
@@ -311,8 +309,6 @@ public class KitodoScriptService {
                 LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
                 overwriteDataScript.process(metadataFile, process, script);
-                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
-                        ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("overwriteDataOk", currentProcessTitle);
             } catch (IOException | KitodoScriptExecutionException e) {
                 Helper.setErrorMessage("overwriteDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
@@ -382,8 +378,6 @@ public class KitodoScriptService {
                 LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                         .readMetadataFile(process);
                 addDataScript.process(metadataFile, process, script);
-                ServiceManager.getMetsService().saveWorkpiece(metadataFile.getWorkpiece(),
-                        ServiceManager.getProcessService().getMetadataFileUri(process));
                 Helper.setMessage("addDataOk", currentProcessTitle);
             } catch (IOException | KitodoScriptExecutionException e) {
                 Helper.setErrorMessage("addDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
