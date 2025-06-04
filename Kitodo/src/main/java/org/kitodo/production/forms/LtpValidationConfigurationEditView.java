@@ -103,7 +103,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getLongTermPreservationValidationService().saveToDatabase(configuration);
+            ServiceManager.getLongTermPreservationValidationService().save(configuration);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(

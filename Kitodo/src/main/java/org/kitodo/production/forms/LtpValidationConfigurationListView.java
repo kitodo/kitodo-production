@@ -24,7 +24,7 @@ import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("LtpValidationConfigurationListView")
@@ -39,7 +39,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
      */
     public LtpValidationConfigurationListView() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getLongTermPreservationValidationService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getLongTermPreservationValidationService()));
     }
 
     /**
@@ -73,7 +73,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getLongTermPreservationValidationService().removeFromDatabase(id);
+            ServiceManager.getLongTermPreservationValidationService().remove(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(
                 ERROR_DELETING, 

@@ -17,17 +17,19 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class LtpValidationConfigurationConverter extends BeanConverter implements Converter {
+public class LtpValidationConfigurationConverter extends BeanConverter implements Converter<LtpValidationConfiguration> {
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) throws ConverterException {
-        return getAsObject(ServiceManager.getLongTermPreservationValidationService(), value);
+    public LtpValidationConfiguration getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) throws ConverterException {
+        return (LtpValidationConfiguration) getAsObject(ServiceManager.getLongTermPreservationValidationService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) throws ConverterException {
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, LtpValidationConfiguration value) throws ConverterException {
         return getAsString(value, "ltpValidationConfiguration");
     }
 }

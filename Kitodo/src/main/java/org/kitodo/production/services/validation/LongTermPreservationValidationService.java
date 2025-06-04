@@ -23,8 +23,7 @@ import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LtpValidationConfigurationDAO;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.kitodo.production.services.data.BaseBeanService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.primefaces.model.SortOrder;
 
@@ -33,7 +32,7 @@ import org.primefaces.model.SortOrder;
  * preservation validation interface.
  */
 public class LongTermPreservationValidationService 
-        extends SearchDatabaseService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
+        extends BaseBeanService<LtpValidationConfiguration, LtpValidationConfigurationDAO> {
 
     private final LongTermPreservationValidationInterface longTermPreservationValidation;
 
@@ -107,8 +106,8 @@ public class LongTermPreservationValidationService
      * @return amount of all rows
      */
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM LtpValidationConfiguration");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM LtpValidationConfiguration");
     }
 
     /**
@@ -120,7 +119,7 @@ public class LongTermPreservationValidationService
      * @throws DataException that can be caused by ElasticSearch
      */
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
-        return countDatabaseRows();
+    public Long countResults(Map filters) throws DAOException {
+        return count();
     }
 }
