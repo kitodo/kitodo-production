@@ -16,11 +16,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class DataEditorSettingDaoIT {
+
+    @BeforeAll
+    public static void setUp() throws Exception {
+        MockIndex.startNode();
+    }
+
+    @AfterAll
+    public static void tearDown() throws Exception {
+        MockIndex.stopNode();
+    }
 
     /**
      * Test saving and loading DataEditorSettings.

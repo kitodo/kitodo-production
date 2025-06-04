@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -32,7 +32,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.process.TitleGenerator;
@@ -70,7 +69,7 @@ public class ProcessHelperIT {
     }
 
     @BeforeEach
-    public void prepareTestProcess() throws DAOException, DataException, IOException {
+    public void prepareTestProcess() throws DAOException, IOException {
         processHelperTestProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processHelperTestProcessId, metadataTestfile);
     }

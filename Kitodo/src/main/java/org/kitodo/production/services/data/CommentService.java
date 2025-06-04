@@ -21,10 +21,9 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.CommentDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
+public class CommentService extends BaseBeanService<Comment, CommentDAO> {
 
     private static volatile CommentService instance = null;
 
@@ -60,13 +59,13 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Comment");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Comment");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     public List<Comment> getAllCommentsByProcess(Process process) {
@@ -100,6 +99,6 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
      */
     public void removeComment(Comment comment) throws DAOException {
         comment.getProcess().getComments().remove(comment);
-        ServiceManager.getCommentService().removeFromDatabase(comment);
+        ServiceManager.getCommentService().remove(comment);
     }
 }

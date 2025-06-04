@@ -42,7 +42,7 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
@@ -625,7 +625,7 @@ public class StructurePanel implements Serializable {
         invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
         List<Integer> processIds = getAllLinkedProcessIds(structure);
-        Map<Integer, String> processTypeMap = processIds.isEmpty() ? Collections.emptyMap() : fetchProcessTypes(processIds);
+        Map<Integer, String> processTypeMap = ServiceManager.getProcessService().getIdBaseTypeMap(processIds);
         Map<String, StructuralElementViewInterface> viewCache = new HashMap<>();
         buildStructureTreeRecursively(structure, invisibleRootNode, processTypeMap, viewCache);
         return invisibleRootNode;
@@ -636,15 +636,6 @@ public class StructurePanel implements Serializable {
                 .filter(division -> division.getLink() != null)
                 .map(division -> ServiceManager.getProcessService().processIdFromUri(division.getLink().getUri()))
                 .collect(Collectors.toList());
-    }
-
-    private Map<Integer, String> fetchProcessTypes(List<Integer> processIds) {
-        try {
-            return ServiceManager.getProcessService().getIdBaseTypeMap(processIds);
-        } catch (DataException e) {
-            Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-            return Collections.emptyMap();
-        }
     }
 
     /**

@@ -25,6 +25,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.utils.Stopwatch;
 
 public class TaskDAO extends BaseDAO<Task> {
 
@@ -101,7 +102,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("orderingMax", orderingMax);
         parameters.put("orderingMin", orderingMin);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :orderingMin"
+        return getByQuery("FROM Task WHERE process.id = :processId AND ordering < :orderingMin"
                 + " AND ordering > :orderingMax ORDER BY ordering ASC",
             parameters);
     }
@@ -119,7 +120,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
+        return getByQuery("FROM Task WHERE process.id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
             parameters);
     }
 
@@ -137,7 +138,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery(
-            "FROM Task WHERE process_id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
+            "FROM Task WHERE process.id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
     }
 
     /**
@@ -150,6 +151,7 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     @SuppressWarnings("unchecked")
     public Map<TaskStatus, Integer> countTaskStatusForProcessAndItsAncestors(Process process) throws DAOException {
+        Stopwatch stopwatch = new Stopwatch(process, "countTaskStatusForProcessAndItsAncestors");
         if (Objects.isNull(process)) {
             throw new DAOException("can not count task status for process that is null");
         }
@@ -186,7 +188,7 @@ public class TaskDAO extends BaseDAO<Task> {
                 counts.put(status, count);
             }
 
-            return counts;
+            return stopwatch.stop(counts);
         } catch (PersistenceException e) {
             // catch any exceptions that might be thrown by internals of database connector
             // due to recursive query, which might not be supported by some databases

@@ -36,9 +36,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessorException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportConfigurationService;
 
@@ -99,8 +97,6 @@ public class CreateNewProcessOrder {
      * @throws DAOException
      *             if the ImportConfiguartionDAO is unable to find an import
      *             configuration with the given ID
-     * @throws DataException
-     *             if there is an error accessing the search service
      * @throws IllegalArgumentException
      *             If a required field is missing in the Active MQ message
      *             message, or contains inappropriate values.
@@ -110,7 +106,7 @@ public class CreateNewProcessOrder {
      * @throws ProcessorException
      *             if the process count for the title is not exactly one
      */
-    CreateNewProcessOrder(MapMessageObjectReader ticket) throws DAOException, DataException, JMSException,
+    CreateNewProcessOrder(MapMessageObjectReader ticket) throws DAOException, JMSException,
             ProcessorException {
         this.projectId = ticket.getMandatoryInteger(FIELD_PROJECT);
         this.templateId = ticket.getMandatoryInteger(FIELD_TEMPLATE);
@@ -162,26 +158,24 @@ public class CreateNewProcessOrder {
      * @param processId
      *            parent process reference
      * @return ID of the parent process
-     * @throws DataException
-     *             if there is an error accessing the search service
      * @throws ProcessorException
      *             if the process count for the title is not exactly one
      */
     @CheckForNull
-    private static final Integer convertProcessId(String processId) throws DataException, ProcessorException {
+    private static final Integer convertProcessId(String processId) throws DAOException, ProcessorException {
         if (Objects.isNull(processId)) {
             return null;
         }
         if (processId.matches("\\d+")) {
             return Integer.valueOf(processId);
         } else {
-            List<ProcessDTO> parents = ServiceManager.getProcessService().findByTitle(processId);
+            Collection<Process> parents = ServiceManager.getProcessService().findByTitle(processId);
             if (parents.size() == 0) {
                 throw new ProcessorException("Parent process not found");
             } else if (parents.size() > 1) {
                 throw new ProcessorException("Parent process exists more than one");
             } else {
-                return parents.get(0).getId();
+                return parents.iterator().next().getId();
             }
         }
     }

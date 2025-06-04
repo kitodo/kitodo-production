@@ -14,7 +14,7 @@ package org.kitodo.production.controller;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
 
@@ -389,7 +389,7 @@ public class SecurityAccessController {
      * @param taskId the specific taskId
      * @return true if the current user has the authority to edit the task
      */
-    public boolean hasAuthorityToEditTask(int taskId) throws DataException {
+    public boolean hasAuthorityToEditTask(int taskId) throws DAOException {
         return securityAccessService.hasAuthorityToEditTask(taskId);
     }
 
@@ -417,7 +417,7 @@ public class SecurityAccessController {
      * @param processId the specific processId
      * @return true if the current user has the authority to edit the process
      */
-    public boolean hasAuthorityToEditProcess(int processId) throws DataException {
+    public boolean hasAuthorityToEditProcess(int processId) throws DAOException {
         return securityAccessService.hasAuthorityToEditProcess(processId);
     }
 
@@ -591,7 +591,7 @@ public class SecurityAccessController {
      * @param processId the specific processId
      * @return true if the current user has the authority to view the process
      */
-    public boolean hasAuthorityToViewProcess(int processId) throws DataException {
+    public boolean hasAuthorityToViewProcess(int processId) throws DAOException {
         return securityAccessService.hasAuthorityToViewProcess(processId);
     }
 

@@ -17,12 +17,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class DocketDaoIT {
+
+    @BeforeAll
+    public static void setUp() throws Exception {
+        MockIndex.startNode();
+    }
+
+    @AfterAll
+    public static void tearDown() throws Exception {
+        MockIndex.stopNode();
+    }
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
@@ -49,11 +61,9 @@ public class DocketDaoIT {
     private List<Docket> getAuthorities() {
         Docket firstDocket = new Docket();
         firstDocket.setTitle("first_docket");
-        firstDocket.setIndexAction(IndexAction.DONE);
 
         Docket secondDocket = new Docket();
         secondDocket.setTitle("second_docket");
-        secondDocket.setIndexAction(IndexAction.INDEX);
 
         Docket thirdDocket = new Docket();
         thirdDocket.setTitle("third_docket");

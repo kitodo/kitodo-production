@@ -37,13 +37,12 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.WorkflowCondition;
+import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
@@ -318,13 +317,13 @@ public class WorkflowControllerServiceIT {
     }
 
     @Test
-    public void shouldCloseForProcessWithSkippedTask() throws DataException, DAOException, IOException {
+    public void shouldCloseForProcessWithSkippedTask() throws DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         Process process = ServiceManager.getProcessService().getById(processId);
         process.getTasks().clear();
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForHierarchyParent);
         WorkflowCondition workflowCondition = new WorkflowCondition("xpath", "/mets:nothing");
-        ServiceManager.getWorkflowConditionService().saveToDatabase(workflowCondition);
+        ServiceManager.getWorkflowConditionService().save(workflowCondition);
         Task taskToClose =  createAndSaveTask(TaskStatus.INWORK, 1, process, null);
         Task skippedTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, workflowCondition);
         Task secondSkippedTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, workflowCondition);
@@ -345,10 +344,15 @@ public class WorkflowControllerServiceIT {
         workflowService.close(taskToClose);
 
         assertEquals(TaskStatus.DONE, taskToClose.getProcessingStatus(), "Task '" + taskToClose.getTitle() + "' was not closed!");
+        taskService.refresh(skippedTask);
         assertEquals(TaskStatus.DONE, skippedTask.getProcessingStatus(), "Task '" + skippedTask.getTitle() + "' was not skipped!");
+        taskService.refresh(secondSkippedTask);
         assertEquals(TaskStatus.DONE, secondSkippedTask.getProcessingStatus(), "Task '" + secondSkippedTask.getTitle() + "' was not skipped!");
+        taskService.refresh(taskToOpen);
         assertEquals(TaskStatus.OPEN, taskToOpen.getProcessingStatus(), "Task '" + taskToOpen.getTitle() + "' was not opened!");
+        taskService.refresh(secondTaskToOpen);
         assertEquals(TaskStatus.OPEN, secondTaskToOpen.getProcessingStatus(), "Task '" + secondTaskToOpen.getTitle() + "' was not opened!");
+        taskService.refresh(thirdTaskToSkip);
         assertEquals(TaskStatus.DONE, thirdTaskToSkip.getProcessingStatus(), "Task '" + thirdTaskToSkip.getTitle() + "' was not skipped!");
 
         process.getTasks().clear();
@@ -356,7 +360,7 @@ public class WorkflowControllerServiceIT {
     }
 
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,
-            WorkflowCondition workflowCondition) throws DataException {
+            WorkflowCondition workflowCondition) throws DAOException {
         Task task = new Task();
         task.setProcessingStatus(taskStatus);
         task.setOrdering(ordering);
@@ -404,7 +408,7 @@ public class WorkflowControllerServiceIT {
         problem.setCorrected(Boolean.FALSE);
         problem.setCreationDate(new Date());
 
-        ServiceManager.getCommentService().saveToDatabase(problem);
+        ServiceManager.getCommentService().save(problem);
 
         workflowService.reportProblem(problem, TaskEditType.MANUAL_SINGLE);
 
@@ -412,7 +416,7 @@ public class WorkflowControllerServiceIT {
 
         assertTrue(correctionTask.isCorrection(), "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not a correction task!");
 
-        Process process = currentTask.getProcess();
+        Process process = problem.getCurrentTask().getProcess();
         for (Task task : process.getTasks()) {
             if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
                 assertEquals(TaskStatus.LOCKED, task.getProcessingStatus(), "Report of problem was incorrect - tasks between were not set up to locked!");
@@ -428,6 +432,7 @@ public class WorkflowControllerServiceIT {
         Task correctionTask = correctionComment.getCorrectionTask();
 
         workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        ServiceManager.getCommentService().refresh(correctionComment);
         workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
 
         Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
@@ -448,7 +453,7 @@ public class WorkflowControllerServiceIT {
     }
 
     @Test
-    public void shouldGetCorrectCommentStatus() throws DAOException, DataException, IOException {
+    public void shouldGetCorrectCommentStatus() throws DAOException, IOException {
         Comment correctionComment = prepareCorrectionComment();
         workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
         assertEquals(CorrectionComments.OPEN_CORRECTION_COMMENTS, ProcessConverter
@@ -472,7 +477,7 @@ public class WorkflowControllerServiceIT {
         correctionComment.setCorrected(Boolean.FALSE);
         correctionComment.setCreationDate(new Date());
 
-        ServiceManager.getCommentService().saveToDatabase(correctionComment);
+        ServiceManager.getCommentService().save(correctionComment);
 
         return correctionComment;
     }

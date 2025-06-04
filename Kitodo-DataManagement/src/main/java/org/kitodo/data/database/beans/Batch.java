@@ -39,7 +39,7 @@ import org.kitodo.data.database.persistence.BatchDAO;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseIndexedBean {
+public class Batch extends BaseBean {
 
     /**
      * The batch title. Using titles for batches is optional, the field may be
@@ -106,20 +106,20 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Returns the batch title. Using titles for batches is optional, the field
-     * may be {@code null}. If so, the function returns null.
+     * Returns the title of the batch. Using titles for batches is optional, the
+     * field may be {@code null}. If so, the function returns null.
      *
-     * @return the batch title
+     * @return the title of the batch
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * Sets a batch title.
+     * Gives the batch a text-based title.
      *
      * @param title
-     *            title of the batch
+     *            title to use
      */
     public void setTitle(String title) {
         this.title = title;
@@ -135,9 +135,10 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Return the processes that belong to the batch.
+     * Returns the processes belonging to the batch. This list is not guaranteed
+     * to be in reliable order.
      *
-     * @return the processes of the batch
+     * @return the processes belonging to the batch
      */
     public List<Process> getProcesses() {
         initialize(new BatchDAO(), this.processes);
@@ -148,10 +149,12 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
-     * Sets the processes that belong to the batch.
+     * Sets the list of processes belonging to the batch. The list should not
+     * contain duplicates, and must not contain {@code null}s.
      *
      * @param processes
-     *            processes of the batch
+     *            contain the list of processes belonging to the batch to be
+     *            determined
      */
     public void setProcesses(List<Process> processes) {
         if (this.processes == null) {

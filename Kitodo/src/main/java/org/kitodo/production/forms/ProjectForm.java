@@ -47,15 +47,12 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.forms.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProjectService;
 
@@ -135,12 +132,12 @@ public class ProjectForm extends BaseForm {
     private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of
+     * Empty default constructor that also sets the LazyBeanModel instance of
      * this bean.
      */
     public ProjectForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProjectService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getProjectService()));
     }
 
     /**
@@ -238,10 +235,10 @@ public class ProjectForm extends BaseForm {
                 commitTemplates();
                 commitFolders();
 
-                ServiceManager.getProjectService().save(project, true);
+                ServiceManager.getProjectService().save(project);
 
                 return projectsPage;
-            } catch (DAOException | DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
@@ -261,10 +258,10 @@ public class ProjectForm extends BaseForm {
         }
 
         for (Template template : project.getTemplates()) {
-            ServiceManager.getTemplateService().saveToDatabase(template);
+            ServiceManager.getTemplateService().save(template);
         }
         for (Template template : deletedTemplates) {
-            ServiceManager.getTemplateService().saveToDatabase(template);
+            ServiceManager.getTemplateService().save(template);
         }
 
         deletedTemplates = new ArrayList<>();
@@ -298,8 +295,8 @@ public class ProjectForm extends BaseForm {
             User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);
             this.project.getUsers().add(user);
-            ServiceManager.getProjectService().saveToDatabase(this.project);
-            ServiceManager.getUserService().saveToDatabase(user);
+            ServiceManager.getProjectService().save(this.project);
+            ServiceManager.getUserService().save(user);
         }
     }
 
@@ -309,7 +306,7 @@ public class ProjectForm extends BaseForm {
     public void delete(int projectId) {
         try {
             ProjectService.delete(projectId);
-        } catch (DAOException | DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
                 e);
         } catch (ProjectDeletionException e) {
@@ -337,7 +334,7 @@ public class ProjectForm extends BaseForm {
         if (!this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
             try {
-                ServiceManager.getProjectService().saveToDatabase(this.project);
+                ServiceManager.getProjectService().save(this.project);
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                         logger, e);
@@ -375,10 +372,10 @@ public class ProjectForm extends BaseForm {
      *
      * @return list of assignable templates
      */
-    public List<TemplateDTO> getTemplates() {
+    public List<Template> getTemplates() {
         try {
             return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TEMPLATE.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
@@ -829,10 +826,10 @@ public class ProjectForm extends BaseForm {
      *
      * @return list of projects
      */
-    public List<ProjectDTO> getProjects() {
+    public List<Project> getProjects() {
         try {
-            return ServiceManager.getProjectService().findAll();
-        } catch (DataException e) {
+            return ServiceManager.getProjectService().getAll();
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();

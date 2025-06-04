@@ -69,7 +69,7 @@ public class FinalizeStepProcessor extends ActiveMQProcessor {
                 comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
                 comment.setType(CommentType.INFO);
                 comment.setCreationDate(new Date());
-                ServiceManager.getCommentService().saveToDatabase(comment);
+                ServiceManager.getCommentService().save(comment);
             }
             dialog.closeTaskByUser();
         } catch (DAOException e) {

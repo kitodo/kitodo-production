@@ -83,16 +83,16 @@ public class ImportProcessesIT {
         template.setDocket(ServiceManager.getDocketService().getById(1));
         template.getProjects().add(ServiceManager.getProjectService().getById(1));
         template.setRuleset(ruleset);
-        ServiceManager.getTemplateService().save(template, true);
+        ServiceManager.getTemplateService().save(template);
 
         task.setTemplate(template);
         template.getTasks().add(task);
-        ServiceManager.getTemplateService().save(template, true);
+        ServiceManager.getTemplateService().save(template);
         ServiceManager.getTaskService().save(task);
 
         Folder local = ServiceManager.getFolderService().getById(6);
         local.setMimeType("image/jpeg");
-        ServiceManager.getFolderService().saveToDatabase(local);
+        ServiceManager.getFolderService().save(local);
 
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
@@ -123,7 +123,7 @@ public class ImportProcessesIT {
         String errors = "src/test/resources/errors";
         ImportProcesses underTest = new ImportProcesses(indir, projectId, templateId, errors);
 
-        int processesBefore = ServiceManager.getProcessService().countDatabaseRows().intValue();
+        int processesBefore = ServiceManager.getProcessService().count().intValue();
 
         // initialize
         underTest.run(0);
@@ -202,7 +202,7 @@ public class ImportProcessesIT {
         Path metaXml = processPath.resolve("meta.xml");
 
         underTest.run(10);
-        assertEquals(Long.valueOf(firstProcessId), ServiceManager.getProcessService().countDatabaseRows(), "should have created 1st process,");
+        assertEquals(Long.valueOf(firstProcessId), ServiceManager.getProcessService().count(), "should have created 1st process,");
         underTest.run(11);
         assertTrue(Files.isDirectory(processPath), "should have created process directory");
         underTest.run(12);
@@ -260,7 +260,7 @@ public class ImportProcessesIT {
         metaXml = processPath.resolve("meta.xml");
 
         underTest.run(31);
-        assertEquals(processesBefore + 3, (long) ServiceManager.getProcessService().countDatabaseRows(), "should have created 3rd process,");
+        assertEquals(processesBefore + 3, (long) ServiceManager.getProcessService().count(), "should have created 3rd process,");
         underTest.run(32);
         assertTrue(Files.isDirectory(processPath), "should have created process directory");
         underTest.run(33);
@@ -291,7 +291,7 @@ public class ImportProcessesIT {
         underTest.run(42);
 
         // import results
-        assertEquals(processesBefore + 3, (long) ServiceManager.getProcessService().countDatabaseRows(), "Should import 3 processes,");
+        assertEquals(processesBefore + 3, (long) ServiceManager.getProcessService().count(), "Should import 3 processes,");
         assertEquals(6, ERRORS_DIR_PATH.toFile().list().length, "Should not import 6 processes,");
     }
 

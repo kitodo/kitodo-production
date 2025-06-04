@@ -33,10 +33,9 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("RulesetForm")
@@ -51,8 +50,8 @@ public class RulesetForm extends BaseForm {
     private final ProjectForm projectForm;
 
     /**
-     * Default constructor with inject project form that also sets the LazyDTOModel
-     * instance of this bean.
+     * Default constructor with inject project form that also sets the
+     * LazyBeanModel instance of this bean.
      *
      * @param projectForm
      *            managed bean
@@ -60,7 +59,7 @@ public class RulesetForm extends BaseForm {
     @Inject
     public RulesetForm(ProjectForm projectForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRulesetService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRulesetService()));
         this.projectForm = projectForm;
     }
 
@@ -93,7 +92,7 @@ public class RulesetForm extends BaseForm {
                 Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
                 return this.stayOnCurrentPage;
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                 e);
             return this.stayOnCurrentPage;
@@ -110,7 +109,7 @@ public class RulesetForm extends BaseForm {
             } else {
                 ServiceManager.getRulesetService().remove(this.ruleset);
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                     e);
         }
@@ -148,7 +147,7 @@ public class RulesetForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DataException {
+    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DAOException {
         return !ServiceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
                 || !ServiceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
     }

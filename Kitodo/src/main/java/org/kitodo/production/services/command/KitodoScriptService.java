@@ -34,7 +34,7 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.KitodoScriptExecutionException;
@@ -46,6 +46,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
@@ -98,7 +99,7 @@ public class KitodoScriptService {
      *            from frontend passed as String
      */
     public void execute(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         this.parameters = new HashMap<>();
         // decompose and capture all script parameters
         StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
@@ -126,7 +127,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -171,7 +172,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeOtherScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "runscript":
@@ -254,7 +255,7 @@ public class KitodoScriptService {
 
     private void deleteData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        script = script.replaceFirst("\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:deleteData\\s+(.*?)[\r\n\\s]*", "$1");
         DeleteDataScript deleteDataScript = new DeleteDataScript();
         for (Process process : processes) {
             try {
@@ -273,7 +274,7 @@ public class KitodoScriptService {
 
     private void copyDataToChildren(List<Process> processes, String script) {
         String currentProcessTitle;
-        script = script.replaceFirst("\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:copyDataToChildren\\s+(.*?)[\r\n\\s]*", "$1");
         AddDataScript addDataScript = new AddDataScript();
         for (Process parentProcess : processes) {
             currentProcessTitle = parentProcess.getTitle();
@@ -303,7 +304,7 @@ public class KitodoScriptService {
 
     private void overwriteData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        script = script.replaceFirst("\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:overwriteData\\s+(.*?)[\r\n\\s]*", "$1");
         OverwriteDataScript overwriteDataScript = new OverwriteDataScript();
         for (Process process : processes) {
             try {
@@ -364,7 +365,7 @@ public class KitodoScriptService {
                 try {
                     ServiceManager.getProcessService().deleteProcess(process);
                     Helper.setMessage("Process " + title + " deleted.");
-                } catch (DataException | IOException e) {
+                } catch (DAOException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
                         new Object[] {Helper.getTranslation("process") + " " + title }, logger, e);
                 }
@@ -374,7 +375,7 @@ public class KitodoScriptService {
 
     private void addData(List<Process> processes, String script) {
         String currentProcessTitle = null;
-        script = script.replaceFirst("\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
+        script = script.replaceFirst("^\\s*action:addData\\s+(.*?)[\r\n\\s]*", "$1");
         AddDataScript addDataScript = new AddDataScript();
         for (Process process : processes) {
             try {
@@ -458,7 +459,7 @@ public class KitodoScriptService {
         }
     }
 
-    private void runScript(List<Process> processes, String taskName, String scriptName) throws DataException {
+    private void runScript(List<Process> processes, String taskName, String scriptName) throws DAOException {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equalsIgnoreCase(taskName)) {
@@ -531,8 +532,10 @@ public class KitodoScriptService {
         }
 
         try {
-            List<Ruleset> rulesets = ServiceManager.getRulesetService()
-                    .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
+            BeanQuery query = new BeanQuery(Ruleset.class);
+            query.addStringRestriction("title", this.parameters.get(RULESET));
+            List<Ruleset> rulesets = ServiceManager.getRulesetService().getByQuery(query.formQueryForAll(), query
+                    .getQueryParameters());
             if (rulesets.isEmpty()) {
                 Helper.setErrorMessage("Could not find ruleset: ", RULESET);
                 return;
@@ -543,7 +546,7 @@ public class KitodoScriptService {
                 process.setRuleset(ruleset);
                 ServiceManager.getProcessService().save(process);
             }
-        } catch (DataException | RuntimeException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(e);
             logger.error(e.getMessage(), e);
         }
@@ -700,8 +703,10 @@ public class KitodoScriptService {
 
         // check if role exists
         Role role;
-        List<Role> foundRoles = ServiceManager.getRoleService()
-                .getByQuery("FROM Role WHERE title='" + this.parameters.get(ROLE) + "'");
+        BeanQuery query = new BeanQuery(Role.class);
+        query.addStringRestriction("title", this.parameters.get(ROLE));
+        List<Role> foundRoles = ServiceManager.getRoleService().getByQuery(query.formQueryForAll(), query
+                .getQueryParameters());
         if (!foundRoles.isEmpty()) {
             role = foundRoles.get(0);
         } else {
@@ -755,7 +760,7 @@ public class KitodoScriptService {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);
                 dms.startExport(process);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 logger.error(e.getMessage(), e);
             }
         }
@@ -772,7 +777,7 @@ public class KitodoScriptService {
     private void saveProcess(Process process) {
         try {
             ServiceManager.getProcessService().save(process);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("Error while saving process: " + process.getTitle(), logger, e);
         }
     }
@@ -780,7 +785,7 @@ public class KitodoScriptService {
     private void saveTask(String processTitle, Task task) {
         try {
             ServiceManager.getTaskService().save(task);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
         }
     }

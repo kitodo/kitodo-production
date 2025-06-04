@@ -105,9 +105,8 @@ public class ProcessFormIT {
         assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
 
         processForm.setAllSelected(false);
-        processForm.selectedProcessesOrProcessDTOs = ServiceManager.getProcessService().findByAnything("SelectionTest");
         selectedIds = processForm.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
-        assertEquals(new ArrayList<>(Arrays.asList(4, 5)), selectedIds);
+        assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
     }
 }

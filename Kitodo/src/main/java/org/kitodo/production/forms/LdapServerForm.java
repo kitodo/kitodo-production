@@ -80,7 +80,7 @@ public class LdapServerForm extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+            ServiceManager.getLdapServerService().save(ldapServer);
             return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
@@ -94,7 +94,7 @@ public class LdapServerForm extends BaseForm {
      */
     public void delete() {
         try {
-            ServiceManager.getLdapServerService().removeFromDatabase(this.ldapServer);
+            ServiceManager.getLdapServerService().remove(this.ldapServer);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {LDAP_SERVER }, logger, e);
         }

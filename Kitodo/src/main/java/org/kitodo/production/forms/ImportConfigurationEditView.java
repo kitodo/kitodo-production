@@ -37,7 +37,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -122,7 +121,7 @@ public class ImportConfigurationEditView extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getImportConfigurationService().saveToDatabase(importConfiguration);
+            ServiceManager.getImportConfigurationService().save(importConfiguration);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING,
@@ -345,7 +344,7 @@ public class ImportConfigurationEditView extends BaseForm {
     public List<Process> getTemplateProcesses() {
         try {
             return ServiceManager.getProcessService().getTemplateProcesses();
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(e);
             return new ArrayList<>();
         }

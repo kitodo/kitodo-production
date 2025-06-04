@@ -27,10 +27,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
+public class RoleService extends BaseBeanService<Role, RoleDAO> {
 
     private static volatile RoleService instance = null;
 
@@ -63,23 +62,27 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Role");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Role");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return countDatabaseRows();
+            return count();
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return countDatabaseRows("SELECT COUNT(*) FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+            return count("SELECT COUNT(*) FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
                     Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()));
         }
         return 0L;
     }
 
-    @Override
+    /**
+     * Get list of all objects for selected client from database.
+     *
+     * @return list of all objects for selected client from database
+     */
     public List<Role> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
             Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()));
@@ -119,12 +122,6 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
 
     }
 
-    /**
-     * Refresh user's role object after update.
-     *
-     * @param role
-     *            object
-     */
     @Override
     public void refresh(Role role) {
         dao.refresh(role);

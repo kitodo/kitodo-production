@@ -17,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
@@ -62,21 +61,21 @@ public class TaskScriptThread extends EmptyTask {
         if (!scriptPath.isEmpty()) {
             try {
                 this.taskService.executeScript(this.task, automatic);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 logger.error("Data Error occurred", e);
             }
         }
         if (task.isTypeGenerateImages() && !task.getContentFolders().isEmpty()) {
             try {
                 taskService.generateImages(this, task, automatic);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 logger.error(e.getMessage(), e);
             }
         }
         if (task.isTypeExportDMS()) {
             try {
                 taskService.executeDmsExport(this.task);
-            } catch (DataException | IOException | DAOException e) {
+            } catch (DAOException | IOException e) {
                 logger.error("Data Exception occurred", e);
             }
         }

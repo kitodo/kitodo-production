@@ -12,8 +12,8 @@
 package org.kitodo.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ class GuardTest {
     void canCastShouldCast() {
         Object input = "Hello world!";
         String greet = Guard.canCast("input", input, String.class);
-        assertTrue(greet instanceof String, "should return String");
+        assertInstanceOf(String.class, greet, "should return String");
     }
 
     @Test
@@ -37,7 +37,7 @@ class GuardTest {
     void canCastShouldCastToSuperclass() {
         Object input = new GregorianCalendar();
         Calendar calendar = Guard.canCast("input", input, Calendar.class);
-        assertTrue(calendar instanceof Calendar, "should return Calendar");
+        assertInstanceOf(Calendar.class, calendar, "should return Calendar");
     }
 
     @Test

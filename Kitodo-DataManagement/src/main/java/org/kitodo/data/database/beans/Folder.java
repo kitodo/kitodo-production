@@ -247,12 +247,7 @@ public class Folder extends BaseBean {
      * the process directory, and maybe an extra file name pattern.
      *
      * @return path with optional filename pattern
-     *
-     * @deprecated This getter is here to be used by Hibernate and JSF to access the
-     *             field value, but should not be used for other purpose, unless you
-     *             know what you are doing. Use {@link #getRelativePath()}.
      */
-    @Deprecated
     public String getPath() {
         return this.path;
     }

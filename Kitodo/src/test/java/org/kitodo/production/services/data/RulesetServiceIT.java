@@ -15,23 +15,20 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
 
 /**
  * Tests for RulesetService class.
@@ -53,7 +50,7 @@ public class RulesetServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         await().until(() -> {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
-            return !rulesetService.findByTitle(slubDD, true).isEmpty();
+            return !Collections.singleton(rulesetService.getByTitle(slubDD)).isEmpty();
         });
     }
 
@@ -64,19 +61,19 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldCountAllRulesets() throws DataException {
+    public void shouldCountAllRulesets() throws DAOException {
         assertEquals(Long.valueOf(3), rulesetService.count(), "Rulesets were not counted correctly!");
     }
 
     @Test
-    public void shouldCountAllRulesetsAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", slubDD).operator(Operator.AND);
-        assertEquals(Long.valueOf(1), rulesetService.count(query), "Rulesets were not counted correctly!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldCountAllRulesetsAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
-        Long amount = rulesetService.countDatabaseRows();
+        Long amount = rulesetService.count();
         assertEquals(Long.valueOf(3), amount, "Rulesets were not counted correctly!");
     }
 
@@ -100,67 +97,72 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws DataException {
-        assertEquals(slubDD, rulesetService.findById(1).getTitle(), rulesetNotFound);
+    public void shouldFindById() throws DAOException {
+        assertEquals(slubDD, rulesetService.getById(1).getTitle(), rulesetNotFound);
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
-        assertEquals(1, rulesetService.findByTitle(slubDD, true).size(), rulesetNotFound);
+    public void shouldFindByTitle() throws DAOException {
+        assertEquals(1, rulesetService.getByTitle(slubDD).size(), rulesetNotFound);
     }
 
     @Test
-    public void shouldFindByFile() throws DataException {
-        String expected = "ruleset_test.xml";
-        assertEquals(expected, rulesetService.findByFile("ruleset_test.xml").get(RulesetTypeField.FILE.getKey()), rulesetNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindByFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindManyByClientId() throws DataException {
-        assertEquals(2, rulesetService.findByClientId(1).size(), "Rulesets were not found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByClientId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindOneByClientId() throws DataException, DAOException {
-        SecurityTestUtils.addUserDataToSecurityContext(new User(), 2);
-        assertEquals(1, rulesetService.findByClientId(2).size(), rulesetNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByClientId() throws Exception, DAOException {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByClientId() throws DataException {
-        assertEquals(0, rulesetService.findByClientId(3).size(), "Ruleset was found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByClientId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindByTitleAndFile() throws DataException {
-        Integer expected = 2;
-        assertEquals(expected, rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SUBHH", "ruleset_subhh.xml")), rulesetNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByTitleAndFile() throws DataException {
-        Integer expected = 0;
-        assertEquals(expected, rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile(slubDD, "none")), "Ruleset was found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindManyByTitleOrFile() throws DataException {
-        assertEquals(2, rulesetService.findByTitleOrFile(slubDD, "ruleset_subhh.xml").size(), "Rulesets were not found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindOneByTitleOrFile() throws DataException {
-        assertEquals(1, rulesetService.findByTitleOrFile("default", "ruleset_subhh.xml").size(), rulesetNotFound);
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByTitleOrFile() throws DataException {
-        assertEquals(0, rulesetService.findByTitleOrFile("none", "none").size(), "Some rulesets were found in index!");
+    @Disabled("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindAllRulesetsDocuments() throws DataException {
-        assertEquals(3, rulesetService.findAllDocuments().size(), "Not all rulesets were found in index!");
+    public void shouldFindAllRulesetsDocuments() throws DAOException {
+        assertEquals(3, rulesetService.getAll().size(), "Not all rulesets were found in database!");
     }
 
     @Test
@@ -180,7 +182,7 @@ public class RulesetServiceIT {
         foundRuleset = rulesetService.getById(5);
         assertEquals("To remove", foundRuleset.getTitle(), "Additional ruleset was not inserted in database!");
 
-        rulesetService.remove(5);
+        rulesetService.remove(foundRuleset);
         assertThrows(DAOException.class, () -> rulesetService.getById(5));
     }
 }

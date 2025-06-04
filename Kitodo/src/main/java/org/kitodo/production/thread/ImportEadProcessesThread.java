@@ -52,7 +52,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -232,7 +231,7 @@ public class ImportEadProcessesThread extends EmptyTask {
         } catch (XMLStreamException | IOException | ParserConfigurationException | SAXException
                  | UnsupportedFormatException | XPathExpressionException | ProcessGenerationException
                  | URISyntaxException | InvalidMetadataValueException | TransformerException
-                 | NoSuchMetadataFieldException | DataException | CommandException e) {
+                | NoSuchMetadataFieldException | DAOException | CommandException e) {
             logger.error(e.getMessage(), e);
             cleanUpProcesses(newProcessIds, newParentId);
             throw new RuntimeException(e);
@@ -245,14 +244,14 @@ public class ImportEadProcessesThread extends EmptyTask {
         for (int id : processIds) {
             try {
                 ProcessService.deleteProcess(ServiceManager.getProcessService().getById(id));
-            } catch (DataException | DAOException | IOException ex) {
+            } catch (DAOException | IOException ex) {
                 logger.error(ex);
             }
         }
         if (newParentId > 0 && Objects.nonNull(parentProcess) && Objects.nonNull(parentProcess.getProcess())) {
             try {
                 ProcessService.deleteProcess(parentProcess.getProcess());
-            } catch (DataException | IOException ex) {
+            } catch (DAOException | IOException ex) {
                 logger.error(ex);
             }
         }
@@ -295,7 +294,7 @@ public class ImportEadProcessesThread extends EmptyTask {
     }
 
     private TempProcess processTempProcess(TempProcess tempProcess) throws ProcessGenerationException, IOException,
-            InvalidMetadataValueException, NoSuchMetadataFieldException, DataException, CommandException {
+            InvalidMetadataValueException, NoSuchMetadataFieldException, DAOException, CommandException {
         ProcessHelper.generateAtstslFields(tempProcess, Collections.emptyList(), CREATE, priorityList, false);
         tempProcess.getProcessMetadata().preserve();
         ImportService.processTempProcess(tempProcess, rulesetManagementInterface, CREATE, priorityList, parentProcess);
@@ -304,7 +303,7 @@ public class ImportEadProcessesThread extends EmptyTask {
             ProcessService.setParentRelations(parentProcess.getProcess(), tempProcess.getProcess());
             MetadataEditor.addLink(parentProcess.getProcess(), String.valueOf(count - 1), tempProcess.getProcess()
                     .getId());
-            ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
+            ServiceManager.getProcessService().save(tempProcess.getProcess());
         }
         return tempProcess;
     }
@@ -322,7 +321,7 @@ public class ImportEadProcessesThread extends EmptyTask {
     private TempProcess parseXmlStringToProcessedTempProcess(String xmlElementString) throws IOException,
             ParserConfigurationException, SAXException, UnsupportedFormatException, XPathExpressionException,
             ProcessGenerationException, URISyntaxException, InvalidMetadataValueException, TransformerException,
-            NoSuchMetadataFieldException, DataException, CommandException {
+            NoSuchMetadataFieldException, DAOException, CommandException {
         TempProcess tempProcess = parseXmlStringToTempProcess(xmlElementString, false);
         return processTempProcess(tempProcess);
     }
@@ -349,8 +348,8 @@ public class ImportEadProcessesThread extends EmptyTask {
         securityContext.setAuthentication(authentication);
     }
 
-    private void saveTempProcessMetadata(TempProcess tempProcess) throws DataException, IOException, CommandException {
-        ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
+    private void saveTempProcessMetadata(TempProcess tempProcess) throws DAOException, IOException, CommandException {
+        ServiceManager.getProcessService().save(tempProcess.getProcess());
         URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
         tempProcess.getProcess().setProcessBaseUri(processBaseUri);
         ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagementInterface, CREATE, priorityList);

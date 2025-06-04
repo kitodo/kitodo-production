@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
@@ -37,6 +38,7 @@ public class IndexingST extends BaseTestSelenium {
         Pages.getTopNavigation().logout();
     }
 
+    @Disabled
     @Test
     public void reindexingTest() throws Exception {
         assertTrue(true);

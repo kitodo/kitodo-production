@@ -63,6 +63,6 @@ public class ProjectDAO extends BaseDAO<Project> {
      * @return all active projects sorted by title as Project objects
      */
     public List<Project> getAllActiveProjectsSortedByTitle() {
-        return getByQuery("FROM Project WHERE active = 1 ORDER BY title ASC");
+        return getByQuery("FROM Project WHERE active = true ORDER BY title ASC");
     }
 }

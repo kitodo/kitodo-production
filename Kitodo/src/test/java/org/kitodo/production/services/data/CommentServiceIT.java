@@ -71,12 +71,12 @@ public class CommentServiceIT {
         comment.setAuthor(ServiceManager.getUserService().getById(1));
         comment.setCreationDate(new Date());
         comment.setType(CommentType.INFO);
-        commentService.saveToDatabase(comment);
+        commentService.save(comment);
         Comment newComment = commentService.getAll().get(0);
-        assertEquals(newComment.getMessage(), "TEST_MESSAGE", "Comment was not found in database!");
+        assertEquals("TEST_MESSAGE", newComment.getMessage(), "Comment was not found in database!");
 
         commentService.removeComment(newComment);
         List<Comment> comments = commentService.getAll();
-        assertEquals(comments.size(), 0, "Comments were found in database!");
+        assertEquals(0, comments.size(), "Comments were found in database!");
     }
 }

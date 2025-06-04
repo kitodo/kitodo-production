@@ -11,12 +11,19 @@
 
 package org.kitodo;
 
+import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
+import static com.xebialabs.restito.semantics.Condition.get;
+import static com.xebialabs.restito.semantics.Condition.parameter;
+
+import com.xebialabs.restito.semantics.Action;
+import com.xebialabs.restito.server.StubServer;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -25,24 +32,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import com.xebialabs.restito.semantics.Action;
-import com.xebialabs.restito.server.StubServer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -88,28 +86,20 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
-import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.index.IndexRestClient;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.kitodo.test.utils.TestConstants;
 import org.opensearch.common.settings.Settings;
-import org.opensearch.node.InternalSettingsPreparer;
+import org.opensearch.env.Environment;
 import org.opensearch.node.Node;
-import org.opensearch.plugins.Plugin;
 import org.opensearch.transport.Netty4Plugin;
-
-import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-import static com.xebialabs.restito.semantics.Condition.get;
-import static com.xebialabs.restito.semantics.Condition.parameter;
 
 /**
  * Insert data to test database.
@@ -117,8 +107,6 @@ import static com.xebialabs.restito.semantics.Condition.parameter;
 public class MockDatabase {
 
     private static Node node;
-    private static IndexRestClient indexRestClient;
-    private static String testIndexName;
     private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
     private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
     private static final String HTTP_TRANSPORT_PORT = "9305";
@@ -153,34 +141,15 @@ public class MockDatabase {
     }
 
     public static void startNode() throws Exception {
-        startNodeWithoutMapping();
-        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
-            indexRestClient.createIndex(readMapping(mappingType), mappingType);
-        }
-        indexRestClient.setRefreshInterval();
-    }
-
-    public static void startNodeWithoutMapping() throws Exception {
-        String nodeName = Helper.generateRandomString(6);
+        final String nodeName = "index";
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
-
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        indexRestClient = initializeIndexRestClient();
-
-        Settings settings = prepareNodeSettings(port, nodeName);
-
+        Environment environment = prepareEnvironment(port, nodeName, Paths.get("target", "classes"));
         removeOldDataDirectories("target/" + nodeName);
-
-        if (node != null) {
-            stopNode();
-        }
-        Supplier<String> nodeNameSupplier = () -> nodeName;
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class), nodeNameSupplier);
+        node = new ExtendedNode(environment, Collections.singleton(Netty4Plugin.class));
         node.start();
     }
 
     public static void stopNode() throws Exception {
-        indexRestClient.deleteAllIndexes();
         node.close();
         node = null;
     }
@@ -258,39 +227,6 @@ public class MockDatabase {
         insertDataEditorSettings();
     }
 
-    private static class ExtendedNode extends Node {
-        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins,
-                     Supplier<String> nodeNameSupplier) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, Collections.emptyMap(),
-                    Paths.get("target"), nodeNameSupplier), classpathPlugins, false);
-        }
-    }
-
-    private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndexBase(testIndexName);
-        return restClient;
-    }
-
-    private static String readMapping(String mappingType) {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
-        try (InputStream inputStream = classloader.getResourceAsStream("elasticsearch_mappings/" + mappingType + ".json")) {
-            if (Objects.nonNull(inputStream)) {
-                String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-                try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
-                    JsonObject jsonObject = jsonReader.readObject();
-                    return jsonObject.toString();
-                }
-            } else {
-                return "";
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return "";
-    }
-
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {
         File dataDir = new File(dataDirectory);
         if (dataDir.exists()) {
@@ -298,8 +234,8 @@ public class MockDatabase {
         }
     }
 
-    private static Settings prepareNodeSettings(String httpPort, String nodeName) {
-        return Settings.builder().put("node.name", nodeName)
+    private static Environment prepareEnvironment(String httpPort, String nodeName, Path configPath) {
+        Settings settings = Settings.builder().put("node.name", nodeName)
                 .put("path.data", TARGET)
                 .put("path.logs", TARGET)
                 .put("path.home", TARGET)
@@ -308,6 +244,7 @@ public class MockDatabase {
                 .put("transport.tcp.port", HTTP_TRANSPORT_PORT)
                 .put("transport.type", "netty4")
                 .put("action.auto_create_index", "false").build();
+        return new Environment(settings, configPath);
     }
 
     public static void insertAuthorities() throws DAOException {
@@ -465,7 +402,7 @@ public class MockDatabase {
         authorities.add(new Authority("useMassImport" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
-            ServiceManager.getAuthorityService().saveToDatabase(authority);
+            ServiceManager.getAuthorityService().save(authority);
         }
     }
 
@@ -518,11 +455,11 @@ public class MockDatabase {
         listColumns.add(new ListColumn("ldapgroup.gidNumber"));
 
         for (ListColumn listColumn : listColumns) {
-            ServiceManager.getListColumnService().saveToDatabase(listColumn);
+            ServiceManager.getListColumnService().save(listColumn);
         }
     }
 
-    private static void insertBatches() throws DAOException, DataException {
+    private static void insertBatches() throws DAOException {
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
         firstBatch.getProcesses().add(ServiceManager.getProcessService().getById(1));
@@ -549,7 +486,7 @@ public class MockDatabase {
         firstSetting.setStructureWidth(0.2f);
         firstSetting.setMetadataWidth(0.4f);
         firstSetting.setGalleryWidth(0.4f);
-        ServiceManager.getDataEditorSettingService().saveToDatabase(firstSetting);
+        ServiceManager.getDataEditorSettingService().save(firstSetting);
 
         DataEditorSetting secondSetting = new DataEditorSetting();
         secondSetting.setUserId(1);
@@ -557,7 +494,7 @@ public class MockDatabase {
         secondSetting.setStructureWidth(0f);
         secondSetting.setMetadataWidth(0.5f);
         secondSetting.setGalleryWidth(0.5f);
-        ServiceManager.getDataEditorSettingService().saveToDatabase(secondSetting);
+        ServiceManager.getDataEditorSettingService().save(secondSetting);
 
         DataEditorSetting thirdSetting = new DataEditorSetting();
         thirdSetting.setUserId(1);
@@ -565,10 +502,10 @@ public class MockDatabase {
         thirdSetting.setStructureWidth(1f);
         thirdSetting.setMetadataWidth(0f);
         thirdSetting.setGalleryWidth(0f);
-        ServiceManager.getDataEditorSettingService().saveToDatabase(thirdSetting);
+        ServiceManager.getDataEditorSettingService().save(thirdSetting);
     }
 
-    public static void insertDockets() throws DAOException, DataException {
+    public static void insertDockets() throws DAOException {
         Client client = ServiceManager.getClientService().getById(1);
 
         Docket firstDocket = new Docket();
@@ -605,7 +542,7 @@ public class MockDatabase {
         ldapServer.setPasswordEncryption(PasswordEncryption.SHA);
         ldapServer.setUseSsl(false);
 
-        ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+        ServiceManager.getLdapServerService().save(ldapServer);
     }
 
     public static void insertLdapGroups() throws DAOException {
@@ -619,10 +556,10 @@ public class MockDatabase {
         firstLdapGroup.setDisplayName("Name");
         firstLdapGroup.setLdapServer(ServiceManager.getLdapServerService().getById(1));
 
-        ServiceManager.getLdapGroupService().saveToDatabase(firstLdapGroup);
+        ServiceManager.getLdapGroupService().save(firstLdapGroup);
     }
 
-    private static void insertProcesses() throws DAOException, DataException {
+    private static void insertProcesses() throws DAOException {
         Project projectOne = ServiceManager.getProjectService().getById(1);
         Template template = ServiceManager.getTemplateService().getById(1);
 
@@ -665,7 +602,7 @@ public class MockDatabase {
      * @param startId ID of first placeholder process to add
      * @param endId ID of last placeholder process to add
      */
-    public static void insertPlaceholderProcesses(int startId, int endId) throws DataException {
+    public static void insertPlaceholderProcesses(int startId, int endId) throws DAOException {
         for (int processNumber = startId; processNumber <= endId; processNumber++) {
             Process nthProcess = new Process();
             nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
@@ -676,9 +613,9 @@ public class MockDatabase {
     /**
      * Insert process of type 'MultiVolumeWork' used to test creation of subordinate process of type 'Volume'.
      * @throws DAOException when retrieving project or ruleset from database fails
-     * @throws DataException when saving new process object fails
+     * @throws DAOException when saving new process object fails
      */
-    public static int insertMultiVolumeWork() throws DAOException, DataException {
+    public static int insertMultiVolumeWork() throws DAOException {
         Process multiVolumeWork = new Process();
         multiVolumeWork.setBaseType("MultiVolumeWork");
         multiVolumeWork.setTitle("Multi volume work test process");
@@ -693,9 +630,9 @@ public class MockDatabase {
     /**
      * Create template process of type 'Volume' and corresponding template process import configuration.
      * @throws DAOException when loading required objects from database fails
-     * @throws DataException when saving process or import configuration fails
+     * @throws DAOException when saving process or import configuration fails
      */
-    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException, DataException {
+    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException {
 
         // create template process
         Project firstProject = ServiceManager.getProjectService().getById(1);
@@ -713,15 +650,15 @@ public class MockDatabase {
         ImportConfiguration templateProcessConfiguration = new ImportConfiguration();
         templateProcessConfiguration.setConfigurationType(ImportConfigurationType.PROCESS_TEMPLATE.name());
         templateProcessConfiguration.setDefaultTemplateProcess(newProcess);
-        ServiceManager.getImportConfigurationService().saveToDatabase(templateProcessConfiguration);
-        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().countDatabaseRows());
+        ServiceManager.getImportConfigurationService().save(templateProcessConfiguration);
+        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().count());
         ImportConfiguration savedConfig = ServiceManager.getImportConfigurationService().getById(numberOfConfigs);
         firstProject.setDefaultChildProcessImportConfiguration(savedConfig);
         ServiceManager.getProjectService().save(firstProject);
         ServiceManager.getImportService().setUsingTemplates(true);
     }
 
-    public static Map<String, Integer> insertProcessesForHierarchyTests() throws DAOException, DataException {
+    public static Map<String, Integer> insertProcessesForHierarchyTests() throws DAOException {
         Map<String, Integer> testProcesses = new HashMap<>();
         Process parentProcess = new Process();
         parentProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -759,21 +696,21 @@ public class MockDatabase {
         return testProcesses;
     }
 
-    private static ImportConfiguration insertEadImportConfiguration() throws DAOException, DataException {
+    private static ImportConfiguration insertEadImportConfiguration() throws DAOException {
         // EAD mapping files (for "file" and "collection" level)
         MappingFile eadMappingFile = new MappingFile();
         eadMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
         eadMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
         eadMappingFile.setFile("ead2kitodo.xsl");
         eadMappingFile.setTitle("EAD to Kitodo");
-        ServiceManager.getMappingFileService().saveToDatabase(eadMappingFile);
+        ServiceManager.getMappingFileService().save(eadMappingFile);
 
         MappingFile eadParentMappingFile = new MappingFile();
         eadParentMappingFile.setInputMetadataFormat(MetadataFormat.EAD.name());
         eadParentMappingFile.setOutputMetadataFormat(MetadataFormat.KITODO.name());
         eadParentMappingFile.setFile("eadParent2kitodo.xsl");
         eadParentMappingFile.setTitle("EAD Parent to Kitodo");
-        ServiceManager.getMappingFileService().saveToDatabase(eadParentMappingFile);
+        ServiceManager.getMappingFileService().save(eadParentMappingFile);
 
         // EAD upload import configuration
         ImportConfiguration eadUploadConfiguration = new ImportConfiguration();
@@ -783,12 +720,12 @@ public class MockDatabase {
         eadUploadConfiguration.setReturnFormat(FileFormat.XML.name());
         eadUploadConfiguration.setMappingFiles(Collections.singletonList(eadMappingFile));
         eadUploadConfiguration.setParentMappingFile(eadParentMappingFile);
-        ServiceManager.getImportConfigurationService().saveToDatabase(eadUploadConfiguration);
+        ServiceManager.getImportConfigurationService().save(eadUploadConfiguration);
         return eadUploadConfiguration;
     }
 
     private static Template insertEadTemplate(Ruleset eadRuleset, Project eadImportProject, Client client)
-            throws DAOException, DataException {
+            throws DAOException {
         Task firstTask = new Task();
         firstTask.setTitle("Open");
         firstTask.setOrdering(1);
@@ -824,7 +761,7 @@ public class MockDatabase {
         return eadTemplate;
     }
 
-    public static Project insertProjectForEadImport(User user, Client client) throws DAOException, DataException {
+    public static Project insertProjectForEadImport(User user, Client client) throws DAOException {
 
         // EAD ruleset
         Ruleset eadRuleset = new Ruleset();
@@ -857,10 +794,10 @@ public class MockDatabase {
      * @param clientId client id
      * @return id of ruleset
      * @throws DAOException when retrieving client by ID fails
-     * @throws DataException when saving ruleset failed
+     * @throws DAOException when saving ruleset failed
      */
     public static int insertRuleset(String rulesetTitle, String rulesetFilename, int clientId) throws DAOException,
-            DataException {
+            DAOException {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle(rulesetTitle);
         ruleset.setFile(rulesetFilename);
@@ -870,7 +807,7 @@ public class MockDatabase {
         return ruleset.getId();
     }
 
-    private static void insertTemplates() throws DAOException, DataException {
+    private static void insertTemplates() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
 
         Template firstTemplate = new Template();
@@ -881,7 +818,7 @@ public class MockDatabase {
         firstTemplate.setDocket(ServiceManager.getDocketService().getById(2));
         firstTemplate.getProjects().add(project);
         firstTemplate.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getTemplateService().save(firstTemplate, true);
+        ServiceManager.getTemplateService().save(firstTemplate);
 
         Project thirdProject = ServiceManager.getProjectService().getById(3);
         Template secondTemplate = new Template();
@@ -893,7 +830,7 @@ public class MockDatabase {
         secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
         secondTemplate.setRuleset(ServiceManager.getRulesetService().getById(2));
-        ServiceManager.getTemplateService().save(secondTemplate, true);
+        ServiceManager.getTemplateService().save(secondTemplate);
 
         thirdProject = ServiceManager.getProjectService().getById(3);
         Template thirdTemplate = new Template();
@@ -905,7 +842,7 @@ public class MockDatabase {
         thirdTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(thirdTemplate);
         thirdTemplate.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getTemplateService().save(thirdTemplate, true);
+        ServiceManager.getTemplateService().save(thirdTemplate);
 
         Template fourthTemplate = new Template();
         fourthTemplate.setTitle("Fourth template");
@@ -916,10 +853,10 @@ public class MockDatabase {
         fourthTemplate.getProjects().add(project);
         fourthTemplate.getProjects().add(thirdProject);
         fourthTemplate.setRuleset(ServiceManager.getRulesetService().getById(2));
-        ServiceManager.getTemplateService().save(fourthTemplate, true);
+        ServiceManager.getTemplateService().save(fourthTemplate);
     }
 
-    private static void insertProcessProperties() throws DAOException, DataException {
+    private static void insertProcessProperties() throws DAOException {
         Process firstProcess = ServiceManager.getProcessService().getById(1);
 
         Property firstProcessProperty = new Property();
@@ -931,7 +868,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 14);
         firstProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
+        ServiceManager.getPropertyService().save(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("Korrektur notwendig");
@@ -942,7 +879,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 15);
         secondProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
+        ServiceManager.getPropertyService().save(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
         thirdProcessProperty.setTitle("Korrektur notwendig");
@@ -953,7 +890,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 7, 15);
         thirdProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
+        ServiceManager.getPropertyService().save(thirdProcessProperty);
 
         Process secondProcess = ServiceManager.getProcessService().getById(2);
         Property fourthProcessProperty = new Property();
@@ -965,7 +902,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 7, 15);
         fourthProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         fourthProcessProperty.getProcesses().add(secondProcess);
-        ServiceManager.getPropertyService().saveToDatabase(fourthProcessProperty);
+        ServiceManager.getPropertyService().save(fourthProcessProperty);
 
         firstProcess.getProperties().add(firstProcessProperty);
         firstProcess.getProperties().add(secondProcessProperty);
@@ -977,7 +914,7 @@ public class MockDatabase {
 
     }
 
-    private static void insertProcessPropertiesForWorkflow() throws DAOException, DataException {
+    private static void insertProcessPropertiesForWorkflow() throws DAOException {
         Process firstProcess = ServiceManager.getProcessService().getById(1);
 
         Property firstProcessProperty = new Property();
@@ -989,7 +926,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 14);
         firstProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
+        ServiceManager.getPropertyService().save(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("Korrektur notwendig");
@@ -1000,7 +937,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 15);
         secondProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
+        ServiceManager.getPropertyService().save(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
         thirdProcessProperty.setTitle("Korrektur notwendig");
@@ -1011,7 +948,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 7, 15);
         thirdProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
+        ServiceManager.getPropertyService().save(thirdProcessProperty);
 
         firstProcess.getProperties().add(firstProcessProperty);
         firstProcess.getProperties().add(secondProcessProperty);
@@ -1025,17 +962,17 @@ public class MockDatabase {
         Client client = new Client();
         client.setName("First client");
         client = ServiceManager.getClientService().addStandardListColumns(client);
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
         secondClient = ServiceManager.getClientService().addStandardListColumns(secondClient);
-        ServiceManager.getClientService().saveToDatabase(secondClient);
+        ServiceManager.getClientService().save(secondClient);
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
         thirdClient = ServiceManager.getClientService().addStandardListColumns(thirdClient);
-        ServiceManager.getClientService().saveToDatabase(thirdClient);
+        ServiceManager.getClientService().save(thirdClient);
     }
 
     private static void insertProjects() throws Exception {
@@ -1077,8 +1014,7 @@ public class MockDatabase {
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
         sixthUser.getProjects().add(secondProject);
-        ServiceManager.getUserService().saveToDatabase(firstUser);
-        ServiceManager.getProjectService().saveToIndex(secondProject, true);
+        ServiceManager.getUserService().save(firstUser);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
@@ -1099,12 +1035,12 @@ public class MockDatabase {
         secondUser.getProjects().add(thirdProject);
         thirdUser.getProjects().add(thirdProject);
         sixthUser.getProjects().add(firstProject);
-        ServiceManager.getUserService().saveToDatabase(secondUser);
-        ServiceManager.getUserService().saveToDatabase(thirdUser);
-        ServiceManager.getUserService().saveToDatabase(sixthUser);
+        ServiceManager.getUserService().save(secondUser);
+        ServiceManager.getUserService().save(thirdUser);
+        ServiceManager.getUserService().save(sixthUser);
     }
 
-    private static void insertFolders() throws DAOException, DataException {
+    private static void insertFolders() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
 
         Folder firstFolder = new Folder();
@@ -1189,9 +1125,9 @@ public class MockDatabase {
      * Add test process for media references update test to second project.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
+     * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException, DataException {
+    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(MEDIA_REFERENCES_TEST_PROCESS_TITLE);
     }
 
@@ -1199,9 +1135,9 @@ public class MockDatabase {
      * Add test process for metadata lock test to second project.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
+     * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException, DataException {
+    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(METADATA_LOCK_TEST_PROCESS_TITLE);
     }
 
@@ -1209,9 +1145,9 @@ public class MockDatabase {
      * Add test process for renaming media files.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
+     * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessForRenamingMediaTestIntoSecondProject() throws DAOException, DataException {
+    public static int insertTestProcessForRenamingMediaTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(MEDIA_RENAMING_TEST_PROCESS_TITLE);
     }
 
@@ -1219,9 +1155,8 @@ public class MockDatabase {
      * Add test process for moving pages via mouse drag'n'drop.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
      */
-    public static int insertTestProcessForDragNDropTestIntoSecondProject() throws DAOException, DataException {
+    public static int insertTestProcessForDragNDropTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(DRAG_N_DROP_TEST_PROCESS_TITLE);
     }
 
@@ -1229,9 +1164,8 @@ public class MockDatabase {
      * Add test process for moving pages via mouse drag'n'drop.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
      */
-    public static int insertTestProcessForCreateStructureAndDragNDropTestIntoSecondProject() throws DAOException, DataException {
+    public static int insertTestProcessForCreateStructureAndDragNDropTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(CREATE_STRUCTURE_AND_DRAG_N_DROP_TEST_PROCESS_TITLE);
     }
 
@@ -1239,9 +1173,8 @@ public class MockDatabase {
      * Add test process for creating structure elements.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
-     * @throws DataException when saving test process fails
      */
-    public static int insertTestProcessForCreatingStructureElementIntoSecondProject() throws DAOException, DataException {
+    public static int insertTestProcessForCreatingStructureElementIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(CREATE_STRUCTURE_PROCESS_TITLE);
     }
 
@@ -1249,9 +1182,9 @@ public class MockDatabase {
      * Insert test process for media reference updates into database.
      * @return database ID of created test process
      * @throws DAOException when loading test project fails
-     * @throws DataException when saving test process fails
+     * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DataException {
+    public static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Template template = projectTwo.getTemplates().get(0);
         Process mediaReferencesProcess = new Process();
@@ -1272,10 +1205,10 @@ public class MockDatabase {
      * @param rulesetId ruleset id of test process
      * @return id of test process
      * @throws DAOException when retrieving project, template or ruleset fails
-     * @throws DataException when saving test process fails
+     * @throws DAOException when saving test process fails
      */
     public static int insertTestProcess(String processTitle, int projectId, int templateId, int rulesetId)
-            throws DAOException, DataException {
+            throws DAOException {
         Project project = ServiceManager.getProjectService().getById(projectId);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
@@ -1292,9 +1225,9 @@ public class MockDatabase {
     /**
      * Insert folders into database and add them to second test project.
      * @throws DAOException when loading project or template fails
-     * @throws DataException when saving project or template fails
+     * @throws DAOException when saving project or template fails
      */
-    public static void insertFoldersForSecondProject() throws DAOException, DataException {
+    public static void insertFoldersForSecondProject() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(2);
 
         Template template = ServiceManager.getTemplateService().getById(1);
@@ -1343,7 +1276,7 @@ public class MockDatabase {
         ServiceManager.getProjectService().save(project);
     }
 
-    public static void insertRulesets() throws DAOException, DataException {
+    public static void insertRulesets() throws DAOException {
         Client client = ServiceManager.getClientService().getById(1);
 
         Ruleset firstRuleset = new Ruleset();
@@ -1404,12 +1337,15 @@ public class MockDatabase {
                 task.setProcessingUser(secondUser);
                 secondUser.getProcessingTasks().add(task);
             }
-            ServiceManager.getTaskService().save(task, true);
+            firstProcess.getTasks().add(task);
         }
 
-        ServiceManager.getUserService().saveToDatabase(firstUser);
-        ServiceManager.getUserService().saveToDatabase(secondUser);
-        ServiceManager.getUserService().saveToDatabase(blockedUser);
+        ServiceManager.getUserService().save(firstUser);
+        ServiceManager.getUserService().save(secondUser);
+        ServiceManager.getUserService().save(blockedUser);
+
+        WorkflowControllerService.updateProcessSortHelperStatus(firstProcess);
+        ServiceManager.getProcessService().save(firstProcess);
 
         Process secondProcess = ServiceManager.getProcessService().getById(2);
 
@@ -1426,9 +1362,8 @@ public class MockDatabase {
         eleventhTask.setScriptPath("../type/automatic/script/path");
         eleventhTask.getRoles().add(role);
         role.getTasks().add(eleventhTask);
-        ServiceManager.getTaskService().save(eleventhTask, true);
         firstUser.getProcessingTasks().add(eleventhTask);
-        ServiceManager.getTaskService().saveToIndex(eleventhTask, true);
+        secondProcess.getTasks().add(eleventhTask);
 
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
@@ -1441,10 +1376,9 @@ public class MockDatabase {
         twelfthTask.setProcess(secondProcess);
         twelfthTask.getRoles().add(role);
         role.getTasks().add(twelfthTask);
-        ServiceManager.getTaskService().save(twelfthTask, true);
         firstUser.getProcessingTasks().add(twelfthTask);
-        ServiceManager.getUserService().saveToDatabase(firstUser);
-        ServiceManager.getTaskService().saveToIndex(twelfthTask, true);
+        ServiceManager.getUserService().save(firstUser);
+        secondProcess.getTasks().add(twelfthTask);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");
@@ -1456,9 +1390,12 @@ public class MockDatabase {
         thirteenTask.setProcess(secondProcess);
         thirteenTask.getRoles().add(role);
         role.getTasks().add(thirteenTask);
-        ServiceManager.getTaskService().save(thirteenTask, true);
+        secondProcess.getTasks().add(thirteenTask);
 
-        ServiceManager.getRoleService().saveToDatabase(role);
+        ServiceManager.getRoleService().save(role);
+
+        WorkflowControllerService.updateProcessSortHelperStatus(secondProcess);
+        ServiceManager.getProcessService().save(secondProcess);
     }
 
     private static List<Task> getTasks() {
@@ -1515,7 +1452,7 @@ public class MockDatabase {
         return Arrays.asList(firstTask, secondTask, thirdTask, fourthTask, fifthTask);
     }
 
-    private static void insertTemplateProperties() throws DAOException, DataException {
+    private static void insertTemplateProperties() throws DAOException {
         Process template = ServiceManager.getProcessService().getById(1);
 
         Property firstTemplateProperty = new Property();
@@ -1527,7 +1464,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 14);
         firstTemplateProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTemplateProperty.getTemplates().add(template);
-        ServiceManager.getPropertyService().saveToDatabase(firstTemplateProperty);
+        ServiceManager.getPropertyService().save(firstTemplateProperty);
 
         Property secondTemplateProperty = new Property();
         secondTemplateProperty.setTitle("template");
@@ -1538,7 +1475,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 15);
         secondTemplateProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondTemplateProperty.getTemplates().add(template);
-        ServiceManager.getPropertyService().saveToDatabase(secondTemplateProperty);
+        ServiceManager.getPropertyService().save(secondTemplateProperty);
 
         template.getTemplates().add(firstTemplateProperty);
         template.getTemplates().add(secondTemplateProperty);
@@ -1575,7 +1512,7 @@ public class MockDatabase {
         firstUser.getRoles().add(databaseRole);
         firstUser.getRoles().add(renameMediaRole);
         firstUser.getClients().add(firstClient);
-        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getUserService().save(firstUser);
 
         User secondUser = new User();
         secondUser.setName("Adam");
@@ -1590,7 +1527,7 @@ public class MockDatabase {
         secondUser.getRoles().add(projectRoleForSecondClient);
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
-        ServiceManager.getUserService().saveToDatabase(secondUser);
+        ServiceManager.getUserService().save(secondUser);
 
         User thirdUser = new User();
         thirdUser.setName("Anna");
@@ -1603,7 +1540,7 @@ public class MockDatabase {
         thirdUser.getRoles().add(adminRole);
         thirdUser.getRoles().add(clientAdminRole);
         thirdUser.getClients().add(secondClient);
-        ServiceManager.getUserService().saveToDatabase(thirdUser);
+        ServiceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
         fourthUser.setName("Max");
@@ -1615,7 +1552,7 @@ public class MockDatabase {
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
         fourthUser.getRoles().add(withoutAuthoritiesRole);
-        ServiceManager.getUserService().saveToDatabase(fourthUser);
+        ServiceManager.getUserService().save(fourthUser);
 
         User fifthUser = new User();
         fifthUser.setName("Last");
@@ -1626,7 +1563,7 @@ public class MockDatabase {
         fifthUser.setLocation("Dresden");
         fifthUser.setTableSize(20);
         fifthUser.setLanguage("de");
-        ServiceManager.getUserService().saveToDatabase(fifthUser);
+        ServiceManager.getUserService().save(fifthUser);
 
         User sixthUser = new User();
         sixthUser.setName("Very last");
@@ -1636,7 +1573,7 @@ public class MockDatabase {
         sixthUser.getClients().add(firstClient);
         sixthUser.getRoles().add(metadataRole);
         sixthUser.setMetadataLanguage("de");
-        ServiceManager.getUserService().saveToDatabase(sixthUser);
+        ServiceManager.getUserService().save(sixthUser);
     }
 
     private static void insertRoles() throws DAOException {
@@ -1656,7 +1593,7 @@ public class MockDatabase {
         firstRole.getAuthorities().add(ServiceManager.getAuthorityService()
                 .getByTitle("useMassImport" + CLIENT_ASSIGNABLE));
 
-        ServiceManager.getRoleService().saveToDatabase(firstRole);
+        ServiceManager.getRoleService().save(firstRole);
 
         Role secondRole = new Role();
         secondRole.setTitle("General");
@@ -1667,7 +1604,7 @@ public class MockDatabase {
             secondRole.getAuthorities().add(allAuthorities.get(i));
         }
 
-        ServiceManager.getRoleService().saveToDatabase(secondRole);
+        ServiceManager.getRoleService().save(secondRole);
 
         Role thirdRole = new Role();
         thirdRole.setTitle("Random for first");
@@ -1679,7 +1616,7 @@ public class MockDatabase {
         userAuthoritiesForFirst.add(ServiceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
         thirdRole.setAuthorities(userAuthoritiesForFirst);
 
-        ServiceManager.getRoleService().saveToDatabase(thirdRole);
+        ServiceManager.getRoleService().save(thirdRole);
 
         Role fourthRole = new Role();
         fourthRole.setTitle("Random for second");
@@ -1697,12 +1634,12 @@ public class MockDatabase {
         userAuthoritiesForSecond.add(ServiceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
         fourthRole.setAuthorities(userAuthoritiesForSecond);
 
-        ServiceManager.getRoleService().saveToDatabase(fourthRole);
+        ServiceManager.getRoleService().save(fourthRole);
 
         Role fifthUserGroup = new Role();
         fifthUserGroup.setTitle("Without authorities");
         fifthUserGroup.setClient(firstClient);
-        ServiceManager.getRoleService().saveToDatabase(fifthUserGroup);
+        ServiceManager.getRoleService().save(fifthUserGroup);
 
         Role sixthRole = new Role();
         sixthRole.setTitle("With partial metadata editor authorities");
@@ -1716,7 +1653,7 @@ public class MockDatabase {
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("reimportMetadata" + CLIENT_ASSIGNABLE));
         sixthRole.setAuthorities(userMetadataAuthorities);
 
-        ServiceManager.getRoleService().saveToDatabase(sixthRole);
+        ServiceManager.getRoleService().save(sixthRole);
 
         // insert database authority
         Role databaseStatisticsRole = new Role();
@@ -1727,7 +1664,7 @@ public class MockDatabase {
         databaseStatisticAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
         databaseStatisticsRole.setAuthorities(databaseStatisticAuthorities);
 
-        ServiceManager.getRoleService().saveToDatabase(databaseStatisticsRole);
+        ServiceManager.getRoleService().save(databaseStatisticsRole);
 
         // insert media renaming role
         Role renameMediaRole = new Role();
@@ -1736,7 +1673,7 @@ public class MockDatabase {
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + GLOBAL_ASSIGNABLE)));
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + CLIENT_ASSIGNABLE)));
 
-        ServiceManager.getRoleService().saveToDatabase(renameMediaRole);
+        ServiceManager.getRoleService().save(renameMediaRole);
 
         // insert client admin role
         Role clientAdminRole = new Role();
@@ -1744,10 +1681,10 @@ public class MockDatabase {
         clientAdminRole.setClient(secondClient);
         clientAdminRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE)));
 
-        ServiceManager.getRoleService().saveToDatabase(clientAdminRole);
+        ServiceManager.getRoleService().save(clientAdminRole);
     }
 
-    private static void insertUserFilters() throws DAOException, DataException {
+    private static void insertUserFilters() throws DAOException {
         User user = ServiceManager.getUserService().getById(1);
 
         Filter firstUserFilter = new Filter();
@@ -1766,10 +1703,10 @@ public class MockDatabase {
 
         user.getFilters().add(firstUserFilter);
         user.getFilters().add(secondUserFilter);
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
     }
 
-    private static void insertWorkpieceProperties() throws DAOException, DataException {
+    private static void insertWorkpieceProperties() throws DAOException {
         Process workpiece = ServiceManager.getProcessService().getById(1);
 
         Property firstWorkpieceProperty = new Property();
@@ -1781,7 +1718,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstWorkpieceProperty.getWorkpieces().add(workpiece);
-        ServiceManager.getPropertyService().saveToDatabase(firstWorkpieceProperty);
+        ServiceManager.getPropertyService().save(firstWorkpieceProperty);
 
         Property secondWorkpieceProperty = new Property();
         secondWorkpieceProperty.setTitle("workpiece");
@@ -1792,14 +1729,14 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondWorkpieceProperty.getWorkpieces().add(workpiece);
-        ServiceManager.getPropertyService().saveToDatabase(secondWorkpieceProperty);
+        ServiceManager.getPropertyService().save(secondWorkpieceProperty);
 
         workpiece.getWorkpieces().add(firstWorkpieceProperty);
         workpiece.getWorkpieces().add(secondWorkpieceProperty);
         ServiceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DAOException, DataException {
+    public static void insertWorkflows() throws DAOException {
         Workflow firstWorkflow = new Workflow(TEST);
         firstWorkflow.setStatus(WorkflowStatus.ACTIVE);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
@@ -1808,7 +1745,7 @@ public class MockDatabase {
         template.setWorkflow(firstWorkflow);
         ServiceManager.getTemplateService().save(template);
 
-        Workflow secondWorkflow = new Workflow(TEST);
+        Workflow secondWorkflow = new Workflow("test_second");
         secondWorkflow.setStatus(WorkflowStatus.DRAFT);
         secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);
@@ -1826,7 +1763,7 @@ public class MockDatabase {
         mappingFileModsToKitodo.setTitle("MODS to Kitodo mapping");
         mappingFileModsToKitodo.setInputMetadataFormat(MetadataFormat.MODS.name());
         mappingFileModsToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
-        ServiceManager.getMappingFileService().saveToDatabase(mappingFileModsToKitodo);
+        ServiceManager.getMappingFileService().save(mappingFileModsToKitodo);
 
         // add PICA to Kitodo mapping file
         MappingFile mappingFilePicaToKitodo = new MappingFile();
@@ -1834,10 +1771,10 @@ public class MockDatabase {
         mappingFilePicaToKitodo.setTitle("PICA to Kitodo mapping");
         mappingFilePicaToKitodo.setInputMetadataFormat(MetadataFormat.PICA.name());
         mappingFilePicaToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
-        ServiceManager.getMappingFileService().saveToDatabase(mappingFilePicaToKitodo);
+        ServiceManager.getMappingFileService().save(mappingFilePicaToKitodo);
     }
 
-    public static void insertImportConfigurations() throws DAOException, DataException {
+    public static void insertImportConfigurations() throws DAOException {
         Client firstClient = ServiceManager.getClientService().getById(1);
         Client secondClient = ServiceManager.getClientService().getById(2);
         List<Client> clients = Arrays.asList(firstClient, secondClient);
@@ -1865,7 +1802,7 @@ public class MockDatabase {
         gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setClients(clients);
-        ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
+        ServiceManager.getImportConfigurationService().save(gbvConfiguration);
 
         // add Kalliope import configuration, including id search field
         ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
@@ -1899,12 +1836,12 @@ public class MockDatabase {
         kalliopeSearchFields.add(parentIdSearchFieldKalliope);
 
         kalliopeConfiguration.setSearchFields(kalliopeSearchFields);
-        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+        ServiceManager.getImportConfigurationService().save(kalliopeConfiguration);
 
         kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
         kalliopeConfiguration.setParentSearchField(kalliopeConfiguration.getSearchFields().get(1));
         kalliopeConfiguration.setClients(Collections.singletonList(firstClient));
-        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+        ServiceManager.getImportConfigurationService().save(kalliopeConfiguration);
 
         // add K10Plus import configuration, including id search field
         ImportConfiguration k10plusConfiguration = new ImportConfiguration();
@@ -1939,12 +1876,12 @@ public class MockDatabase {
         k10SearchFields.add(parentIdSearchFieldK10Plus);
 
         k10plusConfiguration.setSearchFields(k10SearchFields);
-        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+        ServiceManager.getImportConfigurationService().save(k10plusConfiguration);
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
         k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
         k10plusConfiguration.setClients(clients);
-        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+        ServiceManager.getImportConfigurationService().save(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {
             project.setDefaultImportConfiguration(k10plusConfiguration);
@@ -1999,10 +1936,10 @@ public class MockDatabase {
         urlParameters.add(secondParameter);
         customConfiguration.setUrlParameters(urlParameters);
 
-        ServiceManager.getImportConfigurationService().saveToDatabase(customConfiguration);
+        ServiceManager.getImportConfigurationService().save(customConfiguration);
     }
 
-    private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
+    private static void insertDataForParallelTasks() throws DAOException, IOException, WorkflowException {
         Client client = ServiceManager.getClientService().getById(1);
 
         Workflow workflow = new Workflow("gateway-test1");
@@ -2127,7 +2064,7 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(sixthProcess);
     }
 
-    private static void insertDataForScriptParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
+    private static void insertDataForScriptParallelTasks() throws DAOException, IOException, WorkflowException {
         Workflow workflow = new Workflow("gateway-test5");
         workflow.setStatus(WorkflowStatus.ACTIVE);
         workflow.setClient(ServiceManager.getClientService().getById(1));
@@ -2200,12 +2137,12 @@ public class MockDatabase {
         transaction.commit();
     }
 
-    private static void insertRemovableObjects() throws DataException, DAOException {
+    private static void insertRemovableObjects() throws DAOException {
         removableObjectIDs = new HashMap<>();
 
         Client client = new Client();
         client.setName("Removable client");
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
         removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
 
         Client assignableClient = ServiceManager.getClientService().getById(1);
@@ -2225,13 +2162,13 @@ public class MockDatabase {
         User user = new User();
         user.setName("Removable user");
         user.getClients().add(assignableClient);
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 
         Role role = new Role();
         role.setTitle("Removable role");
         role.setClient(assignableClient);
-        ServiceManager.getRoleService().saveToDatabase(role);
+        ServiceManager.getRoleService().save(role);
         removableObjectIDs.put(ObjectType.ROLE.name(), role.getId());
 
     }
@@ -2246,7 +2183,7 @@ public class MockDatabase {
         if (removableObjectIDs.isEmpty()) {
             try {
                 insertRemovableObjects();
-            } catch (DataException | DAOException e) {
+            } catch (DAOException e) {
                 logger.error("Unable to save removable objects to test database!");
             }
         }
@@ -2300,10 +2237,10 @@ public class MockDatabase {
      * @param templateId ID of template to add to new process
      * @return new process
      * @throws DAOException when retrieving entities from database fails
-     * @throws DataException when saving new process to database fails
+     * @throws DAOException when saving new process to database fails
      */
     public static Process addProcess(String processTitle, int projectId, int templateId)
-            throws DAOException, DataException {
+            throws DAOException {
         Project projectOne = ServiceManager.getProjectService().getById(projectId);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         LocalDate localDate = LocalDate.of(2023, 1, 3);
@@ -2385,9 +2322,8 @@ public class MockDatabase {
      * Add simple template with one task that can be used to create processes.
      *
      * @throws DAOException when loading role or template fails
-     * @throws DataException when saving template task fails
      */
-    public static void insertTestTemplateForCreatingProcesses() throws DAOException, DataException {
+    public static void insertTestTemplateForCreatingProcesses() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
         Client client = ServiceManager.getClientService().getById(1);
 
@@ -2405,7 +2341,7 @@ public class MockDatabase {
         bookTemplate.setDocket(ServiceManager.getDocketService().getById(2));
         bookTemplate.setRuleset(ServiceManager.getRulesetService().getById(bookRulesetId));
         bookTemplate.getProjects().add(project);
-        ServiceManager.getTemplateService().save(bookTemplate, true);
+        ServiceManager.getTemplateService().save(bookTemplate);
         int bookTemplateId = bookTemplate.getId();
 
         Role role = ServiceManager.getRoleService().getById(1);

@@ -14,9 +14,7 @@ package org.kitodo.production.forms;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Objects;
 
@@ -30,8 +28,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.IndexAction;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.services.ServiceManager;
 
 public class IndexingFormIT {
@@ -40,11 +36,11 @@ public class IndexingFormIT {
 
     @BeforeAll
     public static void setUp() throws Exception {
-        MockDatabase.startNodeWithoutMapping();
+        MockDatabase.startNode();
         Client client = new Client();
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
         User user = new User();
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         await().until(() -> {
             SecurityTestUtils.addUserDataToSecurityContext(user, 1);
@@ -59,38 +55,25 @@ public class IndexingFormIT {
     }
 
     @Test
-    public void shouldCreateMapping() {
-        assertFalse(indexingForm.indexExists());
-        indexingForm.createMapping(false);
-        assertTrue(indexingForm.indexExists());
-    }
-
-    @Test
     @Disabled("Not working due to CDI injection problems")
     public void indexingAll() throws Exception {
-        indexingForm.createMapping(false);
         Project project = new Project();
         project.setTitle("TestProject");
         project.setClient(ServiceManager.getClientService().getById(1));
-        ServiceManager.getProjectService().saveToDatabase(project);
+        ServiceManager.getProjectService().save(project);
         Process process = new Process();
         process.setTitle("testIndex");
         process.setProject(project);
-        process.setIndexAction(IndexAction.INDEX);
-        ServiceManager.getProcessService().saveToDatabase(process);
+        ServiceManager.getProcessService().save(process);
 
-        indexingForm.countDatabaseObjects();
+        IndexingForm.setNumberOfDatabaseObjects();
 
-        ProcessDTO processOne = ServiceManager.getProcessService().findById(1);
+        Process processOne = ServiceManager.getProcessService().getById(1);
         assertNull(processOne.getTitle(), "process should not be found in index");
-        IndexAction indexAction = ServiceManager.getProcessService().getById(1).getIndexAction();
-        assertEquals(IndexAction.INDEX, indexAction, "Index Action should be Index");
         indexingForm.startAllIndexing();
         given().ignoreExceptions().await()
-                .until(() -> Objects.nonNull(ServiceManager.getProcessService().findById(1).getTitle()));
-        processOne = ServiceManager.getProcessService().findById(1);
+                .until(() -> Objects.nonNull(ServiceManager.getProcessService().getById(1).getTitle()));
+        processOne = ServiceManager.getProcessService().getById(1);
         assertEquals("testIndex", processOne.getTitle(), "process should be found");
-        indexAction = ServiceManager.getProcessService().getById(1).getIndexAction();
-        assertEquals(IndexAction.INDEX, indexAction, "Index Action should be Index");
     }
 }

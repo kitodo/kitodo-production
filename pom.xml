@@ -53,6 +53,7 @@
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2</hamcrest.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
+        <hibernate-search.version>6.2.4.Final</hibernate-search.version>
         <jaxb.api.version>2.3.3</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
@@ -66,7 +67,7 @@
         <myfaces.version>2.3.10</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
         <pdfbox.version>3.0.3</pdfbox.version>
-        <poi.version>5.3.0</poi.version>
+        <poi.version>5.4.0</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
@@ -170,7 +171,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>*</groupId>
@@ -468,32 +469,6 @@ from system library in Java 11+ -->
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.opensearch</groupId>
-                <artifactId>opensearch</artifactId>
-                <version>${opensearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opensearch</groupId>
-                <artifactId>opensearch-core</artifactId>
-                <version>${opensearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opensearch.client</groupId>
-                <artifactId>opensearch-rest-client</artifactId>
-                <version>${opensearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opensearch.client</groupId>
-                <artifactId>opensearch-rest-high-level-client</artifactId>
-                <version>${opensearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opensearch.plugin</groupId>
-                <artifactId>transport-netty4-client</artifactId>
-                <version>${opensearch.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <!-- hibernate caching dependency -->
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
@@ -573,6 +548,18 @@ from system library in Java 11+ -->
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch</groupId>
+                <artifactId>opensearch</artifactId>
+                <version>${opensearch.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.plugin</groupId>
+                <artifactId>transport-netty4-client</artifactId>
+                <version>${opensearch.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

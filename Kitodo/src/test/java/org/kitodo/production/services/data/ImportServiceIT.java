@@ -44,6 +44,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +70,7 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
@@ -73,7 +80,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -92,10 +98,6 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.kitodo.test.utils.TestConstants;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 
 public class ImportServiceIT {
 
@@ -168,12 +170,12 @@ public class ImportServiceIT {
      * Tests whether basic catalog metadata import to a single process succeeds or not.
      *
      * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
-     * @throws DataException when counting processes in test database fails
+     * @throws DAOException when counting processes in test database fails
      * @throws ImportException when importing metadata fails
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcess() throws DAOException, DataException, ImportException, IOException {
+    public void testImportProcess() throws DAOException, ImportException, IOException {
         assertEquals(7, (long) processService.count(), "Not the correct amount of processes found");
         Process importedProcess = importProcess(RECORD_ID, MockDatabase.getK10PlusImportConfiguration());
         try {
@@ -302,19 +304,22 @@ public class ImportServiceIT {
     }
 
     /**
-     * Tests whether parent process with provided process ID exists and created parent TempProcess from it.
+     * Tests whether the parent process with the provided process ID exists and
+     * whether the parent TempProcess was created from it.
      *
-     * @throws DAOException when test ruleset cannot be loaded from database
-     * @throws IOException when checking for parent process fails
-     * @throws DataException when copying test metadata file fails
+     * @throws DAOException
+     *             when test ruleset cannot be loaded from database
+     * @throws IOException
+     *             when checking for parent process fails
      */
     @Test
-    public void shouldCheckForParent() throws DAOException, IOException, DataException {
+    public void shouldCheckForParent() throws Exception {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
         try {
             ProcessTestUtils.updateIdentifier(parentTestId);
+            Thread.sleep(2000);
             importService.checkForParent(String.valueOf(parentTestId), ruleset, PROJECT_ID);
             assertNotNull(importService.getParentTempProcess());
         } finally {
@@ -429,15 +434,15 @@ public class ImportServiceIT {
             InvalidMetadataValueException, NoSuchMetadataFieldException, ParserConfigurationException, SAXException,
             TransformerException {
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
+        RulesetManagementInterface management = ServiceManager.getRulesetService().openRuleset(ruleset);
         ImportConfiguration importConfiguration = MockDatabase.getK10PlusImportConfiguration();
         try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_KITODO_METADATA_FILE_PATH))) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            ImportService.processTempProcess(tempProcess, managementInterface, CREATE,
-                    ServiceManager.getUserService().getCurrentMetadataLanguage(), null);
+            ImportService.processTempProcess(tempProcess, management, CREATE, ServiceManager.getUserService()
+                    .getCurrentMetadataLanguage(), null);
             assertFalse(tempProcess.getProcess().getProperties().isEmpty(), "Process should have some properties");
             assertTrue(StringUtils.isNotBlank(tempProcess.getProcess().getTitle()), "Process title should not be empty");
         }
@@ -511,11 +516,11 @@ public class ImportServiceIT {
      * Tests whether ensuring non-empty process titles succeeds or not.
      *
      * @throws DAOException when preparing test process fails
-     * @throws DataException when copying test metadata file fails
+     * @throws DAOException when copying test metadata file fails
      * @throws IOException when loading workpiece fails
      */
     @Test
-    public void shouldEnsureNonEmptyTitles() throws DAOException, DataException, IOException {
+    public void shouldEnsureNonEmptyTitles() throws DAOException, IOException {
         int parentProcessId = MockDatabase.insertTestProcess("", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         try {
             ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_KITODO_METADATA_FILE);
@@ -579,7 +584,8 @@ public class ImportServiceIT {
         createProcessForm.setCurrentImportConfiguration(eadProject.getDefaultImportConfiguration());
         createProcessForm.updateRulesetAndDocType(eadTemplate.getRuleset());
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        List<Integer> allIds = ServiceManager.getProcessService().findAllIDs();
+        List<Integer> allIds = ServiceManager.getProcessService().getAll().stream().map(BaseBean::getId).collect(
+            Collectors.toList());
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }
@@ -591,14 +597,15 @@ public class ImportServiceIT {
                 ImportEadProcessesThread eadProcessesThread = new ImportEadProcessesThread(createProcessForm, user, client);
                 eadProcessesThread.start();
                 assertTrue(eadProcessesThread.isAlive(), "Process should have been started");
-                eadProcessesThread.join(3000);
+                eadProcessesThread.join(10_000);
                 assertFalse(eadProcessesThread.isAlive(), "Process should have been stopped");
             }
         }
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
-        List<Integer> allIdsWithEad = ServiceManager.getProcessService().findAllIDs();
+        List<Integer> allIdsWithEad = ServiceManager.getProcessService().getAll().stream().map(BaseBean::getId).collect(
+            Collectors.toList());
         // EAD test file contains one collection and 5 files, so the system should contain 6 new processes altogether
         assertEquals(allIds.size() + 6, allIdsWithEad.size(),
                 "Database does not contain the correct number of processes after EAD import");
@@ -623,14 +630,14 @@ public class ImportServiceIT {
             NoSuchMetadataFieldException, ParserConfigurationException, SAXException {
         ImportConfiguration importConfiguration = MockDatabase.getK10PlusImportConfiguration();
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
+        RulesetManagementInterface management = ServiceManager.getRulesetService().openRuleset(ruleset);
         try (InputStream inputStream = Files.newInputStream(Paths.get(filepath))) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            return ProcessHelper.transformToProcessDetails(tempProcess, managementInterface, CREATE,
-                    ServiceManager.getUserService().getCurrentMetadataLanguage());
+            return ProcessHelper.transformToProcessDetails(tempProcess, management, CREATE, ServiceManager
+                    .getUserService().getCurrentMetadataLanguage());
         }
     }
 

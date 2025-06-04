@@ -28,7 +28,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -125,7 +124,7 @@ public class BatchTaskHelper extends BatchHelper {
     /**
      * Execute script.
      */
-    public void executeScript() throws DataException {
+    public void executeScript() throws DAOException {
         for (Task task : this.steps) {
             if (task.getScriptName().equals(this.script)) {
                 String scriptPath = task.getScriptPath();
@@ -142,7 +141,7 @@ public class BatchTaskHelper extends BatchHelper {
             ExportDms export = new ExportDms();
             try {
                 export.startExport(step.getProcess());
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("task"), step.getId() }, logger, e);
             }
@@ -170,7 +169,7 @@ public class BatchTaskHelper extends BatchHelper {
 
             try {
                 ServiceManager.getTaskService().save(task);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving",  new Object[] {ObjectType.TASK.getTranslationSingular()}, logger, e);
             }
         }
@@ -195,7 +194,7 @@ public class BatchTaskHelper extends BatchHelper {
                     task.setEditType(TaskEditType.MANUAL_MULTI);
                     new WorkflowControllerService().close(task);
                 }
-            } catch (DataException | IOException | DAOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
