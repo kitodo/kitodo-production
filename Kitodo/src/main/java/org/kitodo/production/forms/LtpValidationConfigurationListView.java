@@ -35,7 +35,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
     private final String ltpValidationConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "ltpValidationConfigurationEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this bean.
+     * Empty default constructor that also sets the LazyBeanModel instance of this bean.
      */
     public LtpValidationConfigurationListView() {
         super();
