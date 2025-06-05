@@ -19,6 +19,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
@@ -32,13 +34,34 @@ import org.openqa.selenium.WebElement;
 public class LtpValidationConfigurationST extends BaseTestSelenium {
 
     private static final String LTP_VALIDATION_CONFIGURATION_TABLE_ID = "ltpValidationConfigurationsTable";
+
+    /**
+     * Login before every test.
+     * 
+     * @throws Exception when page navigation fails
+     */
+    @BeforeEach
+    public void doLogin() throws Exception {
+        User metadataUser = ServiceManager.getUserService().getByLogin("kowal");
+        Pages.getLoginPage().goTo().performLogin(metadataUser);
+    }
+
+    /**
+     * Logout after every test.
+     * 
+     * @throws Exception when page navigation fails
+     */
+    @AfterEach
+    public void doLogout() throws Exception {
+        Pages.getTopNavigation().logout();
+    }
     
     /**
      * Checks that there are two LTP validation configurations listed in the projects page tab.
      */
     @Test
     public void shouldListTwoLtpValidationConfigurationsTest() throws Exception {
-        login("kowal");
+        // go to ltp validation configurations table
         Pages.getProjectsPage().goTo().goToLtpValidationConfigurationsTab();
 
         // check table is displayed
@@ -60,7 +83,7 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
      */
     @Test
     public void firstLtpValidationConfigurationTest() throws Exception {
-        login("kowal");
+        // go to ltp validation configurations table
         Pages.getProjectsPage().goTo().goToLtpValidationConfigurationsTab();
 
         // click on edit button of first ltp validation configuration
@@ -90,8 +113,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
      */
     @Test 
     public void canAddNewLtpValidationConfigurationTest() throws Exception {
-        login("kowal");
-
         // click on create new ltp validation configuration menu entry
         LtpValidationConfigurationEditPage editPage = Pages.getProjectsPage().goTo().createNewLtpValidationConfiguration();
 
@@ -177,16 +198,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
                 .pollInterval(100, TimeUnit.MILLISECONDS)
                 .atMost(5, TimeUnit.SECONDS)
                 .until(conditionEvaluator);
-    }
-
-    /**
-     * Performs login.
-     * 
-     * @param username the user name
-     */
-    private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {
-        User metadataUser = ServiceManager.getUserService().getByLogin(username);
-        Pages.getLoginPage().goTo().performLogin(metadataUser);
     }
 
 }
