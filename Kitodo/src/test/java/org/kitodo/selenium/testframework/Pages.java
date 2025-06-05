@@ -21,6 +21,7 @@ import org.kitodo.selenium.testframework.pages.HelpPage;
 import org.kitodo.selenium.testframework.pages.ImportConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
+import org.kitodo.selenium.testframework.pages.LtpValidationConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.MassImportPage;
 import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
 import org.kitodo.selenium.testframework.pages.PostLoginChecksPage;
@@ -160,5 +161,9 @@ public class Pages {
 
     public static MassImportPage getMassImportPage() throws IllegalAccessException, InstantiationException {
         return getPage(MassImportPage.class);
+    }
+
+    public static LtpValidationConfigurationEditPage getLtpValidationConfigurationEditPage() throws IllegalAccessException, InstantiationException {
+        return getPage(LtpValidationConfigurationEditPage.class);
     }
 }

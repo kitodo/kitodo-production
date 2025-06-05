@@ -34,6 +34,9 @@ public class LongTermPreservationValidationIT {
     private static final URI JPG_URI = URI.create("src/test/resources/rose.jpg");
     private static final URI PDF_URI = URI.create("src/test/resources/rose.pdf");
 
+    /**
+     * Check that valid files are detected as valid and corrupted files are detected as invalid.
+     */
     @Test
     public void testSimpleValidationScnearios() {        
         assert(simpleValidateFile(CORRUPTED_TIF_URI, FileType.TIFF).equals(LtpValidationResultState.ERROR));
@@ -44,6 +47,9 @@ public class LongTermPreservationValidationIT {
         assert(simpleValidateFile(PDF_URI, FileType.PDF).equals(LtpValidationResultState.VALID));
     }
 
+    /**
+     * Check that valid files are detected as invalid if the wrong file type is specified.
+     */
     @Test
     public void testThatFilesOfTheWrongTypeDoNotValidate() {
         assert(simpleValidateFile(TIF_URI, FileType.JPEG).equals(LtpValidationResultState.ERROR));
@@ -53,6 +59,9 @@ public class LongTermPreservationValidationIT {
         assert(simpleValidateFile(PDF_URI, FileType.JPEG_2000).equals(LtpValidationResultState.ERROR));
     }
 
+    /**
+     * Check that a validation condition that declares a valid range is evaluated as valid.
+     */
     @Test
     public void testValidInBetweenConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -78,6 +87,9 @@ public class LongTermPreservationValidationIT {
         ).getState().equals(LtpValidationResultState.VALID));
     }
 
+    /**
+     * Check that a validation condition that declares an invalid range is evaluated as invalid.
+     */
     @Test
     public void testOutsideInBetweenConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -96,6 +108,10 @@ public class LongTermPreservationValidationIT {
         assert(result.getConditionResults().get(0).getError().equals(LtpValidationConditionError.CONDITION_FALSE));
     }
 
+    /**
+     * Check that a validation condition that declares a range based on a single value (which doesn't make sense) 
+     * is evaluated as invalid.
+     */
     @Test
     public void testInvalidInputInBetweenConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -114,6 +130,10 @@ public class LongTermPreservationValidationIT {
         assert(result.getConditionResults().get(0).getError().equals(LtpValidationConditionError.INCORRECT_NUMBER_OF_CONDITION_VALUES));
     }
 
+    /**
+     * Check that a validation condition that declares a range with its first value being larger than the second 
+     * (which doesn't make sense) is evaluated as invalid.
+     */
     @Test
     public void testInverseInputInBetweenConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -131,6 +151,10 @@ public class LongTermPreservationValidationIT {
         assert(result.getConditionResults().get(0).getError().equals(LtpValidationConditionError.CONDITION_FALSE));
     }
 
+    /**
+     * Test that validation conditions that require a number (in between, smaller than, larger than)
+     * will be evaluated as invalid if a string is provided that is not a number.
+     */
     @Test
     public void testNotANumberCondition() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -169,6 +193,9 @@ public class LongTermPreservationValidationIT {
         }
     }
 
+    /**
+     * Check that a validation condition is evaluated as invalid if the image property is not known.
+     */
     @Test
     public void testUnknownPropertyCondition() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -187,6 +214,10 @@ public class LongTermPreservationValidationIT {
         assert(result.getConditionResults().get(0).getError().equals(LtpValidationConditionError.PROPERTY_DOES_NOT_EXIST));
     }
 
+    /**
+     * Check that a validation condition is evaluated as invalid and reported as warning if
+     * the severity of the validation condition is declared as warning.
+     */
     @Test
     public void testConditionFailureIsReportedAsWarning() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -205,6 +236,10 @@ public class LongTermPreservationValidationIT {
         assert(result.getConditionResults().get(0).getError().equals(LtpValidationConditionError.PROPERTY_DOES_NOT_EXIST));
     }
 
+    /**
+     * Check that the "one of" validation condition is evaluated as valid if the extracted value is present in the 
+     * list of potential condition values.
+     */
     @Test
     public void testOneOfConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -232,6 +267,10 @@ public class LongTermPreservationValidationIT {
         assert(invalidResult.getConditionResults().get(0).getError().equals(LtpValidationConditionError.CONDITION_FALSE));
     }
 
+    /**
+     * Check that the "none of" validation condition is evaluated as valid if the extracted value does not 
+     * occur amongst the provided condition values.
+     */
     @Test
     public void testNoneOfConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -259,6 +298,10 @@ public class LongTermPreservationValidationIT {
         assert(invalidResult.getConditionResults().get(0).getError().equals(LtpValidationConditionError.CONDITION_FALSE));
     }
 
+    /**
+     * Check that the "matches" validation condition is evaluated as valid if the extracted value matches 
+     * the provided regular expression.
+     */
     @Test
     public void testMatchesConditionOperation() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
@@ -284,6 +327,25 @@ public class LongTermPreservationValidationIT {
         assert(invalidResult.getState().equals(LtpValidationResultState.ERROR));
         assert(!invalidResult.getConditionResults().get(0).getPassed());
         assert(invalidResult.getConditionResults().get(0).getError().equals(LtpValidationConditionError.CONDITION_FALSE));
+    }
+
+    /**
+     * Checks that the "matches" validation condition detects a syntax error in the regular expression.
+     */
+    @Test
+    public void testMatchesConditionSyntaxError() {
+        LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
+
+        LtpValidationCondition invalidCondition = new LtpValidationCondition(
+            "filename",
+            LtpValidationConditionOperation.MATCHES,
+            Collections.singletonList("\\p{something}}.tif"),
+            LtpValidationConditionSeverity.ERROR
+        );
+
+        LtpValidationResult invalidResult = validator.validate(TIF_URI, FileType.TIFF, Collections.singletonList(invalidCondition));
+        assert(invalidResult.getState().equals(LtpValidationResultState.ERROR));
+        assert(invalidResult.getConditionResults().get(0).getError().equals(LtpValidationConditionError.PATTERN_INVALID_SYNTAX));
     }
 
     private LtpValidationResultState simpleValidateFile(URI file, FileType fileType) {
