@@ -367,8 +367,8 @@ public class UploadFileDialog {
 
                 if (sourceFolder.isValidateFolder() 
                         && Objects.nonNull(sourceFolder.getLtpValidationConfiguration())
-                        && !LtpValidationHelper.validateUploadedFile(uploadFileUri, sourceFolder, generatorSource, validationResults)
                         && sourceFolder.getLtpValidationConfiguration().getRequireNoErrorToUploadImage()
+                        && !LtpValidationHelper.validateUploadedFile(uploadFileUri, sourceFolder, generatorSource, validationResults)
                 ) {
                     // validation is required and failed, delete file
                     logger.debug("delete uploaded file after validation error");
