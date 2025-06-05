@@ -17,6 +17,9 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 
+/**
+ * DAO implementation for LTP validation configurations.
+ */
 public class LtpValidationConfigurationDAO extends BaseDAO<LtpValidationConfiguration> {
     /**
      * Retrieves a BaseBean identified by the given id from the database.

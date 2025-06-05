@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
- * Helper class to extract NisoImageMetadatainto simple String map.
+ * Helper class to extract NisoImageMetadata into a simple String map.
  */
 public class KitodoJhoveNisoImageMetadataHelper {
 

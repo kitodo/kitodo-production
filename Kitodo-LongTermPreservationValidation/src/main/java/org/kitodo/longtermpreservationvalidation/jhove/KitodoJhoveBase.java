@@ -39,9 +39,10 @@ import org.kitodo.longtermpreservationvalidation.conditions.LtpValidationConditi
 /**
  * Manages Jhove.
  * 
- * <p>The png module is disabled, because it depends on the package "jhove-ext-modules". 
- * For some reason, including this jar interfers with the xml processing in Kitodo.Production 
- * somehow. Specifically, mods2kitodo schema conversion does not work correctly.</p>
+ * <p>The png module (PNG-gdm, "com.mcgath.jhove.module.PngModule") is disabled, because it 
+ * depends on the package "jhove-ext-modules". For some reason, including this jar interfers 
+ * with the xml processing in Kitodo.Production somehow. Specifically, mods2kitodo schema 
+ * conversion does not work correctly.</p>
  */
 public class KitodoJhoveBase {
 
@@ -55,7 +56,6 @@ public class KitodoJhoveBase {
         Map.entry(FileType.JPEG, "JPEG-hul"),
         Map.entry(FileType.JPEG_2000, "JPEG2000-hul"),
         Map.entry(FileType.PDF, "PDF-hul"),
-        // Map.entry(FileType.PNG, "PNG-gdm"), 
         Map.entry(FileType.TIFF, "TIFF-hul")
     );
 
@@ -67,7 +67,6 @@ public class KitodoJhoveBase {
         "edu.harvard.hul.ois.jhove.module.Jpeg2000Module", 
         "edu.harvard.hul.ois.jhove.module.JpegModule",
         "edu.harvard.hul.ois.jhove.module.PdfModule", 
-        // "com.mcgath.jhove.module.PngModule",
         "edu.harvard.hul.ois.jhove.module.TiffModule"
     );
 
@@ -75,6 +74,11 @@ public class KitodoJhoveBase {
 
     private static JhoveBase base = null;
 
+    /**
+     * Initialize Jhove by loading all defined modules.
+     * 
+     * @return the initialize JhoveBase instance
+     */
     private static final JhoveBase initBase() {
         logger.debug("initialize jhove base class and load jhove modules");
         try {
@@ -98,13 +102,17 @@ public class KitodoJhoveBase {
         }
     }
 
+    /**
+     * Return the global JHoveBase instance.
+     * 
+     * @return the JHoveBase instance.
+     */
     private static JhoveBase getJhoveBase() {
         if (Objects.isNull(base)) {
             base = initBase();
         }
         return base;
     }
-
 
     /**
      * Return Kitodo file types that are supported to be validated by Jhove.
@@ -113,24 +121,6 @@ public class KitodoJhoveBase {
      */
     public static Set<FileType> getSupportedFileTypes() {
         return MODULE_NAMES_BY_FILE_TYPE.keySet();
-    }
-
-    /**
-     * Return a list of supported properties for each file type to be suggested to the user.
-     * 
-     * @param fileType the file type
-     * @return a list of supported porperties for this file type
-     */
-    public static List<String> getListOfProperties(FileType fileType) {
-        if (fileType.equals(FileType.TIFF)) {
-            return Arrays.asList(new String[] {
-                "valid", 
-                "wellFormed", 
-                "imageWidth", 
-                "imageLength"
-            });
-        }
-        return Collections.emptyList();
     }
 
     /**

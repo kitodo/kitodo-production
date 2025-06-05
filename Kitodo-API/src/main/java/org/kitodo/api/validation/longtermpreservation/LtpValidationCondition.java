@@ -13,7 +13,9 @@ package org.kitodo.api.validation.longtermpreservation;
 
 import java.util.List;
 
-
+/**
+ * An immutable, no-setters beans implementing the validation condition interface.
+ */
 public class LtpValidationCondition implements LtpValidationConditionInterface {
 
     private String property;

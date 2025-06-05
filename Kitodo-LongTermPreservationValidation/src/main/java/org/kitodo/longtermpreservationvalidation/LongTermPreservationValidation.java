@@ -29,9 +29,5 @@ public class LongTermPreservationValidation implements LongTermPreservationValid
     public LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions) {
         return KitodoJhoveBase.validate(fileUri.getPath(), fileType, conditions);
     }
-
-    @Override
-    public List<String> getPossibleValidationConditionProperties(FileType filetype) {
-        return KitodoJhoveBase.getListOfProperties(filetype);
-    }
+    
 }
