@@ -12,14 +12,18 @@
 package org.kitodo.production.services.image;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.validation.State;
-import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtermpreservation.FileType;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationCondition;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeverity;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.validation.LongTermPreservationValidationService;
 
@@ -96,13 +100,23 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
         Optional<FileType> fileType = folder.getFileFormat().getFileType();
         if (fileType.isPresent()) {
             LongTermPreservationValidationService serviceLoader = new LongTermPreservationValidationService();
-            ValidationResult validated = serviceLoader.validate(imageURI.get(), fileType.get());
-            if (validated.getState().equals(State.SUCCESS)) {
-                logger.info(VALIDATION_SUCCESS, canonical, folder, validated.getState());
+            LtpValidationCondition condition = new LtpValidationCondition(
+                "valid", 
+                LtpValidationConditionOperation.EQUAL, 
+                Collections.singletonList("true"), 
+                LtpValidationConditionSeverity.ERROR
+            );
+            LtpValidationResult validationResult = serviceLoader.validate(
+                imageURI.get(), 
+                fileType.get(), 
+                Collections.singletonList(condition)
+            );
+            if (validationResult.getState().equals(LtpValidationResultState.VALID)) {
+                logger.info(VALIDATION_SUCCESS, canonical, folder);
                 return false;
             } else {
-                logger.info(VALIDATION_NO_SUCCESS, canonical, folder, validated.getState());
-                validated.getResultMessages().forEach(logger::debug);
+                logger.info(VALIDATION_NO_SUCCESS, canonical, folder, validationResult.getState());
+                logger.debug(validationResult);
                 return true;
             }
         } else {

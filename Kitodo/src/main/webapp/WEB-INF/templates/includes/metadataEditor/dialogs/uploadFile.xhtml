@@ -31,6 +31,9 @@
             <p:remoteCommand name="generateMedia"
                              action="#{DataEditorForm.uploadFileDialog.generateNewUploadedMedia}"
                              update="uploadFileDialogForm:progressBar"/>
+            <p:remoteCommand name="openValidationReport"
+                             action="#{LtpValidationReportDialog.openAfterFileUpload(DataEditorForm.uploadFileDialog.validationResults, DataEditorForm.uploadFileDialog.sourceFolder)}"
+                             update=":ltpValidationReportDialogForm"/>
             <h:panelGroup styleClass="not-scrollable dialogFieldWrapper"
                           layout="block">
                 <p:panelGrid id="uploadFileGrid" columns="1" layout="grid">
@@ -73,7 +76,7 @@
                                            labelTemplate="{value}%" global="false">
                                 <p:ajax event="complete"
                                         listener="#{DataEditorForm.uploadFileDialog.updateWorkpiece()}"
-                                        oncomplete="PF('uploadFileDialog').hide();"
+                                        oncomplete="PF('uploadFileDialog').hide();openValidationReport();"
                                         update="numberOfScans
                                                 logicalTree
                                                 metadataAccordion:logicalMetadataWrapperPanel

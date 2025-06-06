@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +41,7 @@ import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -867,5 +869,18 @@ public class ProjectForm extends BaseForm {
      */
     public Boolean hasProcesses() {
         return hasProcesses;
+    }
+
+    /**
+     * Return the list of validation configurations that can be assigned to a folder based
+     * on the folders mimeType.
+     * 
+     * @return the list of possible validation configurations that can be assigned to a folder
+     */
+    public List<LtpValidationConfiguration> getPossibleLtpValidationConfigurations() {
+        if (Objects.isNull(myFolder)) {
+            return Collections.emptyList();
+        }
+        return ServiceManager.getLtpValidationConfigurationService().listByMimeType(myFolder.getMimeType());
     }
 }

@@ -12,7 +12,9 @@
 package org.kitodo.production.services.workflow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -357,6 +359,25 @@ public class WorkflowControllerServiceIT {
 
         process.getTasks().clear();
         ProcessTestUtils.removeTestProcess(processId);
+    }
+
+    /**
+     * Checks that a task is not closed if it is set up to trigger image validation, 
+     * the task is set up to be verified when closed, and the image validation fails.
+     * 
+     * @throws DAOException if loading process fails
+     */
+    @Test
+    public void shouldNotCloseWhenImageValidationFails() throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(1);
+
+        Task task = new Task();
+        task.setTypeCloseVerify(true);
+        task.setTypeValidateImages(true);
+        task.setProcess(process);
+
+        assertThrows(DAOException.class, () -> workflowService.closeTaskByUser(task), "image validation should fail and raise exception");
+        assertNotEquals(TaskStatus.DONE, task.getProcessingStatus(), "task should not be marked as done");
     }
 
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,

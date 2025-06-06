@@ -91,6 +91,10 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement newProjectButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "projectForm:newLtpValidationConfigurationButton")
+    private WebElement newLtpValidationConfigurationButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newTemplateButton")
     private WebElement newTemplateButton;
 
@@ -361,6 +365,24 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
+     * Go to edit page for creating a new LTP validation configuration.
+     *
+     * @return LTP validation configuration page
+     */
+    public LtpValidationConfigurationEditPage createNewLtpValidationConfiguration() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+
+        clickButtonAndWaitForRedirect(
+            newLtpValidationConfigurationButton, 
+            Pages.getLtpValidationConfigurationEditPage().getUrl()
+        );
+        return Pages.getLtpValidationConfigurationEditPage();
+    }
+
+    /**
      * Go to edit page for creating a new template.
      *
      * @return template edit page
@@ -504,6 +526,14 @@ public class ProjectsPage extends Page<ProjectsPage> {
     public void deleteRuleset() throws Exception {
         deleteElement("Ruleset", MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
                 TabIndex.RULESETS.getIndex(), projectsTabView);
+    }
+
+    /**
+     * Switch to LTP Validation Configurations Tab.
+     */
+    public ProjectsPage goToLtpValidationConfigurationsTab() throws Exception {
+        switchToTabByIndex(TabIndex.LTP_VALIDATION_CONFIGURATIONS.getIndex());
+        return this;
     }
 
     /**

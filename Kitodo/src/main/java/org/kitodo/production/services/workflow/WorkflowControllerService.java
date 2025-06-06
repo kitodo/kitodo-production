@@ -50,6 +50,7 @@ import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.helper.validation.LtpValidationHelper;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.CommentService;
@@ -216,10 +217,12 @@ public class WorkflowControllerService {
             }
 
             // image validation
-            if (task.isTypeImagesWrite()) {
+            if (task.isTypeValidateImages()) {
                 ImageHelper mih = new ImageHelper();
                 URI imageFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess());
-                if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
+                boolean imageFilenamesValid = mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder);
+                boolean imageContentValid = LtpValidationHelper.validateImagesWhenFinishingTask(task);
+                if (!imageFilenamesValid || !imageContentValid) {
                     throw new DAOException("Error on image validation!");
                 }
             }
