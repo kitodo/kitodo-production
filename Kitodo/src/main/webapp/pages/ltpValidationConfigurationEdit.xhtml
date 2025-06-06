@@ -235,6 +235,7 @@
 
                 <p:dataTable id="ltpValidationConditionsTable" 
                              var="condition" 
+                             rowIndexVar="conditionIdx"
                              value="#{LtpValidationConfigurationEditView.configuration.validationConditions}"
                              styleClass="default-layout">
                     <p:column headerText="#{msgs['ltpValidation.edit.conditions.property.header']}">
@@ -280,7 +281,7 @@
                     <p:column headerText="#{msgs['actions']}" 
                               width="75">
                         <p:commandLink 
-                           action="#{LtpValidationConfigurationEditView.removeValidationCondition(condition)}"
+                           action="#{LtpValidationConfigurationEditView.removeValidationCondition(conditionIdx)}"
                            styleClass="action"
                            title="#{msgs.delete}"
                            rendered="#{isEditMode or isCreateMode}"

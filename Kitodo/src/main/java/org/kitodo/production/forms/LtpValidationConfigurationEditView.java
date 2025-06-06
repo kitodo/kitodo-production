@@ -53,7 +53,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     private static final String VALUE_TRUE = "true";
 
     /**
-     * Cash for the list of possible mime types.
+     * Cache for the list of possible mime types.
      */
     private Map<String, String> mimeTypes = Collections.emptyMap();
 
@@ -67,7 +67,8 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      * condition is removed from the list of validation conditions.</p>
      * 
      * <p>Simplified options take precedence over manually specifying the same condition in the list of 
-     * validation conditions.</p>
+     * validation conditions, meaning a condition on the same property is modified to match the 
+     * simplified option chosen by the user.</p>
      */
     private LtpValidationConditionSeverity simpleWellFormedSeverity;
     private LtpValidationConditionSeverity simpleValidSeverity;
@@ -205,14 +206,13 @@ public class LtpValidationConfigurationEditView extends BaseForm {
      * Removes a validation condition from the list of conditions if the user clicks on the 
      * tash icon for a validation condition.
      * 
-     * @param condition the validation condition to be removed
+     * @param index the index of the condition that is supposed to be removed
      */
-    public void removeValidationCondition(LtpValidationCondition condition) {
-        if (Objects.nonNull(condition) 
-                && Objects.nonNull(configuration.getValidationConditions())
-                && configuration.getValidationConditions().contains(condition)) {
-            configuration.getValidationConditions().remove(condition);
-            condition.setLtpValidationConfiguration(null);
+    public void removeValidationCondition(int index) {
+        if (Objects.nonNull(configuration.getValidationConditions()) 
+                && index >= 0 
+                && index < configuration.getValidationConditions().size()) {
+            configuration.getValidationConditions().remove(index);
         }
     }
 
@@ -287,6 +287,20 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     }
 
     /**
+     * Finds and removes a simple validation condition matching the provided condition.
+     * 
+     * @param condition the simple condition to be removed
+     */
+    private void findAndRemoveSimpleCondition(LtpValidationCondition condition) {
+        if (Objects.nonNull(condition) 
+                && Objects.nonNull(configuration.getValidationConditions())
+                && configuration.getValidationConditions().contains(condition)) {
+            configuration.getValidationConditions().remove(condition);
+            condition.setLtpValidationConfiguration(null);
+        }
+    }
+
+    /**
      * Add, edits or removes a simple equals condition depending on the severity level.
      * 
      * @param property the property of the condition
@@ -314,7 +328,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
             }
         } else {
             // remove condition
-            removeValidationCondition(condition);
+            findAndRemoveSimpleCondition(condition);
         }
     }
 
