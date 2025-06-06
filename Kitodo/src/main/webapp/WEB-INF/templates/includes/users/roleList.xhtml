@@ -19,6 +19,7 @@
     <!--@elvariable id="item" type="org.kitodo.production.dto.RoleDTO"-->
     <p:dataTable var="item"
                  id="rolesTable"
+                 widgetVar="rolesTable"
                  styleClass="default-layout"
                  value="#{RoleForm.lazyBeanModel}"
                  first="#{RoleForm.firstRow}"
@@ -41,7 +42,7 @@
         </p:column>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.client.name}"
-                  rendered="#{UserForm.showColumn('role.client')}">
+                  rendered="#{UserForm.showColumn('role.client') and RoleForm.showRolesOfAllAvailableClients}">
             <h:outputText value="#{item.client.name}"
                           title="#{item.client.name}"/>
         </p:column>
