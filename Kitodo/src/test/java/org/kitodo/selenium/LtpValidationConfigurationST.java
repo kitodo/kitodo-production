@@ -94,7 +94,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
         LtpValidationConfigurationEditPage editPage = Pages.getLtpValidationConfigurationEditPage();
         
         editPage.goToDetailsTab();
-        pollAssertTrue(() -> editPage.isDetailsTabDisplayed());
         assertEquals("Valid Tif", editPage.getTitle());
         assertEquals("image/tiff", editPage.getMimeType());
         assertTrue(editPage.isRequireNoErrorToFinishTask());
@@ -103,7 +102,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
         assertEquals("ERROR", editPage.getSimpleValidSeverity());
         
         editPage.goToAllConditionsTab();
-        pollAssertTrue(() -> editPage.isAllConditionsTabDisplayed());
         assertEquals("wellformed", editPage.getConditionProperty(0));
         assertEquals("valid", editPage.getConditionProperty(1));
     }
@@ -118,7 +116,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
 
         // verify form has default values
         editPage.goToDetailsTab();
-        pollAssertTrue(() -> editPage.isDetailsTabDisplayed());
         assertTrue(editPage.getTitle().isEmpty());
         assertFalse(editPage.getMimeType().isEmpty());
         assertFalse(editPage.isRequireNoErrorToFinishTask());
@@ -148,7 +145,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
 
         // verify that details tab is open
         editPage.goToDetailsTab();
-        pollAssertTrue(() -> editPage.isDetailsTabDisplayed());
 
         // check that settings were saved correctly
         assertEquals("Wellformed Gif", editPage.getTitle());
@@ -162,7 +158,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
 
         // go to all conditions table
         editPage.goToAllConditionsTab();
-        pollAssertTrue(() -> editPage.isAllConditionsTabDisplayed());
 
         // check that 3 conditions were created
         assertEquals("wellformed", editPage.getConditionProperty(0));
@@ -178,6 +173,48 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
         // verify that table contains 3 rows (header + 2 configurations) again
         Pages.getProjectsPage().goTo().goToLtpValidationConfigurationsTab();
         assertEquals(3, getLtpValidationConfigurationTable().findElements(By.tagName("tr")).size());
+    }
+
+    /**
+     * Check that correct validation conditions are removed when clicking the trash button.
+     * 
+     * There was a bug reported that removing the last condition incorrectly removes the first unsaved condition 
+     * instead. The problem was related to the "list.remove(condition)" method removing the first instance that 
+     * equals the provided condition, which does not have a unique id yet if it was not saved yet, thus matching any 
+     * unsaved condition due to the custom bean equals implementation.
+     */
+    @Test 
+    public void canRemoveLtpValidationConditionsTest() throws Exception {
+        // click on create new ltp validation configuration menu entry
+        LtpValidationConfigurationEditPage editPage = Pages.getProjectsPage().goTo().createNewLtpValidationConfiguration();
+        editPage.goToAllConditionsTab();
+
+        // add 4 empty conditions
+        editPage.clickAddConditionButton();
+        editPage.clickAddConditionButton();
+        editPage.clickAddConditionButton();
+        editPage.clickAddConditionButton();
+
+        // set names of conditions
+        editPage.setConditionProperty(0, "property_1");
+        editPage.setConditionProperty(1, "property_2");
+        editPage.setConditionProperty(2, "property_3");
+        editPage.setConditionProperty(3, "property_4");
+
+        // remove condition 4
+        editPage.clickRemoveConditionButton(3);
+
+        // check first 3 conditions remain
+        assertEquals("property_1", editPage.getConditionProperty(0));
+        assertEquals("property_2", editPage.getConditionProperty(1));
+        assertEquals("property_3", editPage.getConditionProperty(2));
+
+        // remove condition 2
+        editPage.clickRemoveConditionButton(1);
+
+        // check first and third condition remain
+        assertEquals("property_1", editPage.getConditionProperty(0));
+        assertEquals("property_3", editPage.getConditionProperty(1));
     }
 
     /**

@@ -103,6 +103,10 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     private WebElement allConditionsTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = TABVIEW + ":addConditionButton")
+    private WebElement addConditionButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
     private WebElement saveButton;
 
@@ -153,6 +157,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      */
     public void goToDetailsTab() throws Exception {
         switchToTabByIndex(0, tabView);
+        Awaitility.await().until(() -> isDetailsTabDisplayed());
     }
 
     /**
@@ -160,6 +165,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      */
     public void goToAllConditionsTab() throws Exception {
         switchToTabByIndex(1, tabView);
+        Awaitility.await().until(() -> isAllConditionsTabDisplayed());
     }
 
     /**
@@ -327,14 +333,64 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Returns the property name for the n-th condition listed inside the all conditions table.
+     * Returns the property name for the n-th condition listed in the all conditions table.
      * 
      * @param row the row in the table
      * @return the property name of the condition in that row
      */
     public String getConditionProperty(int row) throws Exception {
-        return allConditionsTable.findElements(By.tagName("td")).get(row * 5)
-            .findElement(By.tagName("input")).getAttribute("value");
+        return getPropertyInputForCondition(row).getAttribute("value");
+    }
+
+    /**
+     * Sets the property name for the n-th condition listed in the all conditions table.
+     * @param row the row in the table
+     * @param name the new property name of the condition in that row
+     */
+    public void setConditionProperty(int row, String name) throws Exception {
+        WebElement input = getPropertyInputForCondition(row);
+        input.clear();
+        input.sendKeys(name);
+    }
+
+    /**
+     * Click the add condition button and wait until a new row was added to the table.
+     */
+    public void clickAddConditionButton() throws Exception {
+        int countBefore = getNumberOfValidationConditions();
+        addConditionButton.click();
+        Awaitility.await().until(() -> getNumberOfValidationConditions() == countBefore + 1);
+    }
+
+    /**
+     * Click the trash button for a validation condition and wait until the row was removed from the table.
+     * 
+     * @param idx the index of the validation condition to be removed
+     */
+    public void clickRemoveConditionButton(int idx) throws Exception {
+        int countBefore = getNumberOfValidationConditions();
+        allConditionsTable.findElements(By.tagName("tr")).get(idx + 1).findElements(By.tagName("a")).get(0).click();
+        Awaitility.await().until(() -> getNumberOfValidationConditions() == countBefore - 1);
+    }
+
+    /**
+     * Return the input element of the property column for the n-th validation condition listed in the table.
+     * @param row the row in the table
+     * @return the input element of the property column
+     */
+    private WebElement getPropertyInputForCondition(int row) {
+        return allConditionsTable.findElements(By.tagName("tr")).get(row + 1)
+            .findElements(By.tagName("td")).get(0)
+            .findElement(By.tagName("input"));
+    }
+
+    /**
+     * Return the number of validation conditions that are listed in the table of all conditions.
+     * 
+     * @return the number of validation conditions
+     */
+    private int getNumberOfValidationConditions() {
+        return allConditionsTable.findElements(By.cssSelector("tr:not(.ui-datatable-empty-message)")).size() - 1;
     }
 
     /**
