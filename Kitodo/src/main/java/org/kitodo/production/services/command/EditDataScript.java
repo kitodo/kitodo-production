@@ -107,10 +107,13 @@ public abstract class EditDataScript {
      * @param process the process to save
      */
     public void saveChanges(Workpiece workpiece, Process process) {
-        try (OutputStream out = ServiceManager.getFileService()
-                .write(ServiceManager.getFileService().getMetadataFilePath(process))) {
-            ServiceManager.getMetsService().save(workpiece, out);
-            ServiceManager.getProcessService().saveToIndex(process, false);
+        try {
+            ServiceManager.getFileService().createBackupFile(process);
+            try (OutputStream out = ServiceManager.getFileService()
+                    .write(ServiceManager.getProcessService().getMetadataFileUri(process))) {
+                ServiceManager.getMetsService().save(workpiece, out);
+                ServiceManager.getProcessService().saveToIndex(process, false);
+            }
         } catch (IOException | CustomResponseException | DataException e) {
             logger.error(e.getMessage());
         }
