@@ -13,6 +13,7 @@ package org.kitodo.production.services.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -231,11 +232,19 @@ public class KitodoScriptServiceIT {
     public void shouldAddDataWithValue() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "PDM1.0");
 
         final List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata beforehand");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0";
         List<Process> processes = new ArrayList<>();
@@ -246,6 +255,10 @@ public class KitodoScriptServiceIT {
         final List<Process> processByMetadataAfter = ServiceManager.getProcessService()
                 .findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadataAfter.size(), "does not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
@@ -253,11 +266,18 @@ public class KitodoScriptServiceIT {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
 
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
         Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should not contain metadata beforehand");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0" + " type:Chapter";
         List<Process> processes = new ArrayList<>();
@@ -270,6 +290,10 @@ public class KitodoScriptServiceIT {
         workpiece = metadataFile.getWorkpiece();
         metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(2, metadataOfChapter.size(), "metadata should have been added");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
@@ -277,11 +301,18 @@ public class KitodoScriptServiceIT {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMain";
 
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
         Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should contain metadata beforehand");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey + " type:Chapter";
         List<Process> processes = new ArrayList<>();
@@ -294,6 +325,10 @@ public class KitodoScriptServiceIT {
         workpiece = metadataFile.getWorkpiece();
         metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(0, metadataOfChapter.size(), "metadata should have been deleted");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
@@ -301,11 +336,18 @@ public class KitodoScriptServiceIT {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMain";
 
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
         Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should contain metadata beforehand");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey + " value:test" + " type:Chapter";
         List<Process> processes = new ArrayList<>();
@@ -318,6 +360,10 @@ public class KitodoScriptServiceIT {
         workpiece = metadataFile.getWorkpiece();
         metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(1, metadataOfChapter.size(), "metadata should not have been deleted");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
@@ -325,11 +371,18 @@ public class KitodoScriptServiceIT {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
 
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
         Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should contain metadata beforehand");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey + " type:Chapter";
         List<Process> processes = new ArrayList<>();
@@ -342,6 +395,10 @@ public class KitodoScriptServiceIT {
         workpiece = metadataFile.getWorkpiece();
         metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
         assertEquals(1, metadataOfChapter.size(), "metadata should not have been deleted");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
@@ -372,11 +429,19 @@ public class KitodoScriptServiceIT {
     public void shouldAddDataWithWhitespace() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
 
         final List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap, true);
         assertEquals(0, processByMetadata.size(), "should not contain metadata beforehand");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:addData " + "key:" + metadataKey + " \"value:legal note\"";
         List<Process> processes = new ArrayList<>();
@@ -387,11 +452,21 @@ public class KitodoScriptServiceIT {
         final List<Process> processByMetadataAfter = ServiceManager.getProcessService()
                 .findByMetadata(metadataSearchMap, true);
         assertEquals(1, processByMetadataAfter.size(), "does not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldAddDataWithMultipleScripts() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
 
@@ -404,9 +479,11 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata beforehand");
 
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
         String script = "action:addData " + "key:" + metadataKey + " value:legal note;" + "key:" + metadataKey + " value:secondNote";
         List<Process> processes = new ArrayList<>();
-        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         processes.add(process);
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
@@ -415,17 +492,29 @@ public class KitodoScriptServiceIT {
         assertEquals(1, processByMetadataAfter.size(), "does not contain metadata");
         processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
         assertEquals(1, processByMetadataAfter.size(), "does not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldCopyDataWithSource() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
 
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "does not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:addData " + "key:" + metadataKey + " source:TSL_ATS";
         List<Process> processes = new ArrayList<>();
@@ -442,11 +531,19 @@ public class KitodoScriptServiceIT {
     public void shouldAddDataWithVariable() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, String.valueOf(kitodoScriptTestProcessId));
 
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "does not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:addData " + "key:" + metadataKey + " variable:(processid)";
         List<Process> processes = new ArrayList<>();
@@ -457,18 +554,30 @@ public class KitodoScriptServiceIT {
         Thread.sleep(2000);
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "does not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldDeleteData() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
         Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey;
         List<Process> processes = new ArrayList<>();
@@ -479,18 +588,30 @@ public class KitodoScriptServiceIT {
         Thread.sleep(2000);
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldDeleteDataWithValue() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
         Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey + " value:SecondMetaShort";
         List<Process> processes = new ArrayList<>();
@@ -501,18 +622,30 @@ public class KitodoScriptServiceIT {
         Thread.sleep(2000);
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldDeleteAllDataWithSameKey() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TSL_ATS";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
 
         Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey;
         List<Process> processes = new ArrayList<>();
@@ -523,18 +656,30 @@ public class KitodoScriptServiceIT {
         Thread.sleep(2000);
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldDeleteDataWithSource() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
         Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData " + "key:" + metadataKey + " source:TitleDocMainShort";
         List<Process> processes = new ArrayList<>();
@@ -545,18 +690,30 @@ public class KitodoScriptServiceIT {
         Thread.sleep(2000);
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldNotDeleteDataWithValue() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
         Thread.sleep(2000);
         List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
         String script = "action:deleteData" + " key:" + metadataKey + " value:SecondMetaLong";
         List<Process> processes = new ArrayList<>();
@@ -567,11 +724,21 @@ public class KitodoScriptServiceIT {
         Thread.sleep(2000);
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should still contain metadata");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldOverwriteDataWithValue() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
 
@@ -585,7 +752,9 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should contain new metadata value");
 
-        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
         String script = "action:overwriteData " + "key:" + metadataKey + " value:Overwritten";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -598,11 +767,21 @@ public class KitodoScriptServiceIT {
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain new metadata value");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldOverwriteDataWithSource() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
 
@@ -616,7 +795,9 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should contain new metadata value");
 
-        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
         String script = "action:overwriteData " + "key:" + metadataKey + " source:TitleDocMain";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -629,11 +810,21 @@ public class KitodoScriptServiceIT {
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain new metadata value");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 
     @Test
     public void shouldOverwriteDataWithVariable() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
+
+        File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
+        File mainMetsFile = new File(processDir, "meta.xml");
+        File backupMetsFile = new File(processDir, "meta.xml.1");
+
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
 
@@ -647,7 +838,9 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should contain new metadata value");
 
-        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
         String script = "action:overwriteData " + "key:" + metadataKey + " variable:(processid)";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -660,5 +853,9 @@ public class KitodoScriptServiceIT {
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain new metadata value");
+
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
+        assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
     }
 }
