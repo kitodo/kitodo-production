@@ -488,8 +488,9 @@ Breadcrumb menu
 ----------------------------------------------------------------------*/
 
 body .ui-breadcrumb {
-    padding: 0;
     border: none;
+    padding: 0;
+    overflow: hidden;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron {
