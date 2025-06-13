@@ -87,12 +87,10 @@
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
                          <h:outputScript>
                            if (!window._textareaResizeAttached) {
-                               console.log("listener attached");
                                window._textareaResizeAttached = true;
                                document.addEventListener("DOMContentLoaded", function() {
                                    setTimeout(function() {
                                        document.querySelectorAll("textarea").forEach(function(textarea) {
-                                           textarea.style.height = "auto"; // Reset height first
                                            textarea.style.height = textarea.scrollHeight + "px"; // Set to content height
                                        });
                                    }, 100);
