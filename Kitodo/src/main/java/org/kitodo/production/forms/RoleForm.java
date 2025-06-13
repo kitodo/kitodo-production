@@ -246,6 +246,15 @@ public class RoleForm extends BaseForm {
     }
 
     /**
+     * Returns whether current user has the authority to see roles of all clients.
+     *
+     * @return whether current user has the authority to see roles of all clients.
+     */
+    public boolean isHasPermissionToSeeAllClientsRoles() {
+        return ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList();
+    }
+
+    /**
      * Set value of property 'showRolesOfAllAvailableClients' in this forms 'LazyRoleModel' instance.
      *
      * @param showRolesOfAllAvailableClients value of 'showRolesOfAllAvailableClients' as boolean

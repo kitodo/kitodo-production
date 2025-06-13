@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;

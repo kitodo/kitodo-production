@@ -42,7 +42,7 @@
         </p:column>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.client.name}"
-                  rendered="#{UserForm.showColumn('role.client') and RoleForm.showRolesOfAllAvailableClients}">
+                  rendered="#{UserForm.showColumn('role.client')}">
             <h:outputText value="#{item.client.name}"
                           title="#{item.client.name}"/>
         </p:column>
