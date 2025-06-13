@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -196,5 +197,28 @@ public class ListColumnService extends BaseBeanService<ListColumn, ListColumnDAO
         for (int id : columnIds) {
             remove(id);
         }
+    }
+
+    /**
+     * Remove the ListColumn with given title from the given list of ListColumns and returns the updated list.
+     *
+     * @param listColumns list of ListColumns from which the ListColumn the given title is removed
+     *
+     * @return the updated list of ListColumns
+     */
+    public List<ListColumn> removeColumnByTitle(List<ListColumn> listColumns, String columnTitle) {
+        if (StringUtils.isNotBlank(columnTitle)) {
+            int clientColumnIndex = -1;
+            for (ListColumn listColumn : listColumns) {
+                if (columnTitle.equals(listColumn.getTitle())) {
+                    clientColumnIndex = listColumns.indexOf(listColumn);
+                    break;
+                }
+            }
+            if (clientColumnIndex != -1) {
+                listColumns.remove(clientColumnIndex);
+            }
+        }
+        return listColumns;
     }
 }

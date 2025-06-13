@@ -134,6 +134,9 @@ public class UserForm extends BaseForm {
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client"));
         selectedColumns
                 .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup"));
+        if (!ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            deselectRoleClientColumn();
+        }
     }
 
     /**
@@ -778,5 +781,9 @@ public class UserForm extends BaseForm {
      */
     public FilterMenu getFilterMenu() {
         return filterMenu;
+    }
+
+    private void deselectRoleClientColumn() {
+        selectedColumns = ServiceManager.getListColumnService().removeColumnByTitle(selectedColumns, "role.client");
     }
 }
