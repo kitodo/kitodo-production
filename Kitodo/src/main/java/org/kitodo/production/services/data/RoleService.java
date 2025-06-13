@@ -96,6 +96,8 @@ public class RoleService extends BaseBeanService<Role, RoleDAO> {
                 && ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
             return dao.getByQuery("FROM Role"  + getSort(sortField, sortOrder), Collections.emptyMap(), first,
                     pageSize);
+        } else {
+            sortField = "title";
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId"
