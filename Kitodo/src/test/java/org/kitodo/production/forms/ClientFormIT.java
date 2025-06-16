@@ -53,7 +53,7 @@ public class ClientFormIT {
         final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
                 .size();
 
-        assertEquals(8, numberOfRolesForFirstClient, "Number of roles is incorrect");
+        assertEquals(9, numberOfRolesForFirstClient, "Number of roles is incorrect");
 
         clientForm.getRolesForClient();
         clientForm.setClientToCopyRoles(ServiceManager.getClientService().getById(2));
