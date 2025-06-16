@@ -16,15 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -84,10 +81,7 @@ public class UIInteractionsST extends BaseTestSelenium {
      */
     @Test
     public void filterRolesByCurrentClientTest() throws Exception {
-        User nowak = ServiceManager.getUserService().getByLogin("nowak");
-        List<Role> existingRoles = augmentUserWithAllExistingRolesOfAssignedClients(nowak);
-
-        Pages.getLoginPage().goTo().performLogin(nowak);
+        Pages.getLoginPage().performLoginAsAdmin();
         usersPage.goTo();
 
         int rolesInDatabase = ServiceManager.getRoleService().getAll().size();
@@ -109,10 +103,6 @@ public class UIInteractionsST extends BaseTestSelenium {
 
         int rolesDisplayedUnfiltered = usersPage.countListedRoles();
         assertEquals(8, rolesDisplayedUnfiltered, "Displayed wrong number of roles unfiltered");
-
-        // reset test user "nowak" to original state
-        nowak.setRoles(existingRoles);
-        ServiceManager.getUserService().save(nowak);
     }
 
     /**
@@ -122,23 +112,18 @@ public class UIInteractionsST extends BaseTestSelenium {
      */
     @Test
     public void roleSwitchUnavailableTest() throws Exception {
-        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("kowal"));
+        String setClientId = "select-session-client-form:setSessionClientButton";
+        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("nowak"));
+        await().ignoreExceptions()
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(300, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.id(setClientId)).isDisplayed());
+        Browser.getDriver().findElement(By.id(setClientId)).click();
         usersPage.goTo();
         usersPage.switchToTabByIndex(TabIndex.ROLES.getIndex());
         List<WebElement> roleSwitches = Browser.getDriver().findElements(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
-        assertTrue(roleSwitches.isEmpty(), "Role filter switch should be unavailable for users with just one client");
-    }
-
-    private List<Role> augmentUserWithAllExistingRolesOfAssignedClients(User user) throws Exception {
-        List<Role> existingRoles = new ArrayList<>(user.getRoles());
-        user.setRoles(new ArrayList<>());
-        for (Role role : ServiceManager.getRoleService().getAll()) {
-            if (user.getClients().contains(role.getClient())) {
-                user.getRoles().add(role);
-            }
-        }
-        user.setDefaultClient(user.getClients().get(0));
-        ServiceManager.getUserService().save(user);
-        return existingRoles;
+        assertTrue(roleSwitches.isEmpty(), "Role filter switch should be unavailable for users without the "
+                + "corresponding global permission to see roles of all clients");
     }
 }
