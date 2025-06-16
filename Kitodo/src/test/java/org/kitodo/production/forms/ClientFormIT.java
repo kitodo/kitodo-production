@@ -65,7 +65,7 @@ public class ClientFormIT {
                 .size();
         int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(8).getAuthorities()
                 .size();
-        assertEquals(10, numberOfRolesForFirstClient, "Role was not added");
+        assertEquals(11, numberOfRolesForFirstClient, "Role was not added");
         assertEquals(numberOfOldAuthorities, numberOfNewAuthorities, "Authorities were not added");
         assertEquals(numberOfAuthoritiesToCopy, numberOfOldAuthorities, "Authorities were removed from second client");
     }
