@@ -97,6 +97,7 @@ public class UIInteractionsST extends BaseTestSelenium {
         assertEquals(rolesInDatabase, rolesDisplayedFiltered, "Displayed wrong number of roles filtered");
 
         Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR)).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
 
         // verify that switch to show other clients roles is off after clicking
         WebElement roleSwitchClicked = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
@@ -115,11 +116,7 @@ public class UIInteractionsST extends BaseTestSelenium {
     public void roleSwitchUnavailableTest() throws Exception {
         String setClientId = "select-session-client-form:setSessionClientButton";
         Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("nowak"));
-        await().ignoreExceptions()
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(300, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> Browser.getDriver().findElement(By.id(setClientId)).isDisplayed());
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id(setClientId)).isDisplayed());
         Browser.getDriver().findElement(By.id(setClientId)).click();
         usersPage.goTo();
         usersPage.switchToTabByIndex(TabIndex.ROLES.getIndex());
