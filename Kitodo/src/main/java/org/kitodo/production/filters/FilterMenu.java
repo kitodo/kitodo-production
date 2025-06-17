@@ -310,14 +310,6 @@ public class FilterMenu {
      * @return value of filterInEditMode
      */
     public String getFilterInEditMode() {
-        Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext()
-                .getRequestParameterMap();
-        String input = parameters.get("input");
-        if (StringUtils.isNotBlank(input) && StringUtils.isBlank(filterInEditMode)) {
-            filterInEditMode = input;
-            parsedFilters.clear();
-            submitFilters();
-        }
         return filterInEditMode;
     }
 
