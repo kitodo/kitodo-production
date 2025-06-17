@@ -1489,6 +1489,7 @@ public class MockDatabase {
         Role databaseRole = ServiceManager.getRoleService().getById(7);
         Role renameMediaRole = ServiceManager.getRoleService().getById(8);
         Role clientAdminRole = ServiceManager.getRoleService().getById(9);
+        Role userAdminRole = ServiceManager.getRoleService().getById(10);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1518,6 +1519,7 @@ public class MockDatabase {
         secondUser.setLdapGroup(ServiceManager.getLdapGroupService().getById(1));
         secondUser.getRoles().add(projectRoleForFirstClient);
         secondUser.getRoles().add(projectRoleForSecondClient);
+        secondUser.getRoles().add(userAdminRole);
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
         ServiceManager.getUserService().save(secondUser);
@@ -1675,6 +1677,16 @@ public class MockDatabase {
         clientAdminRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE)));
 
         ServiceManager.getRoleService().save(clientAdminRole);
+
+        Role userAdminRole = new Role();
+        userAdminRole.setTitle("User administrator");
+        userAdminRole.setClient(firstClient);
+        List<Authority> userAdminAuthorities = new LinkedList<>();
+        userAdminAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllUsers" + CLIENT_ASSIGNABLE));
+        userAdminAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllRoles" + CLIENT_ASSIGNABLE));
+        userAdminRole.setAuthorities(userAdminAuthorities);
+
+        ServiceManager.getRoleService().save(userAdminRole);
     }
 
     private static void insertUserFilters() throws DAOException {

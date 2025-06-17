@@ -53,7 +53,7 @@ public class ClientFormIT {
         final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
                 .size();
 
-        assertEquals(8, numberOfRolesForFirstClient, "Number of roles is incorrect");
+        assertEquals(9, numberOfRolesForFirstClient, "Number of roles is incorrect");
 
         clientForm.getRolesForClient();
         clientForm.setClientToCopyRoles(ServiceManager.getClientService().getById(2));
@@ -63,9 +63,9 @@ public class ClientFormIT {
         numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
         int numberOfOldAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
                 .size();
-        int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(8).getAuthorities()
+        int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(9).getAuthorities()
                 .size();
-        assertEquals(10, numberOfRolesForFirstClient, "Role was not added");
+        assertEquals(11, numberOfRolesForFirstClient, "Role was not added");
         assertEquals(numberOfOldAuthorities, numberOfNewAuthorities, "Authorities were not added");
         assertEquals(numberOfAuthoritiesToCopy, numberOfOldAuthorities, "Authorities were removed from second client");
     }

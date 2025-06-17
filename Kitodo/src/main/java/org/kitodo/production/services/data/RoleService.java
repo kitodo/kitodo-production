@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -68,7 +69,8 @@ public class RoleService extends BaseBeanService<Role, RoleDAO> {
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+        if (((Boolean)filters.get("allClients"))
+                && ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
             return count();
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
@@ -91,8 +93,12 @@ public class RoleService extends BaseBeanService<Role, RoleDAO> {
     @Override
     @SuppressWarnings("unchecked")
     public List<Role> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return dao.getByQuery("FROM Role"  + getSort(sortField, sortOrder), filters, first, pageSize);
+        if (((Boolean)filters.get("allClients"))
+                && ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            return dao.getByQuery("FROM Role"  + getSort(sortField, sortOrder), Collections.emptyMap(), first,
+                    pageSize);
+        } else {
+            sortField = "title";
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId"
@@ -167,5 +173,19 @@ public class RoleService extends BaseBeanService<Role, RoleDAO> {
             return roles.stream().filter(role -> role.getClient().equals(currentClient)).map(Role::getTitle)
                     .collect(Collectors.joining(COMMA_DELIMITER));
         }
+    }
+
+    /**
+     * Get number of roles of session client of currently authenticated user.
+     *
+     * @return number of roles assigned to session client of currently authenticated user
+     *
+     * @throws DAOException when retrieving number of roles from database fails
+     */
+    public int getNumberOfRolesOfCurrentClient() throws DAOException {
+        Client currentSessionClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        return (int) ServiceManager.getRoleService().getAll().stream()
+                .filter(role -> role.getClient().equals(currentSessionClient)).count();
+
     }
 }
