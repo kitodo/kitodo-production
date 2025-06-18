@@ -58,7 +58,12 @@
         <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
-        <jhove.version>1.20.1</jhove.version>
+        <jhove.version>1.32.1</jhove.version>
+        <jhove.modules.gif.hul.version>1.4.3</jhove.modules.gif.hul.version>
+        <jhove.modules.jpeg2000.hul.version>1.4.4</jhove.modules.jpeg2000.hul.version>
+        <jhove.modules.jpeg.hul.version>1.5.4</jhove.modules.jpeg.hul.version>
+        <jhove.modules.pdf.hul.version>1.12.7</jhove.modules.pdf.hul.version>
+        <jhove.modules.tiff.hul.version>1.9.5</jhove.modules.tiff.hul.version>
         <myfaces.version>2.3.10</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
         <pdfbox.version>3.0.3</pdfbox.version>
@@ -613,16 +618,51 @@ from system library in Java 11+ -->
                 <groupId>org.openpreservation.jhove</groupId>
                 <artifactId>jhove-core</artifactId>
                 <version>${jhove.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit-vintage-engine</groupId>
+                        <artifactId>org.junit.vintage</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.parsson</groupId>
+                        <artifactId>parsson</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.openpreservation.jhove</groupId>
-                <artifactId>jhove-modules</artifactId>
-                <version>${jhove.version}</version>
+                <groupId>org.openpreservation.jhove.modules</groupId>
+                <artifactId>gif-hul</artifactId>
+                <version>${jhove.modules.gif.hul.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.openpreservation.jhove</groupId>
-                <artifactId>jhove-ext-modules</artifactId>
-                <version>${jhove.version}</version>
+                <groupId>org.openpreservation.jhove.modules</groupId>
+                <artifactId>jpeg2000-hul</artifactId>
+                <version>${jhove.modules.jpeg2000.hul.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openpreservation.jhove.modules</groupId>
+                <artifactId>jpeg-hul</artifactId>
+                <version>${jhove.modules.jpeg.hul.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openpreservation.jhove.modules</groupId>
+                <artifactId>pdf-hul</artifactId>
+                <version>${jhove.modules.pdf.hul.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openpreservation.jhove.modules</groupId>
+                <artifactId>tiff-hul</artifactId>
+                <version>${jhove.modules.tiff.hul.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.passay</groupId>

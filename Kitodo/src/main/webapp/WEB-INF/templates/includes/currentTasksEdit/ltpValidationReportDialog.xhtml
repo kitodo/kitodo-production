@@ -1,0 +1,92 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="ltpValidationReportDialog"
+              fitViewport="true"
+              position="center,50"
+              responsive="true"
+              resizable="false"
+              modal="true"
+              dynamic="true"
+              widgetVar="ltpValidationReportDialog">
+        <h:body>
+            <h:form id="ltpValidationReportDialogForm">
+                <h3><h:outputText value="#{msgs['ltpValidation.report.title']}" /></h3>
+
+                <ui:fragment rendered="#{LtpValidationReportDialog.getTotalNumberOfFiles() eq 0}">
+                    <p><h:outputText value="#{msgs['ltpValidation.report.noFilesFound']}" /></p>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{LtpValidationReportDialog.getTotalNumberOfFiles() gt 0 and LtpValidationReportDialog.getNumberOfInvalidFiles() eq 0}">
+                    <p><h:outputText value="#{LtpValidationReportDialog.getTranslatedAllFilesValidMessage()}" /></p>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{LtpValidationReportDialog.getNumberOfInvalidFiles() gt 0}">
+                    <p><h:outputText value="#{LtpValidationReportDialog.getTranslatedIssuesFoundMessage()}" /></p>
+
+                    <p:scrollPanel mode="native" style="width:100%;max-height:50vh;">
+                        <ui:repeat value="#{LtpValidationReportDialog.getFoldersWithValidationIssues()}" var="folder">
+                            <h4><h:outputText value="#{msgs['directory']}" />: <h:outputText value="#{folder.path}" /></h4>
+                            <p:accordionPanel scrollIntoView="center"  
+                                            value="#{LtpValidationReportDialog.getFilesWithValidationIssues(folder)}" 
+                                            var="file">
+                                <c:set var="result" value="#{LtpValidationReportDialog.getValidationResultForFile(folder, file)}" />
+                                <p:tab title="#{file}" titleStyleClass="#{result.state.name()}">
+                                    <ui:fragment rendered="#{LtpValidationReportDialog.getGeneralErrorMessagesForFile(folder, file).size() gt 0}">
+                                        <p><h:outputText value="#{msgs['ltpValidation.report.generalIssues']}" /></p>
+                                        <ul>
+                                            <ui:repeat value="#{LtpValidationReportDialog.getGeneralErrorMessagesForFile(folder, file)}" var="message">
+                                                <li><h:outputText value="#{message}" /></li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </ui:fragment>
+                                    <ui:fragment rendered="#{LtpValidationReportDialog.getValidationConditionMessagesForFile(folder, file).size() gt 0}">
+                                        <p><h:outputText value="#{msgs['ltpValidation.report.conditionIssues']}" /></p>
+                                        <ul>
+                                            <ui:repeat value="#{LtpValidationReportDialog.getValidationConditionMessagesForFile(folder, file)}" var="message">
+                                                <li><h:outputText value="#{message}" /></li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </ui:fragment>
+                                    <ui:fragment rendered="#{LtpValidationReportDialog.getAdditionalMessagesForFile(folder, file).size() gt 0}">
+                                        <p><h:outputText value="#{msgs['ltpValidation.report.additionalMessages']}" /></p>
+                                        <ul>
+                                            <ui:repeat value="#{LtpValidationReportDialog.getAdditionalMessagesForFile(folder, file)}" var="message">
+                                                <li><h:outputText value="#{message}" /></li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </ui:fragment>
+                                </p:tab>
+                            </p:accordionPanel>
+                        </ui:repeat>
+                    </p:scrollPanel>
+                </ui:fragment>                             
+
+                <span class="button-wrapper">
+                    <p:commandButton styleClass="primary dialog"
+                                     value="#{msgs['close']}"
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('ltpValidationReportDialog').hide()" />
+                </span>
+            </h:form>
+        </h:body>
+    </p:dialog>
+</ui:composition>
