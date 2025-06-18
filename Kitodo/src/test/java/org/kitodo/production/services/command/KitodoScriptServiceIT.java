@@ -247,6 +247,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -260,6 +271,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(7, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(7, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -280,6 +300,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0" + " type:Chapter";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -295,6 +326,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(7, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(7, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -315,6 +355,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey + " type:Chapter";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -330,6 +381,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(5, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(5, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -350,6 +410,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey + " value:test" + " type:Chapter";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -365,6 +436,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -385,6 +465,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey + " type:Chapter";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -400,6 +491,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -443,6 +543,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:addData " + "key:" + metadataKey + " \"value:legal note\"";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -456,6 +567,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(7, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(7, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -479,6 +599,20 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
         assertEquals(0, processByMetadata.size(), "should not contain metadata beforehand");
 
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:addData " + "key:" + metadataKey + " value:legal note;" + "key:" + metadataKey + " value:secondNote";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -493,6 +627,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(8, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(8, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -513,6 +656,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:addData " + "key:" + metadataKey + " source:TSL_ATS";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -526,6 +680,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(8, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(8, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -546,6 +709,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:addData " + "key:" + metadataKey + " variable:(processid)";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -559,6 +733,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(7, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(7, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -579,6 +762,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey;
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -592,6 +786,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(5, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(5, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -609,6 +812,20 @@ public class KitodoScriptServiceIT {
         List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey + " value:SecondMetaShort";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -622,6 +839,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(5, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(5, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
     @Test
     public void shouldDeleteAllDataWithSameKey() throws Exception {
@@ -638,6 +864,20 @@ public class KitodoScriptServiceIT {
         List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         assertEquals(1, processByMetadata.size(), "should contain metadata");
 
+        assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
+        assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
+
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey;
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -651,6 +891,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(4, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(4, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -671,6 +920,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData " + "key:" + metadataKey + " source:TitleDocMainShort";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -684,6 +944,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(5, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(5, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -704,6 +973,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:deleteData" + " key:" + metadataKey + " value:SecondMetaLong";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -717,6 +997,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -743,6 +1032,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:overwriteData " + "key:" + metadataKey + " value:Overwritten";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -759,6 +1059,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -785,6 +1094,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:overwriteData " + "key:" + metadataKey + " source:TitleDocMain";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -801,6 +1121,15 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 
     @Test
@@ -827,6 +1156,17 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertFalse(backupMetsFile.exists(), "Backup file meta.xml.1 should not exist");
 
+        // update database entries with init values
+        ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // update index entries with init values
+        ServiceManager.getProcessService().saveToIndex(process, true);
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
+
         String script = "action:overwriteData " + "key:" + metadataKey + " variable:(processid)";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
@@ -843,5 +1183,14 @@ public class KitodoScriptServiceIT {
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
         assertTrue(backupMetsFile.exists(), "Backup file meta.xml.1 should exist");
         assertNotEquals(mainMetsFile.length(), backupMetsFile.length(), "meta.xml and meta.xml.1 should not have same size");
+
+        // database based check
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(6, process.getSortHelperMetadata());
+        assertEquals(2, process.getSortHelperDocstructs());
+        // index based check
+        assertEquals(0, process.getNumberOfImages());
+        assertEquals(6, process.getNumberOfMetadata());
+        assertEquals(2, process.getNumberOfStructures());
     }
 }
