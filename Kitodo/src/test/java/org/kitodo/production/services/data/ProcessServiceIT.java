@@ -652,4 +652,26 @@ public class ProcessServiceIT {
         assertEquals(4, logicalMetadata, "Wrong amount of metadata found!");
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
+
+    @Test
+    public void updateInternalMetaInformation() throws DAOException, IOException, DataException {
+        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 3, 1, 1);
+        Process process = processService.getById(testProcessId);
+
+        // pre database checks
+        assertEquals(0, process.getSortHelperImages());
+        assertEquals(0, process.getSortHelperMetadata());
+        assertEquals(0, process.getSortHelperDocstructs());
+
+        // provide some meta data
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
+        // copyTestMetadataFile is already updating process information
+        // but in case that this is removed update it again.
+        processService.updateAmountOfInternalMetaInformation(process, true);
+
+        // after database checks
+        assertEquals(1, process.getSortHelperImages());
+        assertEquals(4, process.getSortHelperMetadata());
+        assertEquals(1, process.getSortHelperDocstructs());
+    }
 }
