@@ -502,6 +502,7 @@ body .ui-breadcrumb .ui-breadcrumb-items li {
     border-radius: var(--default-border-radius);
     overflow: visible;
     position: relative;
+    text-align: center;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link,
@@ -564,7 +565,7 @@ body .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child)::before {
     border-width: 3px 0 0 3px;
     content: "";
     height: 10px;
-    left: -15px;
+    left: -16px;
     position: absolute;
     top: 11px;
     transform: translateZ(1px) rotate(-45deg);
