@@ -4372,6 +4372,15 @@ body .ui-panel .ui-widget-content.ui-panel-content {
     position: relative;
 }
 
+body .ui-datatable thead th.ui-state-active {
+    background: var(--cloudy-gray);
+    color: inherit;
+}
+
+body .ui-datatable thead th.ui-sortable-column.ui-state-focus {
+    box-shadow: none;
+}
+
 .ui-datatable tbody tr:last-child td {
     border-bottom: none;
 }
