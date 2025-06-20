@@ -38,6 +38,7 @@ import org.kitodo.production.services.data.RoleService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.data.PageEvent;
+import org.primefaces.model.SortMeta;
 
 public class BaseForm implements Serializable {
 
@@ -81,6 +82,7 @@ public class BaseForm implements Serializable {
     protected List<ListColumn> selectedColumns;
 
     protected int firstRow;
+    protected SortMeta sortBy;
 
     /**
      * Get first row to show in datatable.
@@ -104,6 +106,24 @@ public class BaseForm implements Serializable {
      */
     public void onPageChange(PageEvent pageEvent) {
         this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
+    }
+
+    /**
+     * Get the current sorting configuration.
+     *
+     * @return the SortMeta object representing the sorting configuration
+     */
+    public SortMeta getSortBy() {
+        return sortBy;
+    }
+
+    /**
+     * Set the sorting configuration.
+     *
+     * @param sortBy the SortMeta object representing the sorting configuration
+     */
+    public void setSortBy(SortMeta sortBy) {
+        this.sortBy = sortBy;
     }
 
     /**
