@@ -19,7 +19,7 @@
    <p:dialog id="explanationDialog"
              widgetVar="explanationDialog"
              showHeader="false"
-             visible="#{not LoginForm.isHideMassImportExplanationDialog()}"
+             visible="#{not HelperForm.isHideMassImportExplanationDialog()}"
              modal="true"
              width="680px"
              appendTo="@(body)"
@@ -48,7 +48,7 @@
          <h:form id="buttonForm">
             <p:selectBooleanCheckbox id="hideCheckbox"
                                      itemLabel="#{msgs['massImport.explanation.skipText']}"
-                                     value="#{LoginForm.hideMassImportExplanationDialog}">
+                                     value="#{HelperForm.hideMassImportExplanationDialog}">
                <p:ajax event="change"
                        process="@this"/>
             </p:selectBooleanCheckbox>
