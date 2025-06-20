@@ -30,6 +30,8 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("ImportConfigurationListView")
 @ViewScoped
@@ -37,6 +39,11 @@ public class ImportConfigurationListView extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ImportConfigurationListView.class);
     private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
+
+    public ImportConfigurationListView() {
+        super();
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+    }
 
     /**
      * Get import configurations.
