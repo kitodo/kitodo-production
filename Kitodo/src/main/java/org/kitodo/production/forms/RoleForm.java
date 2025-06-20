@@ -33,6 +33,10 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyRoleModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("RoleForm")
 @SessionScoped
@@ -49,6 +53,7 @@ public class RoleForm extends BaseForm {
     public RoleForm() {
         super();
         super.setLazyBeanModel(new LazyRoleModel(ServiceManager.getRoleService()));
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**

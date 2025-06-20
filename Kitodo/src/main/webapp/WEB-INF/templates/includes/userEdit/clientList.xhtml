@@ -20,7 +20,7 @@
     <!--@elvariable id="client" type="org.kitodo.data.database.beans.Client"-->
     <p:dataTable id="clientDatatable"
                  var="client"
-                 sortBy="#{client.name}"
+                 sortBy="#{UserForm.clientListSortBy}"
                  value="#{UserForm.userObject.clients}">
         <p:column headerText="#{msgs.clientList}" sortBy="#{client.name}">
             <h:outputText value="#{client.name}"/>

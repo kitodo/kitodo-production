@@ -37,6 +37,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.AESUtil;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("LdapServerForm")
 @SessionScoped
@@ -48,6 +50,11 @@ public class LdapServerForm extends BaseForm {
 
     private LdapServer ldapServer;
     private PasswordEncryption passwordEncryption;
+
+    public LdapServerForm() {
+        super();
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+    }
 
     /**
      * Create new LDAP server.
