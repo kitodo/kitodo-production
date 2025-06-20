@@ -37,6 +37,8 @@ public class HelperForm implements Serializable {
         return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ANONYMIZE);
     }
 
+    private boolean hideMassImportExplanationDialog = false;
+
     /**
      * Returning value of configuration parameter withUserStepDoneSearch. Used
      * for enabling/disabling search for done steps by user.
@@ -57,4 +59,25 @@ public class HelperForm implements Serializable {
     public String getTranslated(String input) {
         return Helper.getTranslation(input);
     }
+
+    /**
+     * Get value of 'hideMassImportExplanationDialog', indicating whether the explanation dialog for the mass import
+     * should be shown during this session or not.
+     *
+     * @return value of 'hideMassImportExplanationDialog'
+     */
+    public boolean isHideMassImportExplanationDialog() {
+        return hideMassImportExplanationDialog;
+    }
+
+    /**
+     * Set value of 'hideMassImportExplanationDialog', indicating whether the explanation dialog for the mass import
+     * should be shown during this session or not.
+     *
+     * @param hideMassImportExplanationDialog whether explanation dialog should be shown or not
+     */
+    public void setHideMassImportExplanationDialog(boolean hideMassImportExplanationDialog) {
+        this.hideMassImportExplanationDialog = hideMassImportExplanationDialog;
+    }
+
 }

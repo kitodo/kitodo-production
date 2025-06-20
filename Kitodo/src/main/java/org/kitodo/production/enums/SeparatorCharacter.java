@@ -45,6 +45,7 @@ public enum SeparatorCharacter {
      * @return the string representation of this enum constant in the format
      *         "NAME ('separator')"
      */
+    @Override
     public String toString() {
         return name() + (" ('" + separator + "')");
     }
