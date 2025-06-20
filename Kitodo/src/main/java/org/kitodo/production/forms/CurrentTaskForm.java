@@ -60,6 +60,8 @@ import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
 import org.kitodo.utils.Stopwatch;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("CurrentTaskForm")
 @SessionScoped
@@ -132,6 +134,8 @@ public class CurrentTaskForm extends BaseForm {
         selectedTaskStatus = new LinkedList<>();
         selectedTaskStatus.add(TaskStatus.OPEN);
         selectedTaskStatus.add(TaskStatus.INWORK);
+
+        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
         stopwatch.stop();
     }
 
