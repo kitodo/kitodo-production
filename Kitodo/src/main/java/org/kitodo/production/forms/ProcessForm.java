@@ -70,6 +70,8 @@ import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -142,6 +144,8 @@ public class ProcessForm extends TemplateBaseForm {
 
         selectedColumns =
                 ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
+
+        sortBy = SortMeta.builder().field("id").order(SortOrder.DESCENDING).build();
         stopwatch.stop();
     }
 

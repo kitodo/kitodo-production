@@ -26,6 +26,8 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("MappingFileListView")
 @ViewScoped
@@ -41,6 +43,7 @@ public class MappingFileListView extends BaseForm {
     public MappingFileListView() {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getMappingFileService()));
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**
