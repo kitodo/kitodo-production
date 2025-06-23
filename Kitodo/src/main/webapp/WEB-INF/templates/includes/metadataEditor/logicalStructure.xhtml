@@ -156,7 +156,7 @@
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
             <p:menuitem value="#{msgs.addElement}"
-                        rendered="#{DataEditorForm.selectedMedia.size() lt 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null}"
+                        rendered="#{DataEditorForm.structurePanel.isAddingElementOrLinkingProcessPossible()}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -167,6 +167,16 @@
                         update="dialogAddDocStrucTypeDialog">
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
+            <p:menuitem value="#{msgs['dataEditor.linkProcess']}"
+                        rendered="#{DataEditorForm.structurePanel.isAddingElementOrLinkingProcessPossible()}"
+                        styleClass="plain link-process"
+                        disabled="#{readOnly}"
+                        icon="fa fa-external-link fa-sm"
+                        onclick="$('#loadingScreen').show()"
+                        oncomplete="$('#loadingScreen').hide(); PF('linkProcess').show()"
+                        actionListener="#{DataEditorForm.linkProcessDialog.resetValues}"
+                        process="@this"
+                        update="linkProcessDialog" />
             <p:menuitem
                     value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
                     rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null}"
@@ -246,7 +256,7 @@
             <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type ne StructurePanel.VIEW_NODE_TYPE and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type ne StructurePanel.MEDIA_PARTIAL_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
-                        styleClass="plain"
+                        styleClass="plain unlink-process"
                         disabled="#{readOnly}"
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"

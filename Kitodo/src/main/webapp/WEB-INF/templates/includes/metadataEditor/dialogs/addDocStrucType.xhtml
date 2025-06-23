@@ -44,22 +44,8 @@
 
                 <br/>
 
-                <!-- option to link to existing process -->
-                <h:panelGrid rendered="#{not viewsSelected}">
-                    <p:selectBooleanCheckbox itemLabel="#{msgs.link}"
-                                             styleClass="switch"
-                                             title="#{msgs.link}"
-                                             value="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
-                        <p:ajax event="change"
-                                update="dialogAddDocStrucTypeFormContent" />
-                    </p:selectBooleanCheckbox>
-                </h:panelGrid>
-
-                <br/>
-
                 <!-- add new structure element -->
-                <p:panelGrid columns="2" id="docStrucTypeGrid"
-                             rendered="#{not DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
+                <p:panelGrid columns="2" id="docStrucTypeGrid">
 
                     <h:panelGroup>
                         <!-- select type and position of new doc struct element -->
@@ -167,7 +153,7 @@
                     </h:panelGroup>
 
                     <!-- option to add multiple doc structs of same type -->
-                    <h:panelGroup rendered="#{not viewsSelected and not DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
+                    <h:panelGroup rendered="#{not viewsSelected}">
                         <p:panelGrid columns="1">
                             <p:row>
                                 <p:column rowspan="2">
@@ -223,110 +209,43 @@
                     </h:panelGroup>
                 </p:panelGrid>
 
-                <!-- link to existing process -->
-                <p:panelGrid rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
-                    <p:row>
-                        <p:column colspan="2">
-                            <p:inputText id="processTitle"
-                                         styleClass="search-process-title input"
-                                         placeholder="#{msgs.processTitle} / #{msgs.id}"
-                                         value="#{DataEditorForm.addDocStrucTypeDialog.processNumber}"/>
-                        </p:column>
-                        <p:column>
-                            <p:commandButton id="searchButton"
-                                             value="#{msgs['dialogAddDocStrucType.searchButton']}"
-                                             action="#{DataEditorForm.addDocStrucTypeDialog.search}"
-                                             styleClass="primary"
-                                             icon="fa fa-search fa-lg"
-                                             iconPos="right">
-                                    <p:remoteCommand name="updateProcessSelect"
-                                                     update="processSelect"/>
-                                    <p:ajax update="processSelect"
-                                            oncomplete="updateProcessSelect()"/>
-                            </p:commandButton>
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column colspan="3">
-                            <p:outputLabel for="processSelect"
-                                           value="#{msgs.processes}"/>
-                            <p:selectOneMenu id="processSelect"
-                                             disabled="#{empty DataEditorForm.addDocStrucTypeDialog.processes}"
-                                             styleClass="input"
-                                             autoWidth="false"
-                                             converter="#{processConverter}"
-                                             value="#{DataEditorForm.addDocStrucTypeDialog.selectedProcess}">
-                                <f:selectItem noSelectionOption="true"
-                                              itemValue="#{null}"
-                                              itemLabel="#{msgs.selectProcess}"/>
-                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.processes}"/>
-                                <p:ajax event="change" update="docStructAddTypeSelection, addLinkButton"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                    </p:row>
-                </p:panelGrid>
-
-                <p:panelGrid id="submitButtonGroup" columns="1">
-
-                    <!-- submit buttons for new structure element(s) -->
-                    <h:panelGroup layout="block"
-                                  rendered="#{not DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
-                        <p:commandButton id="addDocStruc"
-                                         value="#{msgs.apply}"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(false)}"
-                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1 or DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem eq null}"
-                                         styleClass="primary right"
-                                         icon="fa fa-check fa-lg"
-                                         iconPos="right"
-                                         update="logicalTree
-                                                 paginationForm:paginationWrapperPanel
-                                                 metadataAccordion:logicalMetadataWrapperPanel
-                                                 metadataAccordion:logicalMetadataHeader
-                                                 commentWrapperPanel
-                                                 galleryWrapperPanel"
-                                         oncomplete="updateMetadataEditorView(false);"/>
-                        <p:commandButton id="addAndEditStruc"
-                                         value="#{msgs.applyAndEdit}"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(true)}"
-                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1 or DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem eq null}"
-                                         styleClass="secondary right"
-                                         icon="fa fa-check fa-lg"
-                                         iconPos="right"
-                                         update="logicalTree
-                                                 paginationForm:paginationWrapperPanel
-                                                 metadataAccordion:logicalMetadataWrapperPanel
-                                                 metadataAccordion:logicalMetadataHeader
-                                                 commentWrapperPanel
-                                                 galleryWrapperPanel"
-                                         oncomplete="updateMetadataEditorView(true);"/>
-                        <p:commandButton value="#{msgs.cancel}"
-                                         icon="fa fa-times fa-lg"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
-                                         iconPos="secondary"
-                                         styleClass="secondary right"
-                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
-                    </h:panelGroup>
-
-                    <!-- submit buttons for linking processes -->
-                    <h:panelGroup layout="block"
-                                  rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}"
-                                  columns="1">
-                        <p:commandButton id="addLinkButton"
-                                         value="#{msgs.apply}"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.addProcessLink}"
-                                         disabled="#{empty DataEditorForm.addDocStrucTypeDialog.selectedProcess}"
-                                         update="structureTreeForm,paginationForm:paginationWrapperPanel"
-                                         icon="fa fa-check fa-lg"
-                                         iconPos="right"
-                                         styleClass="primary right"
-                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
-                        <p:commandButton value="#{msgs.cancel}"
-                                         icon="fa fa-times fa-lg"
-                                         iconPos="secondary"
-                                         styleClass="secondary right"
-                                         onclick="PF('dialogAddDocStrucType').hide();"/>
-                    </h:panelGroup>
-                </p:panelGrid>
+                <!-- submit buttons for new structure element(s) -->
+                <h:panelGroup layout="block">
+                    <p:commandButton id="addDocStruc"
+                                     value="#{msgs.apply}"
+                                     action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(false)}"
+                                     disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1 or DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem eq null}"
+                                     styleClass="primary right"
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"
+                                     update="logicalTree
+                                             paginationForm:paginationWrapperPanel
+                                             metadataAccordion:logicalMetadataWrapperPanel
+                                             metadataAccordion:logicalMetadataHeader
+                                             commentWrapperPanel
+                                             galleryWrapperPanel"
+                                     oncomplete="updateMetadataEditorView(false);"/>
+                    <p:commandButton id="addAndEditStruc"
+                                     value="#{msgs.applyAndEdit}"
+                                     action="#{DataEditorForm.addDocStrucTypeDialog.addDocStruc(true)}"
+                                     disabled="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems.size() lt 1 or DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem eq null}"
+                                     styleClass="secondary right"
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"
+                                     update="logicalTree
+                                             paginationForm:paginationWrapperPanel
+                                             metadataAccordion:logicalMetadataWrapperPanel
+                                             metadataAccordion:logicalMetadataHeader
+                                             commentWrapperPanel
+                                             galleryWrapperPanel"
+                                     oncomplete="updateMetadataEditorView(true);"/>
+                    <p:commandButton value="#{msgs.cancel}"
+                                     icon="fa fa-times fa-lg"
+                                     action="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
+                                     iconPos="secondary"
+                                     styleClass="secondary right"
+                                     oncomplete="PF('dialogAddDocStrucType').hide();"/>
+                </h:panelGroup>
             </h:panelGroup>
         </h:form>
     </p:dialog>

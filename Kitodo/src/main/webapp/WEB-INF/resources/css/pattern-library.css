@@ -1426,10 +1426,6 @@ body .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-r
     padding: 0;
 }
 
-.ui-dialog-content .search-process-title {
-    margin-top: var(--default-double-size);
-}
-
 .ui-dialog .ui-panelgrid-cell div,
 .ui-dialog .ui-panelgrid-cell > input {
     margin-bottom: var(--default-full-size);
@@ -1601,6 +1597,10 @@ body .ui-dialog .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
 #dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-selectonemenu,
 #dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content:first-child > .ui-panelgrid-cell > table {
     width: 90%;
+}
+
+#dialogAddDocStrucTypeForm\:docStrucTypeGrid tr.ui-widget-content:not(:first-child) {
+    border: 0;
 }
 
 .ui-dialog.legal-dialog button.secondary.right {

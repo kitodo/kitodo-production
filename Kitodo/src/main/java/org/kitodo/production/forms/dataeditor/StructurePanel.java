@@ -1236,6 +1236,26 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Checks whether conditions are met for displaying the context menu option to add a new structure element or link a
+     * different process is displayed for the currently selected node(s) in the logical structure tree.
+     * The conditions are:
+     * - no media is selected
+     * - exactly one logical node is selected
+     * - the selected node does not already represent a linked process
+     * @return whether the option to add a new structure element or link a process is displayed
+     */
+    public boolean isAddingElementOrLinkingProcessPossible() {
+        List<?> selectedMedia = dataEditor.getSelectedMedia();
+        TreeNode<?> selectedLogicalNode = getSelectedLogicalNodeIfSingle();
+        if (Objects.nonNull(selectedLogicalNode) && selectedMedia.isEmpty()) {
+            if (selectedLogicalNode.getData() instanceof StructureTreeNode structureTreeNode) {
+                return (!structureTreeNode.isLinked());
+            }
+        }
+        return false;
+    }
+
+    /**
      * Callback function triggered on NodeCollapseEvent. Sets the 'expanded' flag of the corresponding tree node to
      * 'false' because this is not done automatically by PrimeFaces on a NodeCollapseEvent.
      *

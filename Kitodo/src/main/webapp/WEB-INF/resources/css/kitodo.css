@@ -3339,6 +3339,22 @@ Column content
     padding: 0.5em 0.25em;
 }
 
+#linkProcessForm tr.ui-widget-content {
+    border: 0;
+}
+
+#linkProcessForm\:searchButton {
+    margin-top: 0;
+}
+
+#linkProcessForm .search-button-container {
+    display: block;
+}
+
+#linkProcessForm\:submitButtonGroup {
+    float: right;
+}
+
 button.settings-loaded::after,
 button.settings-loaded-task::after {
     background: white;
