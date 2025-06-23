@@ -3522,6 +3522,12 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 
 #imagePreviewForm fieldset {
     min-width: 0;
+    border: none;
+}
+
+#imagePreviewForm .ui-datalist .ui-datalist-content {
+    border: none;
+    padding: 0;
 }
 
 #imagePreviewForm\:structuredPagesField {
