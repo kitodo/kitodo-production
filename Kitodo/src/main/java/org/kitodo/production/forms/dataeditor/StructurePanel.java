@@ -86,12 +86,12 @@ public class StructurePanel implements Serializable {
     /**
      * The logical structure tree of the edited document.
      */
-    private DefaultTreeNode<Object>logicalTree = null;
+    private DefaultTreeNode<Object> logicalTree = null;
 
     /**
      * The physical structure tree of the edited document.
      */
-    private DefaultTreeNode<Object>physicalTree = null;
+    private DefaultTreeNode<Object> physicalTree = null;
 
     /**
      * HashMap containing the current expansion states of all TreeNodes in the logical structure tree.
@@ -1170,7 +1170,9 @@ public class StructurePanel implements Serializable {
      */
     public void onDragDrop(TreeDragDropEvent event) {
         TreeNode<Object> dropTreeNode = event.getDropNode();
-        TreeNode<Object>[] dragTreeNodes = Objects.nonNull(event.getDragNodes()) ? event.getDragNodes() : new TreeNode[] { event.getDragNode() };
+        TreeNode<Object>[] dragTreeNodes = Objects.nonNull(event.getDragNodes())
+                ? event.getDragNodes()
+                : new TreeNode[] { event.getDragNode() };
         Object dropNodeObject = dropTreeNode.getData();
         expandNode(dropTreeNode);
 
@@ -1227,7 +1229,9 @@ public class StructurePanel implements Serializable {
         );
 
         // nodes that were dragged (either multiple if multipleDrag=true, or a single node otherwise)
-        TreeNode<Object>[] dragNodes = Objects.nonNull(event.getDragNodes()) ? event.getDragNodes() : new TreeNode[] { event.getDragNode() };
+        TreeNode<Object>[] dragNodes = Objects.nonNull(event.getDragNodes())
+                ? event.getDragNodes()
+                : new TreeNode[] { event.getDragNode() };
 
         // update selected physical divisions with new parent logical division
         List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = Arrays.stream(dragNodes)
@@ -1701,7 +1705,8 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void updatePhysicalNodeExpansionStatesRecursively(TreeNode<Object> treeNode, HashMap<PhysicalDivision, Boolean> expansionStates) {
+    private void updatePhysicalNodeExpansionStatesRecursively(TreeNode<Object> treeNode,
+                                                              HashMap<PhysicalDivision, Boolean> expansionStates) {
         PhysicalDivision physicalDivision = getTreeNodePhysicalDivision(treeNode);
         if (Objects.nonNull(physicalDivision) && expansionStates.containsKey(physicalDivision)) {
             treeNode.setExpanded(expansionStates.get(physicalDivision));

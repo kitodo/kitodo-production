@@ -338,6 +338,11 @@ public class BeanQuery {
         }
     }
 
+    /**
+     * Define sorting using given sortField and sortOrder.
+     * @param sortField field to sort by
+     * @param sortOrder ascending or descending
+     */
     public void defineSorting(String sortField, SortOrder sortOrder) {
         if (StringUtils.isNotBlank(sortField) && Objects.nonNull(sortOrder)) {
             sorting = Pair.of(sortField.startsWith("lastTask") || sortField.startsWith("CASE") ? sortField
