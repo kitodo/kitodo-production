@@ -54,7 +54,6 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
-import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -142,7 +141,7 @@ public class MockDatabase {
 
     public static void startNode() throws Exception {
         final String nodeName = "index";
-        final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
+        final String port = "9205"; // defined in test resources file hibernate.cfg.xml
         Environment environment = prepareEnvironment(port, nodeName, Paths.get("target", "classes"));
         removeOldDataDirectories("target/" + nodeName);
         node = new ExtendedNode(environment, Collections.singleton(Netty4Plugin.class));
