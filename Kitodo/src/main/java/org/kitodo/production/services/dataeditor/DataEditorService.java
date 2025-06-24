@@ -286,7 +286,8 @@ public class DataEditorService {
      * @param metadataTreeNodes as a List of TreeNode
      * @return the existing metadata
      */
-    public static Collection<Metadata> getExistingMetadataRows(List<TreeNode<Object>> metadataTreeNodes) throws InvalidMetadataValueException {
+    public static Collection<Metadata> getExistingMetadataRows(List<TreeNode<Object>> metadataTreeNodes)
+            throws InvalidMetadataValueException {
         Collection<Metadata> existingMetadataRows = new ArrayList<>();
 
         for (TreeNode<Object> metadataNode : metadataTreeNodes) {
