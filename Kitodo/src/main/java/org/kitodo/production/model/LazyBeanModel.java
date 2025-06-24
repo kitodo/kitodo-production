@@ -33,8 +33,8 @@ import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 public class LazyBeanModel extends LazyDataModel<Object> {
 
