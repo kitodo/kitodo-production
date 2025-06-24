@@ -60,6 +60,7 @@
         <property name="hibernate.search.backend.hosts">localhost:9200</property>
         <property name="hibernate.search.backend.protocol">http</property>
         <property name="hibernate.search.backend.layout.strategy">class:org.kitodo.data.index.KitodoCustomLayoutStrategy</property>
+        <!-- more option to configure hibernate-search can be found at https://docs.jboss.org/hibernate/stable/search/reference/en-US/html_single/#backend-elasticsearch-configuration-client -->
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
