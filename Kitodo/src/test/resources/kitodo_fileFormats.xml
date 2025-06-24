@@ -28,7 +28,7 @@
     <fileFormat extension="pdf" fileType="PDF" mimeType="application/pdf">
         <label>Portable Document Format (application/pdf, *.pdf)</label>
     </fileFormat>
-    <fileFormat extension="png" fileType="PNG" formatName="png" imageFileFormat="PNG" mimeType="image/png">
+    <fileFormat extension="png" formatName="png" imageFileFormat="PNG" mimeType="image/png">
         <label>Portable Network Graphics (image/png, *.png)</label>
     </fileFormat>
     <fileFormat extension="tif" fileType="TIFF" imageFileFormat="TIFF" mimeType="image/tiff">

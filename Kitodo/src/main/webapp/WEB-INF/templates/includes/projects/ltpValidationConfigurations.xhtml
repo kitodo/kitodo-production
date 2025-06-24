@@ -1,0 +1,86 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+   <!--@elvariable id="item" type="org.kitodo.data.database.beans.LtpValidationConfiguration"-->
+   <p:dataTable id="ltpValidationConfigurationsTable"
+                value="#{LtpValidationConfigurationListView.lazyBeanModel}"
+                var="item"
+                styleClass="default-layout"
+                first="#{LtpValidationConfigurationListView.firstRow}"
+                lazy="true"
+                paginator="true"
+                resizableColumns="true"
+                liveResize="true"
+                sortBy="#{item.title}"
+                rows="#{LoginForm.loggedUser.tableSize}"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
+                currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
+                paginatorPosition="bottom">
+
+      <p:column headerText="#{msgs.title}"
+                sortBy="#{item.title}">
+         <h:outputText value="#{item.title}"
+                       title="#{item.title}"/>
+      </p:column>
+
+      <p:column headerText="#{msgs['editFolderDialog.mimeType']}"
+                sortBy="#{item.mimeType}">
+         <h:outputText value="#{item.mimeType}"
+                       title="#{item.mimeType}"/>
+      </p:column>
+
+      <p:column headerText="#{msgs.actions}"
+                resizable="false"
+                width="70"
+                styleClass="actionsColumn">
+         <h:form id="actionForm">
+            <h:link id="viewLtpValidationConfiguration"
+                    outcome="ltpValidationConfigurationEdit"
+                    styleClass="action"
+                    title="#{msgs.view}"
+                    rendered="#{SecurityAccessController.hasAuthorityToViewLtpValidationConfiguration() and not SecurityAccessController.hasAuthorityToEditLtpValidationConfiguration()}">
+               <f:param name="id" value="#{item.id}"/>
+               <i class="fa fa-eye fa-lg"/>
+            </h:link>
+
+            <h:link id="editLtpValidationConfiguration"
+                    outcome="ltpValidationConfigurationEdit"
+                    styleClass="action"
+                    title="#{msgs.edit}"
+                    rendered="#{SecurityAccessController.hasAuthorityToEditLtpValidationConfiguration()}">
+               <f:param name="id" value="#{item.id}"/>
+               <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+
+            <p:commandLink id="deleteLtpValidationConfiguration"
+                           action="#{LtpValidationConfigurationListView.deleteById(item.id)}"
+                           styleClass="action"
+                           rendered="#{SecurityAccessController.hasAuthorityToDeleteLtpValidationConfiguration()}"
+                           title="#{msgs.delete}"
+                           update="ltpValidationConfigurationsTable">
+               <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+               <p:confirm header="#{msgs.confirmDelete}"
+                          message="#{LtpValidationConfigurationEditView.formatString('ltpValidation.confirmDelete', item.title)}"
+                          icon="ui-icon-alert"/>
+            </p:commandLink>
+         </h:form>
+      </p:column>
+
+   </p:dataTable>
+</ui:composition>
