@@ -270,9 +270,9 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      */
     public String getMetadataEntryLabel(RulesetManagementInterface ruleset, String metadataEntryKey, String groupKey,
                                         String acquisitionStage, List<Locale.LanguageRange> languageRange) {
-        ComplexMetadataViewInterface viewInterface = ruleset.getMetadataView(groupKey, acquisitionStage, languageRange);
-        if (Objects.nonNull(viewInterface)) {
-            for (MetadataViewInterface metadataViewInterface : viewInterface.getAllowedMetadata()) {
+        MetadataViewInterface viewInterface = ruleset.getMetadataView(groupKey, acquisitionStage, languageRange);
+        if (Objects.nonNull(viewInterface) && viewInterface instanceof ComplexMetadataViewInterface) {
+            for (MetadataViewInterface metadataViewInterface : ((ComplexMetadataViewInterface)viewInterface).getAllowedMetadata()) {
                 if (metadataEntryKey.equals(metadataViewInterface.getId())) {
                     return metadataViewInterface.getLabel();
                 }
