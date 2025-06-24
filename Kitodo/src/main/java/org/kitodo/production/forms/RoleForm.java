@@ -35,8 +35,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
-import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 
 @Named("RoleForm")
 @SessionScoped
