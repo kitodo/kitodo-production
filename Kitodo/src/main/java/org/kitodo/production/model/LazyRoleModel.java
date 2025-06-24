@@ -20,6 +20,7 @@ import java.util.Map;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.data.RoleService;
 import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyRoleModel extends LazyBeanModel {
@@ -50,8 +51,14 @@ public class LazyRoleModel extends LazyBeanModel {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,
-            FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
+        String sortField = "";
+        SortOrder sortOrder = SortOrder.ASCENDING;
+        if (!sortBy.isEmpty()) {
+            SortMeta sortMeta = sortBy.values().iterator().next();
+            sortField = sortMeta.getField();
+            sortOrder = sortMeta.getOrder();
+        }
         try {
             Map<String, Boolean> filterMap = Collections.singletonMap("allClients", showRolesOfAllAvailableClients);
             setRowCount(toIntExact(searchService.countResults(filterMap)));
@@ -62,5 +69,16 @@ public class LazyRoleModel extends LazyBeanModel {
             logger.error(e.getMessage(), e);
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        Map<String, Boolean> filterMap = Collections.singletonMap("allClients", showRolesOfAllAvailableClients);
+        try {
+            return toIntExact(searchService.countResults(filterMap));
+        } catch (DAOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return 0;
     }
 }
