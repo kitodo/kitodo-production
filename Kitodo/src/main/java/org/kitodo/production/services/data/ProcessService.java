@@ -2896,7 +2896,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Update amount of references files, document structure elements and metadata fields in database.
+     * Update amount of referenced files, document structure elements and metadata fields in database.
      * @param process Process to update
      * @param save Save process in method call itself or not.
      * @throws DataException Thrown if storing of process data in database is not possible
