@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -16,4 +16,4 @@
 
 Directory="$1"
 
-/bin/mkdir -vm 0775 "$Directory"
+/usr/bin/mkdir -vm 0775 "$Directory"

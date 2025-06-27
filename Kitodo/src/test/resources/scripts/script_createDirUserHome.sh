@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -17,5 +17,5 @@
 User="$1"
 Home="$2"
 
-/bin/mkdir "$Home"
-/bin/chmod g+w "$Home"
+/usr/bin/mkdir -p "$Home"
+/usr/bin/chmod g+w "$Home"
