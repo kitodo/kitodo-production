@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -18,5 +18,5 @@ Source="$1"
 Target="$2"
 User="$3"
 
-/bin/ln -vs "$Source" "$Target"
-/bin/chown -vR "$User" "$Source" 
+/usr/bin/ln -vs "$Source" "$Target"
+/usr/bin/chown -vR "$User" "$Source"

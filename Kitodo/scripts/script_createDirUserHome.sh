@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -17,7 +17,7 @@
 User="$1"
 Home="$2"
 
-/bin/mkdir "$Home"
-/bin/chmod g+w "$Home"
-/bin/chown $User "$Home"
-/bin/chgrp tomcat "$Home"
+/usr/bin/mkdir "$Home"
+/usr/bin/chmod g+w "$Home"
+/usr/bin/chown $User "$Home"
+/usr/bin/chgrp tomcat "$Home"
