@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -16,4 +16,4 @@
 
 Link="$1"
 
-rm -v "$Link"
+/usr/bin/rm -v "$Link"
