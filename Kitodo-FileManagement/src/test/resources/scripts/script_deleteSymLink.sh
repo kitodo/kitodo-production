@@ -14,6 +14,8 @@
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 Link="$1"
 
-/usr/bin/rm -v "$Link"
+rm -v "$Link"

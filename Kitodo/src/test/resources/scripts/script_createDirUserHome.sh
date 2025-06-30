@@ -14,8 +14,10 @@
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 User="$1"
 Home="$2"
 
-/usr/bin/mkdir -p "$Home"
-/usr/bin/chmod g+w "$Home"
+mkdir -p "$Home"
+chmod g+w "$Home"
