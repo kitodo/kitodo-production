@@ -680,7 +680,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (index < processes.size() - 1) {
                 ProcessService.setParentRelations(processes.get(index + 1).getProcess(), process);
             }
-            if (Objects.nonNull(tempProcess.getMetadataNodes())) {
+            if (Objects.nonNull(tempProcess.getMetadataNodes()) && index > 0) {
                 processTempProcess(tempProcess);
             }
         }
