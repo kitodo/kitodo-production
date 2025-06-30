@@ -14,9 +14,11 @@
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 Source="$1"
 Target="$2"
 User="$3"
 
-/usr/bin/ln -vs "$Source" "$Target"
-/usr/bin/chown -vR "$User" "$Source"
+ln -vs "$Source" "$Target"
+chown -vR "$User" "$Source"

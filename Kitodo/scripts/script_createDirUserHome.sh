@@ -14,10 +14,12 @@
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 User="$1"
 Home="$2"
 
-/usr/bin/mkdir "$Home"
-/usr/bin/chmod g+w "$Home"
-/usr/bin/chown $User "$Home"
-/usr/bin/chgrp tomcat "$Home"
+mkdir "$Home"
+chmod g+w "$Home"
+chown $User "$Home"
+chgrp tomcat "$Home"
