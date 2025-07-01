@@ -22,9 +22,14 @@ import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -35,7 +40,7 @@ public class AddPhysicalDivisionDialog {
     private List<SelectItem> possibleTypes;
     private InsertionPosition selectedPosition = InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
     private String selectedType;
-
+    private static final Logger logger = LogManager.getLogger(AddPhysicalDivisionDialog.class);
 
     /**
      * Constructor.
@@ -49,16 +54,23 @@ public class AddPhysicalDivisionDialog {
      * Add a new PhysicalDivision.
      */
     public void addPhysicalDivision() {
+        try {
+            dataEditor.getMetadataPanel().preserve();
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
         Optional<PhysicalDivision> selectedPhysicalDivision = dataEditor.getSelectedPhysicalDivision();
         if (selectedPhysicalDivision.isPresent()) {
             PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(selectedType, dataEditor.getWorkpiece(),
                     selectedPhysicalDivision.get(),
                     selectedPosition);
             dataEditor.refreshStructurePanel();
-            dataEditor.getStructurePanel().updateNodeSelection(
-                List.of(new ImmutablePair<>(physicalDivision, null)),
-                Collections.emptyList()
-            );
+
+            try {
+                dataEditor.updateSelection(Collections.singletonList(Pair.of(physicalDivision, null)), Collections.emptyList());
+            } catch (NoSuchMetadataFieldException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
         } else {
             Helper.setErrorMessage("No physical division selected!");
         }
