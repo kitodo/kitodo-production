@@ -262,7 +262,9 @@ public class StructurePanel implements Serializable {
                         return;
                     }
 
-                    dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
+                    if (!physicalDivision.getMediaFiles().isEmpty()) {
+                        dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
+                    }
                 }
             }
         }
@@ -272,12 +274,12 @@ public class StructurePanel implements Serializable {
      * Delete all currently selected physical divisons.
      */
     public void deleteSelectedPhysicalDivisions() {
-        if (Objects.isNull(selectedLogicalNodes)) {
+        if (Objects.isNull(selectedPhysicalNodes)) {
             // there is nothing to do
             return;
         }
-        for (TreeNode selectedLogicalNode : selectedLogicalNodes) {
-            deleteSelectedPhysicalDivision(selectedLogicalNode);
+        for (TreeNode selectedPhysicalNode : selectedPhysicalNodes) {
+            deleteSelectedPhysicalDivision(selectedPhysicalNode);
         }
 
         int i = 1;
