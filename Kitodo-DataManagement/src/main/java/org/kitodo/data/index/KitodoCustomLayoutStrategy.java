@@ -50,7 +50,7 @@ public class KitodoCustomLayoutStrategy implements IndexLayoutStrategy {
 
     @Override
     public String extractUniqueKeyFromElasticsearchIndexName(String elasticsearchIndexName) {
-        String patternString = getSearchIndexPrefix() + "(.*)-\\d{6}";
+        String patternString = Pattern.quote(getSearchIndexPrefix()) + "(.*)-\\d{6}";
         Pattern uniqueKeyExtractionPattern = Pattern.compile(patternString);
         Matcher matcher = uniqueKeyExtractionPattern.matcher(elasticsearchIndexName);
         if (!matcher.matches()) {
