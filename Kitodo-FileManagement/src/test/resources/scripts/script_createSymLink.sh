@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -14,9 +14,11 @@
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 Source="$1"
 Target="$2"
 User="$3"
 
-/bin/ln -vs "$Source" "$Target"
-/bin/chown -vR "$User" "$Source" 
+ln -vs "$Source" "$Target"
+chown -vR "$User" "$Source"
