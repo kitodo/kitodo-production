@@ -892,7 +892,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     ) throws NoSuchMetadataFieldException {
         try {
             // save previously edited meta data
-            getMetadataPanel().preserveLogical();
+            getMetadataPanel().preserve();
         } catch (InvalidMetadataValueException e) {
             logger.info(e.getLocalizedMessage(), e);
         }
