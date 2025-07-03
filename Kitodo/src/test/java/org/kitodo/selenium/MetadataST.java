@@ -1013,12 +1013,4 @@ public class MetadataST extends BaseTestSelenium {
         xmlContent = xmlContent.replaceAll(SECOND_CHILD_ID, String.valueOf(secondChildId));
         Files.write(metaXml, xmlContent.getBytes());
     }
-
-    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
-        await().ignoreExceptions()
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(100, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS)
-                .until(conditionEvaluator);
-    }
 }
