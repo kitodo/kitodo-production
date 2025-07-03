@@ -53,6 +53,7 @@
         <property name="hibernate.search.backend.type">elasticsearch</property>
         <property name="hibernate.search.backend.hosts">localhost:9205</property>
         <property name="hibernate.search.backend.protocol">http</property>
+        <property name="hibernate.search.backend.layout.strategy">class:org.kitodo.data.index.KitodoCustomLayoutStrategy</property>
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
