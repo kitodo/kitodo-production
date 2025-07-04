@@ -112,6 +112,7 @@ public abstract class EditDataScript {
             try (OutputStream out = ServiceManager.getFileService()
                     .write(ServiceManager.getProcessService().getMetadataFileUri(process))) {
                 ServiceManager.getMetsService().save(workpiece, out);
+                ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(process, true);
                 ServiceManager.getProcessService().saveToIndex(process, false);
             }
         } catch (IOException | CustomResponseException | DataException e) {
