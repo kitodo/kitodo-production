@@ -19,8 +19,7 @@
 
     <p:dataTable id="templateTable"
                  var="template"
-                 value="#{ProjectForm.project.activeTemplates}"
-                 sortBy="#{ProjectForm.templateListSortBy}">
+                 value="#{ProjectForm.project.activeTemplates}">
         <p:column headerText="#{msgs.template}" id="taskTitle">
             <h:outputText value="#{template.title}"/>
         </p:column>
