@@ -21,40 +21,41 @@ import org.kitodo.data.database.enums.TaskStatus;
  * Constants for known search field names in filters.
  */
 enum FilterField {
-    SEARCH(null, null, null, null, null, "search", null),
-    PROCESS_ID(null, null, "id", "process.id", null, null, null),
-    PARENT_PROCESS_ID(null, null, "parent.id", "process.parent.id", null, null, null),
-    PROCESS_TITLE("title", "process.title", null, null, null, "searchTitle", null),
-    PROJECT("project.title", "process.project.title", "project.id", "process.project.id", null, "searchProject", null),
-    PROJECT_EXACT("project.title", "process.project.title", "project.id", "process.project.id", null, null, null),
+    SEARCH(null, null, null, null, null, null, "search", null),
+    PROCESS_ID(null, null, null, "id", "process.id", null, null, null),
+    PARENT_PROCESS_ID(null, null, null, "parent.id", "process.parent.id", null, null, null),
+    PROCESS_TITLE("title", "process.title", LikeSearch.NO, null, null, null, "searchTitle", null),
+    PROJECT("project.title", "process.project.title", LikeSearch.ALLOWED, "project.id", "process.project.id", null, null, null),
+    PROJECT_LOOSE("project.title", "process.project.title", LikeSearch.ALWAYS_RIGHT, "project.id", "process.project.id",
+            null, null, null),
     BATCH("process.batches AS batch WITH batch.title", "process.batches AS batch WITH batch.title",
-            "batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, null, null),
-    TASK("tasks AS task WITH task.title", "title", "tasks AS task WITH task.id", "id", null, "searchTask", null),
+            LikeSearch.NO, "batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, null, null),
+    TASK("tasks AS task WITH task.title", "title", LikeSearch.NO, "tasks AS task WITH task.id", "id", null, "searchTask", null),
     TASK_AUTOMATIC("tasks AS task WITH task.typeAutomatic = :queryObject AND task.title",
-            "~.typeAutomatic = :queryObject AND ~.title",
+            "~.typeAutomatic = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.typeAutomatic = :queryObject AND task.id", "typeAutomatic = :queryObject AND id",
             Boolean.TRUE, "searchTask", "automatic"),
     TASK_UNREADY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
-            "~.processingStatus = :queryObject AND ~.title",
+            "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.LOCKED, "searchTask", "locked"),
     TASK_READY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
-            "~.processingStatus = :queryObject AND ~.title",
+            "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.OPEN, "searchTask", "open"),
     TASK_ONGOING("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
-            "~.processingStatus = :queryObject AND ~.title",
+            "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.INWORK, "searchTask", "inwork"),
     TASK_FINISHED("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
-            "~.processingStatus = :queryObject AND ~.title",
+            "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.DONE, "searchTask", "closed"),
     TASK_FINISHED_USER(
             "tasks AS task WITH task.processingStatus = :queryObject AND (task.processingUser.name = # OR task.processingUser.surname = # "
                     .concat("OR task.processingUser.login = # OR task.processingUser.ldapLogin = #)"),
             "~.processingStatus = :queryObject AND (~.processingUser.name = # OR ~.processingUser.surname = # "
-                    .concat("OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)"),
+                    .concat("OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)"), LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.processingUser.id",
             "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, "searchTask", "closeduser");
 
@@ -77,7 +78,8 @@ enum FilterField {
                 return PARENT_PROCESS_ID;
             case "process": return PROCESS_TITLE;
             case "project": return PROJECT;
-            case "projectexact": return PROJECT_EXACT;
+            case "project_loose":
+                return PROJECT_LOOSE;
             case "batch": return BATCH;
             case "step": return TASK;
             case "stepautomatic": return TASK_AUTOMATIC;
@@ -92,7 +94,8 @@ enum FilterField {
             case "elternprozessid":
                 return PARENT_PROCESS_ID;
             case "projekt": return PROJECT;
-            case "projektexakt": return PROJECT_EXACT;
+            case "projekt_trunkiert":
+                return PROJECT_LOOSE;
             case "gruppe": return BATCH;
             case "schritt": return TASK;
             case "schrittautomatisch": return TASK_AUTOMATIC;
@@ -108,6 +111,7 @@ enum FilterField {
 
     private final String processTitleQuery;
     private final String taskTitleQuery;
+    private final LikeSearch likeSearch;
     private final String processIdQuery;
     private final String taskIdQuery;
     private final Object queryObject;
@@ -121,6 +125,8 @@ enum FilterField {
      *            search for processes by label in the database
      * @param taskTitleQuery
      *            search for tasks by label in the database
+     * @param likeSearch
+     *            like search settings
      * @param processIdQuery
      *            search for processes by id in the database
      * @param taskIdQuery
@@ -132,10 +138,11 @@ enum FilterField {
      * @param pseudoword
      *            auxiliary term for searching the index
      */
-    FilterField(String processTitleQuery, String taskTitleQuery, String processIdQuery, String taskIdQuery,
-            Object queryObject, String searchField, String pseudoword) {
+    FilterField(String processTitleQuery, String taskTitleQuery, LikeSearch likeSearch, String processIdQuery,
+            String taskIdQuery, Object queryObject, String searchField, String pseudoword) {
         this.processTitleQuery = processTitleQuery;
         this.taskTitleQuery = taskTitleQuery;
+        this.likeSearch = likeSearch;
         this.processIdQuery = processIdQuery;
         this.taskIdQuery = taskIdQuery;
         this.queryObject = queryObject;
@@ -162,6 +169,18 @@ enum FilterField {
     @MaybeNull
     String getTaskTitleQuery() {
         return taskTitleQuery;
+    }
+
+    /**
+     * Returns the field-bound like search settings for the search field. It is
+     * {@code null} only if the search field itself cannot perform text database
+     * searches.
+     * 
+     * @return like search settings
+     */
+    @MaybeNull
+    LikeSearch getLikeSearch() {
+        return likeSearch;
     }
 
     /**

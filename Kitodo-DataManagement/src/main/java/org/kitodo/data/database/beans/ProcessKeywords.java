@@ -430,16 +430,6 @@ class ProcessKeywords {
     }
 
     /**
-     * Returns the search keywords for the project name search. These are the
-     * words from the project name in normalized form.
-     * 
-     * @return search keywords for the project
-     */
-    public String getSearchProject() {
-        return String.join(" ", projectKeywords);
-    }
-
-    /**
      * Returns the search keywords for searching for operations assigned to a
      * batch. The same splitting criteria apply as for the title.
      * 

@@ -979,18 +979,6 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * When indexing, outputs the index keywords for searching by project name.
-     * 
-     * @return the index keywords for searching by project name
-     */
-    @Transient
-    @FullTextField(name = "searchProject")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingByProjectName() {
-        return initializeKeywords().getSearchProject();
-    }
-
-    /**
      * When indexing, outputs the index keywords for searching for assignment to
      * batches.
      * 
