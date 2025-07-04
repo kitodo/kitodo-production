@@ -39,12 +39,5 @@
         <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory
         </exception-handler-factory>
     </factory>
-    <render-kit>
-        <renderer>
-            <component-family>org.primefaces.component</component-family>
-            <renderer-type>org.primefaces.component.MediaRenderer</renderer-type>
-            <renderer-class>org.kitodo.production.renderer.KitodoMediaRenderer</renderer-class>
-        </renderer>
-    </render-kit>
 </faces-config>
 
