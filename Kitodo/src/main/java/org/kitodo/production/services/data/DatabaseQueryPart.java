@@ -60,8 +60,9 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
         }
         if (asteriskAllowed) {
             return value.replace("*", "%");
-        } else
+        } else {
             return value;
+        }
     }
 
     /**
