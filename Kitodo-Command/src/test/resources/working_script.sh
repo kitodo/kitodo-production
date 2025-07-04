@@ -10,4 +10,6 @@
 # GPL3-License.txt file that was distributed with this source code.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 echo Hello World

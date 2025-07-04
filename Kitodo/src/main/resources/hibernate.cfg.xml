@@ -54,6 +54,12 @@
         <property name="hibernate.javax.cache.missing_cache_strategy">create</property>
         <property name="hibernate.javax.cache.uri">ehcache.xml</property>
 
+        <!-- hibernate search -->
+        <property name="hibernate.search.enabled">true</property>
+        <property name="hibernate.search.backend.type">elasticsearch</property>
+        <property name="hibernate.search.backend.hosts">localhost:9200</property>
+        <property name="hibernate.search.backend.protocol">http</property>
+
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
 
