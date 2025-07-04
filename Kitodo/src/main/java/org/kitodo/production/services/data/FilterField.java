@@ -30,34 +30,34 @@ enum FilterField {
             null, null, null),
     BATCH("process.batches AS batch WITH batch.title", "process.batches AS batch WITH batch.title",
             LikeSearch.NO, "batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, null, null),
-    TASK("tasks AS task WITH task.title", "title", LikeSearch.NO, "tasks AS task WITH task.id", "id", null, "searchTask", null),
+    TASK("tasks AS task WITH task.title", "title", LikeSearch.NO, "tasks AS task WITH task.id", "id", null, null, null),
     TASK_AUTOMATIC("tasks AS task WITH task.typeAutomatic = :queryObject AND task.title",
             "~.typeAutomatic = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.typeAutomatic = :queryObject AND task.id", "typeAutomatic = :queryObject AND id",
-            Boolean.TRUE, "searchTask", "automatic"),
+            Boolean.TRUE, null, null),
     TASK_UNREADY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.LOCKED, "searchTask", "locked"),
+            "processingStatus = :queryObject AND id", TaskStatus.LOCKED, null, null),
     TASK_READY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.OPEN, "searchTask", "open"),
+            "processingStatus = :queryObject AND id", TaskStatus.OPEN, null, null),
     TASK_ONGOING("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.INWORK, "searchTask", "inwork"),
+            "processingStatus = :queryObject AND id", TaskStatus.INWORK, null, null),
     TASK_FINISHED("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.DONE, "searchTask", "closed"),
+            "processingStatus = :queryObject AND id", TaskStatus.DONE, null, null),
     TASK_FINISHED_USER(
             "tasks AS task WITH task.processingStatus = :queryObject AND (task.processingUser.name = # OR task.processingUser.surname = # "
                     .concat("OR task.processingUser.login = # OR task.processingUser.ldapLogin = #)"),
             "~.processingStatus = :queryObject AND (~.processingUser.name = # OR ~.processingUser.surname = # "
                     .concat("OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)"), LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.processingUser.id",
-            "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, "searchTask", "closeduser");
+            "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, null, null);
 
     /**
      * Here the string search field names (user input) are mapped to the

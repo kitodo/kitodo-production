@@ -34,12 +34,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.KitodoConfig;
-import org.kitodo.data.database.enums.TaskStatus;
 
 /**
  * Search keywords for a process.
@@ -50,9 +48,6 @@ class ProcessKeywords {
     private static final int LENGTH_MIN_REASONABLE = 1;
     private static final int LENGTH_MIN_DEFAULT = 3;
 
-    private static final String PSEUDOWORD_TASK_AUTOMATIC = "automatic";
-    private static final String PSEUDOWORD_TASK_DONE = "closed";
-    private static final String PSEUDOWORD_TASK_DONE_PROCESSING_USER = "closeduser";
     private static final String ANY_METADATA_MARKER = "mdWrap";
     private static final char VALUE_SEPARATOR = 'q';
 
@@ -72,23 +67,20 @@ class ProcessKeywords {
     private final Set<String> projectKeywords;
     private final Set<String> batchKeywords;
     private final Set<String> taskKeywords;
-    private final Set<String> taskPseudoKeywords;
 
     public ProcessKeywords(Process process) {
         // keywords for title search + default search
         this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()), LENGTH_MIN_DEFAULT);
 
-        // keywords for project search + default search
+        // keywords for project search in default search
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
         this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle, true), LENGTH_MIN_REASONABLE);
 
         // keywords for batch search + default search
         this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()), LENGTH_MIN_DEFAULT);
 
-        // keywords for task search, partly in default search
-        var taskKeywords = initTaskKeywords(process.getTasksUnmodified());
-        this.taskKeywords = filterMinLength(taskKeywords.getLeft(), LENGTH_MIN_DEFAULT);
-        this.taskPseudoKeywords = filterMinLength(taskKeywords.getRight(), LENGTH_MIN_DEFAULT);
+        // keywords for task search in default search
+        this.taskKeywords = filterMinLength(initTaskKeywords(process.getTasksUnmodified()), LENGTH_MIN_DEFAULT);
 
         // more keywords for default search only
         this.defaultKeywords = new HashSet<String>();
@@ -181,45 +173,14 @@ class ProcessKeywords {
      * 
      * @param tasks
      *            tasks for the words to be generated
-     * @return search terms and pseudo search terms
+     * @return search terms
      */
-    private static Pair<Set<String>, Set<String>> initTaskKeywords(Collection<Task> tasks) {
+    private static Set<String> initTaskKeywords(Collection<Task> tasks) {
         Set<String> taskKeywords = new HashSet<>();
-        Set<String> taskPseudoKeywords = new HashSet<>();
         for (Task task : tasks) {
-            for (String token : splitValues(task.getTitle())) {
-                String term = normalize(token);
-                taskKeywords.add(term);
-                if (task.isTypeAutomatic()) {
-                    taskKeywords.add(PSEUDOWORD_TASK_AUTOMATIC + VALUE_SEPARATOR + term);
-                }
-                TaskStatus taskStatus = task.getProcessingStatus();
-                if (Objects.isNull(taskStatus)) {
-                    continue;
-                }
-                if (Objects.equals(taskStatus, TaskStatus.DONE)) {
-                    taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE);
-                    taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE + VALUE_SEPARATOR + term);
-                    User closedUser = task.getProcessingUser();
-                    if (Objects.isNull(closedUser)) {
-                        continue;
-                    }
-                    if (StringUtils.isNotBlank(closedUser.getName())) {
-                        taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE_PROCESSING_USER + VALUE_SEPARATOR
-                            + normalize(closedUser.getName()));
-                    }
-                    if (StringUtils.isNotBlank(closedUser.getSurname())) {
-                        taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE_PROCESSING_USER + VALUE_SEPARATOR
-                            + normalize(closedUser.getSurname()));
-                    }
-                } else {
-                    String taskKeyword = taskStatus.toString().toLowerCase();
-                    taskPseudoKeywords.add(taskKeyword);
-                    taskPseudoKeywords.add(taskKeyword + VALUE_SEPARATOR + term);
-                }
-            }
+            taskKeywords.addAll(initSimpleKeywords(task.getTitle(), false));
         }
-        return Pair.of(taskKeywords, taskPseudoKeywords);
+        return taskKeywords;
     }
 
     /**
@@ -439,30 +400,6 @@ class ProcessKeywords {
         return String.join(" ", batchKeywords);
     }
 
-    /**
-     * Returns search keywords for finding tasks. This uses pseudowords to
-     * particularly powerfully search the various task states.
-     * 
-     * <p>
-     * Given an automated task called "OCR" and the task is running, it
-     * generates the tokens: {@code ocr}, {@code automaticqocr},
-     * {@code inworkqocr}.
-     * 
-     * <p>
-     * If a task "Quality Assurance" is finished and it was processed by John
-     * Doe, the token results: {@code quality}, {@code assurance},
-     * {@code closedqquality}, {@code closedqassurance},
-     * {@code closeduserqjohn}, {@code closeduserqdoe}.
-     * 
-     * @return search keywords for tasks
-     */
-    public String getSearchTask() {
-        Set<String> allTaskKeywords = new HashSet<>(initialHashMapSize(taskKeywords, taskPseudoKeywords));
-        allTaskKeywords.addAll(taskKeywords);
-        allTaskKeywords.addAll(taskPseudoKeywords);
-        return String.join(" ", allTaskKeywords);
-    }
-
     private static int initialHashMapSize(Collection<?>... collections) {
         final double hashMapDefaultLoadFactor = 0.75;
         int items = 0;
@@ -488,7 +425,6 @@ class ProcessKeywords {
             traceLogCollection("[projectKeywords]", projectKeywords, log, true);
             traceLogCollection("[batchKeywords]", batchKeywords, log, true);
             traceLogCollection("[taskKeywords]", taskKeywords, log, true);
-            traceLogCollection("[taskPseudoKeywords]", taskPseudoKeywords, log, true);
             logger.trace("Keywords logged to {}", log);
         } catch (RuntimeException | IOException e) {
             logger.catching(Level.TRACE, e);

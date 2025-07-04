@@ -991,19 +991,6 @@ public class Process extends BaseTemplateBean {
         return initializeKeywords().getSearchBatch();
     }
 
-    /**
-     * When indexing, outputs the index keywords for searching for task
-     * information.
-     * 
-     * @return the index keywords for searching for task information
-     */
-    @Transient
-    @FullTextField(name = "searchTask")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingForTaskInformation() {
-        return initializeKeywords().getSearchTask();
-    }
-
     private ProcessKeywords initializeKeywords() {
         if (this.processKeywords == null) {
             ProcessKeywords indexingKeyworder = new ProcessKeywords(this);
