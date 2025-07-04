@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -13,6 +13,8 @@
 #
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
+
+export PATH="/usr/bin:/bin:${PATH}"
 
 Link="$1"
 

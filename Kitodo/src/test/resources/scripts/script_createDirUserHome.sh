@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
 #
@@ -14,8 +14,10 @@
 # Note: Ensure that Tomcat has permission to execute the given commands.
 #
 
+export PATH="/usr/bin:/bin:${PATH}"
+
 User="$1"
 Home="$2"
 
-/bin/mkdir "$Home"
-/bin/chmod g+w "$Home"
+mkdir -p "$Home"
+chmod g+w "$Home"
