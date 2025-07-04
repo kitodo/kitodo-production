@@ -20,7 +20,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <f:metadata>
-        <!--@elvariable id="id" type="java.lang.Integer"-->
+        <!--@elvariable id="processId" type="java.lang.Integer"-->
         <f:viewParam name="processId"/>
         <!--@elvariable id="mediaId" type="java.lang.String"-->
         <f:viewParam name="mediaId"/>
@@ -48,20 +48,45 @@
         <p:panel id="externalViewPanel">
             <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
                 <!-- video and audio -->
+                <!--@elvariable id="mimeType" type="java.lang.String"-->
+                <!--@elvariable id="cachingUUID" type="java.lang.String"-->
                 <ui:fragment rendered="#{fn:startsWith(mimeType, 'video') or fn:startsWith(mimeType, 'audio')}">
                     <p:outputPanel id="mediaDetailMediaContainer">
-                        <p:media 
-                                styleClass="mediaPreviewItem" 
-                                value="#{mediaProvider.mediaView}"
-                                player="#{fn:startsWith(mimeType, 'video') ? 'html-video' : 'html-audio'}"
-                                width="90%" 
-                                height="auto">
-                            <f:param name="mediaId" value="#{mediaId}"/>
-                            <f:param name="process" value="#{processId}"/>
-                            <f:param name="sessionId" value="#{cachingUUID}"/>
-                            <f:param name="type" value="#{mimeType}"/>
-                            <f:param name="krsc" value="true"/>
-                        </p:media>
+                        <p:video styleClass="mediaPreviewItem"
+                                 rendered="#{fn:startsWith(mimeType, 'video')}"
+                                 value="#{mediaProvider.mediaView}"
+                                 player="#{mimeType.substring(mimeType.lastIndexOf('/') + 1)}"
+                                 width="90%"
+                                 controls="true"
+                                 height="auto">
+                            <f:param name="process"
+                                     value="#{processId}"/>
+                            <f:param name="mediaId"
+                                     value="#{mediaId}"/>
+                            <f:param name="sessionId"
+                                     value="#{cachingUUID}"/>
+                            <f:param name="type"
+                                     value="#{mimeType}"/>
+                            <f:param name="krsc"
+                                     value="true"/>
+                        </p:video>
+                        <p:audio styleClass="mediaPreviewItem"
+                                 rendered="#{fn:startsWith(mimeType, 'audio')}"
+                                 value="#{mediaProvider.mediaView}"
+                                 width="90%"
+                                 controls="true"
+                                 height="auto">
+                            <f:param name="process"
+                                     value="#{processId}"/>
+                            <f:param name="mediaId"
+                                     value="#{mediaId}"/>
+                            <f:param name="sessionId"
+                                     value="#{cachingUUID}"/>
+                            <f:param name="type"
+                                     value="#{mimeType}"/>
+                            <f:param name="krsc"
+                                     value="true"/>
+                        </p:audio>
                     </p:outputPanel>
                 </ui:fragment>
                 <!-- image -->
@@ -71,8 +96,10 @@
                             value="#{mediaProvider.mediaView}"
                             styleClass="mediaPreviewItem"
                             style="display: none;">
-                        <f:param name="mediaId" value="#{mediaId}"/>
-                        <f:param name="process" value="#{processId}"/>
+                        <f:param name="mediaId"
+                                 value="#{mediaId}"/>
+                        <f:param name="process"
+                                 value="#{processId}"/>
                     </p:graphicImage>
 
                     <div id="map" class="map" style="width: 100%; height: 100%;">
