@@ -15,6 +15,11 @@ public class StringConstants {
 
     public static final String KITODO = "kitodo";
 
+    public static final String PROCESS = "process";
+    public static final String MEDIA_ID = "mediaId";
+    public static final String MEDIA_VIEW = "mediaView";
+    public static final String PREVIEW = "preview";
+
     public static final String COMMA_DELIMITER = ", ";
     public static final String SEMICOLON_DELIMITER = "; ";
     public static final String EDIT_FORM_SAVE = "editForm:save";
