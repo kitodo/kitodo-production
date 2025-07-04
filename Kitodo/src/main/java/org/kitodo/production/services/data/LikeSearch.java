@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+
 package org.kitodo.production.services.data;
 
 /**
