@@ -3632,6 +3632,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 
 #imagePreviewForm\:mediaDetail .mediaPreviewItem {
     max-height: 100%;
+    width: 90%;
 }
 
 #imagePreviewForm\:mediaDetail #mediaFormattedTime {
@@ -3647,6 +3648,12 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     padding: 14px 16px;
     background: var(--trans-blue);
     border-radius: 3px;
+}
+
+#imagePreviewForm\:mediaDetail audio,
+#imagePreviewForm\:mediaDetail video {
+    max-width: 100%;
+    width: 100%;
 }
 
 #imagePreviewForm\:audioWaveformTools > div > button:first-child {
