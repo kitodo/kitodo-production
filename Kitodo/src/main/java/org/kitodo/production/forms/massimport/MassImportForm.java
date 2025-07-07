@@ -165,16 +165,15 @@ public class MassImportForm extends BaseForm {
                 records = new LinkedList<>();
                 success = false;
             }
-            if (metadataKeys.size() == 1) {
-                Helper.setWarnMessage(Helper.getTranslation("massImport.separatorMissing", csvSeparator.toString()));
-                success = false;
-            }
             if (success && skipEmptyColumns) {
                 List<Integer> skipIndices = ServiceManager.getMassImportService().getColumnSkipIndices(records, metadataKeys.size());
                 if (!skipIndices.isEmpty()) {
                     metadataKeys = discardMetadataKeysOfEmptyColumns(metadataKeys, skipIndices);
                     records = discardEmptyColumns(records, skipIndices);
                 }
+            }
+            if (missingFunctionalMetadataInFirstColumn()) {
+                Helper.setErrorMessage("massImport.invalidConfigurationFirstColumn");
             }
         } catch (IOException | CsvException | KitodoCsvImportException e) {
             Helper.setErrorMessage(e);
@@ -620,13 +619,13 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Check and return whether first column contains metadata configured as "recordIdentifier" or "docType"
-     * in ruleset or not.
-     * @return 'true' if first column contains functional metadata of type "recordIdentifier" or "docType" and
+     * Check and return whether first column contains metadata that is _not_ configured as "recordIdentifier" or "docType"
+     * in ruleset.
+     * @return 'true' if first column contains metadata that is not configured as "recordIdentifier" or "docType" and
      *          'false' otherwise
      */
-    public boolean firstColumnContainsRecordIdentifierOrDocType() {
-        return firstColumnContainsRecordsIdentifier() || firstColumnContainsDoctype();
+    public boolean missingFunctionalMetadataInFirstColumn() {
+        return !(firstColumnContainsRecordsIdentifier() || firstColumnContainsDoctype());
     }
 
     /**
@@ -699,5 +698,18 @@ public class MassImportForm extends BaseForm {
      */
     public void setSkipEmptyColumns(Boolean skipEmptyColumns) {
         this.skipEmptyColumns = skipEmptyColumns;
+    }
+
+    /**
+     * Check and return whether the button to initiate the mass import should be disabled or not.
+     *
+     * @return "true" if the list of records is empty, the first column does not contain the necessary functional metadata
+     *                or the first column contains record identifier but no catalog has been selected as source for the metadata import
+     *         "false" otherwise
+     */
+    public boolean isMassImportDisabled() {
+        return records.isEmpty()
+                || missingFunctionalMetadataInFirstColumn()
+                || (firstColumnContainsRecordsIdentifier() && Objects.isNull(importConfiguration));
     }
 }
