@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -109,15 +110,17 @@ public class MassImportService {
                      .build()) {
             int targetNumberOfColumns = -1;
             for (String[] entries : csvReader.readAll()) {
-                if (isSingleEmptyEntry(entries)) {
+                if (isSingleEmptyEntry(entries) || isLineEmpty(entries)) {
                     continue; // Skip processing this line
                 }
-                // throw exception different number of metadata entries were parsed for different CSV lines
+                // throw exception if different number of metadata entries were parsed for different CSV lines
                 if (targetNumberOfColumns >= 0 && entries.length != targetNumberOfColumns) {
                     throw new KitodoCsvImportException(Helper.getTranslation("massImport.separatorCountMismatchEntries",
                             Pattern.quote(separator)));
                 }
-                targetNumberOfColumns = entries.length;
+                if (targetNumberOfColumns < 0) {
+                    targetNumberOfColumns = entries.length;
+                }
                 List<CsvCell> cells = new LinkedList<>();
                 for (String value : entries) {
                     cells.add(new CsvCell(value.trim()));
@@ -205,6 +208,12 @@ public class MassImportService {
     // Helper method to check if a line has a single empty entry
     private boolean isSingleEmptyEntry(String[] entries) {
         return entries.length == 1 && entries[0].isEmpty();
+    }
+
+    // Helper method to check if line is completely empty
+    private boolean isLineEmpty(String[] entries) {
+        return entries.length == 0 ||
+                Arrays.stream(entries).allMatch(StringUtils::isBlank);
     }
 
     /**

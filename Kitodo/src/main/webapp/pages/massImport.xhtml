@@ -39,7 +39,7 @@
                   styleClass="secondary"/>
         <p:commandButton id="importButton"
                          value="#{msgs.massImport}"
-                         disabled="#{empty MassImportForm.records or not MassImportForm.getRulesetConfigurationForOpacImportComplete() or not MassImportForm.firstColumnContainsRecordIdentifierOrDocType()}"
+                         disabled="#{MassImportForm.massImportDisabled}"
                          actionListener="#{MassImportForm.prepare()}"
                          action="#{MassImportForm.startMassImport()}"
                          icon="fa fa-download fa-lg"

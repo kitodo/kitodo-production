@@ -1342,7 +1342,7 @@ public class ImportService {
 
         String processTitle = tempProcess.getProcess().getTitle();
         if (!ProcessValidator.isProcessTitleCorrect(processTitle)) {
-            throw new ProcessGenerationException(String.format("Unable to create process (invalid process title '%s')",
+            throw new ProcessGenerationException(Helper.getTranslation("importError.invalidProcessTitle",
                     processTitle));
         }
 
