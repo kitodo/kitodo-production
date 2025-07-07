@@ -40,8 +40,8 @@
                          value="#{mediaProvider.mediaView}"
                          player="#{selectedGalleryMediaContent.mediaViewMimeType.substring(selectedGalleryMediaContent.mediaViewMimeType.lastIndexOf('/') + 1)}"
                          controls="true"
+                         width="100%"
                          rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video')}"
-                         width="90%"
                          height="auto">
                     <f:param name="mediaId"
                              value="#{selectedGalleryMediaContent.id}"/>
@@ -60,7 +60,6 @@
                          controls="true"
                          player="#{fn:endsWith(selectedGalleryMediaContent.mediaViewMimeType, 'mpeg') ? 'mp3' : selectedGalleryMediaContent.mediaViewMimeType.substring(selectedGalleryMediaContent.mediaViewMimeType.lastIndexOf('/') + 1)}"
                          rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}"
-                         width="90%"
                          height="auto">
                     <f:param name="mediaId"
                              value="#{selectedGalleryMediaContent.id}"/>
