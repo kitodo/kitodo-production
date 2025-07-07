@@ -43,6 +43,7 @@
                 <p:video styleClass="mediaListItem"
                          rendered="#{fn:startsWith(media.previewMimeType, 'video')}"
                          player="#{media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
                          value="#{mediaProvider.previewData}">
                     <f:param name="mediaId"
                              value="#{media.id}"/>
@@ -58,6 +59,7 @@
                 <p:audio styleClass="mediaListItem"
                          rendered="#{fn:startsWith(media.previewMimeType, 'audio')}"
                          player="#{fn:endsWith(media.previewMimeType, 'mpeg') ? 'mp3' : media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
                          value="#{mediaProvider.previewData}">
                     <f:param name="mediaId"
                              value="#{media.id}"/>
