@@ -212,8 +212,8 @@ public class MassImportService {
 
     // Helper method to check if line is completely empty
     private boolean isLineEmpty(String[] entries) {
-        return entries.length == 0 ||
-                Arrays.stream(entries).allMatch(StringUtils::isBlank);
+        return entries.length == 0
+                || Arrays.stream(entries).allMatch(StringUtils::isBlank);
     }
 
     /**
