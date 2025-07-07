@@ -1491,7 +1491,7 @@ public class ImportService {
         String docType = getDocType(presetMetadata, templateId);
         Map<String, String> divisions = rulesetManagementInterface.getStructuralElements(metadataLanguages);
         if (!divisions.containsKey(docType)) {
-            throw new ProcessGenerationException("Invalid document type: " + docType);
+            throw new ProcessGenerationException(Helper.getTranslation("massImport.invalidDocumentType", docType));
         }
         TempProcess tempProcess = new TempProcess(process, docType, presetMetadata, rulesetManagementInterface, metadataSeparator);
 
