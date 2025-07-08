@@ -2446,6 +2446,10 @@ Metadata Editor
     margin: 0;
 }
 
+#messagesWrapper .ui-messages .ui-corner-all {
+    padding: 10px;
+}
+
 #metadataEditorWrapper {
     height: 700px;
     white-space: nowrap;
