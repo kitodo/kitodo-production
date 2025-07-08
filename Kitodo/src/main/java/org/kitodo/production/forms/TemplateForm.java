@@ -64,7 +64,6 @@ public class TemplateForm extends TemplateBaseForm {
     private List<String> selectedTemplateFilters;
     private static final String DEACTIVATED_TEMPLATES_FILTER = "deactivatedTemplates";
     private Map<Integer,Boolean> templateUsageMap;
-    private SortMeta taskListSortBy;
 
     /**
      * Constructor.
@@ -82,7 +81,6 @@ public class TemplateForm extends TemplateBaseForm {
         templateFilters.add(DEACTIVATED_TEMPLATES_FILTER);
         selectedTemplateFilters = new LinkedList<>();
         sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
-        taskListSortBy = SortMeta.builder().field("ordering").order(SortOrder.ASCENDING).build();
     }
 
     /**
@@ -544,23 +542,5 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public void templateFiltersChanged() {
         setShowInactiveTemplates(selectedTemplateFilters.contains(DEACTIVATED_TEMPLATES_FILTER));
-    }
-
-    /**
-     * Get the current sorting configuration for the template's task list.
-     *
-     * @return the SortMeta object representing the sorting configuration
-     */
-    public SortMeta getTaskListSortBy() {
-        return taskListSortBy;
-    }
-
-    /**
-     * Set the sorting configuration for the template's task list.
-     *
-     * @param taskListSortBy the SortMeta object representing the sorting configuration
-     */
-    public void setTaskListSortBy(SortMeta taskListSortBy) {
-        this.taskListSortBy = taskListSortBy;
     }
 }
