@@ -378,8 +378,15 @@ public class ProcessForm extends TemplateBaseForm {
     public String saveTaskAndRedirect() {
         Stopwatch stopwatch = new Stopwatch(this, "saveTaskAndRedirect");
         saveTask(this.task);
-        return stopwatch.stop(processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0
-                : this.process.getId()));
+        try {
+            this.process = ServiceManager.getProcessService().getById(this.process.getId());
+            ServiceManager.getProcessService().save(this.process);
+            return stopwatch.stop(processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId()));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
+                    logger, e);
+        }
+        return stopwatch.stop(this.stayOnCurrentPage);
     }
 
     /**
