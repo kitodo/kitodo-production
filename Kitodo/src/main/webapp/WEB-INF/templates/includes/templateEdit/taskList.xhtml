@@ -12,7 +12,6 @@
 -->
 
 <ui:composition
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui"
@@ -20,7 +19,6 @@
     <p:dataTable id="taskTable"
                  var="item"
                  value="#{TemplateForm.template.tasks}"
-                 sortBy="#{TemplateForm.taskListSortBy}"
                  rowKey="#{item.id}">
 
         <!-- ordering -->
