@@ -1191,6 +1191,7 @@ body .statusColumn .ui-button {
     margin-bottom: 32px;
 }
 
+#login-section #password,
 #login-section .ui-password {
     width: 100%;
 }
