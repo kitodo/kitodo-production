@@ -103,7 +103,7 @@ public class CreateProcessFormIT {
     @AfterEach
     public void cleanUpAfterEach() throws Exception {
         if (createdProcess != null && createdProcess.getId() != null) {
-            processService.remove(createdProcess.getId());
+            ProcessService.deleteProcess(createdProcess);
             fileService.delete(URI.create(createdProcess.getId().toString()));
         }
         createdProcess = null;
