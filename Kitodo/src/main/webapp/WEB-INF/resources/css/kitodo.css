@@ -4415,8 +4415,7 @@ min 700px
     }
 
     #portal-header #portal-nav {
-        width: 25%;
-        min-width: 230px;
+        width:120px;
         text-align: right;
         position: relative;
         top: auto;
