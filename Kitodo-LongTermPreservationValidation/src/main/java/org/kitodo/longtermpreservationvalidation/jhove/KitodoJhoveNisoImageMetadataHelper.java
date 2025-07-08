@@ -385,7 +385,45 @@ public class KitodoJhoveNisoImageMetadataHelper {
             Rational value = entry.getValue().apply(metadata);
             if (Objects.nonNull(value)) {
                 map.put(entry.getKey(), value.toString());
+                try {
+                    map.put(entry.getKey() + "_double", String.valueOf(value.toDouble()));
+                } catch (ArithmeticException e) {
+                    // ignore
+                }
+                try {
+                    map.put(entry.getKey() + "_long", String.valueOf(value.toLong()));
+                } catch (ArithmeticException e) {
+                    // ignore
+                }
             }
+        }
+    }
+
+    /**
+     * Converts an array of rationals to a comma separated string.
+     * 
+     * @param array the array to convert
+     * @param rationalToString the method that is used to convert a single rational to a string
+     * @return the aggregated string
+     */
+    private static String rationalArrayToString(Rational[] array, Function<Rational, String> rationalToString) {
+        if (Objects.isNull(array)) {
+            return null;
+        }
+
+        try {
+            String joined = Arrays.stream(array)
+                .filter(Objects::nonNull)
+                .map((r) -> rationalToString.apply(r))
+                .collect(Collectors.joining(","));
+
+            if (!joined.isEmpty()) {
+                return joined;
+            }
+
+            return null;
+        } catch (ArithmeticException e) {
+            return null;
         }
     }
 
@@ -420,16 +458,21 @@ public class KitodoJhoveNisoImageMetadataHelper {
             }
         }
 
-        // rationa array properties
+        // rational array properties
         for (Map.Entry<String, Function<NisoImageMetadata, Rational[]>> entry: RATIONAL_ARRAY_PROPERTIES_MAP.entrySet()) {
             Rational[] values = entry.getValue().apply(metadata);
             if (Objects.nonNull(values)) {
-                String joined = Arrays.stream(values)
-                    .filter(Objects::nonNull)
-                    .map((r) -> r.toString())
-                    .collect(Collectors.joining(","));
-                if (!joined.isEmpty()) {
-                    map.put(entry.getKey(), joined);
+                String joinedRaw = rationalArrayToString(values, (Rational r) -> r.toString());
+                if (Objects.nonNull(joinedRaw)) {
+                    map.put(entry.getKey(), joinedRaw);
+                }
+                String joinedDouble = rationalArrayToString(values, (Rational r) -> String.valueOf(r.toDouble()));
+                if (Objects.nonNull(joinedDouble)) {
+                    map.put(entry.getKey() + "_double", joinedDouble);
+                }
+                String joinedLong = rationalArrayToString(values, (Rational r) -> String.valueOf(r.toLong()));
+                if (Objects.nonNull(joinedLong)) {
+                    map.put(entry.getKey(), joinedLong);
                 }
             }
         }
