@@ -20,11 +20,11 @@ import org.apache.logging.log4j.LogManager;
 
 public class Stopwatch {
 
-    private Class<?> executor;
-    private Object object;
-    private String functionName;
-    private String[] args;
-    private long start;
+    private final Class<?> executor;
+    private final Object object;
+    private final String functionName;
+    private final String[] args;
+    private final long start;
 
     /**
      * Creates a new stopwatch.
