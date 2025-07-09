@@ -571,6 +571,7 @@ public class MassImportForm extends BaseForm {
             return importSuccessMap.get(Integer.parseInt(recordId)).get(errorMessage);
         } catch (NumberFormatException e) {
             logger.error(e.getLocalizedMessage());
+            return "";
         }
     }
 
