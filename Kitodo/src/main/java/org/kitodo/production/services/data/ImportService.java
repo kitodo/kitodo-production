@@ -1539,7 +1539,7 @@ public class ImportService {
         String newTitle = titleGenerator.generateTitle(titleDefinition, null, tempProcess.getProcess().getTitle());
         // replace special characters with underscores to avoid invalid process titles
         tempProcess.getProcess().setTitle(newTitle.replaceAll("[^a-zA-Z0-9]", "_"));
-        processTempProcess(tempProcess, rulesetManagementInterface, CREATE, metadataLanguages, parentTempProcess);
+        processTempProcess(tempProcess, rulesetManagementInterface, CREATE, metadataLanguages, parentTempProcess, false);
         setLabelAndOrderLabelOfImportedProcess(tempProcess, presetMetadata);
         checkProcessTitle(tempProcess);
         ServiceManager.getProcessService().save(tempProcess.getProcess());

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -71,7 +70,7 @@ public class MassImportForm extends BaseForm {
     private List<String> importedCsvLines = new LinkedList<>();
     private final MassImportService massImportService = ServiceManager.getMassImportService();
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
-    private HashMap<Integer, HashMap<String, String>> importSuccessMap = new HashMap<>();
+    private LinkedList<HashMap<String, String>> importResults = new LinkedList<>();
     private Integer progress = 0;
     private Boolean rulesetConfigurationForOpacImportComplete = null;
     private String configurationError = null;
@@ -194,7 +193,7 @@ public class MassImportForm extends BaseForm {
     private void resetValues() {
         metadataKeys = new LinkedList<>();
         records = new LinkedList<>();
-        importSuccessMap = new HashMap<>();
+        importResults = new LinkedList<>();
         importedCsvHeaderLine = "";
         importedCsvLines = new LinkedList<>();
     }
@@ -226,7 +225,7 @@ public class MassImportForm extends BaseForm {
      * Import all records from list.
      */
     public void startMassImport() {
-        importSuccessMap = new HashMap<>();
+        importResults = new LinkedList<>();
         PrimeFaces.current().ajax().update("massImportResultDialog");
         try {
             LinkedList<LinkedHashMap<String, List<String>>> presetMetadata = massImportService.prepareMetadata(metadataKeys, records);
@@ -255,7 +254,7 @@ public class MassImportForm extends BaseForm {
      */
     public void prepare() {
         progress = 0;
-        importSuccessMap = new HashMap<>();
+        importResults = new LinkedList<>();
         PrimeFaces.current().ajax().update("massImportProgressForm:massImportProgress");
     }
 
@@ -282,7 +281,7 @@ public class MassImportForm extends BaseForm {
             } catch (ImportException e) {
                 entryMap.put(errorMessage, e.getLocalizedMessage());
             }
-            importSuccessMap.put(processMetadata.indexOf(record), entryMap);
+            importResults.add(entryMap);
             PrimeFaces.current().ajax().update("massImportProgressDialog");
         }
     }
@@ -311,7 +310,7 @@ public class MassImportForm extends BaseForm {
             } catch (Exception e) {
                 entryMap.put(errorMessage, e.getLocalizedMessage());
             }
-            importSuccessMap.put(processMetadata.indexOf(entry), entryMap);
+            importResults.add(entryMap);
             PrimeFaces.current().ajax().update("massImportProgressDialog");
         }
     }
@@ -534,47 +533,30 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get map containing indexes of successful imports as keys and maps containing corresponding titles, recordIdentifiers
-     * and error messages.
+     * Return a list of maps containing recordIdentifiers and process titles of successful imports.
      *
-     * @return map with indexes of successful imports as keys and
+     * @return list of maps containing record identifier and process titles of successful imports
      */
-    public HashMap<Integer, HashMap<String, String>> getSuccessfulImports() {
-        if (Objects.nonNull(importSuccessMap)) {
-            return importSuccessMap.entrySet().stream().filter(entry -> Objects.isNull(entry.getValue().get(errorMessage)))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (prev, next) -> next, HashMap::new));
+    public LinkedList<HashMap<String, String>> getSuccessfulImports() {
+        if (Objects.nonNull(importResults)) {
+            return importResults.stream().filter(map -> Objects.isNull(map.get(errorMessage)))
+                    .collect(Collectors.toCollection(LinkedList::new));
         }
-        return new HashMap<>();
+        return new LinkedList<>();
     }
 
     /**
-     * Get map containing indexes of failed imports as keys and maps containing corresponding titles, recordIdentifiers and error messages.
+     * Return a list of maps containing recordIdentifiers and error messages of failed imports.
      *
-     * @return map with indexes of failed imports as keys and
+     * @return list of maps containing record identifier and error messages of failed imports
      */
-    public HashMap<Integer, HashMap<String, String>> getFailedImports() {
-        if (Objects.nonNull(importSuccessMap)) {
-            return importSuccessMap.entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue().get(errorMessage)))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (prev, next) -> next, HashMap::new));
+    public LinkedList<HashMap<String, String>> getFailedImports() {
+        if (Objects.nonNull(importResults)) {
+            return importResults.stream().filter(map -> Objects.nonNull(map.get(errorMessage)))
+                    .collect(Collectors.toCollection(LinkedList::new));
         }
-        return new HashMap<>();
+        return new LinkedList<>();
     }
-
-    /**
-     * Get error message of import with ID 'recordId'. Return 'null' if record was imported without error.
-     *
-     * @param recordId ID of record for which error message is returned
-     * @return error message of import for ID 'recordId'; returns 'null' if no error occurred
-     */
-    public String getImportErrorMessage(String recordId) {
-        try {
-            return importSuccessMap.get(Integer.parseInt(recordId)).get(errorMessage);
-        } catch (NumberFormatException e) {
-            logger.error(e.getLocalizedMessage());
-            return "";
-        }
-    }
-
 
     /**
      * Remove metadata key and CsvCells with given index from list of metadata keys and all current CsvRecords.
@@ -599,7 +581,7 @@ public class MassImportForm extends BaseForm {
         if (records.isEmpty()) {
             progress = 0;
         } else {
-            progress = (importSuccessMap.size() * 100) / records.size();
+            progress = (importResults.size() * 100) / records.size();
         }
         PrimeFaces.current().ajax().update("massImportProgressForm:massImportProgress");
         return progress;
@@ -611,7 +593,7 @@ public class MassImportForm extends BaseForm {
      * @return number of imported records
      */
     public int getNumberOfProcessesRecords() {
-        return importSuccessMap.size();
+        return importResults.size();
     }
 
     /**
