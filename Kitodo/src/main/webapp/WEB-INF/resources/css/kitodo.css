@@ -172,11 +172,13 @@ body.first-visit #portal-header {
 #portal-search {
     margin-left: var(--default-double-size);
     margin-right: var(--default-full-size);
+    width:45%
 }
 
 #portal-search form {
     background: var(--focused-blue);
     border-radius: var(--default-border-radius);
+    width: 100%;
     display: table;
     white-space: nowrap;
 }
@@ -852,7 +854,7 @@ label.ui-outputlabel[for] {
 
 #filterMenuWrapper {
     min-width: 430px;
-    width: 35%;
+    width: 50%;
 }
 
 #filterMenuWrapper > .ui-inputgroup {
@@ -4413,8 +4415,7 @@ min 700px
     }
 
     #portal-header #portal-nav {
-        width: 25%;
-        min-width: 230px;
+        width:120px;
         text-align: right;
         position: relative;
         top: auto;
