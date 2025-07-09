@@ -277,7 +277,7 @@ public class MassImportForm extends BaseForm {
                     logger.info(ee.getLocalizedMessage());
                     entryMap.put(recordIdentifier, null);
                 }
-                Process process = importService.importProcess(projectId, templateId, importConfiguration, record);
+                Process process = importService.importProcessForMassImport(projectId, templateId, importConfiguration, record);
                 entryMap.put(processTitle, process.getTitle());
             } catch (ImportException e) {
                 entryMap.put(errorMessage, e.getLocalizedMessage());

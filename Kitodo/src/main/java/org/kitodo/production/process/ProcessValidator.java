@@ -68,27 +68,45 @@ public final class ProcessValidator {
 
     /**
      * Check if process title is correct.
+     * Convenience function displaying potential error messages on the frontend.
      *
      * @param title
      *            of the process for validation
-     * @return true or false
+     * @return whether process title is correct or not
      */
     public static boolean isProcessTitleCorrect(String title) {
+        return isProcessTitleCorrect(title, true);
+    }
+
+    /**
+     * Check if process title is correct.
+     *
+     * @param title
+     *            of the process for validation
+     * @param showErrorMessage
+     *            controls whether potential error messages should be displayed on the frontend or not
+     * @return true or false
+     */
+    public static boolean isProcessTitleCorrect(String title, boolean showErrorMessage) {
         boolean valid = true;
 
         if (StringUtils.isBlank(title)) {
             valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
+            if (showErrorMessage) {
+                Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
+            }
         }
 
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (Objects.isNull(title) || !title.matches(validateRegEx)) {
             valid = false;
-            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
+            if (showErrorMessage) {
+                Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
+            }
         }
 
         if (valid && preventProcessDuplicates()) {
-            valid = isProcessTitleAvailable(title);
+            valid = isProcessTitleAvailable(title, showErrorMessage);
         }
 
         return valid;
@@ -119,10 +137,12 @@ public final class ProcessValidator {
      *
      * @param title
      *            of process for checking availability
+     * @param showErrorMessage
+     *            controls whether error messages should be rendered to the frontend or not
      * @return true if process title is not used, false if otherwise or title is
      *         null
      */
-    public static boolean isProcessTitleAvailable(String title) {
+    public static boolean isProcessTitleAvailable(String title, boolean showErrorMessage) {
         if (Objects.nonNull(title)) {
             long amount;
             try {
@@ -133,7 +153,9 @@ public final class ProcessValidator {
                 return false;
             }
             if (amount > 0) {
-                Helper.setErrorMessage("processTitleAlreadyInUse", new Object[] {title});
+                if (showErrorMessage) {
+                    Helper.setErrorMessage("processTitleAlreadyInUse", new Object[] {title});
+                }
                 return false;
             }
             return true;

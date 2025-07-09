@@ -23,7 +23,7 @@
         <p:row>
             <h:panelGroup style="display: inline-block;">
                 <p:outputLabel for="csvFileUpload"
-                               value="#{msgs['csvFileUpload']}"/>
+                               value="#{msgs['massImport.csvFileUpload']}"/>
                 <p:fileUpload id="csvFileUpload"
                               value="#{MassImportForm.file}"
                               listener="#{MassImportForm.handleFileUpload}"
@@ -61,7 +61,7 @@
                           rendered="#{MassImportForm.file ne null}">
                 <h:panelGroup styleClass="separator-selection">
                     <p:outputLabel for="csvSeparator"
-                                   value="#{msgs['csvSeparator']}"/>
+                                   value="#{msgs['massImport.csvSeparator']}"/>
                     <p:selectOneMenu id="csvSeparator"
                                      styleClass="input"
                                      maxlength="1"
@@ -75,7 +75,7 @@
 
                 <h:panelGroup styleClass="separator-selection">
                     <p:outputLabel for="groupEntrySeparator"
-                                   value="Metadaten-Trennzeichen"/>
+                                   value="#{msgs['massImport.metadataGroupSeparator']}"/>
                     <p:selectOneMenu id="groupEntrySeparator"
                                      styleClass="input"
                                      maxlength="1"
@@ -161,7 +161,7 @@
             <p:commandButton id="addCsvRecord"
                              action="#{MassImportForm.addRecord}"
                              title="#{msgs['massImport.addRow']}"
-                             value="#{msgs.records}"
+                             value="#{msgs['massImport.addRow']}"
                              icon="fa fa-plus"
                              iconPos="right"
                              styleClass="secondary"
