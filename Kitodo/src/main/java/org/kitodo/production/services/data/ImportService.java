@@ -1878,22 +1878,21 @@ public class ImportService {
     /**
      * Retrieve and return label of metadata with given key 'metadataKey'.
      *
-     * @param ruleset Ruleset from which metadata label is retrieved
+     * @param ruleset RulesetManagementInterface from which metadata label is retrieved
      * @param metadataKey key of metadata for which label ir retrieved
      * @param groupSeparator SeparatorCharacter separating metadata group entries
      * @return label of metadata
      * @throws IOException if ruleset file could not be read
      */
-    public String getMetadataTranslation(Ruleset ruleset, String metadataKey, SeparatorCharacter groupSeparator)
+    public String getMetadataTranslation(RulesetManagementInterface ruleset, String metadataKey, SeparatorCharacter groupSeparator)
             throws IOException {
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
         User user = ServiceManager.getUserService().getCurrentUser();
         String metadataLanguage = user.getMetadataLanguage();
         List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
                 ? Locale.ENGLISH.getCountry() : metadataLanguage);
         if (Objects.isNull(groupSeparator) || StringUtils.isBlank(groupSeparator.getSeparator())
                 || !metadataKey.contains(groupSeparator.getSeparator())) {
-            return managementInterface.getTranslationForKey(metadataKey, languages).orElse(metadataKey);
+            return ruleset.getTranslationForKey(metadataKey, languages).orElse(metadataKey);
         } else {
             String separator = groupSeparator.getSeparator();
             List<String> keyHierarchy = List.of(metadataKey.split(Pattern.quote(separator)));
@@ -1901,12 +1900,12 @@ public class ImportService {
             String groupLabel = "";
             for (String key : keyHierarchy) {
                 if (keyHierarchy.indexOf(key) == 0) {
-                    groupLabel = managementInterface.getTranslationForKey(keyHierarchy.get(0), languages).orElse(metadataKey);
+                    groupLabel = ruleset.getTranslationForKey(keyHierarchy.get(0), languages).orElse(metadataKey);
                 } else {
                     List<String> nestedKeys = new LinkedList<>();
                     nestedKeys.add(keyHierarchy.get(0));
                     nestedKeys.add(key);
-                    Optional<String> nestedKeyTranslation = managementInterface.getTranslationForKey(nestedKeys, languages);
+                    Optional<String> nestedKeyTranslation = ruleset.getTranslationForKey(nestedKeys, languages);
                     if (nestedKeyTranslation.isPresent()) {
                         translatedKeys.add(nestedKeyTranslation.get());
                     } else {

@@ -40,6 +40,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.exceptions.ImportException;
@@ -50,6 +51,7 @@ import org.kitodo.production.forms.CsvRecord;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.file.UploadedFile;
 
 public class MassImportService {
@@ -316,6 +318,50 @@ public class MassImportService {
 
     public SeparatorCharacter[] getCsvSeparatorCharacters() {
         return csvSeparatorCharacters;
+    }
+
+    /**
+     * Check and return whether given list of strings contains the key of a metadata configured as functional metadata
+     * 'recordIdentifier' in given RulesetManagementInterface 'ruleset'.
+     *
+     * @param metadataKeys list of strings representing metadata keys
+     * @param ruleset RulesetManagementInterface defining metadata
+     * @return 'true' if at least one string in the given list is the key of a functional metadata of type 'recordIdentifier'
+     *         'false' otherwise
+     */
+    public static boolean metadataKeyListContainsRecordIdentifier(List<String> metadataKeys, RulesetManagementInterface ruleset) {
+        if (metadataKeys.isEmpty()) {
+            return false;
+        } else {
+            for (String metadataKey : metadataKeys) {
+                if (ServiceManager.getImportService().isRecordIdentifierMetadata(ruleset, metadataKey)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get String containing label of 'recordIdentifier' functional metadata from given ruleset.
+     *
+     * @param metadataKeys list of strings representing metadata keys
+     * @param ruleset RulesetManagementInterface defining metadata
+     * @return localized label of 'recordIdentifier' functional metadata
+     * @throws IOException if ruleset could not be opened
+     */
+    public static String getRecordIdentifierMetadataLabel(List<String> metadataKeys, RulesetManagementInterface ruleset)
+            throws IOException {
+        if (metadataKeys.isEmpty()) {
+            return "";
+        } else {
+            for (String metadataKey : metadataKeys) {
+                if (ServiceManager.getImportService().isRecordIdentifierMetadata(ruleset, metadataKey)) {
+                    return ServiceManager.getImportService().getMetadataTranslation(ruleset, metadataKey, null);
+                }
+            }
+        }
+        return "";
     }
 
 }
