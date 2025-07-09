@@ -177,7 +177,7 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcess() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImport() throws DAOException, ImportException, IOException {
         assertEquals(7, (long) processService.count(), "Not the correct amount of processes found");
         Process importedProcess = importProcess(RECORD_ID, MockDatabase.getK10PlusImportConfiguration());
         try {
@@ -198,7 +198,7 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcessWithAdditionalMetadata() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImportWithAdditionalMetadata() throws DAOException, ImportException, IOException {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
@@ -226,7 +226,7 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcessWithAdditionalMetadataWithLabelAndOrderlabel() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImportWithAdditionalMetadataWithLabelAndOrderlabel() throws DAOException, ImportException, IOException {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
@@ -740,7 +740,7 @@ public class ImportServiceIT {
         }
         String recordIdMetadataKey = recordIdentifierMetadata.get(0);
         List<String> ids = Collections.singletonList(recordId);
-        Process importedProcess = importService.importProcess(PROJECT_ID, TEMPLATE_ID, importConfiguration,
+        Process importedProcess = importService.importProcessForMassImport(PROJECT_ID, TEMPLATE_ID, importConfiguration,
                 Collections.singletonMap(recordIdMetadataKey, ids));
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
@@ -757,7 +757,7 @@ public class ImportServiceIT {
         }
         List<String> ids = Collections.singletonList(RECORD_ID);
         presetMetadata.put(importConfiguration.getIdSearchField().getValue(), ids);
-        Process importedProcess = importService.importProcess(1, 1,
+        Process importedProcess = importService.importProcessForMassImport(1, 1,
                 importConfiguration, presetMetadata);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);

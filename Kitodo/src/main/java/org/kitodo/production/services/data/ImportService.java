@@ -1315,6 +1315,7 @@ public class ImportService {
     /**
      * Process given TempProcess 'tempProcess' by creating the metadata, doc type and properties for the process and
      * updating the process' tasks.
+     * Convenience function displaying potential error messages on the frontend.
      *
      * @param tempProcess TempProcess that will be processed
      * @param rulesetManagement Ruleset management to create metadata and TIFF header
@@ -1325,7 +1326,29 @@ public class ImportService {
      * @throws ProcessGenerationException thrown if process title could not be generated
      */
     public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface rulesetManagement,
-            String acquisitionStage, List<Locale.LanguageRange> priorityList, TempProcess parentTempProcess)
+                                          String acquisitionStage, List<Locale.LanguageRange> priorityList, TempProcess parentTempProcess)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
+            IOException {
+        processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, parentTempProcess, true);
+    }
+
+    /**
+     * Process given TempProcess 'tempProcess' by creating the metadata, doc type and properties for the process and
+     * updating the process' tasks.
+     *
+     * @param tempProcess TempProcess that will be processed
+     * @param rulesetManagement Ruleset management to create metadata and TIFF header
+     * @param acquisitionStage String containing the acquisition stage
+     * @param priorityList List of LanguageRange objects
+     * @param parentTempProcess optional TempProcess to link as parent process
+     * @param showErrorMessage controls whether potential error messages are displayed on the frontend
+     * @throws InvalidMetadataValueException thrown if the process contains invalid metadata
+     * @throws NoSuchMetadataFieldException thrown if the process contains undefined metadata
+     * @throws ProcessGenerationException thrown if process title could not be generated
+     */
+    public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface rulesetManagement,
+            String acquisitionStage, List<Locale.LanguageRange> priorityList, TempProcess parentTempProcess,
+                                          boolean showErrorMessage)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
 
@@ -1341,9 +1364,12 @@ public class ImportService {
                 rulesetManagement, acquisitionStage, priorityList);
 
         String processTitle = tempProcess.getProcess().getTitle();
-        if (!ProcessValidator.isProcessTitleCorrect(processTitle)) {
-            throw new ProcessGenerationException(Helper.getTranslation("importError.invalidProcessTitle",
-                    processTitle));
+        if (!ProcessValidator.isProcessTitleCorrect(processTitle, showErrorMessage)) {
+            try {
+                checkProcessTitle(processTitle);
+            } catch (DAOException e) {
+                throw new ProcessGenerationException(e.getLocalizedMessage());
+            }
         }
 
         Process process = tempProcess.getProcess();
@@ -1415,15 +1441,15 @@ public class ImportService {
     }
 
     /**
-     * Imports a process and saves it to database.
+     * Imports a process and saves it to database. This method is called by the metadata mass import feature.
      * @param projectId the projectId
      * @param templateId the templateId
      * @param importConfiguration the selected import configuration
      * @param presetMetadata Map containing preset metadata with keys as metadata keys and values as metadata values
      * @return the importedProcess
      */
-    public Process importProcess(int projectId, int templateId, ImportConfiguration importConfiguration,
-                                 Map<String, List<String>> presetMetadata) throws ImportException {
+    public Process importProcessForMassImport(int projectId, int templateId, ImportConfiguration importConfiguration,
+                                              Map<String, List<String>> presetMetadata) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         TempProcess tempProcess;
         Template template;
@@ -1444,7 +1470,7 @@ public class ImportService {
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
                     CREATE, Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage),
-                    parentTempProcess);
+                    parentTempProcess, false);
             setLabelAndOrderLabelOfImportedProcess(tempProcess, presetMetadata);
             checkProcessTitle(tempProcess);
             ServiceManager.getProcessService().save(tempProcess.getProcess());
@@ -1532,9 +1558,13 @@ public class ImportService {
         ServiceManager.getProcessService().save(tempProcess.getProcess());
     }
 
-    private void checkProcessTitle(TempProcess tempProcess)
-            throws ProcessGenerationException, DAOException {
+    private void checkProcessTitle(TempProcess tempProcess) throws DAOException, ProcessGenerationException {
         String title = tempProcess.getProcess().getTitle();
+        checkProcessTitle(title);
+    }
+
+    private static void checkProcessTitle(String title)
+            throws ProcessGenerationException, DAOException {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (StringUtils.isBlank(title)) {
             throw new ProcessGenerationException(Helper.getTranslation("processTitleEmpty"));
