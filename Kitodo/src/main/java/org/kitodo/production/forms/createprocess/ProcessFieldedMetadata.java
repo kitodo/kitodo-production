@@ -753,8 +753,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public void remove(ProcessDetail toDelete) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         Iterator<TreeNode<Object>> treeNodesIterator = treeNode.getChildren().iterator();
         while (treeNodesIterator.hasNext()) {
-            TreeNode<Object> treeNode = treeNodesIterator.next();
-            if (treeNode.getData().equals(toDelete)) {
+            TreeNode<Object> nextTreeNode = treeNodesIterator.next();
+            if (nextTreeNode.getData().equals(toDelete)) {
                 treeNodesIterator.remove();
                 preserve();
                 break;
@@ -799,8 +799,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public int getOccurrences(String metadataKey) {
         int occ = 0;
-        for (TreeNode<Object> treeNode : treeNode.getChildren()) {
-            if (((ProcessDetail) treeNode.getData()).getMetadataID().equals(metadataKey)) {
+        for (TreeNode<Object> childNode : treeNode.getChildren()) {
+            if (((ProcessDetail) childNode.getData()).getMetadataID().equals(metadataKey)) {
                 occ++;
             }
         }
