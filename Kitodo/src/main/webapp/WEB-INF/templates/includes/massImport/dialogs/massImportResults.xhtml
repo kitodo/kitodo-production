@@ -31,48 +31,50 @@
                 <p:tab id="successfulImports"
                        title="#{msgs['import.successfulImports']}: #{MassImportForm.successfulImports.size()}">
                     <p:dataTable value="#{MassImportForm.successfulImports}"
-                                 var="entry">
+                                 rowIndexVar="index"
+                                 var="importResult">
                         <p:column id="successfulImportCounter"
                                   width="80"
                                   headerText="#">
-                            <h:outputText value="#{entry.key}"
-                                          title="#{entry.key}"/>
+                            <h:outputText value="#{index + 1}"
+                                          title="#{index + 1}"/>
                         </p:column>
                         <p:column id="successfulImportRecordId"
                                   width="200"
                                   headerText="#{MassImportForm.recordIdentifierLabel}"
                                   rendered="#{MassImportForm.metadataKeysContainRecordIdentifier}">
-                            <h:outputText value="#{entry.value.get('recordIdentifier')}"
-                                          title="#{entry.value.get('recordIdentifier')}"/>
+                            <h:outputText value="#{importResult.get('recordIdentifier')}"
+                                          title="#{importResult.get('recordIdentifier')}"/>
                         </p:column>
                         <p:column id="succesfulImportTitle"
                                   headerText="#{msgs['processTitle']}">
-                            <h:outputText value="#{entry.value.get('processTitle')}"
-                                          title="#{entry.value.get('processTitle')}"/>
+                            <h:outputText value="#{importResult.get('processTitle')}"
+                                          title="#{importResult.get('processTitle')}"/>
                         </p:column>
                     </p:dataTable>
                 </p:tab>
                 <p:tab id="failedImports"
                        title="#{msgs['import.failedImports']}: #{MassImportForm.failedImports.size()}">
                     <p:dataTable value="#{MassImportForm.failedImports}"
-                                 var="entry">
+                                 rowIndexVar="index"
+                                 var="importResult">
                         <p:column id="failedImportCounter"
                                   width="80"
                                   headerText="#">
-                            <h:outputText value="#{entry.key}"
-                                          title="#{entry.key}"/>
+                            <h:outputText value="#{index + 1}"
+                                          title="#{index + 1}"/>
                         </p:column>
                         <p:column id="failedImportRecordId"
                                   width="200"
                                   headerText="#{MassImportForm.recordIdentifierLabel}"
                                   rendered="#{MassImportForm.metadataKeysContainRecordIdentifier}">
-                            <h:outputText value="#{entry.value.get('recordIdentifier')}"
-                                          title="#{entry.value.get('recordIdentifier')}"/>
+                            <h:outputText value="#{importResult.get('recordIdentifier')}"
+                                          title="#{importResult.get('recordIdentifier')}"/>
                         </p:column>
                         <p:column id="errorMessage"
                                   headerText="#{msgs['errorMessage']}">
-                            <h:outputText value="#{MassImportForm.getImportErrorMessage(entry.key)}"
-                                          title="#{MassImportForm.getImportErrorMessage(entry.key)}"/>
+                            <h:outputText value="#{importResult.get('errorMessage')}"
+                                          title="#{importResult.get('errorMessage')}"/>
                         </p:column>
                     </p:dataTable>
                 </p:tab>
