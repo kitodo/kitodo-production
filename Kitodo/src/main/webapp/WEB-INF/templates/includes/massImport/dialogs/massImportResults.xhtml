@@ -21,7 +21,7 @@
               widgetVar="massImportResultDialog"
               showHeader="false"
               modal="true"
-              width="800px"
+              width="1024px"
               appendTo="@(body)"
               resizable="false"
               closable="false">
@@ -31,24 +31,48 @@
                 <p:tab id="successfulImports"
                        title="#{msgs['import.successfulImports']}: #{MassImportForm.successfulImports.size()}">
                     <p:dataTable value="#{MassImportForm.successfulImports}"
-                                 var="id">
-                        <p:column id="succesfulImportId">
-                            <h:outputText value="#{id}"
-                                          title="#{id}"/>
+                                 var="entry">
+                        <p:column id="successfulImportCounter"
+                                  width="80"
+                                  headerText="#">
+                            <h:outputText value="#{entry.key}"
+                                          title="#{entry.key}"/>
+                        </p:column>
+                        <p:column id="successfulImportRecordId"
+                                  width="200"
+                                  headerText="#{MassImportForm.recordIdentifierLabel}"
+                                  rendered="#{MassImportForm.metadataKeysContainRecordIdentifier}">
+                            <h:outputText value="#{entry.value.get('recordIdentifier')}"
+                                          title="#{entry.value.get('recordIdentifier')}"/>
+                        </p:column>
+                        <p:column id="succesfulImportTitle"
+                                  headerText="#{msgs['processTitle']}">
+                            <h:outputText value="#{entry.value.get('processTitle')}"
+                                          title="#{entry.value.get('processTitle')}"/>
                         </p:column>
                     </p:dataTable>
                 </p:tab>
                 <p:tab id="failedImports"
                        title="#{msgs['import.failedImports']}: #{MassImportForm.failedImports.size()}">
                     <p:dataTable value="#{MassImportForm.failedImports}"
-                                 var="id">
-                        <p:column id="failedImportId">
-                            <h:outputText value="#{id}"
-                                          title="#{id}"/>
+                                 var="entry">
+                        <p:column id="failedImportCounter"
+                                  width="80"
+                                  headerText="#">
+                            <h:outputText value="#{entry.key}"
+                                          title="#{entry.key}"/>
                         </p:column>
-                        <p:column id="errorMessage">
-                            <h:outputText value="#{MassImportForm.getImportErrorMessage(id)}"
-                                          title="#{MassImportForm.getImportErrorMessage(id)}"/>
+                        <p:column id="failedImportRecordId"
+                                  width="200"
+                                  headerText="#{MassImportForm.recordIdentifierLabel}"
+                                  rendered="#{MassImportForm.metadataKeysContainRecordIdentifier}">
+                            <h:outputText value="#{entry.value.get('recordIdentifier')}"
+                                          title="#{entry.value.get('recordIdentifier')}"/>
+                        </p:column>
+                        <p:column id="errorMessage"
+                                  headerText="#{msgs['errorMessage']}">
+                            <h:outputText value="#{MassImportForm.getImportErrorMessage(entry.key)}"
+                                          title="#{MassImportForm.getImportErrorMessage(entry.key)}"/>
                         </p:column>
                     </p:dataTable>
                 </p:tab>

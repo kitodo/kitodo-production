@@ -15,7 +15,6 @@ import com.opencsv.exceptions.CsvException;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -72,11 +71,14 @@ public class MassImportForm extends BaseForm {
     private List<String> importedCsvLines = new LinkedList<>();
     private final MassImportService massImportService = ServiceManager.getMassImportService();
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
-    private HashMap<String, String> importSuccessMap = new HashMap<>();
+    private HashMap<Integer, HashMap<String, String>> importSuccessMap = new HashMap<>();
     private Integer progress = 0;
     private Boolean rulesetConfigurationForOpacImportComplete = null;
     private String configurationError = null;
     private Boolean skipEmptyColumns = true;
+    private static final String recordIdentifier = "recordIdentifier";
+    private static final String errorMessage = "errorMessage";
+    private static final String processTitle = "processTitle";
 
     /**
      * Prepare mass import.
@@ -266,18 +268,21 @@ public class MassImportForm extends BaseForm {
         ImportService importService = ServiceManager.getImportService();
         PrimeFaces.current().ajax().update("massImportProgressDialog");
         for (LinkedHashMap<String, List<String>> record : processMetadata) {
+            HashMap<String, String> entryMap = new HashMap<>();
             try {
-                Process process = importService.importProcess(projectId, templateId, importConfiguration, record);
-                importSuccessMap.put(process.getTitle(), null);
-            } catch (ImportException e) {
                 try {
                     String id = importService.getRecordId(record, templateId);
-                    importSuccessMap.put(id, e.getLocalizedMessage());
+                    entryMap.put(recordIdentifier, id);
                 } catch (ConfigException | IOException | DAOException ee) {
-                    logger.error(ee.getLocalizedMessage());
-                    importSuccessMap.put("[" + processMetadata.indexOf(record) + "]", e.getLocalizedMessage());
+                    logger.info(ee.getLocalizedMessage());
+                    entryMap.put(recordIdentifier, null);
                 }
+                Process process = importService.importProcess(projectId, templateId, importConfiguration, record);
+                entryMap.put(processTitle, process.getTitle());
+            } catch (ImportException e) {
+                entryMap.put(errorMessage, e.getLocalizedMessage());
             }
+            importSuccessMap.put(processMetadata.indexOf(record), entryMap);
             PrimeFaces.current().ajax().update("massImportProgressDialog");
         }
     }
@@ -290,23 +295,24 @@ public class MassImportForm extends BaseForm {
     private void createProcessesFromCsvData(LinkedList<LinkedHashMap<String, List<String>>> processMetadata) {
         ImportService importService = ServiceManager.getImportService();
         PrimeFaces.current().ajax().update("massImportProgressDialog");
-        int iterator = 1;
         for (LinkedHashMap<String, List<String>> entry : processMetadata) {
+            HashMap<String, String> entryMap = new HashMap<>();
             try {
+                try {
+                    String id = importService.getRecordId(entry, templateId);
+                    entryMap.put(recordIdentifier, id);
+                } catch (DAOException | IOException ex) {
+                    logger.info(ex.getLocalizedMessage());
+                    entryMap.put(recordIdentifier, null);
+                }
                 Process process = importService.createProcessFromData(projectId, templateId, entry,
                         metadataGroupEntrySeparator.getSeparator());
-                importSuccessMap.put(process.getTitle(), null);
+                entryMap.put(processTitle, process.getTitle());
             } catch (Exception e) {
-                try {
-                    String docType = importService.getDocType(entry, templateId);
-                    importSuccessMap.put(docType + "(" + iterator + ")", e.getLocalizedMessage());
-                } catch (DAOException | IOException ex) {
-                    logger.error(ex.getLocalizedMessage());
-                    importSuccessMap.put("[" + processMetadata.indexOf(entry) + "]", ex.getLocalizedMessage());
-                }
+                entryMap.put(errorMessage, e.getLocalizedMessage());
             }
+            importSuccessMap.put(processMetadata.indexOf(entry), entryMap);
             PrimeFaces.current().ajax().update("massImportProgressDialog");
-            iterator++;
         }
     }
 
@@ -320,7 +326,7 @@ public class MassImportForm extends BaseForm {
         if (columnIndex < metadataKeys.size()) {
             String metadataKey = metadataKeys.get(columnIndex);
             try {
-                return ServiceManager.getImportService().getMetadataTranslation(ruleset, metadataKey, metadataGroupEntrySeparator);
+                return ServiceManager.getImportService().getMetadataTranslation(addMetadataDialog.getRulesetManagement(), metadataKey, metadataGroupEntrySeparator);
             } catch (IOException e) {
                 Helper.setErrorMessage(e);
                 return metadataKey;
@@ -527,29 +533,29 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get list IDs of successfully imported processes.
+     * Get map containing indexes of successful imports as keys and maps containing corresponding titles, recordIdentifiers and error messages.
      *
-     * @return list of IDs of successfully import processes
+     * @return map with indexes of successful imports as keys and
      */
-    public List<String> getSuccessfulImports() {
+    public HashMap<Integer, HashMap<String, String>> getSuccessfulImports() {
         if (Objects.nonNull(importSuccessMap)) {
-            return importSuccessMap.entrySet().stream().filter(entry -> Objects.isNull(entry.getValue()))
-                    .map(Map.Entry::getKey).collect(Collectors.toList());
+            return importSuccessMap.entrySet().stream().filter(entry -> Objects.isNull(entry.getValue().get(errorMessage)))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (prev, next) -> next, HashMap::new));
         }
-        return Collections.emptyList();
+        return new HashMap<>();
     }
 
     /**
-     * Get list of IDs failed imports.
+     * Get map containing indexes of failed imports as keys and maps containing corresponding titles, recordIdentifiers and error messages.
      *
-     * @return list of IDs of failed imports
+     * @return map with indexes of failed imports as keys and
      */
-    public List<String> getFailedImports() {
+    public HashMap<Integer, HashMap<String, String>> getFailedImports() {
         if (Objects.nonNull(importSuccessMap)) {
-            return importSuccessMap.entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue()))
-                    .map(Map.Entry::getKey).collect(Collectors.toList());
+            return importSuccessMap.entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue().get(errorMessage)))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (prev, next) -> next, HashMap::new));
         }
-        return Collections.emptyList();
+        return new HashMap<>();
     }
 
     /**
@@ -559,7 +565,7 @@ public class MassImportForm extends BaseForm {
      * @return error message of import for ID 'recordId'; returns 'null' if no error occurred
      */
     public String getImportErrorMessage(String recordId) {
-        return importSuccessMap.get(recordId);
+        return importSuccessMap.get(Integer.parseInt(recordId)).get(errorMessage);
     }
 
 
@@ -599,15 +605,6 @@ public class MassImportForm extends BaseForm {
      */
     public int getNumberOfProcessesRecords() {
         return importSuccessMap.size();
-    }
-
-    /**
-     * Get rulesetConfigurationForOpacImportComplete.
-     *
-     * @return value of rulesetConfigurationForOpacImportComplete
-     */
-    public Boolean getRulesetConfigurationForOpacImportComplete() {
-        return rulesetConfigurationForOpacImportComplete;
     }
 
     /**
@@ -711,5 +708,29 @@ public class MassImportForm extends BaseForm {
         return records.isEmpty()
                 || missingFunctionalMetadataInFirstColumn()
                 || (firstColumnContainsRecordsIdentifier() && Objects.isNull(importConfiguration));
+    }
+
+    /**
+     * Whether metadata keys contain recordIdentifier or not.
+     *
+     * @return whether metadata keys contain recordIdentifier or not
+     */
+    public boolean isMetadataKeysContainRecordIdentifier() {
+        return MassImportService.metadataKeyListContainsRecordIdentifier(metadataKeys, addMetadataDialog.getRulesetManagement());
+    }
+
+    /**
+     * Get label of functional metadata 'recordIdentifier', retrieved from current ruleset.
+     *
+     * @return label of functional metadata 'recordIdentifier', if such metadata is defined in ruleset; returns empty
+     *         String otherwise
+     */
+    public String getRecordIdentifierLabel() {
+        try {
+            return MassImportService.getRecordIdentifierMetadataLabel(metadataKeys, addMetadataDialog.getRulesetManagement());
+        } catch (IOException e) {
+            logger.error(e);
+            return "";
+        }
     }
 }
