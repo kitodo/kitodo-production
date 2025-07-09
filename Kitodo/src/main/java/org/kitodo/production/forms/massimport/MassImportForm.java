@@ -326,7 +326,8 @@ public class MassImportForm extends BaseForm {
         if (columnIndex < metadataKeys.size()) {
             String metadataKey = metadataKeys.get(columnIndex);
             try {
-                return ServiceManager.getImportService().getMetadataTranslation(addMetadataDialog.getRulesetManagement(), metadataKey, metadataGroupEntrySeparator);
+                return ServiceManager.getImportService().getMetadataTranslation(addMetadataDialog.getRulesetManagement(), metadataKey,
+                        metadataGroupEntrySeparator);
             } catch (IOException e) {
                 Helper.setErrorMessage(e);
                 return metadataKey;
@@ -533,7 +534,8 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get map containing indexes of successful imports as keys and maps containing corresponding titles, recordIdentifiers and error messages.
+     * Get map containing indexes of successful imports as keys and maps containing corresponding titles, recordIdentifiers
+     * and error messages.
      *
      * @return map with indexes of successful imports as keys and
      */
