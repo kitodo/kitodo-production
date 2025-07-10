@@ -34,10 +34,10 @@ public class LtpValidationConditionResult {
     String value;
 
     /**
-     * Initialize a new condition validation result by providing all information.
+ * Creates a new condition validation result.
      * 
      * @param passed whether the condition passed
-     * @param error a potential error or null if no error
+     * @param the error that occurred, or {@code null} if no error occurred
      * @param value the value extracted from the image
      */
     public LtpValidationConditionResult(boolean passed, LtpValidationConditionError error, String value) {
@@ -47,7 +47,7 @@ public class LtpValidationConditionResult {
     }
 
     /**
-     * Return whether the condition passed.
+     * Returns whether the condition passed.
      * 
      * @return whether the condition passed
      */
@@ -56,16 +56,18 @@ public class LtpValidationConditionResult {
     }
 
     /**
-     * Return the error if a condition did not pass.
+     * Returns the error, if a condition did not pass.
      * 
-     * @return the error if a condition did not pass or null
+     * @return the error. Returns {@code null} if no error occurred.
      */
     public LtpValidationConditionError getError() {
         return error;
     }
 
     /**
-     * Return the value extracted from the image.
+     * Returns the value extracted from the image. Can be {@code null} if the
+     * value was not present in the image. The value can provide insight into
+     * why the condition did not pass.
      * 
      * @return the value extracted from the image
      */

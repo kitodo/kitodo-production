@@ -59,7 +59,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     private LtpValidationConfiguration ltpValidationConfiguration;
     
     /**
-     * Return the property of the file that is checked (e.g., ImageWidth, ColorSpace, etc.)
+     * Returns the property of the file that is checked. Examples: {@code ImageWidth}, {@code ColorSpace}, etc.
      * 
      * @return the property of the the file that is checked
      */
@@ -69,8 +69,8 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
     
     /**
-     * Return the operation that is used to check the property against the condition values
-     * (e.g., equal, not_equal, smaller_than, etc.)
+     * Returns the operation that is used to check the property against the condition values.
+     * Examples: equal, not_equal, smaller_than, etc.
      * 
      * @return the operation that is used to check the property against the condition values
      */
@@ -80,7 +80,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
 
     /**
-     * Return a list of values that are checked against the property of the file.
+     * Returns a list of values that are checked against the property of the file.
      * 
      * <p>May be a single value (comparing via equal), two values (comparing as interval) or 
      * multiple values (comparing as set) depending on the operation</p>
@@ -93,11 +93,11 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
 
     /**
-     * Return the severity of the validation condition, whether the condition is critical
-     * and should be treated as an error, or whether the condition is optional and should
-     * be treated as a warning.
+     * Returns the severity of a validation condition violation. This determines whether
+     * the condition is critical and should be treated as an error, or whether the
+     * condition is optional and should be treated as a warning.
      * 
-     * @return the severity of the validation condition
+     * @return the severity of a validation condition violation
      */
     @Override
     public LtpValidationConditionSeverity getSeverity() {
@@ -105,7 +105,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
 
     /**
-     * Return the LTP validation configuration this condition belongs to.
+     * Returns the LTP validation configuration this condition belongs to.
      * 
      * @return the LTP validation configuration this condition belongs to
      */

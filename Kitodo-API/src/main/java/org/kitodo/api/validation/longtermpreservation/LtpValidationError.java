@@ -17,7 +17,7 @@ package org.kitodo.api.validation.longtermpreservation;
 public enum LtpValidationError {
     
     /**
-     * The file that needs to be validation is not found at the specified URI.
+     * The file to be validated cannot be found at the specified URI.
      */
     FILE_NOT_FOUND,
 

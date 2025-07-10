@@ -24,7 +24,7 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     private LtpValidationConditionSeverity severity;
 
     /**
-     * Create a new (immutable, no-setters) validation condition.
+     * Creates a new validation condition.
      * 
      * @param property the property that is checked
      * @param operation the operation a property is checked against

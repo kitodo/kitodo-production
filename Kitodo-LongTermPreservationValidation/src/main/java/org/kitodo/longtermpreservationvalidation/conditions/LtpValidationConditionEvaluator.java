@@ -39,11 +39,11 @@ public class LtpValidationConditionEvaluator {
      * @return the list of condition results containing the success or failure state for each condition
      */
     public static List<LtpValidationConditionResult> evaluateValidationConditions(
-        List<? extends LtpValidationConditionInterface> conditions, 
-        Map<String, String> properties
-    ) {
+            List<? extends LtpValidationConditionInterface> conditions, 
+            Map<String, String> properties)
+    {
         return conditions.stream()
-            .map((c) -> evaluateValidationCondition(c, properties))
+            .map((condition) -> evaluateValidationCondition(condition, properties))
             .collect(Collectors.toList());
     }
 

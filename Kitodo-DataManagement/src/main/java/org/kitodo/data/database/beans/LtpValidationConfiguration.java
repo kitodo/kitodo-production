@@ -49,8 +49,8 @@ public class LtpValidationConfiguration extends BaseBean {
     private List<Folder> folders;
 
     /**
-     * Return the title of this validation configuration.
-     * @return the ittle of this validation configuration
+     * Returns the title of this validation configuration.
+     * @return the title of this validation configuration
      */
     public String getTitle() {
         return title;
@@ -112,7 +112,7 @@ public class LtpValidationConfiguration extends BaseBean {
     }
 
     /**
-     * Sets the mime type this validation configuration can be applied to.
+     * Sets the MIME type this validation configuration can be applied to.
      * 
      * @param mimeType the mime type this validation configuration can be  applied to
      */

@@ -16,11 +16,13 @@ import java.util.List;
 /**
  * Describes a condition that has to be met when validating files for long term preservation (ltp).
  * 
- * <p>For example, a validation condition for a tif file might be that the file is stored in
- * one of several acceptable color spaces (RGB, CMYK).</p>
+ * <p>
+ * For example, a validation condition for a TIF file might be that the file is stored in
+ * one of several acceptable color spaces (RGB, CMYK).
  * 
- * <p>A condition is modelled by the simple format {property} {operation} {value(s)}, e.g., 
- * {ColorSpace} {contained in} {RGB,CMYK}.</p>
+ * <p>
+ * A condition is modelled by the simple format "{property} {operation} {value(s)}".
+ * Example: "{ColorSpace} {contained in} {RGB,CMYK}".
  */
 public interface LtpValidationConditionInterface {
 

@@ -44,7 +44,7 @@ public class LtpValidationResult {
     private List<String> additionalMessages;
 
     /**
-     * Initialize a validation results if validation conditions could not be checked.
+     * Initializes a validation result if the validation conditions could not be checked.
      * 
      * @param generalState the failure state 
      * @param generalErrors any errors that occurred during validation
@@ -54,7 +54,7 @@ public class LtpValidationResult {
     }
 
     /**
-     * Initialize a validation results by providing all relevant information.
+     * Initializes a validation result by providing all relevant information.
      * 
      * @param generalState the success or failure state of the validation for the file or image
      * @param generalErrors any general errors that occurred during validation
@@ -74,16 +74,16 @@ public class LtpValidationResult {
     }
     
     /**
-     * Return the overall validation success or failure state.
+     * Returns the overall validation state, success or failure.
      *
-     * @return the success or failure state of the validation
+     * @return the overall state of the validation
      */
     public LtpValidationResultState getState() {
         return state;
     }
 
     /**
-     * Return general errors that occurred during validation.
+     * Returns general errors that occurred during validation.
      * 
      * @return a list of general validation errors
      */
@@ -92,7 +92,9 @@ public class LtpValidationResult {
     }
 
     /**
-     * Return the validation state (valid, warning, error) of each validation condition that was checked.
+     * Returns the validation state of each validation condition. Each
+     * validation condition can have a status of either valid, warning, or
+     * error.
      * 
      * @return the validation state of each validation condition
      */
@@ -101,8 +103,8 @@ public class LtpValidationResult {
     }
 
     /**
-     * Return a list of general validation messages that might provide additional information about
-     * why validation failed. Messages are not related to specific validation conditions.
+     * Returns a list of general validation messages. These may provide additional information about
+     * the reason for the validation error. The messages do not refer to specific validation conditions.
      * 
      * @return the list of messages
      */
@@ -123,7 +125,7 @@ public class LtpValidationResult {
             conditionResults.stream().map((r) -> r.toString()).collect(Collectors.toList()), 
             ", "
         );
-        String joinedMessages =  StringUtils.join(additionalMessages, ",");
+        String joinedMessages =  StringUtils.join(additionalMessages, ", ");
         builder.append("LtpValidationResult " + super.toString() + "\n");
         builder.append("- state: " + state.name() + "\n");
         builder.append("- errors: " + joinedErrors + "\n");

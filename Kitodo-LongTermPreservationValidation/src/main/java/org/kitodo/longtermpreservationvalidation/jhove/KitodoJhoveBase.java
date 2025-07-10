@@ -75,7 +75,7 @@ public class KitodoJhoveBase {
     private static JhoveBase base = null;
 
     /**
-     * Initialize Jhove by loading all defined modules.
+     * Initializes JHove by loading all defined modules.
      * 
      * @return the initialize JhoveBase instance
      */
@@ -103,7 +103,7 @@ public class KitodoJhoveBase {
     }
 
     /**
-     * Return the global JHoveBase instance.
+     * Returns the global JHoveBase instance.
      * 
      * @return the JHoveBase instance.
      */
@@ -115,7 +115,7 @@ public class KitodoJhoveBase {
     }
 
     /**
-     * Return Kitodo file types that are supported to be validated by Jhove.
+     * Returns Kitodo file types that are supported to be validated by JHove.
      * 
      * @return the list of file types supported to be validated by Jhove
      */
@@ -124,7 +124,7 @@ public class KitodoJhoveBase {
     }
 
     /**
-     * Validate an existing file.
+     * Validates an existing file.
      * 
      * @param module the JHove module that is used to validate the exsting file
      * @param file the existing file

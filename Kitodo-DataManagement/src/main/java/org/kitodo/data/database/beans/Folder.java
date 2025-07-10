@@ -171,7 +171,7 @@ public class Folder extends BaseBean {
     private boolean validateFolder = true;
 
     /**
-     * The long-term-preservation validation configuration that we will be used
+     * The long-term-preservation validation configuration that we will use
      * to validate files of this folder.
      */
     @ManyToOne(optional = true)
