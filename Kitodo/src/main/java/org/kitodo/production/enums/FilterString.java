@@ -21,7 +21,7 @@ public enum FilterString {
     TASKDONETITLE("stepdonetitle:", "abgeschlossenerschritttitel:"),
     TASKDONEUSER("stepdoneuser:", "abgeschlossenerschrittbenutzer:"),
     PROJECT("project:", "projekt:"),
-    PROJECT_EXACT("projectexact:", "projektexakt:"),
+    PROJECT_LOOSE("project_loose:", "projekt_trunkiert:"),
     ID("id:", "id:"),
     PARENTPROCESSID("parentprocessid:", "elternprozessid:"),
     PROCESS("process:", "prozess:"),
