@@ -42,9 +42,12 @@ import org.kitodo.production.services.ServiceManager;
 
 public class LtpValidationHelperIT {
 
-    private static Path VALID_TIF_SOURCE = Paths.get("../Kitodo-LongTermPreservationValidation/src/test/resources/rose.tif");
-    private static Path INVALID_TIF_SOURCE = Paths.get("../Kitodo-LongTermPreservationValidation/src/test/resources/corrupted.tif");
-    private static Path VALID_JPEG_SOURCE = Paths.get("../Kitodo-LongTermPreservationValidation/src/test/resources/rose.jpg");
+    private static Path VALID_TIF_SOURCE = Paths
+            .get("../Kitodo-LongTermPreservationValidation/src/test/resources/rose.tif");
+    private static Path INVALID_TIF_SOURCE = Paths
+            .get("../Kitodo-LongTermPreservationValidation/src/test/resources/corrupted.tif");
+    private static Path VALID_JPEG_SOURCE = Paths
+            .get("../Kitodo-LongTermPreservationValidation/src/test/resources/rose.jpg");
 
     private static Process imageValidationProcess = null;
 
@@ -52,7 +55,7 @@ public class LtpValidationHelperIT {
      * Function to run before test is executed.
      *
      * @throws Exception
-     *         the exception when set up test
+     *             the exception when set up test
      */
     @BeforeAll
     public static void setUp() throws Exception {
@@ -66,39 +69,41 @@ public class LtpValidationHelperIT {
     }
 
     /**
-     * Check that image validation will iterate over all folders with LTP validation configuration and
-     * determine valid and invalid files.
+     * Check that image validation will iterate over all folders with LTP
+     * validation configuration and determine valid and invalid files.
      */
     @Test
     public void shouldValidateAllFoldersForTask() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(1);
-        
+
         // set up validation task
         Task validationTask = new Task();
         validationTask.setProcess(process);
         validationTask.setTypeValidateImages(true);
 
         // do validation for task
-        Map<Folder, Map<URI, LtpValidationResult>> results = LtpValidationHelper.validateImageFoldersForTask(validationTask);
+        Map<Folder, Map<URI, LtpValidationResult>> results = LtpValidationHelper
+                .validateImageFoldersForTask(validationTask);
 
-        assertEquals(2, results.keySet().size(), 
-            "validation results for task should contain two folders (which are set up with an ltp validation configuration)"
-        );
+        assertEquals(2, results.keySet().size(),
+            "validation results for task should contain two folders (which are set up with an ltp validation configuration)");
 
         // identify tif and jpeg folder results
-        Folder tifFolder = results.keySet().stream().filter((f) -> f.getMimeType().equals("image/tiff")).findFirst().get();
-        Folder jpegFolder = results.keySet().stream().filter((f) -> f.getMimeType().equals("image/jpeg")).findFirst().get();
+        Folder tifFolder = results.keySet().stream().filter((f) -> f.getMimeType().equals("image/tiff")).findFirst()
+                .get();
+        Folder jpegFolder = results.keySet().stream().filter((f) -> f.getMimeType().equals("image/jpeg")).findFirst()
+                .get();
 
         assertEquals(2, results.get(tifFolder).size(), "tif folder does not contain exactly 2 files");
         assertEquals(1, results.get(jpegFolder).size(), "jpeg folder does not contain exactly 1 file");
 
         // identify validation results for each file
         URI validTifUri = results.get(tifFolder).keySet().stream()
-            .filter((uri) -> uri.toString().endsWith("00000001.tif")).findFirst().get();
+                .filter((uri) -> uri.toString().endsWith("00000001.tif")).findFirst().get();
         URI invalidTifUri = results.get(tifFolder).keySet().stream()
-            .filter((uri) -> uri.toString().endsWith("00000002.tif")).findFirst().get();
+                .filter((uri) -> uri.toString().endsWith("00000002.tif")).findFirst().get();
         URI validJpegUri = results.get(jpegFolder).keySet().stream()
-            .filter((uri) -> uri.toString().endsWith("00000001.jpg")).findFirst().get();
+                .filter((uri) -> uri.toString().endsWith("00000001.jpg")).findFirst().get();
 
         assertEquals(LtpValidationResultState.VALID, results.get(tifFolder).get(validTifUri).getState());
         assertEquals(LtpValidationResultState.ERROR, results.get(tifFolder).get(invalidTifUri).getState());
@@ -116,7 +121,8 @@ public class LtpValidationHelperIT {
      * Return the directory of the process in the Kitodo data directory.
      * 
      * @return the directory of the process in the Kitodo data directory
-     * @throws DAOException if retrieving the process fails
+     * @throws DAOException
+     *             if retrieving the process fails
      */
     private static Path getProcessDirectory() throws DAOException {
         String dataDirectory = KitodoConfig.getKitodoDataDirectory();
@@ -125,14 +131,18 @@ public class LtpValidationHelperIT {
     }
 
     /**
-     * Copy prepared image files (both valid and corrupted) to the corresponding folders in the Kitodo data directory
-     * such that they will be validated when triggering the image validation task.
+     * Copy prepared image files (both valid and corrupted) to the corresponding
+     * folders in the Kitodo data directory such that they will be validated
+     * when triggering the image validation task.
      * 
-     * @throws DAOException if retrieving process information fails
-     * @throws IOException if copying of files fails
+     * @throws DAOException
+     *             if retrieving process information fails
+     * @throws IOException
+     *             if copying of files fails
      */
     private static void copyImagesToFolders() throws DAOException, IOException {
-        Path tifFolder = Paths.get(getProcessDirectory().toString(), "images/" + getImageValidationProcess().getTitle() + "_media");
+        Path tifFolder = Paths.get(getProcessDirectory().toString(),
+            "images/" + getImageValidationProcess().getTitle() + "_media");
         Path jpegFolder = Paths.get(getProcessDirectory().toString(), "jpgs/default");
 
         // create folders for tif and jpeg files
@@ -153,7 +163,7 @@ public class LtpValidationHelperIT {
         Awaitility.await().until(() -> validJpegTarget.toFile().exists());
     }
 
-    /** 
+    /**
      * Delete all files that were created by this test.
      */
     private static void cleanFiles() throws DAOException, IOException {
@@ -164,16 +174,18 @@ public class LtpValidationHelperIT {
     }
 
     /**
-     * Return the process that is used as a reference for performing the image validation.
+     * Return the process that is used as a reference for performing the image
+     * validation.
      * 
      * @return the process
-     * @throws DAOException if retrieving the process fails
+     * @throws DAOException
+     *             if retrieving the process fails
      */
     private static Process getImageValidationProcess() throws DAOException {
         if (Objects.isNull(imageValidationProcess)) {
             imageValidationProcess = ServiceManager.getProcessService().getById(1);
         }
-        return imageValidationProcess;        
+        return imageValidationProcess;
     }
-    
+
 }

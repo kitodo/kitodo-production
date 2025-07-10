@@ -48,7 +48,8 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.validation.LongTermPreservationValidationService;
 
 /**
- * Helper class providing common functions related to long-term-preservation validation.
+ * Helper class providing common functions related to long-term-preservation
+ * validation.
  */
 public class LtpValidationHelper {
 
@@ -60,24 +61,26 @@ public class LtpValidationHelper {
     /**
      * Return the absolute URI for a folder in a specific process.
      *
-     * @param folder the folder
-     * @param process the process
+     * @param folder
+     *            the folder
+     * @param process
+     *            the process
      * @return the absolute URI to this folder
      */
     private static URI getAbsoluteFolderUri(Folder folder, Process process) {
         Subfolder subfolder = new Subfolder(process, folder);
 
-        return Paths.get(
-                KitodoConfig.getKitodoDataDirectory(), 
-                ServiceManager.getProcessService().getProcessDataDirectory(process).getPath(),
-                subfolder.getRelativeDirectoryPath()
-            ).toUri();
+        return Paths.get(KitodoConfig.getKitodoDataDirectory(),
+            ServiceManager.getProcessService().getProcessDataDirectory(process).getPath(),
+            subfolder.getRelativeDirectoryPath()).toUri();
     }
 
     /**
-     * Return the absolute URI from a filepath relative to Kitodo's data directory.
+     * Return the absolute URI from a filepath relative to Kitodo's data
+     * directory.
      * 
-     * @param relativeToDataDir the filepath relative to Kitodo's data directory
+     * @param relativeToDataDir
+     *            the filepath relative to Kitodo's data directory
      * @return the absolute filepath
      */
     private static URI getAbsoluteFileUri(URI relativeToDataDir) {
@@ -85,9 +88,11 @@ public class LtpValidationHelper {
     }
 
     /**
-     * Return relative URI for absolute URI with respect to Kitodo's data directory.
+     * Return relative URI for absolute URI with respect to Kitodo's data
+     * directory.
      * 
-     * @param absoluteUri the absolute filepath to a file inside Kitodo's data directory
+     * @param absoluteUri
+     *            the absolute filepath to a file inside Kitodo's data directory
      * @return the relative uri to the file
      */
     private static URI getRelativeFileUri(URI absoluteUri) {
@@ -95,9 +100,11 @@ public class LtpValidationHelper {
     }
 
     /**
-     * Translate a condition operation to a string that is presented to the user.
+     * Translate a condition operation to a string that is presented to the
+     * user.
      * 
-     * @param operation the condition operation
+     * @param operation
+     *            the condition operation
      * @return the translation for a condition operation
      */
     public static String translateConditionOperation(LtpValidationConditionOperation operation) {
@@ -123,7 +130,8 @@ public class LtpValidationHelper {
     /**
      * Translate the failure severity of a validation confition to a string.
      * 
-     * @param severity the failure severity of a validation condition
+     * @param severity
+     *            the failure severity of a validation condition
      * @return the translation for the failure severity
      */
     public static String translateConditionSeverity(LtpValidationConditionSeverity severity) {
@@ -134,51 +142,43 @@ public class LtpValidationHelper {
         }
         return "unknown severity";
     }
-    
+
     /**
-     * Translate a validation condition result to a simple string that is presented to the user.
+     * Translate a validation condition result to a simple string that is
+     * presented to the user.
      * 
-     * @param result the validation condition results that is translated
-     * @param condition the corresponding validation condition
+     * @param result
+     *            the validation condition results that is translated
+     * @param condition
+     *            the corresponding validation condition
      * @return the translation for the condition result
      */
-    public static String translateConditionResult(LtpValidationConditionResult result, LtpValidationCondition condition) {
+    public static String translateConditionResult(LtpValidationConditionResult result,
+            LtpValidationCondition condition) {
         if (result.getPassed()) {
             // currently never displayed (only warnings and errors are shown)
             return "Condition passed";
         } else {
             String severity = translateConditionSeverity(condition.getSeverity()) + ": ";
             if (result.getError().equals(LtpValidationConditionError.PROPERTY_DOES_NOT_EXIST)) {
-                return severity + Helper.getTranslation(
-                    "ltpValidation.condition.error.propertyDoesNotExist", 
-                    condition.getProperty()
-                );
+                return severity + Helper.getTranslation("ltpValidation.condition.error.propertyDoesNotExist",
+                    condition.getProperty());
             } else if (result.getError().equals(LtpValidationConditionError.INCORRECT_NUMBER_OF_CONDITION_VALUES)) {
-                return severity + Helper.getTranslation(
-                    "ltpValidation.condition.error.incorrectNumberOfValues", 
-                    String.valueOf(condition.getValues().size()), 
-                    translateConditionOperation(condition.getOperation())
-                );
+                return severity + Helper.getTranslation("ltpValidation.condition.error.incorrectNumberOfValues",
+                    String.valueOf(condition.getValues().size()),
+                    translateConditionOperation(condition.getOperation()));
             } else if (result.getError().equals(LtpValidationConditionError.NOT_A_NUMBER)) {
-                return severity + Helper.getTranslation(
-                    "ltpValidation.condition.error.notANumber", 
-                    result.getValue(), 
-                    translateCondition(condition)
-                );
+                return severity + Helper.getTranslation("ltpValidation.condition.error.notANumber", result.getValue(),
+                    translateCondition(condition));
             } else if (result.getError().equals(LtpValidationConditionError.PATTERN_INVALID_SYNTAX)) {
-                return severity + Helper.getTranslation(
-                    "ltpValidation.condition.error.patternInvalidSyntax", 
-                    translateCondition(condition)
-                );
+                return severity + Helper.getTranslation("ltpValidation.condition.error.patternInvalidSyntax",
+                    translateCondition(condition));
             } else if (result.getError().equals(LtpValidationConditionError.CONDITION_FALSE)) {
-                return severity + Helper.getTranslation(
-                    "ltpValidation.condition.error.conditionFalse", 
-                    result.getValue(), 
-                    translateCondition(condition)
-                );
+                return severity + Helper.getTranslation("ltpValidation.condition.error.conditionFalse",
+                    result.getValue(), translateCondition(condition));
             } else if (result.getError().equals(LtpValidationConditionError.UNKNOWN_OPERATION)) {
                 // should never happen
-                return severity + "Condition operation '" + condition.getOperation().name() +  "' not supported"; 
+                return severity + "Condition operation '" + condition.getOperation().name() + "' not supported";
             }
             // should never happen
             return severity + "Unknown condition error";
@@ -186,18 +186,19 @@ public class LtpValidationHelper {
     }
 
     /**
-     * Translate a list of validation condition results by translating only results for conditions that did not pass.
+     * Translate a list of validation condition results by translating only
+     * results for conditions that did not pass.
      * 
-     * @param results the list of validation conditions to be translated
-     * @param conditions the list of corresponding validation conditions
-     * @return the list of translations for each validation condition results with issues (errors or warnings)
+     * @param results
+     *            the list of validation conditions to be translated
+     * @param conditions
+     *            the list of corresponding validation conditions
+     * @return the list of translations for each validation condition results
+     *         with issues (errors or warnings)
      */
-    public static List<String> translateConditionResultsThatDidNotPass(
-        List<LtpValidationConditionResult> results, 
-        List<LtpValidationCondition> conditions
-    ) {
-        return IntStream
-                .range(0, Math.min(results.size(), conditions.size()))
+    public static List<String> translateConditionResultsThatDidNotPass(List<LtpValidationConditionResult> results,
+            List<LtpValidationCondition> conditions) {
+        return IntStream.range(0, Math.min(results.size(), conditions.size()))
                 .filter((i) -> !results.get(i).getPassed())
                 .mapToObj((i) -> translateConditionResult(results.get(i), conditions.get(i)))
                 .collect(Collectors.toList());
@@ -206,7 +207,8 @@ public class LtpValidationHelper {
     /**
      * Translate a general validation error.
      * 
-     * @param error the error to be translated
+     * @param error
+     *            the error to be translated
      * @return the translation of the error
      */
     public static String translateGeneralError(LtpValidationError error) {
@@ -226,44 +228,48 @@ public class LtpValidationHelper {
     /**
      * Translate a validation condition to a simple string.
      * 
-     * @param condition the validation condition to be translated
+     * @param condition
+     *            the validation condition to be translated
      * @return the translation for the validation condition
      */
     public static String translateCondition(LtpValidationCondition condition) {
-        return Helper.getTranslation(
-            "ltpValidation.condition", 
-            condition.getProperty(), 
-            translateConditionOperation(condition.getOperation()),
-            StringUtils.join(condition.getValues(), ",")
-        );
+        return Helper.getTranslation("ltpValidation.condition", condition.getProperty(),
+            translateConditionOperation(condition.getOperation()), StringUtils.join(condition.getValues(), ","));
     }
 
     /**
      * Translate a validation result for a single file.
      * 
-     * @param result the validation result for a single file
-     * @param conditions the validation conditions that were checked for that file
-     * @param filepath the relative filepath of the file
+     * @param result
+     *            the validation result for a single file
+     * @param conditions
+     *            the validation conditions that were checked for that file
+     * @param filepath
+     *            the relative filepath of the file
      * @return a simple translated string describing the validation result
      */
-    public static String translateValidationResult(LtpValidationResult result, List<LtpValidationCondition> conditions, URI filepath) {
+    public static String translateValidationResult(LtpValidationResult result, List<LtpValidationCondition> conditions,
+            URI filepath) {
         if (result.getState().equals(LtpValidationResultState.VALID)) {
             // currently never displayed (only warnings and errors are shown)
             return "File '" + filepath.getPath() + "'' passed validation";
-        } else { 
+        } else {
             List<String> errorMessages = translateGeneralErrorsList(result.getErrors());
-            List<String> conditionMessages = translateConditionResultsThatDidNotPass(result.getConditionResults(), conditions);
+            List<String> conditionMessages = translateConditionResultsThatDidNotPass(result.getConditionResults(),
+                conditions);
             List<String> additionalMessages = result.getAdditionalMessages();
 
             List<String> allMessages = Stream.of(errorMessages, conditionMessages, additionalMessages)
-                .flatMap(Collection::stream).collect(Collectors.toList());
+                    .flatMap(Collection::stream).collect(Collectors.toList());
 
             String allMessagesString = StringUtils.join(allMessages, ", ");
 
             if (result.getState().equals(LtpValidationResultState.ERROR)) {
-                return Helper.getTranslation("ltpValidation.result.description.error", filepath.getPath(), allMessagesString);
+                return Helper.getTranslation("ltpValidation.result.description.error", filepath.getPath(),
+                    allMessagesString);
             } else {
-                return Helper.getTranslation("ltpValidation.result.description.warning", filepath.getPath(), allMessagesString);
+                return Helper.getTranslation("ltpValidation.result.description.warning", filepath.getPath(),
+                    allMessagesString);
             }
         }
     }
@@ -271,7 +277,8 @@ public class LtpValidationHelper {
     /**
      * Translate the list of general validation errors.
      * 
-     * @param errors the list of validation errors to be translated
+     * @param errors
+     *            the list of validation errors to be translated
      * @return the list of translated errors
      */
     public static List<String> translateGeneralErrorsList(List<LtpValidationError> errors) {
@@ -281,8 +288,10 @@ public class LtpValidationHelper {
     /**
      * Validate all images of a single folder for a task.
      * 
-     * @param task the task
-     * @param folder the folder whose images are to be validated
+     * @param task
+     *            the task
+     * @param folder
+     *            the folder whose images are to be validated
      * @return the map of validation results for each file in the folder
      */
     public static Map<URI, LtpValidationResult> validateImageFolderForTask(Task task, Folder folder) {
@@ -306,7 +315,8 @@ public class LtpValidationHelper {
     /**
      * Validate all images of all folders for a given task.
      * 
-     * @param task the task
+     * @param task
+     *            the task
      * @return the validation results for each folder and file as a two-step map
      */
     public static Map<Folder, Map<URI, LtpValidationResult>> validateImageFoldersForTask(Task task) {
@@ -334,34 +344,39 @@ public class LtpValidationHelper {
     }
 
     /**
-     * Returns true if the validation result contains any errors, either general errors or condition errors.
+     * Returns true if the validation result contains any errors, either general
+     * errors or condition errors.
      * 
-     * @param result the validation result to be checked for errors
-     * @param conditions the conditions that were applied
-     * @param generalErrorSeverity the severity level of general errors (if warning, general errors are ignored)
+     * @param result
+     *            the validation result to be checked for errors
+     * @param conditions
+     *            the conditions that were applied
+     * @param generalErrorSeverity
+     *            the severity level of general errors (if warning, general
+     *            errors are ignored)
      * @return true if the validation result contains any errors
      */
-    public static boolean validationResultHasError(
-        LtpValidationResult result, List<LtpValidationCondition> conditions, 
-        LtpValidationConditionSeverity generalErrorSeverity
-    ) {
+    public static boolean validationResultHasError(LtpValidationResult result, List<LtpValidationCondition> conditions,
+            LtpValidationConditionSeverity generalErrorSeverity) {
         if (generalErrorSeverity == LtpValidationConditionSeverity.ERROR && result.getErrors().size() > 0) {
             return true;
         }
-        return IntStream
-                .range(0, Math.min(result.getConditionResults().size(), conditions.size()))
-                .filter((i) -> !result.getConditionResults().get(i).getPassed() 
-                    && conditions.get(i).getSeverity() == LtpValidationConditionSeverity.ERROR)
-                .findAny()
-                .isPresent();
+        return IntStream.range(0, Math.min(result.getConditionResults().size(), conditions.size()))
+                .filter((i) -> !result.getConditionResults().get(i).getPassed()
+                        && conditions.get(i).getSeverity() == LtpValidationConditionSeverity.ERROR)
+                .findAny().isPresent();
     }
 
     /**
-     * Validate all images of all folders for a task when clicking on the "finish task" link.
+     * Validate all images of all folders for a task when clicking on the
+     * "finish task" link.
      * 
-     * <p>Reports the first error that was found to the user as a ErrorMessage</p>
+     * <p>
+     * Reports the first error that was found to the user as a ErrorMessage
+     * </p>
      * 
-     * @param task the task
+     * @param task
+     *            the task
      * @return true if all files of all folders passed validation
      */
     public static boolean validateImagesWhenFinishingTask(Task task) {
@@ -399,20 +414,22 @@ public class LtpValidationHelper {
     }
 
     /**
-     * Validate a single file that was uploaded by a user inside of the metadata editor.
+     * Validate a single file that was uploaded by a user inside of the metadata
+     * editor.
      * 
-     * @param absoluteFilePath the absolute filepath of the uploaded file
-     * @param folder the folder the file was uploaded to
-     * @param subfolder the subfolder instance the file was uploaded to
-     * @param validationResults the map that will be filled with a new validation result
-     * @return false if there were errors during validation and the uploaded file needs to be deleted
+     * @param absoluteFilePath
+     *            the absolute filepath of the uploaded file
+     * @param folder
+     *            the folder the file was uploaded to
+     * @param subfolder
+     *            the subfolder instance the file was uploaded to
+     * @param validationResults
+     *            the map that will be filled with a new validation result
+     * @return false if there were errors during validation and the uploaded
+     *         file needs to be deleted
      */
-    public static boolean validateUploadedFile(
-        URI absoluteFilePath, 
-        Folder folder, 
-        Subfolder subfolder, 
-        Map<URI, LtpValidationResult> validationResults
-    ) {
+    public static boolean validateUploadedFile(URI absoluteFilePath, Folder folder, Subfolder subfolder,
+            Map<URI, LtpValidationResult> validationResults) {
         if (Objects.isNull(folder)) {
             // no valid folder provided
             return true;

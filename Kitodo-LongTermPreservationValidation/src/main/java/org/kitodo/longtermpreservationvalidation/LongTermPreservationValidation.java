@@ -26,8 +26,9 @@ import org.kitodo.longtermpreservationvalidation.jhove.KitodoJhoveBase;
 public class LongTermPreservationValidation implements LongTermPreservationValidationInterface {
 
     @Override
-    public LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions) {
+    public LtpValidationResult validate(URI fileUri, FileType fileType,
+            List<? extends LtpValidationConditionInterface> conditions) {
         return KitodoJhoveBase.validate(fileUri.getPath(), fileType, conditions);
     }
-    
+
 }

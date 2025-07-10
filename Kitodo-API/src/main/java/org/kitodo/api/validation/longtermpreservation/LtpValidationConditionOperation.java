@@ -17,7 +17,8 @@ package org.kitodo.api.validation.longtermpreservation;
 public enum LtpValidationConditionOperation {
 
     /**
-     * The condition value is verified to be exactly equal to the extracted value.
+     * The condition value is verified to be exactly equal to the extracted
+     * value.
      */
     EQUAL,
 
@@ -42,12 +43,14 @@ public enum LtpValidationConditionOperation {
     LARGER_THAN,
 
     /**
-     * The extracted value is verified to be in between the interval of two condition values.
+     * The extracted value is verified to be in between the interval of two
+     * condition values.
      */
     IN_BETWEEN,
 
-    /** 
-     * The extracted value matches the provided regular expression without considering letter casing.
+    /**
+     * The extracted value matches the provided regular expression without
+     * considering letter casing.
      */
     MATCHES
 }

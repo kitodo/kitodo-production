@@ -15,14 +15,16 @@ package org.kitodo.api.validation.longtermpreservation;
  * The failure severity of a condition.
  */
 public enum LtpValidationConditionSeverity {
-    
+
     /**
-     * A condition failure is treated as warning, meaning it is not considered critical and should not interrupt the workflow.
+     * A condition failure is treated as warning, meaning it is not considered
+     * critical and should not interrupt the workflow.
      */
     WARNING,
 
     /**
-     * A condition failure is treated as an error, meaning it is considered critical and should interrupt the workflow.
+     * A condition failure is treated as an error, meaning it is considered
+     * critical and should interrupt the workflow.
      */
     ERROR
 

@@ -32,10 +32,12 @@ import org.kitodo.production.services.ServiceManager;
 public class LtpValidationConfigurationListView extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(LtpValidationConfigurationListView.class);
-    private final String ltpValidationConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "ltpValidationConfigurationEdit");
+    private final String ltpValidationConfigurationEditPath = MessageFormat.format(REDIRECT_PATH,
+        "ltpValidationConfigurationEdit");
 
     /**
-     * Empty default constructor that also sets the LazyBeanModel instance of this bean.
+     * Empty default constructor that also sets the LazyBeanModel instance of
+     * this bean.
      */
     public LtpValidationConfigurationListView() {
         super();
@@ -52,7 +54,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
             return ServiceManager.getLtpValidationConfigurationService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY,
-                    new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationPlural() }, logger, e);
+                new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationPlural() }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -69,17 +71,15 @@ public class LtpValidationConfigurationListView extends BaseForm {
     /**
      * Delete ltp validation configuration identified by ID.
      *
-     * @param id ID of ltp validation configuration to delete
+     * @param id
+     *            ID of ltp validation configuration to delete
      */
     public void deleteById(int id) {
         try {
             ServiceManager.getLtpValidationConfigurationService().remove(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(
-                ERROR_DELETING, 
-                new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, 
-                logger, e
-            );
+            Helper.setErrorMessage(ERROR_DELETING,
+                new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);
         }
     }
 

@@ -52,7 +52,8 @@ public class LongTermPreservationValidationService {
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    public LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions) {
+    public LtpValidationResult validate(URI fileUri, FileType fileType,
+            List<? extends LtpValidationConditionInterface> conditions) {
         return longTermPreservationValidation.validate(fileUri, fileType, conditions);
     }
 

@@ -15,7 +15,7 @@ package org.kitodo.api.validation.longtermpreservation;
  * General error types that might occur during image validation.
  */
 public enum LtpValidationError {
-    
+
     /**
      * The file to be validated cannot be found at the specified URI.
      */
@@ -27,7 +27,8 @@ public enum LtpValidationError {
     IO_ERROR,
 
     /**
-     * The image can not be validated because the file type is not supported by the backend.
+     * The image can not be validated because the file type is not supported by
+     * the backend.
      */
     FILE_TYPE_NOT_SUPPORTED,
 

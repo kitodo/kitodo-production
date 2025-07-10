@@ -23,12 +23,13 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 /**
- * Various settings that influence how images of a folder are validated for long-term-preservation.
+ * Various settings that influence how images of a folder are validated for
+ * long-term-preservation.
  */
 @Entity
 @Table(name = "ltp_validation_configuration")
 public class LtpValidationConfiguration extends BaseBean {
-    
+
     @Column(name = "title")
     private String title = "";
 
@@ -50,6 +51,7 @@ public class LtpValidationConfiguration extends BaseBean {
 
     /**
      * Returns the title of this validation configuration.
+     * 
      * @return the title of this validation configuration
      */
     public String getTitle() {
@@ -57,17 +59,19 @@ public class LtpValidationConfiguration extends BaseBean {
     }
 
     /**
-     * Return the mime type of files this validation configuration can be applied to.
+     * Return the mime type of files this validation configuration can be
+     * applied to.
      * 
-     * @return the mime type of files this validation configuratio can be applied to.
+     * @return the mime type of files this validation configuratio can be
+     *         applied to.
      */
     public String getMimeType() {
         return mimeType;
     }
 
     /**
-     * Return a list of validation conditions that are checked against an image that 
-     * is validated with this configuration.
+     * Return a list of validation conditions that are checked against an image
+     * that is validated with this configuration.
      * 
      * @return the lis of validation conditions that will be checked
      */
@@ -85,18 +89,22 @@ public class LtpValidationConfiguration extends BaseBean {
     }
 
     /**
-     * Whether uploading an image should be canceled if an error was found during validation.
+     * Whether uploading an image should be canceled if an error was found
+     * during validation.
      * 
-     * @return true if upliading an image should be canceled if an error was found during validation
+     * @return true if upliading an image should be canceled if an error was
+     *         found during validation
      */
     public boolean getRequireNoErrorToUploadImage() {
         return this.requireNoErrorToUploadImage;
     }
 
     /**
-     * Whether finishing an image validation task should be canceled if an error was found during validation.
+     * Whether finishing an image validation task should be canceled if an error
+     * was found during validation.
      * 
-     * @return true if finishing an image validation task should be canceled if an error was found during validation
+     * @return true if finishing an image validation task should be canceled if
+     *         an error was found during validation
      */
     public boolean getRequireNoErrorToFinishTask() {
         return this.requireNoErrorToFinishTask;
@@ -105,7 +113,8 @@ public class LtpValidationConfiguration extends BaseBean {
     /**
      * Sets the title of this validation configuration.
      * 
-     * @param title the title of this validation configuration
+     * @param title
+     *            the title of this validation configuration
      */
     public void setTitle(String title) {
         this.title = title;
@@ -114,7 +123,8 @@ public class LtpValidationConfiguration extends BaseBean {
     /**
      * Sets the MIME type this validation configuration can be applied to.
      * 
-     * @param mimeType the mime type this validation configuration can be  applied to
+     * @param mimeType
+     *            the mime type this validation configuration can be applied to
      */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
@@ -123,7 +133,9 @@ public class LtpValidationConfiguration extends BaseBean {
     /**
      * Sets the list of validation conditions that are checked for an image.
      * 
-     * @param validationConditions the list of validation conditions that are checked for an image
+     * @param validationConditions
+     *            the list of validation conditions that are checked for an
+     *            image
      */
     public void setValidationConditions(List<LtpValidationCondition> validationConditions) {
         this.validationConditions = validationConditions;
@@ -132,24 +144,30 @@ public class LtpValidationConfiguration extends BaseBean {
     /**
      * Sets the list of folders that use this validation configuration.
      * 
-     * @param folders the list of folders that use this validation configuration
+     * @param folders
+     *            the list of folders that use this validation configuration
      */
     public void setFolders(List<Folder> folders) {
         this.folders = folders;
     }
 
     /**
-     * Sets whether uploading an image should be canceled if an error was found during validation.
+     * Sets whether uploading an image should be canceled if an error was found
+     * during validation.
      * 
-     * @param requireNoErrorToUploadImage true if uploading an image should be canceled
+     * @param requireNoErrorToUploadImage
+     *            true if uploading an image should be canceled
      */
     public void setRequireNoErrorToUploadImage(boolean requireNoErrorToUploadImage) {
         this.requireNoErrorToUploadImage = requireNoErrorToUploadImage;
     }
 
     /**
-     * Sets whether finishing an image validation task should be canceled if an error was found during validation.
-     * @param requireNoErrorToFinishTask true if finishing an image validation task should be canceled
+     * Sets whether finishing an image validation task should be canceled if an
+     * error was found during validation.
+     * 
+     * @param requireNoErrorToFinishTask
+     *            true if finishing an image validation task should be canceled
      */
     public void setRequireNoErrorToFinishTask(boolean requireNoErrorToFinishTask) {
         this.requireNoErrorToFinishTask = requireNoErrorToFinishTask;
@@ -173,11 +191,13 @@ public class LtpValidationConfiguration extends BaseBean {
     }
 
     /**
-     * Hash code implementation based on all properties of validation configuration.
+     * Hash code implementation based on all properties of validation
+     * configuration.
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, mimeType, requireNoErrorToUploadImage, requireNoErrorToFinishTask, validationConditions);
+        return Objects.hash(id, title, mimeType, requireNoErrorToUploadImage, requireNoErrorToFinishTask,
+            validationConditions);
     }
 
 }

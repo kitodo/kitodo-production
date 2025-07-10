@@ -14,7 +14,8 @@ package org.kitodo.api.validation.longtermpreservation;
 import java.util.List;
 
 /**
- * An immutable, no-setters beans implementing the validation condition interface.
+ * An immutable, no-setters beans implementing the validation condition
+ * interface.
  */
 public class LtpValidationCondition implements LtpValidationConditionInterface {
 
@@ -26,17 +27,17 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     /**
      * Creates a new validation condition.
      * 
-     * @param property the property that is checked
-     * @param operation the operation a property is checked against
-     * @param values the values that a property is checked against
-     * @param severity the failure severity of this condition
+     * @param property
+     *            the property that is checked
+     * @param operation
+     *            the operation a property is checked against
+     * @param values
+     *            the values that a property is checked against
+     * @param severity
+     *            the failure severity of this condition
      */
-    public LtpValidationCondition(
-        String property, 
-        LtpValidationConditionOperation operation, 
-        List<String> values, 
-        LtpValidationConditionSeverity severity
-    ) {
+    public LtpValidationCondition(String property, LtpValidationConditionOperation operation, List<String> values,
+            LtpValidationConditionSeverity severity) {
         this.property = property;
         this.operation = operation;
         this.values = values;
@@ -44,7 +45,8 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     }
 
     /**
-     * Return the property of the file that is checked (e.g., ImageWidth, ColorSpace, etc.)
+     * Return the property of the file that is checked (e.g., ImageWidth,
+     * ColorSpace, etc.)
      * 
      * @return the property of the the file that is checked
      */
@@ -54,10 +56,11 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     }
 
     /**
-     * Return the operation that is used to check the property against the condition values
-     * (e.g., equal, not_equal, smaller_than, etc.)
+     * Return the operation that is used to check the property against the
+     * condition values (e.g., equal, not_equal, smaller_than, etc.)
      * 
-     * @return the operation that is used to check the property against the condition values
+     * @return the operation that is used to check the property against the
+     *         condition values
      */
     @Override
     public LtpValidationConditionOperation getOperation() {
@@ -65,10 +68,14 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     }
 
     /**
-     * Return a list of values that are checked against the property of the file.
+     * Return a list of values that are checked against the property of the
+     * file.
      * 
-     * <p>May be a single value (comparing via equal), two values (comparing as interval) or 
-     * multiple values (comparing as set) depending on the operation</p>
+     * <p>
+     * May be a single value (comparing via equal), two values (comparing as
+     * interval) or multiple values (comparing as set) depending on the
+     * operation
+     * </p>
      * 
      * @return the list of values
      */
@@ -78,9 +85,9 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     }
 
     /**
-     * Return the severity of the validation condition, whether the condition is critical
-     * and should be treated as an error, or whether the condition is optional and should
-     * be treated as a warning.
+     * Return the severity of the validation condition, whether the condition is
+     * critical and should be treated as an error, or whether the condition is
+     * optional and should be treated as a warning.
      * 
      * @return the severity of the validation condition
      */
@@ -88,5 +95,5 @@ public class LtpValidationCondition implements LtpValidationConditionInterface {
     public LtpValidationConditionSeverity getSeverity() {
         return severity;
     }
-    
+
 }

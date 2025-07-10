@@ -21,15 +21,16 @@ import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class LtpValidationConfigurationConverter extends BeanConverter implements Converter<LtpValidationConfiguration> {
+public class LtpValidationConfigurationConverter extends BeanConverter
+        implements Converter<LtpValidationConfiguration> {
     @Override
-    public LtpValidationConfiguration getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) 
+    public LtpValidationConfiguration getAsObject(FacesContext facesContext, UIComponent uiComponent, String value)
             throws ConverterException {
         return (LtpValidationConfiguration) getAsObject(ServiceManager.getLtpValidationConfigurationService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, LtpValidationConfiguration value) 
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, LtpValidationConfiguration value)
             throws ConverterException {
         return getAsString(value, "ltpValidationConfiguration");
     }

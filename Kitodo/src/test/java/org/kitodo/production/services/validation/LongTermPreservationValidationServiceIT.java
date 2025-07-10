@@ -39,9 +39,11 @@ public class LongTermPreservationValidationServiceIT {
     }
 
     /**
-     * Verifies that all LtpValidationConfigurations stored in the MockDatabase are returned by the service class.
+     * Verifies that all LtpValidationConfigurations stored in the MockDatabase
+     * are returned by the service class.
      * 
-     * @throws DAOException when loading of LtpValidationConfigurations fails
+     * @throws DAOException
+     *             when loading of LtpValidationConfigurations fails
      */
     @Test
     public void shouldGetAllLtpValidationConfigurations() throws DAOException {
@@ -50,10 +52,11 @@ public class LongTermPreservationValidationServiceIT {
         List<LtpValidationConfiguration> configs = ServiceManager.getLtpValidationConfigurationService().getAll();
         assertEquals(2, configs.size(), "Wrong number of ltp validation configurations");
         assertEquals("Valid Tif", configs.get(0).getTitle(), "Wrong title for tif ltp validation configuration");
-        assertEquals(2, configs.get(0).getValidationConditions().size(), 
+        assertEquals(2, configs.get(0).getValidationConditions().size(),
             "Wrong number of validation conditions for first ltp validation configuration");
-        assertEquals("Wellformed Jpeg", configs.get(1).getTitle(), "Wrong title for second ltp validation configuration");
-        assertEquals(1, configs.get(1).getValidationConditions().size(), 
+        assertEquals("Wellformed Jpeg", configs.get(1).getTitle(),
+            "Wrong title for second ltp validation configuration");
+        assertEquals(1, configs.get(1).getValidationConditions().size(),
             "Wrong number of validation conditions for second ltp validation configuration");
     }
 

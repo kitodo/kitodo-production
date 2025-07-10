@@ -41,28 +41,29 @@ public class KitodoJhoveRepInfoParser {
     /**
      * Parse property if it claims to be of type (arity) list.
      * 
-     * @param propertyKey the property name
-     * @param propertyValue the property value
-     * @param propertyMap the simple map of property values
-     * @param stack the stack of properties that need to be parsed
+     * @param propertyKey
+     *            the property name
+     * @param propertyValue
+     *            the property value
+     * @param propertyMap
+     *            the simple map of property values
+     * @param stack
+     *            the stack of properties that need to be parsed
      */
-    private static void parsePropertyOfTypeList(
-        String propertyKey,
-        Object propertyValue, Map<String, 
-        String> propertyMap, 
-        Stack<Pair<String, Property>> stack
-    ) {
+    private static void parsePropertyOfTypeList(String propertyKey, Object propertyValue,
+            Map<String, String> propertyMap, Stack<Pair<String, Property>> stack) {
         if (propertyValue instanceof List<?>) {
-            List<?> valueList = (List<?>)propertyValue;
+            List<?> valueList = (List<?>) propertyValue;
             if (valueList.size() > 0) {
                 if (valueList.get(0) instanceof Property) {
-                    for (Object p : ((List<?>)propertyValue)) {
-                        stack.add(Pair.of(propertyKey, (Property)p));
+                    for (Object p : ((List<?>) propertyValue)) {
+                        stack.add(Pair.of(propertyKey, (Property) p));
                     }
                 } else if (valueList.get(0) instanceof String) {
                     propertyMap.put(propertyKey, StringUtils.join(valueList, ","));
                 } else {
-                    logger.debug("JHove RepInfo contains property list with unknown item type: " + valueList.get(0).toString());
+                    logger.debug(
+                        "JHove RepInfo contains property list with unknown item type: " + valueList.get(0).toString());
                 }
             }
         } else {
@@ -73,42 +74,40 @@ public class KitodoJhoveRepInfoParser {
     /**
      * Parse property if it claims to be of type (arity) array.
      * 
-     * @param propertyKey the property name
-     * @param propertyValue the property value
-     * @param propertyMap the simple map of property values
-     * @param stack the stack of properties that need to be parsed
+     * @param propertyKey
+     *            the property name
+     * @param propertyValue
+     *            the property value
+     * @param propertyMap
+     *            the simple map of property values
+     * @param stack
+     *            the stack of properties that need to be parsed
      */
-    private static void parsePropertyOfTypeArray(
-        String propertyKey,
-        Object propertyValue, Map<String, 
-        String> propertyMap, 
-        Stack<Pair<String, Property>> stack
-    ) {
+    private static void parsePropertyOfTypeArray(String propertyKey, Object propertyValue,
+            Map<String, String> propertyMap, Stack<Pair<String, Property>> stack) {
         if (propertyValue instanceof Property[]) {
-            Property[] propertyArray = (Property[])propertyValue;
-            stack.addAll(
-                IntStream.range(0, propertyArray.length)
-                    .mapToObj((i) -> Pair.of(propertyKey, propertyArray[i]))
-                    .collect(Collectors.toList()
-                )
-            );
+            Property[] propertyArray = (Property[]) propertyValue;
+            stack.addAll(IntStream.range(0, propertyArray.length)
+                    .mapToObj((i) -> Pair.of(propertyKey, propertyArray[i])).collect(Collectors.toList()));
         } else if (propertyValue instanceof String[]) {
-            propertyMap.put(propertyKey, Arrays.toString((String[])propertyValue));
+            propertyMap.put(propertyKey, Arrays.toString((String[]) propertyValue));
         } else if (propertyValue instanceof int[]) {
-            propertyMap.put(propertyKey, Arrays.toString((int[])propertyValue));
+            propertyMap.put(propertyKey, Arrays.toString((int[]) propertyValue));
         } else if (propertyValue instanceof long[]) {
-            propertyMap.put(propertyKey, Arrays.toString((long[])propertyValue));
+            propertyMap.put(propertyKey, Arrays.toString((long[]) propertyValue));
         } else {
             logger.debug("JHove RepInfo contains property array of unknown type: " + propertyValue.toString());
         }
     }
 
     /**
-     * Iterates through hierarchical properties and add them to a flat map. The hierarchy information is lost.
-     * If two properties in different parts of the hierarchy have the same name, the outcome is not clear and
-     * depends on the iteration order.
+     * Iterates through hierarchical properties and add them to a flat map. The
+     * hierarchy information is lost. If two properties in different parts of
+     * the hierarchy have the same name, the outcome is not clear and depends on
+     * the iteration order.
      * 
-     * @param properties the map of properties as provided by Jhov
+     * @param properties
+     *            the map of properties as provided by Jhov
      * @return a simple flat map of property names to values
      */
     private static Map<String, String> hierarchicalPropertiesToSimpleMap(Map<String, Property> properties) {
@@ -122,13 +121,14 @@ public class KitodoJhoveRepInfoParser {
         while (stack.size() > 0) {
             Pair<String, Property> entry = stack.pop();
             PropertyArity propertyArity = entry.getRight().getArity();
-            String propertyKey = entry.getRight().getName(); 
+            String propertyKey = entry.getRight().getName();
             Object propertyValue = entry.getRight().getValue();
 
             if (propertyArity == PropertyArity.SCALAR) {
                 if (propertyValue instanceof NisoImageMetadata) {
-                    NisoImageMetadata metadata = (NisoImageMetadata)propertyValue;
-                    for (Map.Entry<String, String> e : KitodoJhoveNisoImageMetadataHelper.nisoImageMetadataToMap(metadata).entrySet()) {
+                    NisoImageMetadata metadata = (NisoImageMetadata) propertyValue;
+                    for (Map.Entry<String, String> e : KitodoJhoveNisoImageMetadataHelper
+                            .nisoImageMetadataToMap(metadata).entrySet()) {
                         propertyMap.put(e.getKey(), e.getValue());
                     }
                 } else {
@@ -144,10 +144,11 @@ public class KitodoJhoveRepInfoParser {
     }
 
     /**
-     * Converts an integer value representing a ternary value (true, false, undetermined) to
-     * a string of true, false, undetermined.
+     * Converts an integer value representing a ternary value (true, false,
+     * undetermined) to a string of true, false, undetermined.
      * 
-     * @param value the int value
+     * @param value
+     *            the int value
      * @return the string value
      */
     private static String ternaryValueToString(int value) {
@@ -162,9 +163,11 @@ public class KitodoJhoveRepInfoParser {
     }
 
     /**
-     * Converts properties provided by JHove to a simple flat string representation for debugging.
+     * Converts properties provided by JHove to a simple flat string
+     * representation for debugging.
      * 
-     * @param properties the properties provided by JHove
+     * @param properties
+     *            the properties provided by JHove
      * @return the flat string representation of these properties
      */
     private static String propertiesToString(Map<String, Property> properties) {
@@ -176,11 +179,12 @@ public class KitodoJhoveRepInfoParser {
     }
 
     /**
-     * Extracts property values from a RepInfo object provided by JHove by parsing the
-     * hierarchical property structure and adding non-hierarchical base properties provided 
-     * directly by Jhove (e.g. valid, wellformed).
+     * Extracts property values from a RepInfo object provided by JHove by
+     * parsing the hierarchical property structure and adding non-hierarchical
+     * base properties provided directly by Jhove (e.g. valid, wellformed).
      * 
-     * @param info the RepInfo object
+     * @param info
+     *            the RepInfo object
      * @return the flat map of properties and values
      */
     public static Map<String, String> repInfoToPropertyMap(RepInfo info) {
@@ -196,9 +200,11 @@ public class KitodoJhoveRepInfoParser {
     }
 
     /**
-     * Converts info messages contained in the RepInfo object to a simple list of strings.
+     * Converts info messages contained in the RepInfo object to a simple list
+     * of strings.
      * 
-     * @param info the RepInfo object
+     * @param info
+     *            the RepInfo object
      * @return a simple list of message strings
      */
     public static List<String> repInfoMessagesToStringList(RepInfo info) {
@@ -208,7 +214,8 @@ public class KitodoJhoveRepInfoParser {
     /**
      * Converts a single message contained in the RepInfo object to a string.
      * 
-     * @param message the message object
+     * @param message
+     *            the message object
      * @return a string representing the message
      */
     public static String repoInfoMessageToString(Message message) {
@@ -226,19 +233,19 @@ public class KitodoJhoveRepInfoParser {
         }
         return prefix + message.getMessage() + subMessage + offset;
     }
-    
+
     /**
      * Converts a repInfo object to a simple string for debugging.
      * 
-     * @param info the RepInfo object
+     * @param info
+     *            the RepInfo object
      * @return a simple string representing the RepInfo object for debugging
      */
     public static String repInfoToString(RepInfo info) {
         StringBuilder builder = new StringBuilder();
 
-        List<String> checksums = info.getChecksum().stream()
-            .map((c) -> c.getType() + ":" + c.getValue())
-            .collect(Collectors.toList());
+        List<String> checksums = info.getChecksum().stream().map((c) -> c.getType() + ":" + c.getValue())
+                .collect(Collectors.toList());
 
         builder.append("RepInfo object " + info.toString() + "\n");
         builder.append("URI: " + info.getUri() + "\n");

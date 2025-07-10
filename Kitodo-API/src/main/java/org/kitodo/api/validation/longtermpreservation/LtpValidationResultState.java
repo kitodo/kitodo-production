@@ -15,7 +15,7 @@ package org.kitodo.api.validation.longtermpreservation;
  * The overall validation success or failure state for an image or file.
  */
 public enum LtpValidationResultState {
-    
+
     /**
      * The image was deemed valid.
      */

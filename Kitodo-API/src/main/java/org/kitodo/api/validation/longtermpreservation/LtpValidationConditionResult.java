@@ -14,12 +14,14 @@ package org.kitodo.api.validation.longtermpreservation;
 import java.util.Objects;
 
 /**
- * Contains information about the success or failure state after checking a validation condition.
+ * Contains information about the success or failure state after checking a
+ * validation condition.
  */
 public class LtpValidationConditionResult {
-    
+
     /**
-     * Whether the validation condition matched with values extracted from the image.
+     * Whether the validation condition matched with values extracted from the
+     * image.
      */
     boolean passed;
 
@@ -29,16 +31,20 @@ public class LtpValidationConditionResult {
     LtpValidationConditionError error;
 
     /**
-     * The value extracted from an image to be shown to the user as justification why a condition did not pass.
+     * The value extracted from an image to be shown to the user as
+     * justification why a condition did not pass.
      */
     String value;
 
     /**
- * Creates a new condition validation result.
+     * Creates a new condition validation result.
      * 
-     * @param passed whether the condition passed
-     * @param error the error that occurred, or {@code null} if no error occurred
-     * @param value the value extracted from the image
+     * @param passed
+     *            whether the condition passed
+     * @param error
+     *            the error that occurred, or {@code null} if no error occurred
+     * @param value
+     *            the value extracted from the image
      */
     public LtpValidationConditionResult(boolean passed, LtpValidationConditionError error, String value) {
         this.passed = passed;

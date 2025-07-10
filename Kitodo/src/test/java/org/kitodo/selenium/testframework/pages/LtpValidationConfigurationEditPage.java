@@ -151,7 +151,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     public boolean isAllConditionsTabDisplayed() throws Exception {
         return allConditionsTab.isDisplayed();
     }
-    
+
     /**
      * Navigate to details tab.
      */
@@ -180,7 +180,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     /**
      * Set the title of the LTP validation configuration.
      * 
-     * @param title the title
+     * @param title
+     *            the title
      */
     public void setTitle(String title) throws Exception {
         titleInput.clear();
@@ -200,14 +201,16 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     /**
      * Set the mime type based on an option value (not label).
      * 
-     * @param mimeType the option value of the mime type to be selected
+     * @param mimeType
+     *            the option value of the mime type to be selected
      */
     public void setMimeType(String mimeType) throws Exception {
         setDropDownValue(mimeTypeDropDown, mimeType);
     }
 
     /**
-     * Return true if the checkbox "require no errors to finish task" is checked.
+     * Return true if the checkbox "require no errors to finish task" is
+     * checked.
      * 
      * @return true if checked
      */
@@ -218,7 +221,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     /**
      * Set the checkbox "require no errors to finish task".
      * 
-     * @param required true if checkbox should be checked
+     * @param required
+     *            true if checkbox should be checked
      */
     public void setRequireNoErrorToFinishTask(boolean required) throws Exception {
         if (isRequireNoErrorToFinishTask() != required) {
@@ -228,7 +232,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Return true if the checkbox "require no error to upload image" is checked.
+     * Return true if the checkbox "require no error to upload image" is
+     * checked.
      * 
      * @return true if checked
      */
@@ -239,7 +244,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     /**
      * Set the checkbox "require no error to upload image".
      * 
-     * @param required true if checkbox should be checked
+     * @param required
+     *            true if checkbox should be checked
      */
     public void setRequireNoErrorToUploadImage(boolean required) throws Exception {
         if (isRequireNoErrorToUploadImage() != required) {
@@ -249,7 +255,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Return currently selected option value (not label) of the simple wellformed dropdown.
+     * Return currently selected option value (not label) of the simple
+     * wellformed dropdown.
      * 
      * @return the selected option value (not label)
      */
@@ -258,16 +265,19 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Set the currently selected option value (not label) for the simple wellformed dropdown.
+     * Set the currently selected option value (not label) for the simple
+     * wellformed dropdown.
      * 
-     * @param severity the newly selected option value (not label)
+     * @param severity
+     *            the newly selected option value (not label)
      */
     public void setSimpleWellFormedSeverity(String severity) throws Exception {
         setDropDownValue(simpleWellFormedDropDown, severity);
     }
 
     /**
-     * Return currently selected option value (not label) of the simple valid dropdown.
+     * Return currently selected option value (not label) of the simple valid
+     * dropdown.
      * 
      * @return the selected option value (not label)
      */
@@ -276,9 +286,11 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Set the currently selected option value (not label) for the simple valid dropdown.
+     * Set the currently selected option value (not label) for the simple valid
+     * dropdown.
      * 
-     * @param severity the newly selected option value (not label)
+     * @param severity
+     *            the newly selected option value (not label)
      */
     public void setSimpleValidSeverity(String severity) throws Exception {
         setDropDownValue(simpleValidDropDown, severity);
@@ -296,7 +308,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     /**
      * Set the simple filename pattern of the LTP validation configuration.
      * 
-     * @param pattern the new pattern to be set
+     * @param pattern
+     *            the new pattern to be set
      */
     public void setFilenamePattern(String pattern) throws Exception {
         simpleFilenamePatternInput.clear();
@@ -305,7 +318,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Return currently selected option value (not label) of the simple filename pattern severity dropdown.
+     * Return currently selected option value (not label) of the simple filename
+     * pattern severity dropdown.
      * 
      * @return the selected option value (not label)
      */
@@ -314,9 +328,11 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Set the currently selected option value (not label) for the simple filename pattern severity dropdown.
+     * Set the currently selected option value (not label) for the simple
+     * filename pattern severity dropdown.
      * 
-     * @param severity the newly selected option value (not label)
+     * @param severity
+     *            the newly selected option value (not label)
      */
     public void setSimpleFilenamePatternSeverity(String severity) throws Exception {
         setDropDownValue(simpleFilenamePatternSeverityDropDown, severity);
@@ -333,9 +349,11 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Returns the property name for the n-th condition listed in the all conditions table.
+     * Returns the property name for the n-th condition listed in the all
+     * conditions table.
      * 
-     * @param row the row in the table
+     * @param row
+     *            the row in the table
      * @return the property name of the condition in that row
      */
     public String getConditionProperty(int row) throws Exception {
@@ -343,9 +361,13 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Sets the property name for the n-th condition listed in the all conditions table.
-     * @param row the row in the table
-     * @param name the new property name of the condition in that row
+     * Sets the property name for the n-th condition listed in the all
+     * conditions table.
+     * 
+     * @param row
+     *            the row in the table
+     * @param name
+     *            the new property name of the condition in that row
      */
     public void setConditionProperty(int row, String name) throws Exception {
         WebElement input = getPropertyInputForCondition(row);
@@ -354,7 +376,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Click the add condition button and wait until a new row was added to the table.
+     * Click the add condition button and wait until a new row was added to the
+     * table.
      */
     public void clickAddConditionButton() throws Exception {
         int countBefore = getNumberOfValidationConditions();
@@ -363,9 +386,11 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Click the trash button for a validation condition and wait until the row was removed from the table.
+     * Click the trash button for a validation condition and wait until the row
+     * was removed from the table.
      * 
-     * @param idx the index of the validation condition to be removed
+     * @param idx
+     *            the index of the validation condition to be removed
      */
     public void clickRemoveConditionButton(int idx) throws Exception {
         int countBefore = getNumberOfValidationConditions();
@@ -374,18 +399,21 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Return the input element of the property column for the n-th validation condition listed in the table.
-     * @param row the row in the table
+     * Return the input element of the property column for the n-th validation
+     * condition listed in the table.
+     * 
+     * @param row
+     *            the row in the table
      * @return the input element of the property column
      */
     private WebElement getPropertyInputForCondition(int row) {
-        return allConditionsTable.findElements(By.tagName("tr")).get(row + 1)
-            .findElements(By.tagName("td")).get(0)
-            .findElement(By.tagName("input"));
+        return allConditionsTable.findElements(By.tagName("tr")).get(row + 1).findElements(By.tagName("td")).get(0)
+                .findElement(By.tagName("input"));
     }
 
     /**
-     * Return the number of validation conditions that are listed in the table of all conditions.
+     * Return the number of validation conditions that are listed in the table
+     * of all conditions.
      * 
      * @return the number of validation conditions
      */
@@ -394,11 +422,13 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Sets the value for a dropdown UI element. Waits until the form is refreshed an the 
-     * newly selected value is rendered.
+     * Sets the value for a dropdown UI element. Waits until the form is
+     * refreshed an the newly selected value is rendered.
      * 
-     * @param dropDown the primefaces dropdown UI element
-     * @param value the option value to be set (not the label)
+     * @param dropDown
+     *            the primefaces dropdown UI element
+     * @param value
+     *            the option value to be set (not the label)
      */
     private void setDropDownValue(WebElement dropDown, String value) {
         // wait until dropdown is available
@@ -407,10 +437,8 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
         // check which item idx corresponds to value
         String selectId = dropDown.getAttribute("id") + "_input";
         List<WebElement> options = new Select(Browser.getDriver().findElement(By.id(selectId))).getOptions();
-        int idx = IntStream.range(0, options.size())
-            .filter((i) -> value.equals(options.get(i).getAttribute("value")))
-            .findFirst()
-            .orElse(-1);
+        int idx = IntStream.range(0, options.size()).filter((i) -> value.equals(options.get(i).getAttribute("value")))
+                .findFirst().orElse(-1);
 
         if (idx < 0) {
             throw new IllegalArgumentException("value not found amongst dropdown list items");
@@ -428,7 +456,6 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
 
         // wait until item was selected
         Awaitility.await().until(() -> new Select(Browser.getDriver().findElement(By.id(selectId)))
-            .getFirstSelectedOption().getAttribute("value").equals(value)
-        );
+                .getFirstSelectedOption().getAttribute("value").equals(value));
     }
 }

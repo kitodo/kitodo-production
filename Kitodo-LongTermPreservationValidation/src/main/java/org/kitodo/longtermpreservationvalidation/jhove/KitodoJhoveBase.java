@@ -39,10 +39,12 @@ import org.kitodo.longtermpreservationvalidation.conditions.LtpValidationConditi
 /**
  * Manages Jhove.
  * 
- * <p>The png module (PNG-gdm, "com.mcgath.jhove.module.PngModule") is disabled, because it 
- * depends on the package "jhove-ext-modules". For some reason, including this jar interfers 
- * with the xml processing in Kitodo.Production somehow. Specifically, mods2kitodo schema 
- * conversion does not work correctly.</p>
+ * <p>
+ * The png module (PNG-gdm, "com.mcgath.jhove.module.PngModule") is disabled,
+ * because it depends on the package "jhove-ext-modules". For some reason,
+ * including this jar interfers with the xml processing in Kitodo.Production
+ * somehow. Specifically, mods2kitodo schema conversion does not work correctly.
+ * </p>
  */
 public class KitodoJhoveBase {
 
@@ -52,23 +54,16 @@ public class KitodoJhoveBase {
      * Returns the matching module name for the given file type.
      */
     private static final Map<FileType, String> MODULE_NAMES_BY_FILE_TYPE = Map.ofEntries(
-        Map.entry(FileType.GIF, "GIF-hul"),
-        Map.entry(FileType.JPEG, "JPEG-hul"),
-        Map.entry(FileType.JPEG_2000, "JPEG2000-hul"),
-        Map.entry(FileType.PDF, "PDF-hul"),
-        Map.entry(FileType.TIFF, "TIFF-hul")
-    );
+        Map.entry(FileType.GIF, "GIF-hul"), Map.entry(FileType.JPEG, "JPEG-hul"),
+        Map.entry(FileType.JPEG_2000, "JPEG2000-hul"), Map.entry(FileType.PDF, "PDF-hul"),
+        Map.entry(FileType.TIFF, "TIFF-hul"));
 
     /**
      * Modules to initialize.
      */
-    private static final List<String> JHOVE_MODULE_CLASSES = Arrays.asList(
-        "edu.harvard.hul.ois.jhove.module.GifModule",
-        "edu.harvard.hul.ois.jhove.module.Jpeg2000Module", 
-        "edu.harvard.hul.ois.jhove.module.JpegModule",
-        "edu.harvard.hul.ois.jhove.module.PdfModule", 
-        "edu.harvard.hul.ois.jhove.module.TiffModule"
-    );
+    private static final List<String> JHOVE_MODULE_CLASSES = Arrays.asList("edu.harvard.hul.ois.jhove.module.GifModule",
+        "edu.harvard.hul.ois.jhove.module.Jpeg2000Module", "edu.harvard.hul.ois.jhove.module.JpegModule",
+        "edu.harvard.hul.ois.jhove.module.PdfModule", "edu.harvard.hul.ois.jhove.module.TiffModule");
 
     private static final App app = App.newAppWithName("JHOVE");
 
@@ -126,74 +121,66 @@ public class KitodoJhoveBase {
     /**
      * Validates an existing file.
      * 
-     * @param module the JHove module that is used to validate the exsting file
-     * @param file the existing file
-     * @param conditions the validation conditions that are checked
+     * @param module
+     *            the JHove module that is used to validate the exsting file
+     * @param file
+     *            the existing file
+     * @param conditions
+     *            the validation conditions that are checked
      * @return the validation result
      */
-    private static LtpValidationResult validateFile(Module module, File file, List<? extends LtpValidationConditionInterface> conditions) {
+    private static LtpValidationResult validateFile(Module module, File file,
+            List<? extends LtpValidationConditionInterface> conditions) {
         RepInfo info = new RepInfo(file.getAbsolutePath());
 
         try {
             base.processFile(app, module, false, file, info);
         } catch (Exception e) {
             logger.error("exception while validating with jhove", e);
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.UNKNOWN_ERROR),
-                Collections.emptyList(),
-                Collections.singletonList("Jhove Exception: " + e.getMessage())
-            );
+            return new LtpValidationResult(LtpValidationResultState.ERROR,
+                    Collections.singletonList(LtpValidationError.UNKNOWN_ERROR), Collections.emptyList(),
+                    Collections.singletonList("Jhove Exception: " + e.getMessage()));
         }
 
         Map<String, String> properties = KitodoJhoveRepInfoParser.repInfoToPropertyMap(info);
         properties.put("filename", file.getName());
 
-        List<LtpValidationConditionResult> conditionResults = 
-            LtpValidationConditionEvaluator.evaluateValidationConditions(conditions, properties);
+        List<LtpValidationConditionResult> conditionResults = LtpValidationConditionEvaluator
+                .evaluateValidationConditions(conditions, properties);
 
         return new LtpValidationResult(
-            LtpValidationConditionEvaluator.summarizeValidationState(conditions, conditionResults), 
-            Collections.emptyList(), 
-            conditionResults, 
-            KitodoJhoveRepInfoParser.repInfoMessagesToStringList(info)
-        );
+                LtpValidationConditionEvaluator.summarizeValidationState(conditions, conditionResults),
+                Collections.emptyList(), conditionResults, KitodoJhoveRepInfoParser.repInfoMessagesToStringList(info));
     }
 
     /**
      * Validates a file.
      *
-     * @param filepath filepath of file that is validated
-     * @param fileType target file type that the file is supposed to be
-     * @param conditions list of validation conditions that need to be checked
+     * @param filepath
+     *            filepath of file that is validated
+     * @param fileType
+     *            target file type that the file is supposed to be
+     * @param conditions
+     *            list of validation conditions that need to be checked
      * @return the validation result
      */
-    public static LtpValidationResult validate(
-        String filepath, 
-        FileType fileType, 
-        List<? extends LtpValidationConditionInterface> conditions
-    ) {
+    public static LtpValidationResult validate(String filepath, FileType fileType,
+            List<? extends LtpValidationConditionInterface> conditions) {
         if (!getSupportedFileTypes().contains(fileType)) {
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.FILE_TYPE_NOT_SUPPORTED)
-            );
+            return new LtpValidationResult(LtpValidationResultState.ERROR,
+                    Collections.singletonList(LtpValidationError.FILE_TYPE_NOT_SUPPORTED));
         }
 
         File file = new File(filepath);
 
         if (!file.exists()) {
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.FILE_NOT_FOUND)
-            );
+            return new LtpValidationResult(LtpValidationResultState.ERROR,
+                    Collections.singletonList(LtpValidationError.FILE_NOT_FOUND));
         }
 
         if (!file.canRead()) {
-            return new LtpValidationResult(
-                LtpValidationResultState.ERROR, 
-                Collections.singletonList(LtpValidationError.IO_ERROR)
-            );
+            return new LtpValidationResult(LtpValidationResultState.ERROR,
+                    Collections.singletonList(LtpValidationError.IO_ERROR));
         }
 
         Module module = getJhoveBase().getModule(MODULE_NAMES_BY_FILE_TYPE.get(fileType));

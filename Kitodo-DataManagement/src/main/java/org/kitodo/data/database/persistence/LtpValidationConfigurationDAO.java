@@ -24,9 +24,11 @@ public class LtpValidationConfigurationDAO extends BaseDAO<LtpValidationConfigur
     /**
      * Retrieves a BaseBean identified by the given id from the database.
      *
-     * @param id of bean to load
+     * @param id
+     *            of bean to load
      * @return persisted bean
-     * @throws DAOException if a HibernateException is thrown
+     * @throws DAOException
+     *             if a HibernateException is thrown
      */
     @Override
     public LtpValidationConfiguration getById(Integer id) throws DAOException {
@@ -50,8 +52,10 @@ public class LtpValidationConfigurationDAO extends BaseDAO<LtpValidationConfigur
     /**
      * Retrieves all BaseBean objects in given range.
      *
-     * @param offset result
-     * @param size   amount of results
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
      * @return constrained list of persisted beans
      */
     @Override
@@ -62,8 +66,10 @@ public class LtpValidationConfigurationDAO extends BaseDAO<LtpValidationConfigur
     /**
      * Retrieves all not indexed BaseBean objects in given range.
      *
-     * @param offset result
-     * @param size   amount of results
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
      * @return constrained list of persisted beans
      */
     @Override
@@ -74,9 +80,11 @@ public class LtpValidationConfigurationDAO extends BaseDAO<LtpValidationConfigur
     /**
      * Removes BaseBean object specified by the given id from the database.
      *
-     * @param id of bean to delete
-     * @throws DAOException if the current session can't be retrieved or an exception is
-     *                      thrown while performing the rollback
+     * @param id
+     *            of bean to delete
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
      */
     @Override
     public void remove(Integer id) throws DAOException {

@@ -54,12 +54,13 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     @Enumerated(EnumType.STRING)
     private LtpValidationConditionSeverity severity;
 
-    @ManyToOne(optional = false) 
+    @ManyToOne(optional = false)
     @JoinColumn(name = "ltp_validation_configuration_id", nullable = false)
     private LtpValidationConfiguration ltpValidationConfiguration;
-    
+
     /**
-     * Returns the property of the file that is checked. Examples: {@code ImageWidth}, {@code ColorSpace}, etc.
+     * Returns the property of the file that is checked. Examples:
+     * {@code ImageWidth}, {@code ColorSpace}, etc.
      * 
      * @return the property of the the file that is checked
      */
@@ -67,12 +68,13 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     public String getProperty() {
         return property;
     }
-    
+
     /**
-     * Returns the operation that is used to check the property against the condition values.
-     * Examples: equal, not_equal, smaller_than, etc.
+     * Returns the operation that is used to check the property against the
+     * condition values. Examples: equal, not_equal, smaller_than, etc.
      * 
-     * @return the operation that is used to check the property against the condition values
+     * @return the operation that is used to check the property against the
+     *         condition values
      */
     @Override
     public LtpValidationConditionOperation getOperation() {
@@ -80,10 +82,14 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
 
     /**
-     * Returns a list of values that are checked against the property of the file.
+     * Returns a list of values that are checked against the property of the
+     * file.
      * 
-     * <p>May be a single value (comparing via equal), two values (comparing as interval) or 
-     * multiple values (comparing as set) depending on the operation</p>
+     * <p>
+     * May be a single value (comparing via equal), two values (comparing as
+     * interval) or multiple values (comparing as set) depending on the
+     * operation
+     * </p>
      * 
      * @return the list of values
      */
@@ -93,9 +99,9 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
 
     /**
-     * Returns the severity of a validation condition violation. This determines whether
-     * the condition is critical and should be treated as an error, or whether the
-     * condition is optional and should be treated as a warning.
+     * Returns the severity of a validation condition violation. This determines
+     * whether the condition is critical and should be treated as an error, or
+     * whether the condition is optional and should be treated as a warning.
      * 
      * @return the severity of a validation condition violation
      */
@@ -116,7 +122,8 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     /**
      * Sets the property of the file that is checked.
      * 
-     * @param property the property that is checked
+     * @param property
+     *            the property that is checked
      */
     public void setProperty(String property) {
         this.property = property;
@@ -125,7 +132,8 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     /**
      * Sets the condition operation that is applied when checking the condition.
      * 
-     * @param operation the condition operation that is applied
+     * @param operation
+     *            the condition operation that is applied
      */
     public void setOperation(LtpValidationConditionOperation operation) {
         this.operation = operation;
@@ -134,16 +142,19 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     /**
      * Sets the values that are used for comparison when checking the condition.
      * 
-     * @param values the list of values that are used for comparison
+     * @param values
+     *            the list of values that are used for comparison
      */
     public void setValues(List<String> values) {
         this.values = values;
     }
 
     /**
-     * Sets the failure severity that is used in case the condition does not pass.
+     * Sets the failure severity that is used in case the condition does not
+     * pass.
      * 
-     * @param severity the failure severity
+     * @param severity
+     *            the failure severity
      */
     public void setSeverity(LtpValidationConditionSeverity severity) {
         this.severity = severity;
@@ -152,7 +163,8 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     /**
      * Sets the LTP validation configuration this condition belongs to.
      * 
-     * @param ltpValidationConfiguration the LTP validation configuration this condition belongs to
+     * @param ltpValidationConfiguration
+     *            the LTP validation configuration this condition belongs to
      */
     public void setLtpValidationConfiguration(LtpValidationConfiguration ltpValidationConfiguration) {
         this.ltpValidationConfiguration = ltpValidationConfiguration;
@@ -169,9 +181,8 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
 
         if (object instanceof LtpValidationCondition) {
             LtpValidationCondition condition = (LtpValidationCondition) object;
-            return Objects.nonNull(this.getId()) 
-                && Objects.nonNull(condition.getId()) 
-                && Objects.equals(this.getId(), condition.getId());
+            return Objects.nonNull(this.getId()) && Objects.nonNull(condition.getId())
+                    && Objects.equals(this.getId(), condition.getId());
         }
 
         return false;

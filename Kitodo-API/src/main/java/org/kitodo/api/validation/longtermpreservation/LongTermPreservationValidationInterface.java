@@ -26,6 +26,7 @@ public interface LongTermPreservationValidationInterface {
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    LtpValidationResult validate(URI fileUri, FileType fileType, List<? extends LtpValidationConditionInterface> conditions);
+    LtpValidationResult validate(URI fileUri, FileType fileType,
+            List<? extends LtpValidationConditionInterface> conditions);
 
 }
