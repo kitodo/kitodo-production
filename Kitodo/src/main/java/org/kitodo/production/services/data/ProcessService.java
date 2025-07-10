@@ -313,7 +313,12 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     @Override
     public void save(Process process) throws DAOException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
-        
+
+        // do not update if process was not saved yet
+        if (Objects.nonNull(process) && Objects.nonNull(process.getId())) {
+            this.updateAmountOfInternalMetaInformation(process, false);
+        }
+
         // save parent processes if they are new and do not have an id yet
         List<Process> parents = findParentProcesses(process);
         for (Process parent: parents) {
@@ -2365,5 +2370,44 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             save(process);
         }
         return configuration.getTitle();
+    }
+
+    private int getNumberOfImagesForIndex(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getPhysicalStructure())
+                .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count());
+    }
+
+    private int getNumberOfMetadata(Workpiece workpiece) {
+        return Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
+    }
+
+    private int getNumberOfStructures(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getLogicalStructure()).count());
+    }
+
+    /**
+     * Update amount of referenced files, document structure elements and metadata fields in database.
+     * @param process Process to update
+     * @param save Save process in method call itself or not.
+     * @throws DAOException Thrown if storing of process data in database is not possible
+     */
+    public void updateAmountOfInternalMetaInformation(Process process, boolean save) throws DAOException {
+        if (Objects.isNull(process) || Objects.isNull(process.getId())) {
+            logger.debug("Process was not saved yet so no meta information are available.");
+            return;
+        }
+
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
+        try {
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+            process.setSortHelperImages(getNumberOfImagesForIndex(workpiece));
+            process.setSortHelperDocstructs(getNumberOfStructures(workpiece));
+            process.setSortHelperMetadata(getNumberOfMetadata(workpiece));
+            if (save) {
+                super.save(process);
+            }
+        } catch (IOException e) {
+            logger.debug("Could not load meta file {} for gathering meta information!", metadataFileUri.toString());
+        }
     }
 }
