@@ -37,7 +37,7 @@ public class LtpValidationConditionResult {
  * Creates a new condition validation result.
      * 
      * @param passed whether the condition passed
-     * @param the error that occurred, or {@code null} if no error occurred
+     * @param error the error that occurred, or {@code null} if no error occurred
      * @param value the value extracted from the image
      */
     public LtpValidationConditionResult(boolean passed, LtpValidationConditionError error, String value) {
