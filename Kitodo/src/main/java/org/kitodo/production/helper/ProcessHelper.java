@@ -378,8 +378,8 @@ public class ProcessHelper {
             for (String value : entry.getValue()) {
                 // distinguish between metadata entries and groups (groups definitely required in the future!)
                 if (separatorSet && entry.getKey().contains(separator)) {
-                    String[] keyParts = entry.getKey().split(Pattern.quote(separator));
-                    String[] contentParts = value.split(Pattern.quote(separator));
+                    String[] keyParts = entry.getKey().split(Pattern.quote(separator), -1);
+                    String[] contentParts = value.split(Pattern.quote(separator), -1);
                     // "-1" because 'keyParts' also contains the name of the metadata group itself at the first index
                     if (keyParts.length < 1 || (keyParts.length - 1 != contentParts.length)) {
                         logger.error("Number of keys in CSV cell to be parsed into metadata group does not match number of metadata keys");
