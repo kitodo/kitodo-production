@@ -16,17 +16,16 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Objects;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+import org.hibernate.search.backend.elasticsearch.ElasticsearchBackend;
+import org.hibernate.search.mapper.orm.Search;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 /**
  * Checks the connection to the search service. This is an asynchronous function
@@ -35,8 +34,6 @@ import org.kitodo.config.ConfigCore;
  */
 class ServerConnectionChecker implements Runnable {
     private static final Logger logger = LogManager.getLogger(ServerConnectionChecker.class);
-    private static final Pattern PATTERN_SERVER = Pattern.compile("cluster_name\\W+([^\"]*).*?number\\W+([^\"]*)",
-        Pattern.DOTALL);
     private static final int WAIT_BETWEEN_CHECKS_SECS = 3;
 
     private final IndexingService indexingService;
@@ -77,19 +74,25 @@ class ServerConnectionChecker implements Runnable {
      * Get search server information.
      */
     private static String downloadServerInformation() {
-        try (InputStream greetStream = ConfigCore.getSearchServerUrl().openStream();
-                Scanner scanner = new Scanner(greetStream, StandardCharsets.US_ASCII)) {
-            scanner.useDelimiter("\\A");
-            String body = scanner.hasNext() ? scanner.next() : "";
-            Matcher serverMatcher = PATTERN_SERVER.matcher(body);
-            if (serverMatcher.find()) {
-                String serverInformation = serverMatcher.group(1) + ' ' + serverMatcher.group(2);
+        try {
+            ElasticsearchBackend elasticsearchBackend = Search.mapping(HibernateUtil.getSession().getSessionFactory())
+                    .backend()
+                    .unwrap(ElasticsearchBackend.class);
+            // do not call close() on restClient as this will terminate the connection to search index
+            RestClient restClient = elasticsearchBackend.client(RestClient.class);
+            Request request = new Request("GET", "/");
+            Response response = restClient.performRequest(request);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String serverInformation = String.format("Connection established to %s", response.getHost().toURI());
                 logger.info("Search server found: {}", serverInformation);
                 return serverInformation;
             } else {
-                throw new InvalidPropertiesFormatException(body);
+                String message = String.format("Error connecting to Elasticsearch server: %s",
+                        response.getStatusLine().getReasonPhrase());
+                logger.error(message);
+                return "";
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException e) {
             logger.error("searchServerNotRunning", e);
         }
         return "";
