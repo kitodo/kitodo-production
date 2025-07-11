@@ -270,7 +270,7 @@ public class MassImportForm extends BaseForm {
             HashMap<String, String> entryMap = new HashMap<>();
             try {
                 try {
-                    String id = importService.getRecordId(record, templateId);
+                    String id = importService.getRecordId(record, templateId, true);
                     entryMap.put(recordIdentifier, id);
                 } catch (ConfigException | IOException | DAOException ee) {
                     logger.info(ee.getLocalizedMessage());
@@ -298,14 +298,12 @@ public class MassImportForm extends BaseForm {
             HashMap<String, String> entryMap = new HashMap<>();
             try {
                 try {
-                    String id = importService.getRecordId(entry, templateId);
-                    entryMap.put(recordIdentifier, id);
+                    String id = importService.getRecordId(entry, templateId, false);
+                    if (StringUtils.isNotBlank(id)) {
+                        entryMap.put(recordIdentifier, id);
+                    }
                 } catch (DAOException | IOException ex) {
-                    logger.info(ex.getLocalizedMessage());
-                    entryMap.put(recordIdentifier, null);
-                } catch (ConfigException ex) {
-                    // recordIdentifier is not mandatory when creating processes only from data contained in CSV file
-                    logger.info(ex.getLocalizedMessage());
+                    logger.error(ex.getLocalizedMessage());
                 }
                 Process process = importService.createProcessFromData(projectId, templateId, entry,
                         metadataGroupEntrySeparator.getSeparator());
