@@ -27,7 +27,7 @@
             <h:panelGroup layout="block"
                           styleClass="not-scrollable dialogFieldWrapper">
                 <p:panelGrid columns="1" layout="grid">
-                    <p:row>
+                    <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="searchFieldLabel"
                                            value="#{msgs['importConfig.searchField.label']}"/>
@@ -39,8 +39,6 @@
                             <p:tooltip for="searchFieldLabelHelp"
                                        value="#{msgs['tooltip.importConfig.searchFieldLabelHelp']}"/>
                         </div>
-                    </p:row>
-                    <p:row>
                         <div>
                             <p:outputLabel for="searchFieldValue"
                                            value="#{msgs['importConfig.searchField.value']}"/>
@@ -52,8 +50,6 @@
                             <p:tooltip for="searchFieldValueHelp"
                                        value="#{msgs['tooltip.importConfig.searchFieldValueHelp']}"/>
                         </div>
-                    </p:row>
-                    <p:row>
                         <div>
                             <p:outputLabel for="searchFieldHidden"
                                            value="#{msgs.visible}"/>
@@ -65,8 +61,7 @@
                             <p:tooltip for="searchFieldHiddenHelp"
                                        value="#{msgs['tooltip.importConfig.searchFieldHiddenHelp']}"/>
                         </div>
-                    </p:row>
-
+                    </p:panel>
                 </p:panelGrid>
             </h:panelGroup>
             <h:panelGroup layout="block"
