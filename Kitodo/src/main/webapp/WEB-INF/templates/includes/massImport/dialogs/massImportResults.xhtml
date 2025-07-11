@@ -32,6 +32,7 @@
                        title="#{msgs['import.successfulImports']}: #{MassImportForm.successfulImports.size()}">
                     <p:dataTable value="#{MassImportForm.successfulImports}"
                                  rowIndexVar="index"
+                                 emptyMessage="#{msgs['noRecordsFound']}"
                                  var="importResult">
                         <p:column id="successfulImportCounter"
                                   width="80"
@@ -57,6 +58,7 @@
                        title="#{msgs['import.failedImports']}: #{MassImportForm.failedImports.size()}">
                     <p:dataTable value="#{MassImportForm.failedImports}"
                                  rowIndexVar="index"
+                                 emptyMessage="#{msgs['noRecordsFound']}"
                                  var="importResult">
                         <p:column id="failedImportCounter"
                                   width="80"
