@@ -1386,18 +1386,21 @@ public class ImportService {
      * as metadata values.
      * @param metadata map containing metadata to
      * @param templateId ID of template whose ruleset contains definition of 'recordIdentifier' functional metadata
+     * @param strict boolean parameter controling whether an exception should be thrown or not if no 'recordIdentifier' was found
      * @return value of metadata configured as 'recordIdentifier'
      * @throws ConfigException when no 'recordIdentifier' metadata was found in given metadata map
      * @throws IOException when loading ruleset file fails
      * @throws DAOException when retrieving template with given ID 'templateID' from database fails
      */
-    public String getRecordId(Map<String, List<String>> metadata, int templateId)
+    public String getRecordId(Map<String, List<String>> metadata, int templateId, boolean strict)
             throws ConfigException, IOException, DAOException {
         Template template = ServiceManager.getTemplateService().getById(templateId);
         Collection<String> recordIdMetadataKeys = getRecordIdentifierMetadata(template.getRuleset());
         if (recordIdMetadataKeys.isEmpty()) {
-            throw new ConfigException("At least one metadata in ruleset '" + template.getRuleset().getTitle()
-                    + "' must be configured as 'recordIdentifier'");
+            if (strict) {
+                throw new ConfigException(Helper.getTranslation("massImport.recordIdentifierDefinitionMissing",
+                        template.getRuleset().getTitle()));
+            }
         }
         for (String recordIdMetadataKey : recordIdMetadataKeys) {
             if (metadata.containsKey(recordIdMetadataKey)) {
@@ -1407,7 +1410,10 @@ public class ImportService {
                 }
             }
         }
-        throw new ConfigException("No record identifier found in given metadata!");
+        if (strict) {
+            throw new ConfigException(Helper.getTranslation("massImport.recordIdentifierMissing"));
+        }
+        return "";
     }
 
     /**
@@ -1461,7 +1467,7 @@ public class ImportService {
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
-            String id = getRecordId(presetMetadata, templateId);
+            String id = getRecordId(presetMetadata, templateId, true);
             final String parentId = importProcessAndReturnParentID(id, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey);
             setParentProcess(parentId, projectId, template);

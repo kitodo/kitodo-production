@@ -11,18 +11,20 @@
 
 package org.kitodo.production.services.data;
 
-import static org.kitodo.constants.StringConstants.CREATE;
-import static org.kitodo.constants.StringConstants.KITODO;
-
-import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.awaitility.Awaitility.await;
+
 import static org.kitodo.constants.StringConstants.COLLECTION;
+import static org.kitodo.constants.StringConstants.CREATE;
 import static org.kitodo.constants.StringConstants.FILE;
+import static org.kitodo.constants.StringConstants.KITODO;
 
 import com.xebialabs.restito.server.StubServer;
 
@@ -625,13 +627,16 @@ public class ImportServiceIT {
         // verify that config exception is thrown when 'getRecordId' is called with metadata lacking a 'recordIdentifier'
         Map<String, List<String>> metadataWithoutId = createExampleMetadataMap(false, true);
         Exception exception = assertThrows(ConfigException.class,
-                () -> ServiceManager.getImportService().getRecordId(metadataWithoutId, TEMPLATE_ID),
+                () -> ServiceManager.getImportService().getRecordId(metadataWithoutId, TEMPLATE_ID, true),
                 "Expected ConfigException was not thrown");
         assertEquals("No record identifier found in given metadata!", exception.getMessage());
 
+        // verify that not config exception is thrown when 'recordIdentifier' is missing, but parameter 'strict' is set to 'false'
+        assertDoesNotThrow(() -> ServiceManager.getImportService().getRecordId(metadataWithoutId, TEMPLATE_ID, false));
+
         // verify 'getRecordId' returns the correct value when called with a map containing a 'recordIdentifier' metadata
         Map<String, List<String>> metadataWithId = createExampleMetadataMap(true, true);
-        String recordId = ServiceManager.getImportService().getRecordId(metadataWithId, TEMPLATE_ID);
+        String recordId = ServiceManager.getImportService().getRecordId(metadataWithId, TEMPLATE_ID, true);
         assertEquals("123",  recordId, "Wrong record identifier");
     }
 
