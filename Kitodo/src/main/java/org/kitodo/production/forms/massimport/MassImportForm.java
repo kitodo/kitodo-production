@@ -303,6 +303,9 @@ public class MassImportForm extends BaseForm {
                 } catch (DAOException | IOException ex) {
                     logger.info(ex.getLocalizedMessage());
                     entryMap.put(recordIdentifier, null);
+                } catch (ConfigException ex) {
+                    // recordIdentifier is not mandatory when creating processes only from data contained in CSV file
+                    logger.info(ex.getLocalizedMessage());
                 }
                 Process process = importService.createProcessFromData(projectId, templateId, entry,
                         metadataGroupEntrySeparator.getSeparator());
