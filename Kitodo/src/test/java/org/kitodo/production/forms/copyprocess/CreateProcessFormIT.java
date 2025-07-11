@@ -66,7 +66,6 @@ public class CreateProcessFormIT {
             + TEST_KITODO_METADATA_FILE;
     private static final int TEMPLATE_ID = 1;
     private static final int PROJECT_ID = 1;
-    private static final int RULESET_ID = 1;
 
     private static final String firstProcess = "First process";
     private Process createdProcess;
