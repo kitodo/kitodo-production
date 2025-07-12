@@ -143,8 +143,8 @@
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                disabled="#{process.hasChildren()}"
-                               update="@form">
-                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                               update="processesTable">
+                <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{ProcessListView.formatString('confirmDeleteProcess', process.title)}"
                                icon="ui-icon-alert"/>
