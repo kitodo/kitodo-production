@@ -309,11 +309,6 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
         return Browser.getDriver().findElements(By.cssSelector(css));
     }
 
-    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) throws Exception {
-        await().ignoreExceptions().pollInterval(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
-                .until(conditionEvaluator);
-    }
-
     private Boolean isOpenLayersAnimating() {
         return (Boolean)Browser.getDriver().executeScript("return metadataEditor.detailMap.getAnimating()");
     }

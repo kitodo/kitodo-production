@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
@@ -123,13 +122,5 @@ public class UIInteractionsST extends BaseTestSelenium {
         List<WebElement> roleSwitches = Browser.getDriver().findElements(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
         assertTrue(roleSwitches.isEmpty(), "Role filter switch should be unavailable for users without the "
                 + "corresponding global permission to see roles of all clients");
-    }
-
-    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
-        await().ignoreExceptions()
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(100, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS)
-                .until(conditionEvaluator);
     }
 }

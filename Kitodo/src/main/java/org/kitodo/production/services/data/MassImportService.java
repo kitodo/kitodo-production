@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,23 +32,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.exceptions.ImportException;
+import org.kitodo.exceptions.KitodoCsvImportException;
+import org.kitodo.production.enums.SeparatorCharacter;
 import org.kitodo.production.forms.CsvCell;
 import org.kitodo.production.forms.CsvRecord;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.file.UploadedFile;
 
 public class MassImportService {
 
     private static MassImportService instance = null;
+    private final SeparatorCharacter[] csvSeparatorCharacters = SeparatorCharacter.values();
 
     /**
      * Return singleton variable of type MassImportService.
@@ -85,10 +95,11 @@ public class MassImportService {
      * The method also handles quoted csv values, which contain comma or semicolon to allow
      * csv separators in csv cells.
      * @param lines lines to parse
-     * @param separator String used to split lines into individual parts
+     * @param separator Character used to split lines into individual parts
      * @return list of CsvRecord
      */
-    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvException {
+    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvException,
+            KitodoCsvImportException {
         List<CsvRecord> records = new LinkedList<>();
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(separator.charAt(0))
@@ -99,9 +110,18 @@ public class MassImportService {
                      .withSkipLines(0)
                      .withCSVParser(parser)
                      .build()) {
+            int targetNumberOfColumns = -1;
             for (String[] entries : csvReader.readAll()) {
-                if (isSingleEmptyEntry(entries)) {
+                if (isSingleEmptyEntry(entries) || isLineEmpty(entries)) {
                     continue; // Skip processing this line
+                }
+                // throw exception if different number of metadata entries were parsed for different CSV lines
+                if (targetNumberOfColumns >= 0 && entries.length != targetNumberOfColumns) {
+                    throw new KitodoCsvImportException(Helper.getTranslation("massImport.separatorCountMismatchEntries",
+                            Pattern.quote(separator)));
+                }
+                if (targetNumberOfColumns < 0) {
+                    targetNumberOfColumns = entries.length;
                 }
                 List<CsvCell> cells = new LinkedList<>();
                 for (String value : entries) {
@@ -113,9 +133,89 @@ public class MassImportService {
         return records;
     }
 
+    /**
+     * Determines the indices of columns in a CSV file that can be skipped based on their metadata completeness.
+     * A column is skipped if all associated metadata values for that column are blank or null across all records.
+     *
+     * @param records list of CsvRecord objects representing rows of a CSV file
+     * @param numberOfMetadataKeys the number of metadata keys representing columns in the CSV file
+     * @return a list of integers representing the indices of columns that can be skipped
+     * @throws RuntimeException if the size of csvCells in any CsvRecord does not match the number of metadata keys
+     */
+    public List<Integer> getColumnSkipIndices(List<CsvRecord> records, int numberOfMetadataKeys) {
+        List<Integer> skipIndices = IntStream.range(0, numberOfMetadataKeys).boxed().collect(Collectors.toList());
+        for (int index = numberOfMetadataKeys - 1; index >= 0; index--) {
+            for (CsvRecord csvRecord : records) {
+                if (Objects.nonNull(csvRecord.getCsvCells()) && csvRecord.getCsvCells().size() != numberOfMetadataKeys) {
+                    throw new RuntimeException(Helper.getTranslation("massImport.csvCellMismatch"));
+                }
+                // if at least one record has a non-null value in the column with the current index,
+                // remove the column's index from the list of indices to be skipped
+                if (StringUtils.isNotBlank(csvRecord.getCsvCells().get(index).getValue())) {
+                    skipIndices.remove(index);
+                    break;
+                }
+            }
+        }
+        return skipIndices;
+    }
+
+    /**
+     * Removes metadata keys from the provided list based on the specified indices of empty columns.
+     * The method iterates over the list of indices in reverse order to preserve the integrity of the column indices
+     * while removing the associated metadata keys.
+     *
+     * @param metadataKeys the list of metadata keys representing the columns in a CSV file
+     * @param skipIndices the list of column indices that correspond to empty columns that need to be removed
+     * @return the modified list of metadata keys after removing entries for the specified empty column indices
+     * @throws RuntimeException if any index in skipIndices is greater than the size of the metadataKeys list
+     */
+    public List<String> discardMetadataKeysOfEmptyColumns(List<String> metadataKeys, List<Integer> skipIndices) {
+        if (Collections.max(skipIndices) > metadataKeys.size()) {
+            throw new RuntimeException(Helper.getTranslation("massImport.metadataKeysMismatch"));
+        }
+        // iterate over "skipIndices" in reverse order to preserve column indices in "metadataKeys" list
+        for (int index = skipIndices.size() - 1; index >= 0; index--) {
+            metadataKeys.remove(skipIndices.get(index).intValue());
+        }
+        return metadataKeys;
+    }
+
+    /**
+     * Removes columns from the provided list of CSV records based on specified indices.
+     * This method modifies the CSV records by discarding the cells at the given column indices.
+     *
+     * @param csvRecords the list of {@link CsvRecord} objects representing rows of a CSV file
+     * @param skipIndices a list of integers representing the indices of columns to be removed
+     * @return the modified list of {@link CsvRecord} objects with specified columns removed
+     * @throws RuntimeException if any index in skipIndices is greater than the number of columns in the first record
+     */
+    public List<CsvRecord> discardEmptyColumns(List<CsvRecord> csvRecords, List<Integer> skipIndices) {
+        if (!csvRecords.isEmpty() && Collections.max(skipIndices) > csvRecords.get(0).getCsvCells().size()) {
+            throw new RuntimeException(Helper.getTranslation("massImport.csvCellMismatch"));
+        }
+        // iterate over "skipIndices" in reverse order to preserve column indices in "metadataKeys" list
+        for (int index = skipIndices.size() - 1; index >= 0; index--) {
+            int currentSkipIndex = skipIndices.get(index);
+            // discard ith cell in all csv records
+            for (CsvRecord csvRecord : csvRecords) {
+                if (currentSkipIndex < csvRecord.getCsvCells().size()) {
+                    csvRecord.getCsvCells().remove(currentSkipIndex);
+                }
+            }
+        }
+        return csvRecords;
+    }
+
     // Helper method to check if a line has a single empty entry
     private boolean isSingleEmptyEntry(String[] entries) {
         return entries.length == 1 && entries[0].isEmpty();
+    }
+
+    // Helper method to check if line is completely empty
+    private boolean isLineEmpty(String[] entries) {
+        return entries.length == 0
+                || Arrays.stream(entries).allMatch(StringUtils::isBlank);
     }
 
     /**
@@ -124,20 +224,20 @@ public class MassImportService {
      * @param metadataKeys metadata keys for additional metadata added to individual records during import
      * @param records list of CSV records
      */
-    public Map<String, Map<String, List<String>>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
+    public LinkedList<LinkedHashMap<String, List<String>>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
             throws ImportException {
-        Map<String, Map<String, List<String>>> presetMetadata = new LinkedHashMap<>();
+        LinkedList<LinkedHashMap<String, List<String>>> presetMetadata = new LinkedList<>();
         for (CsvRecord record : records) {
-            Map<String, List<String>> processMetadata = new HashMap<>();
-            // skip first metadata key as it always contains the record ID to be used for search
-            for (int index = 1; index < metadataKeys.size(); index++) {
+            LinkedHashMap<String, List<String>> processMetadata = new LinkedHashMap<>();
+            for (int index = 0; index < metadataKeys.size(); index++) {
                 String metadataKey = metadataKeys.get(index);
-                if (StringUtils.isNotBlank(metadataKey)) {
+                String metadataValue = record.getCsvCells().get(index).getValue();
+                if (StringUtils.isNotBlank(metadataKey) && StringUtils.isNotBlank(metadataValue)) {
                     List<String> values = processMetadata.computeIfAbsent(metadataKey, k -> new ArrayList<>());
-                    values.add(record.getCsvCells().get(index).getValue());
+                    values.add(metadataValue);
                 }
             }
-            presetMetadata.put(record.getCsvCells().get(0).getValue(), processMetadata);
+            presetMetadata.add(processMetadata);
         }
         return presetMetadata;
     }
@@ -174,4 +274,94 @@ public class MassImportService {
         }
         return table.getRows();
     }
+
+    /**
+     * This method takes a list of lines from a CSV file and tries to guess separator character used in this file
+     * (e.g. comma or semicolon). To achieve this, the method gathers the number of occurrences of each candidate in all
+     * lines and selects the character with the highest number of lines containing one specific count of that character.
+     * character
+     * @param csvLines lines from CSV file
+     * @return character that is determined to be most likely used as separator character in uploaded CSV file
+     */
+    public SeparatorCharacter guessCsvSeparator(List<String> csvLines) {
+        Map<String, Map<Integer, Integer>> separatorOccurrences = new HashMap<>();
+        for (SeparatorCharacter separator : SeparatorCharacter.values()) {
+            Map<Integer, Integer> currentOccurrences = new HashMap<>();
+            for (String line : csvLines) {
+                int occurrences = StringUtils.countMatches(line, separator.getSeparator());
+                if (currentOccurrences.containsKey(occurrences)) {
+                    currentOccurrences.put(occurrences, currentOccurrences.get(occurrences) + 1);
+                } else {
+                    currentOccurrences.put(occurrences, 1);
+                }
+            }
+            separatorOccurrences.put(separator.getSeparator(), currentOccurrences);
+        }
+        SeparatorCharacter probablyCharacter = csvSeparatorCharacters[0];
+        int maxOccurrence = 0;
+        int maxKey = 0;
+        for (Map.Entry<String, Map<Integer, Integer>> characterStatistics : separatorOccurrences.entrySet()) {
+            Optional<Map.Entry<Integer, Integer>> highestOccurrence = characterStatistics.getValue().entrySet()
+                    .stream().max(Map.Entry.comparingByValue());
+            if (highestOccurrence.isPresent()) {
+                Map.Entry<Integer, Integer> occurrence = highestOccurrence.get();
+                // skip count of lines that did not contain current separator, e.g. occurrences are "0", which would
+                // otherwise be the most common count in the statistic for each unused separator character!
+                if (occurrence.getKey() > 0 && occurrence.getValue() > maxOccurrence && occurrence.getKey() > maxKey) {
+                    probablyCharacter = SeparatorCharacter.getByCharacter(characterStatistics.getKey());
+                    maxKey = occurrence.getKey();
+                }
+            }
+        }
+        return probablyCharacter;
+    }
+
+    public SeparatorCharacter[] getCsvSeparatorCharacters() {
+        return csvSeparatorCharacters;
+    }
+
+    /**
+     * Check and return whether given list of strings contains the key of a metadata configured as functional metadata
+     * 'recordIdentifier' in given RulesetManagementInterface 'ruleset'.
+     *
+     * @param metadataKeys list of strings representing metadata keys
+     * @param ruleset RulesetManagementInterface defining metadata
+     * @return 'true' if at least one string in the given list is the key of a functional metadata of type 'recordIdentifier'
+     *         'false' otherwise
+     */
+    public static boolean metadataKeyListContainsRecordIdentifier(List<String> metadataKeys, RulesetManagementInterface ruleset) {
+        if (metadataKeys.isEmpty()) {
+            return false;
+        } else {
+            for (String metadataKey : metadataKeys) {
+                if (ServiceManager.getImportService().isRecordIdentifierMetadata(ruleset, metadataKey)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get String containing label of 'recordIdentifier' functional metadata from given ruleset.
+     *
+     * @param metadataKeys list of strings representing metadata keys
+     * @param ruleset RulesetManagementInterface defining metadata
+     * @return localized label of 'recordIdentifier' functional metadata
+     * @throws IOException if ruleset could not be opened
+     */
+    public static String getRecordIdentifierMetadataLabel(List<String> metadataKeys, RulesetManagementInterface ruleset)
+            throws IOException {
+        if (metadataKeys.isEmpty()) {
+            return "";
+        } else {
+            for (String metadataKey : metadataKeys) {
+                if (ServiceManager.getImportService().isRecordIdentifierMetadata(ruleset, metadataKey)) {
+                    return ServiceManager.getImportService().getMetadataTranslation(ruleset, metadataKey, null);
+                }
+            }
+        }
+        return "";
+    }
+
 }
