@@ -167,6 +167,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to add a new LTP validation configuration.
+     *
+     * @return true if the current user has the authority to add a new LTP validation configuration.
+     */
+    public boolean hasAuthorityToAddLtpValidationConfiguration() {
+        return hasAuthorityForClient("addLtpValidationConfiguration");
+    }
+
+    /**
      * Check if the current user has the authority to add new mapping file.
      *
      * @return true if the current user has the authority to add new mapping file.
@@ -321,6 +330,15 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToDeleteImportConfiguration() {
         return hasAuthorityForClient("deleteImportConfiguration");
+    }
+
+    /**
+     * Check if the current user has the authority to delete a LTP validation configuration.
+     *
+     * @return true if the current user has the authority to delete a LTP validation configuration
+     */
+    public boolean hasAuthorityToDeleteLtpValidationConfiguration() {
+        return hasAuthorityForClient("deleteLtpValidationConfiguration");
     }
 
     /**
@@ -483,9 +501,18 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
-     * Check if the current user has the authority to edit import configuration.
+     * Check if the current user has the authority to edit a LTP validation configuration.
      *
-     * @return true if the current user has the authority to edit import configuration
+     * @return true if the current user has the authority to edit a LTP validation configuration
+     */
+    public boolean hasAuthorityToEditLtpValidationConfiguration() {
+        return hasAuthorityForClient("editLtpValidationConfiguration");
+    }
+
+    /**
+     * Check if the current user has the authority to edit a mapping file.
+     *
+     * @return true if the current user has the authority to edit a mapping file
      */
     public boolean hasAuthorityToEditMappingFile() {
         return hasAuthorityForClient("editMappingFile");
@@ -659,6 +686,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view a LTP validation configuration.
+     *
+     * @return true if the current user has the authority to view a LTP validation configuration
+     */
+    public boolean hasAuthorityToViewLtpValidationConfiguration() {
+        return hasAnyAuthorityForClient("viewLtpValidationConfiguration, editLtpValidationConfiguration, addLtpValidationConfiguration");
+    }
+
+    /**
      * Check if the current user has the authority to view mapping file.
      *
      * @return true if the current user has the authority to view mapping file
@@ -807,6 +843,16 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewImportConfigurationList() {
         return hasAuthorityForClient("viewAllImportConfigurations");
+    }
+
+    /**
+     * Check if current user has authority to view LTP validation configurations list. It returns true if
+     * user has "viewAllLtpValidationConfigurations" authority for client.
+     *
+     * @return true if user has authority 'viewAllLtpValidationConfigurations' for client
+     */
+    public boolean hasAuthorityToViewLtpValidationConfigurationsList() {
+        return hasAuthorityForClient("viewAllLtpValidationConfigurations");
     }
 
     /**

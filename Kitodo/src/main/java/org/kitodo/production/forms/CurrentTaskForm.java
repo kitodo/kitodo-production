@@ -646,6 +646,25 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
+     * Checks if the task type is "validateImages" and thus the task action link is shown.
+     *
+     * @return whether action link for validating images should be displayed
+     */
+    public boolean isShowingImageValidationAction() {
+        return currentTask.isTypeValidateImages();
+    }
+
+    /**
+     * Checks if any folders are configured to contain images that need to be validated.
+     * 
+     * @return whether there are folders with images that are supposed to validated.
+     */
+    public boolean isImageValidationPossible() {
+        return currentTask.getValidationFolders().size() > 0;
+    }
+
+
+    /**
      * Set show automatic tasks.
      *
      * @param showAutomaticTasks

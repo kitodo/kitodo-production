@@ -19,8 +19,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
@@ -48,6 +51,7 @@ import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskState;
+import org.kitodo.production.helper.validation.LtpValidationHelper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
@@ -84,6 +88,7 @@ public class UploadFileDialog {
     private Integer progress;
     private List<EmptyTask> generateMediaTasks = new ArrayList<>();
     private final List<TaskState> taskBlockedStates = Arrays.asList(TaskState.CRASHED, TaskState.STOPPED, TaskState.STOPPING);
+    private Map<URI, LtpValidationResult> validationResults;
 
     /**
      * Constructor.
@@ -199,6 +204,24 @@ public class UploadFileDialog {
         this.progress = progress;
     }
 
+    /**
+     * Return the source folder where files are uploaded to.
+     * 
+     * @return the folder where files are uploaded to
+     */
+    public Folder getSourceFolder() {
+        return this.sourceFolder;
+    }
+
+    /**
+     * Return results of validation after files were uploaded.
+     * 
+     * @return the validation results for each uploaded file
+     */
+    public Map<URI, LtpValidationResult> getValidationResults() {
+        return this.validationResults;
+    }
+
     private Integer updateProgress() {
         if (!generateMediaTasks.isEmpty() && progress != 100) {
             return generateMediaTasks.stream().mapToInt(EmptyTask::getProgress).sum() / generateMediaTasks.size();
@@ -306,6 +329,7 @@ public class UploadFileDialog {
      */
     public void prepare() {
         progress = 0;
+        validationResults = new HashMap<>();
         generateMediaTasks = new ArrayList<>();
         selectedMedia = new LinkedList<>();
         if (!setUpFolders()) { return; }
@@ -327,9 +351,6 @@ public class UploadFileDialog {
     public void uploadMedia(FileUploadEvent event) {
         if (event.getFile() != null) {
 
-            PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(MediaUtil.getPhysicalDivisionTypeOfMimeType(mimeType),
-                    dataEditor.getWorkpiece(), dataEditor.getWorkpiece().getPhysicalStructure(),
-                    InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
             uploadFileUri = new File(sourceFolderURI.getPath().concat(event.getFile().getFileName())).toURI();
             //TODO: Find a better way to avoid overwriting an existing file
             if (ServiceManager.getFileService().fileExist(uploadFileUri)) {
@@ -337,13 +358,34 @@ public class UploadFileDialog {
                         + "_" + Helper.generateRandomString(3) + "." + fileExtension;
                 uploadFileUri = sourceFolderURI.resolve(new File(sourceFolderURI.getPath().concat(newFileName)).toURI());
             }
-            physicalDivision.getMediaFiles().put(mediaVariant, uploadFileUri);
+
             //upload file in sourceFolder
             try (OutputStream outputStream = ServiceManager.getFileService().write(uploadFileUri)) {
                 IOUtils.copy(event.getFile().getInputStream(), outputStream);
+                outputStream.flush();
+                outputStream.close();
+
+                if (sourceFolder.isValidateFolder() 
+                        && Objects.nonNull(sourceFolder.getLtpValidationConfiguration())
+                        && sourceFolder.getLtpValidationConfiguration().getRequireNoErrorToUploadImage()
+                        && !LtpValidationHelper.validateUploadedFile(uploadFileUri, sourceFolder, generatorSource, validationResults)
+                ) {
+                    // validation is required and failed, delete file
+                    logger.debug("delete uploaded file after validation error");
+                    ServiceManager.getFileService().delete(uploadFileUri);
+                    return;
+                }
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+            }           
+
+            // upload was successful, add file to metadata editor
+            PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(
+                MediaUtil.getPhysicalDivisionTypeOfMimeType(mimeType),
+                dataEditor.getWorkpiece(), dataEditor.getWorkpiece().getPhysicalStructure(),
+                InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT
+            );
+            physicalDivision.getMediaFiles().put(mediaVariant, uploadFileUri);
             dataEditor.getUnsavedUploadedMedia().add(physicalDivision);
             selectedMedia.add(new ImmutablePair<>(physicalDivision, parent));
             PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
@@ -378,7 +420,7 @@ public class UploadFileDialog {
         refresh();
         if (progress != 100) {
             Helper.setErrorMessage("generateMediaFailed");
-            PrimeFaces.current().executeScript("PF('uploadFileDialog').hide();");
+            PrimeFaces.current().executeScript("PF('uploadFileDialog').hide();openValidationReport();");
             PrimeFaces.current().ajax().update("numberOfScans", "logicalTree", 
                     "metadataAccordion:logicalMetadataWrapperPanel", "metadataAccordion:logicalMetadataHeader",
                     "paginationForm:paginationWrapperPanel", "galleryWrapperPanel");

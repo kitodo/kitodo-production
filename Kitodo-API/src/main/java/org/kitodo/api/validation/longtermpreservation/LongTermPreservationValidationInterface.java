@@ -12,12 +12,10 @@
 package org.kitodo.api.validation.longtermpreservation;
 
 import java.net.URI;
-
-import org.kitodo.api.validation.ValidationInterface;
-import org.kitodo.api.validation.ValidationResult;
+import java.util.List;
 
 /** Validation for long-term preservation. */
-public interface LongTermPreservationValidationInterface extends ValidationInterface {
+public interface LongTermPreservationValidationInterface {
 
     /**
      * Validates a file for long-term preservation.
@@ -28,6 +26,7 @@ public interface LongTermPreservationValidationInterface extends ValidationInter
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    ValidationResult validate(URI fileUri, FileType fileType);
+    LtpValidationResult validate(URI fileUri, FileType fileType,
+            List<? extends LtpValidationConditionInterface> conditions);
 
 }

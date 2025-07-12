@@ -26,6 +26,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -47,6 +48,7 @@ public enum ObjectType {
     FOLDER("folder", "folders", false, Folder.class),
     LDAP_GROUP("ldapGroup", "ldapGroups", false, LdapGroup.class),
     LDAP_SERVER("ldapServer", "ldapServers", false, LdapServer.class),
+    LTP_VALIDATION_CONFIGURATION("ltpValidation.configuration", "ltpValidation.configurations", false, LtpValidationConfiguration.class),
     PROCESS("process", "processes", true, Process.class),
     PROJECT("project", "projects", false, Project.class),
     PROPERTY("property", "properties", false, Property.class),

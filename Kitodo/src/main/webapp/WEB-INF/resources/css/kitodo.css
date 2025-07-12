@@ -2357,6 +2357,105 @@ form#metadata div label,
     overflow-y: scroll;
 }
 
+#ltpValidationReportDialog {
+    top: 50px;
+}
+
+#ltpValidationReportDialog .ui-dialog-content {
+    padding: var(--default-double-size);
+}
+
+#ltpValidationReportDialog h3 {
+    padding: 0;
+}
+
+#ltpValidationReportDialog h4 {
+    margin: 2em 0 1em 0;
+}
+
+#ltpValidationReportDialog h4:first-child {
+    margin-top: 0;
+}
+
+#ltpValidationReportDialog .ui-scrollpanel {
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+#ltpValidationReportDialog .ui-accordion-header {
+    padding-right: 1.5em;
+    font-weight: 400;
+    margin-bottom: 2px;
+}
+
+#ltpValidationReportDialog .ui-accordion-content {
+    padding-top: 0;
+}
+
+#ltpValidationReportDialog .ui-accordion-header.ERROR {
+    color: #2e0000;
+    background-color: #daa;
+}
+
+#ltpValidationReportDialog p {
+    margin: 1em 0;
+}
+
+#ltpValidationReportDialog ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    margin: 1em 0;
+    list-style: disc inside;
+}
+
+#ltpValidationReportDialog ul li {
+    padding-left: 1em;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:detailsTab h4 {
+    padding: 0 24px;
+    margin-bottom: 0.5em;
+}
+
+#editForm\:ltpValidationConfigurationTabView .selectOneMenuWithHelp {
+    display: flex;
+    gap: 0.25em;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu {
+    box-sizing: border-box;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu label,
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu .ui-selectonemenu-trigger {
+    padding-top: 0.3em;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-chips {
+    display: block;
+    margin: 0.25em 0;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-chips-container {
+    width: 100%;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-inputfield,
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-chips-container,
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu label,
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu .ui-selectonemenu-trigger {
+    min-height: 3em;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:addConditionButton {
+    margin: 1em;
+}
+
+#editFolderDialog .dialogFieldWrapper td {
+    vertical-align: top;
+}
+
 #uploadFileDialog {
     max-height: 550px;
 }

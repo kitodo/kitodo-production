@@ -12,10 +12,12 @@
 package org.kitodo.production.services.validation;
 
 import java.net.URI;
+import java.util.List;
 
-import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValidationInterface;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionInterface;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
@@ -50,7 +52,9 @@ public class LongTermPreservationValidationService {
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    public ValidationResult validate(URI fileUri, FileType fileType) {
-        return longTermPreservationValidation.validate(fileUri, fileType);
+    public LtpValidationResult validate(URI fileUri, FileType fileType,
+            List<? extends LtpValidationConditionInterface> conditions) {
+        return longTermPreservationValidation.validate(fileUri, fileType, conditions);
     }
+
 }

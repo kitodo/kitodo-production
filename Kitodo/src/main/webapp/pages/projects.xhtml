@@ -79,6 +79,9 @@
                 <p:menuitem value="#{msgs['mappingFile.new']}" action="#{MappingFileListView.newMappingFile()}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddMappingFile()}"
                             id="newMappingFileButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs['ltpValidation.new']}" action="#{LtpValidationConfigurationListView.newLtpValidationConfiguration()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddLtpValidationConfiguration()}"
+                            id="newLtpValidationConfigurationButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -116,6 +119,10 @@
             <p:tab title="#{msgs['mappingFile.files']}" id="mappingFilesTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['ltpValidation.tab.title']}" id="ltpValidationConfigurationsTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewLtpValidationConfigurationsList()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/ltpValidationConfigurations.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>

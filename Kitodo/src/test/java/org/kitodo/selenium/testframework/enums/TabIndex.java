@@ -37,6 +37,7 @@ public enum TabIndex {
     RULESETS(4),
     IMPORT_CONFIGURATIONS(5),
     MAPPING_FILES(6),
+    LTP_VALIDATION_CONFIGURATIONS(7),
 
     // template edit page
     TEMPLATE_DETAILS(0),

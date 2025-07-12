@@ -54,6 +54,8 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
+import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeverity;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -65,6 +67,8 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.ListColumn;
+import org.kitodo.data.database.beans.LtpValidationCondition;
+import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -164,6 +168,7 @@ public class MockDatabase {
         insertDockets();
         insertRulesets();
         insertProjects();
+        insertLtpValidationConfigurations();
         insertFolders();
         insertTemplates();
         insertProcesses();
@@ -182,6 +187,7 @@ public class MockDatabase {
         insertDockets();
         insertRulesets();
         insertProjects();
+        insertLtpValidationConfigurations();
         insertFolders();
         insertTemplates();
         insertProcesses();
@@ -340,6 +346,13 @@ public class MockDatabase {
         authorities.add(new Authority("viewImportConfiguration" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllImportConfigurations" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("deleteImportConfiguration" + CLIENT_ASSIGNABLE));
+
+        // LTP validation configurations
+        authorities.add(new Authority("addLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllLtpValidationConfigurations" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteLtpValidationConfiguration" + CLIENT_ASSIGNABLE));
 
         // MappingFiles
         authorities.add(new Authority("addMappingFile" + CLIENT_ASSIGNABLE));
@@ -1032,8 +1045,58 @@ public class MockDatabase {
         ServiceManager.getUserService().save(sixthUser);
     }
 
+    /*
+     * Insert two LTP validation configurations (one for valid tif files, one for wellformed jpeg files).
+     */
+    private static void insertLtpValidationConfigurations() throws DAOException {
+        LtpValidationConfiguration tifConfig = new LtpValidationConfiguration();
+        LtpValidationCondition firstTifCondition = new LtpValidationCondition();
+        LtpValidationCondition secondTifCondition = new LtpValidationCondition();
+
+        firstTifCondition.setProperty("wellformed");
+        firstTifCondition.setOperation(LtpValidationConditionOperation.EQUAL);
+        firstTifCondition.setValues(Collections.singletonList("true"));
+        firstTifCondition.setSeverity(LtpValidationConditionSeverity.ERROR);
+        firstTifCondition.setLtpValidationConfiguration(tifConfig);
+
+        secondTifCondition.setProperty("valid");
+        secondTifCondition.setOperation(LtpValidationConditionOperation.EQUAL);
+        secondTifCondition.setValues(Collections.singletonList("true"));
+        secondTifCondition.setSeverity(LtpValidationConditionSeverity.ERROR);
+        secondTifCondition.setLtpValidationConfiguration(tifConfig);
+
+        tifConfig.setTitle("Valid Tif");
+        tifConfig.setMimeType("image/tiff");
+        tifConfig.setRequireNoErrorToFinishTask(true);
+        tifConfig.setRequireNoErrorToUploadImage(true);
+        tifConfig.setValidationConditions(Arrays.asList(firstTifCondition, secondTifCondition));
+        tifConfig.setFolders(Collections.emptyList());
+
+        ServiceManager.getLtpValidationConfigurationService().save(tifConfig);
+
+        LtpValidationConfiguration jpegConfig = new LtpValidationConfiguration();
+        LtpValidationCondition firstJpegCondition = new LtpValidationCondition();
+
+        firstJpegCondition.setProperty("wellformed");
+        firstJpegCondition.setOperation(LtpValidationConditionOperation.EQUAL);
+        firstJpegCondition.setValues(Collections.singletonList("true"));
+        firstJpegCondition.setSeverity(LtpValidationConditionSeverity.ERROR);
+        firstJpegCondition.setLtpValidationConfiguration(jpegConfig);        
+
+        jpegConfig.setTitle("Wellformed Jpeg");
+        jpegConfig.setMimeType("image/jpeg");
+        jpegConfig.setRequireNoErrorToFinishTask(true);
+        jpegConfig.setRequireNoErrorToUploadImage(true);
+        jpegConfig.setValidationConditions(Arrays.asList(firstJpegCondition));
+        jpegConfig.setFolders(Collections.emptyList());
+
+        ServiceManager.getLtpValidationConfigurationService().save(jpegConfig);
+    }
+
     private static void insertFolders() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
+        LtpValidationConfiguration tifConfig = ServiceManager.getLtpValidationConfigurationService().getById(1);
+        LtpValidationConfiguration jpegConfig = ServiceManager.getLtpValidationConfigurationService().getById(2);
 
         Folder firstFolder = new Folder();
         firstFolder.setFileGroup("MAX");
@@ -1054,6 +1117,7 @@ public class MockDatabase {
         secondFolder.setCreateFolder(true);
         secondFolder.setDerivative(0.8);
         secondFolder.setLinkingMode(LinkingMode.ALL);
+        secondFolder.setLtpValidationConfiguration(jpegConfig);
 
         Folder thirdFolder = new Folder();
         thirdFolder.setFileGroup("THUMBS");
@@ -1090,6 +1154,7 @@ public class MockDatabase {
         sixthFolder.setCopyFolder(false);
         sixthFolder.setCreateFolder(true);
         sixthFolder.setLinkingMode(LinkingMode.NO);
+        sixthFolder.setLtpValidationConfiguration(tifConfig);
 
         firstFolder.setProject(project);
         project.getFolders().add(firstFolder);

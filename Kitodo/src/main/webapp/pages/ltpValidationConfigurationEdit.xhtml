@@ -1,0 +1,313 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{LtpValidationConfigurationEditView.load(id)}"/>
+    </f:metadata>
+
+    <!--@elvariable id="isEditMode" type="boolean"-->
+    <ui:param name="isEditMode"
+              value="#{LtpValidationConfigurationEditView.configuration.id ne null and SecurityAccessController.hasAuthorityToEditLtpValidationConfiguration()}"/>
+    <!--@elvariable id="isCreateMode" type="boolean"-->
+    <ui:param name="isCreateMode"
+              value="#{LtpValidationConfigurationEditView.configuration.id eq null and SecurityAccessController.hasAuthorityToAddLtpValidationConfiguration()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewLtpValidationConfiguration()}"/>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <h3 id="headerText">
+            <h:outputText value="#{msgs['ltpValidation.edit.mode.create']}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs['ltpValidation.edit.mode.edit']} (#{LtpValidationConfigurationEditView.configuration.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs['ltpValidation.edit.mode.view']} (#{LtpValidationConfigurationEditView.configuration.title})" rendered="#{isViewMode}"/>
+        </h3>
+
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects?keepPagination=true"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="save"
+                         value="#{msgs.save}"
+                         action="#{LtpValidationConfigurationEditView.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         rendered="#{isEditMode || isCreateMode}"
+                         disabled="#{LtpValidationConfigurationEditView.saveDisabled}"
+                         onclick="setConfirmUnload(false);"
+                         onsuccess="PF('notifications').renderMessage({
+                            'summary':'#{msgs.configurationSaving}',
+                            'detail':'#{msgs.youWillBeRedirected}',
+                            'severity':'info'});"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{LtpValidationConfigurationEditView.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="ltpValidationConfigurationTabView">
+            <p:tab id="detailsTab"
+                   title="#{msgs.details}">
+                
+                <p:panelGrid id="ltpValidationConfiguration-grid"
+                   columns="2"
+                   layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="title"
+                                            value="#{msgs.title} *"/>
+                            <p:inputText id="title"
+                                        styleClass="input-with-button input"
+                                        value="#{LtpValidationConfigurationEditView.configuration.title}"
+                                        placeholder="#{msgs.title}"
+                                        disabled="#{isViewMode}"
+                                        required="#{not empty param['editForm:save']}"/>
+                            <p:commandButton id="titleHelp"
+                                            type="button"
+                                            styleClass="help-button"
+                                            icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="titleHelp"
+                                        value="#{msgs['ltpValidation.edit.title.tooltip']}"/>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="mimeType"
+                                            value="#{msgs['ltpValidation.edit.mimeType.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="mimeType"
+                                                 value="#{LtpValidationConfigurationEditView.configuration.mimeType}"
+                                                 disabled="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0 or isViewMode}"
+                                                 styleClass="input"
+                                                 onchange="toggleSave()">
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.mimeTypes}"/>
+                                </p:selectOneMenu>
+                                <p:commandButton id="mimeTypeHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="mimeTypeHelp"
+                                           rendered="#{LtpValidationConfigurationEditView.configuration.folders.size() eq 0}"
+                                           value="#{msgs['ltpValidation.edit.mimeType.editable.tooltip']}"/>
+                                <p:tooltip for="mimeTypeHelp"
+                                           rendered="#{LtpValidationConfigurationEditView.configuration.folders.size() gt 0}"
+                                           value="#{msgs['ltpValidation.edit.mimeType.disabled.tooltip']}"/>
+                            </div>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+
+                <h4><h:outputText value="#{msgs['ltpValidation.edit.workflowOptions']}" /></h4>
+                <p:panelGrid columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="requireNoErrorToFinishTask"
+                                           value="#{msgs['ltpValidation.edit.requireNoErrorToFinishTask']}"/>
+                            <p:selectBooleanCheckbox id="requireNoErrorToFinishTask" 
+                                                     disabled="#{isViewMode}"
+                                                     styleClass="switch input" 
+                                                     value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToFinishTask}">
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="requireNoErrorToUploadImage"
+                                           value="#{msgs['ltpValidation.edit.requireNoErrorToUploadImage']}"/>
+                            <p:selectBooleanCheckbox id="requireNoErrorToUploadImage" 
+                                                     disabled="#{isViewMode}"
+                                                     styleClass="switch input" 
+                                                     value="#{LtpValidationConfigurationEditView.configuration.requireNoErrorToUploadImage}">
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+
+                <h4><h:outputText value="#{msgs['ltpValidation.edit.commonValidationConditions']}" /></h4>
+                <p:panelGrid columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="simpleWellFormed"
+                                            value="#{msgs['ltpValidation.edit.wellFormed.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="simpleWellFormed" 
+                                                 value="#{LtpValidationConfigurationEditView.simpleWellFormedCondition}"
+                                                 onchange="toggleSave()">
+                                    <f:selectItem itemLabel="-- #{msgs['ltpValidation.edit.noValidation']} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                                    <p:ajax event="valueChange" listener="#{LtpValidationConfigurationEditView.onSimpleWellFormedConditionChange}" update="editForm" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="simpleWellFormedHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="simpleWellFormedHelp"
+                                           value="#{msgs['ltpValidation.edit.wellFormed.tooltip']}"/>
+                            </div>
+                        </div>
+                        <div>
+                            <p:outputLabel for="simpleFilenamePattern"
+                                            value="#{msgs['ltpValidation.edit.filenamePattern.label']}"/>
+                            <p:inputText id="simpleFilenamePattern"
+                                        styleClass="input-with-button input"
+                                        value="#{LtpValidationConfigurationEditView.simpleFilenamePattern}"
+                                        placeholder="#{msgs['ltpValidation.edit.filenamePattern.placeholder']}"
+                                        disabled="#{isViewMode}"
+                                        onchange="toggleSave()">
+                                <p:ajax event="keyup" delay="300" listener="#{LtpValidationConfigurationEditView.onSimpleFilenamePatternChange}" update="editForm" />
+                            </p:inputText>
+                            <p:commandButton id="simpleFilenamePatternHelp"
+                                            type="button"
+                                            styleClass="help-button"
+                                            icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="simpleFilenamePatternHelp"
+                                        value="#{msgs['ltpValidation.edit.filenamePattern.tooltip']}"/>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="simpleValid"
+                                            value="#{msgs['ltpValidation.edit.valid.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="simpleValid" 
+                                                 value="#{LtpValidationConfigurationEditView.simpleValidCondition}"
+                                                 onchange="toggleSave()">
+                                    <f:selectItem itemLabel="-- #{msgs['ltpValidation.edit.noValidation']} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                                    <p:ajax event="valueChange" listener="#{LtpValidationConfigurationEditView.onSimpleValidConditionChange}" update="editForm" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="simpleValidHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="simpleValidHelp"
+                                           value="#{msgs['ltpValidation.edit.valid.tooltip']}"/>
+                            </div>
+                        </div>
+                        <div>
+                            <p:outputLabel for="simpleFilenamePatternSeverity"
+                                            value="#{msgs['ltpValidation.edit.filenamePatternSeverity.label']}"/>
+                            <div class="selectOneMenuWithHelp">
+                                <p:selectOneMenu id="simpleFilenamePatternSeverity" 
+                                                 value="#{LtpValidationConfigurationEditView.simpleFilenamePatternSeverity}"
+                                                 onchange="toggleSave()">
+                                    <f:selectItem itemLabel="-- #{msgs['ltpValidation.edit.noValidation']} --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                                    <p:ajax event="valueChange" listener="#{LtpValidationConfigurationEditView.onSimpleFilenamePatternSeverityChange}" update="editForm" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="simpleFilenamePatternSeverityHelp"
+                                                type="button"
+                                                styleClass="help-button"
+                                                icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="simpleFilenamePatternSeverityHelp"
+                                           value="#{msgs['ltpValidation.edit.filenamePatternSeverity.tooltip']}"/>
+                            </div>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </p:tab>
+            <p:tab id="conditionsTab"
+                   title="#{msgs['ltpValidation.edit.conditions.title']}">
+
+                <p:dataTable id="ltpValidationConditionsTable" 
+                             var="condition" 
+                             rowIndexVar="conditionIdx"
+                             value="#{LtpValidationConfigurationEditView.configuration.validationConditions}"
+                             styleClass="default-layout">
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.property.header']}">
+                        <div>
+                            <p:inputText 
+                                styleClass="input"
+                                value="#{condition.property}"
+                                disabled="#{isViewMode}"
+                                placeholder="#{msgs['ltpValidation.edit.conditions.property.placeholder']}"
+                                onchange="toggleSave()"/>
+                        </div>
+                    </p:column>
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.operation.header']}"
+                              width="200">
+                        <div>
+                            <p:selectOneMenu value="#{condition.operation}"
+                                             disabled="#{isViewMode}"
+                                             styleClass="input"
+                                             onchange="toggleSave()">
+                                <f:selectItems value="#{LtpValidationConfigurationEditView.possibleOperationsSelectMap}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </p:column>
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.values.header']}">
+                        <div>
+                            <p:chips value="#{condition.values}"
+                                     disabled="#{isViewMode}"
+                                     addOnBlur="true"
+                                     onkeydown="toggleSave()"/>
+                        </div>
+                    </p:column>
+                    <p:column headerText="#{msgs['ltpValidation.edit.conditions.severity.header']}"
+                              width="150">
+                        <div>
+                            <p:selectOneMenu value="#{condition.severity}"
+                                             disabled="#{isViewMode}"
+                                             styleClass="input"
+                                             onchange="toggleSave()">
+                                <f:selectItems value="#{LtpValidationConfigurationEditView.possibleSeveritiesSelectMap}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </p:column>
+                    <p:column headerText="#{msgs['actions']}" 
+                              width="75">
+                        <p:commandLink 
+                           action="#{LtpValidationConfigurationEditView.removeValidationCondition(conditionIdx)}"
+                           styleClass="action"
+                           title="#{msgs.delete}"
+                           rendered="#{isEditMode or isCreateMode}"
+                           update="editForm"
+                           oncomplete="toggleSave()">
+                            <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+
+                <p:commandButton id="addConditionButton"
+                                 value="#{msgs['ltpValidation.edit.conditions.add']}" 
+                                 rendered="#{isEditMode or isCreateMode}"
+                                 action="#{LtpValidationConfigurationEditView.addValidationCondition()}" 
+                                 update="ltpValidationConditionsTable"
+                                 oncomplete="toggleSave()" />
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs['ltpValidation.edit.mode.edit']}" rendered="#{isEditMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['ltpValidation.edit.mode.create']}" rendered="#{isCreateMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['ltpValidation.edit.mode.view']}" rendered="#{isViewMode}" icon="fa fa-cogs"/>
+    </ui:define>
+
+</ui:composition>
