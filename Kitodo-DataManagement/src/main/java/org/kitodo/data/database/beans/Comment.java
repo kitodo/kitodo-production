@@ -258,4 +258,21 @@ public class Comment extends BaseBean {
     public void setProcess(Process process) {
         this.process = process;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object instanceof Comment) {
+            Comment comment = (Comment) object;
+            return this.getId() != null && this.getId().equals(comment.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId() != null ? this.getId().hashCode() : 0;
+    }
 }

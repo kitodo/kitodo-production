@@ -98,7 +98,11 @@ public class CommentService extends BaseBeanService<Comment, CommentDAO> {
      * @param comment to be removed.
      */
     public void removeComment(Comment comment) throws DAOException {
-        comment.getProcess().getComments().remove(comment);
-        ServiceManager.getCommentService().remove(comment);
+        Process process = null;
+        if (comment.getProcess() != null ) {
+            process = ServiceManager.getProcessService().getById(comment.getProcess().getId());
+            process.getComments().remove(comment);
+            ServiceManager.getProcessService().save(process);
+        }
     }
 }
