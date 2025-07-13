@@ -2365,7 +2365,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             logger.debug("Process was not saved yet so no meta information are available.");
             return;
         }
-        process = ServiceManager.getProcessService().getById(process.getId());
 
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         try {
