@@ -112,7 +112,7 @@ public interface RulesetManagementInterface {
      *          value of the function {@link LanguageRange#parse(String)}.
      * @return a service that provides a view to the ruleset
      */
-    ComplexMetadataViewInterface getMetadataView(String metadata, String acquisitionStage, List<LanguageRange> priorityList);
+    MetadataViewInterface getMetadataView(String metadata, String acquisitionStage, List<LanguageRange> priorityList);
 
     /**
      * Returns the most appropriate label for a key, if there is one.
@@ -125,6 +125,18 @@ public interface RulesetManagementInterface {
      * @return the best-matching label, if any
      */
     Optional<String> getTranslationForKey(String key, List<LanguageRange> priorityList);
+
+    /**
+     * Returns the translation for the last key in the given list "keys", representing a metadata entry inside one
+     * or potentially multiple nested metadata groups.
+     *
+     * @param keys
+     *          hierarchical list of metadata keys, where the last key is the one to be translated.
+     * @param priorityList
+     *          list of languages
+     * @return translation of the last key in the provided list of keys, or empty if no translation is available.
+     */
+    Optional<String> getTranslationForKey(List<String> keys, List<LanguageRange> priorityList);
 
     /**
      * Loads a ruleset into this management.

@@ -1747,6 +1747,59 @@ Import form
 Mass import
 ----------------------------------------------------------------------*/
 
+#editForm\:fileUploadButtonWrapper {
+    padding: 0;
+}
+
+#editForm\:recordsTable th span.metadata-record-id::after,
+#editForm\:recordsTable th span.metadata-doctype::after {
+    color: var(--medium-gray);
+    font-family: FontAwesome;
+    margin-left: var(--default-half-size);
+}
+
+#editForm\:recordsTable th span.metadata-record-id::after {
+    content: "\f2c2";
+}
+
+#editForm\:recordsTable th span.metadata-doctype::after {
+    content: "\f02d";
+}
+
+#editForm\:recordsTable .ui-datatable-scrollable-theadclone {
+    display: none;
+}
+
+#editForm\:recordsTable_scrollableThead > tr > th:last-child span {
+    float: right;
+}
+
+#editForm\:recordsTable th.ui-state-default,
+#editForm\:recordsTable td.ui-editable-column,
+#editForm\:recordsTable td.remove-column,
+#editForm\:recordsTable tr.ui-datatable-empty-message {
+    border: 1px solid var(--carbon-blue);
+}
+
+#editForm\:addCsvRecord,
+#editForm\:catalogSelectionWrapper {
+    margin-top: var(--default-half-size);
+}
+
+#editForm\:recordsTable th:has(> span.ui-column-title > span.invalid-configuration) {
+    background-color: var(--orange);
+}
+
+#editForm\:recordsTable th:has(> span.ui-column-title > span.unknown-metadata) {
+    background-color: var(--light-orange);
+}
+
+#editForm\:recordsTable td.ui-editable-column {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 #editForm .ui-panelgrid-cell {
     padding-left: var(--default-full-size);
 }
@@ -1757,6 +1810,14 @@ Mass import
 
 #editForm .ui-fileupload-buttonbar .ui-button {
     margin-right: var(--default-full-size);
+}
+
+#editForm\:fileUploadButtonWrapper .ui-fileupload-files:not(:has(div.ui-fileupload-row)) {
+    border: none;
+}
+
+#editForm\:recordsTableWrapper {
+    padding: 0 var(--default-full-size);
 }
 
 #editForm\:recordsTable tr {
@@ -1773,6 +1834,11 @@ Mass import
     border: none;
 }
 
+#editForm\:addCsvRecord,
+#editForm\:recordsTable .remove-column button.secondary {
+    float: right;
+}
+
 #editForm\:recordsTable input.ui-inputtext {
     width: 100%;
 }
@@ -1782,8 +1848,20 @@ Mass import
     width: 60px;
 }
 
+#editForm\:separatorCharacterWrapper .separator-selection {
+    display: inline-block;
+    margin-right: var(--default-double-size);
+    width: 45%;
+}
+
+#editForm\:skipEmptyColumnsWrapper {
+    display: inline-block;
+    vertical-align: top;
+}
+
 #editForm\:csvFileUpload {
-    margin-bottom: 72px;
+    overflow-x: hidden;
+    white-space: nowrap;
 }
 
 #editForm\:csvFileUpload .ui-fileupload-buttonbar {
@@ -1796,7 +1874,26 @@ Mass import
 
 #editForm\:recordsTable\:addMetadataColumn,
 #editForm\:recordsTable button.remove-metadata-column {
-    background: var(--cloudy-gray);
+    background: transparent;
+    overflow: hidden;
+    height: inherit;
+}
+
+#editForm\:recordsTable span.ui-column-title {
+    white-space: nowrap;
+}
+
+#editForm\:recordsTable span.ui-column-title span {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    width: calc(100% - 20px);
+}
+
+#buttonForm\:hideCheckbox {
+    margin-left: var(--default-double-size);
+    margin-top: var(--default-double-size);
 }
 
 #catalogSearchForm {

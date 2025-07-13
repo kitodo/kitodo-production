@@ -11,16 +11,20 @@
 
 package org.kitodo.production.helper;
 
+import static org.kitodo.constants.StringConstants.CREATE;
 import static org.kitodo.constants.StringConstants.EDIT;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +44,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.exceptions.NotImplementedException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -281,6 +286,35 @@ public class ProcessHelper {
         return docTypeView.getProcessTitle().orElse("");
     }
 
+    private static HashSet<Metadata> createMetadataGroup(String[] keyParts, String[] contentParts, String separatorCharacter,
+                                                         RulesetManagementInterface rulesetManagement,
+                                                         List<Locale.LanguageRange> priorityList) {
+        if (keyParts.length == 0 || contentParts.length == 0 || StringUtils.isBlank(separatorCharacter)) {
+            return new HashSet<>();
+        }
+        HashSet<Metadata> metadataSet = new HashSet<>();
+        for (int i = 0; i < keyParts.length; i++) {
+            String subMetadataKey = keyParts[i];
+            MetadataViewInterface metadataView = rulesetManagement.getMetadataView(subMetadataKey, CREATE, priorityList);
+            if (Objects.nonNull(metadataView)) {
+                if (metadataView.isComplex()) {
+                    throw new NotImplementedException("Nested metadata groups are currently not supported in mass import from CSV files");
+                    // TODO: implement!
+                    //MetadataGroup metadataGroup = new MetadataGroup();
+                    //metadataGroup.setKey(subMetadataKey);
+                    //metadataGroup.setMetadata(createMetadataGroup());
+                    //metadataSet.add(metadataGroup);
+                } else {
+                    MetadataEntry metadataEntry = new MetadataEntry();
+                    metadataEntry.setKey(subMetadataKey);
+                    metadataEntry.setValue(contentParts[i]);
+                    metadataSet.add(metadataEntry);
+                }
+            }
+        }
+        return metadataSet;
+    }
+
     /**
      * Converts DOM node list of Kitodo metadata elements to metadata objects.
      *
@@ -322,6 +356,68 @@ public class ProcessHelper {
             }
         }
         return allMetadata;
+    }
+
+    /**
+     * Convert given map Strings and lists of Strings to a metadata set and return this set.
+     * Map keys contain metadata IDs and map values contain lists of metadata values.
+     *
+     * @param metadataMap map containing metadata IDs as keys and metadata values as lists of Strings
+     * @param rulesetManagementInterface used to determine whether keys are defined in corresponding ruleset
+     * @param separator String used to parse metadata groups from Strings
+     * @return metadata set
+     */
+    public static HashSet<Metadata> convertMetadata(Map<String, List<String>> metadataMap,
+                                                    RulesetManagementInterface rulesetManagementInterface,
+                                                    String separator) {
+        final String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(metadataLanguage);
+        HashSet<Metadata> metadataSet = new HashSet<>();
+        boolean separatorSet = StringUtils.isNotBlank(separator);
+        for (Map.Entry<String, List<String>> entry : metadataMap.entrySet()) {
+            for (String value : entry.getValue()) {
+                // distinguish between metadata entries and groups (groups definitely required in the future!)
+                if (separatorSet && entry.getKey().contains(separator)) {
+                    String[] keyParts = entry.getKey().split(Pattern.quote(separator), -1);
+                    String[] contentParts = value.split(Pattern.quote(separator), -1);
+                    // "-1" because 'keyParts' also contains the name of the metadata group itself at the first index
+                    if (keyParts.length < 1 || (keyParts.length - 1 != contentParts.length)) {
+                        logger.error("Number of keys in CSV cell to be parsed into metadata group does not match number of metadata keys");
+                        break;
+                    } else {
+                        // try to create MetadataGroup from 'entry.getValue'
+                        String metadataGroupKey = keyParts[0];
+                        // verify that "metadataGroupKey" is a valid metadata defined in the given "RulesetManagementInterface"
+                        MetadataViewInterface metadataView = rulesetManagementInterface.getMetadataView(metadataGroupKey,
+                                CREATE, priorityList);
+                        if (metadataView.isComplex()) {
+                            MetadataGroup metadataGroup = new MetadataGroup();
+                            metadataGroup.setKey(metadataGroupKey);
+                            metadataGroup.setMetadata(createMetadataGroup(Arrays.copyOfRange(keyParts, 1, keyParts.length),
+                                    contentParts, separator, rulesetManagementInterface, priorityList));
+                            metadataSet.add(metadataGroup);
+                        } else {
+                            logger.error("Metadata with key '{}' is configured as simple metadata entry in ruleset but passed as "
+                                    + "metadata group in uploaded CSV file", metadataGroupKey);
+                            break;
+                        }
+                    }
+                } else {
+                    // create MetadataEntry from 'entry.getValue'
+                    MetadataViewInterface metadataView = rulesetManagementInterface.getMetadataView(entry.getKey(), CREATE, priorityList);
+                    if (metadataView.isComplex()) {
+                        logger.error("Metadata with key '{}' is configured as complex metadata group in ruleset but passed as simple "
+                                + "metadata entry in uploaded CSV file", entry.getKey());
+                        break;
+                    }
+                    MetadataEntry metadataEntry = new MetadataEntry();
+                    metadataEntry.setKey(entry.getKey());
+                    metadataEntry.setValue(value);
+                    metadataSet.add(metadataEntry);
+                }
+            }
+        }
+        return metadataSet;
     }
 
     /**

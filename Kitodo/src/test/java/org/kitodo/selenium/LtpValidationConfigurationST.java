@@ -15,10 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -191,7 +187,7 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
     /**
      * Check that correct validation conditions are removed when clicking the
      * trash button.
-     * 
+     *
      * There was a bug reported that removing the last condition incorrectly
      * removes the first unsaved condition instead. The problem was related to
      * the "list.remove(condition)" method removing the first instance that
@@ -241,16 +237,4 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
     private WebElement getLtpValidationConfigurationTable() {
         return Browser.getDriver().findElementById(LTP_VALIDATION_CONFIGURATION_TABLE_ID);
     }
-
-    /**
-     * Checks a condition repeatedly.
-     * 
-     * @param conditionEvaluator
-     *            the condition
-     */
-    private void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
-        Awaitility.await().ignoreExceptions().pollDelay(1, TimeUnit.SECONDS).pollInterval(100, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS).until(conditionEvaluator);
-    }
-
 }

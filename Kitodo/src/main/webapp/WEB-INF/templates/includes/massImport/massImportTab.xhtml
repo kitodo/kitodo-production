@@ -16,106 +16,19 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+
     <p:panelGrid layout="grid"
-                 columns="2"
-                 cellpadding="10">
+                 id="fileUploadButtonWrapper"
+                 columns="2">
         <p:row>
-            <div>
-                <p:outputLabel for="catalogueSelect"
-                               value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
-                <p:selectOneMenu id="catalogueSelect"
-                                 required="#{not empty param['editForm:importButton']}"
-                                 converter="#{importConfigurationConverter}"
-                                 value="#{MassImportForm.importConfigurationId}">
-                    <f:selectItem itemValue="#{null}"
-                                  itemLabel="-- #{msgs.selectCatalog} --"
-                                  noSelectionOption="true"
-                                  itemDisabled="true"/>
-                    <f:selectItems value="#{CreateProcessForm.catalogImportDialog.importConfigurations}"
-                                   var="configuration"
-                                   itemLabel="#{configuration.title}"
-                                   itemValue="#{configuration}"/>
-                    <p:ajax update="editForm"/>
-                </p:selectOneMenu>
-            </div>
-            <h:panelGroup id="recordsTableWrapper"
-                          layout="block">
-                <p:outputLabel for="recordsTable"
-                               value="#{msgs['records']}"/>
-                <p:dataTable id="recordsTable"
-                             resizableColumns="true"
-                             editable="true"
-                             editMode="cell"
-                             style="border: 1px solid black;"
-                             value="#{MassImportForm.records}"
-                             var="record">
-                    <p:ajax event="cellEdit"
-                            update="editForm:recordsTable"/>
-                    <!--@elvariable id="columnIndex" type="java.lang.Integer"-->
-                    <p:columns var="metadataKey"
-                               columnIndexVar="columnIndex"
-                               value="#{MassImportForm.metadataKeys}">
-                        <f:facet name="header">
-                            <h:outputText value="#{MassImportForm.getColumnHeader(columnIndex)}"/>
-                            <p:commandButton id="removeMetadataColumn"
-                                             rendered="#{columnIndex gt 0}"
-                                             styleClass="secondary remove-metadata-column"
-                                             action="#{MassImportForm.removeMetadata(columnIndex)}"
-                                             title="#{msgs.delete}"
-                                             icon="fa fa-trash-o"
-                                             update="editForm:recordsTableWrapper"/>
-                        </f:facet>
-                        <p:cellEditor>
-                            <f:facet name="output">
-                                <h:outputText value="#{record.csvCells.get(columnIndex).value}"
-                                              title="#{record.csvCells.get(columnIndex).value}"/>
-                            </f:facet>
-                            <f:facet name="input">
-                                <p:inputText value="#{record.csvCells.get(columnIndex).value}">
-                                    <p:ajax update="editForm:recordsTable"/>
-                                </p:inputText>
-                            </f:facet>
-                        </p:cellEditor>
-                    </p:columns>
-                    <p:column styleClass="remove-column">
-                        <f:facet name="header">
-                            <p:commandButton id="addMetadataColumn"
-                                             title="#{msgs['dataEditor.addMetadata.newMetadata']}"
-                                             disabled="#{MassImportForm.records.size() eq 0}"
-                                             style="margin: 3px"
-                                             icon="fa fa-plus"
-                                             styleClass="secondary"
-                                             action="#{MassImportForm.addMetadataDialog.prepareMetadataTypes()}"
-                                             update="addMetadataDialog"
-                                             oncomplete="PF('addMetadataDialog').show();"/>
-                        </f:facet>
-                        <p:commandButton id="removeLine"
-                                         action="#{MassImportForm.removeLine(record)}"
-                                         styleClass="secondary"
-                                         title="#{msgs.delete}"
-                                         icon="fa fa-trash-o"
-                                         update="editForm:recordsTableWrapper editForm:importButton"/>
-                    </p:column>
-                </p:dataTable>
-            </h:panelGroup>
-            <div>
-                <p:commandButton id="addCsvRecord"
-                                 action="#{MassImportForm.addRecord}"
-                                 title="#{msgs['massImport.addRow']}"
-                                 icon="fa fa-plus"
-                                 styleClass="secondary"
-                                 update="editForm:recordsTableWrapper editForm:importButton"/>
-            </div>
-        </p:row>
-        <p:row>
-            <h:panelGroup rendered="#{MassImportForm.importConfigurationId ne null}">
+            <h:panelGroup style="display: inline-block;">
                 <p:outputLabel for="csvFileUpload"
-                               value="#{msgs['csvFileUpload']}"/>
+                               value="#{msgs['massImport.csvFileUpload']}"/>
                 <p:fileUpload id="csvFileUpload"
                               value="#{MassImportForm.file}"
-                              rendered="#{MassImportForm.importConfigurationId ne null}"
                               listener="#{MassImportForm.handleFileUpload}"
                               allowTypes="/(\.|\/)(csv)$/"
+                              sizeLimit="100000"
                               skinSimple="true"
                               update="editForm"
                               styleClass="input"
@@ -126,19 +39,159 @@
                               uploadIcon="fa fa-upload fa-lg"
                               cancelIcon="fa fa-times fa-lg"/>
             </h:panelGroup>
-            <h:panelGroup rendered="#{MassImportForm.file ne null}">
-                <p:outputLabel for="csvSeparator"
-                               value="#{msgs['csvSeparator']}"/>
-                <p:selectOneMenu id="csvSeparator"
-                                 styleClass="input"
-                                 maxlength="1"
-                                 value="#{MassImportForm.csvSeparator}">
-                    <f:selectItems value="#{MassImportForm.csvSeparatorCharacters}"/>
-                            <p:ajax event="change"
-                                    listener="#{MassImportForm.changeSeparator()}"
-                                    update="editForm:recordsTableWrapper"/>
-                </p:selectOneMenu>
+            <h:panelGroup id="skipEmptyColumnsWrapper">
+                <p:outputLabel for="skipEmptyColumns"
+                               value="#{msgs['massImport.skipEmptyColumns']}"/>
+                <p:selectBooleanCheckbox id="skipEmptyColumns"
+                                         disabled="#{empty MassImportForm.records}"
+                                         value="#{MassImportForm.skipEmptyColumns}"
+                                         styleClass="switch input">
+                    <p:ajax event="change"
+                            listener="#{MassImportForm.parseCsvLines()}"
+                            update="editForm:recordsTableWrapper"/>
+                </p:selectBooleanCheckbox>
+            </h:panelGroup>
+        </p:row>
+
+        <p:row>
+            <!-- separator option to parse metadata groups inside individual CSV cells;
+                 IMPORTANT: does not support nested groups, yet! -->
+            <h:panelGroup id="separatorCharacterWrapper"
+                          layout="block"
+                          rendered="#{MassImportForm.file ne null}">
+                <h:panelGroup styleClass="separator-selection">
+                    <p:outputLabel for="csvSeparator"
+                                   value="#{msgs['massImport.csvSeparator']}"/>
+                    <p:selectOneMenu id="csvSeparator"
+                                     styleClass="input"
+                                     maxlength="1"
+                                     value="#{MassImportForm.csvSeparator}">
+                        <f:selectItems value="#{MassImportForm.csvSeparatorCharacters}"/>
+                        <p:ajax event="change"
+                                listener="#{MassImportForm.parseCsvLines()}"
+                                update="editForm:recordsTableWrapper editForm:catalogSelectionWrapper editForm:groupEntrySeparator"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+
+                <h:panelGroup styleClass="separator-selection">
+                    <p:outputLabel for="groupEntrySeparator"
+                                   value="#{msgs['massImport.metadataGroupSeparator']}"/>
+                    <p:selectOneMenu id="groupEntrySeparator"
+                                     styleClass="input"
+                                     maxlength="1"
+                                     autoWidth="false"
+                                     value="#{MassImportForm.metadataGroupEntrySeparator}">
+                        <f:selectItem noSelectionOption="true"
+                                      itemValue="#{null}"
+                                      itemLabel="-- Select metadata group entry separator --"
+                                      itemDescription="Please select a separator character to parse CSV cell contents into Kitodo metadata groups"/>
+                        <f:selectItems value="#{MassImportForm.metadataGroupEntrySeparators}"/>
+                        <p:ajax event="change"
+                                update="editForm:recordsTableWrapper editForm:catalogSelectionWrapper"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
             </h:panelGroup>
         </p:row>
     </p:panelGrid>
+
+    <!-- (CSV) records -->
+    <h:panelGroup id="recordsTableWrapper"
+                  layout="block">
+        <p:outputLabel for="recordsTable"
+                       value="#{MassImportForm.getDataRecordLabel()}"/>
+        <!-- FIXME: our custom CSS seems to break 'frozenColumns="1"' and 'scrollWidth="800"' -->
+        <p:dataTable id="recordsTable"
+                     scrollable="true"
+                     resizableColumns="false"
+                     scrollHeight="480"
+                     editable="true"
+                     editMode="cell"
+                     emptyMessage="#{msgs['noRecordsFound']}"
+                     value="#{MassImportForm.records}"
+                     var="record">
+            <p:ajax event="cellEdit"
+                    update="editForm:recordsTable"/>
+            <!--@elvariable id="columnIndex" type="java.lang.Integer"-->
+            <p:columns var="metadataKey"
+                       columnIndexVar="columnIndex"
+                       value="#{MassImportForm.metadataKeys}">
+                <f:facet name="header">
+                    <h:outputText value="#{MassImportForm.getColumnHeader(columnIndex)}"
+                                  title="#{MassImportForm.getColumnHeader(columnIndex)}"
+                                  styleClass="#{MassImportForm.getFunctionalMetadataStyleClass(columnIndex)}"/>
+                    <p:commandButton id="removeMetadataColumn"
+                                     styleClass="secondary remove-metadata-column"
+                                     action="#{MassImportForm.removeMetadata(columnIndex)}"
+                                     title="#{msgs.delete}"
+                                     icon="fa fa-trash-o"
+                                     update="editForm:recordsTableWrapper"/>
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputText value="#{record.csvCells.get(columnIndex).value}"
+                                      title="#{record.csvCells.get(columnIndex).value}"/>
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputText value="#{record.csvCells.get(columnIndex).value}">
+                            <p:ajax update="editForm:recordsTable"/>
+                        </p:inputText>
+                    </f:facet>
+                </p:cellEditor>
+            </p:columns>
+            <p:column styleClass="remove-column">
+                <f:facet name="header">
+                    <p:commandButton id="addMetadataColumn"
+                                     title="#{msgs['dataEditor.addMetadata.newMetadata']}"
+                                     disabled="#{MassImportForm.records.size() eq 0}"
+                                     style="margin: 3px"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     action="#{MassImportForm.addMetadataDialog.prepareMetadataTypes()}"
+                                     update="addMetadataDialog"
+                                     oncomplete="PF('addMetadataDialog').show();"/>
+                </f:facet>
+                <p:commandButton id="removeLine"
+                                 action="#{MassImportForm.removeLine(record)}"
+                                 styleClass="secondary"
+                                 title="#{msgs.delete}"
+                                 icon="fa fa-trash-o"
+                                 update="editForm:recordsTableWrapper editForm:importButton  editForm:skipEmptyColumns"/>
+            </p:column>
+        </p:dataTable>
+        <div>
+            <p:commandButton id="addCsvRecord"
+                             action="#{MassImportForm.addRecord}"
+                             title="#{msgs['massImport.addRow']}"
+                             value="#{msgs['massImport.addRow']}"
+                             icon="fa fa-plus"
+                             iconPos="right"
+                             styleClass="secondary"
+                             update="editForm:recordsTableWrapper editForm:importButton editForm:skipEmptyColumns"/>
+        </div>
+        <h:panelGroup layout="block"
+                      id="catalogSelectionWrapper">
+            <h:panelGroup layout="block">
+                <p:outputLabel for="catalogueSelect"
+                               value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+                <p:selectOneMenu id="catalogueSelect"
+                                 disabled="#{not MassImportForm.firstColumnContainsRecordsIdentifier()}"
+                                 required="#{not empty param['editForm:importButton']}"
+                                 converter="#{importConfigurationConverter}"
+                                 value="#{MassImportForm.importConfigurationId}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs.selectCatalog} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{CreateProcessForm.catalogImportDialog.importConfigurations}"
+                                   var="configuration"
+                                   itemLabel="#{configuration.title}"
+                                   itemValue="#{configuration}"/>
+                    <p:ajax update="editForm"/>
+                </p:selectOneMenu>
+                <!-- FIXME: this tooltip doesn't work! -->
+                <p:tooltip for="catalogueSelect"
+                           rendered="#{not MassImportForm.firstColumnContainsRecordsIdentifier()}"
+                           value="First column does not contain key of functional metadata 'recordIdentifier', which is required for catalog search"/>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:panelGroup>
 </ui:composition>
