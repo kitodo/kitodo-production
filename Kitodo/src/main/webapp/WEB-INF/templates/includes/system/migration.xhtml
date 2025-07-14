@@ -44,6 +44,13 @@
                          styleClass="primary"
                          action="#{MigrationForm.showLdapManagerPasswordsMigration()}"
                          immediate="true"/>
+        <p:commandButton value="#{msgs['migrationForm.updateInternalMetaInformation.chooseButton']}"
+                         id="updateInternalMetaInfomation"
+                         update="systemTabView:migrationForm"
+                         style="margin: 10px;"
+                         styleClass="primary"
+                         action="#{MigrationForm.showProjectsForUpdatingInternalMetaInformation()}"
+                         immediate="true"/>
         <h:panelGroup rendered="#{MigrationForm.projectListRendered}">
             <div style="margin: 0 10px;"><h:outputText value="#{msgs.projectsForMigration}:"/></div>
             <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}" layout="grid" columns="1" converter="#{projectConverter}" style="margin: 10px;">
@@ -121,6 +128,26 @@
                              update="systemTabView:migrationForm"/>
         </h:panelGroup>
 
+        <h:panelGroup id="updateInternalMetaInformation" rendered="#{MigrationForm.updateInternalMetaInformation}">
+            <div style="margin: 0 10px;"><h:outputText value="#{msgs['migrationForm.updateInternalMetaInformation.projectSelection']}:"/></div>
+            <p:selectManyCheckbox value="#{MigrationForm.selectedProjects}"
+                                  layout="grid"
+                                  columns="1"
+                                  converter="#{projectConverter}"
+                                  style="margin: 10px;">
+                    <f:selectItems value="#{MigrationForm.allProjects}"
+                                   var="project"
+                                   itemLabel="#{project.title}"
+                                   itemValue="#{project}"/>
+            </p:selectManyCheckbox>
+            <div style="margin: 0 10px;"><h:outputText value="#{msgs['migrationForm.updateInternalMetaInformation.informationTaskmanagerExecution']}"/></div>
+            <p:commandButton id="startUpdateInternalMetaInformation" value="#{msgs.ok}"
+                             action="#{MigrationForm.startUpdateInternalMetaInformation}"
+                             update="systemTabView:migrationForm" style="margin: 0 10px;" />
+            <p:commandButton id="cancelUpdateInternalMetaInformation" value="#{msgs.cancel}"
+                             action="#{MigrationForm.hideUpdateInternalMetaInformation}"
+                             update="systemTabView:migrationForm"/>
+        </h:panelGroup>
     </h:form>
 
 </ui:composition>
