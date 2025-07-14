@@ -44,26 +44,28 @@
          </div>
       </h:panelGroup>
 
-      <p:panelGrid>
-         <h:form id="buttonForm">
-            <p:selectBooleanCheckbox id="hideCheckbox"
-                                     itemLabel="#{msgs['massImport.explanation.skipText']}"
-                                     value="#{HelperForm.hideMassImportExplanationDialog}">
-               <p:ajax event="change"
-                       process="@this"/>
-            </p:selectBooleanCheckbox>
-            <h:panelGroup layout="block"
-                          styleClass="dialogButtonWrapper right">
-                  <p:commandButton value="#{msgs.ok}"
-                                   id="okButton"
-                                   type="button"
-                                   widgetVar="closeButton"
-                                   onclick="PF('explanationDialog').hide();"
-                                   icon="fa fa-times fa-lg"
-                                   iconPos="right"
-                                   styleClass="primary right"/>
-            </h:panelGroup>
-         </h:form>
+      <p:panelGrid id="buttonFormGrid">
+         <p:row>
+            <h:form id="buttonForm">
+               <p:selectBooleanCheckbox id="hideCheckbox"
+                                        itemLabel="#{msgs['massImport.explanation.skipText']}"
+                                        value="#{HelperForm.hideMassImportExplanationDialog}">
+                  <p:ajax event="change"
+                          process="@this"/>
+               </p:selectBooleanCheckbox>
+               <h:panelGroup layout="block"
+                             styleClass="dialogButtonWrapper right">
+                     <p:commandButton value="#{msgs.ok}"
+                                      id="okButton"
+                                      type="button"
+                                      widgetVar="closeButton"
+                                      onclick="PF('explanationDialog').hide();"
+                                      icon="fa fa-times fa-lg"
+                                      iconPos="right"
+                                      styleClass="primary right"/>
+               </h:panelGroup>
+            </h:form>
+         </p:row>
       </p:panelGrid>
    </p:dialog>
 </ui:composition>
