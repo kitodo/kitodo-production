@@ -35,7 +35,7 @@ public enum FunctionalMetadata {
      * creation. The value is the current number of children of the parent
      * process plus one, i.e. it creates a one-based counting.
      */
-    CHILD_COUND("childCount"),
+    CHILD_COUNT("childCount"),
 
     /**
      * The name of the data source from which the record was imported. This is
