@@ -32,7 +32,7 @@ public class UpdateInternalMetaInformationTask extends EmptyTask {
     /**
      * Default constructor.
      *
-     * @param project Choosen projet which process meta information should be updated.
+     * @param project Chosen project which process meta information should be updated.
      */
     public UpdateInternalMetaInformationTask(Project project) {
         super(project.getTitle());
