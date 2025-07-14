@@ -54,6 +54,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.HierarchyMigrationTask;
 import org.kitodo.production.helper.tasks.MigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
+import org.kitodo.production.helper.tasks.UpdateInternalMetaInformationTask;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
 import org.kitodo.production.security.AESUtil;
@@ -83,6 +84,7 @@ public class MigrationForm extends BaseForm {
     private Collection<Integer> newspaperBatchesSelectedItems = new ArrayList<>();
     private List<Batch> newspaperBatchesItems;
     private boolean ldapManagerPasswordsMigrationRendered = false;
+    private boolean updateInternalMetaInformation = false;
 
     /**
      * Migrates the meta.xml for all processes in the database (if it's in the
@@ -615,5 +617,44 @@ public class MigrationForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapServers") }, logger, e);
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * Show projects for updating the project processes internal meta information.
+     */
+    public void showProjectsForUpdatingInternalMetaInformation() {
+        try {
+            loadProjects();
+            updateInternalMetaInformation = true;
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error during database access", e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Should update internal meta information be displayed or not.
+     * @return Is update internal meta information content displayed or not.
+     */
+    public boolean isUpdateInternalMetaInformation() {
+        return updateInternalMetaInformation;
+    }
+
+    /**
+     * Action performed when the cancelUpdateInternalMetaInformation button is clicked.
+     */
+    public void hideUpdateInternalMetaInformation() {
+        selectedProjects.clear();
+        updateInternalMetaInformation = false;
+    }
+
+    /**
+     * Start updating internal meta information in separat tasks.
+     */
+    public void startUpdateInternalMetaInformation() {
+        for (Project project : selectedProjects) {
+            TaskManager.addTask(new UpdateInternalMetaInformationTask(project));
+        }
+        updateInternalMetaInformation = false;
+        selectedProjects.clear();
     }
 }
