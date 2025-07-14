@@ -633,7 +633,7 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Should update interal meta information be displayed or not.
+     * Should update internal meta information be displayed or not.
      * @return Is update internal meta information content displayed or not.
      */
     public boolean isUpdateInternalMetaInformation() {
