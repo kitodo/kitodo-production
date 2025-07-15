@@ -33,7 +33,6 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -55,7 +54,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,7 +83,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -107,7 +104,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
@@ -1821,15 +1817,21 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
         processToDelete.setProject(null);
         processToDelete.setTemplate(null);
-        if (Objects.nonNull(processToDelete.getParent())) {
-            MetadataEditor.removeLink(processToDelete.getParent(), processToDelete.getId());
-            processToDelete.setParent(null);
-        }
-
         processToDelete.getBatches().clear();
-        processToDelete.getWorkpieces().clear();
         processToDelete.getTemplates().clear();
+
+        List<Property> propertiesToDelete = new ArrayList<>(processToDelete.getWorkpieces());
+        processToDelete.getWorkpieces().clear();
+        ServiceManager.getProcessService().save(processToDelete);
+        for (Property property : propertiesToDelete) {
+            ServiceManager.getPropertyService().remove(property);
+        }
+        Process parent = processToDelete.getParent();
+        int processID = processToDelete.getId();
         ServiceManager.getProcessService().remove(processToDelete);
+        if (Objects.nonNull(parent)) {
+            MetadataEditor.removeLink(parent, processID);
+        }
     }
 
     private static void deleteMetadataDirectory(Process process) {
