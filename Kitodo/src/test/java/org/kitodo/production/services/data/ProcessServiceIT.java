@@ -122,6 +122,14 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindProcessesWithExactTitleMatch() throws DataException {
+        // Mock database contains process with title "First process", which should _not_ be found when searching for processes with title "First"
+        assertEquals(Long.valueOf(0), processService.findNumberOfProcessesWithTitle("First"), "Found wrong process!");
+        // Process with title "First process" should only be found when searching for that exact title
+        assertEquals(Long.valueOf(1), processService.findNumberOfProcessesWithTitle("First process"), "Did not find correct process!");
+    }
+
+    @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.countDatabaseRows();
         assertEquals(Long.valueOf(7), amount, "Processes were not counted correctly!");
