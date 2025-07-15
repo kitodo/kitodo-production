@@ -47,12 +47,14 @@
       <p:panelGrid id="buttonFormGrid">
          <p:row>
             <h:form id="buttonForm">
-               <p:selectBooleanCheckbox id="hideCheckbox"
-                                        itemLabel="#{msgs['massImport.explanation.skipText']}"
-                                        value="#{HelperForm.hideMassImportExplanationDialog}">
-                  <p:ajax event="change"
-                          process="@this"/>
-               </p:selectBooleanCheckbox>
+               <div class="dialogCheckboxWrapper">
+                  <p:selectBooleanCheckbox id="hideCheckbox"
+                                           value="#{HelperForm.hideMassImportExplanationDialog}">
+                     <p:ajax event="change"
+                             process="@this"/>
+                  </p:selectBooleanCheckbox>
+                  <p:outputLabel for="hideCheckbox" value="#{msgs['massImport.explanation.skipText']}"/>
+               </div>
                <h:panelGroup layout="block"
                              styleClass="dialogButtonWrapper right">
                      <p:commandButton value="#{msgs.ok}"
