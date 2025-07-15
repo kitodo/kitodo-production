@@ -2620,6 +2620,14 @@ form#metadata div label,
     padding-left: 1em;
 }
 
+#editForm\:ltpValidationConfigurationTabView\:detailsTab .ui-panel .ui-panel-content {
+    padding: 0;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:detailsTab .ui-panel .ui-panel-content > div {
+    margin-bottom: var(--default-full-size);
+}
+
 #editForm\:ltpValidationConfigurationTabView\:detailsTab h4 {
     padding: 0 24px;
     margin-bottom: 0.5em;
@@ -2653,6 +2661,15 @@ form#metadata div label,
 #editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu label,
 #editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-selectonemenu .ui-selectonemenu-trigger {
     min-height: 3em;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-chips-token,
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-chips-input-token {
+    vertical-align: text-bottom;
+}
+
+#editForm\:ltpValidationConfigurationTabView\:ltpValidationConditionsTable_data .ui-chips-token .ui-chips-token-icon {
+    margin-top: -18px;
 }
 
 #editForm\:ltpValidationConfigurationTabView\:addConditionButton {
