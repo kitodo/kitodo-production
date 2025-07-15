@@ -1400,6 +1400,18 @@ body .ui-dialog .ui-dialog-content {
     margin-right: var(--default-double-size);
 }
 
+.ui-dialog div.dialogCheckboxWrapper {
+    display: inline-block;
+    line-height: var(--input-height);
+    margin: var(--default-full-size) var(--default-double-size);
+}
+
+.ui-dialog div.dialogCheckboxWrapper label {
+    display: inline-block;
+    height: var(--input-height);
+    margin-left: var(--default-half-size);
+}
+
 .ui-dialog .ui-datatable-tablewrapper .actionsColumn {
     width: unset;
     text-align: right !important;
