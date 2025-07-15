@@ -1982,8 +1982,19 @@ Mass import
 }
 
 #editForm\:csvFileUpload .ui-fileupload-buttonbar {
-    float: left;
+    background: transparent;
+    border: none;
 }
+
+#editForm .ui-fileupload .ui-fileupload-content {
+    border: none;
+    padding: 0;
+}
+
+#editForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row > div {
+    padding: 0 var(--default-full-size);
+}
+
 
 #importResultsForm\:importResults .ui-accordion-content {
     padding: 0;
@@ -2008,9 +2019,8 @@ Mass import
     width: calc(100% - 20px);
 }
 
-#buttonForm\:hideCheckbox {
-    margin-left: var(--default-double-size);
-    margin-top: var(--default-double-size);
+#editForm\:recordsTable_data tr td {
+    box-sizing: content-box;
 }
 
 #catalogSearchForm {
