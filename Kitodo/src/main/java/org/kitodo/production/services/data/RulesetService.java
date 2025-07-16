@@ -142,6 +142,19 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
     }
 
     /**
+     * Returns all rulesets with the given title and eagerly loads associated clients.
+     *
+     * @param title the title of the rulesets
+     * @return list of rulesets with client fetched
+     */
+    public List<Ruleset> getByTitleWithClient(String title) {
+        return dao.getByQuery(
+                "SELECT r FROM Ruleset r JOIN FETCH r.client WHERE r.title = :title",
+                Collections.singletonMap("title", title)
+        );
+    }
+
+    /**
      * Get preferences.
      *
      * @param ruleset
