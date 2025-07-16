@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -266,13 +267,13 @@ public class Comment extends BaseBean {
         }
         if (object instanceof Comment) {
             Comment comment = (Comment) object;
-            return this.getId() != null && this.getId().equals(comment.getId());
+            return Objects.nonNull(this.getId()) && this.getId().equals(comment.getId());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return this.getId() != null ? this.getId().hashCode() : 0;
+        return Objects.nonNull(this.getId()) ? this.getId().hashCode() : 0;
     }
 }

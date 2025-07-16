@@ -1822,16 +1822,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
         List<Property> propertiesToDelete = new ArrayList<>(processToDelete.getWorkpieces());
         processToDelete.getWorkpieces().clear();
-        ServiceManager.getProcessService().save(processToDelete);
+        ProcessService processService = ServiceManager.getProcessService();
+        processService.save(processToDelete);
         for (Property property : propertiesToDelete) {
             ServiceManager.getPropertyService().remove(property);
         }
         Process parent = processToDelete.getParent();
-        int processID = processToDelete.getId();
-        ServiceManager.getProcessService().remove(processToDelete);
         if (Objects.nonNull(parent)) {
-            MetadataEditor.removeLink(parent, processID);
+            MetadataEditor.removeLink(parent, processToDelete.getId());
         }
+        processService.remove(processToDelete);
     }
 
     private static void deleteMetadataDirectory(Process process) {
