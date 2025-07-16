@@ -37,7 +37,32 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
     DatabaseQueryPart(FilterField filterField, String value, boolean operand) {
         this.filterField = filterField;
         this.operand = operand;
-        this.value = value;
+        this.value = likeValue(filterField.getLikeSearch(), value);
+    }
+
+    /**
+     * Returns a value like the search value, depending on the like search mode
+     * specified for the search field.
+     * 
+     * @param likeSearch
+     *            like search setting
+     * @param value
+     *            user entered search value
+     * @return search value for like search
+     */
+    private static final String likeValue(LikeSearch likeSearch, String value) {
+        boolean asteriskAllowed = Objects.equals(likeSearch, LikeSearch.ALLOWED);
+        if (!asteriskAllowed) {
+            value = value.replace("*", "");
+        }
+        if (Objects.equals(likeSearch, LikeSearch.ALWAYS_RIGHT)) {
+            return value.concat("%");
+        }
+        if (asteriskAllowed) {
+            return value.replace("*", "%");
+        } else {
+            return value;
+        }
     }
 
     /**
@@ -71,7 +96,8 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
             return SQL_FALSE;
         }
         query = query.contains("~") ? query.replace("~", varName) : varName + '.' + query;
-        query = query.contains("#") ? query.replace("#", parameterName) : query + " = :" + parameterName;
+        query = query.contains("#") ? query.replace("#", parameterName)
+                : query + (value.contains("%") ? " LIKE :" : " = :") + parameterName;
         return operand ? query : "NOT (" + query + ')';
     }
 
