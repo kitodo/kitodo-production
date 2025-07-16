@@ -77,7 +77,7 @@ public class CommentFormIT {
         addTestComment(testProcess);
         // Force reload of the process to ensure consistency
         Process managedProcess = ServiceManager.getProcessService().getById(testProcess.getId());
-        Comment managedComment = managedProcess.getComments().get(0); // assuming only one comment
+        Comment managedComment = managedProcess.getComments().get(0);
         long numberOfCommentsBeforeRemovingComment = ServiceManager.getCommentService().count();
         commentForm.removeComment(managedComment);
         long numberOfCommentsAfterRemovingComment = ServiceManager.getCommentService().count();
