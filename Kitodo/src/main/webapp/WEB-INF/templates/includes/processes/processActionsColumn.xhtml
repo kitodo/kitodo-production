@@ -143,6 +143,7 @@
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                disabled="#{process.hasChildren()}"
+                               process="@this"
                                update="processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
