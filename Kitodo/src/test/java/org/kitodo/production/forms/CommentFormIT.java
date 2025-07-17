@@ -74,12 +74,9 @@ public class CommentFormIT {
         CommentForm commentForm = new CommentForm();
         Process testProcess = addTestProcess("Test process for removing comment");
         commentForm.setProcessById(testProcess.getId());
-        addTestComment(testProcess);
-        // Force reload of the process to ensure consistency
-        Process managedProcess = ServiceManager.getProcessService().getById(testProcess.getId());
-        Comment managedComment = managedProcess.getComments().get(0);
+        Comment testComment = addTestComment(testProcess);
         long numberOfCommentsBeforeRemovingComment = ServiceManager.getCommentService().count();
-        commentForm.removeComment(managedComment);
+        commentForm.removeComment(testComment);
         long numberOfCommentsAfterRemovingComment = ServiceManager.getCommentService().count();
         Assertions.assertEquals(numberOfCommentsAfterRemovingComment, numberOfCommentsBeforeRemovingComment - 1);
     }
