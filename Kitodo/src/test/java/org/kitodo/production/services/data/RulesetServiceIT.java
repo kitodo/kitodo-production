@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -109,7 +110,8 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitleWithClientEagerlyLoaded() throws DAOException {
-        assertEquals(1, rulesetService.getByTitleWithClient(slubDD).size(), rulesetNotFound);
+        assertEquals(1, rulesetService.getByTitleAndClient(slubDD,
+                ServiceManager.getClientService().getById(1)).size(), rulesetNotFound);
     }
 
     @Test

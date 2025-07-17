@@ -130,8 +130,9 @@ public class RulesetForm extends BaseForm {
     }
 
     private boolean existsRulesetWithSameName() {
-        List<Ruleset> rulesets = ServiceManager.getRulesetService().getByTitleWithClient(this.ruleset.getTitle())
-                .stream().filter(r -> r.getClient().equals(this.ruleset.getClient())).collect(Collectors.toList());
+        List<Ruleset> rulesets = ServiceManager.getRulesetService()
+                .getByTitleAndClient(this.ruleset.getTitle(), ServiceManager.getUserService()
+                        .getSessionClientOfAuthenticatedUser());
         if (rulesets.isEmpty()) {
             return false;
         } else {

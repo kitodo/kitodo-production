@@ -39,6 +39,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -142,15 +143,19 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
     }
 
     /**
-     * Returns all rulesets with the given title and eagerly loads associated clients.
-     *
-     * @param title the title of the rulesets
-     * @return list of rulesets with client fetched
+     * Retrieves a list of rulesets matching the given title and client.
+     * @param title the title of the ruleset to search for
+     * @param client the client associated with the ruleset
+     * @return a list of matching rulesets
      */
-    public List<Ruleset> getByTitleWithClient(String title) {
+    public List<Ruleset> getByTitleAndClient(String title, Client client) {
+        Map<String, Object> parameters = Map.of(
+                "title", title,
+                "client", client
+        );
         return dao.getByQuery(
-                "SELECT r FROM Ruleset r JOIN FETCH r.client WHERE r.title = :title",
-                Collections.singletonMap("title", title)
+                "SELECT r FROM Ruleset r WHERE r.title = :title AND r.client = :client",
+                parameters
         );
     }
 
