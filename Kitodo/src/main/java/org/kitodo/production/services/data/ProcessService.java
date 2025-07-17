@@ -1787,8 +1787,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return amount as Long
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
-        return countDocumentsAcrossProjects(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true,
-                Operator.AND));
+        return countDocumentsAcrossProjects(getQueryTitle(title, true, true));
     }
 
     /**
