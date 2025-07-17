@@ -12,8 +12,8 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -108,13 +108,15 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindByTitleWithClientEagerlyLoaded() throws DAOException {
+    public void shouldFindByTitleWithClientEagerlyLoaded() {
         List<Ruleset> rulesets = rulesetService.getByTitleWithClient(slubDD);
         assertEquals(1, rulesets.size(), rulesetNotFound);
 
         Ruleset ruleset = rulesets.get(0);
-        assertNotNull(ruleset.getClient(), "Client should be eagerly loaded");
-        assertNotNull(ruleset.getClient().getId(), "Client ID should be accessible without exception");
+        assertDoesNotThrow(() -> {
+            ruleset.getClient();
+            ruleset.getClient().getId();
+        });
     }
 
     @Test
