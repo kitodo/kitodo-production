@@ -30,6 +30,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.RulesetEditPage;
 import org.kitodo.selenium.testframework.pages.TemplateEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
@@ -143,8 +144,10 @@ public class EditingST extends BaseTestSelenium {
 
     @Test
     public void editRulesetTest() throws Exception {
-        projectsPage.editRuleset();
+        RulesetEditPage rulesetEditPage = projectsPage.editRuleset();
         assertEquals("Regelsatz bearbeiten (SLUBDD)", Pages.getRulesetEditPage().getHeaderText(), "Header for edit ruleset is incorrect");
+        rulesetEditPage.changeRuleset().save();
+        assertTrue(projectsPage.isAt(), "Redirection after save was not successful");
     }
 
     @Test

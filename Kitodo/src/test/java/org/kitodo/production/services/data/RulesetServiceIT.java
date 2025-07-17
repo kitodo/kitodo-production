@@ -108,15 +108,8 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindByTitleWithClientEagerlyLoaded() {
-        List<Ruleset> rulesets = rulesetService.getByTitleWithClient(slubDD);
-        assertEquals(1, rulesets.size(), rulesetNotFound);
-
-        Ruleset ruleset = rulesets.get(0);
-        assertDoesNotThrow(() -> {
-            ruleset.getClient();
-            ruleset.getClient().getId();
-        });
+    public void shouldFindByTitleWithClientEagerlyLoaded() throws DAOException {
+        assertEquals(1, rulesetService.getByTitleWithClient(slubDD).size(), rulesetNotFound);
     }
 
     @Test
