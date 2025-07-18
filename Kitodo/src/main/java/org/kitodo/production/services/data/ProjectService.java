@@ -120,6 +120,20 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     }
 
     /**
+     * Retrieves a project by its ID with its folders eagerly loaded.
+     *
+     * @param projectId the ID of the project to retrieve
+     * @return the project with its folders, or null if not found
+     */
+    public Project getProjectWithFolders(Integer projectId) throws DAOException {
+        String query = "SELECT p FROM Project p LEFT JOIN FETCH p.folders WHERE p.id = :id";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("id", projectId);
+        List<Project> result = getByQuery(query, parameters);
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    /**
      * Returns all projects that can still be assigned to a user. Returns the
      * projects that are not already assigned to the user to be edited, and that
      * belong to the client for which the logged-in user is currently working.

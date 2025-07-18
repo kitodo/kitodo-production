@@ -352,15 +352,13 @@ public class ProjectForm extends BaseForm {
     /**
      * Delete folder.
      *
-     * @return page
      */
-    public String deleteFolder() {
+    public void deleteFolder() {
         if (Objects.isNull(myFolder.getId())) {
             project.getFolders().remove(myFolder);
         } else {
             deletedFolders.add(this.myFolder.getId());
         }
-        return this.stayOnCurrentPage;
     }
 
     /**
@@ -809,8 +807,11 @@ public class ProjectForm extends BaseForm {
         }
         try {
             if (!Objects.equals(id, 0)) {
-                setProject(ServiceManager.getProjectService().getById(id));
-                this.locked = true;
+                Project projectWithFolder = ServiceManager.getProjectService().getProjectWithFolders(id);
+                if (Objects.nonNull(projectWithFolder)) {
+                    setProject(ServiceManager.getProjectService().getProjectWithFolders(id));
+                    this.locked = true;
+                }
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
