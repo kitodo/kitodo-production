@@ -160,6 +160,30 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
     }
 
     /**
+     * Checks if another ruleset with the same title exists for the current user's client.
+     *
+     * @param ruleset the ruleset to check
+     * @return true if a different ruleset with the same title exists, false otherwise
+     */
+    public boolean existsRulesetWithSameName(Ruleset ruleset) {
+        List<Ruleset> rulesets = getByTitleAndClient(ruleset.getTitle(), ServiceManager.getUserService()
+                        .getSessionClientOfAuthenticatedUser());
+        if (rulesets.isEmpty()) {
+            return false;
+        } else {
+            if (Objects.nonNull(ruleset.getId())) {
+                if (rulesets.size() == 1) {
+                    return !rulesets.get(0).getId().equals(ruleset.getId());
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
      * Get preferences.
      *
      * @param ruleset
