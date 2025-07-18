@@ -19,7 +19,7 @@
 
     <h:form id="batchForm">
         <p:panelGrid id="detailForm" columns="2" cellpadding="10" layout="grid">
-            <p:row>
+            <p:panel styleClass="column-wrapper">
                 <h4><h:outputText value="#{msgs.batches}"/></h4>
 
                 <div>
@@ -93,8 +93,8 @@
                                         processesTabView:batchForm:selectBatches"
                                 rendered="#{SecurityAccessController.hasAuthorityToDeleteBatch()}"/>
                 </p:menu>
-            </p:row>
-            <p:row>
+            </p:panel>
+            <p:panel styleClass="column-wrapper">
                 <h4><h:outputText value="#{msgs.processes}"/></h4>
 
                 <div>
@@ -158,7 +158,7 @@
                                 icon="fa fa-plus"
                                 rendered="#{SecurityAccessController.hasAuthorityToAddBatch()}"/>
                 </p:menu>
-            </p:row>
+            </p:panel>
         </p:panelGrid>
     </h:form>
 </ui:composition>

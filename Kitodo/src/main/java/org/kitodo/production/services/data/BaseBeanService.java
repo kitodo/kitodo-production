@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
@@ -346,9 +347,9 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
     }
 
     protected String getSort(String sortField, SortOrder sortOrder) {
-        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
+        if (StringUtils.isNotBlank(sortField) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
             return " ORDER BY " + sortField + " ASC";
-        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
+        } else if (StringUtils.isNotBlank(sortField) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
             return " ORDER BY " + sortField + " DESC";
         } else {
             return "";

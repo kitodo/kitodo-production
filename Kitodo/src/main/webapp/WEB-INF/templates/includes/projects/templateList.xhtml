@@ -28,7 +28,7 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{item.title.keyword}"
+                 sortBy="#{TemplateForm.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -39,7 +39,7 @@
         <p:ajax event="rowToggle"
                 oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 20px;"
+        <p:column styleClass="rowTogglerColumn"
                   resizable="false"
                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewTemplate')}">
             <p:rowToggler/>
@@ -167,7 +167,7 @@
                             <p:panelGrid id="templateActionDetailTable"
                                          columns="2"
                                          columnClasses="label, actionsColumn">
-                                <p:repeat id="projects"
+                                <ui:repeat id="projects"
                                           value="#{item.projects}"
                                           var="project">
                                     <div class="project-template-action">
@@ -189,7 +189,7 @@
                                             </h:outputText>
                                         </h:panelGroup>
                                     </div>
-                                </p:repeat>
+                                </ui:repeat>
                             </p:panelGrid>
                         </h:form>
                     </p:panelGrid>
@@ -213,6 +213,7 @@
                                   panelStyleClass="filter-panel"
                                   value="#{TemplateForm.selectedTemplateFilters}"
                                   styleClass="secondary"
+                                  showHeader="false"
                                   label="#{msgs.filter}">
                 <f:selectItems value="#{TemplateForm.templateFilters}"
                                var="templateFilter"

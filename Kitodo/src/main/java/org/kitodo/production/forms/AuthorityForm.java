@@ -25,6 +25,8 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("AuthorityForm")
 @SessionScoped
@@ -42,6 +44,7 @@ public class AuthorityForm extends BaseForm {
     public AuthorityForm() {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getAuthorityService()));
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**

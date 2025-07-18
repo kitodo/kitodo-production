@@ -36,18 +36,42 @@
                     <ui:param name="selectedGalleryMediaContent" value="#{selectedGalleryMediaContent}"/>
                 </ui:include>
 
-                <p:media styleClass="mediaPreviewItem" value="#{mediaProvider.mediaView}"
-                       player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
-                       width="90%" height="auto">
-                  <f:param name="mediaId"
-                           value="#{selectedGalleryMediaContent.id}"/>
-                  <f:param name="process"
-                           value="#{DataEditorForm.process.id}"/>
-                  <f:param name="sessionId"
-                           value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                  <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
-                  <f:param name="krsc" value="true"/>
-                </p:media>
+                <p:video styleClass="mediaPreviewItem"
+                         value="#{mediaProvider.mediaView}"
+                         player="#{selectedGalleryMediaContent.mediaViewMimeType.substring(selectedGalleryMediaContent.mediaViewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
+                         width="100%"
+                         rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video')}"
+                         height="auto">
+                    <f:param name="mediaId"
+                             value="#{selectedGalleryMediaContent.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="type"
+                             value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:video>
+
+                <p:audio styleClass="mediaPreviewItem"
+                         value="#{mediaProvider.mediaView}"
+                         controls="true"
+                         player="#{fn:endsWith(selectedGalleryMediaContent.mediaViewMimeType, 'mpeg') ? 'mp3' : selectedGalleryMediaContent.mediaViewMimeType.substring(selectedGalleryMediaContent.mediaViewMimeType.lastIndexOf('/') + 1)}"
+                         rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}"
+                         height="auto">
+                    <f:param name="mediaId"
+                             value="#{selectedGalleryMediaContent.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="type"
+                             value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:audio>
 
                 <ui:include
                         src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail-media-formatted-time.xhtml"/>

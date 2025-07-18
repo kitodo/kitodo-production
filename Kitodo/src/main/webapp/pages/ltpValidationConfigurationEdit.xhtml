@@ -74,7 +74,7 @@
                 <p:panelGrid id="ltpValidationConfiguration-grid"
                    columns="2"
                    layout="grid">
-                    <p:row>
+                    <p:panel>
                         <div>
                             <p:outputLabel for="title"
                                             value="#{msgs.title} *"/>
@@ -91,8 +91,8 @@
                             <p:tooltip for="titleHelp"
                                         value="#{msgs['ltpValidation.edit.title.tooltip']}"/>
                         </div>
-                    </p:row>
-                    <p:row>
+                    </p:panel>
+                    <p:panel>
                         <div>
                             <p:outputLabel for="mimeType"
                                             value="#{msgs['ltpValidation.edit.mimeType.label']}"/>
@@ -116,12 +116,12 @@
                                            value="#{msgs['ltpValidation.edit.mimeType.disabled.tooltip']}"/>
                             </div>
                         </div>
-                    </p:row>
+                    </p:panel>
                 </p:panelGrid>
 
                 <h4><h:outputText value="#{msgs['ltpValidation.edit.workflowOptions']}" /></h4>
                 <p:panelGrid columns="2" layout="grid">
-                    <p:row>
+                    <p:panel>
                         <div>
                             <p:outputLabel for="requireNoErrorToFinishTask"
                                            value="#{msgs['ltpValidation.edit.requireNoErrorToFinishTask']}"/>
@@ -132,8 +132,8 @@
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectBooleanCheckbox>
                         </div>
-                    </p:row>
-                    <p:row>
+                    </p:panel>
+                    <p:panel>
                         <div>
                             <p:outputLabel for="requireNoErrorToUploadImage"
                                            value="#{msgs['ltpValidation.edit.requireNoErrorToUploadImage']}"/>
@@ -144,12 +144,12 @@
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectBooleanCheckbox>
                         </div>
-                    </p:row>
+                    </p:panel>
                 </p:panelGrid>
 
                 <h4><h:outputText value="#{msgs['ltpValidation.edit.commonValidationConditions']}" /></h4>
                 <p:panelGrid columns="2" layout="grid">
-                    <p:row>
+                    <p:panel>
                         <div>
                             <p:outputLabel for="simpleWellFormed"
                                             value="#{msgs['ltpValidation.edit.wellFormed.label']}"/>
@@ -187,8 +187,8 @@
                             <p:tooltip for="simpleFilenamePatternHelp"
                                         value="#{msgs['ltpValidation.edit.filenamePattern.tooltip']}"/>
                         </div>
-                    </p:row>
-                    <p:row>
+                    </p:panel>
+                    <p:panel>
                         <div>
                             <p:outputLabel for="simpleValid"
                                             value="#{msgs['ltpValidation.edit.valid.label']}"/>
@@ -227,7 +227,7 @@
                                            value="#{msgs['ltpValidation.edit.filenamePatternSeverity.tooltip']}"/>
                             </div>
                         </div>
-                    </p:row>
+                    </p:panel>
                 </p:panelGrid>
             </p:tab>
             <p:tab id="conditionsTab"
