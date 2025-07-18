@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<ead audience="external">
+<ead audience="external"
+     xmlns="urn:isbn:1-931666-22-9">
   <eadheader countryencoding="iso3166-1"
              dateencoding="iso8601"
              langencoding="iso639-2b"
