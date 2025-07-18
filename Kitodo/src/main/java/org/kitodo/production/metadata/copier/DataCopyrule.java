@@ -21,7 +21,6 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 public class DataCopyrule {

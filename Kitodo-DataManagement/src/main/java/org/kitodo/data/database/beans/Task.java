@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -38,8 +37,6 @@ import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.utils.Stopwatch;
-import org.kitodo.utils.Tee;
 
 @Entity
 @Table(name = "task")

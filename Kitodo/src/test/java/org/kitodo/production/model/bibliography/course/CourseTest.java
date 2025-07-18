@@ -15,16 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.jupiter.api.Test;
 import org.kitodo.production.helper.XMLUtils;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 public class CourseTest {
 

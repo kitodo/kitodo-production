@@ -42,7 +42,6 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
