@@ -14,6 +14,7 @@
 
 <xsl:stylesheet version="2.0"
                 xmlns="urn:isbn:1-931666-22-9"
+                xpath-default-namespace="urn:isbn:1-931666-22-9"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:kitodo="http://meta.kitodo.org/v1/">
