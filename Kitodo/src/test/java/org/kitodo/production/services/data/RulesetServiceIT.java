@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -109,10 +107,20 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindByTitleWithClientEagerlyLoaded() throws DAOException {
+    public void shouldFindByTitleAndClient() throws DAOException {
+        int CLIENT_ID_MATCH = 1;
         assertEquals(1, rulesetService.getByTitleAndClient(slubDD,
-                ServiceManager.getClientService().getById(1)).size(), rulesetNotFound);
+                ServiceManager.getClientService().getById(CLIENT_ID_MATCH)).size(), rulesetNotFound);
     }
+
+    @Test
+    public void shouldNotFindByTitleAndWrongClient() throws DAOException {
+        int CLIENT_ID_MISMATCH = 2;
+        assertEquals(0, rulesetService.getByTitleAndClient(slubDD,
+                ServiceManager.getClientService().getById(CLIENT_ID_MISMATCH)).size(), rulesetNotFound);
+    }
+
+
 
     @Test
     @Disabled("functionality nowhere used, no longer implemented")

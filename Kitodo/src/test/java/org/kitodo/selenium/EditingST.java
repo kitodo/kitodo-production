@@ -145,7 +145,7 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editRulesetTest() throws Exception {
         RulesetEditPage rulesetEditPage = projectsPage.editRuleset();
-        assertEquals("Regelsatz bearbeiten (SLUBDD)", Pages.getRulesetEditPage().getHeaderText(), "Header for edit ruleset is incorrect");
+        assertEquals("Regelsatz bearbeiten (SLUBDD)", rulesetEditPage.getHeaderText(), "Header for edit ruleset is incorrect");
         rulesetEditPage.changeRuleset().save();
         assertTrue(projectsPage.isAt(), "Redirection after save was not successful");
     }
