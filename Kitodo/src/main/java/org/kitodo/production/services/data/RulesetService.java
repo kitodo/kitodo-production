@@ -39,6 +39,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -139,6 +140,47 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      */
     public List<Ruleset> getByTitle(String title) {
         return dao.getByQuery("FROM Ruleset WHERE title = :title", Collections.singletonMap("title", title));
+    }
+
+    /**
+     * Retrieves a list of rulesets matching the given title and client.
+     * @param title the title of the ruleset to search for
+     * @param client the client associated with the ruleset
+     * @return a list of matching rulesets
+     */
+    public List<Ruleset> getByTitleAndClient(String title, Client client) {
+        Map<String, Object> parameters = Map.of(
+                "title", title,
+                "client", client
+        );
+        return dao.getByQuery(
+                "SELECT r FROM Ruleset r WHERE r.title = :title AND r.client = :client",
+                parameters
+        );
+    }
+
+    /**
+     * Checks if another ruleset with the same title exists for the current user's client.
+     *
+     * @param ruleset the ruleset to check
+     * @return true if a different ruleset with the same title exists, false otherwise
+     */
+    public boolean existsRulesetWithSameName(Ruleset ruleset) {
+        List<Ruleset> rulesets = getByTitleAndClient(ruleset.getTitle(), ServiceManager.getUserService()
+                        .getSessionClientOfAuthenticatedUser());
+        if (rulesets.isEmpty()) {
+            return false;
+        } else {
+            if (Objects.nonNull(ruleset.getId())) {
+                if (rulesets.size() == 1) {
+                    return !rulesets.get(0).getId().equals(ruleset.getId());
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
     }
 
     /**

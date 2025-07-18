@@ -50,6 +50,12 @@ public class RulesetEditPage extends EditPage<RulesetEditPage> {
         return this;
     }
 
+    public RulesetEditPage changeRuleset() {
+        selectTrigger.click();
+        Browser.getDriver().findElement(By.id(RULESET_TAB_VIEW + ":file_1")).click();
+        return this;
+    }
+
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();

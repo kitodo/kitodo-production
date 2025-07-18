@@ -107,6 +107,22 @@ public class RulesetServiceIT {
     }
 
     @Test
+    public void shouldFindByTitleAndClient() throws DAOException {
+        int CLIENT_ID_MATCH = 1;
+        assertEquals(1, rulesetService.getByTitleAndClient(slubDD,
+                ServiceManager.getClientService().getById(CLIENT_ID_MATCH)).size(), rulesetNotFound);
+    }
+
+    @Test
+    public void shouldNotFindByTitleAndWrongClient() throws DAOException {
+        int CLIENT_ID_MISMATCH = 2;
+        assertEquals(0, rulesetService.getByTitleAndClient(slubDD,
+                ServiceManager.getClientService().getById(CLIENT_ID_MISMATCH)).size(), rulesetNotFound);
+    }
+
+
+
+    @Test
     @Disabled("functionality nowhere used, no longer implemented")
     public void shouldFindByFile() throws Exception {
         // TODO delete test stub

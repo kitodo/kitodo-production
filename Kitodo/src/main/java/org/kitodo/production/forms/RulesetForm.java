@@ -130,21 +130,7 @@ public class RulesetForm extends BaseForm {
     }
 
     private boolean existsRulesetWithSameName() {
-        List<Ruleset> rulesets = ServiceManager.getRulesetService().getByTitle(this.ruleset.getTitle())
-                .stream().filter(r -> r.getClient().equals(this.ruleset.getClient())).collect(Collectors.toList());
-        if (rulesets.isEmpty()) {
-            return false;
-        } else {
-            if (Objects.nonNull(this.ruleset.getId())) {
-                if (rulesets.size() == 1) {
-                    return !rulesets.get(0).getId().equals(this.ruleset.getId());
-                } else {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        }
+        return ServiceManager.getRulesetService().existsRulesetWithSameName(this.ruleset);
     }
 
     private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DAOException {
