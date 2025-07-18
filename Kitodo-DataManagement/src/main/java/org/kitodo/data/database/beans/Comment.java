@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -257,5 +258,22 @@ public class Comment extends BaseBean {
      */
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object instanceof Comment) {
+            Comment comment = (Comment) object;
+            return Objects.nonNull(this.getId()) && this.getId().equals(comment.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.nonNull(this.getId()) ? this.getId().hashCode() : 0;
     }
 }

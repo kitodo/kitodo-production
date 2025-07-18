@@ -110,7 +110,7 @@ public class Process extends BaseTemplateBean {
     private List<Task> tasks;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
