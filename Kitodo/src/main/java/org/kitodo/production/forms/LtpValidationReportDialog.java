@@ -24,6 +24,8 @@ import javax.inject.Named;
 
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LtpValidationCondition;
 import org.kitodo.data.database.beans.Task;
@@ -49,7 +51,8 @@ public class LtpValidationReportDialog implements Serializable {
      * the user and all files in all folders have validation errors.
      * </p>
      */
-    private static final int MAX_NUMBER_OF_REPORTED_FOLDERS = 3;
+    private static final int MAX_NUMBER_OF_REPORTED_FOLDERS = ConfigCore
+            .getIntParameter(ParameterCore.LTP_VALIDATION_MAX_REPORTED_FOLDERS);
 
     /**
      * The maximum number of files (that contain validation errors) that are
@@ -61,7 +64,8 @@ public class LtpValidationReportDialog implements Serializable {
      * the user and all files in all folders have validation errors.
      * </p>
      */
-    private static final int MAX_NUMBER_OF_REPORTED_FILES_PER_FOLDER = 5;
+    private static final int MAX_NUMBER_OF_REPORTED_FILES_PER_FOLDER = ConfigCore
+            .getIntParameter(ParameterCore.LTP_VALIDATION_MAX_REPORTED_FILES_PER_FOLDER);
 
     /**
      * Contains all validation results for all folders and files.
