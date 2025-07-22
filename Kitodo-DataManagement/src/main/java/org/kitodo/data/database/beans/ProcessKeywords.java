@@ -255,7 +255,9 @@ class ProcessKeywords {
             Matcher keysMatcher = RULESET_KEY_PATTERN.matcher(ruleset);
             while (keysMatcher.find()) {
                 String key = normalize(keysMatcher.group(1));
-                Matcher labelMatcher = RULESET_LABEL_PATTERN.matcher(keysMatcher.group(2));
+                String content = keysMatcher.group(2);
+                content = content.replaceAll("<option [^>]*>.*?</option>", "");
+                Matcher labelMatcher = RULESET_LABEL_PATTERN.matcher(content);
                 Set<String> labels = new HashSet<>();
                 while (labelMatcher.find()) {
                     labels.add(normalize(labelMatcher.group(1)));
