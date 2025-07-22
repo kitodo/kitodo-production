@@ -288,6 +288,28 @@ public class LtpValidationConditionEvaluator {
     }
 
     /**
+     * Evaluate a validation condition that checks whether the value is at least
+     * not empty.
+     * 
+     * @param value
+     *            the value extracted from the image
+     * @param condition
+     *            the condition
+     * @return the condition result
+     */
+    private static LtpValidationConditionResult evaluateNonEmptyCondition(String value,
+            LtpValidationConditionInterface condition) {
+        if (Objects.nonNull(condition.getValues()) && condition.getValues().size() > 0) {
+            return getConditionIncorrectNumberOfValuesResult(value);
+        }
+
+        if (value.trim().isEmpty()) {
+            return getConditionFalseResult(value);
+        }
+        return new LtpValidationConditionResult(true, null, value);
+    }
+
+    /**
      * Evaluates a single validation condition against the property values
      * extracted from an image.
      * 
@@ -323,6 +345,8 @@ public class LtpValidationConditionEvaluator {
             return evaluateSmallerThanCondition(value, condition);
         } else if (condition.getOperation().equals(LtpValidationConditionOperation.IN_BETWEEN)) {
             return evaluateInBetweenThanCondition(value, condition);
+        } else if (condition.getOperation().equals(LtpValidationConditionOperation.NON_EMPTY)) {
+            return evaluateNonEmptyCondition(value, condition);
         }
 
         // unknown operation

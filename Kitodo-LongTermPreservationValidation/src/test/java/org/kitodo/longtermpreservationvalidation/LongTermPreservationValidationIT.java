@@ -313,6 +313,32 @@ public class LongTermPreservationValidationIT {
                 .equals(LtpValidationConditionError.PATTERN_INVALID_SYNTAX));
     }
 
+    /**
+     * Check that a validation condition for non-empty values is valid.
+     */
+    @Test
+    public void testValidNonEmptyConditionOperation() {
+        LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
+
+        LtpValidationCondition wrongValuesCondition = new LtpValidationCondition("imageWidth",
+                LtpValidationConditionOperation.NON_EMPTY, Arrays.asList("60"),
+                LtpValidationConditionSeverity.ERROR);
+
+        LtpValidationCondition validCondition = new LtpValidationCondition("imageWidth",
+                LtpValidationConditionOperation.NON_EMPTY, Collections.emptyList(),
+                LtpValidationConditionSeverity.ERROR);
+
+        assert (validator
+                .validate(TIF_URI, FileType.TIFF,
+                    Arrays.asList(new LtpValidationCondition[] { wrongValuesCondition }))
+                .getState().equals(LtpValidationResultState.ERROR));
+
+        assert (validator
+                .validate(TIF_URI, FileType.TIFF,
+                    Arrays.asList(new LtpValidationCondition[] { validCondition }))
+                .getState().equals(LtpValidationResultState.VALID));
+    }
+
     private LtpValidationResultState simpleValidateFile(URI file, FileType fileType) {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
 

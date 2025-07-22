@@ -52,5 +52,10 @@ public enum LtpValidationConditionOperation {
      * The extracted value matches the provided regular expression without
      * considering letter casing.
      */
-    MATCHES
+    MATCHES,
+
+    /**
+     * There is a non-empty value present. The exact value does not matter.
+     */
+    NON_EMPTY
 }
