@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -807,11 +808,11 @@ public class ProjectForm extends BaseForm {
         }
         try {
             if (!Objects.equals(id, 0)) {
-                Project projectWithFolder = ServiceManager.getProjectService().getProjectWithFolders(id);
-                if (Objects.nonNull(projectWithFolder)) {
-                    setProject(projectWithFolder);
+                Optional<Project> projectWithFolderOpt = ServiceManager.getProjectService().getProjectWithFolders(id);
+                projectWithFolderOpt.ifPresent(project -> {
+                    setProject(project);
                     this.locked = true;
-                }
+                });
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
