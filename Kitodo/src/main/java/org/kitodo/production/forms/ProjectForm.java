@@ -809,7 +809,7 @@ public class ProjectForm extends BaseForm {
             if (!Objects.equals(id, 0)) {
                 Project projectWithFolder = ServiceManager.getProjectService().getProjectWithFolders(id);
                 if (Objects.nonNull(projectWithFolder)) {
-                    setProject(ServiceManager.getProjectService().getProjectWithFolders(id));
+                    setProject(projectWithFolder);
                     this.locked = true;
                 }
             }
