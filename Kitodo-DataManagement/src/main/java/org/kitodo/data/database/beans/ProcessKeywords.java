@@ -68,6 +68,28 @@ public class ProcessKeywords {
     private final Set<String> batchKeywords;
     private final Set<String> taskKeywords;
 
+    /**
+     * Creates the individual subsets of keywords. These will later be indexed
+     * in different combinations into the various index fields. What is
+     * tokenized is the process title, the project title, the numbers and names
+     * of the batches containing the process, the process ID, the metadata, the
+     * titles of the process's tasks, and any processing comments. How it is
+     * tokenized: Only tokens with a minimum length of 3 are retained, except
+     * for the project title, for which it is 1. The metadata is tokenized both
+     * itself, and fielded into pseudowords to enable searches for specific
+     * metadata fields that are only known at runtime.
+     * 
+     * <p>
+     * In this implementation, most of the work actually happens in the
+     * constructor because it is placed as a singleton in a transient field of
+     * the respective process object. Different subsets of the keywords are
+     * retrieved via different getters whose call order is undefined. However,
+     * the creation of the keywords and the necessary loading and parsing of the
+     * ruleset and meta.xml files should only happen once.
+     * 
+     * @param process
+     *            process whose keywords are to be generated
+     */
     public ProcessKeywords(Process process) {
         // keywords for title search + default search
         this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()), LENGTH_MIN_DEFAULT);
