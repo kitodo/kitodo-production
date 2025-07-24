@@ -59,6 +59,7 @@ class ProcessKeywords {
     private static final Pattern RULESET_KEY_PATTERN = Pattern.compile("key id=\"([^\"]+)\"[^>]*>(.*?)</key>",
         Pattern.DOTALL);
     private static final Pattern RULESET_LABEL_PATTERN = Pattern.compile("<label[^>]*>([^<]+)", Pattern.DOTALL);
+    private static final Pattern OPTION_PATTERN = Pattern.compile("<option [^>]*>.*?</option>", Pattern.DOTALL);
 
     private static final Map<String, Map<String, Collection<String>>> rulesetCache = new HashMap<>();
 
@@ -256,7 +257,7 @@ class ProcessKeywords {
             while (keysMatcher.find()) {
                 String key = normalize(keysMatcher.group(1));
                 String content = keysMatcher.group(2);
-                content = content.replaceAll("<option [^>]*>.*?</option>", "");
+                content = OPTION_PATTERN.matcher(content).replaceAll("");
                 Matcher labelMatcher = RULESET_LABEL_PATTERN.matcher(content);
                 Set<String> labels = new HashSet<>();
                 while (labelMatcher.find()) {
