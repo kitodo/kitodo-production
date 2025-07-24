@@ -1661,7 +1661,6 @@ body .ui-tabs .ui-tabs-nav,
 body .ui-tabmenu .ui-widget-header {
     background: var(--cloudy-gray);
     border-top: solid var(--contrast-border-width) var(--medium-gray);
-    height: calc(var(--input-height) + var(--contrast-border-width));
 }
 
 body .ui-tabs .ui-tabs-nav li,
