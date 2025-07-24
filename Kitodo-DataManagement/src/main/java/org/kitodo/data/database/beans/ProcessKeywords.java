@@ -42,11 +42,11 @@ import org.kitodo.config.KitodoConfig;
 /**
  * Search keywords for a process.
  */
-class ProcessKeywords {
+public class ProcessKeywords {
     private static final Logger logger = LogManager.getLogger(ProcessKeywords.class);
 
-    private static final int LENGTH_MIN_REASONABLE = 1;
-    private static final int LENGTH_MIN_DEFAULT = 3;
+    public static final int LENGTH_MIN_REASONABLE = 1;
+    public static final int LENGTH_MIN_DEFAULT = 3;
 
     private static final String ANY_METADATA_MARKER = "mdWrap";
     private static final char VALUE_SEPARATOR = 'q';
