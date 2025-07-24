@@ -15,8 +15,8 @@ import java.util.Objects;
 
 import net.bytebuddy.utility.nullability.MaybeNull;
 
-import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.beans.ProcessKeywords;
+import org.kitodo.data.database.enums.TaskStatus;
 
 /**
  * Constants for known search field names in filters.
