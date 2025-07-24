@@ -54,7 +54,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,7 +104,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
@@ -1817,48 +1815,23 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static void deleteProcess(Process processToDelete) throws DAOException, IOException {
         deleteMetadataDirectory(processToDelete);
 
-        ArrayList<Property> workpieceProperties = new ArrayList<>(processToDelete.getWorkpieces());
-        if (workpieceProperties.size() > 0) {
-            for (Property workpieceProperty : workpieceProperties) {
-                processToDelete.getWorkpieces().remove(workpieceProperty);
-                workpieceProperty.getProcesses().clear();
-                ServiceManager.getProcessService().save(processToDelete);
-                ServiceManager.getPropertyService().remove(workpieceProperty);
-            }
-        }
-        Project project = processToDelete.getProject();
-        if (Objects.nonNull(project)) {
-            processToDelete.setProject(null);
-            if (Objects.nonNull(project.getProcesses())) {
-                project.getProcesses().remove(processToDelete);
-                ServiceManager.getProcessService().save(processToDelete);
-                ServiceManager.getProjectService().save(project);
-            }
-        }
-        Template template = processToDelete.getTemplate();
-        if (Objects.nonNull(template)) {
-            processToDelete.setTemplate(null);
-            if (Objects.nonNull(template.getProcesses())) {
-                template.getProcesses().remove(processToDelete);
-                ServiceManager.getTemplateService().save(template);
-            }
+        processToDelete.setProject(null);
+        processToDelete.setTemplate(null);
+        processToDelete.getBatches().clear();
+        processToDelete.getTemplates().clear();
+
+        List<Property> propertiesToDelete = new ArrayList<>(processToDelete.getWorkpieces());
+        processToDelete.getWorkpieces().clear();
+        ProcessService processService = ServiceManager.getProcessService();
+        processService.save(processToDelete);
+        for (Property property : propertiesToDelete) {
+            ServiceManager.getPropertyService().remove(property);
         }
         Process parent = processToDelete.getParent();
         if (Objects.nonNull(parent)) {
-            parent.getChildren().remove(processToDelete);
-            processToDelete.setParent(null);
             MetadataEditor.removeLink(parent, processToDelete.getId());
-            processToDelete = ServiceManager.getProcessService().merge(processToDelete);
-            ServiceManager.getProcessService().save(parent);
         }
-        processToDelete = ServiceManager.getProcessService().merge(processToDelete);
-        List<Batch> batches = new CopyOnWriteArrayList<>(processToDelete.getBatches());
-        for (Batch batch : batches) {
-            batch.getProcesses().remove(processToDelete);
-            processToDelete.getBatches().remove(batch);
-            ServiceManager.getBatchService().save(batch);
-        }
-        ServiceManager.getProcessService().remove(processToDelete);
+        processService.remove(processToDelete);
     }
 
     private static void deleteMetadataDirectory(Process process) {
