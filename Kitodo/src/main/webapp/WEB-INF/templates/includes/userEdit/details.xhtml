@@ -147,7 +147,7 @@
                                  disabled="#{isViewMode}">
                     <f:selectItem noSelectionOption="true"
                                   itemLabel="#{msgs['notSelected']}"/>
-                    <f:selectItems value="#{UserForm.userObject.clients}"
+                    <f:selectItems value="#{UserForm.getUserClientsSorted()}"
                                    var="client"
                                    itemLabel="#{client.name}"/>
                     <p:ajax oncomplete="toggleSave()"/>

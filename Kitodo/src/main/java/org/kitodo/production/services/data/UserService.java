@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -508,5 +510,54 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
      */
     public String getShortcuts(int userId) throws DAOException {
         return getById(userId).getShortcuts();
+    }
+
+    /**
+     * Retrieves the list of clients available to the currently authenticated user.
+     *
+     * @return list of {@code Client} objects associated with the current user
+     */
+    public List<Client> getAvailableClientsOfCurrentUser() {
+        return getClientsOfUser(getCurrentUser());
+    }
+
+    /**
+     * Retrieves the list of clients available to the currently authenticated user, sorted by name.
+     *
+     * @return list of {@code Client} objects associated with the current user, sorted by name
+     */
+    public List<Client> getAvailableClientsOfCurrentUserSortedByName() {
+        return getClientsOfUserSorted(getCurrentUser());
+    }
+
+    /**
+     * Retrieves the list of clients associated with the specified user. This includes
+     * clients directly linked to the user and clients of the projects the user is
+     * associated with, ensuring no duplicate clients are included in the list.
+     *
+     * @param user the user for whom the associated clients are retrieved
+     * @return a list of clients associated with the specified user
+     */
+    public static List<Client> getClientsOfUser(User user) {
+        List<Client> clients = user.getClients();
+        for (Project project : user.getProjects()) {
+            if (!clients.contains(project.getClient())) {
+                clients.add(project.getClient());
+            }
+        }
+        return clients;
+    }
+
+    /**
+     * Retrieves the list of clients associated with the specified user, sorted by
+     * the client's name in a case-insensitive manner.
+     *
+     * @param user the user for whom the associated and sorted clients are retrieved
+     * @return a list of clients associated with the specified user, sorted by name
+     */
+    public static List<Client> getClientsOfUserSorted(User user) {
+        return getClientsOfUser(user).stream()
+                .sorted(Comparator.comparing(Client::getName, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
     }
 }
