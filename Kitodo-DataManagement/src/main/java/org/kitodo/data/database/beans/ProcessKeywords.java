@@ -42,11 +42,11 @@ import org.kitodo.config.KitodoConfig;
 /**
  * Search keywords for a process.
  */
-class ProcessKeywords {
+public class ProcessKeywords {
     private static final Logger logger = LogManager.getLogger(ProcessKeywords.class);
 
-    private static final int LENGTH_MIN_REASONABLE = 1;
-    private static final int LENGTH_MIN_DEFAULT = 3;
+    public static final int LENGTH_MIN_REASONABLE = 1;
+    public static final int LENGTH_MIN_DEFAULT = 3;
 
     private static final String ANY_METADATA_MARKER = "mdWrap";
     private static final char VALUE_SEPARATOR = 'q';
@@ -69,6 +69,28 @@ class ProcessKeywords {
     private final Set<String> batchKeywords;
     private final Set<String> taskKeywords;
 
+    /**
+     * Creates the individual subsets of keywords. These will later be indexed
+     * in different combinations into the various index fields. What is
+     * tokenized is the process title, the project title, the numbers and names
+     * of the batches containing the process, the process ID, the metadata, the
+     * titles of the process's tasks, and any processing comments. How it is
+     * tokenized: Only tokens with a minimum length of 3 are retained, except
+     * for the project title, for which it is 1. The metadata is tokenized both
+     * itself, and fielded into pseudowords to enable searches for specific
+     * metadata fields that are only known at runtime.
+     * 
+     * <p>
+     * In this implementation, most of the work actually happens in the
+     * constructor because it is placed as a singleton in a transient field of
+     * the respective process object. Different subsets of the keywords are
+     * retrieved via different getters whose call order is undefined. However,
+     * the creation of the keywords and the necessary loading and parsing of the
+     * ruleset and meta.xml files should only happen once.
+     * 
+     * @param process
+     *            process whose keywords are to be generated
+     */
     public ProcessKeywords(Process process) {
         // keywords for title search + default search
         this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()), LENGTH_MIN_DEFAULT);

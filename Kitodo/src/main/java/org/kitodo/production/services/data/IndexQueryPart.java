@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -46,13 +45,11 @@ class IndexQueryPart implements UserSpecifiedFilter {
     IndexQueryPart(FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
-            this.lookfor.add(addOptionalPseudoword(filterField.getPseudoword(), normalize(value)));
+            if (value.length() >= filterField.getMinTokenLength()) {
+                this.lookfor.add(normalize(value));
+            }
         }
         this.operand = operand;
-    }
-
-    private final String addOptionalPseudoword(String pseudoword, String value) {
-        return Objects.nonNull(pseudoword) ? pseudoword + VALUE_SEPARATOR + value : value;
     }
 
     /**
@@ -109,7 +106,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
         if (lookfor.size() == 1) {
             restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + parameterName + ')');
             indexQueries.put(parameterName, Pair.of(filterField, lookfor.get(0)));
-        } else {
+        } else if (lookfor.size() >= 1) {
             int queryCount = 0;
             for (String lookingFor : lookfor) {
                 queryCount++;
