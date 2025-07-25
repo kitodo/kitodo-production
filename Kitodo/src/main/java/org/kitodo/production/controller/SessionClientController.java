@@ -11,10 +11,8 @@
 
 package org.kitodo.production.controller;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
@@ -22,7 +20,6 @@ import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
@@ -157,14 +154,7 @@ public class SessionClientController {
      * @return The list of clients.
      */
     public List<Client> getAvailableClientsOfCurrentUser() {
-        User currentUser = ServiceManager.getUserService().getCurrentUser();
-        List<Client> clients = currentUser.getClients();
-        for (Project project : currentUser.getProjects()) {
-            if (!clients.contains(project.getClient())) {
-                clients.add(project.getClient());
-            }
-        }
-        return clients;
+        return ServiceManager.getUserService().getAvailableClientsOfCurrentUser();
     }
 
     /**
@@ -181,8 +171,7 @@ public class SessionClientController {
      * @return list of available clients of current user sorted by name
      */
     public List<Client> getAvailableClientsOfCurrentUserSortedByName() {
-        return getAvailableClientsOfCurrentUser().stream().sorted(Comparator.comparing(Client::getName))
-                .collect(Collectors.toList());
+        return ServiceManager.getUserService().getAvailableClientsOfCurrentUserSortedByName();
     }
 
     /**

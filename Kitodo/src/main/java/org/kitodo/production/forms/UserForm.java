@@ -781,4 +781,14 @@ public class UserForm extends BaseForm {
     public FilterMenu getFilterMenu() {
         return filterMenu;
     }
+
+    /**
+     * Retrieves the list of clients associated with the current user, sorted
+     * based on predefined criteria.
+     *
+     * @return a list of sorted {@code Client} objects associated with the user
+     */
+    public List<Client> getUserClientsSorted() {
+        return UserService.getClientsOfUserSorted(userObject);
+    }
 }
