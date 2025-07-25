@@ -45,6 +45,7 @@ import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.helper.validation.LtpValidationHelperIT;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
@@ -362,18 +363,43 @@ public class WorkflowControllerServiceIT {
     }
 
     /**
-     * Checks that a task is not closed if it is set up to trigger image validation, 
-     * the task is set up to be verified when closed, and the image validation fails.
+     * Checks that a task is not closed if it is set up to trigger LTP image validation, 
+     * the task is set up to be verified when closed, and the LTP image validation fails.
      * 
      * @throws DAOException if loading process fails
      */
     @Test
-    public void shouldNotCloseWhenImageValidationFails() throws DAOException {
+    public void shouldNotCloseWhenImageValidationFails() throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(1);
+
+        // copy corrupted tif to process image folder such that validation fails
+        LtpValidationHelperIT.copyImagesToFolders();
 
         Task task = new Task();
         task.setTypeCloseVerify(true);
         task.setTypeValidateImages(true);
+        task.setProcess(process);
+
+        assertThrows(DAOException.class, () -> workflowService.closeTaskByUser(task), "image validation should fail and raise exception");
+        assertNotEquals(TaskStatus.DONE, task.getProcessingStatus(), "task should not be marked as done");
+
+        // delete images from process folder
+        LtpValidationHelperIT.cleanFiles();
+    }
+
+    /**
+     * Checks that a task is not closed if it is set up to trigger image file prefix validation, 
+     * the task is set up to be verified when closed, and the image file prefix validation fails.
+     * 
+     * @throws DAOException if loading process fails
+     */
+    @Test
+    public void shouldNotCloseWhenImagePrefixValidationFails() throws DAOException, IOException {
+        Process process = ServiceManager.getProcessService().getById(1);
+
+        Task task = new Task();
+        task.setTypeCloseVerify(true);
+        task.setTypeImagesWrite(true);
         task.setProcess(process);
 
         assertThrows(DAOException.class, () -> workflowService.closeTaskByUser(task), "image validation should fail and raise exception");
