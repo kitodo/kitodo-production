@@ -264,6 +264,8 @@ public class ImportEadProcessesThread extends EmptyTask {
             if (StringUtils.isNotBlank(prefix)) {
                 content = content.replace(">", " xmlns:" + namespace.getPrefix() + "=\""
                         + namespace.getNamespaceURI() + "\">");
+            } else {
+                content = content.replace(">", " xmlns=\"" + namespace.getNamespaceURI() + "\">");
             }
         }
         return removeDefaultNamespaceUri(content);
