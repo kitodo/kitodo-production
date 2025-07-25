@@ -669,7 +669,20 @@ public enum ParameterCore implements ParameterInterface {
      * not. If set to true, a checkbox will be displayed in the "Create new process" form allowing the user to
      * deactivate validation during process creation. Default value is 'false', thus validation is enforced by default.
      */
-    OPTIONAL_VALIDATION_ON_PROCESS_CREATION(new Parameter<>("metadataValidationOptionalDuringProcessCreation", false));
+    OPTIONAL_VALIDATION_ON_PROCESS_CREATION(new Parameter<>("metadataValidationOptionalDuringProcessCreation", false)),
+
+    /**
+     * Optional parameter that determines how many files with warning or errors
+     * are listed for each folder in the LTP validation report.
+     */
+    LTP_VALIDATION_MAX_REPORTED_FILES_PER_FOLDER(
+            new Parameter<>("LongTermPreservationValidation.maxReportedFilesPerFolder", 5)),
+
+    /**
+     * Optional parameter that determines how many folders with warning or
+     * errors are listed in the LTP validation report.
+     */
+    LTP_VALIDATION_MAX_REPORTED_FOLDERS(new Parameter<>("LongTermPreservationValidation.maxReportedFolders", 3));
 
     private final Parameter<?> parameter;
 
