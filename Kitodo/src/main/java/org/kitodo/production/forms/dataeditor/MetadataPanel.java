@@ -46,7 +46,7 @@ public class MetadataPanel implements Serializable {
 
     private ProcessFieldedMetadata logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
     private ProcessFieldedMetadata physicalMetadataTable = ProcessFieldedMetadata.EMPTY;
-    private TreeNode selectedMetadataTreeNode;
+    private TreeNode<Object> selectedMetadataTreeNode;
 
     MetadataPanel(DataEditorForm dataEditor) {
         this.dataEditorForm = dataEditor;
@@ -97,7 +97,7 @@ public class MetadataPanel implements Serializable {
      *
      * @return the rows of logical metadata
      */
-    public TreeNode getLogicalMetadataRows() {
+    public TreeNode<Object> getLogicalMetadataRows() {
         return logicalMetadataTable.getTreeNode();
     }
 
@@ -106,7 +106,7 @@ public class MetadataPanel implements Serializable {
      *
      * @return the rows of physical metadata
      */
-    public TreeNode getPhysicalMetadataRows() {
+    public TreeNode<Object> getPhysicalMetadataRows() {
         return physicalMetadataTable.getTreeNode();
     }
 
@@ -115,7 +115,7 @@ public class MetadataPanel implements Serializable {
      *
      * @return value of selectedMetadataTreeNode
      */
-    public TreeNode getSelectedMetadataTreeNode() {
+    public TreeNode<Object> getSelectedMetadataTreeNode() {
         return selectedMetadataTreeNode;
     }
 
@@ -124,7 +124,7 @@ public class MetadataPanel implements Serializable {
      *
      * @param selectedMetadataTreeNode as org.primefaces.model.TreeNode
      */
-    public void setSelectedMetadataTreeNode(TreeNode selectedMetadataTreeNode) {
+    public void setSelectedMetadataTreeNode(TreeNode<Object> selectedMetadataTreeNode) {
         this.selectedMetadataTreeNode = selectedMetadataTreeNode;
     }
 
@@ -220,7 +220,7 @@ public class MetadataPanel implements Serializable {
      * @param metadataNode TreeNode for which the check is performed
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
-    public boolean metadataAddableToGroup(TreeNode metadataNode) {
+    public boolean metadataAddableToGroup(TreeNode<Object> metadataNode) {
         if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
             return !(DataEditorService.getAddableMetadataForGroup(this.dataEditorForm.getProcess().getRuleset(), metadataNode).isEmpty());
         } else {

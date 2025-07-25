@@ -27,6 +27,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyProcessModel extends LazyBeanModel {
@@ -110,15 +111,21 @@ public class LazyProcessModel extends LazyBeanModel {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
+        String sortField = "";
+        SortOrder sortOrder = SortOrder.ASCENDING;
         Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
                 .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
                 Objects.toString(filters));
-        // reverse sort order for some process list columns such that first click on column yields more useful ordering
-        if (sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) || sortField.equals(PROGRESS_COMBINED_FIELD)
-                || sortField.equals(CREATION_DATE_FIELD)) {
-            sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        if (!sortBy.isEmpty()) {
+            SortMeta sortMeta = sortBy.values().iterator().next();
+            sortField = sortMeta.getField();
+            sortOrder = sortMeta.getOrder();
+            // reverse sort order for some process list columns such that first click on column yields more useful ordering
+            if (sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) || sortField.equals(PROGRESS_COMBINED_FIELD)
+                    || sortField.equals(CREATION_DATE_FIELD)) {
+                sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+            }
         }
         try {
             HashMap<String, String> filterMap = new HashMap<>();

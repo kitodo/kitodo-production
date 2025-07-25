@@ -28,6 +28,7 @@ import org.kitodo.production.services.data.TaskService;
 import org.kitodo.utils.Stopwatch;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyTaskModel extends LazyBeanModel {
@@ -70,26 +71,32 @@ public class LazyTaskModel extends LazyBeanModel {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
+        String sortField = null;
+        SortOrder sortOrder = SortOrder.ASCENDING;
         Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
                 .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
                 Objects.toString(filters));
-        // reverse sort order for some task list columns such that first click on column yields more useful ordering
-        if (sortField.equals(TASK_STATUS_FIELD) || sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) 
-                || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
-            sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        if (!sortBy.isEmpty()) {
+            SortMeta sortMeta = sortBy.values().iterator().next();
+            sortField = sortMeta.getField();
+            sortOrder = sortMeta.getOrder();
+            // reverse sort order for some task list columns such that first click on column yields more useful ordering
+            if (sortField.equals(TASK_STATUS_FIELD) || sortField.equals(CORRECTION_COMMENT_STATUS_FIELD)
+                    || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
+                sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+            }
         }
         try {
             HashMap<String, String> filterMap = new HashMap<>();
             if (!StringUtils.isBlank(this.filterString)) {
                 filterMap.put(FilterService.FILTER_STRING, this.filterString);
             }
-            setRowCount(toIntExact(((TaskService) searchService).countResults(filterMap, this.onlyOwnTasks,
-                this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction)));
-            entities = ((TaskService) searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
-                this.onlyOwnTasks, this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction);
+            setRowCount(toIntExact(((TaskService)searchService).countResults(filterMap, this.onlyOwnTasks,
+                    this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction)));
+            entities = ((TaskService)searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
+                    this.onlyOwnTasks, this.hideCorrectionTasks, this.showAutomaticTasks,
+                    this.taskStatusRestriction);
             logger.trace("{} entities loaded!", entities.size());
             return stopwatch.stop(entities);
         } catch (DAOException e) {

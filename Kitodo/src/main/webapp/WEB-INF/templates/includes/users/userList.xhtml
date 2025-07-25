@@ -70,7 +70,7 @@
                  resizableColumns="true"
                  liveResize="true"
                  rowStyleClass="#{item.active ? '' : 'deactivated'}"
-                 sortBy="#{item.surname}"
+                 sortBy="#{UserForm.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
