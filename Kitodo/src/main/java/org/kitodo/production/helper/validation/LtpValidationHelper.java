@@ -122,6 +122,8 @@ public class LtpValidationHelper {
             return Helper.getTranslation("ltpValidation.condition.operation.smallerThan");
         } else if (operation.equals(LtpValidationConditionOperation.IN_BETWEEN)) {
             return Helper.getTranslation("ltpValidation.condition.operation.inBetween");
+        } else if (operation.equals(LtpValidationConditionOperation.NON_EMPTY)) {
+            return Helper.getTranslation("ltpValidation.condition.operation.nonEmpty");
         }
         // should never happen
         return "unknown operation";
