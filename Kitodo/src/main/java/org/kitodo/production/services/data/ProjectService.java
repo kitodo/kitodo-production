@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -117,6 +118,20 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         projectQuery.addXIdRestriction("users", ServiceManager.getUserService().getCurrentUser().getId());
         projectQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
         return projectQuery;
+    }
+
+    /**
+     * Retrieves a project by its ID with its folders eagerly loaded.
+     *
+     * @param projectId the ID of the project to retrieve
+     * @return an Optional containing the project
+     */
+    public Optional<Project> getProjectWithFolders(Integer projectId) throws DAOException {
+        String query = "SELECT p FROM Project p LEFT JOIN FETCH p.folders WHERE p.id = :id";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("id", projectId);
+        List<Project> result = getByQuery(query, parameters);
+        return result.stream().findFirst();
     }
 
     /**

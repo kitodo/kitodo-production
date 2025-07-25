@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -352,15 +353,13 @@ public class ProjectForm extends BaseForm {
     /**
      * Delete folder.
      *
-     * @return page
      */
-    public String deleteFolder() {
+    public void deleteFolder() {
         if (Objects.isNull(myFolder.getId())) {
             project.getFolders().remove(myFolder);
         } else {
             deletedFolders.add(this.myFolder.getId());
         }
-        return this.stayOnCurrentPage;
     }
 
     /**
@@ -809,8 +808,11 @@ public class ProjectForm extends BaseForm {
         }
         try {
             if (!Objects.equals(id, 0)) {
-                setProject(ServiceManager.getProjectService().getById(id));
-                this.locked = true;
+                Optional<Project> projectWithFolderOpt = ServiceManager.getProjectService().getProjectWithFolders(id);
+                projectWithFolderOpt.ifPresent(project -> {
+                    setProject(project);
+                    this.locked = true;
+                });
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
