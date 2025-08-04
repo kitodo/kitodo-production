@@ -125,7 +125,7 @@
                                 </li>
                                 <div id="clientList" style="display: none">
                                     <p:outputPanel deferred="true" deferredMode="visible">
-                                        <p:repeat value="#{SessionClientController.availableClientsOfCurrentUser}" var="client">
+                                        <p:repeat value="#{SessionClientController.availableClientsOfCurrentUserSortedByName}" var="client">
                                             <li class="toggle-list">
                                                 <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
                                             </li>
