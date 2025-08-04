@@ -36,7 +36,9 @@
                                      converter="#{clientConverter}"
                                      value="#{SessionClientController.selectedClient}"
                                      autoWidth="false">
-                        <f:selectItems value="#{SessionClientController.availableClientsOfCurrentUser}" var="client" itemValue="#{client}"
+                        <f:selectItems value="#{SessionClientController.availableClientsOfCurrentUserSortedByName}"
+                                       var="client"
+                                       itemValue="#{client}"
                                        itemLabel="#{client.name}"/>
                     </p:selectOneMenu>
                 </p>
