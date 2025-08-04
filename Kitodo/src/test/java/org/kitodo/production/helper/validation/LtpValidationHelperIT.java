@@ -140,7 +140,7 @@ public class LtpValidationHelperIT {
      * @throws IOException
      *             if copying of files fails
      */
-    private static void copyImagesToFolders() throws DAOException, IOException {
+    public static void copyImagesToFolders() throws DAOException, IOException {
         Path tifFolder = Paths.get(getProcessDirectory().toString(),
             "images/" + getImageValidationProcess().getTitle() + "_media");
         Path jpegFolder = Paths.get(getProcessDirectory().toString(), "jpgs/default");
@@ -166,7 +166,7 @@ public class LtpValidationHelperIT {
     /**
      * Delete all files that were created by this test.
      */
-    private static void cleanFiles() throws DAOException, IOException {
+    public static void cleanFiles() throws DAOException, IOException {
         Path processDirectory = getProcessDirectory();
         if (processDirectory.toFile().exists()) {
             Files.walk(processDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);

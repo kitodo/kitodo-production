@@ -216,14 +216,19 @@ public class WorkflowControllerService {
                 throw new DAOException("Error on metadata validation!");
             }
 
-            // image validation
-            if (task.isTypeValidateImages()) {
+            // image file prefix validation (consecutive numbering)
+            if (task.isTypeImagesWrite()) {
                 ImageHelper mih = new ImageHelper();
                 URI imageFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess());
-                boolean imageFilenamesValid = mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder);
-                boolean imageContentValid = LtpValidationHelper.validateImagesWhenFinishingTask(task);
-                if (!imageFilenamesValid || !imageContentValid) {
-                    throw new DAOException("Error on image validation!");
+                if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
+                    throw new DAOException("Error on validating image file prefix (consecutive numbering)!");
+                }
+            }
+
+            // ltp validation
+            if (task.isTypeValidateImages()) {
+                if (!LtpValidationHelper.validateImagesWhenFinishingTask(task)) {
+                    throw new DAOException("Error on long term preservation validation!");
                 }
             }
         }
