@@ -36,6 +36,7 @@ public class ExportDmsTask extends EmptyTask {
 
     private final ExportDms exportDms;
     private final Process process;
+    private boolean optimisticExportFlagSet;
 
     /**
      * ExportDmsTask constructor. Creates a ExportDmsTask.
@@ -45,10 +46,11 @@ public class ExportDmsTask extends EmptyTask {
      * @param process
      *            the process to export
      */
-    public ExportDmsTask(ExportDms exportDms, Process process) {
+    public ExportDmsTask(ExportDms exportDms, Process process, boolean optimisticExportFlagSet) {
         super(process.getTitle());
         this.exportDms = exportDms;
         this.process = process;
+        this.optimisticExportFlagSet = optimisticExportFlagSet;
     }
 
     /**
@@ -89,8 +91,10 @@ public class ExportDmsTask extends EmptyTask {
             exportSuccessful = false;
         }
         try {
-            process.setExported(exportSuccessful);
-            ServiceManager.getProcessService().save(process);
+            if (exportDms.isOptimisticExportFlagSet()) {
+                process.setExported(exportSuccessful);
+                ServiceManager.getProcessService().save(process);
+            }
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }

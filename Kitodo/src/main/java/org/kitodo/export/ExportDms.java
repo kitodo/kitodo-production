@@ -62,7 +62,7 @@ public class ExportDms extends ExportMets {
     private final ProcessService processService = ServiceManager.getProcessService();
 
     private boolean exportWithImages = true;
-
+    private boolean optimisticExportFlagSet = false;
     private Task workFlowTask;
 
     public ExportDms() {
@@ -108,6 +108,7 @@ public class ExportDms extends ExportMets {
         if (wasNotAlreadyExported) {
             process.setExported(true);
             processService.save(process);
+            this.optimisticExportFlagSet = true;
         }
 
         boolean exportSuccessful = startExport(process, (URI) null);
@@ -132,7 +133,7 @@ public class ExportDms extends ExportMets {
     @Override
     public boolean startExport(Process process, URI unused) {
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
-            TaskManager.addTask(new ExportDmsTask(this, process));
+            TaskManager.addTask(new ExportDmsTask(this, process, this.optimisticExportFlagSet));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
             return false;
@@ -343,6 +344,15 @@ public class ExportDms extends ExportMets {
      */
     public Task getWorkflowTask() {
         return workFlowTask;
+    }
+
+    /**
+     * Returns whether the optimistic export flag is set.
+     *
+     * @return true if the optimistic export flag is set; false otherwise
+     */
+    public boolean isOptimisticExportFlagSet() {
+        return optimisticExportFlagSet;
     }
 
     /**
