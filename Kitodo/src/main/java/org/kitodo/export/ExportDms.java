@@ -114,7 +114,7 @@ public class ExportDms extends ExportMets {
         if (Objects.nonNull(process.getParent())) {
             startExport(process.getParent());
         }
-        if (wasNotAlreadyExported) {
+        if (wasNotAlreadyExported && !ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
             process.setExported(exportSuccessful);
             processService.save(process);
         }
