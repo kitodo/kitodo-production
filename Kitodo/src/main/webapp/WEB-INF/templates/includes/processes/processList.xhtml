@@ -325,6 +325,7 @@
                     <p:menuitem id="renameMedia"
                                 rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
                                 value="#{msgs['renameMediaFiles']}"
+                                process="@this"
                                 action="#{ProcessForm.renameMedia}"
                                 icon="fa fa-files-o"/>
                     <p:menuitem id="setImportConfiguration"
