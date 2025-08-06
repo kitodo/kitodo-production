@@ -321,11 +321,13 @@
                                 value="#{msgs.createExcel}"
                                 action="#{ProcessForm.generateResult}"
                                 ajax="false"
+                                immediate="true"
                                 icon="fa fa-file-excel-o"/>
                     <p:menuitem id="createPdf"
                                 value="#{msgs.createPdf}"
                                 action="#{ProcessForm.generateResultAsPdf}"
                                 ajax="false"
+                                immediate="true"
                                 icon="fa fa-file-pdf-o"/>
                     <p:menuitem id="renameMedia"
                                 rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
@@ -345,14 +347,17 @@
             <p:menu overlay="true" trigger="processesTabView:processesForm:statisticButton" my="left bottom" at="left top">
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
+                            process="@this"
                             action="#{ProcessForm.showStateOfVolume}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="durationOfTasks"
                             value="#{msgs.durationOfTasks}"
+                            process="@this"
                             action="#{ProcessForm.showDurationOfTasks}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="processMetadataStatistic"
                             value="#{msgs.numberOfMetadata}"
+                            process="@this"
                             action="#{ProcessForm.showProcessMetadataStatistic}"
                             icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
