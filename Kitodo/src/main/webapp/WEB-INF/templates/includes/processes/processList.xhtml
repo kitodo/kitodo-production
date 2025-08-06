@@ -276,12 +276,14 @@
                     <p:menuitem id="processingStatusUpSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusUp}"
+                                process="@this"
                                 action="#{ProcessForm.setTaskStatusUpForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-up"/>
                     <p:menuitem id="processingStatusDownSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusDown}"
+                                process="@this"
                                 action="#{ProcessForm.setTaskStatusDownForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-down"/>
@@ -294,12 +296,14 @@
                     <p:menuitem id="downloadSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.linkHomeDirectory}"
+                                process="@this"
                                 action="#{ProcessForm.downloadToHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-download"/>
                     <p:menuitem id="uploadAll"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.deleteLinkHomeDirectory}"
+                                process="@this"
                                 action="#{ProcessForm.uploadFromHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-upload">
@@ -309,6 +313,7 @@
                     <p:menuitem id="exportDmsSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                                 value="#{msgs.exportDMS}"
+                                process="@this"
                                 action="#{ProcessForm.exportDMSForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-file-archive-o"/>
