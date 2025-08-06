@@ -288,6 +288,7 @@
                     <p:menuitem id="executeScriptSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToRunKitodoScripts()}"
                                 value="#{msgs.executeKitodoScript}"
+                                process="@this"
                                 onclick="PF('executeScriptSelectedDialog').show();"
                                 icon="fa fa-cogs"/>
                     <p:menuitem id="downloadSelection"
@@ -329,6 +330,7 @@
                     <p:menuitem id="setImportConfiguration"
                                 rendered="#{SecurityAccessController.hasAuthorityToSetImportConfiguration()}"
                                 value="#{msgs['setImportConfiguration']}"
+                                process="@this"
                                 action="#{ProcessForm.setImportConfiguration}"
                                 icon="fa fa-cloud-download "/>
                 </p:menu>
