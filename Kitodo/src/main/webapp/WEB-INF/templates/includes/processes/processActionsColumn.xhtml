@@ -88,7 +88,9 @@
                            action="#{ProcessListView.downloadToHome(process.id)}"
                            styleClass="action"
                            title="#{msgs.linkHomeDirectory}"
-                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
+                           process="@this"
+                           update="processesTable">
                 <h:outputText><i class="fa fa-download"/></h:outputText>
                 <!-- TODO: add separate message in case it already exists and alert -->
             </p:commandLink>
@@ -97,7 +99,9 @@
                            action="#{ProcessListView.uploadFromHome(process)}"
                            styleClass="action"
                            title="#{msgs.deleteLinkHomeDirectory}"
-                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
+                           process="@this"
+                           update="processesTable">
                 <h:outputText><i class="fa fa-upload fa-lg"/></h:outputText>
                 <p:confirm header="#{msgs.confirmDelete}"
                            message="#{msgs.deleteLinkHomeDirectory}?"
@@ -107,7 +111,9 @@
             <p:commandLink id="exportLogXml"
                            action="#{ProcessListView.createXML(process)}"
                            styleClass="action"
-                           title="#{msgs.createXML}">
+                           title="#{msgs.createXML}"
+                           process="@this"
+                           update="processesTable">
                 <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
             </p:commandLink>
 
@@ -120,22 +126,26 @@
                 <h:outputText><i class="fa fa-print fa-lg"/></h:outputText>
             </p:commandLink>
 
-            <h:commandLink action="#{ProcessListView.exportMets(process.id)}"
+            <p:commandLink action="#{ProcessListView.exportMets(process.id)}"
                            id="exportMets"
                            styleClass="action #{ProcessForm.canBeExported(process.id) ? '' : 'disabled'}"
                            disabled="#{not ProcessForm.canBeExported(process.id)}"
                            title="#{ProcessForm.canBeExported(process.id) ? msgs.exportMets : msgs.exportUnavailableNoImages}"
-                           rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                           rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
+                           process="@this"
+                           update="processesTable">
                 <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
-            </h:commandLink>
-            <h:commandLink id="exportDms"
+            </p:commandLink>
+            <p:commandLink id="exportDms"
                            action="#{ProcessListView.exportDMS(process.id)}"
                            styleClass="action #{ProcessForm.canBeExported(process.id) ? '' : 'disabled'}"
                            disabled="#{not ProcessForm.canBeExported(process.id)}"
                            title="#{ProcessForm.canBeExported(process.id) ? msgs.exportDMS : msgs.exportUnavailableNoImages} "
-                           rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
+                           rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
+                           process="@this"
+                           update="processesTable">
                 <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
-            </h:commandLink>
+            </p:commandLink>
             <h:panelGroup styleClass="action"
                           title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
                 <p:commandLink id="deleteProcess"
