@@ -1171,7 +1171,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
                 document.close();
                 wb.close();
-                out.flush();
                 facesContext.responseComplete();
             }
         }
