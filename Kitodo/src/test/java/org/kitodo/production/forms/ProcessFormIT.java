@@ -12,6 +12,7 @@
 package org.kitodo.production.forms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,7 +29,10 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessFormIT {
@@ -108,5 +112,31 @@ public class ProcessFormIT {
         selectedIds = processForm.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
         assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
+    }
+
+    @Test
+    public void testSortHelperStatusIsUpdatedOnTaskSave() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+
+        // Close all tasks
+        for (Task task : process.getTasks()) {
+            task.setProcessingStatus(TaskStatus.DONE);
+        }
+        ServiceManager.getProcessService().save(process);
+
+        assertEquals(ProcessState.COMPLETED.getValue(), process.getSortHelperStatus());
+
+        // Reopen one task
+        Task lastTask = process.getTasks().get(process.getTasks().size() - 1);
+        lastTask.setProcessingStatus(TaskStatus.OPEN);
+
+        ProcessForm form = new ProcessForm();
+        form.setProcess(process);
+        form.setTask(lastTask);
+
+        form.saveTaskAndRedirect();
+
+        Process updated = ServiceManager.getProcessService().getById(process.getId());
+        assertNotEquals(ProcessState.COMPLETED.getValue(), updated.getSortHelperStatus());
     }
 }
