@@ -89,8 +89,7 @@
                            styleClass="action"
                            title="#{msgs.linkHomeDirectory}"
                            rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
-                           process="@this"
-                           update="processesTable">
+                           process="@this">
                 <h:outputText><i class="fa fa-download"/></h:outputText>
                 <!-- TODO: add separate message in case it already exists and alert -->
             </p:commandLink>
@@ -100,8 +99,7 @@
                            styleClass="action"
                            title="#{msgs.deleteLinkHomeDirectory}"
                            rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
-                           process="@this"
-                           update="processesTable">
+                           process="@this">
                 <h:outputText><i class="fa fa-upload fa-lg"/></h:outputText>
                 <p:confirm header="#{msgs.confirmDelete}"
                            message="#{msgs.deleteLinkHomeDirectory}?"
@@ -112,8 +110,7 @@
                            action="#{ProcessListView.createXML(process)}"
                            styleClass="action"
                            title="#{msgs.createXML}"
-                           process="@this"
-                           update="processesTable">
+                           process="@this">
                 <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
             </p:commandLink>
 
@@ -122,6 +119,7 @@
                            styleClass="action"
                            title="#{msgs.docketPrint}"
                            ajax="false"
+                           immediate="true"
                            rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
                 <h:outputText><i class="fa fa-print fa-lg"/></h:outputText>
             </p:commandLink>
@@ -132,8 +130,7 @@
                            disabled="#{not ProcessForm.canBeExported(process.id)}"
                            title="#{ProcessForm.canBeExported(process.id) ? msgs.exportMets : msgs.exportUnavailableNoImages}"
                            rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
-                           process="@this"
-                           update="processesTable">
+                           process="@this">
                 <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
             </p:commandLink>
             <p:commandLink id="exportDms"
@@ -142,8 +139,7 @@
                            disabled="#{not ProcessForm.canBeExported(process.id)}"
                            title="#{ProcessForm.canBeExported(process.id) ? msgs.exportDMS : msgs.exportUnavailableNoImages} "
                            rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
-                           process="@this"
-                           update="processesTable">
+                           process="@this">
                 <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
             </p:commandLink>
             <h:panelGroup styleClass="action"
