@@ -357,7 +357,7 @@ public class MassImportService {
         } else {
             for (String metadataKey : metadataKeys) {
                 if (ServiceManager.getImportService().isRecordIdentifierMetadata(ruleset, metadataKey)) {
-                    return ServiceManager.getImportService().getMetadataTranslation(ruleset, metadataKey, null);
+                    return ServiceManager.getRulesetService().getMetadataTranslation(ruleset, metadataKey, null);
                 }
             }
         }

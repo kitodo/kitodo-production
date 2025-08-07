@@ -34,6 +34,8 @@ import org.kitodo.selenium.testframework.pages.RulesetEditPage;
 import org.kitodo.selenium.testframework.pages.TemplateEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class EditingST extends BaseTestSelenium {
 
@@ -145,6 +147,13 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editRulesetTest() throws Exception {
         RulesetEditPage rulesetEditPage = projectsPage.editRuleset();
+        List<WebElement> functionalMetadataLists = Browser.getDriver().findElements(By.className("functional-metadata-list"));
+        assertEquals(11, functionalMetadataLists.size(), "Wrong number of functional metadata lists");
+        assertEquals("HauptTitel",  functionalMetadataLists.get(7)
+                .findElement(By.tagName("tbody"))
+                .findElement(By.tagName("tr"))
+                .findElement(By.tagName("td"))
+                .findElement(By.tagName("span")).getText());
         assertEquals("Regelsatz bearbeiten (SLUBDD)", rulesetEditPage.getHeaderText(), "Header for edit ruleset is incorrect");
         rulesetEditPage.changeRuleset().save();
         assertTrue(projectsPage.isAt(), "Redirection after save was not successful");

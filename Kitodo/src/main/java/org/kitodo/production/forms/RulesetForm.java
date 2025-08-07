@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,6 +30,8 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
@@ -37,12 +40,14 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.RulesetService;
 
 @Named("RulesetForm")
 @SessionScoped
 public class RulesetForm extends BaseForm {
     private Ruleset ruleset;
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
+    private static final String AT_MARK = "@";
 
     private final String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
@@ -197,6 +202,45 @@ public class RulesetForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.RULESET.getTranslationPlural() },
                 logger, e);
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Retrieve and return collection of metadata keys for functional metadata of given type "functionalMetadata" from current ruleset.
+     * @param functionalMetadata type of functional metadata
+     * @return collection of strings containing metadata keys
+     */
+    public Collection<String> getFunctionalMetadataKeys(FunctionalMetadata functionalMetadata) {
+        try {
+            return RulesetService.getFunctionalMetadataKeys(ruleset, functionalMetadata);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Retrieve and return translated description text for functional metadata of given type "functionalMetadataType".
+     * @param functionalMetadataType type of functional metadata for which description is returned
+     * @return translated description of functional metadata
+     */
+    public String getFunctionalMetadataDescription(String functionalMetadataType) {
+        return Helper.getTranslation("functionalMetadata." +  functionalMetadataType);
+    }
+
+    /**
+     * Retrieve label of metadata with key 'metadataKey' from current ruleset.
+     *
+     * @param metadataKey key of metadata for which label is retrieved from current ruleset
+     * @return label of metadata with key 'metadataKey'
+     */
+    public String getMetadataLabel(String metadataKey) {
+        try {
+            RulesetManagementInterface rulesetManagement =  ServiceManager.getRulesetService().openRuleset(ruleset);
+            return ServiceManager.getRulesetService().getMetadataTranslation(rulesetManagement, metadataKey, AT_MARK);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+            return "";
         }
     }
 }

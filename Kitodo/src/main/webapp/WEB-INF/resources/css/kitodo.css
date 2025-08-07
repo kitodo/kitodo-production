@@ -1743,6 +1743,30 @@ Import form
     margin-top: var(--default-half-size);
 }
 
+.functional-metadata-list {
+    border: 1px solid var(--blue);
+}
+
+.functional-metadata-list [role=gridcell] {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.functional-metadata-list:has(.ui-datatable-empty-message) {
+    opacity: .5;
+}
+
+
+.functional-metadata-wrapper {
+    display: inline-block;
+    margin: var(--default-half-size);
+    width: calc(100% / 4 - 16px);
+}
+
+#editForm\:rulesetTabView\:functionalMetadataGrid .ui-panelgrid-cell {
+    width: 100%;
+}
+
 /*----------------------------------------------------------------------
 Mass import
 ----------------------------------------------------------------------*/
