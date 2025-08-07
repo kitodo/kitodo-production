@@ -276,18 +276,21 @@
                     <p:menuitem id="processingStatusUpSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusUp}"
+                                process="@this"
                                 action="#{ProcessForm.setTaskStatusUpForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-up"/>
                     <p:menuitem id="processingStatusDownSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusDown}"
+                                process="@this"
                                 action="#{ProcessForm.setTaskStatusDownForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-down"/>
                     <p:menuitem id="executeScriptSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToRunKitodoScripts()}"
                                 value="#{msgs.executeKitodoScript}"
+                                process="@this"
                                 onclick="PF('executeScriptSelectedDialog').show();"
                                 icon="fa fa-cogs"/>
                     <p:menuitem id="downloadSelection"
@@ -299,6 +302,7 @@
                     <p:menuitem id="uploadAll"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.deleteLinkHomeDirectory}"
+                                process="@this"
                                 action="#{ProcessForm.uploadFromHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-upload">
@@ -308,6 +312,7 @@
                     <p:menuitem id="exportDmsSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                                 value="#{msgs.exportDMS}"
+                                process="@this"
                                 action="#{ProcessForm.exportDMSForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-file-archive-o"/>
@@ -315,20 +320,24 @@
                                 value="#{msgs.createExcel}"
                                 action="#{ProcessForm.generateResult}"
                                 ajax="false"
+                                immediate="true"
                                 icon="fa fa-file-excel-o"/>
                     <p:menuitem id="createPdf"
                                 value="#{msgs.createPdf}"
                                 action="#{ProcessForm.generateResultAsPdf}"
                                 ajax="false"
+                                immediate="true"
                                 icon="fa fa-file-pdf-o"/>
                     <p:menuitem id="renameMedia"
                                 rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
                                 value="#{msgs['renameMediaFiles']}"
+                                process="@this"
                                 action="#{ProcessForm.renameMedia}"
                                 icon="fa fa-files-o"/>
                     <p:menuitem id="setImportConfiguration"
                                 rendered="#{SecurityAccessController.hasAuthorityToSetImportConfiguration()}"
                                 value="#{msgs['setImportConfiguration']}"
+                                process="@this"
                                 action="#{ProcessForm.setImportConfiguration}"
                                 icon="fa fa-cloud-download "/>
                 </p:menu>
@@ -337,14 +346,17 @@
             <p:menu overlay="true" trigger="processesTabView:processesForm:statisticButton" my="left bottom" at="left top">
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
+                            process="@this"
                             action="#{ProcessForm.showStateOfVolume}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="durationOfTasks"
                             value="#{msgs.durationOfTasks}"
+                            process="@this"
                             action="#{ProcessForm.showDurationOfTasks}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="processMetadataStatistic"
                             value="#{msgs.numberOfMetadata}"
+                            process="@this"
                             action="#{ProcessForm.showProcessMetadataStatistic}"
                             icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
