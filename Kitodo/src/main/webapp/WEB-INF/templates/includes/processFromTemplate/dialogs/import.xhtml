@@ -34,7 +34,7 @@
         <h:form id="catalogSearchForm"
                 styleClass="metadata-import-dialog-form">
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
-                <p:row>
+                <p:panel styleClass="column-wrapper">
                     <div>
                         <p:outputLabel for="catalogueSelectMenu"
                                        value="#{msgs['importConfig.configuration']}"/>
@@ -57,13 +57,13 @@
                                             catalogSearchForm:eadLevelSelectionWrapper"/>
                         </p:selectOneMenu>
                     </div>
-                </p:row>
+                </p:panel>
             </p:panelGrid>
 
             <p:focus for="catalogSearchForm:searchTerm"/>
 
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
-                <p:row>
+                <p:panel styleClass="column-wrapper">
                     <div>
                         <p:outputLabel for="fieldSelectMenu"
                                        value="#{msgs.field}"/>
@@ -95,8 +95,8 @@
                             <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
                         </ui:fragment>
                     </div>
-                </p:row>
-                <p:row>
+                </p:panel>
+                <p:panel styleClass="column-wrapper">
                     <div>
                         <p:outputLabel for="searchTerm"
                                        value="#{msgs.value}"/>
@@ -124,7 +124,8 @@
                                                     value="#{CreateProcessForm.catalogImportDialog.importChildren}"/>
                         </ui:fragment>
                     </div>
-                </p:row>
+                </p:panel>
+
             </p:panelGrid>
             <h:panelGroup id="eadLevelSelectionWrapper">
                 <ui:fragment rendered="#{CreateProcessForm.currentImportConfiguration.configurationType eq 'OPAC_SEARCH' and

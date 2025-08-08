@@ -14,6 +14,7 @@ package org.kitodo.production.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +25,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyBeanModelIT {
@@ -46,7 +48,7 @@ public class LazyBeanModelIT {
 
     @Test
     public void shouldGetRowData() throws Exception {
-        List clients = clientService.getAll();
+        List<?> clients = clientService.getAll();
         Client firstClient = (Client) clients.get(0);
         Client lazyClient = (Client) lazyBeanModel.getRowData(String.valueOf(firstClient.getId()));
         assertEquals(firstClient.getName(), lazyClient.getName());
@@ -54,16 +56,19 @@ public class LazyBeanModelIT {
 
     @Test
     public void shouldLoadFromDatabase() {
-        List clients = lazyBeanModel.load(0, 2, "name", SortOrder.ASCENDING, null);
+        Map<String, SortMeta> sortNameAsc = Map.of("name", SortMeta.builder().field("name").order(SortOrder.ASCENDING).build());
+        Map<String, SortMeta> sortNameDesc = Map.of("name", SortMeta.builder().field("name").order(SortOrder.DESCENDING).build());
+
+        List<?> clients = lazyBeanModel.load(0, 2, sortNameAsc, null);
         assertEquals(2, clients.size());
 
-        clients = lazyBeanModel.load(0, 10, "name", SortOrder.ASCENDING, null);
+        clients = lazyBeanModel.load(0, 10, sortNameAsc, null);
         assertEquals(3, clients.size());
 
         Client client = (Client) clients.get(0);
         assertEquals("First client", client.getName());
 
-        clients = lazyBeanModel.load(0, 2, "name", SortOrder.DESCENDING, null);
+        clients = lazyBeanModel.load(0, 2, sortNameDesc, null);
         client = (Client) clients.get(0);
         assertEquals("Second client", client.getName());
     }
@@ -77,13 +82,16 @@ public class LazyBeanModelIT {
 
         LazyBeanModel lazyBeanModelDocket = new LazyBeanModel(ServiceManager.getDocketService());
 
-        List dockets = lazyBeanModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
+        Map<String, SortMeta> sortTitleAsc = Map.of("title", SortMeta.builder().field("title").order(SortOrder.ASCENDING).build());
+        Map<String, SortMeta> sortTitleDesc = Map.of("title", SortMeta.builder().field("title").order(SortOrder.DESCENDING).build());
+
+        List<?> dockets = lazyBeanModelDocket.load(0, 2, sortTitleAsc, null);
         assertEquals(2, dockets.size());
 
         Docket docket = (Docket) dockets.get(0);
         assertEquals("default", docket.getTitle());
 
-        dockets = lazyBeanModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
+        dockets = lazyBeanModelDocket.load(0, 2, sortTitleDesc, null);
         docket = (Docket) dockets.get(0);
         assertEquals("tester", docket.getTitle());
     }
