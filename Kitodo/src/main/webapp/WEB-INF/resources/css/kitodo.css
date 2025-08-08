@@ -772,8 +772,8 @@ body .content-header > .ui-panel-content {
     white-space: nowrap;
 }
 
-.ui-panelgrid-cell > h3 span.set-apart,
-.content-header > .ui-panel-content > h3 span.set-apart {
+.ui-panelgrid-cell h3 > span.set-apart,
+.content-header > .ui-panel-content h3 > span.set-apart {
     color: var(--medium-gray);
     flex-grow: 0;
     flex-shrink: 0;
@@ -2761,6 +2761,12 @@ form#metadata div label,
     float: left;
 }
 
+#metadataAccordion\:metadata .ui-treetable-toggler {
+    margin-left: calc(var(--group-margin) - var(--default-full-size));
+    margin-right: var(--group-margin);
+    width: var(--default-full-size);
+}
+
 #metadataAccordion\:metadata .ui-treetable-indent {
     width: var(--default-full-size);
 }
@@ -2989,28 +2995,6 @@ body .collapsibleWrapper .columnHeadingWrapper button {
     display: none;
 }
 
-#paginationForm\:paginationSelection {
-    width: 100%;
-}
-
-#paginationForm\:apply,
-#paginationForm\:cancel {
-    max-width: calc(50% - 2px);
-}
-
-#paginationForm\:apply span.ui-button-text,
-#paginationForm\:cancel span.ui-button-text {
-    max-width: calc(75% - 8px);
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    width: auto;
-}
-
-#paginationForm\:updateMediaReferencesButton {
-    margin: 0;
-    width: 100%;
-}
-
 /*
 Column content
  */
@@ -3128,6 +3112,31 @@ Column content
     display: none;
 }
 
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-tree-toggler,
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-leaf-icon,
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-icon,
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-icon.ui-icon {
+    height: 20px;
+}
+
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-tree-toggler,
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-tree-toggler::after,
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-icon::after {
+    line-height: 20px;
+}
+
+#structureTreeForm .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-label {
+    padding: 2px;
+}
+
+#structureTreeForm .ui-tree .ui-tree-container .ui-tree-droppoint {
+    height: 6px;
+}
+
+#structureTreeForm .ui-tree .ui-tree-container .ui-tree-droppoint.ui-state-hover {
+    background: var(--light-blue);
+}
+
 #structureTreeForm .ui-treenode .pageRange {
     margin-left: 0.3em;
 }
@@ -3143,7 +3152,9 @@ Column content
 }
 
 #updateMetadataDialog .ui-panelgrid-cell div {
+    border: none;
     margin: 0;
+    padding: 0;
 }
 
 #updateMetadataDialog_content {
@@ -3331,6 +3342,10 @@ button.settings-loaded-task::after {
     overflow-y: scroll;
 }
 
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div {
+    margin: 0;
+}
+
 .ui-tree-draghelper.ui-draggable-dragging {
     pointer-events: none;
 }
@@ -3341,6 +3356,27 @@ button.settings-loaded-task::after {
 
 .pagination-inactive {
     filter: opacity(35%);
+}
+
+#paginationForm\:paginationSelection {
+    width: 100%;
+}
+
+#paginationForm\:apply,
+#paginationForm\:cancel {
+    max-width: calc(50% - 2px);
+}
+
+#paginationForm\:apply span.ui-button-text,
+#paginationForm\:cancel span.ui-button-text {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+}
+
+#paginationForm\:updateMediaReferencesButton {
+    margin: 0;
+    width: 100%;
 }
 
 #metadataAccordion,
@@ -3566,12 +3602,6 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     position: relative;
 }
 
-#imagePreviewForm\:mediaContextMenu .ui-menuitem-link.ui-state-hover,
-#imagePreviewForm\:stripeContextMenu .ui-menuitem-link.ui-state-hover {
-    background: transparent;
-    color: var(--blue);
-}
-
 #imagePreviewForm\:tifFoldersLabel {
     color: var(--pure-white);
     line-height: var(--input-height);
@@ -3665,6 +3695,10 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 #imagePreviewForm\:mediaDetail .mediaPreviewItem {
     max-height: 100%;
     width: 90%;
+}
+
+#imagePreviewForm\:mediaPreviewGraphicImage.mediaPreviewItem {
+    width: auto; /* image itself is not visible, but the image needs its original aspect ratio to be displayed correctly on the canvas */
 }
 
 #imagePreviewForm\:mediaDetail #mediaFormattedTime {
