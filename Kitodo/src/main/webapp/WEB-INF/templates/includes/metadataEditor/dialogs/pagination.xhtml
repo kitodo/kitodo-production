@@ -22,7 +22,7 @@
         <h:form id="paginationForm">
             <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
                 <p:panelGrid columns="1" layout="grid">
-                        <div>
+                        <h:panelGroup layout="block">
                             <p:commandButton id="updateMediaReferencesButton"
                                              action="#{DataEditorForm.paginationPanel.updateMediaReferences()}"
                                              process="@this"
@@ -33,8 +33,8 @@
                                              styleClass="secondary"
                                              update="paginationForm:paginationSelection,logicalTree,galleryWrapperPanel"
                                              immediate="true"/>
-                        </div>
-                        <div>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
                             <p:selectManyMenu id="paginationSelection"
                                               value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
                                               required="#{not empty param['paginationForm:apply']}"
@@ -52,8 +52,8 @@
                                                 metadataAccordion:logicalMetadataWrapperPanel
                                                 metadataAccordion:physicalMetadataWrapperPanel"/>
                             </p:selectManyMenu>
-                        </div>
-                        <div>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
                             <p:outputLabel for="paginationTypeSelect"
                                            value="#{msgs.pagination}"/>
                             <p:selectOneMenu id="paginationTypeSelect"
@@ -63,10 +63,10 @@
                                                var="type"
                                                itemValue="#{type.key}"
                                                itemLabel="#{HelperForm.getTranslated(type.value)}"/>
-                                <p:ajax event="itemSelect" update="paginationForm:advandedPaginationControls"/>
+                                <p:ajax event="itemSelect" update="paginationForm:advancedPaginationControls"/>
                             </p:selectOneMenu>
-                        </div>
-                        <div>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
                             <p:outputLabel value="#{msgs.paginationStartValue}:"
                                            for="paginationStartValue"/>
                             <p:inputText id="paginationStartValue"
@@ -77,8 +77,8 @@
                                            label="#{msgs.paginationStartValue}"
                                            class="input"
                                            requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
-                        </div>
-                        <h:panelGroup layout="block" id="advandedPaginationControls">
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" id="advancedPaginationControls">
                             <!-- Advanced pagination -->
                             <script type="text/javascript">
                                 function writeToPaginationStartValue(before, after) {
@@ -161,7 +161,7 @@
                                 onclick="return writeToPaginationStartValue('\277','')"
                             />
                         </h:panelGroup>
-                        <div>
+                        <h:panelGroup layout="block">
                             <p:outputLabel value="#{msgs.paginationScope}:"
                                            for="selectPaginationScope"/>
                             <p:selectOneMenu id="selectPaginationScope"
@@ -173,7 +173,7 @@
                                                itemValue="#{scope.key}"
                                                itemLabel="#{HelperForm.getTranslated(scope.value)}"/>
                             </p:selectOneMenu>
-                        </div>
+                        </h:panelGroup>
                         <h:panelGroup layout="block"
                                       id="selectPaginationModeWrapper"
                                       rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'ADVANCED'}">
