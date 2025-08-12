@@ -32,6 +32,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.services.ServiceManager;
 
@@ -115,7 +116,7 @@ public class ProcessFormIT {
     }
 
     @Test
-    public void testSortHelperStatusIsUpdatedOnTaskSave() throws Exception {
+    public void testSortHelperStatusIsUpdatedOnTaskSave() throws DAOException {
         Process process = ServiceManager.getProcessService().getById(1);
 
         // Close all tasks
