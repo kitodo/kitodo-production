@@ -361,7 +361,15 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String saveTaskAndRedirect() {
         saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), ServiceManager.getTaskService());
-        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
+        try {
+            this.process = processService.getById(this.process.getId());
+            processService.save(this.process);
+            return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
+                    logger, e);
+        }
+        return this.stayOnCurrentPage;
     }
 
     /**
