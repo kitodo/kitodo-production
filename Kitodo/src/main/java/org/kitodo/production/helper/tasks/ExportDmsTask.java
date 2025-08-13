@@ -45,6 +45,9 @@ public class ExportDmsTask extends EmptyTask {
      *            exportDMS configuration
      * @param process
      *            the process to export
+     * @param optimisticExportFlagSet
+     *            if the process export flag is set optimistically
+     *            before the export completes
      */
     public ExportDmsTask(ExportDms exportDms, Process process, boolean optimisticExportFlagSet) {
         super(process.getTitle());
