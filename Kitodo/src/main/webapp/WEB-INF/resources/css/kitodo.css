@@ -1765,6 +1765,7 @@ Import form
 .functional-metadata-wrapper .ui-datatable-tablewrapper {
     height: 75px;
     overflow-y: auto;
+    width: 100%;
 }
 
 #editForm\:rulesetTabView\:functionalMetadataGrid .ui-panelgrid-cell {
