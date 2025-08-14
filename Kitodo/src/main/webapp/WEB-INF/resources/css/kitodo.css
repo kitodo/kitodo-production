@@ -1756,11 +1756,15 @@ Import form
     opacity: .5;
 }
 
-
 .functional-metadata-wrapper {
     display: inline-block;
     margin: var(--default-half-size);
     width: calc(100% / 4 - 16px);
+}
+
+.functional-metadata-wrapper .ui-datatable-tablewrapper {
+    height: 75px;
+    overflow-y: auto;
 }
 
 #editForm\:rulesetTabView\:functionalMetadataGrid .ui-panelgrid-cell {
@@ -4134,7 +4138,7 @@ kbd {
 }
 
 #externalViewPanel {
-    margin: auto 16px; 
+    margin: auto 16px;
 }
 
 #externalViewPanel, #externalViewPanel_content {
@@ -4777,7 +4781,7 @@ Print Styles
 }
 
 /*----------------------------------------------------------------------
-PrimeFaces fix preventing hidden input elements from scrolling outside 
+PrimeFaces fix preventing hidden input elements from scrolling outside
 of a container when focused e.g. via the tab key or from Javascript.
 See https://github.com/kitodo/kitodo-production/issues/6438
 ----------------------------------------------------------------------*/
