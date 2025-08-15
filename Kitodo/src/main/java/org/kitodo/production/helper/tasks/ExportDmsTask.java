@@ -36,7 +36,6 @@ public class ExportDmsTask extends EmptyTask {
 
     private final ExportDms exportDms;
     private final Process process;
-    private boolean optimisticExportFlagSet;
 
     /**
      * ExportDmsTask constructor. Creates a ExportDmsTask.
@@ -45,15 +44,11 @@ public class ExportDmsTask extends EmptyTask {
      *            exportDMS configuration
      * @param process
      *            the process to export
-     * @param optimisticExportFlagSet
-     *            if the process export flag is set optimistically
-     *            before the export completes
      */
-    public ExportDmsTask(ExportDms exportDms, Process process, boolean optimisticExportFlagSet) {
+    public ExportDmsTask(ExportDms exportDms, Process process) {
         super(process.getTitle());
         this.exportDms = exportDms;
         this.process = process;
-        this.optimisticExportFlagSet = optimisticExportFlagSet;
     }
 
     /**

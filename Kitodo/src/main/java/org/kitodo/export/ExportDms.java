@@ -133,7 +133,7 @@ public class ExportDms extends ExportMets {
     @Override
     public boolean startExport(Process process, URI unused) {
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
-            TaskManager.addTask(new ExportDmsTask(this, process, this.optimisticExportFlagSet));
+            TaskManager.addTask(new ExportDmsTask(this, process));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
             return false;
