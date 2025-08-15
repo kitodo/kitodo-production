@@ -1005,8 +1005,6 @@ public class ProcessForm extends TemplateBaseForm {
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
                 this.processEditReferer = referer;
-            } else if ("searchResult".equals(referer)) {
-                this.processEditReferer = "searchResult.jsf";
             } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
                 this.processEditReferer = DEFAULT_LINK;
             }
