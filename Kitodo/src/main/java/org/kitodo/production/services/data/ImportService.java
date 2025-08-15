@@ -34,7 +34,6 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -369,7 +368,7 @@ public class ImportService {
      * @return docType as String
      */
     private String getRecordDocType(Document record, Ruleset ruleset) throws IOException {
-        Collection<String> doctypes = getDocTypeMetadata(ruleset);
+        Collection<String> doctypes = RulesetService.getDocTypeMetadata(ruleset);
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO);
         if (kitodoNodes.getLength() > 0 && !doctypes.isEmpty() && kitodoNodes.item(0) instanceof Element) {
@@ -1125,7 +1124,7 @@ public class ImportService {
             throws ProcessGenerationException, DAOException, IOException {
 
         Process parentProcess = null;
-        for (String identifierMetadata : getFunctionalMetadata(ruleset, FunctionalMetadata.RECORD_IDENTIFIER)) {
+        for (String identifierMetadata : RulesetService.getRecordIdentifierMetadata(ruleset)) {
             if (Objects.isNull(parentProcess)) {
                 HashMap<String, String> parentIDMetadata = new HashMap<>();
                 parentIDMetadata.put(identifierMetadata, parentId);
@@ -1395,7 +1394,7 @@ public class ImportService {
     public String getRecordId(Map<String, List<String>> metadata, int templateId, boolean strict)
             throws ConfigException, IOException, DAOException {
         Template template = ServiceManager.getTemplateService().getById(templateId);
-        Collection<String> recordIdMetadataKeys = getRecordIdentifierMetadata(template.getRuleset());
+        Collection<String> recordIdMetadataKeys = RulesetService.getRecordIdentifierMetadata(template.getRuleset());
         if (recordIdMetadataKeys.isEmpty()) {
             if (strict) {
                 throw new ConfigException(Helper.getTranslation("massImport.recordIdentifierDefinitionMissing",
@@ -1430,7 +1429,7 @@ public class ImportService {
     public String getDocType(Map<String, List<String>> metadata, int templateId)
             throws ConfigException, DAOException, IOException {
         Template template = ServiceManager.getTemplateService().getById(templateId);
-        Collection<String> docTypeMetadataKeys = getDocTypeMetadata(template.getRuleset());
+        Collection<String> docTypeMetadataKeys = RulesetService.getDocTypeMetadata(template.getRuleset());
         if (docTypeMetadataKeys.isEmpty()) {
             throw new ConfigException("At least one metadata in ruleset '" + template.getRuleset().getTitle()
                     + "' must be configured as 'docType'");
@@ -1463,7 +1462,7 @@ public class ImportService {
             template = ServiceManager.getTemplateService().getById(templateId);
             String parentMetadataKey = "";
             List<String> higherLevelIdentifiers = new ArrayList<>(
-                    getHigherLevelIdentifierMetadata(template.getRuleset()));
+                    RulesetService.getHigherLevelIdentifierMetadata(template.getRuleset()));
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
@@ -1527,7 +1526,7 @@ public class ImportService {
         }
         TempProcess tempProcess = new TempProcess(process, docType, presetMetadata, rulesetManagementInterface, metadataSeparator);
 
-        for (String parentIdMetadataKey : getHigherLevelIdentifierMetadata(process.getRuleset())) {
+        for (String parentIdMetadataKey : RulesetService.getHigherLevelIdentifierMetadata(process.getRuleset())) {
             if (presetMetadata.containsKey(parentIdMetadataKey)) {
                 for (String parentIdValue : presetMetadata.get(parentIdMetadataKey)) {
                     if (Objects.nonNull(parentIdValue)) {
@@ -1606,16 +1605,6 @@ public class ImportService {
         }
     }
 
-    private static Collection<String> getFunctionalMetadata(Ruleset ruleset, FunctionalMetadata metadata)
-            throws IOException {
-        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
-                .getRulesetManagement();
-        String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
-        String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
-        rulesetManagement.load(new File(rulesetPath));
-        return rulesetManagement.getFunctionalKeys(metadata);
-    }
-
     private List<MetadataEntry> createMetadata(Map<String, List<String>> presetMetadata) {
         List<MetadataEntry> metadata = new LinkedList<>();
         for (Map.Entry<String, List<String>> presetMetadataEntry : presetMetadata.entrySet()) {
@@ -1641,40 +1630,6 @@ public class ImportService {
         if (Objects.nonNull(orderLabelList) && !orderLabelList.isEmpty() && !orderLabelList.get(0).isBlank()) {
             tempProcess.getWorkpiece().getLogicalStructure().setOrderlabel(orderLabelList.get(0));
         }
-    }
-
-    public static Collection<String> getRecordIdentifierMetadata(Ruleset ruleset) throws IOException {
-        return getFunctionalMetadata(ruleset, FunctionalMetadata.RECORD_IDENTIFIER);
-    }
-
-    /**
-     * Load doc type metadata keys from provided ruleset.
-     * @param ruleset Ruleset from which doc type metadata keys are loaded and returned
-     * @return list of Strings containing the IDs of the doc type metadata defined in the provided ruleset.
-     * @throws IOException thrown if ruleset file cannot be loaded
-     */
-    public static Collection<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
-        return getFunctionalMetadata(ruleset, FunctionalMetadata.DOC_TYPE);
-    }
-
-    /**
-     * Load and return higher level identifier metadata keys from provided ruleset.
-     * @param ruleset Ruleset from which higher level identifier metadata keys are loaded and returned
-     * @return list of String containing the keys of metadata defined as higher level identifier
-     * @throws IOException thrown if ruleset file cannot be loaded
-     */
-    public static Collection<String> getHigherLevelIdentifierMetadata(Ruleset ruleset) throws IOException {
-        return getFunctionalMetadata(ruleset, FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
-    }
-
-    /**
-     * Load and return keys of functional metadata 'groupDisplayLabel' from provided ruleset.
-     * @param ruleset Ruleset from which keys are loaded and returned
-     * @return list of String containing the keys of functional metadata for type 'groupDisplayLabel'
-     * @throws IOException thrown if ruleset file cannot be loaded
-     */
-    public static Collection<String> getGroupDisplayLabelMetadata(Ruleset ruleset) throws IOException {
-        return getFunctionalMetadata(ruleset, FunctionalMetadata.GROUP_DISPLAY_LABEL);
     }
 
     private DataImport createDataImportFromImportConfiguration(ImportConfiguration importConfiguration) {
@@ -1909,48 +1864,6 @@ public class ImportService {
             }
         }
         return processes;
-    }
-
-    /**
-     * Retrieve and return label of metadata with given key 'metadataKey'.
-     *
-     * @param ruleset RulesetManagementInterface from which metadata label is retrieved
-     * @param metadataKey key of metadata for which label ir retrieved
-     * @param groupSeparator SeparatorCharacter separating metadata group entries
-     * @return label of metadata
-     * @throws IOException if ruleset file could not be read
-     */
-    public String getMetadataTranslation(RulesetManagementInterface ruleset, String metadataKey, SeparatorCharacter groupSeparator)
-            throws IOException {
-        User user = ServiceManager.getUserService().getCurrentUser();
-        String metadataLanguage = user.getMetadataLanguage();
-        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
-                ? Locale.ENGLISH.getCountry() : metadataLanguage);
-        if (Objects.isNull(groupSeparator) || StringUtils.isBlank(groupSeparator.getSeparator())
-                || !metadataKey.contains(groupSeparator.getSeparator())) {
-            return ruleset.getTranslationForKey(metadataKey, languages).orElse(metadataKey);
-        } else {
-            String separator = groupSeparator.getSeparator();
-            List<String> keyHierarchy = List.of(metadataKey.split(Pattern.quote(separator)));
-            List<String> translatedKeys = new LinkedList<>();
-            String groupLabel = "";
-            for (String key : keyHierarchy) {
-                if (keyHierarchy.indexOf(key) == 0) {
-                    groupLabel = ruleset.getTranslationForKey(keyHierarchy.get(0), languages).orElse(metadataKey);
-                } else {
-                    List<String> nestedKeys = new LinkedList<>();
-                    nestedKeys.add(keyHierarchy.get(0));
-                    nestedKeys.add(key);
-                    Optional<String> nestedKeyTranslation = ruleset.getTranslationForKey(nestedKeys, languages);
-                    if (nestedKeyTranslation.isPresent()) {
-                        translatedKeys.add(nestedKeyTranslation.get());
-                    } else {
-                        translatedKeys.add(key);
-                    }
-                }
-            }
-            return groupLabel + " (" + String.join(separator, translatedKeys) + ")";
-        }
     }
 
     private TempProcess extractParentRecordFromFile(Document internalDocument, CreateProcessForm createProcessForm)

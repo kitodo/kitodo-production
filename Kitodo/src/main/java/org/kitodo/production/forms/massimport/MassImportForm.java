@@ -326,8 +326,8 @@ public class MassImportForm extends BaseForm {
         if (columnIndex < metadataKeys.size()) {
             String metadataKey = metadataKeys.get(columnIndex);
             try {
-                return ServiceManager.getImportService().getMetadataTranslation(addMetadataDialog.getRulesetManagement(), metadataKey,
-                        metadataGroupEntrySeparator);
+                return ServiceManager.getRulesetService().getMetadataTranslation(addMetadataDialog.getRulesetManagement(), metadataKey,
+                        metadataGroupEntrySeparator.getSeparator());
             } catch (IOException e) {
                 Helper.setErrorMessage(e);
                 return metadataKey;

@@ -75,7 +75,7 @@ import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
+import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
@@ -1332,7 +1332,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public String getGroupDisplayLabel(MetadataGroup metadataGroup) {
         try {
-            Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(process.getRuleset());
+            Collection<String> groupDisplayLabel = RulesetService.getGroupDisplayLabelMetadata(process.getRuleset());
             return ServiceManager.getRulesetService().getAnyNestedMetadataValue(metadataGroup, groupDisplayLabel);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

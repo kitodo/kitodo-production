@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.data;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -20,11 +21,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,12 +39,14 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
 import org.kitodo.exceptions.RulesetNotFoundException;
@@ -246,6 +252,64 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
         }
     }
 
+
+    /**
+     * Return collection of strings representing keys of functional metadata of given type "metadata" from given ruleset "ruleset".
+     * @param ruleset ruleset from which functional metadata keys are retrieved
+     * @param metadata type of functional metadata
+     * @return list of functional metadata keys
+     * @throws IOException when loading ruleset file fails
+     */
+    public static Collection<String> getFunctionalMetadataKeys(Ruleset ruleset, FunctionalMetadata metadata)
+            throws IOException {
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
+        String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
+        String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
+        rulesetManagement.load(new File(rulesetPath));
+        return rulesetManagement.getFunctionalKeys(metadata);
+    }
+
+    /**
+     * Retrieve collection of strings representing keys of functional metadata of type 'recordIdentifier' from given ruleset "ruleset".
+     * @param ruleset from which functional metadata keys are retrieved
+     * @return list of keys for functional metadata of type 'recordIdentifier'
+     * @throws IOException when loading ruleset file fails
+     */
+    public static Collection<String> getRecordIdentifierMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadataKeys(ruleset, FunctionalMetadata.RECORD_IDENTIFIER);
+    }
+
+    /**
+     * Load doc type metadata keys from provided ruleset.
+     * @param ruleset Ruleset from which doc type metadata keys are loaded and returned
+     * @return list of Strings containing the IDs of the doc type metadata defined in the provided ruleset.
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    public static Collection<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadataKeys(ruleset, FunctionalMetadata.DOC_TYPE);
+    }
+
+    /**
+     * Load and return higher level identifier metadata keys from provided ruleset.
+     * @param ruleset Ruleset from which higher level identifier metadata keys are loaded and returned
+     * @return list of String containing the keys of metadata defined as higher level identifier
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    public static Collection<String> getHigherLevelIdentifierMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadataKeys(ruleset, FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
+    }
+
+    /**
+     * Load and return keys of functional metadata 'groupDisplayLabel' from provided ruleset.
+     * @param ruleset Ruleset from which keys are loaded and returned
+     * @return list of String containing the keys of functional metadata for type 'groupDisplayLabel'
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    public static Collection<String> getGroupDisplayLabelMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadataKeys(ruleset, FunctionalMetadata.GROUP_DISPLAY_LABEL);
+    }
+
     /**
      * Sort 'MetadataGroup' instance in given set 'metadataSet' by their nested functional metadata 'groupDisplayLabel'
      * if present and return resulting list.
@@ -257,7 +321,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      */
     public static List<Metadata> getGroupsSortedByGroupDisplayLabel(HashSet<Metadata> metadataSet, Ruleset ruleset)
             throws IOException {
-        Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(ruleset);
+        Collection<String> groupDisplayLabel = RulesetService.getGroupDisplayLabelMetadata(ruleset);
         return metadataSet.stream().filter(m -> m instanceof MetadataGroup)
                 .sorted(Comparator.comparing(m -> ServiceManager.getRulesetService().getAnyNestedMetadataValue(m, groupDisplayLabel)))
                 .collect(Collectors.toList());
@@ -336,5 +400,46 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
                                    List<Locale.LanguageRange> languageRange) {
         MetadataViewInterface viewInterface = ruleset.getMetadataView(metadataKey, acquisitionStage, languageRange);
         return viewInterface.getLabel();
+    }
+
+    /**
+     * Retrieve and return label of metadata with given key 'metadataKey'.
+     *
+     * @param ruleset RulesetManagementInterface from which metadata label is retrieved
+     * @param metadataKey key of metadata for which label ir retrieved
+     * @param groupSeparator String separating metadata group entries
+     * @return label of metadata
+     * @throws IOException if ruleset file could not be read
+     */
+    public String getMetadataTranslation(RulesetManagementInterface ruleset, String metadataKey, String groupSeparator)
+            throws IOException {
+        User user = ServiceManager.getUserService().getCurrentUser();
+        String metadataLanguage = user.getMetadataLanguage();
+        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
+                ? Locale.ENGLISH.getCountry() : metadataLanguage);
+        if (Objects.isNull(groupSeparator) || StringUtils.isBlank(groupSeparator)
+                || !metadataKey.contains(groupSeparator)) {
+            return ruleset.getTranslationForKey(metadataKey, languages).orElse(metadataKey);
+        } else {
+            List<String> keyHierarchy = List.of(metadataKey.split(Pattern.quote(groupSeparator)));
+            List<String> translatedKeys = new LinkedList<>();
+            String groupLabel = "";
+            for (String key : keyHierarchy) {
+                if (keyHierarchy.indexOf(key) == 0) {
+                    groupLabel = ruleset.getTranslationForKey(keyHierarchy.get(0), languages).orElse(metadataKey);
+                } else {
+                    List<String> nestedKeys = new LinkedList<>();
+                    nestedKeys.add(keyHierarchy.get(0));
+                    nestedKeys.add(key);
+                    Optional<String> nestedKeyTranslation = ruleset.getTranslationForKey(nestedKeys, languages);
+                    if (nestedKeyTranslation.isPresent()) {
+                        translatedKeys.add(nestedKeyTranslation.get());
+                    } else {
+                        translatedKeys.add(key);
+                    }
+                }
+            }
+            return groupLabel + " (" + String.join(groupSeparator, translatedKeys) + ")";
+        }
     }
 }

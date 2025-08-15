@@ -1041,6 +1041,10 @@ tr.ui-widget-content,
     color: var(--carbon-blue);
 }
 
+.ui-panelgrid .ui-widget-content .ui-datatable-empty-message {
+    color: var(--medium-gray);
+}
+
 .ui-datatable tfoot td {
     text-align: left;
 }
