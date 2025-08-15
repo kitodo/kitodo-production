@@ -17,7 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:view>
-        <p:row>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="searchFieldTable" value="#{msgs['importConfig.searchFields']}"/>
                 <p:dataTable id="searchFieldTable"
@@ -83,8 +83,8 @@
                                      oncomplete="PF('addSearchFieldDialog').show()"/>
                 </h:panelGroup>
             </div>
-        </p:row>
-        <p:row>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="idSearchField"
                                value="#{msgs['importConfig.searchFields.idSearchField']} *"/>
@@ -157,6 +157,6 @@
                 <p:tooltip for="parentIdSearchFieldHelp"
                            value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
             </h:panelGroup>
-        </p:row>
+        </p:panel>
     </f:view>
 </ui:composition>

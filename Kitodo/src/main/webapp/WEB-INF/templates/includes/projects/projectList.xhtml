@@ -26,7 +26,7 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{item.title.keyword}"
+                 sortBy="#{ProjectForm.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -37,7 +37,7 @@
         <p:ajax event="rowToggle"
                 oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 20px;"
+        <p:column styleClass="rowTogglerColumn"
                   resizable="false"
                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewProject')}">
             <p:rowToggler/>
@@ -181,7 +181,7 @@
                             <p:panelGrid id="projectActionDetailTable"
                                          columns="2"
                                          columnClasses="label, actionsColumn" >
-                                <p:repeat id="templates"
+                                <ui:repeat id="templates"
                                           value="#{item.activeTemplates}"
                                           var="template">
                                     <div class="project-template-action">
@@ -202,7 +202,7 @@
                                             </h:outputText>
                                         </h:panelGroup>
                                     </div>
-                                </p:repeat>
+                                </ui:repeat>
                             </p:panelGrid>
                         </h:form>
                     </p:panelGrid>

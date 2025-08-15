@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -813,7 +814,8 @@ public class Project extends BaseBean implements Comparable<Project> {
         if (Objects.isNull(templates)) {
             return Collections.emptyList();
         }
-        return templates.stream().filter(Template::isActive).collect(Collectors.toList());
+        return templates.stream().filter(Template::isActive).sorted(Comparator.comparing(Template::getTitle))
+                .collect(Collectors.toList());
     }
 
     /**
