@@ -76,7 +76,6 @@
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();
-                                scrollToSelectedPaginationRow();
                                 metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 expandMetadata('logical-metadata-tab');"
@@ -92,7 +91,6 @@
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     onstart="$('#contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
                     oncomplete="scrollToSelectedThumbnail();
-                                scrollToSelectedPaginationRow();
                                 metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 PF('contextMenuLogicalTree').show(currentEvent)"
