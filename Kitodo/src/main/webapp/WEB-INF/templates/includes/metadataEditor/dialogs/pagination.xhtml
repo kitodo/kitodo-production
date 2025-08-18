@@ -31,27 +31,8 @@
                                              icon="fa fa-magic fa-lg"
                                              iconPos="right"
                                              styleClass="secondary"
-                                             update="paginationForm:paginationSelection,logicalTree,galleryWrapperPanel"
+                                             update="logicalTree,galleryWrapperPanel"
                                              immediate="true"/>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block">
-                            <p:selectManyMenu id="paginationSelection"
-                                              value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
-                                              required="#{not empty param['paginationForm:apply']}"
-                                              requiredMessage="#{msgs.paginationNoPagesSelected}"
-                                              disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                              filter="true"
-                                              filterMatchMode="contains"
-                                              onchange="metadataEditor.pagination.onChange(event);"
-                                              showCheckbox="true">
-                                <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
-                                <p:ajax event="change"
-                                        oncomplete="metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
-                                        update="galleryHeadingWrapper
-                                                imagePreviewForm:mediaDetail
-                                                metadataAccordion:logicalMetadataWrapperPanel
-                                                metadataAccordion:physicalMetadataWrapperPanel"/>
-                            </p:selectManyMenu>
                         </h:panelGroup>
                         <h:panelGroup layout="block">
                             <p:outputLabel for="paginationTypeSelect"
@@ -222,10 +203,8 @@
                                  styleClass="primary right"
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
-                                 onclick="window.pagesScrollPosition = $('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop();
-                                          PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 oncomplete="$('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop(pagesScrollPosition);"
-                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
+                                 onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
+                                 update="notifications, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"
