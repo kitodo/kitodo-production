@@ -3416,10 +3416,6 @@ button.settings-loaded-task::after {
     filter: opacity(35%);
 }
 
-#paginationForm\:paginationSelection {
-    width: 100%;
-}
-
 #paginationForm\:apply,
 #paginationForm\:cancel {
     max-width: calc(50% - 2px);
