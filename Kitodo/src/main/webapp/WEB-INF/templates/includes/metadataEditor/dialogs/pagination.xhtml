@@ -206,8 +206,8 @@
                                  onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
                                  update="notifications, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
-                <p:commandButton id="cancel"
-                                 value="#{msgs.cancel}"
+                <p:commandButton id="reset"
+                                 value="#{msgs.reset}"
                                  action="#{DataEditorForm.paginationPanel.show()}"
                                  styleClass="secondary left"
                                  icon="fa fa-times fa-lg"
