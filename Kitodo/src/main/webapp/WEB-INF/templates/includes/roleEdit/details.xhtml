@@ -20,31 +20,32 @@
 
     <p:panelGrid columns="1" layout="grid">
         <p:panelGrid columns="2" layout="grid">
-            <p:row>
+            <p:panel styleClass="column-wrapper">
                 <div>
                     <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                     <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
                                  value="#{RoleForm.role.title}" placeholder="#{msgs.title}"
                                  required="#{empty param['editForm:saveButtonToggler']}"/>
                 </div>
-            </p:row>
-            <p:row rendered="#{SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}">
-                <div>
-                    <p:outputLabel for="client" value="#{msgs.client}"/>
-                    <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleForm.role.client}">
-                        <f:selectItems value="#{RoleForm.clients}"
-                                       var="client"
-                                       itemValue="#{client}"
-                                       itemLabel="#{client.name}"/>
-                        <p:ajax oncomplete="toggleSave()"/>
-                    </p:selectOneMenu>
-                </div>
-            </p:row>
-            <p:row rendered="#{not SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}" />
+            </p:panel>
+            <p:panel styleClass="column-wrapper">
+                <p:outputPanel rendered="#{SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}">
+                    <div>
+                        <p:outputLabel for="client" value="#{msgs.client}"/>
+                        <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleForm.role.client}">
+                            <f:selectItems value="#{RoleForm.clients}"
+                                           var="client"
+                                           itemValue="#{client}"
+                                           itemLabel="#{client.name}"/>
+                            <p:ajax oncomplete="toggleSave()"/>
+                        </p:selectOneMenu>
+                    </div>
+                </p:outputPanel>
+            </p:panel>
+            <p:outputPanel rendered="#{not SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}" />
         </p:panelGrid>
         <p:panelGrid columns="#{SecurityAccessController.hasAuthorityGlobalToViewRole() ? 2 : 1}"
                      layout="grid">
-            <p:row rendered="#{SecurityAccessController.hasAuthorityGlobalToViewRole()}">
                 <!--global authorities-->
                 <h:panelGroup>
                     <h3 style="margin-bottom: 20px">
@@ -66,9 +67,7 @@
                         <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
                     </p:pickList>
                 </h:panelGroup>
-            </p:row>
 
-            <p:row>
                 <!--client authorities-->
                 <h:panelGroup>
                     <h3 style="margin-bottom: 20px">
@@ -89,9 +88,8 @@
                         <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
                     </p:pickList>
                 </h:panelGroup>
-            </p:row>
+
         </p:panelGrid>
-        <p:row/>
     </p:panelGrid>
 
 </ui:composition>

@@ -876,8 +876,8 @@ public class MetadataST extends BaseTestSelenium {
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
             .until(() -> Browser.getDriver().findElement(
                 By.id("metadataAccordion:metadata:metadataTable")
-            ).getText().equals("No records found."));
-        
+            ).getText().equals("Keine Datensätze gefunden."));
+
         // verify both pages are selected in pagination panel
         metaDataEditor.checkPaginationSelection(2);
 

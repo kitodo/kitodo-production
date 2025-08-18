@@ -45,6 +45,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("TemplateForm")
 @ViewScoped
@@ -78,6 +80,7 @@ public class TemplateForm extends TemplateBaseForm {
         templateFilters = new LinkedList<>();
         templateFilters.add(DEACTIVATED_TEMPLATES_FILTER);
         selectedTemplateFilters = new LinkedList<>();
+        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
     }
 
     /**

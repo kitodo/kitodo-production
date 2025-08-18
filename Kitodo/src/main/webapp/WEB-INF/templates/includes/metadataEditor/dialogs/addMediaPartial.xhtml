@@ -26,7 +26,6 @@
               onShow="metadataEditor.gallery.mediaPartial.setMediaDuration();metadataEditor.gallery.mediaPartial.setBeginIfEmpty();">
         <h:form id="mediaPartialForm">
             <p:panelGrid columns="1" layout="grid">
-                <p:row>
                     <h3>#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.isEditable() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
                     <h:panelGroup id="errorWrapper"
                                   rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.hasValidationError()}">
@@ -71,7 +70,6 @@
                                          iconPos="right"
                                          styleClass="secondary right"/>
                     </h:panelGroup>
-                </p:row>
             </p:panelGrid>
         </h:form>
     </p:dialog>

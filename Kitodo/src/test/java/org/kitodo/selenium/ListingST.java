@@ -18,13 +18,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.DesktopPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
@@ -50,12 +53,20 @@ public class ListingST extends BaseTestSelenium {
         usersPage = Pages.getUsersPage();
     }
 
-    @BeforeAll
-    public static void login() throws Exception {
+    @BeforeEach
+    public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
 
         User user = ServiceManager.getUserService().getByLogin("kowal");
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+    }
+
+    @AfterEach
+    public void logout() throws Exception {
+        Pages.getTopNavigation().logout();
+        if (Browser.isAlertPresent()) {
+            Browser.getDriver().switchTo().alert().accept();
+        }
     }
 
     @AfterAll
