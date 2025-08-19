@@ -89,8 +89,10 @@ public class ExportDmsTask extends EmptyTask {
             exportSuccessful = false;
         }
         try {
-            process.setExported(exportSuccessful);
-            ServiceManager.getProcessService().save(process);
+            if (exportDms.isOptimisticExportFlagSet()) {
+                process.setExported(exportSuccessful);
+                ServiceManager.getProcessService().save(process);
+            }
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
