@@ -566,7 +566,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     }
 
     static boolean setChildCount(Process parent, RulesetManagementInterface ruleset, Workpiece workpiece) throws IOException {
-        Collection<String> childCountKeys = ruleset.getFunctionalKeys(FunctionalMetadata.CHILD_COUND);
+        Collection<String> childCountKeys = ruleset.getFunctionalKeys(FunctionalMetadata.CHILD_COUNT);
         if (childCountKeys.isEmpty()) {
             return false;
         }

@@ -83,7 +83,8 @@
                             <p:selectOneMenu id="file" value="#{RulesetForm.ruleset.file}" disabled="#{isViewMode}">
                                 <f:selectItems value="#{RulesetForm.rulesetFilenames}" var="rulesetFile" itemValue="#{rulesetFile}"
                                                itemLabel="#{rulesetFile}"/>
-                                <p:ajax oncomplete="toggleSave()"/>
+                                <p:ajax oncomplete="toggleSave()"
+                                        update="editForm:rulesetTabView:functionalMetadataGrid"/>
                             </p:selectOneMenu>
                         </div>
                     </p:row>
@@ -96,6 +97,49 @@
                         </div>
                     </p:row>
                 </p:panelGrid>
+                <h:panelGroup id="functionalMetadataWrapper">
+                    <p:importEnum type="org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata"
+                                  var="KitodoFunctionalMetadata"
+                                  allSuffix="ALL_FUNCTIONAL_METADATA" />
+                    <p:panelGrid layout="grid"
+                                 id="functionalMetadataGrid"
+                                 rendered="#{RulesetForm.ruleset ne null and RulesetForm.ruleset.id ne null}"
+                                 columns="4">
+                        <ui:repeat value="#{KitodoFunctionalMetadata.ALL_FUNCTIONAL_METADATA}"
+                                   var="currentMetadata">
+                            <h:panelGroup id="#{currentMetadata.mark}FunctionalMetadata"
+                                          styleClass="functional-metadata-wrapper">
+                                <p:outputLabel for="currentMetadataList"
+                                               style="display: inline;"
+                                               value="'#{currentMetadata.mark}'" />
+                                <p:commandButton id="currentMetadataHelp"
+                                                 type="button"
+                                                 styleClass="help-button"
+                                                 style="height: min-content; float: right;"
+                                                 icon="fa fa-lg fa-question-circle-o"/>
+                                <p:tooltip for="currentMetadataHelp"
+                                           value="#{RulesetForm.getFunctionalMetadataDescription(currentMetadata.mark)} "/>
+                                <p:dataTable id="currentMetadataList"
+                                             styleClass="functional-metadata-list"
+                                             value="#{RulesetForm.getFunctionalMetadataKeys(currentMetadata)}"
+                                             emptyMessage="#{msgs['noRecordsFound']}"
+                                             style="margin-top: 3px;"
+                                             var="currentKey">
+                                    <p:column id="#{currentKey}Label"
+                                              headerText="Label">
+                                        <h:outputText value="#{RulesetForm.getMetadataLabel(currentKey)}"
+                                                      title="#{RulesetForm.getMetadataLabel(currentKey)}" />
+                                    </p:column>
+                                    <p:column id="#{currentKey}Key"
+                                              headerText="Key">
+                                        <h:outputText value="#{currentKey}"
+                                                      title="#{currentKey}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGroup>
+                        </ui:repeat>
+                    </p:panelGrid>
+                </h:panelGroup>
             </p:tab>
         </p:tabView>
     </ui:define>

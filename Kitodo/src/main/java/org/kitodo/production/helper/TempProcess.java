@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessMetadata;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
+import org.kitodo.production.services.data.RulesetService;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -225,7 +225,7 @@ public class TempProcess {
      */
     public void verifyDocType() throws IOException, ProcessGenerationException {
         if (Objects.nonNull(process.getRuleset())) {
-            Collection<String> doctypeMetadata = ImportService.getDocTypeMetadata(process.getRuleset());
+            Collection<String> doctypeMetadata = RulesetService.getDocTypeMetadata(process.getRuleset());
             if (doctypeMetadata.isEmpty()) {
                 throw new ProcessGenerationException(Helper.getTranslation("newProcess.docTypeMetadataMissing",
                         process.getRuleset().getTitle()));

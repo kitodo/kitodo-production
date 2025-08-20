@@ -739,7 +739,7 @@ public class ImportServiceIT {
             ExecutionPermission.setExecutePermission(script);
         }
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
-        List<String> recordIdentifierMetadata = new ArrayList<>(ImportService.getRecordIdentifierMetadata(ruleset));
+        List<String> recordIdentifierMetadata = new ArrayList<>(RulesetService.getRecordIdentifierMetadata(ruleset));
         if (recordIdentifierMetadata.isEmpty()) {
             throw new ImportException("Functional metadata 'recordIdentifier' is not defined in ruleset");
         }
