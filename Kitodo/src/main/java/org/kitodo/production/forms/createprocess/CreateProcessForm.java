@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -525,31 +526,42 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     setCurrentImportConfiguration(project.getDefaultImportConfiguration());
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
-                    Process parentProcess = ServiceManager.getProcessService().getById(parentId);
-                    RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
-                            .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
-                    Map<String, String> allowedSubstructuralElements = rulesetManagement
-                            .getStructuralElementView(parentProcess.getBaseType(), "", priorityList)
-                            .getAllowedSubstructuralElements();
-                    List<SelectItem> docTypes = allowedSubstructuralElements.entrySet()
-                            .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
-                            .collect(Collectors.toList());
-                    processDataTab.setAllDocTypes(docTypes);
-                    titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
-                    titleRecordLinkTab.chooseParentProcess();
-                    if (Objects.nonNull(project) && Objects.nonNull(project
-                            .getDefaultChildProcessImportConfiguration())) {
-                        setCurrentImportConfiguration(project.getDefaultChildProcessImportConfiguration());
-                    }
-                    if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
-                        updateRulesetAndDocType(getMainProcess().getRuleset());
-                    }
+                    initParentConfiguration(parentId, workpiece);
                 }
                 processDataTab.prepare();
                 showDialogForImportConfiguration(currentImportConfiguration, showDialog);
             }
         } catch (ProcessGenerationException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private void initParentConfiguration(Integer parentId, Workpiece workpiece) throws DAOException, IOException {
+        Process parentProcess = ServiceManager.getProcessService().getById(parentId);
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
+                .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
+
+        String baseType = Optional.ofNullable(parentProcess.getBaseType())
+                .orElseGet(() -> ProcessService.getBaseType(parentProcess));
+
+        Map<String, String> allowedSubstructuralElements = rulesetManagement
+                .getStructuralElementView(baseType, "", priorityList)
+                .getAllowedSubstructuralElements();
+
+        List<SelectItem> docTypes = allowedSubstructuralElements.entrySet()
+                .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        processDataTab.setAllDocTypes(docTypes);
+        titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
+        titleRecordLinkTab.chooseParentProcess();
+
+        if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultChildProcessImportConfiguration())) {
+            setCurrentImportConfiguration(project.getDefaultChildProcessImportConfiguration());
+        }
+
+        if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
+            updateRulesetAndDocType(getMainProcess().getRuleset());
         }
     }
 
