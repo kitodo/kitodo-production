@@ -2476,6 +2476,10 @@ Metadata Editor
     border-color: var(--blue);
 }
 
+#metadataEditor .ui-accordion-header {
+    padding: var(--default-half-size);
+}
+
 form#metadata,
 form#metadata textarea,
 form#metadata div label,
@@ -2727,9 +2731,9 @@ form#metadata div label,
     margin-bottom: var(--default-full-size);
 }
 
-.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content {
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files {
     max-height: 120px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .ui-dialog .ui-panelgrid-cell div.ui-fileupload-content,
@@ -3395,6 +3399,10 @@ button.settings-loaded-task::after {
     height: calc(100% - var(--input-height) - 2 * var(--default-half-size));
 }
 
+#metadataAccordion\:physicalMetadataWrapperPanel_content {
+    position: relative;
+}
+
 #structureAccordion .ui-accordion-header,
 #metadataAccordion .ui-accordion-header {
     display: none;
@@ -3426,12 +3434,10 @@ button.settings-loaded-task::after {
     background: inherit;
 }
 
-#metadataAccordion\:metadata\:metadataTable .ui-datatable-tablewrapper,
-#metadataAccordion\:physicalMetadata\:metadataTable .ui-datatable-tablewrapper {
+#metadataAccordion\:physicalMetadata\:metadataTable table {
     margin-bottom: calc(var(--input-height) + var(--default-double-size));
 }
 
-#metadataAccordion\:metadata\:addMetadataButtonWrapper,
 #metadataAccordion\:physicalMetadata\:addMetadataButtonWrapper {
     border-radius: var(--default-border-radius);
     bottom: var(--default-full-size);
@@ -4483,7 +4489,6 @@ body .ui-datatable thead th.ui-sortable-column.ui-state-focus {
 .ui-datatable tr th.checkboxListColumn .ui-chkbox-box,
 .ui-datatable tr td.checkboxListColumn .ui-chkbox {
     margin: 0;
-    vertical-align: top;
 }
 
 .ui-datatable tr td.checkboxListColumn .ui-chkbox-box {

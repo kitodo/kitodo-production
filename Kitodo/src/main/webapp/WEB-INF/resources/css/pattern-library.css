@@ -308,7 +308,8 @@ a.plain.ui-state-disabled,
 .ui-commandlink:disabled,
 .ui-commandlink.disabled,
 .ui-commandlink.ui-state-disabled,
-.actionsColumn span.ui-state-disabled {
+.actionsColumn span.ui-state-disabled,
+.actionsColumn a.ui-state-disabled i {
     color: var(--medium-gray);
     cursor: default;
     opacity: initial;
@@ -803,7 +804,8 @@ body .ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled {
     border-color: var(--cloudy-gray);
 }
 
-body .ui-commandlink.plain.ui-state-disabled {
+body .ui-commandlink.plain.ui-state-disabled,
+body .ui-commandlink.plain.ui-state-disabled i {
     color: var(--medium-gray);
 }
 
@@ -933,14 +935,14 @@ body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-icon::before {
     opacity: initial;
 }
 
-.ui-inputfield.ui-state-disabled,
-.ui-inputfield.ui-state-disabled::placeholder,
-.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label,
-.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger,
-.ui-spinner.ui-state-disabled .ui-spinner-input,
-.ui-spinner.ui-state-disabled .ui-spinner-button::after,
-.ui-selectmanycheckbox.disabled,
-.ui-selectoneradio.disabled {
+body .ui-inputfield.ui-state-disabled,
+body .ui-inputfield.ui-state-disabled::placeholder,
+body .ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label,
+body .ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger,
+body .ui-spinner.ui-state-disabled .ui-spinner-input,
+body .ui-spinner.ui-state-disabled .ui-spinner-button::after,
+body .ui-selectmanycheckbox.disabled,
+body .ui-selectoneradio.disabled {
     color: var(--medium-gray);
     border-color: var(--medium-gray);
 }
@@ -1033,23 +1035,24 @@ body .ui-tree .ui-tree-container .ui-treenode-outline {
     border: 0;
 }
 
-body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-label.ui-state-highlight {
+body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight,
+body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-treenode-icon,
+body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-treenode-icon:hover,
+body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-treenode-label,
+body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-tree-toggler::after,
+body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content .ui-treenode-label.ui-state-highlight {
     background: transparent;
 }
 
 body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content,
-body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight {
+body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content.ui-state-highlight {
     background: var(--blue);
 }
 
 body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content .ui-treenode-icon,
 body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content .ui-treenode-icon:hover,
 body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content .ui-treenode-label,
-body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content .ui-tree-toggler::after,
-body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-treenode-icon,
-body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-treenode-icon:hover,
-body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-treenode-label,
-body .ui-tree .ui-tree-container .ui-treenode > .ui-treenode-content.ui-state-highlight .ui-tree-toggler::after {
+body .ui-tree .ui-tree-container .ui-treenode.ui-treenode-selected > .ui-treenode-content .ui-tree-toggler::after {
     color: var(--pure-white);
 }
 
@@ -1101,7 +1104,8 @@ body .ui-datatable-even,
 body tfoot td.ui-state-default,
 body tr.ui-widget-header,
 body tr.ui-widget-content,
-body .ui-panelgrid .ui-widget-content {
+body .ui-panelgrid .ui-widget-content,
+body .ui-panelgrid .ui-widget-content label {
     background: transparent;
     color: var(--carbon-blue);
 }
@@ -1360,9 +1364,17 @@ body .ui-dialog .ui-dialog-content,
 body .ui-dialog .ui-panelgrid-content,
 body .ui-dialog .ui-panelgrid-cell,
 body .ui-fileupload-buttonbar,
-body .ui-fileupload-content,
-body .ui-fileupload-content .ui-fileupload-cancel {
+body .ui-fileupload-content {
     background-color: var(--light-gray);
+}
+
+body .ui-fileupload-content .ui-fileupload-cancel {
+    background: transparent;
+    color: var(--blue);
+}
+
+body .ui-fileupload-content .ui-fileupload-cancel:hover {
+   color: var(--pure-white);
 }
 
 .ui-fileupload-buttonbar,
@@ -1377,7 +1389,11 @@ body .ui-fileupload-content .ui-fileupload-cancel {
 }
 
 .ui-fileupload-choose .ui-button-text {
-    line-height: 1.8em;
+    /*line-height: 1.8em;*/
+}
+
+body .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row > div {
+    padding: var(--group-margin) var(--default-half-size);
 }
 
 .ui-dialog-titlebar {
@@ -1761,34 +1777,31 @@ body .ui-growl-item p {
     text-overflow: ellipsis;
 }
 
-body .ui-growl-item-container {
+body .ui-growl .ui-growl-item-container.ui-growl-info,
+body .ui-growl .ui-growl-item-container.ui-growl-error {
     opacity: 1;
     color: var(--pure-white);
     border: none;
     box-shadow: var(--second-level-shadow);
 }
 
-body .ui-growl-item .ui-growl-icon-close {
+body .ui-growl .ui-growl-item-container .ui-growl-item .ui-growl-icon-close {
+    color: var(--pure-white);
     margin-right: 8px;
     text-align: right;
 }
 
-body .ui-growl-item .ui-growl-icon-close::after {
-    color: var(--pure-white);
-    content: "\f00d";
-    font-family: FontAwesome;
-}
-
-body .ui-growl-item .ui-growl-image {
+body .ui-growl .ui-growl-item-container .ui-growl-item .ui-growl-image {
     background: none;
+    color: var(--pure-white);
     text-indent: 0 !important;
     text-rendering: auto;
     widows: inherit;
     width: auto;
     height: inherit;
     display: inline;
-    float: right;
     font: normal normal normal x-large/1 FontAwesome;
+    margin-top: 3px;
 }
 
 body .ui-growl-item .ui-growl-image::before {
@@ -1797,6 +1810,8 @@ body .ui-growl-item .ui-growl-image::before {
 
 body .ui-growl-item .ui-growl-message {
     float: none;
+    padding-left: 32px;
+    width: 245px;
 }
 
 body .ui-grid .ui-grid-row {
