@@ -528,8 +528,12 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     Process parentProcess = ServiceManager.getProcessService().getById(parentId);
                     RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
                             .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
+                    String baseType = parentProcess.getBaseType();
+                    if (Objects.nonNull(baseType)) {
+                        baseType = ProcessService.getBaseType(parentProcess);
+                    }
                     Map<String, String> allowedSubstructuralElements = rulesetManagement
-                            .getStructuralElementView(parentProcess.getBaseType(), "", priorityList)
+                            .getStructuralElementView(baseType, "", priorityList)
                             .getAllowedSubstructuralElements();
                     List<SelectItem> docTypes = allowedSubstructuralElements.entrySet()
                             .stream().map(entry -> new SelectItem(entry.getKey(), entry.getValue()))
