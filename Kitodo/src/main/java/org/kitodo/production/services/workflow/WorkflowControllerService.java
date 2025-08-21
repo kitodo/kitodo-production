@@ -487,11 +487,13 @@ public class WorkflowControllerService {
             TaskManager.addTask(thread);
         }
 
-        closeParent(process);
+        if (closedTask.isLast()) {
+            closeParent(process);
+        }
     }
 
     private void closeParent(Process process) throws DAOException {
-        if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
+        if (Objects.nonNull(process.getParent()) && !processService.hasIncompleteChildren(process.getParent())) {
             process.getParent().setSortHelperStatus(ProcessState.COMPLETED.getValue());
             ServiceManager.getProcessService().save(process.getParent());
             closeParent(process.getParent());
