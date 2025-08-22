@@ -359,8 +359,12 @@ public class KitodoScriptService {
                 }
             } else {
                 try {
-                    ServiceManager.getProcessService().deleteProcess(process);
-                    Helper.setMessage("Process " + title + " deleted.");
+                    if (!process.hasChildren()) {
+                        ProcessService.deleteProcess(process);
+                        Helper.setMessage("Process " + title + " deleted.");
+                    } else {
+                        Helper.setMessage("Process " + title + " skipped.");
+                    }
                 } catch (DAOException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
                         new Object[] {Helper.getTranslation("process") + " " + title }, logger, e);
