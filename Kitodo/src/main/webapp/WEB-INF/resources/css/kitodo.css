@@ -3400,8 +3400,28 @@ button.settings-loaded-task::after {
     overflow-y: scroll;
 }
 
+#paginationForm\:paginationGrid {
+    margin-left: -5px;
+    margin-top: 5px;
+    width: calc(100% + 10px);
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell {
+    padding: 0;
+}
+
 #paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div {
     margin: 0;
+    padding: 5px;
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div:empty {
+    padding: 0;
 }
 
 .ui-tree-draghelper.ui-draggable-dragging {
