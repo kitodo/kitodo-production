@@ -617,17 +617,17 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Check and return whether process with given ID can be exported or not.
      *
-     * @param processId process ID
+     * @param process the process
      * @return whether process with given ID can be exported or not
      */
-    public boolean canBeExported(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "canBeExported");
+    public boolean canBeExported(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "canBeExported");
         try {
-            if (!exportable.containsKey(processId)) {
-                exportable.put(processId, ProcessService.canBeExported(processId));
+            if (!exportable.containsKey(process.getId())) {
+                exportable.put(process.getId(), ProcessService.canBeExported(process));
             }
-            return stopwatch.stop(exportable.get(processId));
-        } catch (IOException | DAOException e) {
+            return stopwatch.stop(exportable.get(process.getId()));
+        } catch (DAOException e) {
             Helper.setErrorMessage(e);
             return stopwatch.stop(false);
         }
