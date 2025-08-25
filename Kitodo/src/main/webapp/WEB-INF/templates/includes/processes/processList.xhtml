@@ -168,6 +168,7 @@
                                     <h:outputText value="#{parent.getTitle()} "
                                                   title="#{parent.getTitle()}"/>
                                     <p:commandLink value="#{msgs.show}"
+                                                   process="@this"
                                                    action="#{ProcessForm.changeFilter('id:'.concat(parent.getId()))}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
@@ -213,6 +214,7 @@
                             <h:panelGroup>
                                 <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())} " rendered="#{process.hasChildren()}"/>
                                 <p:commandLink value="#{msgs.show}"
+                                               process="@this"
                                                action="#{ProcessForm.changeFilter('parentprocessid:'.concat(process.getId()))}"
                                                rendered="#{process.hasChildren()}"/>
                                 <h:outputText value=" #{msgs.none}" rendered="#{not process.hasChildren()}"/>
