@@ -223,32 +223,35 @@
                         <p:dataList value="#{ProcessForm.getCurrentTasksForUser(process)}" var="task">
                             <h:outputText value="#{task.title}"/>
                                 <!-- assign task -->
-                                <h:commandLink id="take"
+                                <p:commandLink id="take"
                                                action="#{CurrentTaskForm.takeOverTask}"
                                                styleClass="action"
                                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
+                                               process="@this"
                                                title="#{msgs.selfAssignTask}">
                                     <h:outputText><i class="fa fa-bell-o"/></h:outputText>
                                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
-                                </h:commandLink>
+                                </p:commandLink>
                                 <!-- already assigned task (this user) -->
-                                <h:commandLink id="editOwnTask"
+                                <p:commandLink id="editOwnTask"
                                                action="#{CurrentTaskForm.editTask}"
                                                styleClass="action"
+                                               process="@this"
                                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
                                                title="#{msgs.assignedTo}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
                                     <h:outputText><i class="fa fa-bell"/></h:outputText>
                                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
-                                </h:commandLink>
+                                </p:commandLink>
                                 <!-- already assigned task (different user) -->
-                                <h:commandLink id="editOtherTask"
+                                <p:commandLink id="editOtherTask"
                                                action="#{CurrentTaskForm.editTask}"
                                                styleClass="action"
+                                               process="@this"
                                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
                                                title="#{msgs.assignedTo}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                                     <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
                                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
-                                </h:commandLink>
+                                </p:commandLink>
                         </p:dataList>
                     </p:panel>
                 </div>
