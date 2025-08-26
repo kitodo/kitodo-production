@@ -953,6 +953,7 @@ body.ui-spinner.ui-state-disabled {
 
 body .ui-spinner input.ui-spinner-input {
     padding-right: 2.4rem;
+    text-align: left;
 }
 
 body .ui-spinner .ui-spinner-button {
