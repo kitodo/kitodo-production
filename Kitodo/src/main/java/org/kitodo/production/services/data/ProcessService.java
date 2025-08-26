@@ -2291,10 +2291,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @return whether process can be exported or not
      */
     public static boolean canBeExported(Process process) throws DAOException {
+        // superordinate processes normally do not contain images but should always be exportable
         if (process.hasChildren()) {
             return true;
         }
         Folder generatorSource = process.getProject().getGeneratorSource();
+        // processes without a generator source should be exportable because they may contain multimedia files
+        // that are not used as generator sources
         if (Objects.isNull(generatorSource)) {
             return true;
         }
