@@ -1703,9 +1703,16 @@ Import form
     float: left;
 }
 
-#editForm\:processFromTemplateTabView\:processHierarchy_header a.ui-panel-titlebar-icon {
-    display: contents;
+#editForm\:processFromTemplateTabView\:processHierarchy_header a {
+    background: var(--cloudy-gray);
+    border-radius: var(--default-border-radius);
+    color: var(--pure-white);
 }
+
+#editForm\:processFromTemplateTabView\:processHierarchy_header a:hover {
+    background: var(--medium-gray);
+}
+
 
 #editForm\:processFromTemplateTabView\:processHierarchy_content {
     margin-left: var(--default-full-size);
@@ -1743,6 +1750,11 @@ Import form
     display: block;
     margin: auto;
     width: max-content;
+}
+
+#editForm\:processFromTemplateTabView\:processAncestors_content {
+    border: none;
+    padding: 0;
 }
 
 #editForm\:processFromTemplateTabView\:processAncestors ul {
@@ -1791,6 +1803,14 @@ Import form
 #editForm\:processFromTemplateTabView\:processChildren .ui-carousel-item {
     align-content: center;
     display: grid;
+}
+
+#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-item button {
+    background: var(--light-blue);
+}
+
+#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-item button.selected {
+    background: var(--blue);
 }
 
 #progressDialog {
