@@ -162,7 +162,7 @@
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalParents}:"/>
                             <p:dataTable var="parent"
-                                         value="#{ProcessForm.getAllParentProcesses(process.id)}"
+                                         value="#{ProcessForm.getAllParentProcesses(process)}"
                                          rendered="#{process.getParentID() ne 0}">
                                 <p:column>
                                     <h:outputText value="#{parent.getTitle()} "
