@@ -1069,15 +1069,9 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @return List of Processes
      */
-    public List<Process> getAllParentProcesses(int processId) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "getAllParentProcesses");
-        try {
-            return stopwatch.stop(ProcessService.getAllParentProcesses(ServiceManager.getProcessService().getById(
-                processId)));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
-            return stopwatch.stop(new ArrayList<>());
-        }
+    public List<Process> getAllParentProcesses(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process.getId(), "getAllParentProcesses");
+        return stopwatch.stop(ProcessService.getAllParentProcesses(process));
     }
 
     /**
