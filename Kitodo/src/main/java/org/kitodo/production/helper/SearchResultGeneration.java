@@ -17,7 +17,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
@@ -51,7 +51,7 @@ public class SearchResultGeneration {
      *
      * @return HSSFWorkbook
      */
-    public SXSSFWorkbook getResult() {
+    public XSSFWorkbook getResult() {
         return getWorkbook();
     }
 
@@ -70,8 +70,8 @@ public class SearchResultGeneration {
         return ServiceManager.getProcessService().getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
-    private SXSSFWorkbook getWorkbook() {
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
+    private XSSFWorkbook getWorkbook() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Search results");
 
         Row title = sheet.createRow(0);
