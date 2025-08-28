@@ -31,7 +31,7 @@
             <h:outputScript name="js/opacImport.js" target="body"/>
             <p:panelGrid layout="grid" columns="1" cellpadding="10">
                 <!-- choose from existing processes  -->
-                <p:row rendered="#{CreateProcessForm.processDataTab.usingTemplates}">
+                <p:outputPanel rendered="#{CreateProcessForm.processDataTab.usingTemplates}">
                     <div>
                         <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
                         <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchDialog.originalProcess}"
@@ -44,7 +44,7 @@
                             <p:ajax update="searchEditForm"/>
                         </p:selectOneMenu>
                     </div>
-                </p:row>
+                </p:outputPanel>
             </p:panelGrid>
             <h:panelGroup layout="block">
                 <p:commandButton id="copyProcessData"

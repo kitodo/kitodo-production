@@ -20,7 +20,7 @@
     <p:panelGrid layout="grid"
                  id="fileUploadButtonWrapper"
                  columns="2">
-        <p:row>
+        <p:panel>
             <h:panelGroup style="display: inline-block;">
                 <p:outputLabel for="csvFileUpload"
                                value="#{msgs['massImport.csvFileUpload']}"/>
@@ -51,9 +51,9 @@
                             update="editForm:recordsTableWrapper"/>
                 </p:selectBooleanCheckbox>
             </h:panelGroup>
-        </p:row>
+        </p:panel>
 
-        <p:row>
+        <p:panel>
             <!-- separator option to parse metadata groups inside individual CSV cells;
                  IMPORTANT: does not support nested groups, yet! -->
             <h:panelGroup id="separatorCharacterWrapper"
@@ -91,7 +91,7 @@
                     </p:selectOneMenu>
                 </h:panelGroup>
             </h:panelGroup>
-        </p:row>
+        </p:panel>
     </p:panelGrid>
 
     <!-- (CSV) records -->

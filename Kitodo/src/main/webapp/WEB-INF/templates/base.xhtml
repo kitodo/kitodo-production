@@ -29,6 +29,7 @@
         <h:body styleClass="#{LoginForm.firstVisit ? 'first-visit' : ''}" lang="#{LanguageForm.locale}">
             <h:outputStylesheet name="css/kitodo.css"/>
             <h:outputStylesheet name="css/pattern-library.css"/>
+            <h:outputStylesheet library="webjars" name="font-awesome/4.7.0/css/font-awesome-jsf.css" />
             <p:ajaxStatus onstart="$('html').addClass('progressCursor')"
                           oncomplete="$('html').removeClass('progressCursor')" />
             <p:growl id="notifications" widgetVar="notifications" severity="info" escape="false"/>
@@ -52,7 +53,7 @@
                         </ui:insert>
                         <section id="breadcrumbs">
                             <h:form id="breadcrumbForm">
-                                <p:breadCrumb id="breadcrumbMenu" styleClass="breadcrumb-menu">
+                                <p:breadCrumb id="breadcrumbMenu" >
                                     <ui:insert name="breadcrumbs"/>
                                 </p:breadCrumb>
                             </h:form>

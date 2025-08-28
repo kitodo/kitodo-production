@@ -11,6 +11,11 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.kitodo.constants.StringConstants.MEDIA_ID;
+import static org.kitodo.constants.StringConstants.MEDIA_VIEW;
+import static org.kitodo.constants.StringConstants.PREVIEW;
+import static org.kitodo.constants.StringConstants.PROCESS;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +23,6 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.production.helper.Helper;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-
 
 /**
  * Session scoped media provider bean.
@@ -38,10 +41,6 @@ public class MediaProvider implements Serializable {
     private static final Logger logger = LogManager.getLogger(MediaProvider.class);
 
     private final Map<Integer, Map<String, GalleryMediaContent>> mediaResolver = new HashMap<>();
-
-    private static final String PREVIEW = "preview";
-
-    private static final String MEDIA_VIEW = "mediaView";
 
     /**
      * Get the media resolver.
@@ -81,7 +80,8 @@ public class MediaProvider implements Serializable {
      * @return preview of media content as PrimeFaces StreamedContent
      */
     public StreamedContent getPreviewData() {
-        return getMediaContent(PREVIEW);
+        Map<String, String> parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        return getMediaContent(PREVIEW, parameterMap.get(PROCESS), parameterMap.get(MEDIA_ID));
     }
 
     /**
@@ -90,7 +90,8 @@ public class MediaProvider implements Serializable {
      * @return media view of media content as PrimeFaces StreamedContent
      */
     public StreamedContent getMediaView() {
-        return getMediaContent(MEDIA_VIEW);
+        Map<String, String> parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        return getMediaContent(MEDIA_VIEW, parameterMap.get(PROCESS), parameterMap.get(MEDIA_ID));
     }
 
     /**
@@ -115,27 +116,24 @@ public class MediaProvider implements Serializable {
         return Objects.nonNull(galleryMediaContent) && galleryMediaContent.isShowingInMediaView();
     }
 
-    private StreamedContent getMediaContent(String mediaVariant) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
-            String processIdString = context.getExternalContext().getRequestParameterMap().get("process");
+    private StreamedContent getMediaContent(String mediaVariant, String processIdString, String mediaIdString) {
+        if (Objects.nonNull(processIdString) && Objects.nonNull(mediaIdString)) {
             try {
                 int processId = Integer.parseInt(processIdString);
                 if (mediaResolver.containsKey(processId)) {
-                    String id = context.getExternalContext().getRequestParameterMap().get("mediaId");
                     Map<String, GalleryMediaContent> processPreviewData = mediaResolver.get(processId);
-                    GalleryMediaContent mediaContent = processPreviewData.get(id);
+                    GalleryMediaContent mediaContent = processPreviewData.get(mediaIdString);
                     if (Objects.nonNull(mediaContent)) {
-                        logger.trace("Serving image request {}", id);
+                        logger.trace("Serving image request {}", mediaIdString);
                         if (PREVIEW.equals(mediaVariant)) {
                             return mediaContent.getPreviewData();
                         }
                         if (MEDIA_VIEW.equals(mediaVariant)) {
                             return mediaContent.getMediaViewData();
                         }
-                        logger.error("Error: Unknown media variant '" + mediaVariant + "'");
+                        logger.error("Error: Unknown media variant '{}'", mediaVariant);
                     }
-                    logger.debug("Cannot serve image request, mediaId = {}", id);
+                    logger.debug("Cannot serve image request, mediaId = {}", mediaIdString);
                 }
                 logger.debug("Media resolver does not contain media content for process with ID {}", processId);
             } catch (NumberFormatException e) {
@@ -144,5 +142,4 @@ public class MediaProvider implements Serializable {
         }
         return DefaultStreamedContent.builder().build();
     }
-
 }

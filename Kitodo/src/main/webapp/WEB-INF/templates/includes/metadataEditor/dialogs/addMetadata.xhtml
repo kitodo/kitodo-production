@@ -25,7 +25,6 @@
               modal="true">
         <h:form id="addMetadataForm">
             <p:panelGrid columns="1" layout="grid">
-                <p:row>
                     <h3>#{msgs['dataEditor.addMetadata.newMetadata']}</h3>
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
@@ -45,6 +44,8 @@
                                          update="metadataAccordion:metadata:metadataTable metadataAccordion:addMetadataButtonWrapper"
                                          oncomplete="PF('addMetadataDialog').hide();metadataTable.focusMetadataRow.focus();"
                                          value="#{msgs.apply}"
+                                         icon="fa fa-check fa-lg"
+                                         iconPos="right"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
                                          onclick="PF('addMetadataDialog').hide();"
@@ -53,7 +54,6 @@
                                          iconPos="right"
                                          styleClass="secondary right"/>
                     </h:panelGroup>
-                </p:row>
             </p:panelGrid>
         </h:form>
     </p:dialog>
