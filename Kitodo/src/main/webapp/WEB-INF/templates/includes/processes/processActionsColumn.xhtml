@@ -126,18 +126,18 @@
 
             <p:commandLink action="#{ProcessListView.exportMets(process.id)}"
                            id="exportMets"
-                           styleClass="action #{ProcessForm.canBeExported(process.id) ? '' : 'disabled'}"
-                           disabled="#{not ProcessForm.canBeExported(process.id)}"
-                           title="#{ProcessForm.canBeExported(process.id) ? msgs.exportMets : msgs.exportUnavailableNoImages}"
+                           styleClass="action #{ProcessForm.canBeExported(process) ? '' : 'disabled'}"
+                           disabled="#{not ProcessForm.canBeExported(process)}"
+                           title="#{ProcessForm.canBeExported(process) ? msgs.exportMets : msgs.exportUnavailableNoImages}"
                            rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                            process="@this">
                 <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
             </p:commandLink>
             <p:commandLink id="exportDms"
-                           action="#{ProcessListView.exportDMS(process.id)}"
-                           styleClass="action #{ProcessForm.canBeExported(process.id) ? '' : 'disabled'}"
-                           disabled="#{not ProcessForm.canBeExported(process.id)}"
-                           title="#{ProcessForm.canBeExported(process.id) ? msgs.exportDMS : msgs.exportUnavailableNoImages} "
+                           action="#{ProcessListView.exportDMS(process)}"
+                           styleClass="action #{ProcessForm.canBeExported(process) ? '' : 'disabled'}"
+                           disabled="#{not ProcessForm.canBeExported(process)}"
+                           title="#{ProcessForm.canBeExported(process) ? msgs.exportDMS : msgs.exportUnavailableNoImages} "
                            rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                            process="@this">
                 <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
