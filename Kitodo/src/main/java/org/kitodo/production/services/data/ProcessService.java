@@ -80,7 +80,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
@@ -1144,7 +1144,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                SXSSFWorkbook wb = sr.getResult();
+                XSSFWorkbook wb = sr.getResult();
                 List<List<Cell>> rowList = new ArrayList<>();
                 Sheet mySheet = wb.getSheetAt(0);
                 Iterator<Row> rowIter = mySheet.rowIterator();
@@ -1190,7 +1190,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                SXSSFWorkbook wb = sr.getResult();
+                XSSFWorkbook wb = sr.getResult();
                 wb.write(out);
                 wb.close();
                 out.flush();
