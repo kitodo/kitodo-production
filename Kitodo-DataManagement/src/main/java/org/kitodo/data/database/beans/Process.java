@@ -38,6 +38,7 @@ import javax.persistence.Transient;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.LazyInitializationException;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
@@ -100,6 +101,7 @@ public class Process extends BaseTemplateBean {
     private Process parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     private List<Process> children;
 
     @Transient
@@ -107,10 +109,12 @@ public class Process extends BaseTemplateBean {
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ordering")
+    @BatchSize(size = 50)
     private List<Task> tasks;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -134,6 +138,7 @@ public class Process extends BaseTemplateBean {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "processes")
+    @BatchSize(size = 50)
     private List<Batch> batches = new ArrayList<>();
 
     @Column(name = "exported")
