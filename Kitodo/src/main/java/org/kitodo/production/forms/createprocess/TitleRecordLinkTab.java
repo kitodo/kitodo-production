@@ -164,9 +164,7 @@ public class TitleRecordLinkTab {
 
         if (selectableInsertionPositions.isEmpty()) {
             selectedInsertionPosition = null;
-            Helper.setErrorMessage(
-                    Helper.getTranslation("createProcessForm.titleRecordLinkTab.noInsertionPosition")
-            );
+            Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
         } else {
             selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
                     .getValue();
