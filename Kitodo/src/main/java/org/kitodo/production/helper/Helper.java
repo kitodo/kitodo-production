@@ -506,13 +506,7 @@ public class Helper {
     }
 
     private static Locale desiredLanguage() {
-        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-            if (Objects.nonNull(desiredLanguage)) {
-                return desiredLanguage;
-            }
-        }
-        return Locale.ENGLISH;
+        return LocaleHelper.getCurrentLocale();
     }
 
     /**
