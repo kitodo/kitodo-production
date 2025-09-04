@@ -1514,11 +1514,18 @@ body .statusColumn .ui-button {
 }
 
 #changeShortcutsDialog {
-    max-height: calc(100% - 100px);
+    height: 850px !important;
+    max-height: 90%;
 }
 
 #changeShortcutsDialog_content {
     overflow: visible;
+    height: 100% !important;
+}
+
+#changeShortcutsDialog .dialogFieldWrapper {
+    height: calc(100% - 85px);
+    padding-bottom: var(--default-full-size);
 }
 
 #resetPasswordForm .dialogFieldWrapper,
@@ -1870,6 +1877,10 @@ Import form
     width: calc(100% / 4 - 16px);
 }
 
+body .functional-metadata-wrapper .help-button .ui-button-text {
+    padding: 0;
+}
+
 .functional-metadata-wrapper .ui-datatable-tablewrapper {
     height: 75px;
     overflow-y: auto;
@@ -1879,6 +1890,19 @@ Import form
 #editForm\:rulesetTabView\:functionalMetadataGrid .ui-panelgrid-cell {
     width: 100%;
 }
+
+#fileUploadForm .ui-fileupload .ui-fileupload-buttonbar {
+    background: transparent;
+    padding: 0;
+    border: none;
+    float: unset;
+}
+
+#fileUploadForm .ui-fileupload .ui-fileupload-content,
+#fileUploadForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files {
+    border: none;
+}
+
 
 /*----------------------------------------------------------------------
 Mass import
@@ -2010,11 +2034,6 @@ Mass import
     border: none;
     padding: 0;
 }
-
-#editForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row > div {
-    padding: 0 var(--default-full-size);
-}
-
 
 #importResultsForm\:importResults .ui-accordion-content {
     padding: 0;
@@ -2360,7 +2379,6 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog .dialogFieldWrapper {
-    min-height: 100%;
     margin-bottom: 0;
     overflow-y: hidden;
 }
@@ -2372,6 +2390,10 @@ h3#headerText.calendar-heading {
     padding-left: var(--default-double-size);
     padding-right: var(--default-double-size);
     width: 100%;
+}
+
+#calendarDayForm .ui-toolbar {
+    border: none;
 }
 
 #calendarDayForm .ui-toolbar.ui-widget-header {
@@ -2409,11 +2431,9 @@ h3#headerText.calendar-heading {
 #calendarDayDialog .metadata-value {
     font-weight: bold;
     margin: var(--default-half-size);
-    vertical-align: top;
 }
 
 #calendarDayDialog .metadata-value-label {
-    vertical-align: top;
     margin-left: var(--default-half-size);
 }
 
@@ -2421,7 +2441,8 @@ h3#headerText.calendar-heading {
     display: block;
 }
 
-#calendarDayDialog .ui-inputtext {
+#calendarDayDialog .ui-inputtext,
+#calendarDayDialog .ui-selectonemenu {
     margin-bottom: var(--default-full-size);
 }
 
@@ -2430,6 +2451,10 @@ h3#headerText.calendar-heading {
     display: inline-flex;
     height: 30px;
     vertical-align: center;
+}
+
+#calendarDayDialog .button-metadata-last-issue {
+    margin-left: 0;
 }
 
 /*----------------------------------------------------------------------
