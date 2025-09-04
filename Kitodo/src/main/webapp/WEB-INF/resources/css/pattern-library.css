@@ -586,15 +586,22 @@ body .ui-picklist-list-wrapper {
     padding: var(--input-padding);
 }
 
+body .ui-fileupload .ui-fileupload-content {
+    padding: 0;
+}
+
 .ui-fileupload-files,
 .select-box {
     border: solid var(--default-border-width) var(--blue);
-    border-collapse: separate;
     border-radius: var(--default-border-radius);
 }
 
 .ui-fileupload-files {
     display: block;
+}
+
+.ui-fileupload-row {
+    background: var(--pure-white);
 }
 
 .ui-inputfield.ui-state-default {
@@ -1364,6 +1371,7 @@ body .ui-dialog,
 body .ui-dialog .ui-dialog-content,
 body .ui-dialog .ui-panelgrid-content,
 body .ui-dialog .ui-panelgrid-cell,
+body .ui-dialog .ui-dialog-footer,
 body .ui-fileupload-buttonbar,
 body .ui-fileupload-content {
     background-color: var(--light-gray);
@@ -1383,14 +1391,6 @@ body .ui-fileupload-content .ui-fileupload-cancel:hover {
     float: right;
     padding: 0;
     width: inherit;
-}
-
-.ui-fileupload-buttonbar > button.ui-button {
-    margin-left: var(--default-full-size);
-}
-
-.ui-fileupload-choose .ui-button-text {
-    /*line-height: 1.8em;*/
 }
 
 body .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row > div {
