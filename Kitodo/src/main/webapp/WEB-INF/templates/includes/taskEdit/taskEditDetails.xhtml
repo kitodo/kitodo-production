@@ -16,7 +16,7 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:panelGrid columns="2" layout="grid">
-        <p:row>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
                 <p:selectOneMenu id="status" value="#{ProcessForm.task.processingStatus}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
@@ -28,6 +28,6 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
-        </p:row>
+        </p:panel>
     </p:panelGrid>
 </ui:composition>

@@ -40,21 +40,38 @@
 
             <ui:fragment
                     rendered="#{mediaProvider.hasPreviewVariant(media) and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
-                <p:media styleClass="mediaListItem" cache="true"
-                         value="#{mediaProvider.previewData}"
-                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}">
+                <p:video styleClass="mediaListItem"
+                         rendered="#{fn:startsWith(media.previewMimeType, 'video')}"
+                         player="#{media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
+                         value="#{mediaProvider.previewData}">
                     <f:param name="mediaId"
                              value="#{media.id}"/>
                     <f:param name="process"
                              value="#{DataEditorForm.process.id}"/>
                     <f:param name="sessionId"
                              value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                    <f:param name="controls"
-                             value="#{fn:startsWith(media.previewMimeType, 'video') ? 'false' : 'true'}"/>
-                    <f:param name="type" value="#{media.previewMimeType}"/>
+                    <f:param name="type"
+                             value="#{media.previewMimeType}"/>
                     <f:param name="krsc"
                              value="true"/>
-                </p:media>
+                </p:video>
+                <p:audio styleClass="mediaListItem"
+                         rendered="#{fn:startsWith(media.previewMimeType, 'audio')}"
+                         player="#{fn:endsWith(media.previewMimeType, 'mpeg') ? 'mp3' : media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
+                         value="#{mediaProvider.previewData}">
+                    <f:param name="mediaId"
+                             value="#{media.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="type"
+                             value="#{media.previewMimeType}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:audio>
             </ui:fragment>
 
             <ui:fragment rendered="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')}">

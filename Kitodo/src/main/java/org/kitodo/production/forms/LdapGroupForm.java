@@ -25,6 +25,8 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("LdapGroupForm")
 @SessionScoped
@@ -35,6 +37,11 @@ public class LdapGroupForm extends BaseForm {
     private final String ldapGroupEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 
     protected static final String ERROR_DELETING_LDAP_GROUPE = "ldapGroupInUse";
+
+    public LdapGroupForm() {
+        super();
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+    }
 
     /**
      * Create new LDAP group.

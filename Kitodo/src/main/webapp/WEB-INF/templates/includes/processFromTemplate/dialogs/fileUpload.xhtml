@@ -29,7 +29,7 @@
         <h:form id="fileUploadForm"
                 styleClass="metadata-import-dialog-form">
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
-                <p:row>
+                <p:panel styleClass="column-wrapper">
                     <div>
                         <p:outputLabel for="catalogueSelectMenu"
                                        value="#{msgs['importConfig.configuration']}"/>
@@ -47,10 +47,10 @@
                             <p:ajax update="fileUploadForm"/>
                         </p:selectOneMenu>
                     </div>
-                </p:row>
+                </p:panel>
             </p:panelGrid>
-            <p:panelGrid>
-                <p:row>
+            <p:panelGrid columns="1">
+                <p:panel styleClass="column-wrapper">
                     <div>
                         <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
                         <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.fileUploadDialog.additionalImport}" >
@@ -70,7 +70,7 @@
                                       uploadIcon="fa fa-upload fa-lg"
                                       cancelIcon="fa fa-times fa-lg"/>
                     </div>
-                </p:row>
+                </p:panel>
             </p:panelGrid>
             <h:panelGroup id="eadLevelSelectionWrapper">
                 <ui:fragment rendered="#{CreateProcessForm.currentImportConfiguration.configurationType eq 'FILE_UPLOAD' and

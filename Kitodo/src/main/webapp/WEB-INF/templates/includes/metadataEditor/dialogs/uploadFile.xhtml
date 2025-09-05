@@ -37,8 +37,7 @@
             <h:panelGroup styleClass="not-scrollable dialogFieldWrapper"
                           layout="block">
                 <p:panelGrid id="uploadFileGrid" columns="1" layout="grid">
-                    <p:row>
-                        <div>
+                        <h:panelGroup>
                             <p:outputLabel value="#{msgs.position}"
                                            for="physicalPosition"/>
                             <p:selectOneMenu id="physicalPosition"
@@ -46,8 +45,8 @@
                                 <f:selectItems value="#{DataEditorForm.uploadFileDialog.possiblePositions}"/>
                                 <p:ajax event="blur"/>
                             </p:selectOneMenu>
-                        </div>
-                        <div>
+                        </h:panelGroup>
+                        <h:panelGroup>
                             <p:fileUpload id="uploadMedia"
                                           widgetVar="uploadMedia"
                                           value="#{DataEditorForm.uploadFileDialog.file}"
@@ -66,8 +65,8 @@
                                           fileLimitMessage="#{msgs.uploadMediaFileLimit}"
                                           cancelIcon="fa fa-times fa-lg"
                                           cancelLabel="#{msgs.cancel}"/>
-                        </div>
-                        <div id="progressDiv" style="display:none">
+                        </h:panelGroup>
+                        <h:panelGroup id="progressDiv" style="display:none">
                             <h:outputLabel for="progressBar">#{msgs.taskImageGeneratorThread}</h:outputLabel>
                             <p:progressBar id="progressBar"
                                            widgetVar="progressBar"
@@ -84,8 +83,7 @@
                                                 paginationForm:paginationWrapperPanel
                                                 @(.pageList)"/>
                             </p:progressBar>
-                        </div>
-                    </p:row>
+                        </h:panelGroup>
                 </p:panelGrid>
             </h:panelGroup>
             <h:panelGroup layout="block"
