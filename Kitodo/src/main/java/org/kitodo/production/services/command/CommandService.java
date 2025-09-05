@@ -52,14 +52,19 @@ public class CommandService {
         if (Objects.isNull(script)) {
             return null;
         }
+
         CommandResult commandResult = commandModule.runCommand(script);
-        List<String> commandResultMessages = commandResult.getMessages();
-        if (!commandResult.isSuccessful() && !commandResultMessages.isEmpty()) {
-            for (String message : commandResultMessages) {
+
+        if (Objects.isNull(commandResult)) {
+            throw new IOException("Command execution failed: no result returned");
+        }
+        for (String message : commandResult.getStdOutMessages()) {
+            Helper.setMessage(message);
+        }
+        if (commandResult.getExitCode() != 0) {
+            for (String message : commandResult.getStdErrMessages()) {
                 Helper.setErrorMessage(message);
             }
-            String fullErrorMessage = String.join(" | ", commandResultMessages);
-            throw new IOException(fullErrorMessage);
         }
         return commandResult;
     }
