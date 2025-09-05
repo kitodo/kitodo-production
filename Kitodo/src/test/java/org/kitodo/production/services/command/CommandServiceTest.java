@@ -11,9 +11,10 @@
 
 package org.kitodo.production.services.command;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -41,6 +42,10 @@ public class CommandServiceTest {
             System.getProperty("user.dir") + "/" + scriptPath + "long_working_script_2s.sh");
     private static File longWorkingScript1s = new File(
             System.getProperty("user.dir") + "/" + scriptPath + "long_working_script_1s.sh");
+    private static File exit1WithStdErrorScript = new File(
+            System.getProperty("user.dir") + "/" + scriptPath + "exit1_with_stderr.sh");
+    private static File exit0WithStdErrorScript = new File(
+            System.getProperty("user.dir") + "/" + scriptPath + "exit0_with_stderr.sh");
 
     @BeforeAll
     public static void setUp() throws IOException {
@@ -55,6 +60,9 @@ public class CommandServiceTest {
             ExecutionPermission.setExecutePermission(workingScriptWithParameters);
             ExecutionPermission.setExecutePermission(longWorkingScript2s);
             ExecutionPermission.setExecutePermission(longWorkingScript1s);
+            ExecutionPermission.setExecutePermission(exit1WithStdErrorScript);
+            ExecutionPermission.setExecutePermission(exit0WithStdErrorScript);
+
         }
 
     }
@@ -66,6 +74,8 @@ public class CommandServiceTest {
             ExecutionPermission.setNoExecutePermission(workingScriptWithParameters);
             ExecutionPermission.setNoExecutePermission(longWorkingScript2s);
             ExecutionPermission.setNoExecutePermission(longWorkingScript1s);
+            ExecutionPermission.setNoExecutePermission(exit1WithStdErrorScript);
+            ExecutionPermission.setNoExecutePermission(exit0WithStdErrorScript);
         }
     }
 
@@ -127,7 +137,13 @@ public class CommandServiceTest {
     public void runNotExistingScript() throws IOException {
         String commandString = scriptPath + "not_existing_script" + scriptExtension;
         CommandService service = new CommandService();
-        assertThrows(IOException.class, () -> service.runCommand(commandString));
+
+        CommandResult result = service.runCommand(commandString);
+
+        assertNotNull(result);
+        assertEquals(-1, result.getExitCode());
+        assertTrue(result.getStdErrMessages().get(0).contains("IOException"));
+        assertFalse(result.isSuccessful());
     }
 
     @Test
@@ -163,6 +179,43 @@ public class CommandServiceTest {
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
         assertNotNull(result, "There were no results!");
         assertTrue(result.getMessages().get(0).contains("IOException"), "result message should contain IOException");
+    }
+
+    @Test
+    public void runScriptExit0WithStdErr() throws IOException {
+        // test script that exits 0 but writes to stderr
+        String commandString = scriptPath + "exit0_with_stderr" + scriptExtension;
+        File file = new File(commandString);
+        CommandService service = new CommandService();
+        CommandResult result = service.runCommand(file);
+
+        assertNotNull(result, "Result must not be null");
+        assertEquals(0, result.getExitCode(), "Exit code should be 0");
+        assertTrue(result.isSuccessful(), "Command should be marked successful");
+
+        // stdout should contain our test line
+        assertTrue(result.getStdOutMessages().contains("Test StdOut output"), "StdOut should contain expected message");
+        // stderr should contain our test error line, but not cause failure
+        assertTrue(result.getStdErrMessages().contains("Test StdErr output"), "StdErr should contain expected message");
+    }
+
+    @Test
+    public void runFailingScriptShouldNotThrow() {
+        String commandString = scriptPath + "exit1_with_stderr" + scriptExtension;
+        CommandService service = new CommandService();
+        File file = new File(commandString);
+        CommandResult result = assertDoesNotThrow(
+                () -> service.runCommand(file),
+                "Non-zero exit code must not cause an exception"
+        );
+
+        assertNotNull(result, "Result should not be null");
+        assertEquals(1, result.getExitCode(), "Exit code should be 1");
+        assertFalse(result.isSuccessful(), "isSuccessful should be false");
+        assertTrue(
+                result.getStdErrMessages().stream().anyMatch(msg -> msg.contains("Test StdErr output")),
+                "StdErr should contain expected message"
+        );
     }
 
     @Test

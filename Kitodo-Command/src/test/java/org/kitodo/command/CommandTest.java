@@ -79,7 +79,7 @@ public class CommandTest {
 
         expectedMessages.add("Hello World");
 
-        CommandResult expectedCommandResult = new CommandResult(commandString, true, expectedMessages);
+        CommandResult expectedCommandResult = new CommandResult(commandString, 0, expectedMessages, new ArrayList<>());
 
         assertEquals(expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful(),
@@ -99,7 +99,7 @@ public class CommandTest {
         String commandString = "src/test/resources/notExistingScript" + scriptExtension;
         CommandResult commandResult = command.runCommand(commandString);
 
-        CommandResult expectedCommandResult = new CommandResult(commandString, false, null);
+        CommandResult expectedCommandResult = new CommandResult(commandString, -1, new ArrayList<>(), commandResult.getStdErrMessages());
 
         assertEquals(expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful(),
@@ -113,7 +113,7 @@ public class CommandTest {
         String commandString = "src/test/resources/not_working_script" + scriptExtension;
         CommandResult commandResult = command.runCommand(commandString);
 
-        CommandResult expectedCommandResult = new CommandResult(commandString, false, null);
+        CommandResult expectedCommandResult = new CommandResult(commandString, commandResult.getExitCode(), new ArrayList<>(), commandResult.getStdErrMessages());
 
         assertEquals(expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful(),
@@ -136,7 +136,7 @@ public class CommandTest {
 
         expectedMessages.add("testParameter");
 
-        CommandResult expectedCommandResult = new CommandResult(commandString, true, expectedMessages);
+        CommandResult expectedCommandResult = new CommandResult(commandString, 0,  expectedMessages, new ArrayList<>());
 
         assertEquals(expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful(),
