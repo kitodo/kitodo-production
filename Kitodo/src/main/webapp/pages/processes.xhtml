@@ -59,6 +59,7 @@
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                   label=""
+                                  showHeader="false"
                                   converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
                                   value="#{ProcessForm.selectedColumns}">

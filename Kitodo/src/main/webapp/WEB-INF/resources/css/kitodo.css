@@ -1549,7 +1549,12 @@ Statistics
 ----------------------------------------------------------------------*/
 
 #statisticsDialog {
+    left: 50% !important;
+    min-height: 200px;
+    min-width: 800px;
     overflow-y: hidden;
+    top: 50% !important;
+    transform: translate(-50%, -50%);
 }
 
 #statisticsDialog h3#headerText {
