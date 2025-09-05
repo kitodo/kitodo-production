@@ -586,6 +586,11 @@ body .ui-picklist-list-wrapper {
     padding: var(--input-padding);
 }
 
+body .ui-picklist .ui-picklist-list .ui-picklist-item.ui-state-highlight {
+    background: var(--blue);
+    color: var(--pure-white);
+}
+
 body .ui-fileupload .ui-fileupload-content {
     padding: 0;
 }
@@ -919,9 +924,16 @@ body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-icon::before {
 }
 
 .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
+    height: auto !important;
+    max-height: 650px;
+    padding: 0;
     min-width: 200px;
     overflow: initial;
     overflow-y: scroll;
+}
+
+body .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items {
+    padding: 0;
 }
 
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger {
@@ -1879,6 +1891,10 @@ body .m-0{
 }
 
 /* Messages */
+body .ui-messages > div {
+    padding: 10px;
+}
+
 body .ui-messages .ui-messages-error,
 body .ui-messages .ui-messages-warn,
 body .ui-messages .ui-messages-info {
