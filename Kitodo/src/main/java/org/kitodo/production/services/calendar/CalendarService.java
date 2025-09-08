@@ -48,6 +48,7 @@ import org.kitodo.production.model.bibliography.course.metadata.CountableMetadat
 import org.kitodo.production.model.bibliography.course.metadata.MetadataEditMode;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 
 public class CalendarService {
 
@@ -92,7 +93,7 @@ public class CalendarService {
         List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(authenticatedUser.getMetadataLanguage());
 
         // get the basic rule set type of the newspaper
-        String newspaperType = ServiceManager.getProcessService().getBaseType(completeEdition.getId());
+        String newspaperType = ProcessService.getBaseType(completeEdition);
 
         // descend to the issue
         StructuralElementViewInterface newspaperView = ruleset.getStructuralElementView(newspaperType, CREATE, priorityList);
