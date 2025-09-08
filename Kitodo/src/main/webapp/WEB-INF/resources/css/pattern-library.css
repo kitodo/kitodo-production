@@ -1892,6 +1892,7 @@ body .m-0{
 
 /* Messages */
 body .ui-messages > div {
+    margin: 0;
     padding: 10px;
 }
 
@@ -1918,7 +1919,7 @@ body .ui-messages .ui-messages-error .ui-messages-close {
     color: var(--pure-white);
     position: absolute;
     right: var(--default-full-size);
-    top: calc(var(--input-padding) + 10px);
+    top: 5px;
 }
 
 #messagesWrapper .ui-messages-close:hover,
