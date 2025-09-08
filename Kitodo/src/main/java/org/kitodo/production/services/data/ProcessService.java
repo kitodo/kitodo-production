@@ -173,7 +173,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_FILE_NAME = "meta.xml";
     private static final String NEW_LINE_ENTITY = "\n";
-    private static final Pattern TYPE_PATTERN = Pattern.compile("structMap TYPE=\"LOGICAL\">.*?TYPE=\"([^\"]+)\"");
+    private static final Pattern TYPE_PATTERN = Pattern.compile("structMap TYPE=\"LOGICAL\">.*?TYPE=\"([^\"]+)\"", Pattern.DOTALL);
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
     private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_FROM_CALENDAR = new HashMap<>();
@@ -1337,7 +1337,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             try {
                 String content = FileUtils.readFileToString(metafile, UTF_8);
                 Matcher type = TYPE_PATTERN.matcher(content);
-                return Pair.of(processId, type.find() ? type.group(1) : "");
+                String foundType = type.find() ? type.group(1) : "";
+                return Pair.of(processId, foundType);
             } catch (IOException e) {
                 logger.catching(Level.ERROR, e);
                 return Pair.of(processId, e.getClass().getSimpleName());
