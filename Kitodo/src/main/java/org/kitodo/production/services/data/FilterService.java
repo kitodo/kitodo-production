@@ -410,13 +410,13 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
         }
 
         Matcher idSearch = ID_SEARCH_PATTERN.matcher(value);
-        if (idSearch.matches()) {
+        if (idSearch.matches() && !filterField.equals(FilterField.PROCESS_TITLE)) {
             return new DatabaseIdQueryPart(filterField, idSearch.group(1), idSearch.group(2), operand);
         }
 
         if (indexed && Objects.nonNull(filterField.getSearchField())) {
             return new IndexQueryPart(filterField, value, operand);
-        } else if (Objects.equals(filterField, FilterField.PROCESS_ID)) {
+        } else if (Objects.equals(filterField, FilterField.PROCESS_ID) && value.matches(".*\\d.*"))  {
             return new DatabaseIdQueryPart(filterField, value, operand);
         } else {
             return new DatabaseQueryPart(filterField, value, operand);
