@@ -80,7 +80,7 @@
                                      oncomplete="PF('calendarDayDialog').show()"
                                      disabled="#{not calendar.get(index).onBlock}"
                                      update="calendarDayForm"/>
-                    <p:repeat value="#{calendar.get(index).issues}"
+                    <ui:repeat value="#{calendar.get(index).issues}"
                               var="issue"
                               varStatus="iteration">
                         <h:outputText title="#{msgs['calendar.sheet.issue.selected']}"
@@ -88,7 +88,7 @@
                                       styleClass="issue match"
                                       style="background-color: #{CalendarForm.getIssueColor(iteration.index)};
                                              border-color: #{CalendarForm.getIssueColor(iteration.index)}"/>
-                    </p:repeat>
+                    </ui:repeat>
                 </p:columns>
             </p:dataTable>
         </h:panelGroup>

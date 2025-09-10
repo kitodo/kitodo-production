@@ -17,16 +17,13 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid columns="2" layout="grid">
-        <p:row>
-            <div>
+            <p:outputPanel>
                 <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                 <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
                              value="#{AuthorityForm.title}" placeholder="#{msgs.title}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
-            </div>
-        </p:row>
-        <p:row>
-            <div>
+            </p:outputPanel>
+            <p:outputPanel>
                 <p:outputLabel for="types" value="#{msgs.type}"/>
                 <p:selectOneMenu id="types" value="#{AuthorityForm.type}" disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
@@ -34,8 +31,7 @@
                     <f:selectItem itemLabel="globalAssignable" itemValue="globalAssignable"/>
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-            </div>
-        </p:row>
+            </p:outputPanel>
     </p:panelGrid>
 
 </ui:composition>

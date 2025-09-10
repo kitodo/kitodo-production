@@ -37,6 +37,8 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("DocketForm")
 @SessionScoped
@@ -61,6 +63,7 @@ public class DocketForm extends BaseForm {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getDocketService()));
         this.projectForm = projectForm;
+        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
     }
 
     /**

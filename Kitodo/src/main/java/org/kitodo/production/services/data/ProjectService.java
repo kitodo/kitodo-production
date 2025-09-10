@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
@@ -108,6 +109,12 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DAOException {
 
+        if (StringUtils.isBlank(sortField)) {
+            sortField = "title";
+        }
+        if (Objects.isNull(sortOrder)) {
+            sortOrder = SortOrder.ASCENDING;
+        }
         BeanQuery query = getProjectsQuery();
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);

@@ -113,24 +113,23 @@ public class AuthorityService extends BaseBeanService<Authority, AuthorityDAO> {
         }
 
         // do sorting
-        Integer sortFactor = sortOrder.equals(SortOrder.DESCENDING) ? -1 : 1;
-        if (sortField.equals("title")) {
+        int sortFactor = sortOrder.equals(SortOrder.DESCENDING) ? -1 : 1;
+        if ("title".equals(sortField)) {
             authorities.sort((Authority a, Authority b) -> 
                 Helper.getTranslation(a.getTitleWithoutSuffix()).toLowerCase().compareTo(
                     Helper.getTranslation(b.getTitleWithoutSuffix()).toLowerCase()
                 ) * sortFactor
             );
         }
-        if (sortField.equals("type")) {
+        if ("type".equals(sortField)) {
             authorities.sort((Authority a, Authority b) -> 
                 Helper.getTranslation(a.getType()).compareTo(Helper.getTranslation(b.getType())) * sortFactor
             );
         }
 
         // extract authorities of current page
-        int fromIndex = first;
         int toIndex = Math.min(authorities.size(), first + pageSize);
-        return IntStream.range(fromIndex, toIndex).mapToObj(authorities::get).collect(Collectors.toList());
+        return IntStream.range(first, toIndex).mapToObj(authorities::get).collect(Collectors.toList());
     }
 
     /**
