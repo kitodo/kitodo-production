@@ -1337,8 +1337,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             try {
                 String content = FileUtils.readFileToString(metafile, UTF_8);
                 Matcher type = TYPE_PATTERN.matcher(content);
-                String foundType = type.find() ? type.group(1) : "";
-                return Pair.of(processId, foundType);
+                return Pair.of(processId, type.find() ? type.group(1) : "");
             } catch (IOException e) {
                 logger.catching(Level.ERROR, e);
                 return Pair.of(processId, e.getClass().getSimpleName());
