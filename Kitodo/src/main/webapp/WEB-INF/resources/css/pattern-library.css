@@ -455,6 +455,10 @@ body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui
     content: "\f160";
 }
 
+body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-treenode-leaf-icon {
+    margin: 0;
+}
+
 .ui-treenode-icon.ui-icon {
     background-image: none;
     height: 2rem;
