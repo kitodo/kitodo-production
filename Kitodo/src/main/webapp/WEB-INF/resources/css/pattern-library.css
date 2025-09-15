@@ -1580,8 +1580,17 @@ body .ui-dialog .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
     overflow-y: hidden;
 }
 
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-panelgrid-cell{
+#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-panelgrid-cell {
     vertical-align: top;
+}
+
+#dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content > .ui-panelgrid-cell {
+    width: 50%;
+}
+
+#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-selectonemenu,
+#dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content:first-child > .ui-panelgrid-cell > table {
+    width: 90%;
 }
 
 .ui-dialog.legal-dialog button.secondary.right {
