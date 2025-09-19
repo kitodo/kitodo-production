@@ -26,6 +26,8 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("LtpValidationConfigurationListView")
 @ViewScoped
@@ -42,6 +44,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
     public LtpValidationConfigurationListView() {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getLtpValidationConfigurationService()));
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**

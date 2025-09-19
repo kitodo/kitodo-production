@@ -28,7 +28,7 @@
                           styleClass="not-scrollable dialogFieldWrapper">
                 <p:panelGrid columns="1"
                              layout="grid">
-                    <p:row>
+                    <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="urlParameterKey"
                                            value="#{msgs['importConfig.urlParameterKey']}"/>
@@ -42,8 +42,6 @@
                             <p:tooltip for="urlParameterKeyHelp"
                                        value="Key of parameter added to each query of this custom search interface"/>
                         </div>
-                    </p:row>
-                    <p:row>
                         <div>
                             <p:outputLabel for="urlParameterValue"
                                            value="#{msgs['importConfig.urlParameterValue']}"/>
@@ -57,7 +55,7 @@
                             <p:tooltip for="urlParameterValueHelp"
                                        value="Value of parameter added to each query of this custom search interface"/>
                         </div>
-                    </p:row>
+                    </p:panel>
                 </p:panelGrid>
             </h:panelGroup>
             <h:panelGroup layout="block"

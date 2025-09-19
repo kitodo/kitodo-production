@@ -551,7 +551,7 @@ public class AddDocStrucTypeDialog {
      *                       (currentElement = false)
      * @param metadataNodes list of TreeNodes containing the metadata that is already assigned to the structure element
      */
-    public void prepareAddableMetadataForStructure(boolean currentElement, List<TreeNode> metadataNodes) {
+    public void prepareAddableMetadataForStructure(boolean currentElement, List<TreeNode<Object>> metadataNodes) {
         addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, currentElement,
                 metadataNodes, docStructAddTypeSelectionSelectedItem, true);
         setSelectedMetadata("");

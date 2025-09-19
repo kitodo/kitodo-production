@@ -150,9 +150,9 @@ public class UpdateMetadataDialog implements Serializable {
         }
     }
 
-    private HashSet<Metadata> getMetadata(TreeNode treeNode) throws InvalidMetadataValueException {
+    private HashSet<Metadata> getMetadata(TreeNode<Object> treeNode) throws InvalidMetadataValueException {
         HashSet<Metadata> processDetails = new HashSet<>();
-        for (TreeNode child : treeNode.getChildren()) {
+        for (TreeNode<Object> child : treeNode.getChildren()) {
             processDetails.addAll(((ProcessDetail) child.getData()).getMetadata(false));
         }
         return processDetails;

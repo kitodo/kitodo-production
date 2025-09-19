@@ -63,11 +63,11 @@
                         </span>
                         <div>
                             <label for="username">#{msgs.username}</label>
-                            <input id="username" name="username" autocomplete="username" autofocus="autofocus"/>
+                            <input id="username" name="username" autocomplete="username" autofocus="autofocus" class="ui-inputfield"/>
                         </div>
                         <div>
                             <label for="password">#{msgs.password}</label>
-                            <input id="password" type="password" name="password"/>
+                            <p:password id="password" toggleMask="true" name="password"/>
                         </div>
                         <button id="login" aria-disabled="false"><span class="button-text">#{msgs.signIn}</span> <span class="ui-icon ui-c fa fa-sign-in fa-lg"/></button>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -87,13 +87,13 @@
             <section id="login-language-section">
                 <h:form id="login-languages-form">
                     <ul>
-                        <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
+                        <ui:repeat value="#{LanguageForm.supportedLocales}" var="language">
                             <c:set var="languageKey" value="#{language['id']}"/>
                             <li class="#{LanguageForm.getLanguage() eq languageKey ? 'active' : ''}">
                                 <p:commandLink value="#{language.displayLanguageSelf}"
                                                onclick="setLanguageCookieAndReload('#{languageKey}')"/>
                             </li>
-                        </p:repeat>
+                        </ui:repeat>
                     </ul>
                 </h:form>
             </section>

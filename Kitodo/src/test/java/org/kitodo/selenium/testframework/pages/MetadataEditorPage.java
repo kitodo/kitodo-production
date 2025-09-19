@@ -22,6 +22,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -253,7 +254,11 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         ));
         Actions actions = new Actions(Browser.getDriver());
         if (withCtrl) {
-            actions = actions.keyDown(Keys.LEFT_CONTROL).click(treeNode).keyUp(Keys.LEFT_CONTROL); 
+            if (Platform.getCurrent().is(Platform.MAC)) {
+                actions = actions.keyDown(Keys.COMMAND).click(treeNode).keyUp(Keys.COMMAND);
+            } else {
+                actions = actions.keyDown(Keys.LEFT_CONTROL).click(treeNode).keyUp(Keys.LEFT_CONTROL);
+            }
         } else if (withShift) {
             actions = actions.keyDown(Keys.LEFT_SHIFT).click(treeNode).keyUp(Keys.LEFT_SHIFT);
         } else {

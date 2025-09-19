@@ -47,6 +47,7 @@
                 <!-- option to link to existing process -->
                 <h:panelGrid rendered="#{not viewsSelected}">
                     <p:selectBooleanCheckbox itemLabel="#{msgs.link}"
+                                             styleClass="switch"
                                              title="#{msgs.link}"
                                              value="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
                         <p:ajax event="change"
@@ -68,9 +69,9 @@
                                     <p:outputLabel value="#{msgs.position}:"
                                                    for="docStructPositionSelection"/>
                                     <p:selectOneMenu id="docStructPositionSelection"
+                                                     autoWidth="false"
                                                      class="input"
-                                                     value="#{DataEditorForm.addDocStrucTypeDialog.selectedDocStructPosition}"
-                                                     style="width: 180px;">
+                                                     value="#{DataEditorForm.addDocStrucTypeDialog.selectedDocStructPosition}">
                                         <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
                                                        var="positionSelection"
                                                        itemValue="#{positionSelection}"
@@ -86,9 +87,9 @@
                                                    for="docStructAddTypeSelection"/>
                                     <p:selectOneMenu id="docStructAddTypeSelection"
                                                      class="input"
+                                                     autoWidth="false"
                                                      value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
-                                                     required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}"
-                                                     style="width: 180px;">
+                                                     required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}">
                                         <f:selectItem itemValue="#{null}"
                                                       itemLabel="#{msgs.notSelected}"
                                                       itemDisabled="true"
@@ -201,8 +202,8 @@
                                 <p:selectOneMenu id="selectAddableMetadataTypes"
                                                  disabled="#{empty DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                                  class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}"
-                                                 style="width: 180px;">
+                                                 autoWidth="false"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}">
                                     <f:selectItem itemValue=""
                                         itemLabel="#{msgs.notSelected}"
                                         itemDisabled="false"/>
@@ -252,6 +253,7 @@
                             <p:selectOneMenu id="processSelect"
                                              disabled="#{empty DataEditorForm.addDocStrucTypeDialog.processes}"
                                              styleClass="input"
+                                             autoWidth="false"
                                              converter="#{processConverter}"
                                              value="#{DataEditorForm.addDocStrucTypeDialog.selectedProcess}">
                                 <f:selectItem noSelectionOption="true"
@@ -264,7 +266,7 @@
                     </p:row>
                 </p:panelGrid>
 
-                <p:panelGrid id="submitButtonGroup">
+                <p:panelGrid id="submitButtonGroup" columns="1">
 
                     <!-- submit buttons for new structure element(s) -->
                     <h:panelGroup layout="block"
@@ -307,7 +309,8 @@
 
                     <!-- submit buttons for linking processes -->
                     <h:panelGroup layout="block"
-                                  rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
+                                  rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}"
+                                  columns="1">
                         <p:commandButton id="addLinkButton"
                                          value="#{msgs.apply}"
                                          action="#{DataEditorForm.addDocStrucTypeDialog.addProcessLink}"

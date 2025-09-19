@@ -16,7 +16,7 @@
     xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
-        <p:row>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="title" value="#{msgs.title}" />
                 <p:inputText id="title" placeholder="#{msgs.title}" class="input"
@@ -37,23 +37,49 @@
                              disabled="#{ProjectForm.locked}">
                 </p:inputText>
             </div>
-        </p:row>
-        <p:row>
+            <ui:fragment rendered="#{ProjectForm.copyTemplates}">
+                <div>
+                    <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
+                    <p:selectBooleanCheckbox id="copyTemplates"
+                                             styleClass="switch input"
+                                             value="#{ProjectForm.copyTemplates}"
+                                             disabled="#{ProjectForm.locked}">
+                        <p:ajax event="change" oncomplete="toggleSave()" />
+                    </p:selectBooleanCheckbox>
+                </div>
+            </ui:fragment>
+            <div>
+                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
+                <p:selectBooleanCheckbox id="projectIsActive"
+                                         styleClass="switch input"
+                                         value="#{ProjectForm.project.active}"
+                                         disabled="#{ProjectForm.locked}">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
-                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjectForm.project.startDate}"
-                            showOn="button"
-                            disabled="#{ProjectForm.locked}">
+                <p:datePicker id="startdate"
+                              styleClass="input-with-button"
+                              value="#{ProjectForm.project.startDate}"
+                              showOn="button"
+                              showIcon="true"
+                              disabled="#{ProjectForm.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
-                </p:calendar>
+                </p:datePicker>
             </div>
             <div>
                 <p:outputLabel for="enddate" value="#{msgs.endDate}" />
-                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjectForm.project.endDate}"
-                            showOn="button"
+                <p:datePicker id="enddate"
+                              styleClass="input-with-button"
+                              value="#{ProjectForm.project.endDate}"
+                              showOn="button"
+                              showIcon="true"
                             disabled="#{ProjectForm.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
-                </p:calendar>
+                </p:datePicker>
             </div>
             <div>
                 <p:outputLabel for="filenamelength" value="#{msgs.filenameLengthForRenaming}" />
@@ -65,25 +91,7 @@
                                disabled="#{ProjectForm.locked}">
                 </p:inputNumber>
             </div>
+        </p:panel>
 
-            <ui:fragment rendered="#{ProjectForm.copyTemplates}">
-                <div>
-                    <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
-                    <p:selectBooleanCheckbox id="copyTemplates" styleClass="switch input" value="#{ProjectForm.copyTemplates}"
-                                             disabled="#{ProjectForm.locked}">
-                        <p:ajax event="change" oncomplete="toggleSave()" />
-                    </p:selectBooleanCheckbox>
-                </div>
-            </ui:fragment>
-        </p:row>
-        <p:row>
-            <div>
-                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
-                <p:selectBooleanCheckbox id="projectIsActive" styleClass="switch input" value="#{ProjectForm.project.active}"
-                                         disabled="#{ProjectForm.locked}">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-        </p:row>
     </p:panelGrid>
 </ui:composition>

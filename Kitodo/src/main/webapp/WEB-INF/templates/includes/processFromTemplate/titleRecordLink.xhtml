@@ -22,7 +22,7 @@
                  layout="grid"
                  columns="2"
                  cellpadding="10">
-        <p:row>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="searchForParent" value="#{msgs.searchProcessTitle}"/>
                 <p:inputText id="searchForParent"
@@ -90,6 +90,6 @@
                     </p:treeNode>
                 </p:tree>
             </h:panelGroup>
-        </p:row>
+        </p:panel>
     </p:panelGrid>
 </ui:composition>

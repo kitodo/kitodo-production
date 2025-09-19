@@ -44,8 +44,8 @@
         </h:panelGroup>
         <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  scrollHeight="300"
                                   label=""
+                                  showHeader="false"
                                   converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
                                   value="#{ProjectForm.selectedColumns}">

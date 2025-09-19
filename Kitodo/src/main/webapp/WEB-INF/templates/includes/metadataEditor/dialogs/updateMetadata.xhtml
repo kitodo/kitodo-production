@@ -27,8 +27,8 @@
               dynamic="true"
               modal="true">
         <h:form id="updateMetadataForm">
-            <p:panelGrid columns="1" layout="grid">
-                <p:row>
+            <p:panelGrid columns="1">
+                <p:panel styleClass="column-wrapper">
                     <h3>#{msgs['updateMetadata']}<h:panelGroup> <h:outputText styleClass="set-apart" value="(#{UpdateMetadataDialog.recordIdentifier})"/></h:panelGroup>
                         <p:commandButton id="updateMetadataHelp"
                                          type="button"
@@ -38,8 +38,8 @@
                     <p:tooltip for="updateMetadataHelp" position="left">
                         #{msgs['dataEditor.updateMetadata.help']}
                     </p:tooltip>
-                </p:row>
-                <p:row>
+                </p:panel>
+                <p:panel styleClass="column-wrapper">
                     <h:panelGroup layout="block"
                                   styleClass="not-scrollable dialogFieldWrapper">
                         <p:dataTable id="metadataUpdateTable"
@@ -101,7 +101,7 @@
                                         </p:tooltip>
                                     </p:commandButton>
                                 </f:facet>
-                                <p:outputPanel>
+                                <p:outputPanel id="selectValueButtonWrapper">
                                     <!--@elvariable id="rowIdx" type="java.lang.Integer"-->
                                     <p:commandButton id="selectOldValuesButton"
                                                      partialSubmit="true"
@@ -183,7 +183,7 @@
                             </p:column>
                         </p:dataTable>
                     </h:panelGroup>
-                </p:row>
+                </p:panel>
             </p:panelGrid>
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">

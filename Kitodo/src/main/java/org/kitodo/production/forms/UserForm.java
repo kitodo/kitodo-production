@@ -66,6 +66,8 @@ import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("UserForm")
 @SessionScoped
@@ -98,6 +100,10 @@ public class UserForm extends BaseForm {
     private final LoginForm loginForm;
 
     private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
+
+    private SortMeta clientListSortBy;
+    private SortMeta projectListSortBy;
+    private SortMeta roleListSortBy;
 
     /**
      * Default constructor with inject login form that also sets the
@@ -137,6 +143,12 @@ public class UserForm extends BaseForm {
         if (!ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
             deselectRoleClientColumn();
         }
+
+        sortBy = SortMeta.builder().field("surname").order(SortOrder.ASCENDING).build();
+        clientListSortBy = SortMeta.builder().field("name").order(SortOrder.ASCENDING).build();
+        projectListSortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        roleListSortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+
     }
 
     /**
@@ -795,5 +807,59 @@ public class UserForm extends BaseForm {
      */
     public List<Client> getUserClientsSorted() {
         return UserService.getClientsOfUserSorted(userObject);
+    }
+
+    /**
+     * Get the current sorting configuration for the user's client list.
+     *
+     * @return the SortMeta object representing the sorting configuration
+     */
+    public SortMeta getClientListSortBy() {
+        return clientListSortBy;
+    }
+
+    /**
+     * Set the current sorting configuration for the user's client list.
+     *
+     * @param clientListSortBy the SortMeta object representing the sorting configuration
+     */
+    public void setClientListSortBy(SortMeta clientListSortBy) {
+        this.clientListSortBy = clientListSortBy;
+    }
+
+    /**
+     * Get the current sorting configuration for the user's project list.
+     *
+     * @return the SortMeta object representing the sorting configuration
+     */
+    public SortMeta getProjectListSortBy() {
+        return projectListSortBy;
+    }
+
+    /**
+     * Set the current sorting configuration for the user's project list.
+     *
+     * @param projectListSortBy the SortMeta object representing the sorting configuration
+     */
+    public void setProjectListSortBy(SortMeta projectListSortBy) {
+        this.projectListSortBy = projectListSortBy;
+    }
+
+    /**
+     * Get the current sorting configuration for the user's role list.
+     *
+     * @return the SortMeta object representing the sorting configuration
+     */
+    public SortMeta getRoleListSortBy() {
+        return roleListSortBy;
+    }
+
+    /**
+     * Set the current sorting configuration for the user's role list.
+     *
+     * @param roleListSortBy the SortMeta object representing the sorting configuration
+     */
+    public void setRoleListSortBy(SortMeta roleListSortBy) {
+        this.roleListSortBy = roleListSortBy;
     }
 }

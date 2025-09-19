@@ -30,7 +30,7 @@
                      paginator="true"
                      resizableColumns="true"
                      liveResize="true"
-                     sortBy="#{item.title.keyword}"
+                     sortBy="#{CurrentTaskForm.sortBy}"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
@@ -41,7 +41,7 @@
             <p:ajax event="rowToggle"
                     oncomplete="registerRowToggleEvents();"/>
 
-            <p:column style="width: 20px;"
+            <p:column styleClass="rowTogglerColumn"
                       resizable="false">
                 <p:rowToggler/>
             </p:column>

@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -51,6 +53,7 @@ import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
@@ -115,7 +118,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             if (skipHitList(createProcessForm.getCurrentImportConfiguration(), getSelectedField())) {
                 getRecordById(getSearchTerm());
             } else {
-                List<?> hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+                Map<String, SortMeta> sortBy = new HashMap<String, SortMeta>();
+                List<?> hits = hitModel.load(0, 10, sortBy, Collections.EMPTY_MAP);
                 if (hits.size() == 1) {
                     getRecordById(((SingleHit) hits.get(0)).getIdentifier());
                 } else {

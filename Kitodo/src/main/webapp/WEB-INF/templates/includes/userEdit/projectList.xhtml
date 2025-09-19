@@ -19,7 +19,7 @@
 
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.Project"-->
     <p:dataTable id="projectDatatable"
-                 sortBy="#{item.title}"
+                 sortBy="#{UserForm.projectListSortBy}"
                  var="item"
                  value="#{UserForm.userObject.projects}">
         <p:column headerText="#{msgs.projectList}" sortBy="#{item.title}">

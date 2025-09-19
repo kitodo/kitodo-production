@@ -20,11 +20,11 @@ import org.apache.logging.log4j.LogManager;
 
 public class Stopwatch {
 
-    private Class<?> executor;
-    private Object object;
-    private String functionName;
-    private String[] args;
-    private long start;
+    private final Class<?> executor;
+    private final Object object;
+    private final String functionName;
+    private final String[] args;
+    private final long start;
 
     /**
      * Creates a new stopwatch.
@@ -86,7 +86,7 @@ public class Stopwatch {
                             break;
                         default:
                     }
-                    int argLength = arg.length();
+                    int argLength = Objects.nonNull(arg) ? arg.length() : 0;
                     for (int pos = 0; pos < argLength;) {
                         int codePoint = arg.codePointAt(pos);
                         if (codePoint >= ' ' && codePoint <= '~' || codePoint >= '¡' && codePoint <= 'ÿ'

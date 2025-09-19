@@ -56,6 +56,8 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("WorkflowForm")
 @SessionScoped
@@ -84,6 +86,7 @@ public class WorkflowForm extends BaseForm {
      */
     public WorkflowForm() {
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getWorkflowService()));
+        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
     }
 
     /**

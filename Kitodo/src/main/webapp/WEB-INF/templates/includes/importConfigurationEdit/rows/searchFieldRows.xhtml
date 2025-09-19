@@ -17,7 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:view>
-        <p:row>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="searchFieldTable" value="#{msgs['importConfig.searchFields']}"/>
                 <p:dataTable id="searchFieldTable"
@@ -83,8 +83,8 @@
                                      oncomplete="PF('addSearchFieldDialog').show()"/>
                 </h:panelGroup>
             </div>
-        </p:row>
-        <p:row>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="idSearchField"
                                value="#{msgs['importConfig.searchFields.idSearchField']} *"/>
@@ -92,6 +92,7 @@
                                  required="#{not empty param['editForm:save'] and
                                              (importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
                                               importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM')}"
+                                 autoWidth="false"
                                  styleClass="input-with-button"
                                  value="#{importConfigurationEditView.idSearchField}">
                     <f:selectItem itemValue="#{null}"
@@ -141,22 +142,25 @@
             </div>
             <h:panelGroup layout="block"
                           rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}">
-                <p:outputLabel for="parentIdSearchField" value="#{msgs['importConfig.searchFields.parentIdField']}"/>
-                <p:selectOneMenu id="parentIdSearchField"
-                                 styleClass="input-with-button"
-                                 value="#{importConfigurationEditView.parentIdSearchField}">
-                    <f:selectItem itemValue="#{null}"
-                                  itemLabel="-- #{msgs['importConfig.searchFields.selectParentIdField']} --"
-                                  noSelectionOption="true"/>
-                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
-                    <p:ajax event="change"
-                            oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
-                <p:commandButton id="parentIdSearchFieldHelp" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="parentIdSearchFieldHelp"
-                           value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
+                <div>
+                    <p:outputLabel for="parentIdSearchField" value="#{msgs['importConfig.searchFields.parentIdField']}"/>
+                    <p:selectOneMenu id="parentIdSearchField"
+                                     autoWidth="false"
+                                     styleClass="input-with-button"
+                                     value="#{importConfigurationEditView.parentIdSearchField}">
+                        <f:selectItem itemValue="#{null}"
+                                      itemLabel="-- #{msgs['importConfig.searchFields.selectParentIdField']} --"
+                                      noSelectionOption="true"/>
+                        <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="parentIdSearchFieldHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="parentIdSearchFieldHelp"
+                               value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
+                </div>
             </h:panelGroup>
-        </p:row>
+        </p:panel>
     </f:view>
 </ui:composition>

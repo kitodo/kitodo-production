@@ -41,6 +41,8 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.RulesetService;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("RulesetForm")
 @SessionScoped
@@ -66,6 +68,7 @@ public class RulesetForm extends BaseForm {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRulesetService()));
         this.projectForm = projectForm;
+        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
     }
 
     /**

@@ -99,7 +99,7 @@ public class RangeStreamContentHandler extends BaseDynamicContentHandler {
                 }
             } finally {
                 if (Objects.nonNull(streamedContent) && Objects.nonNull(streamedContent.getStream())) {
-                    streamedContent.getStream().close();
+                    streamedContent.getStream().get().close();
                 }
             }
         }
@@ -145,7 +145,7 @@ public class RangeStreamContentHandler extends BaseDynamicContentHandler {
 
     private void processInputStreamToOutputStream(HttpServletRequest request, HttpServletResponse response,
             StreamedContent streamedContent, OutputStream outputStream) throws IOException {
-        InputStream inputStream = streamedContent.getStream();
+        InputStream inputStream = streamedContent.getStream().get();
         // Prepare some variables. The full Range represents the complete file.
         int length = inputStream.available(); // Length of file
         Range full = new Range(0, length - 1, length);

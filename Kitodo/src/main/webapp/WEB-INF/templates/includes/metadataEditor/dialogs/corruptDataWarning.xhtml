@@ -26,7 +26,6 @@
               modal="true">
         <h:form id="corruptDataWarningForm">
             <p:panelGrid columns="1" layout="grid">
-                <p:row>
                     <h3>#{msgs.corruptData}</h3>
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
@@ -47,7 +46,6 @@
                             <f:actionListener binding="#{CommentForm.setProcessById(DataEditorForm.process.id)}"/>
                         </p:commandButton>
                     </h:panelGroup>
-                </p:row>
             </p:panelGrid>
         </h:form>
     </p:dialog>

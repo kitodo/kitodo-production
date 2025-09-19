@@ -25,10 +25,12 @@
     <h:outputScript library="js" name="modeler_min.js" target="body"/>
 
     <p:panelGrid columns="3" layout="grid" id="workflowEditorHeader">
-        <p:row>
-            <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
-            <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
-                         value="#{WorkflowForm.workflow.title}" required="#{not empty param['editForm:save']}" disabled="#{isViewMode}"/>
+        <p:panel styleClass="column-wrapper">
+            <div>
+                <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
+                <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
+                             value="#{WorkflowForm.workflow.title}" required="#{not empty param['editForm:save']}" disabled="#{isViewMode}"/>
+            </div>
             <div class="workflow-editor-hidden">
                 <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
                 <h:inputHidden value="#{WorkflowForm.language}" id="editor_language"/>
@@ -39,26 +41,30 @@
                                  action="#{WorkflowForm.readXMLDiagram}"
                                  rendered="#{WorkflowForm.workflow.title ne null}" immediate="true"/>
             </div>
-        </p:row>
-        <p:row>
-            <p:outputLabel for="status" value="#{msgs.status}"/>
-            <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input" disabled="#{isViewMode}">
-                <p:ajax event="change" update="@this" />
-                <f:selectItems value="#{WorkflowForm.workflowStatuses}"
-                               var="status"
-                               itemValue="#{status}"
-                               itemLabel="#{msgs[status]}"/>
-            </p:selectOneMenu>
-        </p:row>
-        <p:row>
-            <p:outputLabel for="separateStructure" value="#{msgs.separateStructure}"/>
-            <p:selectBooleanCheckbox id="separateStructure"
-                                     disabled="#{isViewMode}"
-                                     styleClass="switch input"
-                                     title="#{msgs.separateStructureCheckboxTooltip}"
-                                     value="#{WorkflowForm.workflow.separateStructure}">
-            </p:selectBooleanCheckbox>
-        </p:row>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
+            <div>
+                <p:outputLabel for="status" value="#{msgs.status}"/>
+                <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input" disabled="#{isViewMode}">
+                    <p:ajax event="change" update="@this" />
+                    <f:selectItems value="#{WorkflowForm.workflowStatuses}"
+                                   var="status"
+                                   itemValue="#{status}"
+                                   itemLabel="#{msgs[status]}"/>
+                </p:selectOneMenu>
+            </div>
+        </p:panel>
+        <p:panel styleClass="column-wrapper">
+            <div>
+                <p:outputLabel for="separateStructure" value="#{msgs.separateStructure}"/>
+                <p:selectBooleanCheckbox id="separateStructure"
+                                         disabled="#{isViewMode}"
+                                         styleClass="switch input"
+                                         title="#{msgs.separateStructureCheckboxTooltip}"
+                                         value="#{WorkflowForm.workflow.separateStructure}">
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:panel>
     </p:panelGrid>
 
     <p:panel id="workflowEditorWrapper">

@@ -55,6 +55,8 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProjectService;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("ProjectForm")
 @SessionScoped
@@ -67,6 +69,7 @@ public class ProjectForm extends BaseForm {
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
+    private SortMeta templateListSortBy;
 
     /**
      * An encapsulation of the content generator properties of the folder in a
@@ -100,6 +103,9 @@ public class ProjectForm extends BaseForm {
                 .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("docket"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ruleset"));
+
+        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
+        templateListSortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**
@@ -883,5 +889,23 @@ public class ProjectForm extends BaseForm {
             return Collections.emptyList();
         }
         return ServiceManager.getLtpValidationConfigurationService().listByMimeType(myFolder.getMimeType());
+    }
+
+    /**
+     * Get the current sorting configuration for the project's template list.
+     *
+     * @return the SortMeta object representing the sorting configuration
+     */
+    public SortMeta getTemplateListSortBy() {
+        return templateListSortBy;
+    }
+
+    /**
+     * Set the sorting configuration for the project's template list.
+     *
+     * @param templateListSortBy the SortMeta object representing the sorting configuration
+     */
+    public void setTemplateListSortBy(SortMeta templateListSortBy) {
+        this.templateListSortBy = templateListSortBy;
     }
 }

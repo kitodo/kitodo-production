@@ -25,8 +25,9 @@
               dynamic="true"
               modal="true">
         <h:form id="addMetadataForm">
-            <p:panelGrid columns="1" layout="grid">
-                <p:row>
+            <p:panelGrid id="addMetadataGrid"
+                         columns="1"
+                         layout="grid">
                     <h3>#{msgs['dataEditor.addMetadata.newMetadata']}</h3>
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
@@ -135,7 +136,6 @@
                                          iconPos="right"
                                          styleClass="secondary right"/>
                     </h:panelGroup>
-                </p:row>
             </p:panelGrid>
         </h:form>
     </p:dialog>
