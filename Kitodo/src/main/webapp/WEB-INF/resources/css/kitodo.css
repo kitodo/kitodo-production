@@ -3396,7 +3396,7 @@ button.settings-loaded-task::after {
 }
 
 #paginationForm\:paginationWrapperPanel {
-    height: calc(100% - 80px);
+    height: calc(100% - 57px);
     overflow-y: scroll;
 }
 
@@ -3434,6 +3434,20 @@ button.settings-loaded-task::after {
 
 .pagination-inactive {
     filter: opacity(35%);
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div#paginationForm\:advancedPaginationControls {
+    padding-top: 23px;
+}
+
+#paginationForm\:advancedPaginationControls div {
+    display: inline-block;
+    width: calc(100% - 25px);
+}
+
+#paginationForm\:advancedPaginationControls a {
+    float: right;
+    line-height: var(--input-height);
 }
 
 #paginationForm\:apply,

@@ -98,62 +98,74 @@
                                     return false;
                                 }
                             </script>
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationText}"
-                                    title="#{msgs.paginationTextHint}"
-                                    onclick="return writeToPaginationStartValue('`','`')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationNoIncrement}"
-                                    title="#{msgs.paginationNoIncrementHint}"
-                                    onclick="return writeToPaginationStartValue('','\260')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationHalfIncrement}"
-                                    title="#{msgs.paginationHalfIncrementHint}"
-                                    onclick="return writeToPaginationStartValue('','\275')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationOneIncrement}"
-                                    title="#{msgs.paginationOneIncrementHint}"
-                                    onclick="return writeToPaginationStartValue('','\271')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationTwoIncrement}"
-                                    title="#{msgs.paginationTwoIncrementHint}"
-                                    onclick="return writeToPaginationStartValue('','\262')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationThreeIncrement}"
-                                    title="#{msgs.paginationThreeIncrementHint}"
-                                    onclick="return writeToPaginationStartValue('','\263')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationRectoUse}"
-                                    title="#{msgs.paginationRectoUseHint}"
-                                    onclick="return writeToPaginationStartValue('\241','')"
-                            />
-                            <p:commandButton
-                                    styleClass="secondary"
-                                    style="margin-right: 2px; margin-bottom: 2px; "
-                                    value="#{msgs.paginationVersoUse}"
-                                    title="#{msgs.paginationVersoUseHint}"
-                                    onclick="return writeToPaginationStartValue('\277','')"
-                            />
+                            <div>
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationText}"
+                                        title="#{msgs.paginationTextHint}"
+                                        onclick="return writeToPaginationStartValue('`','`')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationNoIncrement}"
+                                        title="#{msgs.paginationNoIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\260')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationHalfIncrement}"
+                                        title="#{msgs.paginationHalfIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\275')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationOneIncrement}"
+                                        title="#{msgs.paginationOneIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\271')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationTwoIncrement}"
+                                        title="#{msgs.paginationTwoIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\262')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationThreeIncrement}"
+                                        title="#{msgs.paginationThreeIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\263')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationRectoUse}"
+                                        title="#{msgs.paginationRectoUseHint}"
+                                        onclick="return writeToPaginationStartValue('\241','')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationVersoUse}"
+                                        title="#{msgs.paginationVersoUseHint}"
+                                        onclick="return writeToPaginationStartValue('\277','')"
+                                />
+                            </div>
+                                <h:outputLink id="advancedPaginationHelp"
+                                        value="https://github.com/kitodo/kitodo-production/wiki/Paginierung#paginierung-für-fortgeschrittene"
+                                        styleClass="help-button"
+                                        target="_blank"
+                                        title="#{msgs['tooltip.metadataeditor.advancedPaginationHelp']}">
+                                        <i class="fa fa-lg fa-question-circle-o"/>
+                                </h:outputLink>
+                                <p:tooltip for="advancedPaginationHelp"
+                                           value="#{msgs['tooltip.metadataEditor.advancedPaginationHelp']}"/>
+
                         </h:panelGroup>
                         <h:panelGroup layout="block"
                                       id="selectPaginationModeWrapper"
