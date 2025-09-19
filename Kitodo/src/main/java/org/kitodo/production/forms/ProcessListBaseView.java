@@ -543,18 +543,16 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Export DMS.
      */
-    public void exportDMS(int id) {
-        Stopwatch stopwatch = new Stopwatch(this, "exportDMS", "id", Integer.toString(id));
+    public void exportDMS(Process process) {
         ExportDms export = new ExportDms();
         try {
-            export.startExport(ServiceManager.getProcessService().getById(id));
+            export.startExport(process);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process }, logger, e);
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process }, logger, e);
         }
-        stopwatch.stop();
     }
 
     /**
