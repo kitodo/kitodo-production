@@ -240,6 +240,19 @@ public class PaginationPanel {
         return selectedItemsPreparedForPagination;
     }
 
+    private static PaginatorType resolveDefaultPaginationType() {
+        String defaultType = ServiceManager.getUserService().getCurrentUser().getDefaultPaginationType();
+        if (defaultType != null && !defaultType.isBlank()) {
+            try {
+                return PaginatorType.valueOf(defaultType);
+            } catch (IllegalArgumentException ex) {
+                // Fallback if the saved value is not valid
+                return PaginatorType.ARABIC;
+            }
+        }
+        return PaginatorType.ARABIC;
+    }
+
     private void preparePaginationTypeSelectItems() {
         paginationTypeSelectItems = new LinkedHashMap<>(5);
         paginationTypeSelectItems.put(PaginatorType.ARABIC, "arabic");
@@ -316,7 +329,7 @@ public class PaginationPanel {
      * Show.
      */
     public void show() {
-        paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
+        paginationTypeSelectSelectedItem = resolveDefaultPaginationType();
         selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
