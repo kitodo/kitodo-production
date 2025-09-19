@@ -114,8 +114,14 @@ public class User extends BaseBean {
     @Column(name = "paginate_from_first_page_by_default")
     private boolean paginateFromFirstPageByDefault;
 
+    @Column(name = "show_logical_page_number_below_thumbnail")
+    private boolean showLogicalPageNumberBelowThumbnail;
+
     @Column(name = "show_physical_page_number_below_thumbnail")
     private boolean showPhysicalPageNumberBelowThumbnail;
+
+    @Column(name = "default_pagination_type")
+    private String defaultPaginationType;
 
     @ManyToOne
     @JoinColumn(name = "default_client_id", foreignKey = @ForeignKey(name = "FK_user_default_client_id"))
@@ -158,7 +164,9 @@ public class User extends BaseBean {
         this.showPaginationByDefault = user.showPaginationByDefault;
         this.paginateFromFirstPageByDefault = user.paginateFromFirstPageByDefault;
         this.defaultGalleryViewMode = user.defaultGalleryViewMode;
+        this.showLogicalPageNumberBelowThumbnail = user.showLogicalPageNumberBelowThumbnail;
         this.showPhysicalPageNumberBelowThumbnail = user.showPhysicalPageNumberBelowThumbnail;
+        this.defaultPaginationType = user.defaultPaginationType;
 
         this.roles = Objects.isNull(user.roles) ? new ArrayList<>() : user.roles;
         this.projects = Objects.isNull(user.projects) ? new ArrayList<>() : user.projects;
@@ -600,12 +608,41 @@ public class User extends BaseBean {
     }
 
     /**
+     * Get showLogicalPageNumberBelowThumbnail.
+     * 
+     * @return value of showLogicalPageNumberBelowThumbnail
+     */
+    public boolean isShowLogicalPageNumberBelowThumbnail() {
+        return this.showLogicalPageNumberBelowThumbnail;
+    }
+
+    /**
+     * Set showLogicalPageNumberBelowThumbnail.
+     * 
+     * @param showLogicalPageNumberBelowThumbnail as boolean
+     */
+    public void setShowLogicalPageNumberBelowThumbnail(boolean showLogicalPageNumberBelowThumbnail) {
+        this.showLogicalPageNumberBelowThumbnail = showLogicalPageNumberBelowThumbnail;
+    }
+
+    /**
      * Get showPhysicalPageNumberBelowThumbnail.
      * 
      * @return value of showPhysicalPageNumberBelowThumbnail
      */
     public boolean isShowPhysicalPageNumberBelowThumbnail() {
         return showPhysicalPageNumberBelowThumbnail;
+    }
+
+    public String getDefaultPaginationType() {
+        if (Objects.isNull(this.defaultPaginationType)) {
+            return "";
+        }
+        return this.defaultPaginationType;
+    }
+
+    public void setDefaultPaginationType(String defaultPaginationType) {
+        this.defaultPaginationType = defaultPaginationType;
     }
 
     /**
