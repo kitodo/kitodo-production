@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.metadata.pagination.PaginatorType;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecuritySession;
@@ -69,6 +71,8 @@ import org.kitodo.production.services.data.UserService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+
+import static java.util.Map.entry;
 
 @Named("UserForm")
 @SessionScoped
@@ -91,6 +95,13 @@ public class UserForm extends BaseForm {
             "downItemMulti",
             "upItem",
             "upItemMulti");
+    private static final LinkedHashMap<PaginatorType, String> paginationTypes = new LinkedHashMap<>(Map.ofEntries(
+            entry(PaginatorType.ARABIC, "arabic"),
+            entry(PaginatorType.ROMAN, "roman"),
+            entry(PaginatorType.UNCOUNTED, "uncounted"),
+            entry(PaginatorType.FREETEXT, "paginationFreetext"),
+            entry(PaginatorType.ADVANCED, "paginationAdvanced")
+    ));
 
     private String passwordToEncrypt;
 
@@ -574,6 +585,16 @@ public class UserForm extends BaseForm {
             metadataLanguages.put(language[0], language[1]);
         }
         return metadataLanguages;
+    }
+
+    /**
+     * Get map of available pagination types.
+     *
+     * @return a map where keys are instances of PaginatorType and values are their
+     *         respective descriptions as strings
+     */
+    public Map<PaginatorType, String> getPaginationTypes() {
+        return paginationTypes;
     }
 
     /**
