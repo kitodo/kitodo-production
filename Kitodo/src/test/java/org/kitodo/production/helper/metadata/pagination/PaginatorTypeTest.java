@@ -484,6 +484,33 @@ public class PaginatorTypeTest {
     }
 
     @Test
+    public void testAlphabeticFormatColumnsFictious() {
+        assertEquals("[´e´²]", PaginatorType.ALPHABETIC.format(PaginatorMode.COLUMNS, "e", true, UNUSED_STRING));
+    }
+
+    @Test
+    public void testAlphabeticFormatColumns() {
+        assertEquals("´a´²", PaginatorType.ALPHABETIC.format(PaginatorMode.COLUMNS, "a", false, UNUSED_STRING));
+    }
+
+    @Test
+    public void testAlphabeticFormatDoublePagesFictiousFromArabic() {
+        assertEquals("[´aa´]` ; `[´ab´]", PaginatorType.ALPHABETIC.format(PaginatorMode.DOUBLE_PAGES, "aa", true, SEMICOLON_STRING));
+    }
+
+    @Test
+    public void testAlphabeticFormatRectoverso() {
+        assertEquals("´g´`v ; `´h´°r", PaginatorType.ALPHABETIC.format(PaginatorMode.RECTOVERSO, "g", false, SEMICOLON_STRING));
+    }
+
+    @Test
+    public void testAlphabeticFormatRectoversoFoliation() {
+        assertEquals("´m´°¡r¿v½", PaginatorType.ALPHABETIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "m", false, UNUSED_STRING));
+    }
+
+
+
+    @Test
     public void testUncountedFormatColumns() {
         assertEquals("`uncounted`²",
             PaginatorType.UNCOUNTED.format(PaginatorMode.COLUMNS, UNUSED_STRING, false, UNUSED_STRING));
@@ -568,6 +595,11 @@ public class PaginatorTypeTest {
     @Test
     public void testValueOfThree() {
         assertEquals(PaginatorType.UNCOUNTED, PaginatorType.valueOf(3));
+    }
+
+    @Test
+    public void testValueOfFour() {
+        assertEquals(PaginatorType.ALPHABETIC, PaginatorType.valueOf(4));
     }
 
     @Test
