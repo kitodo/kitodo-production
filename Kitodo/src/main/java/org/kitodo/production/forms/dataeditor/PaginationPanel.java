@@ -259,6 +259,7 @@ public class PaginationPanel {
         paginationTypeSelectItems.put(PaginatorType.ROMAN, "roman");
         paginationTypeSelectItems.put(PaginatorType.UNCOUNTED, "uncounted");
         paginationTypeSelectItems.put(PaginatorType.FREETEXT, "paginationFreetext");
+        paginationTypeSelectItems.put(PaginatorType.ALPHABETIC, "alphabetic");
         paginationTypeSelectItems.put(PaginatorType.ADVANCED, "paginationAdvanced");
     }
 
