@@ -1002,6 +1002,31 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Select the media assigned to the currently selected node.
+     */
+    public void selectAssignedMedia() {
+        try {
+            // Get children of selected logical divisions and select all physical divisions of these children
+            List<TreeNode<Object>> selectedChildTreeNodes = getSelectedLogicalNodes().stream()
+                    .flatMap(node -> node.getChildren().stream())
+                    .collect(Collectors.toList());
+
+            List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = selectedChildTreeNodes.stream()
+                    .map(StructureTreeOperations::getPhysicalDivisionPairFromTreeNode)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            // update selection throughout metadata editor
+            dataEditor.updateSelection(selectedPhysicalDivisions, Collections.emptyList());
+
+            previouslySelectedLogicalNodes = getSelectedLogicalNodes();
+        } catch (NoSuchMetadataFieldException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            setSelectedLogicalNodes(previouslySelectedLogicalNodes);
+        }
+    }
+
+    /**
      * Callback function triggered when a node is selected in the logical structure tree.
      *
      * @param event
