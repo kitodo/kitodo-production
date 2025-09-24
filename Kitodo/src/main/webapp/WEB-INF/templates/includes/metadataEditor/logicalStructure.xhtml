@@ -228,6 +228,13 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
+            <p:menuitem value="#{msgs.selectAssignedMedia}"
+                        action="#{DataEditorForm.structurePanel.selectAssignedMedia}"
+                        onclick="metadataEditor.logicalTree.selectAssignedMedia()"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.STRUCTURE_NODE_TYPE}"
+                        icon="fa fa-check-square-o fa-sm"
+                        styleClass="plain"
+                        process="@this"/>
             <p:menuitem value="#{msgs.uploadMedia}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
                         rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked}"

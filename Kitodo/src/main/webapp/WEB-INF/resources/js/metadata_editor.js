@@ -839,6 +839,27 @@ metadataEditor.logicalTree = {
     },
 
     /**
+     * Select the media assigned to the currently selected node.
+     */
+    selectAssignedMedia() {
+        let selectedNodes = this._findSelectedNodes();
+        let mediaToBeSelected = [];
+        if (selectedNodes.length === 1) {
+            selectedNodes.first().find('[data-nodetype=View]').each(function () {
+                mediaToBeSelected.push(metadataEditor.logicalTree._getTreeNodeIdFromNode($(this)));
+            });
+
+            metadataEditor.logicalTree.markManyAsSelected(mediaToBeSelected);
+            metadataEditor.gallery.stripes.markManyAsSelected(mediaToBeSelected);
+            metadataEditor.gallery.pages.markManyAsSelected(mediaToBeSelected, null);
+            if (metadataEditor.physicalTree.isAvailable()) {
+                metadataEditor.physicalTree.markManyAsSelected(mediaToBeSelected);
+            }
+        }
+    },
+
+
+    /**
      * Return the tree node id from a jquery node object.
      * @param {*} node the jquery node object
      * @returns the tree node id
