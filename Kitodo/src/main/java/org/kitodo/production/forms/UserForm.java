@@ -98,6 +98,7 @@ public class UserForm extends BaseForm {
     private static final LinkedHashMap<PaginatorType, String> paginationTypes = new LinkedHashMap<>(Map.ofEntries(
             entry(PaginatorType.ARABIC, "arabic"),
             entry(PaginatorType.ROMAN, "roman"),
+            entry(PaginatorType.ALPHABETIC, "alphabetic"),
             entry(PaginatorType.UNCOUNTED, "uncounted"),
             entry(PaginatorType.FREETEXT, "paginationFreetext"),
             entry(PaginatorType.ADVANCED, "paginationAdvanced")
