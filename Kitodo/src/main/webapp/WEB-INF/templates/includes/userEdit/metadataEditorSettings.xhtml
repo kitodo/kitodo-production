@@ -102,10 +102,7 @@
                                          value="#{UserForm.userObject.defaultPaginationType}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}">
-                                <f:selectItems value="#{UserForm.paginationTypes.entrySet().toArray()}"
-                                               var="paginationType"
-                                               itemValue="#{paginationType.key}"
-                                               itemLabel="#{HelperForm.getTranslated(paginationType.value)}"/>
+                                <f:selectItems value="#{UserForm.paginationTypes}"/>
                                 <p:ajax oncomplete="toggleSave()"/>
                         </p:selectOneMenu>
 
