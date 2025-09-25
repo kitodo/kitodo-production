@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms;
 
+import static java.util.Map.entry;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -71,8 +73,6 @@ import org.kitodo.production.services.data.UserService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
-
-import static java.util.Map.entry;
 
 @Named("UserForm")
 @SessionScoped

@@ -32,17 +32,6 @@ public class AlphabeticNumeral implements Fragment {
     }
 
     /**
-     * Returns the value formatted as alphabetic characters.
-     *
-     * @param value value to format
-     * @return the formatted value
-     */
-    @Override
-    public String format(HalfInteger value) {
-        return format(value.intValue());
-    }
-
-    /**
      * Returns the increment associated with the fragment.
      *
      * @return the increment of fragment
@@ -77,6 +66,17 @@ public class AlphabeticNumeral implements Fragment {
     @Override
     public String toString() {
         return format(value) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
+    }
+
+    /**
+     * Returns the value formatted as alphabetic characters.
+     *
+     * @param value value to format
+     * @return the formatted value
+     */
+    @Override
+    public String format(HalfInteger value) {
+        return format(value.intValue());
     }
 
     /**

@@ -634,6 +634,11 @@ public class User extends BaseBean {
         return showPhysicalPageNumberBelowThumbnail;
     }
 
+    /**
+     * Get the default pagination type.
+     *
+     * @return the default pagination type as a string, or an empty string if it is null
+     */
     public String getDefaultPaginationType() {
         if (Objects.isNull(this.defaultPaginationType)) {
             return "";
@@ -641,6 +646,11 @@ public class User extends BaseBean {
         return this.defaultPaginationType;
     }
 
+    /**
+     * Set the default pagination type.
+     *
+     * @param defaultPaginationType default pagination type as string
+     */
     public void setDefaultPaginationType(String defaultPaginationType) {
         this.defaultPaginationType = defaultPaginationType;
     }
