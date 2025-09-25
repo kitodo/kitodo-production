@@ -205,7 +205,7 @@ public class RulesetForm extends BaseForm {
      * @return list of ruleset filenames
      */
     public List<Path> getRulesetFilenames() {
-        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS)))) {
+        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS)), 1)) {
             return rulesetPaths.filter(f -> f.toString().endsWith(".xml")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
