@@ -95,13 +95,13 @@ public class UserForm extends BaseForm {
             "downItemMulti",
             "upItem",
             "upItemMulti");
-    private static final LinkedHashMap<PaginatorType, String> paginationTypes = new LinkedHashMap<>(Map.ofEntries(
-            entry(PaginatorType.ARABIC, "arabic"),
-            entry(PaginatorType.ROMAN, "roman"),
-            entry(PaginatorType.ALPHABETIC, "alphabetic"),
-            entry(PaginatorType.UNCOUNTED, "uncounted"),
-            entry(PaginatorType.FREETEXT, "paginationFreetext"),
-            entry(PaginatorType.ADVANCED, "paginationAdvanced")
+    private static final LinkedHashMap<String, PaginatorType> paginationTypes = new LinkedHashMap<>(Map.ofEntries(
+            entry("arabic", PaginatorType.ARABIC),
+            entry("roman", PaginatorType.ROMAN),
+            entry("alphabetic", PaginatorType.ALPHABETIC),
+            entry("uncounted", PaginatorType.UNCOUNTED),
+            entry("paginationFreetext", PaginatorType.FREETEXT),
+            entry("paginationAdvanced", PaginatorType.ADVANCED)
     ));
 
     private String passwordToEncrypt;
@@ -594,8 +594,16 @@ public class UserForm extends BaseForm {
      * @return a map where keys are instances of PaginatorType and values are their
      *         respective descriptions as strings
      */
-    public Map<PaginatorType, String> getPaginationTypes() {
-        return paginationTypes;
+    public Map<String, PaginatorType> getPaginationTypes() {
+        return  paginationTypes.entrySet().stream()
+                .map(e -> entry(Helper.getTranslation(e.getKey()), e.getValue()))
+                .sorted(Map.Entry.comparingByKey(Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> a,
+                        LinkedHashMap::new
+                ));
     }
 
     /**
