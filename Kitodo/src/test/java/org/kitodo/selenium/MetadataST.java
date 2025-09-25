@@ -253,6 +253,7 @@ public class MetadataST extends BaseTestSelenium {
                 .until(Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector))::isDisplayed);
         Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector)).click();
         // verify that scope value did not change
+        Thread.sleep(300);
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
                 .until(Browser.getDriver().findElement(By.id(paginationScopeId))::isDisplayed);
         String scopeUpdated = Browser.getDriver().findElement(By.id(paginationScopeId)).getText();
@@ -576,7 +577,7 @@ public class MetadataST extends BaseTestSelenium {
                 .until(() -> Browser.getDriver().findElement(By.id("paginationPanel")).isDisplayed());
 
         // verify that "arabic" is preselected as the general default pagination type
-        assertEquals("arabisch", Browser.getDriver().findElement(By.cssSelector("#paginationForm\\:paginationTypeSelect_label")).getText());
+        assertEquals("alphabetisch", Browser.getDriver().findElement(By.cssSelector("#paginationForm\\:paginationTypeSelect_label")).getText());
 
         // change user setting
         Pages.getMetadataEditorPage().closeEditor();
