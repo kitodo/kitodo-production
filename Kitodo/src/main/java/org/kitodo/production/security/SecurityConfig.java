@@ -23,6 +23,7 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
  * The main security configuration class for the application. The configure
@@ -92,13 +93,18 @@ public class SecurityConfig {
         return this.sessionRegistry;
     }
 
+    @Bean(name = "mvcHandlerMappingIntrospector")
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+        return new HandlerMappingIntrospector();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {     
         // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.
-        http.csrf().disable();
+        http.csrf(csrf -> csrf.disable());
 
-        http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry())
-                .expiredUrl(LOGIN_PAGE);
+        http.sessionManagement(session -> session.maximumSessions(1).sessionRegistry(getSessionRegistry())
+                .expiredUrl(LOGIN_PAGE));
 
         // site specific rules
         authorizeSpecificPages(http);
@@ -144,9 +150,9 @@ public class SecurityConfig {
     }
 
     private void authorizeGeneralPages(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/images/**").permitAll()
-            .requestMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
+            .requestMatchers("/jakarta.faces.resource/**", "**/resources/**").permitAll()
             .requestMatchers("/js/modeler.js").permitAll()
             .requestMatchers("/js/toggle.js").permitAll()
             .anyRequest().authenticated()
@@ -154,7 +160,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageLdapGroupEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
                 "editLdapGroup_" + GLOBAL,
                 "viewLdapGroup_" + GLOBAL)
@@ -162,7 +168,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageRoleEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
                 EDIT_ROLE + GLOBAL,
                 EDIT_ROLE + CLIENT_ANY,
@@ -172,7 +178,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageUsers(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/users.jsf").hasAnyAuthority(
                 VIEW_ALL_USERS + GLOBAL,
                 VIEW_ALL_USERS + CLIENT_ANY,
@@ -184,7 +190,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageTasks(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/tasks.jsf").hasAnyAuthority(
                 VIEW_ALL_TASKS + GLOBAL,
                 VIEW_ALL_TASKS + CLIENT_ANY)
@@ -192,7 +198,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageWorkflowEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
                 EDIT_WORKFLOW + GLOBAL,
                 EDIT_WORKFLOW + CLIENT_ANY,
@@ -202,7 +208,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageRulesetEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
                 EDIT_RULESET + GLOBAL,
                 EDIT_RULESET + CLIENT_ANY,
@@ -212,7 +218,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageDocketEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
                 EDIT_DOCKET + GLOBAL,
                 EDIT_DOCKET + CLIENT_ANY,
@@ -222,7 +228,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageTemplateEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/templateEdit.jsf*").hasAnyAuthority(
                 EDIT_TEMPLATE + GLOBAL,
                 EDIT_TEMPLATE + CLIENT_ANY,
@@ -232,7 +238,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageProjectEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
                 EDIT_PROJECT + GLOBAL,
                 EDIT_PROJECT + CLIENT_ANY,
@@ -242,7 +248,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageProjects(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/projects.jsf").hasAnyAuthority(
                 VIEW_ALL_PROJECTS + GLOBAL,
                 VIEW_ALL_PROJECTS + CLIENT_ANY,
@@ -257,7 +263,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageProcessEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
                 EDIT_PROCESS + GLOBAL,
                 EDIT_PROCESS + CLIENT_ANY,
@@ -267,7 +273,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageProcesses(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/processes.jsf").hasAnyAuthority(
                 VIEW_ALL_PROCESSES + GLOBAL,
                 VIEW_ALL_PROCESSES + CLIENT_ANY)
@@ -275,7 +281,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageIndexing(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
                 "editIndex_" + GLOBAL,
                 "viewIndex_" + GLOBAL)
@@ -283,7 +289,7 @@ public class SecurityConfig {
     }
 
     private void authorizePageClientEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
+        http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
                 EDIT_CLIENT + GLOBAL,
                 EDIT_CLIENT + CLIENT_ANY,
@@ -293,16 +299,16 @@ public class SecurityConfig {
     }
 
     private void handleFormLogin(HttpSecurity http) throws Exception {
-        http.formLogin()
+        http.formLogin(login -> login
                 .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/pages/desktop.jsf")
                 .successHandler(new CustomLoginSuccessHandler())
-                .permitAll()
-                .and()
-            .logout()
+                .permitAll())
+            .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler(LOGIN_PAGE));
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler(LOGIN_PAGE))
+            );
     }
 
     /**
