@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 
