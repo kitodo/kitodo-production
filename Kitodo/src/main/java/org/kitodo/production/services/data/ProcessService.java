@@ -1798,7 +1798,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *             when query to database fails
      */
     public int getNumberOfChildren(int processId) throws DAOException {
-        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent.id = " + processId));
     }
 
     public static void deleteProcess(int processID) throws DAOException, IOException {

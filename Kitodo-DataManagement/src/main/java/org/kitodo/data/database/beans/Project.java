@@ -147,7 +147,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Field to define mode of hover in preview.
      */
-    @Column(name = "preview_hover_mode")
+    @Column(name = "preview_hover_mode", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private PreviewHoverMode previewHoverMode = PreviewHoverMode.OVERLAY;
 

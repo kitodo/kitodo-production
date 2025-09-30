@@ -118,7 +118,7 @@ public class Folder extends BaseBean {
      * Indicates whether a METS {@code <fileGrp>} section is created, and how it
      * is populated.
      */
-    @Column(name = "linkingMode")
+    @Column(name = "linkingMode", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private LinkingMode linkingMode = LinkingMode.ALL;
 

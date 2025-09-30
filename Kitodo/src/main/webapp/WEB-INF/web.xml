@@ -18,7 +18,7 @@
     <display-name>Kitodo</display-name>
 
     <context-param>
-        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
         <param-value>server</param-value>
     </context-param>
 
@@ -43,17 +43,17 @@
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-name>jakarta.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.ENABLE_WEBSOCKET_ENDPOINT</param-name>
+        <param-name>jakarta.faces.ENABLE_WEBSOCKET_ENDPOINT</param-name>
         <param-value>true</param-value>
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.WEBAPP_RESOURCES_DIRECTORY</param-name>
+        <param-name>jakarta.faces.WEBAPP_RESOURCES_DIRECTORY</param-name>
         <param-value>/WEB-INF/resources</param-value>
     </context-param>
 
@@ -63,29 +63,29 @@
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-name>jakarta.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
         <param-value>true</param-value>
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
+        <param-name>jakarta.faces.FACELETS_LIBRARIES</param-name>
         <param-value>/WEB-INF/springsecurity.taglib.xml</param-value>
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
         <param-value>${jsf.projectStage}</param-value>
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
+        <param-name>jakarta.faces.FACELETS_BUFFER_SIZE</param-name>
         <param-value>5242880</param-value>
     </context-param>
 
     <!-- Faces Servlet -->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

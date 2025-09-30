@@ -36,7 +36,7 @@ public class Workflow extends BaseBean {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private WorkflowStatus status = WorkflowStatus.DRAFT;
 

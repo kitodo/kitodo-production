@@ -448,7 +448,7 @@ public class Helper {
     private static void loadMessages() {
         commonMessages = new HashMap<>();
         errorMessages = new HashMap<>();
-        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+        if (Objects.nonNull(FacesContext.getCurrentInstance()) && Objects.nonNull(FacesContext.getCurrentInstance().getApplication())) {
             Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();

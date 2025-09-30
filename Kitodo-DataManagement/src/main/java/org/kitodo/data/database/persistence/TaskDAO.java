@@ -170,7 +170,7 @@ public class TaskDAO extends BaseDAO<Task> {
         try (Session session = HibernateUtil.getSession()) {
             // do not use hibernate query language, which does not support recursive queries, use native SQL instead
             // do not use query parameter with recursive query, which works with MySQL and MariaDB but not h2 database
-            NativeQuery<Object[]> query = session.createSQLQuery(
+            NativeQuery<Object[]> query = session.createNativeQuery(
                 "SELECT t.processingStatus as status, COUNT(*) as count FROM task t, ("
                     + "    WITH RECURSIVE process_children(id) as ("
                     + "        (SELECT id FROM process WHERE id = " + process.getId() + ")"

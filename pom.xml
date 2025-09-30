@@ -54,8 +54,8 @@
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
-        <hibernate-search.version>6.2.4.Final</hibernate-search.version>
+        <hibernate.version>6.4.10.Final</hibernate.version>
+        <hibernate-search.version>7.0.1.Final</hibernate-search.version>
         <jaxb.api.version>2.3.3</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
@@ -222,11 +222,6 @@
                 <groupId>jakarta.servlet.jsp.jstl</groupId>
                 <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
                 <version>3.0.2</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.ws.rs</groupId>
-                <artifactId>jakarta.ws.rs-api</artifactId>
-                <version>3.1.0</version>
             </dependency>
             <!-- Include jaxb runtime dependencies which have been removed
 from system library in Java 11+ -->

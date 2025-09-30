@@ -38,7 +38,7 @@ public class Comment extends BaseBean {
     /**
      * The field type holds the comment type.
      */
-    @Column(name = "type")
+    @Column(name = "type", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private CommentType type;
 

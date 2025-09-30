@@ -40,7 +40,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     @Column(name = "property")
     private String property;
 
-    @Column(name = "operation")
+    @Column(name = "operation", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private LtpValidationConditionOperation operation;
 
@@ -50,7 +50,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     @Column(name = "value")
     private List<String> values;
 
-    @Column(name = "severity")
+    @Column(name = "severity", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private LtpValidationConditionSeverity severity;
 

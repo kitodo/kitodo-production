@@ -25,7 +25,7 @@ import org.kitodo.data.database.enums.WorkflowConditionType;
 @Table(name = "workflowcondition")
 public class WorkflowCondition extends BaseBean {
 
-    @Column(name = "type")
+    @Column(name = "type", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private WorkflowConditionType type;
 

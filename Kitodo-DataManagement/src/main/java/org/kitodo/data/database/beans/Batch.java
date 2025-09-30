@@ -51,7 +51,7 @@ public class Batch extends BaseBean {
     /**
      * The field type holds the batch type.
      */
-    @Column(name = "type")
+    @Column(name = "type", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private BatchType type;
 

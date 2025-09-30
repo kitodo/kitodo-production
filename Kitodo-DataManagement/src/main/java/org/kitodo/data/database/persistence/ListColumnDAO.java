@@ -43,7 +43,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
      * @return list of standard list columns
      */
     public List<ListColumn> getAllStandard() {
-        return getByQuery("FROM ListColumn WHERE custom = 0");
+        return getByQuery("FROM ListColumn WHERE custom = false");
     }
 
     /**
@@ -52,7 +52,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
      * @return list of custom list columns
      */
     public List<ListColumn> getAllCustom() {
-        return getByQuery("FROM ListColumn WHERE custom = 1");
+        return getByQuery("FROM ListColumn WHERE custom = true");
     }
 
     @Override

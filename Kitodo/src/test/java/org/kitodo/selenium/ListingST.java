@@ -97,7 +97,7 @@ public class ListingST extends BaseTestSelenium {
 
         String query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
                 + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1)"
-                + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = 0";
+                + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = false";
 
         int tasksInDatabase = ServiceManager.getTaskService().getByQuery(query).size();
         int tasksDisplayed = desktopPage.countListedTasks();
@@ -152,7 +152,7 @@ public class ListingST extends BaseTestSelenium {
 
         String query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
                 + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1)"
-                + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = 0";
+                + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = false";
 
         int tasksInDatabase = ServiceManager.getTaskService().getByQuery(query).size();
         int tasksDisplayed = tasksPage.countListedTasks();
@@ -170,7 +170,7 @@ public class ListingST extends BaseTestSelenium {
 
         query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
                 + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1) AND "
-                + "t.processingStatus = 1 AND t.typeAutomatic = 0";
+                + "t.processingStatus = 1 AND t.typeAutomatic = false";
         tasksInDatabase = ServiceManager.getTaskService().getByQuery(query).size();
         tasksDisplayed = tasksPage.countListedTasks();
         assertEquals(tasksInDatabase, tasksDisplayed, "Displayed wrong number of tasks with applied filter");
