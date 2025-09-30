@@ -92,6 +92,14 @@ public class BeanQuery {
     }
 
     /**
+     * Add an explicit inner join to the query.
+     * Example: query.addInnerJoin("p.project proj");
+     */
+    public void addInnerJoin(String join) {
+        innerJoins.add(varName + "." + join);
+    }
+
+    /**
      * Requires that the hits must correspond to any of the specified values in
      * the specified class field.
      * 
@@ -388,6 +396,21 @@ public class BeanQuery {
         innerFormQuery(query);
         if (sorted) {
             query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
+        }
+        return query.toString();
+    }
+
+    /**
+     * Forms and returns a query without a SELECT clause.
+     *
+     * @return the query starting with FROM
+     */
+    public String formQueryWithoutSelect() {
+        StringBuilder query = new StringBuilder(512);
+        innerFormQuery(query);
+        if (Objects.nonNull(sorting)) {
+            query.append(" ORDER BY ").append(sorting.getKey())
+                    .append(' ').append(sorting.getValue());
         }
         return query.toString();
     }

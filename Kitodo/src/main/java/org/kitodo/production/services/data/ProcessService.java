@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -114,6 +115,7 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
+import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -2378,5 +2380,59 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         } catch (IOException e) {
             logger.debug("Could not load meta file {} for gathering meta information!", metadataFileUri.toString());
         }
+    }
+
+    /**
+     * Wrapper for ProcessDAO.getForExcel().
+     *
+     * @param showClosedProcesses whether to include closed processes
+     * @param showInactiveProjects whether to include inactive projects
+     * @return list of raw projection rows (Object[])
+     */
+
+    public List<ProcessExportDTO> getForExcel(
+            String filter,
+            boolean showClosedProcesses,
+            boolean showInactiveProjects,
+            int sessionClientId) {
+
+        BeanQuery query = new BeanQuery(Process.class);
+
+        if (StringUtils.isNotBlank(filter)) {
+            query.restrictWithUserFilterString(filter);
+        }
+        if (!showClosedProcesses) {
+            query.restrictToNotCompletedProcesses();
+        }
+        if (!showInactiveProjects) {
+            query.addBooleanRestriction("project.active", Boolean.TRUE);
+        }
+        query.restrictToClient(sessionClientId);
+        query.performIndexSearches();
+
+        query.addInnerJoin("project proj");
+        query.defineSorting("id", SortOrder.ASCENDING);
+
+        String hql = "SELECT process.id, process.title, process.creationDate, "
+                + "process.sortHelperImages, process.sortHelperDocstructs, process.sortHelperMetadata, "
+                + "proj.title, process.sortHelperStatus "
+                + query.formQueryWithoutSelect();
+
+        List<Object[]> rows = dao.getProjectionByQuery(hql, query.getQueryParameters());
+
+        List<ProcessExportDTO> result = new ArrayList<>(rows.size());
+        for (Object[] row : rows) {
+            result.add(new ProcessExportDTO(
+                    (Integer) row[0],        // id
+                    (String) row[1],         // title
+                    (Date) row[2],           // creationDate
+                    (Integer) row[3],        // sortHelperImages
+                    (Integer) row[4],        // sortHelperDocstructs
+                    (Integer) row[5],        // sortHelperMetadata
+                    (String) row[6],         // projectTitle
+                    (String) row[7]          // status
+            ));
+        }
+        return result;
     }
 }
