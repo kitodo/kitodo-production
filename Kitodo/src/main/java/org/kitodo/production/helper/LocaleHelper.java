@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

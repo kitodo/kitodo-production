@@ -14,9 +14,9 @@ package org.kitodo.export;
 import java.io.IOException;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
