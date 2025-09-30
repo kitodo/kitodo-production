@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 

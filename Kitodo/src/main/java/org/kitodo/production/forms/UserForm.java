@@ -32,9 +32,9 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.validation.ConstraintViolation;

@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.faces.push.Push;
-import javax.faces.push.PushContext;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.faces.push.Push;
+import jakarta.faces.push.PushContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

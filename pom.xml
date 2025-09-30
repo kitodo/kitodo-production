@@ -50,6 +50,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-net.version>3.9.0</commons-net.version>
         <font-awesome.version>4.7.0</font-awesome.version>
+        <omnifaces.version>4.6.5</omnifaces.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2</hamcrest.version>
@@ -65,7 +66,7 @@
         <jhove.modules.jpeg.hul.version>1.5.4</jhove.modules.jpeg.hul.version>
         <jhove.modules.pdf.hul.version>1.12.7</jhove.modules.pdf.hul.version>
         <jhove.modules.tiff.hul.version>1.9.5</jhove.modules.tiff.hul.version>
-        <myfaces.version>2.3.10</myfaces.version>
+        <myfaces.version>4.1.1</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
         <pdfbox.version>3.0.3</pdfbox.version>
         <poi.version>5.4.0</poi.version>
@@ -207,35 +208,25 @@
                 <version>2.2.21</version>
             </dependency>
             <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>1.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.el</groupId>
-                <artifactId>javax.el-api</artifactId>
-                <version>3.0.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>javax.ws.rs-api</artifactId>
-                <version>2.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>jsr311-api</artifactId>
-                <version>1.1.1</version>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>2.1.4</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.el</groupId>
                 <artifactId>jakarta.el-api</artifactId>
                 <version>5.0.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet.jsp.jstl</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>3.1.0</version>
             </dependency>
             <!-- Include jaxb runtime dependencies which have been removed
 from system library in Java 11+ -->
@@ -537,11 +528,6 @@ from system library in Java 11+ -->
                 <version>1.4.0</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.weld.servlet</groupId>
-                <artifactId>weld-servlet</artifactId>
-                <version>2.4.8.Final</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jdom</groupId>
                 <artifactId>jdom2</artifactId>
                 <version>2.0.6.1</version>
@@ -619,7 +605,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.omnifaces</groupId>
                 <artifactId>omnifaces</artifactId>
-                <version>3.13.4</version>
+                <version>${omnifaces.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.openpreservation.jhove</groupId>
@@ -788,7 +774,7 @@ from system library in Java 11+ -->
                 <!-- spring security dependency used at runtime -->
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-faces</artifactId>
-                <version>2.5.1.RELEASE</version>
+                <version>3.0.1</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>

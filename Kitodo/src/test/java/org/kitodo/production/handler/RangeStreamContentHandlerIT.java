@@ -24,11 +24,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.el.ExpressionFactory;
 import jakarta.el.ValueExpression;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.jboss.weld.el.WeldExpressionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.BasePrimefaceTest;
@@ -60,7 +60,7 @@ public class RangeStreamContentHandlerIT extends BasePrimefaceTest {
     private OmniApplication omniApplication;
 
     @Mock
-    private WeldExpressionFactory weldExpressionFactory;
+    private ExpressionFactory expressionFactory;
 
     @Mock
     private ValueExpression valueExpression;
@@ -89,8 +89,8 @@ public class RangeStreamContentHandlerIT extends BasePrimefaceTest {
 
         when(externalContext.getSessionMap()).thenReturn(session);
         when(facesContext.getApplication()).thenReturn(omniApplication);
-        when(omniApplication.getExpressionFactory()).thenReturn(weldExpressionFactory);
-        when(weldExpressionFactory.createValueExpression(facesContext.getELContext(), dynamicContentValue,
+        when(omniApplication.getExpressionFactory()).thenReturn(expressionFactory);
+        when(expressionFactory.createValueExpression(facesContext.getELContext(), dynamicContentValue,
                 StreamedContent.class)).thenReturn(valueExpression);
 
         InputStream inputStream = toInputStream(data, StandardCharsets.UTF_8);

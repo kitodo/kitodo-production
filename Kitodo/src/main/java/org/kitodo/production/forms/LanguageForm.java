@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.logging.log4j.LogManager;

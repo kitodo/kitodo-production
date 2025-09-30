@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
