@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 

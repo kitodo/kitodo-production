@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.JsonException;
+
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

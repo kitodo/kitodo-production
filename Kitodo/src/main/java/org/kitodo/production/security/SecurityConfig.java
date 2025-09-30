@@ -21,8 +21,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
@@ -98,6 +98,13 @@ public class SecurityConfig {
         return new HandlerMappingIntrospector();
     }
 
+    /**
+     * Determines which Spring Security Filter instances are invoked for the current request.
+     * 
+     * @param http the spring http instance
+     * @return the security chain
+     * @throws Exception when something fails
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {     
         // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.

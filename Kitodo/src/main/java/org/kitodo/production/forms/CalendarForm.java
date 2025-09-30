@@ -31,11 +31,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.naming.ConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import javax.naming.ConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
