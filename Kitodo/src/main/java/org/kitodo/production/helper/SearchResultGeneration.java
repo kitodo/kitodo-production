@@ -53,7 +53,7 @@ public class SearchResultGeneration {
         return getWorkbook();
     }
 
-    private List<ProcessExportDTO> getResultsWithFilter() {
+    public List<ProcessExportDTO> getResultsWithFilter() {
         return ServiceManager.getProcessService().getForExcel(
                 filter,
                 this.showClosedProcesses,
