@@ -27,6 +27,11 @@ jobs:
           sudo apt-get update
           sudo apt-get --only-upgrade install google-chrome-stable
 
+      - name: install imagemagick (convert command required by kitodo-image-management)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
