@@ -12,7 +12,6 @@
 package org.kitodo.filemanagement;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.kitodo.api.command.CommandInterface;
@@ -29,19 +28,14 @@ class CommandService {
      *            parameter1 parameter2 ...).
      * @return CommandResult objects
      */
-    CommandResult runCommand(String script) throws IOException {
+    CommandResult runCommand(String script) {
         if (script == null) {
             return null;
         }
         KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
         CommandInterface command = serviceLoader.loadModule();
 
-        CommandResult commandResult = command.runCommand(script);
-        List<String> commandResultMessages = commandResult.getMessages();
-        if (!commandResultMessages.isEmpty() && commandResultMessages.get(0).contains("IOException")) {
-            throw new IOException(commandResultMessages.get(1));
-        }
-        return commandResult;
+        return command.runCommand(script);
     }
 
     /**
@@ -53,7 +47,7 @@ class CommandService {
      *            script parameters
      * @return CommandResult object
      */
-    CommandResult runCommand(File scriptFile, List<String> parameter) throws IOException {
+    CommandResult runCommand(File scriptFile, List<String> parameter) {
         if (scriptFile == null) {
             return null;
         }
