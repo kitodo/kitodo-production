@@ -108,6 +108,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {     
         // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.
+        // codeql[java/spring-disabled-csrf-protection] suppress
         http.csrf(csrf -> csrf.disable());
 
         http.sessionManagement(session -> session.maximumSessions(1).sessionRegistry(getSessionRegistry())
