@@ -56,8 +56,8 @@
         <hamcrest.version>2.2</hamcrest.version>
         <hibernate.version>6.4.10.Final</hibernate.version>
         <hibernate-search.version>7.0.1.Final</hibernate-search.version>
-        <jaxb.api.version>2.3.3</jaxb.api.version>
-        <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
+        <jaxb.api.version>4.0.4</jaxb.api.version>
+        <jaxb.glassfish-runtime.version>4.0.6</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jhove.version>1.32.1</jhove.version>
@@ -217,6 +217,11 @@
                 <artifactId>jakarta.el-api</artifactId>
                 <version>5.0.1</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.servlet.jsp.jstl</groupId>
@@ -427,7 +432,7 @@ from system library in Java 11+ -->
                 <artifactId>camunda-bpmn-model</artifactId>
                 <version>7.17.0</version>
             </dependency>
-	    <dependency>
+	        <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>2.17.2</version>
@@ -477,6 +482,7 @@ from system library in Java 11+ -->
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${jaxb.glassfish-runtime.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -488,13 +494,6 @@ from system library in Java 11+ -->
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <!-- can be removed with Hibernate 6.x -->
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>

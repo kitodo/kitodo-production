@@ -82,7 +82,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("title", title);
         parameters.put("batchId", batchId);
         return getByQuery("SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
-                + ":title AND batchStep = 1 AND b.id = :batchId",
+                + ":title AND batchStep = true AND b.id = :batchId",
             parameters);
     }
 
@@ -120,7 +120,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process.id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
+        return getByQuery("FROM Task WHERE process.id = :processId AND ordering > :ordering AND repeatOnCorrection = true",
             parameters);
     }
 

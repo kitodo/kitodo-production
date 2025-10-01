@@ -13,7 +13,7 @@ package org.kitodo.dataeditor.ruleset.xml;
 
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 /**
  * A container for the properties of the XML element {@code <codomain>} in the
