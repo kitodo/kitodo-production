@@ -11,9 +11,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+<web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
 
     <display-name>Kitodo</display-name>
 
@@ -81,6 +81,14 @@
         <param-name>jakarta.faces.FACELETS_BUFFER_SIZE</param-name>
         <param-value>5242880</param-value>
     </context-param>
+
+    <!-- Jakarta EE -->
+    <resource-env-ref>
+        <resource-env-ref-name>BeanManager</resource-env-ref-name>
+        <resource-env-ref-type>
+            jakarta.enterprise.inject.spi.BeanManager
+        </resource-env-ref-type>
+    </resource-env-ref>
 
     <!-- Faces Servlet -->
     <servlet>
