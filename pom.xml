@@ -53,6 +53,7 @@
         <omnifaces.version>4.6.5</omnifaces.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
+        <org.ehcache.version>3.10.9</org.ehcache.version>
         <hamcrest.version>2.2</hamcrest.version>
         <hibernate.version>6.4.10.Final</hibernate.version>
         <hibernate-search.version>7.0.1.Final</hibernate-search.version>
@@ -470,8 +471,9 @@ from system library in Java 11+ -->
                 <!-- hibernate caching dependency -->
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>3.8.2.1</version>
+                <version>${org.ehcache.version}</version>
                 <scope>runtime</scope>
+                <classifier>jakarta</classifier>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
