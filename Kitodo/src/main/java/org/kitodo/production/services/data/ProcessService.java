@@ -2438,17 +2438,20 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Wrapper for ProcessDAO.getForExcel().
+     * Retrieves a list of processes prepared for export, applying the given filters.
+     * Instead of returning full entities, it projects the data into {@link ProcessExportDTO}
+     * objects suitable for use in reports or export (e.g., Excel, CSV).
      *
-     * @param showClosedProcesses whether to include closed processes
-     * @param showInactiveProjects whether to include inactive projects
-     * @return list of raw projection rows (Object[])
+     * @param filter               optional user-defined filter string
+     * @param includeClosed         whether to include closed processes
+     * @param includeInactiveProjects whether to include inactive projects
+     * @param sessionClientId       client ID to restrict the query
+     * @return list of processes as export-ready DTOs
      */
-
-    public List<ProcessExportDTO> getForExcel(
+    public List<ProcessExportDTO> getProcessesForExport(
             String filter,
-            boolean showClosedProcesses,
-            boolean showInactiveProjects,
+            boolean includeClosed,
+            boolean includeInactiveProjects,
             int sessionClientId) {
 
         BeanQuery query = new BeanQuery(Process.class);
@@ -2456,10 +2459,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         if (StringUtils.isNotBlank(filter)) {
             query.restrictWithUserFilterString(filter);
         }
-        if (!showClosedProcesses) {
+        if (!includeClosed) {
             query.restrictToNotCompletedProcesses();
         }
-        if (!showInactiveProjects) {
+        if (!includeInactiveProjects) {
             query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
         query.restrictToClient(sessionClientId);
