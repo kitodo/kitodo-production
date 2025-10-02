@@ -74,17 +74,29 @@ public class CommandResult {
         return successful;
     }
 
+    /**
+     * Returns the list of messages written to standard output (stdout).
+     *
+     * @return list of stdout messages
+     */
     public List<String> getStdOutMessages() {
         return stdOutMessages;
     }
 
+    /**
+    * Returns the list of messages written to standard error (stderr).
+    *
+    * @return list of stderr messages
+    */
     public List<String> getStdErrMessages() {
         return stdErrMessages;
     }
 
     /**
-     * Fallback für bestehenden Code:
-     * kombiniert stdout und stderr.
+     * Fallback for existing code:
+     * returns a combined list of standard output and error messages.
+     *
+     * @return list containing both stdout and stderr messages
      */
     public List<String> getMessages() {
         return Stream.concat(stdOutMessages.stream(), stdErrMessages.stream())

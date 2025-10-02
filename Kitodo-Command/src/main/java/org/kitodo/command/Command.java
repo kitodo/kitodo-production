@@ -71,7 +71,6 @@ public class Command implements CommandInterface {
             commandResult = new CommandResult(command, -1, Collections.emptyList(),
                     Collections.singletonList("IOException: " + e.getMessage()));
             logger.error("Execution of Command {} failed to start: {}", command, e.getMessage());
-
         }
         return commandResult;
     }
