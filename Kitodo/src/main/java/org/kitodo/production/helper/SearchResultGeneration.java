@@ -54,7 +54,7 @@ public class SearchResultGeneration {
     }
 
     private List<ProcessExportDTO> getResultsWithFilter() {
-        return ServiceManager.getProcessService().getForExcel(
+        return ServiceManager.getProcessService().getProcessesForExport(
                 filter,
                 this.showClosedProcesses,
                 this.showInactiveProjects,
