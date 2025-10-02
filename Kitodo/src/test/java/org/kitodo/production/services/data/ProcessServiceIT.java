@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -49,6 +50,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -632,5 +634,40 @@ public class ProcessServiceIT {
         assertEquals(1, process.getSortHelperImages());
         assertEquals(4, process.getSortHelperMetadata());
         assertEquals(1, process.getSortHelperDocstructs());
+    }
+
+    @Test
+    public void shouldReturnCorrectProcessExportDTO() throws Exception {
+        int testProcessId = MockDatabase.insertTestProcess("Export Test Process", 1, 1, 1);
+        Process process = processService.getById(testProcessId);
+
+        List<ProcessExportDTO> result = processService.getProcessesForExport(
+                null,   // no filter
+                true,   // include closed
+                true,   // include inactive projects
+                process.getProject().getClient().getId()
+        );
+
+        ProcessExportDTO dto = result.stream()
+                .filter(d -> d.getId().equals(testProcessId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Export DTO for test process not found"));
+
+        assertEquals(process.getId(), dto.getId(), "Process ID mismatch");
+        assertEquals(Objects.nonNull(process.getTitle()) ? process.getTitle() : "", dto.getTitle(), "Title mismatch");
+        assertEquals(process.getCreationDate(), dto.getCreationDate(), "Creation date mismatch");
+        assertEquals(Objects.nonNull(process.getSortHelperImages()) ? process.getSortHelperImages() : 0,
+                dto.getSortHelperImages(), "Image count mismatch");
+        assertEquals(Objects.nonNull(process.getSortHelperDocstructs()) ? process.getSortHelperDocstructs() : 0,
+                dto.getSortHelperDocstructs(), "Docstruct count mismatch");
+        assertEquals(Objects.nonNull(process.getSortHelperMetadata()) ? process.getSortHelperMetadata() : 0,
+                dto.getSortHelperMetadata(), "Metadata count mismatch");
+        assertEquals(Objects.nonNull(process.getProject().getTitle()) ? process.getProject().getTitle() : "",
+                dto.getProjectTitle(), "Project title mismatch");
+        assertEquals(Objects.nonNull(process.getSortHelperStatus()) ? process.getSortHelperStatus() : "",
+                dto.getStatus(), "Status mismatch");
+
+        // cleanup
+        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 }

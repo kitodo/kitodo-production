@@ -102,13 +102,15 @@ public class SearchResultGeneration {
 
     private void prepareRow(int rowCounter, Sheet sheet, ProcessExportDTO data) {
         Row row = sheet.createRow(rowCounter);
-        row.createCell(0).setCellValue(data.getTitle() != null ? data.getTitle() : "");
-        row.createCell(1).setCellValue(data.getId() != null ? data.getId() : 0);
-        row.createCell(2).setCellValue(data.getCreationDate() != null ? dateFormatter.format(data.getCreationDate()) : "");
-        row.createCell(3).setCellValue(data.getSortHelperImages() != null ? data.getSortHelperImages() : 0);
-        row.createCell(4).setCellValue(data.getSortHelperDocstructs() != null ? data.getSortHelperDocstructs() : 0);
-        row.createCell(5).setCellValue(data.getSortHelperMetadata() != null ? data.getSortHelperMetadata() : 0);
-        row.createCell(6).setCellValue(data.getProjectTitle() != null ? data.getProjectTitle() : "");
-        row.createCell(7).setCellValue(data.getStatus() != null ? data.getStatus() : "");
+        row.createCell(0).setCellValue(data.getTitle());
+        row.createCell(1).setCellValue(data.getId());
+        row.createCell(2).setCellValue(
+                data.getCreationDate() != null ? dateFormatter.format(data.getCreationDate()) : ""
+        );
+        row.createCell(3).setCellValue(data.getSortHelperImages());
+        row.createCell(4).setCellValue(data.getSortHelperDocstructs());
+        row.createCell(5).setCellValue(data.getSortHelperMetadata());
+        row.createCell(6).setCellValue(data.getProjectTitle());
+        row.createCell(7).setCellValue(data.getStatus());
     }
 }
