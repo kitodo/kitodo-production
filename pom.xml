@@ -526,7 +526,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.jboss.weld.servlet</groupId>
                 <artifactId>weld-servlet-core</artifactId>
-                <version>5.1.6.Final</version>
+                <version>6.0.3.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
