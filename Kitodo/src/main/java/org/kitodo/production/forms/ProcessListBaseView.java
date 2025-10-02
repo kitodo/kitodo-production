@@ -394,20 +394,6 @@ public class ProcessListBaseView extends BaseForm {
     }
 
     /**
-     * Generate result as CSV.
-     */
-    public void generateResultAsCsv() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
-        try {
-            ServiceManager.getProcessService().generateResultAsCsv(this.filter, this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects());
-        } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultCsv") }, logger, e);
-        }
-        stopwatch.stop();
-    }
-
-    /**
      * Generate result as PDF.
      */
     public void generateResultAsPdf() {

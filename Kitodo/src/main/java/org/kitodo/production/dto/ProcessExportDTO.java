@@ -14,6 +14,9 @@ package org.kitodo.production.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Data Transfer Object for process export.
+ */
 public class ProcessExportDTO implements Serializable {
 
     private final Integer id;
@@ -47,7 +50,7 @@ public class ProcessExportDTO implements Serializable {
      * @return process ID
      */
     public Integer getId() {
-        return id;
+        return id != null ? id : 0;
     }
 
     /**
@@ -56,7 +59,7 @@ public class ProcessExportDTO implements Serializable {
      * @return title of the process
      */
     public String getTitle() {
-        return title;
+        return title != null ? title : "";
     }
 
     /**
@@ -74,7 +77,7 @@ public class ProcessExportDTO implements Serializable {
      * @return image count
      */
     public Integer getSortHelperImages() {
-        return sortHelperImages;
+        return sortHelperImages != null ? sortHelperImages : 0;
     }
 
     /**
@@ -83,7 +86,7 @@ public class ProcessExportDTO implements Serializable {
      * @return docstruct count
      */
     public Integer getSortHelperDocstructs() {
-        return sortHelperDocstructs;
+        return sortHelperDocstructs != null ? sortHelperDocstructs : 0;
     }
 
     /**
@@ -92,7 +95,7 @@ public class ProcessExportDTO implements Serializable {
      * @return metadata count
      */
     public Integer getSortHelperMetadata() {
-        return sortHelperMetadata;
+        return sortHelperMetadata != null ? sortHelperMetadata : 0;
     }
 
     /**
@@ -101,7 +104,7 @@ public class ProcessExportDTO implements Serializable {
      * @return project title
      */
     public String getProjectTitle() {
-        return projectTitle;
+        return projectTitle != null ? projectTitle : "";
     }
 
     /**
@@ -110,6 +113,7 @@ public class ProcessExportDTO implements Serializable {
      * @return current status
      */
     public String getStatus() {
-        return status;
+        return status != null ? status : "";
     }
 }
+

@@ -24,18 +24,15 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -73,7 +70,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.opencsv.CSVWriter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -100,7 +96,6 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilt
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -1201,56 +1196,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 wb.write(out);
                 wb.close();
                 out.flush();
-                facesContext.responseComplete();
-            }
-        }
-    }
-
-    public void generateResultAsCsv(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
-            throws IOException {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.csv");
-            response.setResponseContentType("text/csv; charset=UTF-8");
-
-            try (OutputStream out = response.getResponseOutputStream();
-                 OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-                 BufferedWriter bufferedWriter = new BufferedWriter(writer);
-                 CSVWriter csvWriter = new CSVWriter(bufferedWriter,
-                         CSVWriter.DEFAULT_SEPARATOR,
-                         CSVWriter.DEFAULT_QUOTE_CHARACTER,
-                         CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                         CSVWriter.DEFAULT_LINE_END)) {
-
-                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses, showInactiveProjects);
-                List<ProcessExportDTO> results = sr.getResultsWithFilter();
-
-                // Header
-                String[] header = {
-                        "Title", "ID", "Date", "CountImages",
-                        "CountStructuralElements", "CountMetadata",
-                        "Project", "Status"
-                };
-                csvWriter.writeNext(header);
-
-                SimpleDateFormat dateFormatter = new SimpleDateFormat(BaseTemplateBean.DATE_FORMAT);
-
-                // Stream rows
-                for (ProcessExportDTO dto : results) {
-                    String[] row = {
-                            dto.getTitle(),
-                            String.valueOf(dto.getId()),
-                            dto.getCreationDate() != null ? dateFormatter.format(dto.getCreationDate()) : "",
-                            String.valueOf(dto.getSortHelperImages()),
-                            String.valueOf(dto.getSortHelperDocstructs()),
-                            String.valueOf(dto.getSortHelperMetadata()),
-                            dto.getProjectTitle(),
-                            dto.getStatus()
-                    };
-                    csvWriter.writeNext(row, false); // false = don't apply quotes unless needed
-                }
-
-                csvWriter.flush();
                 facesContext.responseComplete();
             }
         }
