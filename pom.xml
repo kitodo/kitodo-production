@@ -522,6 +522,11 @@ from system library in Java 11+ -->
                 <version>1.4.0</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.weld.servlet</groupId>
+                <artifactId>weld-servlet-core</artifactId>
+                <version>5.1.6.Final</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jdom</groupId>
                 <artifactId>jdom2</artifactId>
                 <version>2.0.6.1</version>
