@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,32 +47,30 @@ public class Command implements CommandInterface {
                     InputStream errorInputStream = process.getErrorStream()) {
                 List<String> outputMessage = inputStreamArrayToList(inputStream);
                 List<String> errorMessage = inputStreamArrayToList(errorInputStream);
-                List<String> combinedMessages = Stream.concat(outputMessage.stream(), errorMessage.stream())
-                        .collect(Collectors.toList());
                 int errCode = process.waitFor();
-                if (Integer.valueOf(errCode).equals(0)) {
-                    commandResult = new CommandResult(command, true, outputMessage);
-                    logger.info("Execution of Command {} was successful!: {}",
-                            commandResult.getCommand(), combinedMessages);
+                commandResult = new CommandResult(command, errCode, outputMessage, errorMessage);
+                for (String line : outputMessage) {
+                    logger.info("[STDOUT] {}", line);
+                }
+                for (String line : errorMessage) {
+                    logger.error("[STDERR] {}", line);
+                }
+                if (commandResult.isSuccessful()) {
+                    logger.info("Execution of Command {} was successful", commandResult.getCommand());
                 } else {
-                    commandResult = new CommandResult(command, false, errorMessage);
-                    logger.error("Execution of Command {} failed!: {}",
-                            commandResult.getCommand(), combinedMessages);
+                    logger.error("Execution of Command {} failed with exit code {}",
+                            commandResult.getCommand(), commandResult.getExitCode());
                 }
             }
         } catch (InterruptedException e) {
-            commandResult = new CommandResult(command, false, Collections.singletonList(e.getMessage()));
-            logger.error("Execution of Command Thread was interrupted!");
             Thread.currentThread().interrupt();
-            return commandResult;
+            commandResult = new CommandResult(command, -1, Collections.emptyList(),
+                    Collections.singletonList("Interrupted: " + e.getMessage()));
+            logger.error("Execution of Command {} was interrupted!", command);
         } catch (IOException e) {
-            List<String> errorMessages = new ArrayList<>();
-            errorMessages.add(e.getCause().toString());
-            errorMessages.add(e.getMessage());
-            commandResult = new CommandResult(command, false, errorMessages);
-            logger.error("Execution of Command {} failed!: {}", commandResult.getCommand(),
-                commandResult.getMessages());
-            return commandResult;
+            commandResult = new CommandResult(command, -1, Collections.emptyList(),
+                    Collections.singletonList("IOException: " + e.getMessage()));
+            logger.error("Execution of Command {} failed to start: {}", command, e.getMessage());
         }
         return commandResult;
     }
