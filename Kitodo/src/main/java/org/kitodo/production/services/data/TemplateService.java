@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -192,6 +193,23 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
         }
 
         return duplicatedTemplate;
+    }
+
+    /**
+     * Delete given template.
+     *
+     * @param templateToDelete template to delete
+     */
+    public static void deleteTemplate(Template templateToDelete) throws DAOException, IOException {
+        templateToDelete.setWorkflow(null);
+        templateToDelete.setDocket(null);
+        templateToDelete.setRuleset(null);
+        templateToDelete.setClient(null);
+        templateToDelete.getProjects().clear();
+        templateToDelete.getTasks().clear();
+        TemplateService templateService = ServiceManager.getTemplateService();
+        templateService.save(templateToDelete);
+        templateService.remove(templateToDelete);
     }
 
     /**
