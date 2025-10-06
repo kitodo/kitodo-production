@@ -207,13 +207,8 @@ public class TemplateForm extends TemplateBaseForm {
             Helper.setErrorMessage("processAssignedError");
         } else {
             try {
-                if (Objects.nonNull(this.template.getWorkflow())) {
-                    this.template.getWorkflow().getTemplates().remove(this.template);
-                    this.template.setWorkflow(null);
-                }
-
-                ServiceManager.getTemplateService().remove(this.template);
-            } catch (Exception e) {
+                TemplateService.deleteTemplate(template);
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
             }
