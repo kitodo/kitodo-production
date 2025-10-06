@@ -13,6 +13,7 @@ package org.kitodo.production.helper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -105,8 +106,7 @@ public class SearchResultGeneration {
         row.createCell(0).setCellValue(data.getTitle());
         row.createCell(1).setCellValue(data.getId());
         row.createCell(2).setCellValue(
-                data.getCreationDate() != null ? dateFormatter.format(data.getCreationDate()) : ""
-        );
+                Objects.nonNull(data.getCreationDate()) ? dateFormatter.format(data.getCreationDate()) : "");
         row.createCell(3).setCellValue(data.getSortHelperImages());
         row.createCell(4).setCellValue(data.getSortHelperDocstructs());
         row.createCell(5).setCellValue(data.getSortHelperMetadata());
