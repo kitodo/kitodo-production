@@ -13,6 +13,7 @@ package org.kitodo.production.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Data Transfer Object for process export.
@@ -50,7 +51,7 @@ public class ProcessExportDTO implements Serializable {
      * @return process ID
      */
     public Integer getId() {
-        return id != null ? id : 0;
+        return Objects.nonNull(id) ? id : 0;
     }
 
     /**
@@ -59,7 +60,7 @@ public class ProcessExportDTO implements Serializable {
      * @return title of the process
      */
     public String getTitle() {
-        return title != null ? title : "";
+        return Objects.nonNull(title) ? title : "";
     }
 
     /**
@@ -77,7 +78,7 @@ public class ProcessExportDTO implements Serializable {
      * @return image count
      */
     public Integer getSortHelperImages() {
-        return sortHelperImages != null ? sortHelperImages : 0;
+        return Objects.nonNull(sortHelperImages) ? sortHelperImages : 0;
     }
 
     /**
@@ -86,7 +87,7 @@ public class ProcessExportDTO implements Serializable {
      * @return docstruct count
      */
     public Integer getSortHelperDocstructs() {
-        return sortHelperDocstructs != null ? sortHelperDocstructs : 0;
+        return Objects.nonNull(sortHelperDocstructs) ? sortHelperDocstructs : 0;
     }
 
     /**
@@ -95,7 +96,7 @@ public class ProcessExportDTO implements Serializable {
      * @return metadata count
      */
     public Integer getSortHelperMetadata() {
-        return sortHelperMetadata != null ? sortHelperMetadata : 0;
+        return Objects.nonNull(sortHelperMetadata) ? sortHelperMetadata : 0;
     }
 
     /**
@@ -104,7 +105,7 @@ public class ProcessExportDTO implements Serializable {
      * @return project title
      */
     public String getProjectTitle() {
-        return projectTitle != null ? projectTitle : "";
+        return Objects.nonNull(projectTitle) ? projectTitle : "";
     }
 
     /**
@@ -113,7 +114,7 @@ public class ProcessExportDTO implements Serializable {
      * @return current status
      */
     public String getStatus() {
-        return status != null ? status : "";
+        return Objects.nonNull(status) ? status : "";
     }
 }
 
