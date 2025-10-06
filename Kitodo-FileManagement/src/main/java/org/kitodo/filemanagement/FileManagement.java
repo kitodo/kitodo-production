@@ -514,8 +514,6 @@ public class FileManagement implements FileManagementInterface {
             return false;
         }
 
-        String command = KitodoConfig.getParameter("script_createSymLink");
-        CommandService commandService = new CommandService();
         List<String> parameters = new ArrayList<>();
         parameters.add(imagePath.getAbsolutePath());
         parameters.add(userHome.getAbsolutePath());
@@ -526,15 +524,9 @@ public class FileManagement implements FileManagementInterface {
             parameters.add(userLogin);
         }
 
-        try {
-            return commandService.runCommand(new File(command), parameters).isSuccessful();
-        } catch (FileNotFoundException e) {
-            logger.error("FileNotFoundException in createSymLink", e);
-            return false;
-        } catch (IOException e) {
-            logger.error("IOException in createSymLink", e);
-            return false;
-        }
+        String command = KitodoConfig.getParameter("script_createSymLink");
+        CommandService commandService = new CommandService();
+        return commandService.runCommand(new File(command), parameters).isSuccessful();
     }
 
     @Override
@@ -547,11 +539,8 @@ public class FileManagement implements FileManagementInterface {
         try {
             parameters.add(URLDecoder.decode(homeFile.getAbsolutePath(), StandardCharsets.UTF_8.name()));
             return commandService.runCommand(new File(command), parameters).isSuccessful();
-        } catch (FileNotFoundException e) {
-            logger.error("FileNotFoundException in deleteSymLink", e);
-            return false;
-        } catch (IOException e) {
-            logger.error("IOException in deleteSymLink", e);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("UnsupportedEncodingException in deleteSymLink", e);
             return false;
         }
     }
