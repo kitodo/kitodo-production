@@ -13,15 +13,14 @@ package org.kitodo.production.helper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.kitodo.data.database.beans.BaseTemplateBean;
-import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.BeanQuery;
 
 public class SearchResultGeneration {
 
@@ -55,20 +54,13 @@ public class SearchResultGeneration {
         return getWorkbook();
     }
 
-    private List<Process> getResultsWithFilter() {
-        BeanQuery query = new BeanQuery(Process.class);
-        if (StringUtils.isNotBlank(filter)) {
-            query.restrictWithUserFilterString(filter);
-        }
-        if (!this.showClosedProcesses) {
-            query.restrictToNotCompletedProcesses();
-        }
-        if (!this.showInactiveProjects) {
-            query.addBooleanRestriction("project.active", Boolean.TRUE);
-        }
-        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        query.performIndexSearches();
-        return ServiceManager.getProcessService().getByQuery(query.formQueryForAll(), query.getQueryParameters());
+    private List<ProcessExportDTO> getResultsWithFilter() {
+        return ServiceManager.getProcessService().getProcessesForExport(
+                filter,
+                this.showClosedProcesses,
+                this.showInactiveProjects,
+                ServiceManager.getUserService().getSessionClientId()
+        );
     }
 
     private XSSFWorkbook getWorkbook() {
@@ -90,9 +82,9 @@ public class SearchResultGeneration {
 
     private void insertRowData(Sheet sheet) {
         int rowCounter = 2;
-        List<Process> resultsWithFilter = getResultsWithFilter();
-        for (Process process : resultsWithFilter) {
-            prepareRow(rowCounter, sheet, process);
+        List<ProcessExportDTO> results = getResultsWithFilter();
+        for (ProcessExportDTO rowData : results) {
+            prepareRow(rowCounter, sheet, rowData);
             rowCounter++;
         }
     }
@@ -109,15 +101,16 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
-    private void prepareRow(int rowCounter, Sheet sheet, Process process) {
+    private void prepareRow(int rowCounter, Sheet sheet, ProcessExportDTO data) {
         Row row = sheet.createRow(rowCounter);
-        row.createCell(0).setCellValue(process.getTitle());
-        row.createCell(1).setCellValue(process.getId());
-        row.createCell(2).setCellValue(dateFormatter.format(process.getCreationDate()));
-        row.createCell(3).setCellValue(process.getSortHelperImages());
-        row.createCell(4).setCellValue(process.getSortHelperDocstructs());
-        row.createCell(5).setCellValue(process.getSortHelperMetadata());
-        row.createCell(6).setCellValue(process.getProject().getTitle());
-        row.createCell(7).setCellValue(process.getSortHelperStatus());
+        row.createCell(0).setCellValue(data.getTitle());
+        row.createCell(1).setCellValue(data.getId());
+        row.createCell(2).setCellValue(
+                Objects.nonNull(data.getCreationDate()) ? dateFormatter.format(data.getCreationDate()) : "");
+        row.createCell(3).setCellValue(data.getSortHelperImages());
+        row.createCell(4).setCellValue(data.getSortHelperDocstructs());
+        row.createCell(5).setCellValue(data.getSortHelperMetadata());
+        row.createCell(6).setCellValue(data.getProjectTitle());
+        row.createCell(7).setCellValue(data.getStatus());
     }
 }

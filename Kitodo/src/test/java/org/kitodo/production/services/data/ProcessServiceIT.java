@@ -49,6 +49,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -632,5 +633,81 @@ public class ProcessServiceIT {
         assertEquals(1, process.getSortHelperImages());
         assertEquals(4, process.getSortHelperMetadata());
         assertEquals(1, process.getSortHelperDocstructs());
+    }
+
+    @Test
+    public void shouldReturnCorrectProcessExportDTO() throws Exception {
+
+        final String EXPECTED_EXPORT_TITLE = "Export Test Process";
+        final String EXPECTED_PROJECT_TITLE = "First project";
+
+        int testProcessId = MockDatabase.insertTestProcess(EXPECTED_EXPORT_TITLE, 1, 1, 1);
+        Process process = processService.getById(testProcessId);
+        List<ProcessExportDTO> result = processService.getProcessesForExport(
+                null,   // no filter
+                true,   // include closed
+                true,   // include inactive projects
+                process.getProject().getClient().getId()
+        );
+
+        ProcessExportDTO dto = result.stream()
+                .filter(d -> d.getId().equals(testProcessId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Export DTO for test process not found"));
+
+        assertEquals(testProcessId, dto.getId(), "Process ID mismatch");
+        assertEquals(EXPECTED_EXPORT_TITLE, dto.getTitle(), "Title mismatch");
+        assertEquals(process.getCreationDate(), dto.getCreationDate(), "Creation date mismatch");
+        assertEquals(0, dto.getSortHelperImages(), "Image count mismatch");
+        assertEquals(0, dto.getSortHelperDocstructs(), "Docstruct count mismatch");
+        assertEquals(0, dto.getSortHelperMetadata(), "Metadata count mismatch");
+        assertEquals(EXPECTED_PROJECT_TITLE, dto.getProjectTitle(), "Project title mismatch");
+        assertEquals("", dto.getStatus(), "Status mismatch");
+
+        // cleanup
+        ProcessTestUtils.removeTestProcess(testProcessId);
+    }
+
+    @Test
+    public void shouldReturnCorrectProcessExportDTOWithCorrectStats() throws Exception {
+
+        final String EXPECTED_EXPORT_TITLE = "Export Test Process";
+        final String EXPECTED_PROJECT_TITLE = "First project";
+        final int SORT_HELPER_IMAGES = 100;
+        final int SORT_HELPER_DOCSTRUCTS = 200;
+        final int SORT_HELPER_METADATA = 300;
+        final String SORT_HELPER_STATUS = "060000010030";
+
+        int testProcessId = MockDatabase.insertTestProcess(EXPECTED_EXPORT_TITLE, 1, 1, 1);
+        Process process = processService.getById(testProcessId);
+        process.setSortHelperImages(SORT_HELPER_IMAGES);
+        process.setSortHelperMetadata(SORT_HELPER_METADATA);
+        process.setSortHelperDocstructs(SORT_HELPER_DOCSTRUCTS);
+        process.setSortHelperStatus(SORT_HELPER_STATUS);
+
+        processService.save(process);
+
+        List<ProcessExportDTO> result = processService.getProcessesForExport(
+                null,   // no filter
+                true,   // include closed
+                true,   // include inactive projects
+                process.getProject().getClient().getId()
+        );
+        ProcessExportDTO dto = result.stream()
+                .filter(d -> d.getId().equals(testProcessId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Export DTO for test process not found"));
+
+        assertEquals(testProcessId, dto.getId(), "Process ID mismatch");
+        assertEquals(EXPECTED_EXPORT_TITLE, dto.getTitle(), "Title mismatch");
+        assertEquals(process.getCreationDate(), dto.getCreationDate(), "Creation date mismatch");
+        assertEquals(SORT_HELPER_IMAGES, dto.getSortHelperImages(), "Image count mismatch");
+        assertEquals(SORT_HELPER_DOCSTRUCTS, dto.getSortHelperDocstructs(), "Docstruct count mismatch");
+        assertEquals(SORT_HELPER_METADATA, dto.getSortHelperMetadata(), "Metadata count mismatch");
+        assertEquals(EXPECTED_PROJECT_TITLE, dto.getProjectTitle(), "Project title mismatch");
+        assertEquals(SORT_HELPER_STATUS, dto.getStatus(), "Status mismatch");
+
+        // cleanup
+        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 }

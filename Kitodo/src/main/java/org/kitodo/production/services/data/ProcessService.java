@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -114,6 +115,7 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
+import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -2378,5 +2380,62 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         } catch (IOException e) {
             logger.debug("Could not load meta file {} for gathering meta information!", metadataFileUri.toString());
         }
+    }
+
+    /**
+     * Retrieves a list of processes prepared for export, applying the given filters.
+     * Instead of returning full entities, it projects the data into {@link ProcessExportDTO}
+     * objects suitable for use in reports or export (e.g., Excel, CSV).
+     *
+     * @param filter               optional user-defined filter string
+     * @param includeClosed         whether to include closed processes
+     * @param includeInactiveProjects whether to include inactive projects
+     * @param sessionClientId       client ID to restrict the query
+     * @return list of processes as export-ready DTOs
+     */
+    public List<ProcessExportDTO> getProcessesForExport(
+            String filter,
+            boolean includeClosed,
+            boolean includeInactiveProjects,
+            int sessionClientId) {
+
+        BeanQuery query = new BeanQuery(Process.class);
+
+        if (StringUtils.isNotBlank(filter)) {
+            query.restrictWithUserFilterString(filter);
+        }
+        if (!includeClosed) {
+            query.restrictToNotCompletedProcesses();
+        }
+        if (!includeInactiveProjects) {
+            query.addBooleanRestriction("project.active", Boolean.TRUE);
+        }
+        query.restrictToClient(sessionClientId);
+        query.performIndexSearches();
+
+        query.addInnerJoin("project proj");
+        query.defineSorting("id", SortOrder.ASCENDING);
+
+        String hql = "SELECT process.id, process.title, process.creationDate, "
+                + "process.sortHelperImages, process.sortHelperDocstructs, process.sortHelperMetadata, "
+                + "proj.title, process.sortHelperStatus "
+                + query.formQueryWithoutSelect();
+
+        List<Object[]> rows = dao.getProjectionByQuery(hql, query.getQueryParameters());
+
+        List<ProcessExportDTO> result = new ArrayList<>(rows.size());
+        for (Object[] row : rows) {
+            result.add(new ProcessExportDTO(
+                    (Integer) row[0],        // id
+                    (String) row[1],         // title
+                    (Date) row[2],           // creationDate
+                    (Integer) row[3],        // sortHelperImages
+                    (Integer) row[4],        // sortHelperDocstructs
+                    (Integer) row[5],        // sortHelperMetadata
+                    (String) row[6],         // projectTitle
+                    (String) row[7]          // status
+            ));
+        }
+        return result;
     }
 }
