@@ -96,7 +96,7 @@ public class ListingST extends BaseTestSelenium {
         assertEquals(projectsInDatabase, projectsDisplayed, "Displayed wrong number of projects");
 
         String query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
-                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1)"
+                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser.id = 1 OR r.id = 1)"
                 + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = false";
 
         int tasksInDatabase = ServiceManager.getTaskService().getByQuery(query).size();
@@ -151,7 +151,7 @@ public class ListingST extends BaseTestSelenium {
         tasksPage.goTo();
 
         String query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
-                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1)"
+                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser.id = 1 OR r.id = 1)"
                 + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = false";
 
         int tasksInDatabase = ServiceManager.getTaskService().getByQuery(query).size();
@@ -169,7 +169,7 @@ public class ListingST extends BaseTestSelenium {
         tasksPage.applyFilterShowOnlyOpenTasks();
 
         query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
-                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1) AND "
+                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser.id = 1 OR r.id = 1) AND "
                 + "t.processingStatus = 1 AND t.typeAutomatic = false";
         tasksInDatabase = ServiceManager.getTaskService().getByQuery(query).size();
         tasksDisplayed = tasksPage.countListedTasks();
