@@ -499,6 +499,13 @@
                                 <properties>
                                     <cargo.logging>low</cargo.logging>
                                 </properties>
+                                <configfiles>
+                                    <configfile>
+                                        <file>${project.basedir}/src/test/resources/tomcat.server.xml</file>
+                                        <todir>conf</todir>
+                                        <tofile>server.xml</tofile>
+                                    </configfile>
+                                </configfiles>
                             </configuration>
                             <deployables>
                                 <deployable>
@@ -615,6 +622,13 @@
                                 <properties>
                                     <cargo.logging>low</cargo.logging>
                                 </properties>
+                                <configfiles>
+                                    <configfile>
+                                        <file>${project.basedir}/src/test/resources/tomcat.server.xml</file>
+                                        <todir>conf</todir>
+                                        <tofile>server.xml</tofile>
+                                    </configfile>
+                                </configfiles>
                             </configuration>
                             <deployables>
                                 <deployable>
