@@ -177,7 +177,8 @@ public class TaskDAO extends BaseDAO<Task> {
                     + "        UNION ALL"
                     + "        (SELECT p1.id from process as p1, process_children as p2 WHERE p2.id = p1.parent_id)"
                     + "    ) SELECT id FROM process_children"
-                    + ") as p WHERE t.process_id = p.id GROUP BY t.processingStatus;"
+                    + ") as p WHERE t.process_id = p.id GROUP BY t.processingStatus;",
+                Object[].class
             );
             query.addScalar("status", StandardBasicTypes.INTEGER);
             query.addScalar("count", StandardBasicTypes.INTEGER);
