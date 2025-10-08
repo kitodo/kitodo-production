@@ -162,14 +162,14 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         if (user.getProjects().isEmpty()) {
-            return getByQuery("FROM Project WHERE client_id = :sessionClientId", parameters);
+            return getByQuery("FROM Project WHERE client.id = :sessionClientId", parameters);
         } else {
             List<Integer> assignedProjectIds = user.getProjects()
                     .stream()
                     .map(Project::getId)
                     .collect(Collectors.toList());
             parameters.put("assignedProjects", assignedProjectIds);
-            return getByQuery("FROM Project WHERE client_id = :sessionClientId AND id NOT IN :assignedProjects",
+            return getByQuery("FROM Project WHERE client.id = :sessionClientId AND id NOT IN :assignedProjects",
                 parameters);
         }
     }
