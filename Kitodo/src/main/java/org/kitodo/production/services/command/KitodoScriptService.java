@@ -355,8 +355,7 @@ public class KitodoScriptService {
                     }
                     Helper.setMessage(Helper.getTranslation("kitodoScript.contentDeleted", title));
                 } catch (IOException | RuntimeException e) {
-                    Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title}, logger, e);
-
+                    Helper.setErrorMessage("kitodoScript.errorDeleting", new Object[] {"content for " + title}, logger, e);
                 }
             } else {
                 try {
