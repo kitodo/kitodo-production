@@ -73,5 +73,10 @@ public enum PaginatorState {
      * An upper-case Roman numeral. This may still turn into a static text if the
      * next character is a letter.
      */
-    UPPERCASE_ROMAN
+    UPPERCASE_ROMAN,
+
+    /**
+     * Characters representing a numeral (a=1, b=2, ..., z=26, aa=27).
+     */
+    ALPHABETIC
 }

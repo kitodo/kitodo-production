@@ -512,6 +512,10 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         return getById(userId).getShortcuts();
     }
 
+    public String getDefaultPaginationType(int userId) throws DAOException {
+        return getById(userId).getDefaultPaginationType();
+    }
+
     /**
      * Retrieves the list of clients available to the currently authenticated user.
      *

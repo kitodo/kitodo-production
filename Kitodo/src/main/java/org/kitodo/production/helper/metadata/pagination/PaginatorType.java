@@ -28,6 +28,24 @@ public enum PaginatorType {
         }
     },
 
+    ALPHABETIC(4) {
+        @Override
+        public String format(PaginatorMode mode, String valueString, boolean fictitious, String separator) {
+            int value;
+            try {
+                value = AlphabeticNumeral.parseInt(valueString);
+            } catch (NumberFormatException b) {
+                try {
+                    value = Integer.parseInt(valueString);
+                } catch (NumberFormatException unused) {
+                    throw b;
+                }
+            }
+            return mode.format('´' + AlphabeticNumeral.format(value) + '´', '´' + AlphabeticNumeral.format(value + 1) + '´', fictitious,
+                    separator);
+        }
+    },
+
     /**
      * Arabic numbers (1, 2, 3, …).
      */
