@@ -21,10 +21,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
@@ -120,7 +120,7 @@ public class LanguageForm implements Serializable {
                 translation.put("displayLanguageTranslated",
                     supportedLocale.getDisplayLanguage(currentDisplayLanguage));
                 translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
-                translation.put("flag", "javax.faces.resource/images/" + supportedLocale + ".svg.jsf");
+                translation.put("flag", "jakarta.faces.resource/images/" + supportedLocale + ".svg.jsf");
                 supportedLocales.add(translation);
             }
         }

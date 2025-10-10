@@ -14,7 +14,7 @@ package org.kitodo.production.forms.createprocess;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.exceptions.InvalidMetadataValueException;

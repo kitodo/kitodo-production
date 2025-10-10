@@ -23,8 +23,9 @@ import java.util.Objects;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

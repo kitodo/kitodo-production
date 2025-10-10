@@ -29,8 +29,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+
+import jakarta.xml.bind.JAXBElement;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;

@@ -36,8 +36,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -448,7 +448,7 @@ public class Helper {
     private static void loadMessages() {
         commonMessages = new HashMap<>();
         errorMessages = new HashMap<>();
-        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+        if (Objects.nonNull(FacesContext.getCurrentInstance()) && Objects.nonNull(FacesContext.getCurrentInstance().getApplication())) {
             Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();

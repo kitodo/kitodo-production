@@ -51,7 +51,7 @@ public class CommentDAO extends BaseDAO<Comment> {
     }
 
     public List<Comment> getAllByProcess(Process process) {
-        return getByQuery("FROM Comment WHERE process_id = :processId ORDER BY id ASC",
+        return getByQuery("FROM Comment WHERE process.id = :processId ORDER BY id ASC",
                 Collections.singletonMap("processId", process.getId()));
     }
 
@@ -63,7 +63,7 @@ public class CommentDAO extends BaseDAO<Comment> {
      * @return List of comments
      */
     public List<Comment> getAllByTask(Task task) {
-        return getByQuery("FROM Comment WHERE currentTask_id = :taskId ORDER BY id ASC",
+        return getByQuery("FROM Comment WHERE currentTask.id = :taskId ORDER BY id ASC",
                 Collections.singletonMap("taskId", task.getId()));
     }
 

@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;

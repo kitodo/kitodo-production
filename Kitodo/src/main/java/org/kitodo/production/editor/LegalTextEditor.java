@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.production.helper.Helper;

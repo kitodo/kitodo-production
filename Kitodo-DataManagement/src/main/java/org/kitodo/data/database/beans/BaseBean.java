@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PersistenceException;
 
 import org.hibernate.Hibernate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;

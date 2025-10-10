@@ -60,8 +60,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,6 +67,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -1800,7 +1801,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *             when query to database fails
      */
     public int getNumberOfChildren(int processId) throws DAOException {
-        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent.id = " + processId));
     }
 
     public static void deleteProcess(int processID) throws DAOException, IOException {

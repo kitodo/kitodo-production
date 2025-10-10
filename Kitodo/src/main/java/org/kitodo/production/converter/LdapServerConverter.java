@@ -11,10 +11,10 @@
 
 package org.kitodo.production.converter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.inject.Named;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.inject.Named;
 
 import org.kitodo.production.services.ServiceManager;
 
