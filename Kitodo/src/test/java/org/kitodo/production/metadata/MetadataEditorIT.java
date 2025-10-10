@@ -93,7 +93,7 @@ public class MetadataEditorIT {
 
         MetadataEditor.addLink(ServiceManager.getProcessService().getById(parentId), "0", childId);
 
-        assertTrue(isInternalMetsLink(FileUtils.readLines(metaXmlFile, StandardCharsets.UTF_8).get(36), childId), "The link was not added correctly!");
+        assertTrue(isInternalMetsLink(FileUtils.readLines(metaXmlFile, StandardCharsets.UTF_8).get(38), childId), "The link was not added correctly!");
 
         FileUtils.writeLines(metaXmlFile, StandardCharsets.UTF_8.toString(), metaXmlContentBefore);
         FileUtils.deleteQuietly(new File(METADATA_BASE_DIR + parentId + "/meta.xml.1"));
