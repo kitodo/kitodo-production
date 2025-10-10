@@ -597,6 +597,10 @@ public class ProcessForm extends TemplateBaseForm {
     public void executeKitodoScriptSelection() {
         Stopwatch stopwatch = new Stopwatch(this, "executeKitodoScriptSelection");
         executeKitodoScriptForProcesses(getSelectedProcesses(), this.kitodoScriptSelection);
+        // Clear selection if deleteProcess was executed
+        if (Objects.nonNull(kitodoScriptSelection) && kitodoScriptSelection.startsWith("action:deleteProcess")) {
+            this.selectedProcesses.clear();
+        }
         stopwatch.stop();
     }
 
