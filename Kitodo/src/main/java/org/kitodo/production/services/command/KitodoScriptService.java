@@ -353,17 +353,21 @@ public class KitodoScriptService {
                     if (fileService.fileExist(images)) {
                         fileService.delete(images);
                     }
-                    Helper.setMessage("Content deleted for " + title);
+                    Helper.setMessage(Helper.getTranslation("kitodoScript.contentDeleted", title));
                 } catch (IOException | RuntimeException e) {
-                    Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title }, logger, e);
+                    Helper.setErrorMessage("kitodoScript.errorDeleting", new Object[] {"content for " + title}, logger, e);
                 }
             } else {
                 try {
-                    ServiceManager.getProcessService().deleteProcess(process);
-                    Helper.setMessage("Process " + title + " deleted.");
+                    if (!process.hasChildren()) {
+                        ProcessService.deleteProcess(process);
+                        Helper.setMessage(Helper.getTranslation("kitodoScript.processDeleted", title));
+                    } else {
+                        Helper.setMessage(Helper.getTranslation("kitodoScript.processSkipped", title));
+                    }
                 } catch (DAOException | IOException e) {
-                    Helper.setErrorMessage("errorDeleting",
-                        new Object[] {Helper.getTranslation("process") + " " + title }, logger, e);
+                    Helper.setErrorMessage("kitodoScript.errorDeleting",
+                            "process " + title, logger, e);
                 }
             }
         }
