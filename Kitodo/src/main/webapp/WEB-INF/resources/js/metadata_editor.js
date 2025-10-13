@@ -275,7 +275,6 @@ metadataEditor.gallery = {
          */
         handleSelectionUpdates(treeNodeIds) {
             // update selection in other components of the meta data editor
-            metadataEditor.pagination.markManyAsSelected(treeNodeIds);
             metadataEditor.logicalTree.markManyAsSelected(treeNodeIds);
             metadataEditor.gallery.stripes.markManyAsSelected(treeNodeIds);
             if (metadataEditor.physicalTree.isAvailable()) {
@@ -597,7 +596,6 @@ metadataEditor.gallery = {
                 metadataEditor.logicalTree.markManyAsSelected([stripeTreeNodeId]);
                 // reset selection of other panels
                 metadataEditor.gallery.pages.resetSelectionStyle();
-                metadataEditor.pagination.resetSelectionStyle();
                 // mark gallery stripe as selected
                 this.markOneSelected(stripeTreeNodeId);
                 if (metadataEditor.physicalTree.isAvailable()) {
@@ -605,7 +603,6 @@ metadataEditor.gallery = {
                     let treeNodeId = this.findFirstThumbnailLogicalTreeNodeId(stripeTreeNodeId);
                     metadataEditor.physicalTree.markManyAsSelected([treeNodeId]);
                     metadataEditor.gallery.pages.markManyAsSelected([treeNodeId], treeNodeId);
-                    metadataEditor.pagination.markManyAsSelected([treeNodeId]);
                 }
                 // send new selection to backend
                 metadataEditor.gallery.sendSelectionToBackend(null, event.target.dataset.stripe, "default", event);
@@ -799,8 +796,7 @@ metadataEditor.logicalTree = {
         
         metadataEditor.gallery.stripes.markManyAsSelected(treeNodeIds);
         metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, mode === "add" ? currentTreeNodeId: null);
-        metadataEditor.pagination.markManyAsSelected(treeNodeIds);
-        
+
         if (this === metadataEditor.logicalTree) {
             // update physical tree if this method was invoked from a logical tree event
             if (metadataEditor.physicalTree.isAvailable()) {
@@ -841,6 +837,27 @@ metadataEditor.logicalTree = {
             }
         }        
     },
+
+    /**
+     * Select the media assigned to the currently selected node.
+     */
+    selectAssignedMedia() {
+        let selectedNodes = this._findSelectedNodes();
+        let mediaToBeSelected = [];
+        if (selectedNodes.length === 1) {
+            selectedNodes.first().find('[data-nodetype=View]').each(function () {
+                mediaToBeSelected.push(metadataEditor.logicalTree._getTreeNodeIdFromNode($(this)));
+            });
+
+            metadataEditor.logicalTree.markManyAsSelected(mediaToBeSelected);
+            metadataEditor.gallery.stripes.markManyAsSelected(mediaToBeSelected);
+            metadataEditor.gallery.pages.markManyAsSelected(mediaToBeSelected, null);
+            if (metadataEditor.physicalTree.isAvailable()) {
+                metadataEditor.physicalTree.markManyAsSelected(mediaToBeSelected);
+            }
+        }
+    },
+
 
     /**
      * Return the tree node id from a jquery node object.
@@ -1046,78 +1063,6 @@ metadataEditor.physicalTree = {
             return node[0].dataset.rowkey;
         }
         return null;
-    }
-};
-
-
-/** 
- * Event handlers and methods related to the pagination panel.
- */
-metadataEditor.pagination = {
-
-    /**
-     * Handler that is called when the selection state of the page list changes, e.g., when the user selects 
-     * or deselects a page by clicking a checkbox.
-     * 
-     * @param event the mouse event
-     */
-    onChange(event) {
-        // check which pages are selected
-        let selectedOrder = [];
-        for(let i = 0; i < event.target.length; i++) {
-            if ($(event.target[i]).prop("selected")) {
-                selectedOrder.push(event.target[i].index + 1);
-            }
-        }
-        // find corresponding logical tree node ids for all selected pages
-        let treeNodeIds = metadataEditor.gallery.pages.findTreeNodeIdsByOrderList(selectedOrder);
-
-        // apply selection to other components of meta data editor
-        metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, null);
-        metadataEditor.logicalTree.markManyAsSelected(treeNodeIds);
-        if (metadataEditor.physicalTree.isAvailable()) {
-            metadataEditor.physicalTree.markManyAsSelected(treeNodeIds);
-        }
-    },
-
-    /**
-     * Reset CSS selection style of pagination list.
-     */
-    resetSelectionStyle() {
-        $("#paginationForm\\:paginationSelection .ui-state-highlight").removeClass("ui-state-highlight");
-        $("#paginationForm\\:paginationSelection .ui-icon-check").removeClass("ui-icon-check").addClass("ui-icon-blank");
-        $("#paginationForm\\:paginationSelection .ui-state-active").removeClass("ui-state-active");
-        $("#paginationForm\\:paginationSelection select option").removeAttr("selected");
-        $("#paginationForm\\:paginationSelection select option").prop("selected", false);
-    },
-
-    /**
-     * Mark a list of pages a selected by applying corresponding CSS styles to each list item.
-     * 
-     * @param {*} treeNodeIds the list of logical tree node ids that is supposed to be selected
-     */
-    markManyAsSelected(treeNodeIds) {
-        this.resetSelectionStyle();
-        for (let i = 0; i < treeNodeIds.length; i++) {
-            // find treeNode in gallery view
-            let thumbnailContainer = metadataEditor.gallery.pages.findThumbnailByTreeNodeId(treeNodeIds[i]).next();
-            if (thumbnailContainer.length > 0) {
-                let order = thumbnailContainer[0].dataset.order;
-                
-                // make checkbox checked
-                let selectManyMenu = $("#paginationForm\\:paginationSelection");
-                let selectListBox = selectManyMenu.find(".ui-selectlistbox-list");
-                let selectItem = selectListBox.children().eq(order - 1);
-                selectItem.addClass("ui-state-highlight");
-                selectItem.find(".ui-chkbox-box").addClass("ui-state-active");
-                selectItem.find(".ui-chkbox-icon").removeClass("ui-icon-blank").addClass("ui-icon-check");
-                
-                // mark invisible select option as selected
-                let options = $("#paginationForm\\:paginationSelection select option");
-                options.eq(order - 1).attr("selected", "selected");
-                options.eq(order - 1).prop("selected", true);
-            }
-        }        
     }
 };
 

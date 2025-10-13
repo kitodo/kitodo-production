@@ -836,7 +836,7 @@ public class GalleryPanel {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
-        String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
+        String scrollScripts = "scrollToSelectedTreeNode();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
             PrimeFaces.current().executeScript(
                     "checkScrollPosition();metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();" + scrollScripts);
@@ -849,7 +849,7 @@ public class GalleryPanel {
         LogicalDivision logicalDivision = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
         try {
             dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(logicalDivision));
-            PrimeFaces.current().executeScript("scrollToSelectedTreeNode();scrollToSelectedPaginationRow();");
+            PrimeFaces.current().executeScript("scrollToSelectedTreeNode();");
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

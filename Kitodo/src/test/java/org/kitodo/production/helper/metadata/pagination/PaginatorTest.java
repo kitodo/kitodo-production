@@ -196,4 +196,24 @@ public class PaginatorTest {
         assertEquals("2", paginator.next());
         assertEquals("2 (Rückseite)", paginator.next());
     }
+
+    @Test
+    public void alphabeticPagination() {
+        Paginator paginator = new Paginator("´a´");
+        assertEquals("a", paginator.next());
+        assertEquals("b", paginator.next());
+        assertEquals("c", paginator.next());
+        assertEquals("d", paginator.next());
+    }
+
+    @Test
+    public void alphabeticPaginationRectoVerso() {
+        Paginator paginator = new Paginator("´a´° ¡r¿v½");
+        assertEquals("a r", paginator.next());
+        assertEquals("a v", paginator.next());
+        assertEquals("b r", paginator.next());
+        assertEquals("b v", paginator.next());
+        assertEquals("c r", paginator.next());
+        assertEquals("c v", paginator.next());
+    }
 }
