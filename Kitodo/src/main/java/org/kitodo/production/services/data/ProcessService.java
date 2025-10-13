@@ -2411,7 +2411,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
         query.restrictToClient(sessionClientId);
-        query.performIndexSearches();
+        query.performIndexSearches(true);
 
         query.addInnerJoin("project proj");
         query.defineSorting("id", SortOrder.ASCENDING);
