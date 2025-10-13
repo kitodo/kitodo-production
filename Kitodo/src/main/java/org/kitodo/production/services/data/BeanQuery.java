@@ -299,8 +299,7 @@ public class BeanQuery {
      *            roles of the user
      */
     public void restrictToRoles(List<Role> roles) {
-        leftJoins.add("task.roles AS taskRoles");
-        restrictions.add("taskRoles IN (:userRoles)");
+        restrictions.add("EXISTS (SELECT 1 FROM task.roles r WHERE r IN (:userRoles))");
         parameters.put("userRoles", roles);
     }
 
