@@ -224,10 +224,17 @@ public class BeanQuery {
      * Searches the index and inserts the IDs into the HQL query parameters.
      */
     public void performIndexSearches() {
+        performIndexSearches(false);
+    }
+
+    /**
+     * Searches the index and inserts the IDs into the HQL query parameters.
+     */
+    public void performIndexSearches(boolean useScroll) {
         for (var iterator = indexQueries.entrySet().iterator(); iterator.hasNext();) {
             Entry<String, Pair<FilterField, String>> entry = iterator.next();
             Collection<Integer> ids = indexingService.searchIds(Process.class, entry.getValue().getLeft()
-                    .getSearchField(), entry.getValue().getRight());
+                    .getSearchField(), entry.getValue().getRight(), useScroll);
             parameters.put(entry.getKey(), ids.isEmpty() ? NO_HIT : ids);
             iterator.remove();
         }

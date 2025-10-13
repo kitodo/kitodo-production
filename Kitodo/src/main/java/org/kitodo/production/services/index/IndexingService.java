@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.index;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.DataException;
 import org.hibernate.search.engine.search.projection.SearchProjection;
+import org.hibernate.search.engine.search.query.SearchScroll;
+import org.hibernate.search.engine.search.query.SearchScrollResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -124,23 +127,54 @@ public class IndexingService {
 
     /**
      * Searches for a search term in a search field and returns the hit IDs.
-     * 
+     *
      * @param beanClass
      *            class of beans to search for
      * @param searchField
      *            search field to search on
      * @param value
      *            value to be found in the search field
+     * @param useScroll
+     *            whether to use scrolling (for large result sets like exports)
      * @return ids of the found beans
      */
-    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, String searchField, String value) {
+    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass,
+                                         String searchField,
+                                         String value,
+                                         boolean useScroll) {
+
         SearchSession searchSession = Search.session(HibernateUtil.getSession());
-        SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
+        SearchProjection<Integer> idField = searchSession.scope(beanClass)
+                .projection()
+                .field("id", Integer.class)
                 .toProjection();
-        List<Integer> ids = searchSession.search(beanClass).select(idField).where(function -> function.match().field(
-            searchField).matching(value)).fetchAll().hits();
-        logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
-            value, ids.size());
+
+        if (!useScroll) {
+            List<Integer> ids = searchSession.search(beanClass)
+                    .select(idField)
+                    .where(f -> f.match().field(searchField).matching(value))
+                    .fetchAll()
+                    .hits();
+
+            logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits",
+                    beanClass.getSimpleName(), searchField, value, ids.size());
+            return ids;
+        }
+
+        List<Integer> ids = new ArrayList<>();
+        try (SearchScroll<Integer> scroll = searchSession.search(beanClass)
+                .select(idField)
+                .where(f -> f.match().field(searchField).matching(value))
+                .scroll(10_000)) {
+            SearchScrollResult<Integer> chunk;
+            do {
+                chunk = scroll.next();
+                ids.addAll(chunk.hits());
+            } while (chunk.hasHits());
+        }
+
+        logger.debug("Scrolling {} IDs in field \"{}\" for \"{}\": {} hits",
+                beanClass.getSimpleName(), searchField, value, ids.size());
         return ids;
     }
 
