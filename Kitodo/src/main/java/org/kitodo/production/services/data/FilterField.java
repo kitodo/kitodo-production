@@ -80,6 +80,7 @@ enum FilterField {
             case "parentprocessid":
                 return PARENT_PROCESS_ID;
             case "process": return PROCESS_TITLE;
+            case "search": return SEARCH;
             case "project": return PROJECT;
             case "project_loose":
                 return PROJECT_LOOSE;
