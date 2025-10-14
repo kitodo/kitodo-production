@@ -111,7 +111,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
             for (String lookingFor : lookfor) {
                 queryCount++;
                 String uniqueParameterName = parameterName + UNIQUE_PARAMETER_EXTENSION + queryCount;
-                restrictions.add(varName + (operand ? ".id IN (:" : ".id NOT IN (:") + uniqueParameterName + ')');
+                restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + uniqueParameterName + ')');
                 indexQueries.put(uniqueParameterName, Pair.of(filterField, lookingFor));
             }
         }
