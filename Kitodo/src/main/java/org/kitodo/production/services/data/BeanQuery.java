@@ -313,7 +313,7 @@ public class BeanQuery {
      */
     public void restrictWithUserFilterString(String filterString) {
         int userFilterCount = 0;
-        for (var groupFilter : filterService.parse(filterString, beanClass.isAssignableFrom(Process.class))
+        for (var groupFilter : filterService.parse(filterString, true)
                 .entrySet()) {
             List<String> groupFilters = new ArrayList<>();
             for (UserSpecifiedFilter searchFilter : groupFilter.getValue()) {
