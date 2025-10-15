@@ -43,7 +43,7 @@ public class ParsedFilter {
      * @return the category without surrounding quotation marks or leading dash
      */
     public String getCategory() {
-        Pattern pattern = Pattern.compile("[a-zA-Z]+:");
+        Pattern pattern = Pattern.compile("[\\p{L}0-9_\\-() ]+:");
         Matcher matcher = pattern.matcher(plainFilter.replaceFirst("^\"?-?", ""));
         if (matcher.find()) {
             return matcher.group();
