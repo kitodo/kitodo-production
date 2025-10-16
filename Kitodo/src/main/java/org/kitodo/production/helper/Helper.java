@@ -454,7 +454,7 @@ public class Helper {
         try {
             application = FacesContext.getCurrentInstance().getApplication();
         } catch (NullPointerException e) {
-            logger.debug("faces context is not available", e);
+            // do not log this exception, which often happens during CI
             // ignore otherwise
         }
         
