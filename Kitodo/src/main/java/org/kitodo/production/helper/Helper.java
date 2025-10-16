@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import jakarta.faces.application.Application;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 
@@ -448,8 +449,17 @@ public class Helper {
     private static void loadMessages() {
         commonMessages = new HashMap<>();
         errorMessages = new HashMap<>();
-        if (Objects.nonNull(FacesContext.getCurrentInstance()) && Objects.nonNull(FacesContext.getCurrentInstance().getApplication())) {
-            Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+
+        Application application = null;
+        try {
+            application = FacesContext.getCurrentInstance().getApplication();
+        } catch (NullPointerException e) {
+            logger.debug("faces context is not available", e);
+            // ignore otherwise
+        }
+        
+        if (Objects.nonNull(application)) {
+            Iterator<Locale> polyglot = application.getSupportedLocales();
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, Message.getResourceBundle("messages.messages", "messages", language));
