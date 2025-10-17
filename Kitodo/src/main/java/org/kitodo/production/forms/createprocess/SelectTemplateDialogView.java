@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;

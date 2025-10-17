@@ -14,8 +14,8 @@ package org.kitodo.production.handler;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.faces.application.ResourceHandler;
-import javax.faces.context.FacesContext;
+import jakarta.faces.application.ResourceHandler;
+import jakarta.faces.context.FacesContext;
 
 import org.primefaces.application.resource.PrimeResourceHandler;
 

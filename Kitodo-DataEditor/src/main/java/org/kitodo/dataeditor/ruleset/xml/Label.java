@@ -14,8 +14,8 @@ package org.kitodo.dataeditor.ruleset.xml;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlValue;
 
 /**
  * A label maker for everything. This class is the background for the
