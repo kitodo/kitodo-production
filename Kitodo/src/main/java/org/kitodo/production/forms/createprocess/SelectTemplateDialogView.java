@@ -21,7 +21,9 @@ import jakarta.inject.Named;
 
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
 @ViewScoped
@@ -94,6 +96,11 @@ public class SelectTemplateDialogView implements Serializable {
      * Display error message if no template is configured for current project.
      */
     public void checkForTemplates() {
+        try {
+            this.project = ServiceManager.getProjectService().getById(this.project.getId());
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
         List<Template> availableTemplates = this.project.getActiveTemplates();
         if (availableTemplates.size() == 1) {
             this.selectedTemplateId = availableTemplates.get(0).getId();

@@ -273,7 +273,12 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         mets.setMetsHdr(generateMetsHdr());
 
         Map<URI, FileType> mediaFilesToIDFiles = new HashMap<>();
-        mets.setFileSec(generateFileSec(mediaFilesToIDFiles));
+        FileSec fileSec = generateFileSec(mediaFilesToIDFiles);
+
+        // Omit empty fileSecs as they are not valid in METS
+        if (!fileSec.getFileGrp().isEmpty()) {
+            mets.setFileSec(fileSec);
+        }
 
         Map<PhysicalDivision, String> physicalDivisionIDs = new HashMap<>();
         mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, physicalDivisionIDs, mets));
@@ -284,7 +289,10 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(physicalDivisionIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
-        mets.setStructLink(createStructLink(smLinkData));
+        // Omit empty structLinks as they are not valid in METS
+        if (!smLinkData.isEmpty()) {
+            mets.setStructLink(createStructLink(smLinkData));
+        }
         return mets;
     }
 

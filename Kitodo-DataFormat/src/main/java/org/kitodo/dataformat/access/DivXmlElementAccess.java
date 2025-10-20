@@ -317,6 +317,8 @@ public class DivXmlElementAccess extends LogicalDivision {
         xmlData.getAny().add(new JAXBElement<>(KITODO_QNAME, KitodoType.class, kitodoType));
         MdWrap mdWrap = new MdWrap();
         mdWrap.setXmlData(xmlData);
+        mdWrap.setMDTYPE("OTHER");
+        mdWrap.setOTHERMDTYPE("KITODO");
         MdSecType dmdSec = new MdSecType();
         dmdSec.setMdWrap(mdWrap);
         return Optional.of(dmdSec);

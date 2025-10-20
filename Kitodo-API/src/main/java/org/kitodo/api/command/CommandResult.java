@@ -13,32 +13,37 @@ package org.kitodo.api.command;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 public class CommandResult {
 
     /** The command as a String. */
     private String command;
 
+    private final int exitCode;
+
     /** If the command execution was successful. */
     private boolean successful;
 
-    /** The resultMessages. */
-    private List<String> messages;
+    private final List<String> stdOutMessages;
+
+    private final List<String> stdErrMessages;
 
     /**
      * Constructor.
-     * 
+     *
      * @param command
      *            The command.
-     * @param successful
-     *            If command was successful.
-     * @param messages
-     *            The resultMessages
      */
-    public CommandResult(String command, boolean successful, List<String> messages) {
+    public CommandResult(String command, int exitCode,
+                         List<String> stdOutMessages, List<String> stdErrMessages) {
         this.command = command;
-        this.successful = successful;
-        this.messages = messages;
+        this.exitCode = exitCode;
+        this.successful = (exitCode == 0);
+        this.stdOutMessages = stdOutMessages;
+        this.stdErrMessages = stdErrMessages;
     }
 
     /**
@@ -48,6 +53,16 @@ public class CommandResult {
      */
     public String getCommand() {
         return command;
+    }
+
+
+    /**
+     * Gets the exit code.
+     *
+     * @return The exit code.
+     */
+    public int getExitCode() {
+        return exitCode;
     }
 
     /**
@@ -60,13 +75,34 @@ public class CommandResult {
     }
 
     /**
-     * Gets the messages.
-     * 
-     * @return The messages.
+     * Returns the list of messages written to standard output (stdout).
+     *
+     * @return list of stdout messages
+     */
+    public List<String> getStdOutMessages() {
+        return stdOutMessages;
+    }
+
+    /**
+    * Returns the list of messages written to standard error (stderr).
+    *
+    * @return list of stderr messages
+    */
+    public List<String> getStdErrMessages() {
+        return stdErrMessages;
+    }
+
+    /**
+     * Fallback for existing code:
+     * returns a combined list of standard output and error messages.
+     *
+     * @return list containing both stdout and stderr messages
      */
     public List<String> getMessages() {
-        return messages;
+        return Stream.concat(stdOutMessages.stream(), stdErrMessages.stream())
+                .collect(Collectors.toList());
     }
+
 
     /**
      * Indicates whether a CommandResults is "equal to" this one.
@@ -84,15 +120,17 @@ public class CommandResult {
         if (object instanceof CommandResult) {
             CommandResult that = (CommandResult) object;
 
-            return this.successful == that.successful
-                    && this.command.equals(that.command)
-                    && this.messages.equals(that.messages);
+            return this.exitCode == that.exitCode
+                    && this.successful == that.successful
+                    && Objects.equals(this.command, that.command)
+                    && Objects.equals(this.stdOutMessages, that.stdOutMessages)
+                    && Objects.equals(this.stdErrMessages, that.stdErrMessages);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(successful, command, messages);
+        return Objects.hash(command, exitCode, successful, stdOutMessages, stdErrMessages);
     }
 }

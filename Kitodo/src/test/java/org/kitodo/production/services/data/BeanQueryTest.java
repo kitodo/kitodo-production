@@ -187,7 +187,7 @@ public class BeanQueryTest {
         BeanQuery beanQuery = new BeanQuery(Task.class);
         beanQuery.restrictToRoles(roles);
         assertThat("should construct HQL query for roles", beanQuery.formQueryForAll(), startsWith(
-            "FROM Task AS task LEFT JOIN task.roles AS taskRoles WHERE taskRoles IN (:userRoles)"));
+            "FROM Task AS task WHERE EXISTS (SELECT 1 FROM task.roles r WHERE r IN (:userRoles))"));
         assertThat("should define userRoles as Collection<Role>", beanQuery.getQueryParameters().get("userRoles"),
             is(equalTo(roles)));
     }
