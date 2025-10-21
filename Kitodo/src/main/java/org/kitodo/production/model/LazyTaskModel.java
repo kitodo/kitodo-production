@@ -71,6 +71,12 @@ public class LazyTaskModel extends LazyBeanModel {
     }
 
     @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        // count handled via load() + setRowCount()
+        return 0;
+    }
+
+    @Override
     public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
         String sortField = null;
         SortOrder sortOrder = SortOrder.ASCENDING;
