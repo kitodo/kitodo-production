@@ -41,6 +41,7 @@ import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
+import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.utils.Stopwatch;
 
@@ -126,7 +127,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Folder to use as source for generation of derived resources.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generatorSource_folder_id", foreignKey = @ForeignKey(name = "FK_project_generatorSource_folder_id"))
     private Folder generatorSource;
 
@@ -559,6 +560,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      * @return the source folder for generation
      */
     public Folder getGeneratorSource() {
+        initialize(new FolderDAO(), this.generatorSource);
         return generatorSource;
     }
 

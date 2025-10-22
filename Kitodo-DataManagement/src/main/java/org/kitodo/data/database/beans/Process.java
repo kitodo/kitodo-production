@@ -96,7 +96,7 @@ public class Process extends BaseTemplateBean {
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_process_template_id"))
     private Template template;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
     private Process parent;
 
@@ -437,6 +437,7 @@ public class Process extends BaseTemplateBean {
      * @return value of parent
      */
     public Process getParent() {
+        initialize(new ProcessDAO(), this.parent);
         return parent;
     }
 

@@ -18,6 +18,7 @@ import java.util.Objects;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -34,6 +35,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
 import org.kitodo.data.database.persistence.MappingFileDAO;
+import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
 import org.kitodo.data.database.persistence.UrlParameterDAO;
 
@@ -128,7 +130,7 @@ public class ImportConfiguration extends BaseBean {
     @JoinColumn(name = "parent_searchfield_id", referencedColumnName = "id")
     private SearchField parentSearchField;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_templateprocess_id", foreignKey = @ForeignKey(name = "FK_importconfiguration_process_id"))
     private Process defaultTemplateProcess;
 
@@ -142,7 +144,7 @@ public class ImportConfiguration extends BaseBean {
                     foreignKey = @ForeignKey(name = "FK_importconfiguration_x_mappingfile_mappingfile_id")) })
     private List<MappingFile> mappingFiles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_mappingfile_id", foreignKey = @ForeignKey(name = "FK_parent_mappingfile_id"))
     private MappingFile parentMappingFile;
 
@@ -697,6 +699,7 @@ public class ImportConfiguration extends BaseBean {
      * @return value of defaultTemplateProcess
      */
     public Process getDefaultTemplateProcess() {
+        initialize(new ProcessDAO(), this.defaultTemplateProcess);
         return defaultTemplateProcess;
     }
 
@@ -737,6 +740,7 @@ public class ImportConfiguration extends BaseBean {
      * @return value of parentMappingFile
      */
     public MappingFile getParentMappingFile() {
+        initialize(new MappingFileDAO(), parentMappingFile);
         return parentMappingFile;
     }
 
