@@ -260,7 +260,6 @@ public class WorkflowControllerService {
         task.setProcessingEnd(new Date());
 
         taskService.save(task);
-        processService.refresh(task.getProcess());
 
         automaticTasks = new ArrayList<>();
 
