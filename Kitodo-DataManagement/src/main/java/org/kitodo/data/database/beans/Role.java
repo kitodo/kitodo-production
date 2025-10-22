@@ -204,7 +204,7 @@ public class Role extends BaseBean implements Comparable<Role> {
 
     @Override
     public String toString() {
-        return title + '[' + client.getName() + ']';
+        return title + (Objects.nonNull(client) ? ('[' + client.getName() + ']') : "");
     }
 
     /**
