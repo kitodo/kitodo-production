@@ -124,6 +124,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     public void remove(T baseBean) throws DAOException {
         if (baseBean.getId() != null) {
             try (Session session = HibernateUtil.getSession()) {
+                Stopwatch stopwatch = new Stopwatch(baseBean, "remove");
                 Transaction transaction = session.beginTransaction();
                 synchronized (lockObject) {
                     Object merged = session.merge(baseBean);
@@ -131,6 +132,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                     session.flush();
                     transaction.commit();
                 }
+                stopwatch.stop();
             } catch (PersistenceException e) {
                 throw new DAOException(e);
             }
@@ -377,6 +379,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     static void removeObject(Class<?> cls, Integer objectId) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            Stopwatch stopwatch = new Stopwatch(objectId, "removeObject");
             Transaction transaction = session.beginTransaction();
             synchronized (lockObject) {
                 Object object = session.load(cls, objectId);
@@ -384,6 +387,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 session.flush();
                 transaction.commit();
             }
+            stopwatch.stop();
         } catch (PersistenceException e) {
             if (e.getMessage().startsWith("No row with the given identifier exists")) {
                 return;
