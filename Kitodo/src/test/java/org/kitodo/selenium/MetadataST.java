@@ -267,6 +267,8 @@ public class MetadataST extends BaseTestSelenium {
     public void updateMediaReferencesTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_REFERENCES_TEST_PROCESS_TITLE);
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(() -> Pages.getMetadataEditorPage().isFileReferencesUpdatedDialogVisible());
         assertTrue(Pages.getMetadataEditorPage()
                 .isFileReferencesUpdatedDialogVisible(), "Media references updated dialog not visible");
         Pages.getMetadataEditorPage().acknowledgeFileReferenceChanges();
