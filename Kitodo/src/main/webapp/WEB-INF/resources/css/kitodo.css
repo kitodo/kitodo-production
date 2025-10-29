@@ -3465,6 +3465,12 @@ button.settings-loaded-task::after {
 #paginationForm\:updateMediaReferencesButton {
     margin: 0;
     width: 100%;
+    height: auto;
+    min-height: 36px;
+}
+
+#paginationForm\:updateMediaReferencesButton .ui-button-text {
+    line-height: 1.4;
 }
 
 #metadataAccordion,
@@ -4059,6 +4065,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 .thumbnail-parent {
     display: block;
     position: relative;
+    text-align: center;
 }
 
 .thumbnail-parent audio,
@@ -4249,6 +4256,8 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     word-break: break-word;
     color: var(--pure-white);
     font-size: smaller;
+    max-width: 150px;
+    padding: 0 5px;
     text-align: center;
 }
 

@@ -216,7 +216,7 @@
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
                                  onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
+                                 update="notifications, @(.ui-tree), imagePreviewForm:structuredPagesField, metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="reset"
                                  value="#{msgs.reset}"
