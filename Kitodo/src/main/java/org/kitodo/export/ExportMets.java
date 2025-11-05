@@ -155,7 +155,7 @@ public class ExportMets {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
             }
-            Helper.setErrorMessage("Writing Mets file failed!", e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage("Writing METS file failed!", e.getLocalizedMessage(), logger, e);
             return false;
         }
         /*
@@ -179,26 +179,30 @@ public class ExportMets {
                     }
                     byte[] transformedBytes = XsltHelper.transformXmlByXslt(source, xslFile).toByteArray();
                     bufferedOutputStream.write(transformedBytes);
-                    if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_ENRICH_LABELS)) {
-                        updateInternalLabelsIfNeeded(ServiceManager.getFileService().getMetadataFilePath(process),
-                                transformedBytes, process);
-                    }
+                    enrichInternalLabelsIfNeeded(process, transformedBytes);
                 } catch (FileNotFoundException | TransformerException e) {
                     if (Objects.nonNull(exportDmsTask)) {
                         exportDmsTask.setException(e);
                     }
-                    Helper.setErrorMessage("Writing Mets file failed!", e.getLocalizedMessage(), logger, e);
+                    Helper.setErrorMessage("Writing METS file failed!", e.getLocalizedMessage(), logger, e);
                     return false;
                 }
             }
         }
-
         Helper.setMessage(process.getTitle() + ": ", "exportFinished");
         return true;
     }
 
+    private void enrichInternalLabelsIfNeeded(Process process, byte[] transformedBytes) throws IOException {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_ENRICH_LABELS)
+                && ConfigCore.getIntParameter(ParameterCore.TASK_MANAGER_AUTORUN_LIMIT) == 1) {
+            updateInternalLabelsIfNeeded(ServiceManager.getFileService().getMetadataFilePath(process),
+                    transformedBytes, process);
+        }
+    }
+
     /**
-     * Extract LABEL/ORDERLABEL from export and update the internal meta.xml
+     * Extract LABEL/ORDERLABEL from export and update the internal metadata
      * only if values actually changed.
      */
     private void updateInternalLabelsIfNeeded(URI metaFile, byte[] xmlBytes, Process exportProcess) {
@@ -234,7 +238,7 @@ public class ExportMets {
                 logger.debug("LABEL/ORDERLABEL unchanged for {}", metaFile);
             }
         } catch (IOException e) {
-            Helper.setErrorMessage("Updating LABEL/ORDERLABEL in METS file failed!", e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage("Updating LABEL/ORDERLABEL in internal metadata failed!", e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -267,7 +271,7 @@ public class ExportMets {
             }
         } catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
             Helper.setErrorMessage(
-                    "Parsing Mets file failed!", e.getLocalizedMessage(), logger, e);
+                    "Parsing exported METS file failed!", e.getLocalizedMessage(), logger, e);
         }
         return labels;
     }

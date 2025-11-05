@@ -506,8 +506,8 @@ public enum ParameterCore implements ParameterInterface {
     EXPORT_WITHOUT_TIME_LIMIT(new Parameter<>("exportWithoutTimeLimit", true)),
 
     /**
-     * Whether to enrich the INTERNAL METS file with LABEL and ORDERLABEL generated during export,
-     * defaults to {@code true}.
+     * Whether to enrich the INTERNAL metadata with LABEL and ORDERLABEL generated during export,
+     * defaults to {@code false}.
      */
     EXPORT_ENRICH_LABELS(new Parameter<>("exportEnrichLabels", false)),
 
