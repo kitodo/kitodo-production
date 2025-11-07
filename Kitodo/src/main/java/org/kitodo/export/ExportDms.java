@@ -33,6 +33,7 @@ import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.ExportException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
@@ -51,6 +52,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
@@ -80,12 +82,14 @@ public class ExportDms extends ExportMets {
      *
      * @param task
      *            Task object
-     * @throws IOException
+     * @throws IOException / SAXException
      *             if I/O fails while running a script for a script condition of
      *             a subsequent task, or the METS file cannot be read when
      *             evaluating an XPath condition
+     * @throws FileStructureValidationException
+     *             when closing task via WorkflowControllerService fails
      */
-    public void startExport(Task task) throws DAOException, IOException {
+    public void startExport(Task task) throws DAOException, IOException, SAXException, FileStructureValidationException {
         if (startExport(task.getProcess())) {
             new WorkflowControllerService().close(task);
         }
@@ -158,7 +162,7 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process,
                 processService.readMetadataFile(process).getDigitalDocument());
-        } catch (IOException | DAOException e) {
+        } catch (IOException | DAOException | SAXException | FileStructureValidationException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, process.getTitle()), e);
@@ -179,7 +183,7 @@ public class ExportDms extends ExportMets {
      * @return boolean
      */
     private boolean startExport(Process process, LegacyMetsModsDigitalDocumentHelper newFile)
-            throws IOException, DAOException {
+            throws IOException, DAOException, SAXException, FileStructureValidationException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
 
@@ -220,7 +224,8 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean prepareExportLocation(Process process,
-            LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException, DAOException {
+            LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException, DAOException, SAXException,
+            FileStructureValidationException {
 
         URI hotfolder = new File(process.getProject().getDmsImportRootPath()).toURI();
         String processTitle = Helper.getNormalizedTitle(process.getTitle());
@@ -247,7 +252,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
-            URI destination) throws IOException, DAOException {
+            URI destination) throws IOException, DAOException, SAXException, FileStructureValidationException {
 
         if (exportWithImages) {
             try {
@@ -312,7 +317,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
-            throws IOException, DAOException {
+            throws IOException, DAOException, SAXException, FileStructureValidationException {
 
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         if (Objects.nonNull(exportDmsTask)) {

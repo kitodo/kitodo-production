@@ -15,7 +15,7 @@
     <mets:metsHdr CREATEDATE="2023-05-04T13:47:53.495+02:00"
                   LASTMODDATE="2023-06-15T17:16:33.794+02:00"/>
     <mets:dmdSec ID="uuid-7804f52e-4e5d-36d2-9883-adc6892bdfd0">
-        <mets:mdWrap MDTYPE="OTHER">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo>
                     <kitodo:metadata name="title">Test process for renaming media files</kitodo:metadata>
@@ -25,7 +25,7 @@
     </mets:dmdSec>
     <mets:amdSec>
         <mets:sourceMD ID="uuid-823ac5e4-368a-3d65-906b-2960aae610e8">
-            <mets:mdWrap>
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
                 <mets:xmlData>
                     <kitodo:kitodo>
                         <kitodo:metadata name="TitleDocMain">Der Titel des Bandes</kitodo:metadata>

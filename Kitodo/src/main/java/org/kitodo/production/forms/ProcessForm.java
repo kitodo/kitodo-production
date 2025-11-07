@@ -50,6 +50,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
@@ -72,6 +73,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -478,8 +480,17 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Task status up.
+     *
+     * @throws DAOException
+     *          when setting up task status via WorkflowControllerService fails
+     * @throws IOException
+     *          when setting up task status via WorkflowControllerService fails
+     * @throws SAXException
+     *          when setting up task status via WorkflowControllerService fails
+     * @throws FileStructureValidationException
+     *          when setting up task status via WorkflowControllerService fails
      */
-    public void setTaskStatusUp() throws DAOException, IOException {
+    public void setTaskStatusUp() throws DAOException, IOException, SAXException, FileStructureValidationException {
         final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUp");
         workflowControllerService.setTaskStatusUp(this.task);
         processService.refresh(this.process);
@@ -612,7 +623,7 @@ public class ProcessForm extends TemplateBaseForm {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DAOException | IOException | InvalidImagesException e) {
+        } catch (DAOException | IOException | InvalidImagesException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());

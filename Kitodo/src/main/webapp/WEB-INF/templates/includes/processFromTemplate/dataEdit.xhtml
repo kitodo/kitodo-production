@@ -162,14 +162,15 @@
                                      iconPos="right"
                                      styleClass="secondary"
                                      update="addMetadataDialog"
-                                     disabled="#{not CreateProcessForm.addMetadataDialog.metadataAddableToStructureElement()}"
+                                     disabled="#{not CreateProcessForm.addMetadataDialog.metadataAddableToStructureElement() or not empty CreateProcessForm.rulesetValidationError}"
                                      action="#{CreateProcessForm.addMetadataDialog.prepareAddableMetadataForStructure()}"
                                      oncomplete="PF('addMetadataDialog').show();metadataTable.focusMetadataRow.remember(this.source);">
                     </p:commandButton>
                 </h:panelGroup>
             </div>
 
-            <h:panelGroup layout="block" styleClass="metadata-tree-wrapper">
+            <h:panelGroup layout="block" styleClass="metadata-tree-wrapper"
+                          rendered="#{empty CreateProcessForm.rulesetValidationError}">
                 <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
                     <ui:param name="root" value="#{CreateProcessForm.processMetadata.logicalMetadataTree}"/>
                     <ui:param name="readOnly" value="#{false}"/>

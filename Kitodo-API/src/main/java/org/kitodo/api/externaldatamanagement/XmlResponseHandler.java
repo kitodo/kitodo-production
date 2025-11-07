@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.queryurlimport;
+package org.kitodo.api.externaldatamanagement;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,19 +31,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.kitodo.api.externaldatamanagement.DataImport;
-import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
-import org.kitodo.api.externaldatamanagement.SearchResult;
-import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.NoRecordFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-class XmlResponseHandler {
+public class XmlResponseHandler {
 
     private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private static final XMLOutputter xmlOutputter = new XMLOutputter();
@@ -64,7 +61,7 @@ class XmlResponseHandler {
      * @param response HttpResponse for which a SearchResult is created
      * @return SearchResult created from given HttpResponse
      */
-    static SearchResult getSearchResult(HttpResponse response, DataImport dataImport) throws IOException {
+    public static SearchResult getSearchResult(HttpResponse response, DataImport dataImport) throws IOException {
         SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
         SearchResult searchResult = new SearchResult();
         if (Objects.nonNull(response) && Objects.nonNull(response.getEntity())) {
@@ -125,7 +122,7 @@ class XmlResponseHandler {
         return hits;
     }
 
-    static int extractNumberOfRecords(String content, SearchInterfaceType type) {
+    public static int extractNumberOfRecords(String content, SearchInterfaceType type) {
         return extractNumberOfRecords(transformResponseToDocument(content), type);
     }
 
@@ -144,6 +141,30 @@ class XmlResponseHandler {
             return xPath.evaluate(xpathString, element);
         } catch (XPathExpressionException e) {
             return "";
+        }
+    }
+
+    /**
+     * Check and return whether the given XML string 'xmlString' contains no error message and at least one record.
+     * Throws as NoRecordFoundException otherwise.
+     *
+     * @throws NoRecordFoundException if the given XML string contains an error message or no record
+     */
+    public static void checkRecordFound(SearchInterfaceType searchInterfaceType, String xmlString, String identifier)
+            throws NoRecordFoundException {
+        if (Objects.nonNull(searchInterfaceType)) {
+            if (Objects.nonNull(searchInterfaceType.getErrorMessageXpath())) {
+                Element documentElement = parseXML(xmlString).getDocumentElement();
+                String errorMessage = getTextContent(documentElement,
+                        searchInterfaceType.getErrorMessageXpath());
+                if (StringUtils.isNotBlank(errorMessage)) {
+                    throw new NoRecordFoundException(errorMessage);
+                }
+            }
+            if (Objects.nonNull(searchInterfaceType.getNumberOfRecordsString())
+                    && extractNumberOfRecords(xmlString, searchInterfaceType) < 1) {
+                throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
+            }
         }
     }
 }

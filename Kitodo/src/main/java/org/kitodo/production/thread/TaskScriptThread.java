@@ -17,10 +17,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
+import org.xml.sax.SAXException;
 
 public class TaskScriptThread extends EmptyTask {
 
@@ -75,7 +77,7 @@ public class TaskScriptThread extends EmptyTask {
         if (task.isTypeExportDMS()) {
             try {
                 taskService.executeDmsExport(this.task);
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 logger.error("Data Exception occurred", e);
             }
         }

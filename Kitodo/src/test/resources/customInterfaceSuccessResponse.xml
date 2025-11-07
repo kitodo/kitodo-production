@@ -11,7 +11,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<zs:searchRetrieveResponse xmlns:zs="http://www.loc.gov/zing/srw/"><zs:version>1.1</zs:version><zs:numberOfRecords>1</zs:numberOfRecords><zs:records><zs:record><zs:recordSchema>picaxml</zs:recordSchema><zs:recordPacking>xml</zs:recordPacking><zs:recordData><record xmlns="info:srw/schema/5/picaXML-v1.0">
+<record xmlns="info:srw/schema/5/picaXML-v1.0">
     <datafield tag="001@">
         <subfield code="0">2006,2403</subfield>
     </datafield>
@@ -300,4 +300,4 @@
         <subfield code="a">zvdd</subfield>
         <subfield code="x">12</subfield>
     </datafield>
-</record></zs:recordData><zs:recordPosition>1</zs:recordPosition></zs:record></zs:records><zs:echoedSearchRetrieveRequest><zs:version>1.1</zs:version><zs:query>pica.ppn=12345</zs:query><zs:maximumRecords>1</zs:maximumRecords><zs:recordPacking>xml</zs:recordPacking><zs:recordSchema>picaxml</zs:recordSchema></zs:echoedSearchRetrieveRequest></zs:searchRetrieveResponse>
+</record>
