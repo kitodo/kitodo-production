@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ZiNG SRU/SRW WSDL Specification                   -->
+<!-- Version 1.1                                       -->
+<!-- 20 July 2004                                       -->
+<xsd:schema targetNamespace="http://www.loc.gov/zing/srw/diagnostic/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.loc.gov/zing/srw/diagnostic/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:element name="diagnostic" type="diagnosticType" nillable="false"/>
+  <xsd:complexType name="diagnosticType">
+    <xsd:sequence>
+      <xsd:element ref="uri"/>
+      <xsd:element ref="details" minOccurs="0" maxOccurs="1" />
+      <xsd:element ref="message" minOccurs="0" maxOccurs="1" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="uri" type="xsd:anyURI" nillable="false"/>
+  <xsd:element name="details" type="xsd:string" nillable="false"/>
+  <xsd:element name="message" type="xsd:string" nillable="false"/>
+</xsd:schema>

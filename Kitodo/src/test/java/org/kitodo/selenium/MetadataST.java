@@ -46,6 +46,7 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.xml.sax.SAXException;
 
 /**
  * Tests for functions in the metadata editor.
@@ -1008,7 +1009,7 @@ public class MetadataST extends BaseTestSelenium {
      * @throws IOException when deleting test files fails.
      */
     @AfterAll
-    public static void cleanup() throws DAOException, IOException {
+    public static void cleanup() throws Exception {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);
         }

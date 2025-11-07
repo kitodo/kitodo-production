@@ -37,6 +37,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -45,6 +46,7 @@ import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.TemplateService;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -282,14 +284,14 @@ public final class ImportProcesses extends EmptyTask {
             }
             // error barrier
         } catch (IOException | DAOException | ProcessGenerationException | MediaNotFoundException
-                | InvalidImagesException | RuntimeException exception) {
+                 | InvalidImagesException | RuntimeException | SAXException | FileStructureValidationException exception) {
             Helper.setErrorMessage(exception.getLocalizedMessage(), logger, exception);
             super.setException(exception);
         }
     }
 
     void run(int setStep) throws IOException, DAOException, ProcessGenerationException,
-            MediaNotFoundException, InvalidImagesException {
+            MediaNotFoundException, InvalidImagesException, SAXException, FileStructureValidationException {
 
         step = setStep;
         Path processesPath = Paths.get(KitodoConfig.getKitodoDataDirectory());
@@ -312,7 +314,7 @@ public final class ImportProcesses extends EmptyTask {
         importingProcessesIterator = importingProcesses.values().iterator();
     }
 
-    private void validate() throws IOException, DAOException {
+    private void validate() throws IOException, DAOException, SAXException, FileStructureValidationException {
         validatingImportingProcess = importingProcessesIterator.next();
         super.setWorkDetail(validatingImportingProcess.directoryName);
         validatingImportingProcess.validate(ruleset, strictValidation, importingProcesses);
@@ -330,7 +332,8 @@ public final class ImportProcesses extends EmptyTask {
     }
 
     private void copyFilesAndCreateDatabaseEntry(int step, Path processesPath) throws IOException, DAOException,
-            ProcessGenerationException, MediaNotFoundException, InvalidImagesException {
+            ProcessGenerationException, MediaNotFoundException, InvalidImagesException, SAXException,
+            FileStructureValidationException {
         if (nextAction == numberOfRemainingActions && step < totalActions - 1) {
             currentlyImporting = importingProcessesIterator.next();
             currentlyImporting.setProject(project);

@@ -1302,6 +1302,20 @@ body .statusColumn .ui-button {
     color: var(--pure-white);
     hyphens: auto;
     line-height: 22px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#validationErrorsDialog {
+    overflow-y: hidden;
+}
+
+#validationErrorsDialog > div > p {
+    margin: var(--default-full-size) var(--default-double-size);
+}
+
+#validationErrorsList_content {
+    border: 0;
 }
 
 .ui-dialog-content .dialog-text {

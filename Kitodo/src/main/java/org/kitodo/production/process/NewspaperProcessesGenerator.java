@@ -54,6 +54,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
@@ -66,6 +67,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
+import org.xml.sax.SAXException;
 
 /**
  * A generator for newspaper processes.
@@ -284,9 +286,18 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @throws ProcessGenerationException
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
+     * @throws DoctypeMissingException
+     *             when NewspaperProcessesGenerator cannot be initialized
+     * @throws CommandException
+     *             when processing command fails
+     * @throws SAXException
+     *             when NewspaperProcessesGenerator cannot be initialized
+     * @throws FileStructureValidationException
+     *             when XML validation error occurs during initialization
      */
     public boolean nextStep() throws ConfigurationException, DAOException, IOException,
-            ProcessGenerationException, DoctypeMissingException, CommandException {
+            ProcessGenerationException, DoctypeMissingException, CommandException, SAXException,
+            FileStructureValidationException {
 
         if (currentStep == 0) {
             initialize();
@@ -311,8 +322,14 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * @throws IOException
      *             if something goes wrong when reading or writing one of the
      *             affected files
+     * @throws SAXException
+     *             if something goes wrong when reading or writing one of the
+     *             affected files
+     * @throws FileStructureValidationException
+     *             when XML validation of workpiece fails
      */
-    public void initialize() throws ConfigurationException, IOException, DoctypeMissingException {
+    public void initialize() throws ConfigurationException, IOException, DoctypeMissingException, SAXException,
+            FileStructureValidationException {
         final long begin = System.nanoTime();
 
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
@@ -500,7 +517,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createProcess(int index) throws DAOException, IOException, ProcessGenerationException,
-            CommandException {
+            CommandException, SAXException, FileStructureValidationException {
         final long begin = System.nanoTime();
 
         List<IndividualIssue> individualIssuesForProcess = processesToCreate.get(index);
@@ -616,7 +633,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 } else {
                     logger.warn(
                         "Cannot add metadata value \"{}\" of type {} to NewspaperIssue: type is hidden in acquisition stage \"{}\".",
-                        ((MetadataEntry) metadata).getValue(), metadata.getKey(), issue.getType(), acquisitionStage);
+                        ((MetadataEntry) metadata).getValue(), metadata.getKey(), acquisitionStage);
                 }
             }
         }
@@ -651,7 +668,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
-            throws DAOException, ProcessGenerationException, IOException, CommandException {
+            throws DAOException, ProcessGenerationException, IOException, CommandException, SAXException,
+            FileStructureValidationException {
 
         if (yearMark.equals(currentYear)) {
             return;
@@ -683,7 +701,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private boolean openExistingYearProcess(String yearMark)
-            throws DAOException, IOException {
+            throws DAOException, IOException, SAXException, FileStructureValidationException {
         final long begin = System.nanoTime();
 
         boolean couldOpenExistingProcess = false;

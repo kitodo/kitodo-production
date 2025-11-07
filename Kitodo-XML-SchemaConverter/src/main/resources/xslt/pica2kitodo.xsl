@@ -14,70 +14,64 @@
 
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:pica="info:srw/schema/5/picaXML-v1.0"
-                xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://www.loc.gov/METS/ ">
+                xmlns:kitodo="http://meta.kitodo.org/v1/">
 
     <xsl:output method="xml" indent="yes" encoding="utf-8"/>
     <xsl:strip-space elements="*"/>
 
     <xsl:template match="pica:record">
-        <mets:mdWrap MDTYPE="PICAXML">
-            <mets:xmlData>
-                <kitodo:kitodo>
-                    <xsl:apply-templates select="@*|node()"/>
-                    <!-- ### DocType ### -->
-                    <kitodo:metadata name="docType">
-                        <xsl:variable name="status" select="pica:datafield[@tag='002@']/pica:subfield[@code='0']"/>
-                        <xsl:variable name="genre" select="pica:datafield[@tag='013D']/pica:subfield[@code='a']"/>
-                        <xsl:if test="matches($status,'^[AO]a[uv]')">
-                            <xsl:choose>
-                                <xsl:when test="($genre='Handschrift')">
-                                    <xsl:text>Manuscript</xsl:text>
-                                </xsl:when>
-                                <xsl:when test="($genre='Musikhandschrift')">
-                                    <xsl:text>Manuscript</xsl:text>
-                                </xsl:when>
-                                <xsl:when test="($genre='Bild')">
-                                    <xsl:text>Graphics</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:text>Monograph</xsl:text>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:if>
-                        <xsl:if test="matches($status,'^[AO][fF][uv]')">
-                            <xsl:choose>
-                                <xsl:when test="($genre='Bild')">
-                                    <xsl:text>MultiPartGraphics</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:text>MultiVolumeWork</xsl:text>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:if>
-                        <xsl:if test="matches($status,'^[AO]b[uv]')">
-                            <xsl:choose>
-                                <xsl:when test="($genre='Zeitung')">
-                                    <xsl:text>Newspaper</xsl:text>
-                                </xsl:when>
-                                <xsl:when test="($genre='Programmheft')">
-                                    <xsl:text>Ephemera</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:text>Periodical</xsl:text>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:if>
-                    </kitodo:metadata>
-                </kitodo:kitodo>
-            </mets:xmlData>
-        </mets:mdWrap>
+        <kitodo:kitodo>
+            <xsl:apply-templates select="@*|node()"/>
+            <!-- ### DocType ### -->
+            <kitodo:metadata name="docType">
+                <xsl:variable name="status" select="pica:datafield[@tag='002@']/pica:subfield[@code='0']"/>
+                <xsl:variable name="genre" select="pica:datafield[@tag='013D']/pica:subfield[@code='a']"/>
+                <xsl:if test="matches($status,'^[AO]a[uv]')">
+                    <xsl:choose>
+                        <xsl:when test="($genre='Handschrift')">
+                            <xsl:text>Manuscript</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="($genre='Musikhandschrift')">
+                            <xsl:text>Manuscript</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="($genre='Bild')">
+                            <xsl:text>Graphics</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Monograph</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:if>
+                <xsl:if test="matches($status,'^[AO][fF][uv]')">
+                    <xsl:choose>
+                        <xsl:when test="($genre='Bild')">
+                            <xsl:text>MultiPartGraphics</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>MultiVolumeWork</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:if>
+                <xsl:if test="matches($status,'^[AO]b[uv]')">
+                    <xsl:choose>
+                        <xsl:when test="($genre='Zeitung')">
+                            <xsl:text>Newspaper</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="($genre='Programmheft')">
+                            <xsl:text>Ephemera</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Periodical</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:if>
+            </kitodo:metadata>
+        </kitodo:kitodo>
     </xsl:template>
 
     <!-- ### VD16-Nummer ### -->
-    <xsl:template match="datafield[@tag='006V']/subfield[@code='0']">
+    <xsl:template match="pica:datafield[@tag='006V']/subfield[@code='0']">
         <kitodo:metadata name="VD16">
             <xsl:value-of select="normalize-space()"/>
         </kitodo:metadata>

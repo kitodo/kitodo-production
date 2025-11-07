@@ -28,8 +28,10 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.test.utils.TestConstants;
+import org.xml.sax.SAXException;
 
 public class MetadataValidationServiceIT {
 
@@ -62,7 +64,8 @@ public class MetadataValidationServiceIT {
     }
 
     @Test
-    public void shouldValidateMetadataByWorkpieceAndWarnAboutMissingMediaAndID() throws IOException, DAOException {
+    public void shouldValidateMetadataByWorkpieceAndWarnAboutMissingMediaAndID() throws IOException, DAOException,
+            SAXException, FileStructureValidationException {
         URI metsUri = Paths.get(TEST_META).toUri();
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         ruleset.load(new File(TestConstants.TEST_RULESET));
@@ -78,7 +81,8 @@ public class MetadataValidationServiceIT {
     }
 
     @Test
-    public void shouldValidateMetadataByWorkpieceWithoutWarning() throws IOException, DAOException {
+    public void shouldValidateMetadataByWorkpieceWithoutWarning() throws IOException, DAOException, SAXException,
+            FileStructureValidationException {
         URI metsUri = Paths.get(TEST_META).toUri();
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         ruleset.load(new File(TestConstants.TEST_RULESET));
@@ -89,7 +93,8 @@ public class MetadataValidationServiceIT {
     }
 
     @Test
-    public void shouldValidateAndRaiseErrorAndLaxValidation() throws IOException, DAOException {
+    public void shouldValidateAndRaiseErrorAndLaxValidation() throws IOException, DAOException, SAXException,
+            FileStructureValidationException {
         URI metsUri = Paths.get(TEST_KALLIOPE_PARENT).toUri();
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         ruleset.load(new File(TestConstants.TEST_RULESET));

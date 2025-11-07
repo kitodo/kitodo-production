@@ -26,7 +26,9 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 public class VariableReplacerTest {
 
@@ -180,7 +182,7 @@ public class VariableReplacerTest {
     }
 
     @Test
-    public void shouldReturnMetadataOfNewspaperIssue() throws IOException  {
+    public void shouldReturnMetadataOfNewspaperIssue() throws IOException, SAXException, FileStructureValidationException {
         Process process = prepareProcess(2, "variableReplacer/newspaperIssue");
         Workpiece workpiece = ServiceManager.getProcessService().readMetadataFile(process).getWorkpiece();
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
@@ -191,7 +193,7 @@ public class VariableReplacerTest {
     }
 
     @Test
-    public void shouldReturnMetadataOfPeriodialVolume() throws IOException  {
+    public void shouldReturnMetadataOfPeriodicalVolume() throws IOException, SAXException, FileStructureValidationException {
         Process process = prepareProcess(2, "variableReplacer/periodicalVolume");
         Workpiece workpiece = ServiceManager.getProcessService().readMetadataFile(process).getWorkpiece();
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
@@ -202,7 +204,7 @@ public class VariableReplacerTest {
     }
 
     @Test
-    public void shouldReturnMetadataOfMonograph() throws IOException  {
+    public void shouldReturnMetadataOfMonograph() throws IOException, SAXException, FileStructureValidationException {
         Process process = prepareProcess(2, "variableReplacer/monograph");
         Workpiece workpiece = ServiceManager.getProcessService().readMetadataFile(process).getWorkpiece();
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);

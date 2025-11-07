@@ -46,6 +46,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -53,6 +54,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.xml.sax.SAXException;
 
 public class NewspaperProcessesGeneratorIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
@@ -121,13 +123,13 @@ public class NewspaperProcessesGeneratorIT {
      * @throws IOException when deleting metadata test files fails
      */
     @AfterEach
-    public void cleanupNewspaperProcess() throws DAOException, IOException {
+    public void cleanupNewspaperProcess() throws Exception {
         if (newspaperTestProcessId > 0) {
             deleteProcessHierarchy(ServiceManager.getProcessService().getById(newspaperTestProcessId));
         }
     }
 
-    private static void deleteProcessHierarchy(Process process) throws DAOException, IOException {
+    private static void deleteProcessHierarchy(Process process) throws Exception {
         for (Process childProcess : process.getChildren()) {
             deleteProcessHierarchy(childProcess);
         }
@@ -169,7 +171,8 @@ public class NewspaperProcessesGeneratorIT {
      *            element. In the issue process ({@code true}), it is in the
      *            issue, which is two levels below the logical structure.
      */
-    private String readProcessTitleFromMetadata(int processId, boolean issue) throws DAOException, IOException {
+    private String readProcessTitleFromMetadata(int processId, boolean issue) throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         LogicalDivision logicalStructure = metsService
                 .loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId))).getLogicalStructure();
         LogicalDivision logicalDivision = issue

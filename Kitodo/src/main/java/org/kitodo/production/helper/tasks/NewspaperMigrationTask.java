@@ -18,8 +18,10 @@ import javax.naming.ConfigurationException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
+import org.xml.sax.SAXException;
 
 /**
  * Runs the migration of a newspaper in the task manager.
@@ -120,9 +122,13 @@ public class NewspaperMigrationTask extends EmptyTask {
      * @throws ConfigurationException
      *             if the newspaper division is not well configured in the
      *             ruleset
+     * @throws SAXException
+     *             if converting process fails
+     * @throws FileStructureValidationException
+     *             if loading workpiece of process fails due to validation errors
      */
     private void next() throws DAOException, IOException, ProcessGenerationException,
-            ConfigurationException, CommandException {
+            ConfigurationException, CommandException, SAXException, FileStructureValidationException {
         switch (part) {
             case CONVERT_PROCESSES: {
                 super.setWorkDetail(migrator.getProcessTitle(step));
@@ -162,8 +168,8 @@ public class NewspaperMigrationTask extends EmptyTask {
                 }
             }
             setProgress(100);
-        } catch (ConfigurationException | DAOException | IOException | ProcessGenerationException
-                | CommandException e) {
+        } catch (ConfigurationException | DAOException | IOException | ProcessGenerationException | CommandException
+                 | SAXException | FileStructureValidationException e) {
             setException(e);
         }
     }

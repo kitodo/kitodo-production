@@ -82,13 +82,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.exceptions.ConfigException;
-import org.kitodo.exceptions.ImportException;
-import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.exceptions.NoRecordFoundException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.exceptions.UnsupportedFormatException;
+import org.kitodo.exceptions.*;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
@@ -200,7 +194,7 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcessForMassImportWithAdditionalMetadata() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImportWithAdditionalMetadata() throws Exception {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
@@ -228,7 +222,8 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcessForMassImportWithAdditionalMetadataWithLabelAndOrderlabel() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImportWithAdditionalMetadataWithLabelAndOrderlabel()
+            throws DAOException, ImportException, IOException, SAXException, FileStructureValidationException {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
@@ -410,14 +405,14 @@ public class ImportServiceIT {
     @Test
     public void shouldConvertDataRecordToInternal() throws DAOException, UnsupportedFormatException,
             XPathExpressionException, ProcessGenerationException, URISyntaxException, IOException,
-            ParserConfigurationException, SAXException {
+            ParserConfigurationException, SAXException, FileStructureValidationException {
         DataRecord dataRecord = new DataRecord();
         dataRecord.setFileFormat(FileFormat.XML);
         dataRecord.setMetadataFormat(MetadataFormat.MODS);
         try (InputStream inputStream = Files.newInputStream(Paths.get(MODS_TEST_RECORD_PATH))) {
             dataRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
             Document internalDocument = ServiceManager.getImportService().convertDataRecordToInternal(dataRecord,
-                    MockDatabase.getKalliopeImportConfiguration(), false);
+                    MockDatabase.getKalliopeImportConfiguration(), false, false, "N/A");
             assertEquals(1, internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO).getLength(), "Converted data should contain one 'kitodo' root node");
             assertEquals(3, internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, METADATA).getLength(), "Converted data should contain three 'metadata' nodes");
         }
@@ -526,7 +521,7 @@ public class ImportServiceIT {
      * @throws IOException when loading workpiece fails
      */
     @Test
-    public void shouldEnsureNonEmptyTitles() throws DAOException, IOException {
+    public void shouldEnsureNonEmptyTitles() throws DAOException, IOException, SAXException, FileStructureValidationException {
         int parentProcessId = MockDatabase.insertTestProcess("", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         try {
             ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_KITODO_METADATA_FILE);

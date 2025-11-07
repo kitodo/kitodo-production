@@ -48,6 +48,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
@@ -868,9 +869,24 @@ public class CalendarForm implements Serializable {
 
     /**
      * Check if process with the same processtitle already exists.
+     *
+     * @throws ProcessGenerationException
+     *          when checking for duplicate titles fails
+     * @throws DAOException
+     *          when loading parent process fails
+     * @throws ConfigurationException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws IOException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws DoctypeMissingException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws SAXException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws FileStructureValidationException
+     *          when initializing NewspaperProcessesGenerator fails
      */
     public void checkDuplicatedTitles() throws ProcessGenerationException, DAOException,
-            ConfigurationException, IOException, DoctypeMissingException {
+            ConfigurationException, IOException, DoctypeMissingException, SAXException, FileStructureValidationException {
         if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
             Process process = ServiceManager.getProcessService().getById(parentId);
             NewspaperProcessesGenerator newspaperProcessesGenerator = new NewspaperProcessesGenerator(process, course);

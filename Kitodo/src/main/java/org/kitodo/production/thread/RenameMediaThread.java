@@ -23,11 +23,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 /**
  * This class is used to rename media files of multiple processes in a separate thread whose progress can be monitored
@@ -71,7 +73,7 @@ public class RenameMediaThread extends EmptyTask {
                     ServiceManager.getMetsService().save(workpiece, out);
                     logger.info("Renamed " + numberOfRenamedFiles + " media files for process " + process.getId());
                 }
-            } catch (IOException | URISyntaxException e) {
+            } catch (IOException | URISyntaxException | SAXException | FileStructureValidationException e) {
                 logger.error(e.getMessage());
                 String nameDetailMessage = processes.size()
                         + " " + Helper.getString(LocaleHelper.getCurrentLocale(), PROCESSES)

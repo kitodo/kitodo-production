@@ -37,6 +37,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -47,6 +48,7 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("TemplateForm")
 @ViewScoped
@@ -168,7 +170,7 @@ public class TemplateForm extends TemplateBaseForm {
                 ServiceManager.getTemplateService().save(this.template);
                 template = ServiceManager.getTemplateService().getById(this.template.getId());
                 new WorkflowControllerService().activateNextTasks(template.getTasks());
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;

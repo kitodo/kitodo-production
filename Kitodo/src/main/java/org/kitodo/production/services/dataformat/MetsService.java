@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import javax.xml.transform.Result;
@@ -32,9 +33,12 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.exceptions.FileStructureValidationException;
+import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class MetsService {
     private static final Logger logger = LogManager.getLogger(MetsService.class);
@@ -76,8 +80,12 @@ public class MetsService {
      * @throws IOException
      *             if the file cannot be read (for example, because the file was
      *             not found)
+     * @throws SAXException
+     *             if the XML file is malformed
+     * @throws FileStructureValidationException
+     *             when XML validation of workpiece fails
      */
-    public String getBaseType(URI uri) throws IOException {
+    public String getBaseType(URI uri) throws IOException, SAXException, FileStructureValidationException {
         return getBaseType(loadWorkpiece(uri));
 
     }
@@ -101,6 +109,24 @@ public class MetsService {
     }
 
     /**
+     * Loads a workpiece from the given URI. This method retrieves the workpiece data
+     * and validates it against the schema by default.
+     *
+     * @param uri
+     *          Address of the METS file of the workpiece to be loaded.
+     * @return The loaded workpiece.
+     * @throws IOException
+     *          when the file cannot be read (e.g., the file is not found).
+     * @throws SAXException
+     *          when the XML file is malformed.
+     * @throws FileStructureValidationException
+     *          when XML validation of the workpiece fails.
+     */
+    public Workpiece loadWorkpiece(URI uri) throws IOException, SAXException, FileStructureValidationException {
+        return loadWorkpiece(uri, true);
+    }
+
+    /**
      * Function for loading METS files from URI.
      *
      * @param uri
@@ -108,11 +134,26 @@ public class MetsService {
      * @return loaded file
      * @throws IOException
      *             if reading is not working (disk broken, ...)
+     * @throws SAXException
+     *             if XML is malformed
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
-    public Workpiece loadWorkpiece(URI uri) throws IOException {
+    public Workpiece loadWorkpiece(URI uri, boolean validateAgainstSchema) throws IOException, SAXException,
+            FileStructureValidationException {
         try (InputStream inputStream = ServiceManager.getFileService().read(uri)) {
             logger.info("Reading {}", uri.toString());
-            return metsXmlElementAccess.read(inputStream);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            inputStream.transferTo(outputStream);
+            try (InputStream xmlValidationStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                XMLUtils.checkIfXmlIsWellFormed(new String(xmlValidationStream.readAllBytes(), StandardCharsets.UTF_8));
+            }
+            if (validateAgainstSchema) {
+                ServiceManager.getFileStructureValidationService().validateInternalRecord(outputStream.toString(), true, null);
+            }
+            try (InputStream metsDocumentStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                return metsXmlElementAccess.read(metsDocumentStream);
+            }
         }
     }
 

@@ -99,6 +99,9 @@
         <ui:include src="/WEB-INF/templates/includes/processEdit/propertyEditPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceEditPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processEdit/templateEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/validationErrorsDialog.xhtml">
+            <ui:param name="validatableForm" value="#{ProcessForm}"/>
+        </ui:include>
     </ui:define>
 
     <ui:define name="breadcrumbs">
