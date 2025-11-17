@@ -424,13 +424,20 @@ public class MetadataValidation implements MetadataValidationInterface {
     private static Map<MetadataViewInterface, Collection<Metadata>> squash(
             List<MetadataViewWithValuesInterface> metadataViewsWithValues) {
         Map<MetadataViewInterface, Collection<Metadata>> squashed = new HashMap<>();
+        Map<String, MetadataViewInterface> idMap = new HashMap<>();
         for (MetadataViewWithValuesInterface metadataViewWithValues : metadataViewsWithValues) {
             Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
             if (optionalMetadataView.isEmpty()) {
                 continue;
             }
-            squashed.computeIfAbsent(optionalMetadataView.get(), each -> new ArrayList<>());
-            squashed.get(optionalMetadataView.get()).addAll(metadataViewWithValues.getValues());
+            MetadataViewInterface view = optionalMetadataView.get();
+            String id = view.getId();
+            //Choose a stable representative view
+            MetadataViewInterface representative =
+                    idMap.computeIfAbsent(id, k -> view);
+            //merge ALL values into the representative’s list
+            squashed.computeIfAbsent(representative, x -> new ArrayList<>())
+                    .addAll(metadataViewWithValues.getValues());
         }
         return squashed;
     }
