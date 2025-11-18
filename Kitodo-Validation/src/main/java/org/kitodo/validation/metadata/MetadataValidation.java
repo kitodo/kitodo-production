@@ -286,7 +286,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 error = true;
             } else if (count > max) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_TOO_OFTEN),
-                    location.concat(metadataView.getLabel()), Integer.toString(count), Integer.toString(min)));
+                    location.concat(metadataView.getLabel()), Integer.toString(count), Integer.toString(max)));
                 error = true;
             }
 
