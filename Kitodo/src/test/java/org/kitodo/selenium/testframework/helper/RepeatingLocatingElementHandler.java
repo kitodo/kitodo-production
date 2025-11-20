@@ -34,11 +34,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocator;
  */
 public class RepeatingLocatingElementHandler  implements InvocationHandler {
 
-    private static final Object NULL_OBJECT = new Object() {
-        public String toString() {
-            return "NULL_OBJECT";
-        }
-    };
+    private static final Object NULL_OBJECT = new Object();
 
     private static final Logger logger = LogManager.getLogger(RepeatingLocatingElementHandler.class);
 
@@ -51,6 +47,7 @@ public class RepeatingLocatingElementHandler  implements InvocationHandler {
     /**
      * Invokes a method on a WebElement.
      */
+    @Override
     public Object invoke(Object object, Method method, Object[] objects) {
         Callable<Object> findAndInvoke = () -> {
             logger.trace("invoke method " + method.getName() + " on WebElement with locator " + locator.toString());

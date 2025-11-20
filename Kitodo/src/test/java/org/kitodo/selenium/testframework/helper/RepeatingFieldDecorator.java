@@ -33,6 +33,7 @@ public class RepeatingFieldDecorator extends DefaultFieldDecorator {
         super(factory);
     }
 
+    @Override
     protected WebElement proxyForLocator(ClassLoader loader, ElementLocator locator) {
         InvocationHandler handler = new RepeatingLocatingElementHandler(locator);
 
