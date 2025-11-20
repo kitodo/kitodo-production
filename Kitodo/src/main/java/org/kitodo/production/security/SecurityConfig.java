@@ -93,6 +93,10 @@ public class SecurityConfig {
         return this.sessionRegistry;
     }
 
+    /**
+     * Registers Spring Security's default HandlerMappingIntrospector required for request url matching, see:
+     * https://docs.spring.io/spring-security/reference/6.4/servlet/integrations/mvc.html
+     */
     @Bean(name = "mvcHandlerMappingIntrospector")
     public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
