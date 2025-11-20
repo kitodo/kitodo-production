@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium.testframework;
 
+import org.kitodo.selenium.testframework.helper.RepeatingFieldDecorator;
 import org.kitodo.selenium.testframework.pages.CalendarPage;
 import org.kitodo.selenium.testframework.pages.ClientEditPage;
 import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
@@ -41,12 +42,13 @@ import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
 
 public class Pages {
 
     private static <T> T getPage(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T page = clazz.newInstance();
-        PageFactory.initElements(Browser.getDriver(), page);
+        PageFactory.initElements(new RepeatingFieldDecorator(new DefaultElementLocatorFactory(Browser.getDriver())), page);
         return page;
     }
 
