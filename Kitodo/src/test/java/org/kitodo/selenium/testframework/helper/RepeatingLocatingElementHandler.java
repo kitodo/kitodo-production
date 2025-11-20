@@ -53,7 +53,7 @@ public class RepeatingLocatingElementHandler  implements InvocationHandler {
      */
     public Object invoke(Object object, Method method, Object[] objects) {
         Callable<Object> findAndInvoke = () -> {
-            logger.debug("invoke method " + method.getName() + " on WebElement with locator " + locator.toString());
+            logger.trace("invoke method " + method.getName() + " on WebElement with locator " + locator.toString());
             WebElement element;
             try {
                 element = locator.findElement();
