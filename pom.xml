@@ -510,13 +510,18 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.2.5.Final</version>
+                <version>8.0.3.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
                         <artifactId>jboss-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.expressly</groupId>
+                <artifactId>expressly</artifactId>
+                <version>5.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.im4java</groupId>

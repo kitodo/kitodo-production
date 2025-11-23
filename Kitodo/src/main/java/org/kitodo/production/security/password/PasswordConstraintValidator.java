@@ -19,10 +19,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import jakarta.faces.context.FacesContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
