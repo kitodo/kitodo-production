@@ -25,6 +25,7 @@ public enum FilterString {
     ID("id:", "id:"),
     PARENTPROCESSID("parentprocessid:", "elternprozessid:"),
     PROCESS("process:", "prozess:"),
+    PROCESS_LOOSE("process_loose:", "prozess_unscharf:"),
     BATCH("batch:", "gruppe:"),
     TASKAUTOMATIC("stepautomatic:", "schrittautomatisch:"),
     PROPERTY("property:","eigenschaft:"),
