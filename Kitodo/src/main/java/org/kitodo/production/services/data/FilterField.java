@@ -24,7 +24,7 @@ import org.kitodo.data.database.enums.TaskStatus;
  * Constants for known search field names in filters.
  */
 enum FilterField {
-    SEARCH(null, null, null, null, null, null, "search", ProcessKeywords.LENGTH_MIN_REASONABLE),
+    SEARCH(null, null, null, null, null, null, "search", ProcessKeywords.LENGTH_MIN_DEFAULT),
     PROCESS_ID(null, null, null, "id", "process.id", null, null, -1),
     PARENT_PROCESS_ID(null, null, null, "parent.id", "process.parent.id", null, null, -1),
     PROCESS_TITLE("title", "process.title", LikeSearch.NO, null, null, null, "searchTitle",
