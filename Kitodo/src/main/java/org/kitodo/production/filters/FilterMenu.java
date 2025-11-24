@@ -44,6 +44,7 @@ public class FilterMenu {
             FilterString.ID,
             FilterString.PARENTPROCESSID,
             FilterString.PROCESS,
+            FilterString.PROCESS_LOOSE,
             FilterString.BATCH,
             FilterString.PROPERTY
     );
@@ -55,6 +56,7 @@ public class FilterMenu {
             FilterString.PROJECT_LOOSE,
             FilterString.ID,
             FilterString.PROCESS,
+            FilterString.PROCESS_LOOSE,
             FilterString.BATCH,
             FilterString.PROPERTY
     );
