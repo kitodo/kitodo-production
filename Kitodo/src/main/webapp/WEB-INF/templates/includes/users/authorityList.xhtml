@@ -20,19 +20,19 @@
     <p:dataTable var="item"
                  id="authoritiesTable"
                  styleClass="default-layout"
-                 value="#{AuthorityForm.lazyBeanModel}"
-                 first="#{AuthorityForm.firstRow}"
+                 value="#{AuthorityListView.lazyBeanModel}"
+                 first="#{AuthorityListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
-                 sortBy="#{AuthorityForm.sortBy}"
+                 sortBy="#{AuthorityListView.sortBy}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{AuthorityForm.onPageChange}"/>
+                listener="#{AuthorityListView.onPageChange}"/>
         <p:column headerText="#{msgs.authority}" sortBy="#{item.title}">
             <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"
                           title="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
