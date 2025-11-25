@@ -12,7 +12,9 @@
 package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -29,17 +31,24 @@ import org.kitodo.production.services.ServiceManager;
 @ViewScoped
 public class ClientListView extends BaseForm {
 
-    private static final Logger logger = LogManager.getLogger(ClientEditView.class);
+    private static final Logger logger = LogManager.getLogger(ClientListView.class);
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:clientsTab";
     
     /**
-     * Empty default constructor that also sets the LazyBeanModel instance of
-     * this bean.
+     * Initialize ClientListView.
      */
-    public ClientListView() {
-        super();
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getClientService()));
+    @PostConstruct
+    public void init() {
+        setLazyBeanModel(new LazyBeanModel(ServiceManager.getClientService()));
+
+        columns = new ArrayList<>();
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("client"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client");
     }
 
     /**

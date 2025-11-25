@@ -33,7 +33,7 @@
                 listener="#{ClientListView.onPageChange}"/>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.name}"
-                  rendered="#{UserForm.showColumn('client.client')}">
+                  rendered="#{ClientListView.showColumn('client.client')}">
             <h:outputText value="#{item.name}"
                           title="#{item.name}"/>
         </p:column>

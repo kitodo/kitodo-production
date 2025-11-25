@@ -26,22 +26,22 @@
 
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{UserForm.load(id)}"/>
+        <f:viewAction action="#{UserEditView.load(id)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{UserForm.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser()}"/>
+              value="#{UserEditView.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser()}"/>
     <ui:param name="isCreateMode"
-              value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
+              value="#{UserEditView.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserEditView.userObject.id)}"/>
     <ui:param name="isConfigMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserEditView.userObject.id)}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editUser} (#{UserForm.userObject.fullName})"
+            <h:outputText value="#{msgs.editUser} (#{UserEditView.userObject.fullName})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.userCreate}"
@@ -58,18 +58,18 @@
         <p:commandButton id="saveButtonToggler"
                   process="@this"
                   immediate="#{true}"
-                  actionListener="#{UserForm.setSaveDisabled(false)}"
+                  actionListener="#{UserEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton value="#{msgs.save}"
-                         action="#{UserForm.save}"
+                         action="#{UserEditView.save}"
                          id="save"
                          rendered="#{isEditMode || isCreateMode || isConfigMode}"
                          widgetVar="save"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         disabled="#{UserForm.saveDisabled}"
+                         disabled="#{UserEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
     </ui:define>
 

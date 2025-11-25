@@ -35,19 +35,19 @@
                 listener="#{LdapGroupListView.onPageChange}"/>
         <p:column headerText="#{msgs.ldapGroup}"
                   sortBy="#{item.title}"
-                  rendered="#{UserForm.showColumn('ldapgroup.ldapgroup')}">
+                  rendered="#{LdapGroupListView.showColumn('ldapgroup.ldapgroup')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.homeDirectory}"
                   sortBy="#{item.homeDirectory}"
-                  rendered="#{UserForm.showColumn('ldapgroup.home_directory')}">
+                  rendered="#{LdapGroupListView.showColumn('ldapgroup.home_directory')}">
             <h:outputText value="#{item.homeDirectory}"
                           title="#{item.homeDirectory}"/>
         </p:column>
         <p:column headerText="gidNumber"
                   sortBy="#{item.gidNumber}"
-                  rendered="#{UserForm.showColumn('ldapgroup.gidNumber')}">
+                  rendered="#{LdapGroupListView.showColumn('ldapgroup.gidNumber')}">
             <h:outputText value="#{item.gidNumber}"
                           title="#{item.gidNumber}"/>
         </p:column>

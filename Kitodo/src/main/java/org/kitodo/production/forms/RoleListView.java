@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -35,15 +36,27 @@ public class RoleListView extends BaseForm {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:rolesTab";
 
-    private static final Logger logger = LogManager.getLogger(RoleEditView.class);
+    private static final Logger logger = LogManager.getLogger(RoleListView.class);
     
     /**
-     * Default constructor that also sets the LazyBeanModel instance of this
-     * bean.
+     * Initialize RoleListView.
      */
-    public RoleListView() {
-        super();
-        super.setLazyBeanModel(new LazyRoleModel(ServiceManager.getRoleService()));
+    @PostConstruct
+    public void init() {
+        setLazyBeanModel(new LazyRoleModel(ServiceManager.getRoleService()));
+
+        columns = new ArrayList<>();
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("role"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("role");
+
+        if (!ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            deselectRoleClientColumn();
+        }
+
         sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
@@ -126,6 +139,10 @@ public class RoleListView extends BaseForm {
      */
     public void setShowRolesOfAllAvailableClients(boolean showRolesOfAllAvailableClients) {
         ((LazyRoleModel)this.lazyBeanModel).setShowRolesOfAllAvailableClients(showRolesOfAllAvailableClients);
+    }
+
+    private void deselectRoleClientColumn() {
+        selectedColumns = ServiceManager.getListColumnService().removeColumnByTitle(selectedColumns, "role.client");
     }
 
 }

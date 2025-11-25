@@ -36,16 +36,11 @@ public class LdapGroupListView extends BaseForm {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:ldapGroupsTab";
 
-    private static final Logger logger = LogManager.getLogger(LdapGroupEditView.class);  
+    private static final Logger logger = LogManager.getLogger(LdapGroupListView.class);  
 
     protected static final String ERROR_DELETING_LDAP_GROUP = "ldapGroupInUse";
 
     private List<LdapGroup> ldapGroups;
-
-    public LdapGroupListView() {
-        super();
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
-    }
 
     /**
      * Initialize new ldap group list view by retrieving all available ldap groups from the database.
@@ -53,6 +48,16 @@ public class LdapGroupListView extends BaseForm {
     @PostConstruct
     public void init() {
         ldapGroups = retrieveLdapGroups();
+        
+        columns = new ArrayList<>();
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ldapgroup"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup");
+
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**

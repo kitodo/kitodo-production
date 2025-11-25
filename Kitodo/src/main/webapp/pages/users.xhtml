@@ -20,10 +20,10 @@
     <f:metadata>
         <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
         <f:viewParam name="tabIndex"/>
-        <f:viewAction action="#{UserForm.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <f:viewAction action="#{UserListView.setActiveTabIndexFromTemplate(tabIndex)}" />
         <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
         <f:viewParam name="keepPagination"/>
-        <f:viewAction action="#{UserForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{UserListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{RoleListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{ClientListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{AuthorityListView.resetPaginator(keepPagination)}" />
@@ -35,10 +35,10 @@
         <h3>#{msgs.users}</h3>
         <!-- Filters -->
         <h:panelGroup id="filterMenuWrapper">
-            <p:outputPanel rendered="#{UserForm.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 0}">
                 <ui:include src="/WEB-INF/templates/includes/users/filterMenu.xhtml"/>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UserForm.activeTabIndex eq 1 and RoleListView.hasPermissionToSeeAllClientRoles}">
+            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 1 and RoleListView.hasPermissionToSeeAllClientRoles}">
                 <h:form id="allClientsRolesForm">
                     <p:selectBooleanCheckbox id="showAllClientsRoles"
                                              value="#{RoleListView.showRolesOfAllAvailableClients}"
@@ -52,16 +52,42 @@
         </h:panelGroup>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  label=""
-                                  showHeader="false"
-                                  converter="#{listColumnConverter}"
-                                  title="#{msgs.configureColumns}"
-                                  value="#{UserForm.selectedColumns}">
-                <f:selectItems value="#{UserForm.columns}"/>
-                <p:ajax listener="#{UserForm.saveSelectedColumns()}"
-                        update="usersTabView"/>
-            </p:selectCheckboxMenu>
+            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 0}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{UserListView.selectedColumns}">
+                    <f:selectItems value="#{UserListView.columns}"/>
+                    <p:ajax listener="#{UserListView.saveSelectedColumns()}"
+                            update="usersTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
+            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 1}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{RoleListView.selectedColumns}">
+                    <f:selectItems value="#{RoleListView.columns}"/>
+                    <p:ajax listener="#{RoleListView.saveSelectedColumns()}"
+                            update="usersTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
+            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 4}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{LdapGroupListView.selectedColumns}">
+                    <f:selectItems value="#{LdapGroupListView.columns}"/>
+                    <p:ajax listener="#{LdapGroupListView.saveSelectedColumns()}"
+                            update="usersTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
         </h:form>
         <h:form id="newElementForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnUserPage()}">
             <p:menuButton value="#{msgs.newElement}"
@@ -72,7 +98,7 @@
                           menuStyleClass="new-element-menu">
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
                             rendered="#{SecurityAccessController.hasAuthorityToAddUser()}"
-                            action="#{UserForm.newUser}" icon="fa fa-plus"/>
+                            action="#{UserListView.newUser}" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRole()}"
                             action="#{RoleListView.newRole}" icon="fa fa-plus"/>
@@ -93,10 +119,10 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{UserForm.activeTabIndex}" id="usersTabView" dynamic="true">
+        <p:tabView activeIndex="#{UserListView.activeTabIndex}" id="usersTabView" dynamic="true">
             <p:ajax event="tabChange"
-                    listener="#{UserForm.onTabChange}"
-                    update="filterMenuWrapper"/>
+                    listener="#{UserListView.onTabChange}"
+                    update="filterMenuWrapper configureColumnsForm"/>
             <p:tab id="usersTab" title="#{msgs.users}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewUserList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
