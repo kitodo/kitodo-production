@@ -179,7 +179,7 @@
                 <p:selectOneMenu id="ldapGroup" value="#{UserForm.userObject.ldapGroup}"
                                  disabled="#{isViewMode || isConfigMode}" converter="#{ldapGroupConverter}">
                     <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                    <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
+                    <f:selectItems value="#{LdapGroupListView.ldapGroups}" var="ldapGroup"
                                    itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
                     <p:ajax oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
                 </p:selectOneMenu>

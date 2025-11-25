@@ -20,19 +20,19 @@
     <p:dataTable var="item"
                  id="ldapGroupsTable"
                  styleClass="default-layout"
-                 value="#{LdapGroupForm.ldapGroups}"
-                 first="#{LdapGroupForm.firstRow}"
+                 value="#{LdapGroupListView.ldapGroups}"
+                 first="#{LdapGroupListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{LdapGroupForm.sortBy}"
+                 sortBy="#{LdapGroupListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{LdapGroupForm.onPageChange}"/>
+                listener="#{LdapGroupListView.onPageChange}"/>
         <p:column headerText="#{msgs.ldapGroup}"
                   sortBy="#{item.title}"
                   rendered="#{UserForm.showColumn('ldapgroup.ldapgroup')}">
@@ -62,22 +62,23 @@
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}"
+                <h:link outcome="ldapgroupEdit"
                                styleClass="action"
                                title="#{msgs.duplicateLdapGroup}"
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}">
+                    <f:param name="id" value="#{item.id}"/>
+                    <f:param name="duplicate" value="true"/>
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
-                </h:commandLink>
+                </h:link>
                 <p:commandLink id="deleteLdapgroup"
-                               action="#{LdapGroupForm.delete}"
+                               action="#{LdapGroupListView.delete(item)}"
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('deleteLdapGroup')}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{LdapGroupForm.ldapGroupById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{LdapGroupForm.formatString('confirmDeleteLdapgroup', item.title)}"
+                               message="#{LdapGroupListView.formatString('confirmDeleteLdapgroup', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>
