@@ -24,7 +24,7 @@
         <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
         <f:viewParam name="keepPagination"/>
         <f:viewAction action="#{UserForm.resetPaginator(keepPagination)}" />
-        <f:viewAction action="#{RoleForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{RoleListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{ClientListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{AuthorityListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{LdapServerListView.resetPaginator(keepPagination)}" />
@@ -38,10 +38,10 @@
             <p:outputPanel rendered="#{UserForm.activeTabIndex eq 0}">
                 <ui:include src="/WEB-INF/templates/includes/users/filterMenu.xhtml"/>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UserForm.activeTabIndex eq 1 and RoleForm.hasPermissionToSeeAllClientsRoles}">
+            <p:outputPanel rendered="#{UserForm.activeTabIndex eq 1 and RoleListView.hasPermissionToSeeAllClientRoles}">
                 <h:form id="allClientsRolesForm">
                     <p:selectBooleanCheckbox id="showAllClientsRoles"
-                                             value="#{RoleForm.showRolesOfAllAvailableClients}"
+                                             value="#{RoleListView.showRolesOfAllAvailableClients}"
                                              itemLabel="#{msgs.showRolesOfAllAvailableClients}"
                                              styleClass="switch">
                         <p:ajax onstart="PF('rolesTable').getPaginator().setPage(0);"
@@ -75,7 +75,7 @@
                             action="#{UserForm.newUser}" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRole()}"
-                            action="#{RoleForm.newRole}" icon="fa fa-plus"/>
+                            action="#{RoleListView.newRole}" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddClient()}"
                             action="#{ClientListView.newClient}" icon="fa fa-plus"/>
