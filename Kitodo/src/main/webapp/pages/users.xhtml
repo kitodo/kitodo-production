@@ -25,7 +25,7 @@
         <f:viewParam name="keepPagination"/>
         <f:viewAction action="#{UserForm.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{RoleForm.resetPaginator(keepPagination)}" />
-        <f:viewAction action="#{ClientForm.resetPaginator(keepPagination)}" />
+        <f:viewAction action="#{ClientListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{AuthorityForm.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{LdapServerListView.resetPaginator(keepPagination)}" />
         <f:viewAction action="#{LdapGroupListView.resetPaginator(keepPagination)}" />
@@ -78,7 +78,7 @@
                             action="#{RoleForm.newRole}" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddClient()}"
-                            action="#{ClientForm.newClient}" icon="fa fa-plus"/>
+                            action="#{ClientListView.newClient}" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGroupListView.newLdapGroup}"
                             rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"
                             icon="fa fa-plus"/>
