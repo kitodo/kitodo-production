@@ -308,7 +308,7 @@
             <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="ruleset:RestrictivePermit"/>
             <xs:element name="condition" minOccurs="0" maxOccurs="unbounded" type="ruleset:Condition"/>
         </xs:sequence>
-        <xs:attribute type="xs:NMTOKEN" name="division"/>
+        <xs:attribute type="xs:string" name="division"/>
         <xs:attribute type="xs:NMTOKEN" name="key"/>
         <xs:attribute type="xs:string" name="value"/>
         <xs:attribute type="xs:nonNegativeInteger" name="minOccurs"/>
