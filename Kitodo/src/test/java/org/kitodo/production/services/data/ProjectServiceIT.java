@@ -175,9 +175,17 @@ public class ProjectServiceIT {
     public void shouldReturnFalseWhenProjectHasNoProcesses() throws Exception {
         Project project = new Project();
         project.setTitle("Empty Project");
-        projectService.save(project);
-        boolean result = projectService.hasProcesses(project.getId());
-        assertFalse(result, "Project without processes incorrectly reported as having processes!");
+        Integer id = null;
+        try {
+            projectService.save(project);
+            id = project.getId();
+            boolean result = projectService.hasProcesses(id);
+            assertFalse(result, "Project without processes incorrectly reported as having processes!");
+        } finally {
+            if (id != null) {
+                projectService.remove(project);
+            }
+        }
     }
 
     @Test
