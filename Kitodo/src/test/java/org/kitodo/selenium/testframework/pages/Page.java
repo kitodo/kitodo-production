@@ -297,7 +297,7 @@ public abstract class Page<T> {
             .until(() -> {
                 return (Boolean) ((JavascriptExecutor) Browser.getDriver())
                     .executeScript("return (document.readyState === 'complete' && (!window.jQuery || jQuery.active == 0)"
-                        + " && (!window.PrimeFaces || (PrimeFaces.ajax.Queue.isEmpty() && PrimeFaces.animationActive === false)));");
+                        + " && (!window.PrimeFaces || PrimeFaces.ajax.Queue.isEmpty()));");
             });
     }
 
