@@ -106,25 +106,25 @@ public class LdapGroupEditPage extends EditPage<LdapGroupEditPage> {
     }
 
     public LdapGroupEditPage insertLdapGroupData(LdapGroup ldapGroup) {
-        titleInput.sendKeys(ldapGroup.getTitle());
-        descriptionInput.sendKeys(ldapGroup.getDescription());
-        displayNameInput.sendKeys(ldapGroup.getDisplayName());
-        gecosInput.sendKeys(ldapGroup.getGecos());
-        gidNumberInput.sendKeys(ldapGroup.getGidNumber());
-        homeDirectoryInput.sendKeys(ldapGroup.getHomeDirectory());
-        loginShellInput.sendKeys(ldapGroup.getLoginShell());
-        objectClassesInput.sendKeys(ldapGroup.getObjectClasses());
-        sambaAcctFlagsInput.sendKeys(ldapGroup.getSambaAcctFlags());
-        sambaKickoffTimeInput.sendKeys(ldapGroup.getSambaKickoffTime());
-        sambaLogonHoursInput.sendKeys(ldapGroup.getSambaLogonHours());
-        sambaLogonScriptInput.sendKeys(ldapGroup.getSambaLogonScript());
-        sambaPasswordHistoryInput.sendKeys(ldapGroup.getSambaPasswordHistory());
-        sambaPrimaryGroupSidInput.sendKeys(ldapGroup.getSambaPrimaryGroupSID());
-        sambaPwdMustChangeInput.sendKeys(ldapGroup.getSambaPwdMustChange());
-        sambaSidInput.sendKeys(ldapGroup.getSambaSID());
-        snInput.sendKeys(ldapGroup.getSn());
-        uidInput.sendKeys(ldapGroup.getUid());
-        userDnInput.sendKeys(ldapGroup.getUserDN());
+        sendKeysAndWait(titleInput, ldapGroup.getTitle());
+        sendKeysAndWait(descriptionInput, ldapGroup.getDescription());
+        sendKeysAndWait(displayNameInput, ldapGroup.getDisplayName());
+        sendKeysAndWait(gecosInput, ldapGroup.getGecos());
+        sendKeysAndWait(gidNumberInput, ldapGroup.getGidNumber());
+        sendKeysAndWait(homeDirectoryInput, ldapGroup.getHomeDirectory());
+        sendKeysAndWait(loginShellInput, ldapGroup.getLoginShell());
+        sendKeysAndWait(objectClassesInput, ldapGroup.getObjectClasses());
+        sendKeysAndWait(sambaAcctFlagsInput, ldapGroup.getSambaAcctFlags());
+        sendKeysAndWait(sambaKickoffTimeInput, ldapGroup.getSambaKickoffTime());
+        sendKeysAndWait(sambaLogonHoursInput, ldapGroup.getSambaLogonHours());
+        sendKeysAndWait(sambaLogonScriptInput, ldapGroup.getSambaLogonScript());
+        sendKeysAndWait(sambaPasswordHistoryInput, ldapGroup.getSambaPasswordHistory());
+        sendKeysAndWait(sambaPrimaryGroupSidInput, ldapGroup.getSambaPrimaryGroupSID());
+        sendKeysAndWait(sambaPwdMustChangeInput, ldapGroup.getSambaPwdMustChange());
+        sendKeysAndWait(sambaSidInput, ldapGroup.getSambaSID());
+        sendKeysAndWait(snInput, ldapGroup.getSn());
+        sendKeysAndWait(uidInput, ldapGroup.getUid());
+        sendKeysAndWait(userDnInput, ldapGroup.getUserDN());
         return this;
     }
 

@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -284,5 +285,31 @@ public abstract class Page<T> {
         searchField.clear();
         searchField.sendKeys(query);
         clickButtonAndWaitForRedirect(searchButton, Pages.getProcessesPage().getUrl());
+    }
+
+    /**
+     * Waits until all PrimeFaces and jQuery ajax requests have been completed.
+     */
+    public static void waitUntilAjaxCompletes() {
+        await("ajax completes")
+            .atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+            .pollInterval(100, TimeUnit.MILLISECONDS)
+            .until(() -> {
+                return (Boolean) ((JavascriptExecutor) Browser.getDriver())
+                    .executeScript("return (document.readyState === 'complete' && (!window.jQuery || jQuery.active == 0)"
+                        + " && (!window.PrimeFaces || (PrimeFaces.ajax.Queue.isEmpty() && PrimeFaces.animationActive === false)));");
+            });
+    }
+
+    /**
+     * Sends text to a web element by clearing it first, sending the keys, and waiting for any ajax to finish.
+     * 
+     * @param element the web element to send keys to
+     * @param text the text that is send to the web element
+     */
+    public static void sendKeysAndWait(WebElement element, String text) {
+        element.clear();
+        element.sendKeys(text);
+        waitUntilAjaxCompletes();
     }
 }

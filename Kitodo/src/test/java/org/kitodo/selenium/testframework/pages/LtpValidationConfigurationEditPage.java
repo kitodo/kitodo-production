@@ -184,8 +184,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      *            the title
      */
     public void setTitle(String title) throws Exception {
-        titleInput.clear();
-        titleInput.sendKeys(title);
+        sendKeysAndWait(titleInput, title);
         Awaitility.await().until(() -> getTitle().equals(title));
     }
 
@@ -312,8 +311,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      *            the new pattern to be set
      */
     public void setFilenamePattern(String pattern) throws Exception {
-        simpleFilenamePatternInput.clear();
-        simpleFilenamePatternInput.sendKeys(pattern);
+        sendKeysAndWait(simpleFilenamePatternInput, pattern);
         Awaitility.await().until(() -> getFilenamePattern().equals(pattern));
     }
 
@@ -371,8 +369,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      */
     public void setConditionProperty(int row, String name) throws Exception {
         WebElement input = getPropertyInputForCondition(row);
-        input.clear();
-        input.sendKeys(name);
+        sendKeysAndWait(input, name);
     }
 
     /**
