@@ -26,7 +26,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 /**
- * Custom implementation of the default Selenium LocationngElementHandler.
+ * Custom implementation of the default Selenium LocatingElementHandler.
  * 
  * <p>The default implementation tries to invoke a WebElement method just once. However, there can be 
  * instances where a WebElement is already stale before the method can be invoked. In contrast, this
@@ -50,13 +50,13 @@ public class RepeatingLocatingElementHandler  implements InvocationHandler {
     @Override
     public Object invoke(Object object, Method method, Object[] objects) {
         Callable<Object> findAndInvoke = () -> {
-            logger.trace("invoke method " + method.getName() + " on WebElement with locator " + locator.toString());
+            logger.trace("invoke method {} on WebElement with locator {}", method.getName(), locator.toString());
             WebElement element;
             try {
                 element = locator.findElement();
             } catch (NoSuchElementException e) {
                 if ("toString".equals(method.getName())) {
-                    return "Proxy element for: " + locator.toString();
+                    return "Proxy element for: " + locator;
                 }
                 throw e;
             }
