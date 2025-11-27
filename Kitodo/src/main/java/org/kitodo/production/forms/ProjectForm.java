@@ -475,16 +475,20 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Set my project.
+     * Set my project and check for assigned processes.
      *
      * @param project
      *            Project object
      */
     public void setProject(Project project) {
-        // has to be called if a page back move was done
         cancel();
         this.project = project;
-        hasProcesses = !project.getProcesses().isEmpty();
+        try {
+            hasProcesses = ServiceManager.getProjectService().hasProcesses(project.getId());
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error checking for assigned processes", logger, e);
+            hasProcesses = false; // fallback to safe default
+        }
     }
 
     /**
