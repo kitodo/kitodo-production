@@ -1252,10 +1252,12 @@ public class FileService {
                         break;
                     }
                 }
-                workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
-                actualLogicalRoot.getViews().add(insertionPoint, view);
-                view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
-                canonicals.add(insertionPoint, entry.getKey());
+                int safeIndexChildren = Math.min(insertionPoint, workpiece.getPhysicalStructure().getChildren().size());
+                int safeIndexViews = Math.min(insertionPoint, actualLogicalRoot.getViews().size());
+                int safeIndexCanonicals = Math.min(insertionPoint, canonicals.size());
+                workpiece.getPhysicalStructure().getChildren().add(safeIndexChildren, physicalDivision);
+                actualLogicalRoot.getViews().add(safeIndexViews, view);
+                canonicals.add(safeIndexCanonicals, entry.getKey());
             }
         }
     }
