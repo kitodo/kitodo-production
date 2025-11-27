@@ -226,6 +226,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     public void setRequireNoErrorToFinishTask(boolean required) throws Exception {
         if (isRequireNoErrorToFinishTask() != required) {
             requireNoErrorToFinishTaskButton.findElement(By.className("ui-chkbox-box")).click();
+            waitUntilAjaxCompletes();
             Awaitility.await().until(() -> isRequireNoErrorToFinishTask() == required);
         }
     }
@@ -249,6 +250,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     public void setRequireNoErrorToUploadImage(boolean required) throws Exception {
         if (isRequireNoErrorToUploadImage() != required) {
             requireNoErrorToUploadImageButton.findElement(By.className("ui-chkbox-box")).click();
+            waitUntilAjaxCompletes();
             Awaitility.await().until(() -> isRequireNoErrorToUploadImage() == required);
         }
     }
@@ -450,6 +452,9 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
 
         // select item
         Browser.getDriver().findElement(By.id(itemsId)).findElements(By.tagName("li")).get(idx).click();
+
+        // wait until ajax finishes
+        waitUntilAjaxCompletes();
 
         // wait until item was selected
         Awaitility.await().until(() -> new Select(Browser.getDriver().findElement(By.id(selectId)))
