@@ -481,12 +481,18 @@ public class ProjectForm extends BaseForm {
      *            Project object
      */
     public void setProject(Project project) {
+        // has to be called if a page back move was done
         cancel();
         this.project = project;
         try {
             hasProcesses = ServiceManager.getProjectService().hasProcesses(project.getId());
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error checking for assigned processes", logger, e);
+            Helper.setErrorMessage(
+                    ERROR_DATABASE_READING,
+                    new Object[] { ObjectType.PROJECT.getTranslationSingular(), project.getId() },
+                    logger,
+                    e
+            );
             hasProcesses = false; // fallback to safe default
         }
     }
