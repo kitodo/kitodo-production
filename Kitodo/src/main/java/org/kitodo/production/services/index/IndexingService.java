@@ -18,6 +18,7 @@ import java.util.concurrent.CompletionStage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.exception.DataException;
 import org.hibernate.search.engine.search.projection.SearchProjection;
 import org.hibernate.search.mapper.orm.Search;
@@ -113,13 +114,15 @@ public class IndexingService {
      *         ends (including to exceptions)
      */
     public CompletionStage<?> startIndexing(Class<? extends BaseBean> type, MassIndexingMonitor monitor) {
-        MassIndexer massIndexer = Search.session(HibernateUtil.getSession()).massIndexer(type);
-        massIndexer.dropAndCreateSchemaOnStart(true);
-        if (Objects.nonNull(monitor)) {
-            massIndexer.monitor(monitor);
+        try (Session ormSession = HibernateUtil.getSession()) {
+            MassIndexer massIndexer = Search.session(ormSession).massIndexer(type);
+            massIndexer.dropAndCreateSchemaOnStart(true);
+            if (Objects.nonNull(monitor)) {
+                massIndexer.monitor(monitor);
+            }
+            massIndexer.idFetchSize(Integer.MIN_VALUE).batchSizeToLoadObjects(1000);
+            return massIndexer.start();
         }
-        massIndexer.idFetchSize(Integer.MIN_VALUE).batchSizeToLoadObjects(1000);
-        return massIndexer.start();
     }
 
     /**
@@ -134,14 +137,16 @@ public class IndexingService {
      * @return ids of the found beans
      */
     public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, String searchField, String value) {
-        SearchSession searchSession = Search.session(HibernateUtil.getSession());
-        SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
-                .toProjection();
-        List<Integer> ids = searchSession.search(beanClass).select(idField).where(function -> function.match().field(
-            searchField).matching(value)).fetchAll().hits();
-        logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
-            value, ids.size());
-        return ids;
+        try (Session ormSession = HibernateUtil.getSession()) {
+            SearchSession searchSession = Search.session(ormSession);
+            SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
+                    .toProjection();
+            List<Integer> ids = searchSession.search(beanClass).select(idField).where(function -> function.match().field(
+                    searchField).matching(value)).fetchAll().hits();
+            logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
+                    value, ids.size());
+            return ids;
+        }
     }
 
     /**
@@ -163,8 +168,10 @@ public class IndexingService {
      * @return long number of all currently indexed objects
      */
     public long getAllIndexed() {
-        SearchSession searchSession = Search.session(HibernateUtil.getSession());
-        long allIndexed = searchSession.search(Process.class).where(f -> f.matchAll()).fetchTotalHitCount();
-        return allIndexed;
+        try (Session ormSession = HibernateUtil.getSession()) {
+            SearchSession searchSession = Search.session(ormSession);
+            long allIndexed = searchSession.search(Process.class).where(f -> f.matchAll()).fetchTotalHitCount();
+            return allIndexed;
+        }
     }
 }
