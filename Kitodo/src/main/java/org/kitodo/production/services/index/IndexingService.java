@@ -152,12 +152,14 @@ public class IndexingService {
                 });
         List<Integer> ids = query.fetchAll().hits();
 
+        String termSummary = terms.stream()
+                .distinct()
+                .map(t -> t.getLeft() + "=\"***\"")
+                .collect(Collectors.joining(", "));
         logger.debug(
                 "Searching {} IDs with terms {}: {} hits",
                 beanClass.getSimpleName(),
-                terms.stream()
-                        .map(t -> t.getLeft() + "=\"" + t.getRight() + "\"")
-                        .collect(Collectors.joining(", ")),
+                termSummary,
                 ids.size()
         );
         return ids;
