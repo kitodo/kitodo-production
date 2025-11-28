@@ -14,7 +14,7 @@ package org.kitodo.dataeditor.ruleset.xml;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  * A container for the properties of the XML element {@code <declaration>} in

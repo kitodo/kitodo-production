@@ -11,9 +11,9 @@
 
 package org.kitodo.data.database.beans;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity(name = "DataEditorSetting")
 @Table(name = "dataeditor_setting")

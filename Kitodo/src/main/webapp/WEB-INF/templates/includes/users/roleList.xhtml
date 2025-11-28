@@ -21,28 +21,28 @@
                  id="rolesTable"
                  widgetVar="rolesTable"
                  styleClass="default-layout"
-                 value="#{RoleForm.lazyBeanModel}"
-                 first="#{RoleForm.firstRow}"
+                 value="#{RoleListView.lazyBeanModel}"
+                 first="#{RoleListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{RoleForm.sortBy}"
+                 sortBy="#{RoleListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{RoleForm.onPageChange}"/>
+                listener="#{RoleListView.onPageChange}"/>
         <p:column headerText="#{msgs.role}"
                   sortBy="#{item.title}"
-                  rendered="#{UserForm.showColumn('role.role')}">
+                  rendered="#{RoleListView.showColumn('role.role')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.client.name}"
-                  rendered="#{UserForm.showColumn('role.client')}">
+                  rendered="#{RoleListView.showColumn('role.client')}">
             <h:outputText value="#{item.client.name}"
                           title="#{item.client.name}"/>
         </p:column>
@@ -70,15 +70,14 @@
                 </h:link>
 
                 <p:commandLink id="deleteRole"
-                               action="#{RoleForm.delete}"
+                               action="#{RoleListView.delete(item)}"
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteRole()}"
                                update="usersTabView:rolesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{RoleForm.roleById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{RoleForm.formatString('confirmDeleteRole', item.title)}"
+                               message="#{RoleListView.formatString('confirmDeleteRole', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

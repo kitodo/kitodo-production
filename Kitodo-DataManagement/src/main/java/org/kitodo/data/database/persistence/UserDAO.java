@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +33,12 @@ public class UserDAO extends BaseDAO<User> {
 
     @Override
     public List<User> getAll() {
-        return getByQuery("FROM User WHERE deleted = 0");
+        return getByQuery("FROM User WHERE deleted = false", Collections.emptyMap());
     }
 
     @Override
     public List<User> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM User WHERE deleted = false ORDER BY id ASC", offset, size);
     }
 
     @Override

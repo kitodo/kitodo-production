@@ -17,20 +17,20 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{LdapServerForm.load(id)}"/>
+        <f:viewAction action="#{LdapServerEditView.load(id)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{LdapServerForm.ldapServer.id ne null and SecurityAccessController.hasAuthorityGlobal('editLdapServer')}"/>
+              value="#{LdapServerEditView.ldapServer.id ne null and SecurityAccessController.hasAuthorityGlobal('editLdapServer')}"/>
     <ui:param name="isCreateMode"
-              value="#{LdapServerForm.ldapServer.id eq null and SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"/>
+              value="#{LdapServerEditView.ldapServer.id eq null and SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"/>
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editLdapServer} (#{LdapServerForm.ldapServer.title})"
+            <h:outputText value="#{msgs.editLdapServer} (#{LdapServerEditView.ldapServer.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.ldapServerNew}"
@@ -44,18 +44,18 @@
                   outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{LdapServerForm.setSaveDisabled(false)}"
+                  actionListener="#{LdapServerEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{LdapServerForm.save}"
+                         action="#{LdapServerEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
-                         disabled="#{LdapServerForm.saveDisabled}"
+                         disabled="#{LdapServerEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.ldapServerSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
     </ui:define>
@@ -69,7 +69,7 @@
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title"
                                          class="input"
-                                         value="#{LdapServerForm.ldapServer.title}"
+                                         value="#{LdapServerEditView.ldapServer.title}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -77,7 +77,7 @@
                             <p:outputLabel for="managerLogin" value="Manager login"/>
                             <p:inputText id="managerLogin"
                                          class="input"
-                                         value="#{LdapServerForm.ldapServer.managerLogin}"
+                                         value="#{LdapServerEditView.ldapServer.managerLogin}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -85,7 +85,7 @@
                             <p:outputLabel for="nextFreeUnixIdPattern" value="nextFreeUnixIdPattern"/>
                             <p:inputText id="nextFreeUnixIdPattern"
                                          class="input"
-                                         value="#{LdapServerForm.ldapServer.nextFreeUnixIdPattern}"
+                                         value="#{LdapServerEditView.ldapServer.nextFreeUnixIdPattern}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -94,7 +94,7 @@
                             <p:selectBooleanCheckbox id="ssl"
                                                      styleClass="switch input"
                                                      disabled="#{isViewMode}"
-                                                     value="#{LdapServerForm.ldapServer.useSsl}"
+                                                     value="#{LdapServerEditView.ldapServer.useSsl}"
                                                      onchange="toggleSave()"/>
                         </div>
                         <div>
@@ -102,7 +102,7 @@
                             <p:inputText id="rootCertificate"
                                                      styleClass="input"
                                                      disabled="#{isViewMode}"
-                                                     value="#{LdapServerForm.ldapServer.rootCertificate}"
+                                                     value="#{LdapServerEditView.ldapServer.rootCertificate}"
                                                      onchange="toggleSave()"/>
                         </div>
                         <div>
@@ -110,7 +110,7 @@
                             <p:password id="keyStorePassword"
                                         styleClass="input"
                                         disabled="#{isViewMode}"
-                                        value="#{LdapServerForm.ldapServer.keystorePassword}"
+                                        value="#{LdapServerEditView.ldapServer.keystorePassword}"
                                         redisplay="true"
                                         onchange="toggleSave()"/>
                         </div>
@@ -120,7 +120,7 @@
                             <p:outputLabel for="url" value="#{msgs.url}"/>
                             <p:inputText id="url"
                                          class="input"
-                                         value="#{LdapServerForm.ldapServer.url}"
+                                         value="#{LdapServerEditView.ldapServer.url}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -128,17 +128,17 @@
                             <p:outputLabel for="managerPassword" value="Manager password"/>
                             <p:password id="managerPassword"
                                         class="input"
-                                        value="#{LdapServerForm.managerPassword}"
+                                        value="#{LdapServerEditView.managerPassword}"
                                         disabled="#{isViewMode}"
                                         redisplay="true"
                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="passwordEncryption" value="Encryption"/>
-                            <p:selectOneMenu id="passwordEncryption"  value="#{LdapServerForm.ldapServer.passwordEncryption}"
+                            <p:selectOneMenu id="passwordEncryption"  value="#{LdapServerEditView.ldapServer.passwordEncryption}"
                                              disabled="#{isViewMode}"
                                              required="#{empty param['editForm:saveButtonToggler']}">
-                                <f:selectItems value="#{LdapServerForm.passwordEncryption}" var="encryption"
+                                <f:selectItems value="#{LdapServerEditView.passwordEncryption}" var="encryption"
                                                itemValue="#{encryption}" />
                                 <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
@@ -148,7 +148,7 @@
                             <p:selectBooleanCheckbox id="readOnly"
                                                      styleClass="switch input"
                                                      disabled="#{isViewMode}"
-                                                     value="#{LdapServerForm.ldapServer.readOnly}"
+                                                     value="#{LdapServerEditView.ldapServer.readOnly}"
                                                      onchange="toggleSave()"/>
                         </div>
                         <div>
@@ -156,7 +156,7 @@
                             <p:inputText id="pdcCertificate"
                                          styleClass="input"
                                          disabled="#{isViewMode}"
-                                         value="#{LdapServerForm.ldapServer.pdcCertificate}"
+                                         value="#{LdapServerEditView.ldapServer.pdcCertificate}"
                                          onchange="toggleSave()"/>
                         </div>
                         <div>
@@ -164,7 +164,7 @@
                             <p:inputText id="keyStore"
                                          styleClass="input"
                                          disabled="#{isViewMode}"
-                                         value="#{LdapServerForm.ldapServer.keystore}"
+                                         value="#{LdapServerEditView.ldapServer.keystore}"
                                          onchange="toggleSave()"/>
                         </div>
                     </p:panel>
@@ -174,7 +174,7 @@
                     <p:commandButton id="delete"
                                      value="#{msgs.delete}"
                                      onclick="return confirm('#{msgs.shouldItemBeRemoved}')"
-                                    action="#{LdapServerForm.delete}"
+                                    action="#{LdapServerEditView.delete}"
                                      rendered="#{isEditMode and SecurityAccessController.hasAuthorityGlobal('deleteLdapGroup')}"
                                      icon="fa fa-trash-o fa-lg"
                                      iconPos="right"/>
