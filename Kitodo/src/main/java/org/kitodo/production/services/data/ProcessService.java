@@ -1816,7 +1816,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      */
     public boolean hasIncompleteChildren(Process parentProcess) {
         String hql = "FROM Process p WHERE p.parent = :parent "
-                + "AND p.sortHelperStatus NOT IN (:completedStates)";
+                + "AND (p.sortHelperStatus NOT IN (:completedStates) OR p.sortHelperStatus IS NULL)";
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("parent", parentProcess);
@@ -1824,6 +1824,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 ProcessState.COMPLETED20.getValue(),
                 ProcessState.COMPLETED.getValue()
         ));
+
         try {
             return has(hql, parameters);
         } catch (DAOException e) {
