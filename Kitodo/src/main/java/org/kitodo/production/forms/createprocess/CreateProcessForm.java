@@ -904,10 +904,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
         }
     }
-
+    
     /**
      * Returns the details of the missing record identifier error.
-     *
+     * 
      * @return the details as a list of error description
      */
     public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
