@@ -172,19 +172,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
     }
 
     /**
-     * Checks if there is at least one row in the database according to the given query.
-     *
-     * @param query
-     *            for database search
-     * @param parameters
-     *            for query
-     * @return true if at least one row exists according to the given query
-     */
-    public boolean has(String query, Map<String, Object> parameters) throws DAOException {
-        return dao.has(query, parameters);
-    }
-
-    /**
      * Returns the number of objects of the implementing type that the filter
      * matches.
      * 
