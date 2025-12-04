@@ -13,7 +13,7 @@ package org.kitodo.production.converter;
 
 import java.util.Objects;
 
-import javax.faces.convert.ConverterException;
+import jakarta.faces.convert.ConverterException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

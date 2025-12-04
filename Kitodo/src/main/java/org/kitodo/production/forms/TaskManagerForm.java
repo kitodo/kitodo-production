@@ -13,8 +13,8 @@ package org.kitodo.production.forms;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
 
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;

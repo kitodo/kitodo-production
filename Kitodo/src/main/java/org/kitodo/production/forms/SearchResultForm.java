@@ -14,8 +14,8 @@ package org.kitodo.production.forms;
 import java.io.Serializable;
 import java.text.MessageFormat;
 
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 
 @Named("SearchResultForm")
 @SessionScoped

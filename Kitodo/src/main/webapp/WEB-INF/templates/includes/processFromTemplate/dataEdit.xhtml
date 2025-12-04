@@ -90,7 +90,7 @@
                         <p:selectOneMenu id="docType" value="#{CreateProcessForm.processDataTab.docType}">
                             <f:selectItems value="#{CreateProcessForm.processDataTab.allDoctypes}"
                                            var="step"
-                                           itemLabel="#{step.localizedLabel}"
+                                           itemLabel="#{step.label}"
                                            itemValue="#{step.title}"/>
                             <p:ajax event="valueChange"
                                     oncomplete="updateProcessMetadata();"

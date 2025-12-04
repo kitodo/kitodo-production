@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +44,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
      * @return list of standard list columns
      */
     public List<ListColumn> getAllStandard() {
-        return getByQuery("FROM ListColumn WHERE custom = 0");
+        return getByQuery("FROM ListColumn WHERE custom = false", Collections.emptyMap());
     }
 
     /**
@@ -52,7 +53,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
      * @return list of custom list columns
      */
     public List<ListColumn> getAllCustom() {
-        return getByQuery("FROM ListColumn WHERE custom = 1");
+        return getByQuery("FROM ListColumn WHERE custom = true", Collections.emptyMap());
     }
 
     @Override
