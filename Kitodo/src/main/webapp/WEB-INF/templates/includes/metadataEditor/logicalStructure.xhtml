@@ -76,7 +76,6 @@
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();
-                                scrollToSelectedPaginationRow();
                                 metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 expandMetadata('logical-metadata-tab');"
@@ -92,7 +91,6 @@
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     onstart="$('#contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
                     oncomplete="scrollToSelectedThumbnail();
-                                scrollToSelectedPaginationRow();
                                 metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 PF('contextMenuLogicalTree').show(currentEvent)"
@@ -230,6 +228,13 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 @(.structureElementDataList)
                                 imagePreviewForm:mediaContextMenu"/>
+            <p:menuitem value="#{msgs.selectAssignedMedia}"
+                        action="#{DataEditorForm.structurePanel.selectAssignedMedia}"
+                        onclick="metadataEditor.logicalTree.selectAssignedMedia()"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.STRUCTURE_NODE_TYPE}"
+                        icon="fa fa-check-square-o fa-sm"
+                        styleClass="plain selectAssignedMedia"
+                        process="@this"/>
             <p:menuitem value="#{msgs.uploadMedia}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
                         rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked}"

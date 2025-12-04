@@ -253,6 +253,7 @@ public class MetadataST extends BaseTestSelenium {
                 .until(Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector))::isDisplayed);
         Browser.getDriver().findElement(By.cssSelector(secondTypeCssSelector)).click();
         // verify that scope value did not change
+        Thread.sleep(300);
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
                 .until(Browser.getDriver().findElement(By.id(paginationScopeId))::isDisplayed);
         String scopeUpdated = Browser.getDriver().findElement(By.id(paginationScopeId)).getText();
@@ -400,7 +401,7 @@ public class MetadataST extends BaseTestSelenium {
         metaDataEditor.selectStructureTreeNode("0_2", true, false);
 
         // verify two images are selected in gallery and pagination panel
-        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkLogicalSelection(2);
         metaDataEditor.checkGallerySelection(2);
 
         // drag and drop them to first drop position inside structure tree
@@ -411,7 +412,7 @@ public class MetadataST extends BaseTestSelenium {
         new Actions(Browser.getDriver()).dragAndDrop(dragElement, dropPosition).build().perform();
 
         // verify selection in gallery and pagination panel remains active after drag and drop
-        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkLogicalSelection(2);
         metaDataEditor.checkGallerySelection(2);
 
         // page order should now be 1-3-2
@@ -546,7 +547,7 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         
         // verify that physical page number is not shown below thumbnail by default
-        assertEquals(0, Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).size());
+        assertEquals(0, Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner.physical")).size());
 
         // change user setting
         Pages.getMetadataEditorPage().closeEditor();
@@ -554,7 +555,67 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
 
         // verify physical page number is now shown below thumbnail
-        assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).isEmpty());
+        assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner.physical")).isEmpty());
+    }
+
+    /**
+     * Verifies that selecting a default pagination type in the user settings
+     * results in the correct option being preselected in the metadata editor.
+     */
+    @Test
+    public void selectDefaultPaginationTypeTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // open pagination panel if not visible
+        if (!Browser.getDriver().findElement(By.id("paginationPanel")).isDisplayed()) {
+            Browser.getDriver().findElement(By.id("secondSectionSecondColumnToggler")).click();
+        }
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.id("paginationPanel")).isDisplayed());
+
+        // verify that "arabic" is preselected as the general default pagination type
+        assertEquals("alphabetisch", Browser.getDriver().findElement(By.cssSelector("#paginationForm\\:paginationTypeSelect_label")).getText());
+
+        // change user setting
+        Pages.getMetadataEditorPage().closeEditor();
+        Pages.getUserEditPage().selectDefaultPaginationType();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // open pagination panel if not visible
+        if (!Browser.getDriver().findElement(By.id("paginationPanel")).isDisplayed()) {
+            Browser.getDriver().findElement(By.id("secondSectionSecondColumnToggler")).click();
+        }
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.id("paginationPanel")).isDisplayed());
+
+        // verify that the logical page number is now shown below the thumbnail
+        assertEquals("Freitext", Browser.getDriver().findElement(By.cssSelector("#paginationForm\\:paginationTypeSelect_label")).getText());
+    }
+
+    /**
+     * Verifies that turning the "show logical page number below thumbnail switch" on in the user settings
+     * results in a thumbnail banner being displayed in the gallery of the metadata editor.
+     */
+    @Test
+    public void showLogicalPageNumberBelowThumbnailTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // verify that the logical page number is not shown below the thumbnail by default
+        assertEquals(0, Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner.logical")).size());
+
+        // change user setting
+        Pages.getMetadataEditorPage().closeEditor();
+        Pages.getUserEditPage().toggleShowLogicalPageNumberBelowThumbnail();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // verify that the logical page number is now shown below the thumbnail
+        assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner.logical")).isEmpty());
     }
 
     /** 
@@ -881,7 +942,7 @@ public class MetadataST extends BaseTestSelenium {
             ).getText().equals("Keine Datensätze gefunden."));
 
         // verify both pages are selected in pagination panel
-        metaDataEditor.checkPaginationSelection(2);
+        metaDataEditor.checkLogicalSelection(2);
 
         // verify both pages are selected in gallery
         metaDataEditor.checkGallerySelection(2);
@@ -893,9 +954,41 @@ public class MetadataST extends BaseTestSelenium {
         metaDataEditor.selectStructureTreeNode("0_0", false, true);
 
         // verify all pages are selected in pagination panel
-        metaDataEditor.checkPaginationSelection(3);
+        metaDataEditor.checkLogicalSelection(3);
 
         // verify all pages are selected in gallery
+        metaDataEditor.checkGallerySelection(3);
+    }
+
+    /*
+     * Checks that multiple elements can be selected in the logical structure tree using the
+     * ctrl and shift keys. Verifies that selection is applied to pagination panel and gallery.
+     */
+    @Test
+    public void selectAssignedMediaTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until logical structure tree is available
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // select parent element
+        metaDataEditor.selectStructureTreeNode("0", false, false);
+
+        // open context menu
+        metaDataEditor.openContextMenuForStructureTreeNode("0");
+
+        // click on 2nd menu entry "assign to next element"
+        metaDataEditor.clickStructureTreeContextMenuEntry("selectAssignedMedia");
+
+        // verify both pages are selected in pagination panel
+        metaDataEditor.checkLogicalSelection(3);
+
+        // verify both pages are selected in gallery
         metaDataEditor.checkGallerySelection(3);
     }
 

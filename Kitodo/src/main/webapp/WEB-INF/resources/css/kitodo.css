@@ -3396,12 +3396,32 @@ button.settings-loaded-task::after {
 }
 
 #paginationForm\:paginationWrapperPanel {
-    height: calc(100% - 80px);
+    height: calc(100% - 57px);
     overflow-y: scroll;
+}
+
+#paginationForm\:paginationGrid {
+    margin-left: -5px;
+    margin-top: 5px;
+    width: calc(100% + 10px);
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell {
+    padding: 0;
 }
 
 #paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div {
     margin: 0;
+    padding: 5px;
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div:empty {
+    padding: 0;
 }
 
 .ui-tree-draghelper.ui-draggable-dragging {
@@ -3416,8 +3436,18 @@ button.settings-loaded-task::after {
     filter: opacity(35%);
 }
 
-#paginationForm\:paginationSelection {
-    width: 100%;
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div#paginationForm\:advancedPaginationControls {
+    padding-top: 23px;
+}
+
+#paginationForm\:advancedPaginationControls div {
+    display: inline-block;
+    width: calc(100% - 25px);
+}
+
+#paginationForm\:advancedPaginationControls a {
+    float: right;
+    line-height: var(--input-height);
 }
 
 #paginationForm\:apply,
@@ -3435,6 +3465,12 @@ button.settings-loaded-task::after {
 #paginationForm\:updateMediaReferencesButton {
     margin: 0;
     width: 100%;
+    height: auto;
+    min-height: 36px;
+}
+
+#paginationForm\:updateMediaReferencesButton .ui-button-text {
+    line-height: 1.4;
 }
 
 #metadataAccordion,
@@ -4029,6 +4065,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 .thumbnail-parent {
     display: block;
     position: relative;
+    text-align: center;
 }
 
 .thumbnail-parent audio,
@@ -4219,6 +4256,8 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     word-break: break-word;
     color: var(--pure-white);
     font-size: smaller;
+    max-width: 150px;
+    padding: 0 5px;
     text-align: center;
 }
 
