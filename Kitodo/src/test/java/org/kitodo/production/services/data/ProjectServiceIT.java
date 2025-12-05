@@ -170,4 +170,28 @@ public class ProjectServiceIT {
         List<Project> byQuery = ServiceManager.getUserService().getCurrentUser().getProjects();
         assertEquals(2, byQuery.size(), "Wrong amount of projects found");
     }
+
+    @Test
+    public void shouldReturnFalseWhenProjectHasNoProcesses() throws Exception {
+        Project project = new Project();
+        project.setTitle("Empty Project");
+        Integer id = null;
+        try {
+            projectService.save(project);
+            id = project.getId();
+            boolean result = projectService.hasProcesses(id);
+            assertFalse(result, "Project without processes incorrectly reported as having processes!");
+        } finally {
+            if (id != null) {
+                projectService.remove(project);
+            }
+        }
+    }
+
+    @Test
+    public void shouldReturnTrueWhenProjectHasProcesses() throws Exception {
+        Project project = projectService.getById(1);
+        boolean result = projectService.hasProcesses(project.getId());
+        assertTrue(result, "Project with processes incorrectly reported as empty!");
+    }
 }
