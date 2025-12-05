@@ -30,7 +30,7 @@
 
         <!--@elvariable id="input" type="java.lang.String"-->
         <f:viewParam name="input"/>
-        <o:viewAction action="#{ProcessForm.changeFilter('process:'.concat(input))}"
+        <o:viewAction action="#{ProcessForm.changeFilter('search:'.concat(input))}"
                       if="#{not empty input}"
                       update="parsedFiltersForm:parsedFilters"/>
     </f:metadata>
