@@ -184,8 +184,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      *            the title
      */
     public void setTitle(String title) throws Exception {
-        titleInput.clear();
-        titleInput.sendKeys(title);
+        sendKeysAndWait(titleInput, title);
         Awaitility.await().until(() -> getTitle().equals(title));
     }
 
@@ -227,6 +226,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     public void setRequireNoErrorToFinishTask(boolean required) throws Exception {
         if (isRequireNoErrorToFinishTask() != required) {
             requireNoErrorToFinishTaskButton.findElement(By.className("ui-chkbox-box")).click();
+            waitUntilAjaxCompletes();
             Awaitility.await().until(() -> isRequireNoErrorToFinishTask() == required);
         }
     }
@@ -250,6 +250,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     public void setRequireNoErrorToUploadImage(boolean required) throws Exception {
         if (isRequireNoErrorToUploadImage() != required) {
             requireNoErrorToUploadImageButton.findElement(By.className("ui-chkbox-box")).click();
+            waitUntilAjaxCompletes();
             Awaitility.await().until(() -> isRequireNoErrorToUploadImage() == required);
         }
     }
@@ -312,8 +313,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      *            the new pattern to be set
      */
     public void setFilenamePattern(String pattern) throws Exception {
-        simpleFilenamePatternInput.clear();
-        simpleFilenamePatternInput.sendKeys(pattern);
+        sendKeysAndWait(simpleFilenamePatternInput, pattern);
         Awaitility.await().until(() -> getFilenamePattern().equals(pattern));
     }
 
@@ -371,8 +371,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      */
     public void setConditionProperty(int row, String name) throws Exception {
         WebElement input = getPropertyInputForCondition(row);
-        input.clear();
-        input.sendKeys(name);
+        sendKeysAndWait(input, name);
     }
 
     /**
@@ -453,6 +452,9 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
 
         // select item
         Browser.getDriver().findElement(By.id(itemsId)).findElements(By.tagName("li")).get(idx).click();
+
+        // wait until ajax finishes
+        waitUntilAjaxCompletes();
 
         // wait until item was selected
         Awaitility.await().until(() -> new Select(Browser.getDriver().findElement(By.id(selectId)))
