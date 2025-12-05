@@ -76,7 +76,7 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
     private WebElement mappingFiles;
 
     public ImportConfigurationEditPage() {
-        super("importConfigurationEdit.jsf");
+        super("importConfigurationEdit");
     }
 
     @Override

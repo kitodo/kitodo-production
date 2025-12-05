@@ -123,7 +123,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement showPhysicalPageNumberBelowThumbnailSwitch;
 
     public UserEditPage() {
-        super("pages/userEdit.jsf");
+        super("pages/userEdit");
     }
 
     @Override
