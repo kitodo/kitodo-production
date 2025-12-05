@@ -142,27 +142,27 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement mappingFileOkButton;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/projectEdit.jsf?referer=projects&id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/projectEdit?referer=projects&id=1']")
     private WebElement editProjectLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/templateEdit.jsf?id=4']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/templateEdit?id=4']")
     private WebElement editTemplateLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/workflowEdit.jsf?id=2']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/workflowEdit?id=2']")
     private WebElement editWorkflowLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/docketEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/docketEdit?id=1']")
     private WebElement editDocketLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/rulesetEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/rulesetEdit?id=1']")
     private WebElement editRulesetLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/importConfigurationEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/importConfigurationEdit?id=1']")
     private WebElement editImportConfigurationLink;
 
     @SuppressWarnings("unused")
@@ -191,7 +191,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement toggleHiddenTemplatesWrapper;
 
     public ProjectsPage() {
-        super("pages/projects.jsf");
+        super("pages/projects");
     }
 
     /**

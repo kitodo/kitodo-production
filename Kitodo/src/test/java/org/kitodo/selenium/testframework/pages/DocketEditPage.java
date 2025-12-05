@@ -35,7 +35,7 @@ public class DocketEditPage extends EditPage<DocketEditPage> {
     private WebElement errorMessage;
 
     public DocketEditPage() {
-        super("pages/docketEdit.jsf");
+        super("pages/docketEdit");
     }
 
     @Override

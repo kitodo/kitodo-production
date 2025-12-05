@@ -49,7 +49,7 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     private WebElement detailLockedButton;
 
     public ProjectEditPage() {
-        super("pages/projectEdit.jsf");
+        super("pages/projectEdit");
     }
 
     @Override
