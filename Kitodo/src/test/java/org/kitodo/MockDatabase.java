@@ -570,7 +570,6 @@ public class MockDatabase {
 
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
-        firstProcess.setWikiField("field");
         LocalDate localDate = LocalDate.of(2017, 1, 20);
         firstProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcess.setSortHelperImages(30);
@@ -583,7 +582,6 @@ public class MockDatabase {
 
         Process secondProcess = new Process();
         secondProcess.setTitle("Second process");
-        secondProcess.setWikiField("problem");
         localDate = LocalDate.of(2017, 2, 10);
         secondProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcess.setDocket(ServiceManager.getDocketService().getById(1));
