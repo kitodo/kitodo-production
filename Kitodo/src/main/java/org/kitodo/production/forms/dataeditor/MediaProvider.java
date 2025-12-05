@@ -16,14 +16,15 @@ import static org.kitodo.constants.StringConstants.MEDIA_VIEW;
 import static org.kitodo.constants.StringConstants.PREVIEW;
 import static org.kitodo.constants.StringConstants.PROCESS;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -140,6 +141,6 @@ public class MediaProvider implements Serializable {
                 Helper.setErrorMessage("Process ID '" + processIdString + "' is not numeric!");
             }
         }
-        return DefaultStreamedContent.builder().build();
+        return DefaultStreamedContent.builder().stream(() -> InputStream.nullInputStream()).build();
     }
 }

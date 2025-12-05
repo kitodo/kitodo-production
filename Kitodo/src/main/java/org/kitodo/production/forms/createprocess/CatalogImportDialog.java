@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
+
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +55,6 @@ import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
 public class CatalogImportDialog  extends MetadataImportDialog implements Serializable {

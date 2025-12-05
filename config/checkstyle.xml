@@ -209,7 +209,7 @@
         <module name="VariableDeclarationUsageDistance"/>
 
         <module name="ImportOrder">
-            <property name="groups" value="com,de,edu,gov,io,/^java\./,javax,junit,net,org,sun"/>
+            <property name="groups" value="com,de,edu,gov,io,/^java\./,javax,jakarta,junit,net,org,sun"/>
             <property name="ordered" value="true"/>
             <property name="separated" value="true"/>
             <property name="option" value="top"/>

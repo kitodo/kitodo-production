@@ -77,8 +77,8 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
         String query =
             "SELECT d FROM DataEditorSetting AS d"
             + " INNER JOIN Task AS ta ON ta.id = d.taskId"
-            + " INNER JOIN Template AS te ON te.id = ta.template"
-            + " INNER JOIN Workflow AS w ON w.id = te.workflow"
+            + " INNER JOIN Template AS te ON te.id = ta.template.id"
+            + " INNER JOIN Workflow AS w ON w.id = te.workflow.id"
             + " where w.id = :workflowId";
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("workflowId", workflow.getId());
@@ -109,9 +109,9 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
         Map<String, Object> parameterMap = new HashMap<>();
         if (Objects.nonNull(taskId)) {
             parameterMap.put("taskId", taskId);
-            return getByQuery("FROM DataEditorSetting WHERE task_id = :taskId ORDER BY id ASC", parameterMap);
+            return getByQuery("FROM DataEditorSetting WHERE taskId = :taskId ORDER BY id ASC", parameterMap);
         }
-        return getByQuery("FROM DataEditorSetting WHERE task_id is NULL ORDER BY id ASC", parameterMap);
+        return getByQuery("FROM DataEditorSetting WHERE taskId is NULL ORDER BY id ASC", parameterMap);
     }
     
     private List<DataEditorSetting> getByUserAndTask(int userId, Integer taskId) {
@@ -120,11 +120,11 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
         if (Objects.nonNull(taskId)) {
             parameterMap.put("taskId", taskId);
             return getByQuery(
-                "FROM DataEditorSetting WHERE user_id = :userId AND task_id = :taskId ORDER BY id ASC", parameterMap
+                "FROM DataEditorSetting WHERE userId = :userId AND taskId = :taskId ORDER BY id ASC", parameterMap
             );
         }
         return getByQuery(
-            "FROM DataEditorSetting WHERE user_id = :userId AND task_id IS NULL ORDER BY id ASC", parameterMap
+            "FROM DataEditorSetting WHERE userId = :userId AND taskId IS NULL ORDER BY id ASC", parameterMap
         );
     }
 
