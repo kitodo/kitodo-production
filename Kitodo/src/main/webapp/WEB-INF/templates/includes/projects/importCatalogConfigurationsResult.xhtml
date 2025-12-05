@@ -63,10 +63,13 @@
         </h:panelGroup>
         <h:panelGroup layout="block"
                       styleClass="dialogButtonWrapper">
-            <p:commandButton id="close"
-                             value="#{msgs.close}"
-                             styleClass="primary right"
-                             onclick="PF('catalogConfigurationImportResultDialog').hide();"/>
+            <h:form id="closeButtonForm"
+                    prependId="false">
+                <p:commandButton id="close"
+                                 value="#{msgs.close}"
+                                 styleClass="primary right"
+                                 onclick="PF('catalogConfigurationImportResultDialog').hide();"/>
+            </h:form>
         </h:panelGroup>
     </p:dialog>
 </ui:composition>
