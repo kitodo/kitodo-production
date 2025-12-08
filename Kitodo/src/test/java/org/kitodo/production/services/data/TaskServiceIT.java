@@ -286,7 +286,7 @@ public class TaskServiceIT {
                 .flatMap(p -> p.getTasks().stream())
                 .filter(t -> user.equals(t.getProcessingUser()))
                 .filter(t -> t.getProcessingStatus() == TaskStatus.INWORK)
-                .filter(t -> t.getProcess() != null)
+                .filter(t -> Objects.nonNull(t.getProcess()))
                 .collect(Collectors.toList());
 
         List<Task> actual = taskService.getTasksInProgress(user);
