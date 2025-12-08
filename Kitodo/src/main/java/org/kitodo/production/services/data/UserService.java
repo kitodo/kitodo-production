@@ -467,10 +467,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
      *         are "INWORK" and belong to process, not template
      */
     public List<Task> getTasksInProgress(User user) {
-        return user.getProcessingTasks().stream()
-                .filter(
-                    task -> task.getProcessingStatus().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
-                .collect(Collectors.toList());
+        return ServiceManager.getTaskService().getTasksInProgress(user);
     }
 
     /**
