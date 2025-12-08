@@ -259,7 +259,22 @@ public class UserForm extends BaseForm {
      *         are "INWORK" and belong to process, not template
      */
     public List<Task> getTasksInProgress(User user) {
-        return ServiceManager.getUserService().getTasksInProgress(user);
+        return ServiceManager.getTaskService().getTasksInProgress(user);
+    }
+
+    /**
+     * Check whether the user has tasks that are "INWORK" and belong to a process.
+     *
+     * @param user the user to check
+     * @return true if the user has at least one task in progress
+     */
+    public boolean hasTasksInProgress(User user) {
+        try {
+            return ServiceManager.getTaskService().hasTasksInProgress(user);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to check tasks in progress for user.", logger, e);
+            return false;
+        }
     }
 
     /**
@@ -288,7 +303,7 @@ public class UserForm extends BaseForm {
      * user from a connected LDAP service.
      */
     public void checkAndDelete() {
-        if (getTasksInProgress(userObject).isEmpty()) {
+        if (!hasTasksInProgress(userObject)) {
             deleteUser(userObject);
         } else {
             PrimeFaces.current().ajax().update("usersTabView:confirmResetTasksDialog");

@@ -460,17 +460,6 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user and
-     * that are "INWORK" and belong to process, not template.
-     *
-     * @return list of tasks that are currently assigned to the user and that
-     *         are "INWORK" and belong to process, not template
-     */
-    public List<Task> getTasksInProgress(User user) {
-        return ServiceManager.getTaskService().getTasksInProgress(user);
-    }
-
-    /**
      * Changes the password for given User object.
      *
      * @param user

@@ -12,9 +12,7 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -293,6 +291,45 @@ public class TaskServiceIT {
 
         assertEquals(expected.size(), actual.size(), "Unexpected task count");
         assertTrue(actual.containsAll(expected), "Returned tasks do not match expected INWORK tasks");
+    }
+
+    @Test
+    public void shouldDetectTasksInProgressCorrectly() throws Exception {
+        UserService userService = ServiceManager.getUserService();
+        ProcessService processService = ServiceManager.getProcessService();
+
+        List<User> allUsers = userService.getAll();
+        List<Task> allTasks = processService.getAll().stream()
+                .flatMap(p -> p.getTasks().stream())
+                .collect(Collectors.toList());
+        User userWithTasks = null;
+        User userWithoutTasks = null;
+        for (User u : allUsers) {
+            boolean has = allTasks.stream().anyMatch(t ->
+                    u.equals(t.getProcessingUser()) &&
+                            t.getProcessingStatus() == TaskStatus.INWORK &&
+                            t.getProcess() != null
+            );
+            if (has && userWithTasks == null) {
+                userWithTasks = u;
+            } else if (!has && userWithoutTasks == null) {
+                userWithoutTasks = u;
+            }
+            if (userWithTasks != null && userWithoutTasks != null) {
+                break;
+            }
+        }
+        if (userWithTasks == null) {
+            throw new AssertionError("No user with tasks in progress found.");
+        }
+        if (userWithoutTasks == null) {
+            throw new AssertionError("No user without tasks in progress found.");
+        }
+
+        assertTrue(taskService.hasTasksInProgress(userWithTasks),
+                "Expected user with tasks in progress to return true");
+        assertFalse(taskService.hasTasksInProgress(userWithoutTasks),
+                "Expected user without tasks in progress to return false");
     }
 
 

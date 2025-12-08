@@ -819,6 +819,23 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     }
 
     /**
+     * Returns whether the user has at least one task in progress.
+     * @param user the processing user
+     * @return true if the user has tasks in progress, otherwise false
+     */
+    public boolean hasTasksInProgress(User user) throws DAOException {
+        String hql = "FROM Task t "
+                + "WHERE t.processingUser = :user "
+                + "AND t.processingStatus = :status "
+                + "AND t.process IS NOT NULL";
+
+        return dao.has(hql, Map.of(
+                "user", user,
+                "status", TaskStatus.INWORK
+        ));
+    }
+
+    /**
      * Compute and return list of tasks that are eligible as 'currentTask' for a new correction comment.
      *
      * @return list of current task options for new correction comment
