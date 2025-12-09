@@ -97,7 +97,7 @@ public class LdapGroupEditPage extends EditPage<LdapGroupEditPage> {
     private WebElement sambaKickoffTimeInput;
 
     public LdapGroupEditPage() {
-        super("pages/ldapgroupEdit.jsf");
+        super("pages/ldapgroupEdit");
     }
 
     @Override

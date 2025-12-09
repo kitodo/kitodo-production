@@ -263,7 +263,7 @@ public abstract class Page<T> {
         }
         switchToTabByIndex(tabIndex, tabView);
         Browser.getDriver()
-                .findElement(By.xpath("//a[@href='/kitodo/pages/" + objectType.toLowerCase() + "Edit.jsf?id="
+                .findElement(By.xpath("//a[@href='/kitodo/pages/" + objectType.toLowerCase() + "Edit?id="
                         + removableID + "']/following-sibling::a[@id[contains(., 'delete" + objectType + "')]]"))
                 .click();
         await("Wait for 'confirm delete' dialog to be displayed")

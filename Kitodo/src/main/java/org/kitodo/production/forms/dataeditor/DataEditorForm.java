@@ -200,7 +200,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private DataEditorSetting dataEditorSetting;
 
-    private static final String DESKTOP_LINK = "/pages/desktop.jsf";
+    private static final String DESKTOP_LINK = "/pages/desktop";
 
     private List<PhysicalDivision> unsavedDeletedMedia = new ArrayList<>();
 

@@ -40,7 +40,7 @@ public class RoleEditPage extends EditPage<RoleEditPage> {
     private WebElement clientAuthoritiesPickList;
 
     public RoleEditPage() {
-        super("pages/roleEdit.jsf");
+        super("pages/roleEdit");
     }
 
     @Override

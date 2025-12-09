@@ -39,7 +39,7 @@ public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
     private WebElement confirmButton;
 
     public CurrentTasksEditPage() {
-        super("pages/currentTasksEdit.jsf");
+        super("pages/currentTasksEdit");
     }
 
     @Override

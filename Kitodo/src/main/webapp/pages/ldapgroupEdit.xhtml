@@ -233,8 +233,8 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.users}" url="users.jsf" icon="fa fa-user"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.users}" url="users" icon="fa fa-user"/>
         <p:menuitem value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}" icon="fa fa-users"/>
         <p:menuitem value="#{msgs.editLdapGroup}" rendered="#{isEditMode}" icon="fa fa-users"/>
         <p:menuitem value="#{msgs.viewLdapGroup}" rendered="#{isViewMode}" icon="fa fa-users"/>

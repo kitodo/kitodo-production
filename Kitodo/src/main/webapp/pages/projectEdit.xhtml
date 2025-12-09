@@ -93,8 +93,8 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects" icon="fa fa-archive"/>
         <p:menuitem value="#{msgs.editProject}" rendered="#{not empty ProjectForm.project.title}" icon="fa fa-archive"/>
         <p:menuitem value="#{msgs.newProject}"
                     rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}" icon="fa fa-archive"/>

@@ -25,7 +25,7 @@ public class ClientEditPage extends EditPage<ClientEditPage> {
     private WebElement nameInput;
 
     public ClientEditPage() {
-        super("pages/clientEdit.jsf");
+        super("pages/clientEdit");
     }
 
     @Override

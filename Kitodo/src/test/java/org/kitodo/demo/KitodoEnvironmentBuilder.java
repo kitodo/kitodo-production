@@ -40,7 +40,7 @@ public class KitodoEnvironmentBuilder {
     public static void main(String[] args) {
         setUpEnvironment();
         System.out.println(
-            "Kitodo is running now. You can access the application by the URL: http://localhost:8080/kitodo/pages/login.jsf");
+            "Kitodo is running now. You can access the application by the URL: http://localhost:8080/kitodo/pages/login");
         System.out.println("The login can be done with der username \"kowal\" and password \"test\"");
         System.out.println("You can stop the application by pressing Ctrl + c");
     }

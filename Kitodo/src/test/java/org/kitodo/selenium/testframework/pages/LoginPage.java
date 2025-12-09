@@ -34,7 +34,7 @@ public class LoginPage extends Page<LoginPage> {
     private WebElement passwordInput;
 
     public LoginPage() {
-        super("pages/login.jsf");
+        super("pages/login");
     }
 
     /**

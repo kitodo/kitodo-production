@@ -61,7 +61,7 @@ public class TasksPage extends Page<TasksPage> {
     private WebElement inWorkStatusCheckbox;
 
     public TasksPage() {
-        super("pages/tasks.jsf");
+        super("pages/tasks");
     }
 
     /**

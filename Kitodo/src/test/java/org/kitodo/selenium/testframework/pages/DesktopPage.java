@@ -44,11 +44,11 @@ public class DesktopPage extends Page<DesktopPage> {
     private WebElement statisticsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='desktop.jsf']")
+    @FindBy(xpath = "//a[@href='desktop']")
     private WebElement desktopLink;
 
     public DesktopPage() {
-        super("desktop.jsf");
+        super("desktop");
     }
 
     @Override

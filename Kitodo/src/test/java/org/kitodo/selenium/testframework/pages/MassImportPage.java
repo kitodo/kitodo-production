@@ -26,7 +26,7 @@ public class MassImportPage extends Page<MassImportPage> {
     private static final String OK_BUTTON_ID = "buttonForm:okButton";
 
     public MassImportPage() {
-        super("pages/massImport.jsf");
+        super("pages/massImport");
     }
 
     @Override

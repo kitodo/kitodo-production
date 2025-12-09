@@ -52,7 +52,7 @@ public class CalendarPage extends Page<CalendarPage> {
 
 
     public CalendarPage() {
-        super("pages/calendar.jsf");
+        super("pages/calendar");
     }
 
     @Override
