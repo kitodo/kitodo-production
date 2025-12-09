@@ -24,7 +24,7 @@
                 <div>
                     <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                     <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
-                                 value="#{RoleForm.role.title}" placeholder="#{msgs.title}"
+                                 value="#{RoleEditView.role.title}" placeholder="#{msgs.title}"
                                  required="#{empty param['editForm:saveButtonToggler']}"/>
                 </div>
             </p:panel>
@@ -32,8 +32,8 @@
                 <p:outputPanel rendered="#{SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}">
                     <div>
                         <p:outputLabel for="client" value="#{msgs.client}"/>
-                        <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleForm.role.client}">
-                            <f:selectItems value="#{RoleForm.clients}"
+                        <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleEditView.role.client}">
+                            <f:selectItems value="#{RoleEditView.clients}"
                                            var="client"
                                            itemValue="#{client}"
                                            itemLabel="#{client.name}"/>
@@ -57,7 +57,7 @@
                                 filterMatchMode="contains"
                                 responsive="true"
                                 disabled="#{not SecurityAccessController.hasAuthorityGlobalToEditRole() or isViewMode}"
-                                value="#{RoleForm.globalAssignableAuthorities}"
+                                value="#{RoleEditView.globalAssignableAuthorities}"
                                 converter="#{authorityConverter}"
                                 var="authority"
                                 itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
@@ -74,7 +74,7 @@
                         <h:outputText value="#{SecurityAccessController.hasAuthorityGlobalToViewRole() ? msgs.clientAssignable : msgs.authorities}"/>
                     </h3>
                     <p:pickList id="authoritiesClientPick"
-                                value="#{RoleForm.clientAssignableAuthorities}"
+                                value="#{RoleEditView.clientAssignableAuthorities}"
                                 converter="#{authorityConverter}"
                                 var="authority"
                                 disabled="#{isViewMode}"

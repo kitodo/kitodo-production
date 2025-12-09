@@ -28,10 +28,10 @@
             <h:form id="helpForm">
                 <h3>#{msgs.shortcuts}</h3>
                 <ul id="keyboardShortcuts">
-                    <ui:repeat value="#{UserForm.shortcuts}" var="item">
+                    <ui:repeat value="#{ShortcutsHelpDialog.shortcuts}" var="item">
                         <li>
                             <h:outputLabel value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
-                            <h:outputLabel><kbd>#{UserForm.shortcuts[item.key]}</kbd></h:outputLabel>
+                            <h:outputLabel><kbd>#{ShortcutsHelpDialog.shortcuts[item.key]}</kbd></h:outputLabel>
                         </li>
                     </ui:repeat>
                 </ul>

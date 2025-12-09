@@ -21,8 +21,8 @@
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.Role"-->
     <p:dataTable id="roleDatatable"
                  var="item"
-                 sortBy="#{UserForm.roleListSortBy}"
-                 value="#{UserForm.userObject.roles}">
+                 sortBy="#{UserEditViewRolesTab.sortBy}"
+                 value="#{UserEditViewRolesTab.userObject.roles}">
         <p:column headerText="#{msgs.role}" sortBy="#{item.title}">
             <h:outputText value="#{item.title}"/>
         </p:column>
@@ -32,7 +32,7 @@
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromRole"
                            rendered="#{isEditMode || isCreateMode}"
-                           action="#{UserForm.deleteFromRole}"
+                           action="#{UserEditViewRolesTab.deleteFromRole}"
                            styleClass="action"
                            title="#{msgs.removeUserFromGroup}"
                            immediate="true"

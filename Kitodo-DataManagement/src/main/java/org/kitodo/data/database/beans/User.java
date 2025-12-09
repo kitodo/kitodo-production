@@ -643,7 +643,7 @@ public class User extends BaseBean {
      * <p>
      * To allow recreation of an account with the same login the login is cleaned -
      * otherwise it would be blocked eternally by the login existence test performed
-     * in the UserForm.save() function. In addition, all personally identifiable
+     * in the UserEditView.save() function. In addition, all personally identifiable
      * information is removed from the database as well.
      */
     public void selfDestruct() {

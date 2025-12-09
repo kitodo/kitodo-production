@@ -19,20 +19,21 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{LdapGroupForm.load(id)}"/>
+        <f:viewParam name="duplicate"/>
+        <f:viewAction action="#{LdapGroupEditView.load(id, duplicate)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{LdapGroupForm.myLdapGruppe.id ne null and SecurityAccessController.hasAuthorityGlobal('editLdapGroup')}"/>
+              value="#{LdapGroupEditView.ldapGroup.id ne null and SecurityAccessController.hasAuthorityGlobal('editLdapGroup')}"/>
     <ui:param name="isCreateMode"
-              value="#{LdapGroupForm.myLdapGruppe.id eq null and SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"/>
+              value="#{LdapGroupEditView.ldapGroup.id eq null and SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"/>
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body"/>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editLdapGroup} (#{LdapGroupForm.myLdapGruppe.title})"
+            <h:outputText value="#{msgs.editLdapGroup} (#{LdapGroupEditView.ldapGroup.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.createNewLdapGroup}"
@@ -50,17 +51,17 @@
                   iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{LdapGroupForm.setSaveDisabled(false)}"
+                  actionListener="#{LdapGroupEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{LdapGroupForm.save}"
+                         action="#{LdapGroupEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         disabled="#{LdapGroupForm.saveDisabled}"
+                         disabled="#{LdapGroupEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.ldapGroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
     </ui:define>
@@ -72,65 +73,65 @@
                     <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
-                            <p:inputText id="title" class="input" value="#{LdapGroupForm.myLdapGruppe.title}"
+                            <p:inputText id="title" class="input" value="#{LdapGroupEditView.ldapGroup.title}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="userDn" value="#{msgs.userDN}"/>
-                            <p:inputText id="userDn" class="input" value="#{LdapGroupForm.myLdapGruppe.userDN}"
+                            <p:inputText id="userDn" class="input" value="#{LdapGroupEditView.ldapGroup.userDN}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="homeDirectory" value="homeDirectory"/>
                             <p:inputText id="homeDirectory" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.homeDirectory}"
+                                         value="#{LdapGroupEditView.ldapGroup.homeDirectory}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="gidNumber" value="gidNumber"/>
-                            <p:inputText id="gidNumber" class="input" value="#{LdapGroupForm.myLdapGruppe.gidNumber}"
+                            <p:inputText id="gidNumber" class="input" value="#{LdapGroupEditView.ldapGroup.gidNumber}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="objectClasses" value="objectClasses"/>
                             <p:inputText id="objectClasses" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.objectClasses}"
+                                         value="#{LdapGroupEditView.ldapGroup.objectClasses}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaSid" value="sambaSID"/>
-                            <p:inputText id="sambaSid" class="input" value="#{LdapGroupForm.myLdapGruppe.sambaSID}"
+                            <p:inputText id="sambaSid" class="input" value="#{LdapGroupEditView.ldapGroup.sambaSID}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sn" value="sn"/>
-                            <p:inputText id="sn" class="input" value="#{LdapGroupForm.myLdapGruppe.sn}"
+                            <p:inputText id="sn" class="input" value="#{LdapGroupEditView.ldapGroup.sn}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="uid" value="uid"/>
-                            <p:inputText id="uid" class="input" value="#{LdapGroupForm.myLdapGruppe.uid}"
+                            <p:inputText id="uid" class="input" value="#{LdapGroupEditView.ldapGroup.uid}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="description" value="description"/>
                             <p:inputText id="description" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.description}"
+                                         value="#{LdapGroupEditView.ldapGroup.description}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="displayName" value="displayName"/>
                             <p:inputText id="displayName" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.displayName}"
+                                         value="#{LdapGroupEditView.ldapGroup.displayName}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -139,71 +140,71 @@
                         <div>
                             <p:outputLabel for="ldapServer" value="#{msgs.ldapServer}"/>
                             <p:selectOneMenu id="ldapServer" converter="#{ldapServerConverter}"
-                                             value="#{LdapGroupForm.myLdapGruppe.ldapServer}">
+                                             value="#{LdapGroupEditView.ldapGroup.ldapServer}">
                                 <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.notSelected} --" noSelectionOption="true"/>
-                                <f:selectItems value="#{LdapServerForm.ldapServers}" var="ldapServer"
+                                <f:selectItems value="#{LdapServerListView.ldapServers}" var="ldapServer"
                                                itemValue="#{ldapServer}" itemLabel="#{ldapServer.title}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
                             <p:outputLabel for="gecos" value="gecos"/>
-                            <p:inputText id="gecos" class="input" value="#{LdapGroupForm.myLdapGruppe.gecos}"
+                            <p:inputText id="gecos" class="input" value="#{LdapGroupEditView.ldapGroup.gecos}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="loginShell" value="loginShell"/>
-                            <p:inputText id="loginShell" class="input" value="#{LdapGroupForm.myLdapGruppe.loginShell}"
+                            <p:inputText id="loginShell" class="input" value="#{LdapGroupEditView.ldapGroup.loginShell}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaAcctFlags" value="sambaAcctFlags"/>
                             <p:inputText id="sambaAcctFlags" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaAcctFlags}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaAcctFlags}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaLogonScript" value="sambaLogonScript"/>
                             <p:inputText id="sambaLogonScript" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaLogonScript}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaLogonScript}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaPrimaryGroupSid" value="sambaPrimaryGroupSID"/>
                             <p:inputText id="sambaPrimaryGroupSid" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaPrimaryGroupSID}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaPrimaryGroupSID}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaPwdMustChange" value="sambaPwdMustChange"/>
                             <p:inputText id="sambaPwdMustChange" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaPwdMustChange}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaPwdMustChange}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaPasswordHistory" value="sambaPasswordHistory"/>
                             <p:inputText id="sambaPasswordHistory" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaPasswordHistory}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaPasswordHistory}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaLogonHours" value="sambaLogonHours"/>
                             <p:inputText id="sambaLogonHours" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaLogonHours}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaLogonHours}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sambaKickoffTime" value="sambaKickoffTime"/>
                             <p:inputText id="sambaKickoffTime" class="input"
-                                         value="#{LdapGroupForm.myLdapGruppe.sambaKickoffTime}"
+                                         value="#{LdapGroupEditView.ldapGroup.sambaKickoffTime}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -214,7 +215,7 @@
                     <p:commandButton id="delete"
                                      value="#{msgs.delete}"
                                      onclick="return confirm('#{msgs.shouldItemBeRemoved}')"
-                                     action="#{LdapGroupForm.delete}"
+                                     action="#{LdapGroupEditView.delete}"
                                      rendered="#{isEditMode and SecurityAccessController.hasAuthorityGlobal('deleteLdapGroup')}"
                                      icon="fa fa-trash-o fa-lg"
                                      iconPos="right"/>

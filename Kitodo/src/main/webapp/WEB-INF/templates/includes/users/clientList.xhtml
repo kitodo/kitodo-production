@@ -18,8 +18,8 @@
     <p:dataTable var="item"
                  id="clientsTable"
                  styleClass="default-layout"
-                 value="#{ClientForm.lazyBeanModel}"
-                 first="#{ClientForm.firstRow}"
+                 value="#{ClientListView.lazyBeanModel}"
+                 first="#{ClientListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -30,10 +30,10 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{ClientForm.onPageChange}"/>
+                listener="#{ClientListView.onPageChange}"/>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.name}"
-                  rendered="#{UserForm.showColumn('client.client')}">
+                  rendered="#{ClientListView.showColumn('client.client')}">
             <h:outputText value="#{item.name}"
                           title="#{item.name}"/>
         </p:column>
@@ -58,15 +58,14 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteClient"
-                               action="#{ClientForm.delete}"
+                               action="#{ClientListView.delete(item)}"
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteClient()}"
                                update="usersTabView:clientsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{ClientForm.clientById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{ClientForm.formatString('confirmDeleteClient', item.name)}"
+                               message="#{ClientListView.formatString('confirmDeleteClient', item.name)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

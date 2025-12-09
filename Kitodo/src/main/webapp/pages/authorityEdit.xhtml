@@ -19,13 +19,13 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{AuthorityForm.load(id)}"/>
+        <f:viewAction action="#{AuthorityEditView.load(id)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{AuthorityForm.authority.id ne null and SecurityAccessController.hasAuthorityToEditAuthority()}"/>
+              value="#{AuthorityEditView.authority.id ne null and SecurityAccessController.hasAuthorityToEditAuthority()}"/>
     <ui:param name="isCreateMode"
-              value="#{AuthorityForm.authority.id eq null and SecurityAccessController.hasAuthorityToAddAuthority()}"/>
+              value="#{AuthorityEditView.authority.id eq null and SecurityAccessController.hasAuthorityToAddAuthority()}"/>
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>
 
@@ -50,18 +50,18 @@
                   iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{AuthorityForm.setSaveDisabled(false)}"
+                         actionListener="#{AuthorityEditView.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
                          <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{AuthorityForm.save}"
+                         action="#{AuthorityEditView.save}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         disabled="#{AuthorityForm.saveDisabled}"
+                         disabled="#{AuthorityEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.authoritySaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
     </ui:define>
 
