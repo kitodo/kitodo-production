@@ -50,7 +50,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-net.version>3.9.0</commons-net.version>
         <font-awesome.version>4.7.0</font-awesome.version>
-        <omnifaces.version>4.6.5</omnifaces.version>
+        <omnifaces.version>4.7.1</omnifaces.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <org.ehcache.version>3.10.9</org.ehcache.version>
