@@ -24,7 +24,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 /**
  * Extend the default implementation of a field decorator which handles @FindBy decorated fields.
  * 
- * <p>Use a custom handler to proxy calls to an WebElement, which tries invoking methods multiple 
+ * <p>Use a custom handler to proxy calls to a WebElement, which tries invoking methods multiple 
  * times before giving up.</p>
  */
 public class RepeatingFieldDecorator extends DefaultFieldDecorator {
