@@ -48,7 +48,7 @@ public class ParsedFilter {
         if (matcher.find()) {
             return matcher.group();
         }
-        return FilterString.PROCESS.getFilterEnglish();
+        return FilterString.SEARCH.getFilterEnglish();
     }
 
     /**
