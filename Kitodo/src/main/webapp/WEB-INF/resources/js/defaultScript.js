@@ -9,6 +9,8 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+/* globals setConfirmUnload */
+
 $(document).ready(function() {
     $('#loadingScreen').hide();
 
@@ -40,5 +42,8 @@ window.updateLogoutCountdown = function(t) {
         growlMessage.text(currentMessage.replace(/\d+:\d+/g, currentTime));
     } else {
         growlMessage.text(currentMessage + " " + currentTime);
+    }
+    if (minutes === 0 && seconds === 0) {
+        setConfirmUnload(false);
     }
 };
