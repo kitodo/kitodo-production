@@ -25,7 +25,8 @@ enum FilterField {
     SEARCH(null, null, null, null, null, null, "search", ProcessKeywords.LENGTH_MIN_REASONABLE),
     PROCESS_ID(null, null, null, "id", "process.id", null, null, -1),
     PARENT_PROCESS_ID(null, null, null, "parent.id", "process.parent.id", null, null, -1),
-    PROCESS_TITLE("title", "process.title", LikeSearch.NO, null, null, null, "searchTitle",
+    PROCESS_TITLE("title", "process.title",LikeSearch.NO,"id", "process.id", null, null, -1),
+    PROCESS_TITLE_LOOSE("title", "process.title", LikeSearch.NO, null, null, null, "searchTitle",
             ProcessKeywords.LENGTH_MIN_DEFAULT),
     PROJECT("project.title", "process.project.title", LikeSearch.ALLOWED, "project.id", "process.project.id", null,
             null, -1),
@@ -80,6 +81,7 @@ enum FilterField {
             case "parentprocessid":
                 return PARENT_PROCESS_ID;
             case "process": return PROCESS_TITLE;
+            case "process_loose": return PROCESS_TITLE_LOOSE;
             case "search": return SEARCH;
             case "project": return PROJECT;
             case "project_loose":
