@@ -139,6 +139,12 @@
             <groupId>org.hibernate.search</groupId>
             <artifactId>hibernate-search-backend-elasticsearch</artifactId>
             <version>${hibernate-search.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
