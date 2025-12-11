@@ -22,7 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.cache.RequestScopeCacheHelper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
@@ -100,8 +99,7 @@ public class LocaleHelper {
                 User user = ServiceManager.getUserService().getById(securityUserDetails.getId());
                 return new Locale.Builder().setLanguageTag(user.getLanguage()).build();
             } catch (DAOException e) {
-                Helper.setErrorMessage("errorLoadingOne",
-                    new Object[] {ObjectType.USER.getTranslationSingular(), securityUserDetails.getId() }, logger, e);
+                logger.error("Could not load user details for user with ID: {}", securityUserDetails.getId(), e);
             }
 
         }
