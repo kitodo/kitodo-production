@@ -3384,10 +3384,22 @@ button.settings-loaded-task::after {
     overflow-x: hidden;
 }
 
+#paginationForm {
+    display: flex;
+    flex-direction: column;
+}
+
 #paginationBox,
 #paginationBox_content,
 #paginationForm {
     height: 100%;
+}
+
+#paginationForm .dialogButtonWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--default-half-size);
+    justify-content: space-between;
 }
 
 #paginationForm\:paginationWrapperPanel,
@@ -3451,12 +3463,13 @@ button.settings-loaded-task::after {
 }
 
 #paginationForm\:apply,
-#paginationForm\:cancel {
-    max-width: calc(50% - 2px);
+#paginationForm\:reset {
+    flex-grow: 1;
+    min-width: 200px;
 }
 
 #paginationForm\:apply span.ui-button-text,
-#paginationForm\:cancel span.ui-button-text {
+#paginationForm\:reset span.ui-button-text {
     overflow-x: hidden;
     text-overflow: ellipsis;
     width: auto;

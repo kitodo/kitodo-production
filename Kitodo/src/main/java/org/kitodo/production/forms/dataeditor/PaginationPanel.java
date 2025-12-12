@@ -337,4 +337,13 @@ public class PaginationPanel {
         selectPaginationScopeSelectedItem = Boolean.TRUE;
         prepareSelectPaginationScopeSelectedItem();
     }
+
+    /**
+     * Retrieves the link to the documentation for advanced pagination in the METS editor.
+     *
+     * @return the documentation link for advanced pagination as defined by the kitodo_config.properties
+     */
+    public String getAdvancedPaginationDocumentation() {
+        return ConfigCore.getParameterOrDefaultValue(ParameterCore.METS_EDITOR_ADVANCED_PAGINATION_DOCUMENTATION);
+    }
 }

@@ -1008,8 +1008,8 @@ public class StructurePanel implements Serializable {
         try {
             // Get children of selected logical divisions and select all physical divisions of these children
             List<TreeNode<Object>> selectedChildTreeNodes = getSelectedLogicalNodes().stream()
-                    .flatMap(node -> node.getChildren().stream())
-                    .collect(Collectors.toList());
+                    .flatMap(node -> StructureTreeOperations.getDescendantsInOrder(node).stream())
+                    .toList();
 
             List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = selectedChildTreeNodes.stream()
                     .map(StructureTreeOperations::getPhysicalDivisionPairFromTreeNode)

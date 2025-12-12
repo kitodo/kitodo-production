@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -260,4 +261,25 @@ public class StructureTreeOperations {
         }
         return null;
     }
+
+    /**
+     * Return all descendants of a tree node while preserving the order of all nodes.
+     * @param root the node to get descendants of
+     * @return list containing all descendants of the given root node
+     */
+    public static List<TreeNode<Object>> getDescendantsInOrder(TreeNode<Object> root) {
+        List<TreeNode<Object>> out = new ArrayList<>();
+        collectDescendantsInOrder(root, out);
+        return out;
+    }
+
+
+    private static void collectDescendantsInOrder(TreeNode<Object> node, List<TreeNode<Object>> out) {
+        for (TreeNode<Object> child : node.getChildren()) {
+            out.add(child);
+            collectDescendantsInOrder(child, out);
+        }
+    }
+
+
 }

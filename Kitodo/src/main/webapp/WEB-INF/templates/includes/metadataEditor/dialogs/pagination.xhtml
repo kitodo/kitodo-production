@@ -157,7 +157,7 @@
                                 />
                             </div>
                                 <h:outputLink id="advancedPaginationHelp"
-                                        value="https://github.com/kitodo/kitodo-production/wiki/Paginierung#paginierung-für-fortgeschrittene"
+                                        value="#{DataEditorForm.paginationPanel.advancedPaginationDocumentation}"
                                         styleClass="help-button"
                                         target="_blank"
                                         title="#{msgs['tooltip.metadataeditor.advancedPaginationHelp']}">
@@ -210,14 +210,6 @@
             <h:panelGroup layout="block"
                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                           styleClass="dialogButtonWrapper">
-                <p:commandButton id="apply"
-                                 action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
-                                 styleClass="primary right"
-                                 icon="fa fa-check fa-lg"
-                                 iconPos="right"
-                                 onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications, @(.ui-tree), imagePreviewForm:structuredPagesField, metadataAccordion:logicalMetadataWrapperPanel"
-                                 value="#{msgs.apply}"/>
                 <p:commandButton id="reset"
                                  value="#{msgs.reset}"
                                  action="#{DataEditorForm.paginationPanel.show()}"
@@ -227,6 +219,15 @@
                                  immediate="true"
                                  process="@this"
                                  update="paginationForm"/>
+                <p:commandButton id="apply"
+                                 action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
+                                 styleClass="primary right"
+                                 icon="fa fa-check fa-lg"
+                                 iconPos="right"
+                                 onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
+                                 update="notifications, @(.ui-tree), metadataAccordion:logicalMetadataWrapperPanel, galleryHeadingWrapper, imagePreviewForm:structuredPagesField, imagePreviewForm:thumbnailStripe"
+                                 oncomplete="scrollToSelectedPreviewThumbnail()"
+                                 value="#{msgs.apply}"/>
             </h:panelGroup>
         </h:form>
     </p:panel>
