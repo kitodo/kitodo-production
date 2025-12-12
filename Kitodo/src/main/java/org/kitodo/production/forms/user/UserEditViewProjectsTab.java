@@ -47,7 +47,7 @@ public class UserEditViewProjectsTab extends BaseForm {
     private static final Logger logger = LogManager.getLogger(UserEditViewProjectsTab.class);
 
     /**
-     * Initialize the list of displayed list columns.
+     * Initialize UserEditViewProjectsTab.
      */
     @PostConstruct
     public void init() {
@@ -92,9 +92,9 @@ public class UserEditViewProjectsTab extends BaseForm {
     }
 
     /**
-     * Save user if there is no other user with the same login.
+     * Save user projects tab.
      *
-     * @return page or empty String
+     * @return true if information can be saved and was updated on user object
      */
     public boolean save() {
         return true;
@@ -103,7 +103,7 @@ public class UserEditViewProjectsTab extends BaseForm {
     /**
      * Remove user from project.
      *
-     * @return empty String
+     * @return null (to stay on the same page)
      */
     public String deleteFromProject() {
         String idParameter = Helper.getRequestParameter("ID");
@@ -128,7 +128,7 @@ public class UserEditViewProjectsTab extends BaseForm {
     /**
      * Add user to project.
      *
-     * @return empty String or null
+     * @return null (to stay on the same page)
      */
     public String addToProject() {
         String idParameter = Helper.getRequestParameter("ID");

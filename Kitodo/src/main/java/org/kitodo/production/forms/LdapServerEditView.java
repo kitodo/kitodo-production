@@ -49,6 +49,9 @@ public class LdapServerEditView extends BaseForm {
     
     private LdapServer ldapServer;
 
+    /**
+     * Initialize LdapServerEditView.
+     */
     @PostConstruct
     public void init() {
         ldapServer = new LdapServer();
@@ -70,8 +73,7 @@ public class LdapServerEditView extends BaseForm {
     }
 
     /**
-     * Remove LDAP Server.
-     *
+     * Remove current LDAP Server.
      */
     public String delete() {
         try {

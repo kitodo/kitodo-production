@@ -69,9 +69,9 @@ public class UserListView extends BaseForm {
     }
 
     /**
-     * New user.
+     * Navigate to create a new user.
      *
-     * @return page
+     * @return the user edit view path
      */
     public String newUser() {
         return UserEditView.VIEW_PATH;
@@ -123,6 +123,11 @@ public class UserListView extends BaseForm {
         }
     }
 
+    /**
+     * Return user object that was selected to reset tasks.
+     * 
+     * @return the user object that was selected to reset tasks
+     */
     public User getConfirmResetTasksDialogUser() {
         return confirmResetTasksDialogUser;
     }
@@ -164,6 +169,11 @@ public class UserListView extends BaseForm {
         return VIEW_PATH;
     }
 
+    /**
+     * Sets the user list filter to the user specified filter value.
+     * 
+     * @param filter the filter value specified by the user
+     */
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
@@ -179,6 +189,11 @@ public class UserListView extends BaseForm {
         return filterMenu;
     }
 
+    /**
+     * Delete a user from the database.
+     * 
+     * @param userObject the user object to be deleted
+     */
     private static void deleteUser(User userObject) {
         try {
             userService.remove(userObject);

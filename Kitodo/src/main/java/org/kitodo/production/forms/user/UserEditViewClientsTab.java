@@ -48,7 +48,7 @@ public class UserEditViewClientsTab extends BaseForm {
 
 
     /**
-     * Initialize the list of displayed list columns.
+     * Initialize UserEditViewClientsTab.
      */
     @PostConstruct
     public void init() {
@@ -94,7 +94,7 @@ public class UserEditViewClientsTab extends BaseForm {
     }
 
     /**
-     * Save user if there is no other user with the same login.
+     * Save clients tab.
      *
      * @return true if user clients data was saved
      */
@@ -105,7 +105,7 @@ public class UserEditViewClientsTab extends BaseForm {
     /**
      * Remove user from client.
      *
-     * @return empty String
+     * @return null (to stay one the same page)
      */
     public String deleteFromClient() {
         String idParameter = Helper.getRequestParameter(ID_PARAMETER);
@@ -133,7 +133,7 @@ public class UserEditViewClientsTab extends BaseForm {
     /**
      * Add client to user.
      *
-     * @return null
+     * @return null (to stay one the same page)
      */
     public String addToClient() {
         String idParameter = Helper.getRequestParameter("ID");

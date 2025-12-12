@@ -141,6 +141,9 @@ public class RoleListView extends BaseForm {
         ((LazyRoleModel)this.lazyBeanModel).setShowRolesOfAllAvailableClients(showRolesOfAllAvailableClients);
     }
 
+    /**
+     * Hide client column from roles table.
+     */
     private void deselectRoleClientColumn() {
         selectedColumns = ServiceManager.getListColumnService().removeColumnByTitle(selectedColumns, "role.client");
     }

@@ -59,6 +59,7 @@ public class UserEditViewDetailsTab extends BaseForm {
 
     private String passwordToEncrypt;
     private String oldPassword;
+    private List<Client> clientsOfUser;
 
     /**
      * Return user object currently being edited.
@@ -70,6 +71,54 @@ public class UserEditViewDetailsTab extends BaseForm {
     }
 
     /**
+     * Get old password.
+     *
+     * @return value of oldPassword
+     */
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    /**
+     * Set old password.
+     *
+     * @param oldPassword
+     *            as java.lang.String
+     */
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    /**
+     * Retrieves the list of clients associated with the current user, sorted
+     * based on predefined criteria.
+     *
+     * @return a list of sorted {@code Client} objects associated with the user
+     */
+    public List<Client> getUserClientsSorted() {
+        return clientsOfUser;
+    }
+
+    /**
+     * Return empty string. Returning the actual password is never required, but GUI needs a getter for form fields.
+     *
+     * @return Empty string.
+     */
+    public String getPasswordToEncrypt() {
+        return "";
+    }
+
+    /**
+     * Sets password.
+     *
+     * @param passwordToEncrypt
+     *            The password.
+     */
+    public void setPasswordToEncrypt(String passwordToEncrypt) {
+        this.passwordToEncrypt = passwordToEncrypt;
+    }
+
+    /**
      * Method that is called from viewAction of user edit form.
      *
      * @param userObject
@@ -77,11 +126,12 @@ public class UserEditViewDetailsTab extends BaseForm {
      */
     public void load(User userObject) {
         this.userObject = userObject;
+        this.clientsOfUser = UserService.getClientsOfUserSorted(userObject);
         passwordToEncrypt = "";
     }
 
     /**
-     * Save details information of a user if there is no other user with the same login.
+     * Save detail information of a user if there is no other user with the same login.
      *
      * @return true if user information can be saved, else false
      */
@@ -125,20 +175,6 @@ public class UserEditViewDetailsTab extends BaseForm {
         return true;
     }
 
-    private boolean isUserExistingOrLoginValid(String login) {
-        return Objects.nonNull(userObject.getId()) || userService.isLoginValid(login);
-    }
-
-    private Set<ConstraintViolation<KitodoPassword>> getPasswordViolations() {
-        if (isLdapServerReadOnly()) {
-            return Collections.emptySet();
-        }
-        KitodoPassword validPassword = new KitodoPassword(passwordToEncrypt);
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        return validator.validate(validPassword);
-    }
-
     /**
      * Check and return whether LDAP group and LDAP server are configured for current user
      * and if LDAP server is read only.
@@ -156,7 +192,7 @@ public class UserEditViewDetailsTab extends BaseForm {
     }
 
     /**
-     * Writes the user at ldap server.
+     * Writes the user to the ldap server, meaning create a new LDAP user entry.
      */
     public String writeUserAtLdapServer() {
         try {
@@ -168,25 +204,6 @@ public class UserEditViewDetailsTab extends BaseForm {
             Helper.setErrorMessage("Could not generate ldap entry", logger, e);
         }
         return null;
-    }
-
-    /**
-     * Return empty string. Returning the actual password is never required, but GUI needs a getter for form fields.
-     *
-     * @return Empty string.
-     */
-    public String getPasswordToEncrypt() {
-        return "";
-    }
-
-    /**
-     * Sets password.
-     *
-     * @param passwordToEncrypt
-     *            The password.
-     */
-    public void setPasswordToEncrypt(String passwordToEncrypt) {
-        this.passwordToEncrypt = passwordToEncrypt;
     }
 
     /**
@@ -221,40 +238,41 @@ public class UserEditViewDetailsTab extends BaseForm {
         }
     }
 
+    /**
+     * Returns true if the currently edited user is an existing user or the username (login) is valid to be saved as a new user.
+     * 
+     * @param login the username (login) of the currently edited user object
+     * @return true if user already exists or username id valid and follows rules
+     */
+    private boolean isUserExistingOrLoginValid(String login) {
+        return Objects.nonNull(userObject.getId()) || userService.isLoginValid(login);
+    }
+
+    /**
+     * Validate the entered password.
+     * 
+     * @return the set of validation violations
+     */
+    private Set<ConstraintViolation<KitodoPassword>> getPasswordViolations() {
+        if (isLdapServerReadOnly()) {
+            return Collections.emptySet();
+        }
+        KitodoPassword validPassword = new KitodoPassword(passwordToEncrypt);
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        return validator.validate(validPassword);
+    }
+
+    /**
+     * Check whether the old password matches the password stored in the database.
+     * 
+     * @return true if the old password does not match the password stored in the database
+     */
     private boolean isOldPasswordInvalid() {
         if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
             return !Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
         }
         return false;
-    }
-
-    /**
-     * Get old password.
-     *
-     * @return value of oldPassword
-     */
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    /**
-     * Set old password.
-     *
-     * @param oldPassword
-     *            as java.lang.String
-     */
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    /**
-     * Retrieves the list of clients associated with the current user, sorted
-     * based on predefined criteria.
-     *
-     * @return a list of sorted {@code Client} objects associated with the user
-     */
-    public List<Client> getUserClientsSorted() {
-        return UserService.getClientsOfUserSorted(userObject);
     }
 
 }

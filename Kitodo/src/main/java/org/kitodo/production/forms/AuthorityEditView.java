@@ -38,6 +38,9 @@ public class AuthorityEditView extends BaseForm {
     private String title;
     private String type;
 
+    /**
+     * Initialize AuthorityEditView.
+     */
     @PostConstruct
     public void init() {
         authority = new Authority();

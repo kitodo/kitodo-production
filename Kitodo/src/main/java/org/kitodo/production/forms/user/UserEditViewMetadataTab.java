@@ -104,7 +104,7 @@ public class UserEditViewMetadataTab extends BaseForm {
     /**
      * Save metadata tab information for user.
      *
-     * @return true if information can be saved and was updated on user instance
+     * @return true if information can be saved and was updated on user object
      */
     public boolean save() {
 
@@ -159,6 +159,7 @@ public class UserEditViewMetadataTab extends BaseForm {
 
     /**
      * Get translation of GalleryViewMode with given enum value 'galleryViewMode'.
+     * 
      * @param galleryViewModeValue enum value of GalleryViewMode
      * @return translation of GalleryViewMode
      */

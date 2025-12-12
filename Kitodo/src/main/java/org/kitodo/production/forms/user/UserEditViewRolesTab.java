@@ -91,9 +91,9 @@ public class UserEditViewRolesTab extends BaseForm {
     }
 
     /**
-     * Save user if there is no other user with the same login.
+     * Save roles tab.
      *
-     * @return page or empty String
+     * @return true if information can be saved and was updated on user object
      */
     public boolean save() {
         return true;
@@ -102,7 +102,7 @@ public class UserEditViewRolesTab extends BaseForm {
     /**
      * Remove from role.
      *
-     * @return empty String
+     * @return null (to stay on the same page)
      */
     public String deleteFromRole() {
         String idParameter = Helper.getRequestParameter("ID");
@@ -127,7 +127,7 @@ public class UserEditViewRolesTab extends BaseForm {
     /**
      * Add to role.
      *
-     * @return stay on the same page
+     * @return null (to stay on the same page)
      */
     public String addToRole() {
         String idParameter = Helper.getRequestParameter("ID");

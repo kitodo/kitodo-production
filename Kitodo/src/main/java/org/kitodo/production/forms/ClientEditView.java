@@ -44,7 +44,7 @@ public class ClientEditView extends BaseForm {
     private List<Client> allClients;
 
     /**
-     * Initialize view by loading all existing clients from the database.
+     * Initialize ClientEditView by loading all existing clients from the database.
      */
     @PostConstruct
     public void init() {

@@ -66,7 +66,7 @@ public class UserEditView extends BaseForm {
     private UserEditViewClientsTab clientsTab;
 
     /**
-     * Initialize the list of displayed list columns.
+     * Initialize UserEditView.
      */
     @PostConstruct
     public void init() {
