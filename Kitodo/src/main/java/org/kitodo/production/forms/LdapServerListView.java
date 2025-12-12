@@ -33,7 +33,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class LdapServerListView extends BaseForm {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:ldapServersTab";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=5";
 
     private static final Logger logger = LogManager.getLogger(LdapServerEditView.class);    
 

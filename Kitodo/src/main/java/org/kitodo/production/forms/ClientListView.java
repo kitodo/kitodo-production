@@ -33,7 +33,7 @@ public class ClientListView extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ClientListView.class);
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:clientsTab";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=2";
     
     /**
      * Initialize ClientListView.

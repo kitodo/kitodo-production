@@ -20,7 +20,7 @@
     <f:metadata>
         <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
         <f:viewParam name="tabIndex"/>
-        <f:viewAction action="#{UserListView.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <f:viewAction action="#{UsersTabView.setActiveTabIndexFromTemplate(tabIndex)}" />
         <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
         <f:viewParam name="keepPagination"/>
         <f:viewAction action="#{UserListView.resetPaginator(keepPagination)}" />
@@ -119,7 +119,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{UserListView.activeTabIndex}" id="usersTabView" dynamic="true">
+        <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true">
             <p:ajax event="tabChange"
                     listener="#{UserListView.onTabChange}"
                     update="filterMenuWrapper configureColumnsForm"/>

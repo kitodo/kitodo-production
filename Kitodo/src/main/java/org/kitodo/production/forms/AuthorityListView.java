@@ -26,7 +26,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class AuthorityListView extends BaseForm {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:authoritiesTab";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=3";
 
     /**
      * Initialize AuthorityListView.
