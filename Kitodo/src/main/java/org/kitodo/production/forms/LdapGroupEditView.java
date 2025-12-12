@@ -52,7 +52,7 @@ public class LdapGroupEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapGroupService().save(ldapGroup);
-            return usersPage;
+            return LdapGroupListView.VIEW_PATH;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;

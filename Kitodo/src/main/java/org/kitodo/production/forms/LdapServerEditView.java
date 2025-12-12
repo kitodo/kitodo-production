@@ -65,7 +65,7 @@ public class LdapServerEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapServerService().save(ldapServer);
-            return LdapGroupListView.VIEW_PATH;
+            return LdapServerListView.VIEW_PATH;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
