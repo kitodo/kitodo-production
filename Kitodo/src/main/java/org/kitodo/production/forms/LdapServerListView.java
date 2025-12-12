@@ -40,16 +40,12 @@ public class LdapServerListView extends BaseForm {
     private List<LdapServer> ldapServers;
 
     /**
-     * Initialize list view for all ldap servers.
+     * Initialize LdapServerListView.
      */
-    public LdapServerListView() {
-        super();
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
-    }
-
     @PostConstruct
     public void init() {
         ldapServers = getLdapServersOrShowErrorMessage();
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**
