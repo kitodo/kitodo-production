@@ -38,14 +38,10 @@ public class LdapGroupEditView extends BaseForm {
 
     private LdapGroup ldapGroup;
 
-    public LdapGroupEditView() {
-        super();
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
-    }
-
     @PostConstruct
     public void init() {
         ldapGroup = new LdapGroup();
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**
