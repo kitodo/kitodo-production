@@ -35,10 +35,10 @@
         <h3>#{msgs.users}</h3>
         <!-- Filters -->
         <h:panelGroup id="filterMenuWrapper">
-            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 0}">
                 <ui:include src="/WEB-INF/templates/includes/users/filterMenu.xhtml"/>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 1 and RoleListView.hasPermissionToSeeAllClientRoles}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 1 and RoleListView.hasPermissionToSeeAllClientRoles}">
                 <h:form id="allClientsRolesForm">
                     <p:selectBooleanCheckbox id="showAllClientsRoles"
                                              value="#{RoleListView.showRolesOfAllAvailableClients}"
@@ -52,7 +52,7 @@
         </h:panelGroup>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 0}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -64,7 +64,7 @@
                             update="usersTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 1}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 1}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -76,7 +76,7 @@
                             update="usersTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UserListView.activeTabIndex eq 4}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 4}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -121,7 +121,7 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true" onTabShow="tabView.updateTabIndexQueryParameter(index)">
             <p:ajax event="tabChange"
-                    listener="#{UserListView.onTabChange}"
+                    listener="#{UsersTabView.onTabChange}"
                     update="filterMenuWrapper configureColumnsForm"/>
             <p:tab id="usersTab" title="#{msgs.users}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewUserList()}">
