@@ -12,6 +12,7 @@
 /**
  * Methods and functions related to the Primefaces TabView component.
  */
+// eslint-disable-next-line no-use-before-define
 var tabView = tabView || {};
 
 /**
@@ -23,4 +24,4 @@ tabView.updateTabIndexQueryParameter = function (tabIndex) {
     const url = new URL(window.location.href);
     url.searchParams.set("tabIndex", tabIndex);
     window.history.replaceState({}, "", url);
-}
+};
