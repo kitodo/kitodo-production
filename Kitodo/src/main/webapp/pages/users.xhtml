@@ -119,7 +119,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true">
+        <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true" onTabShow="tabView.updateTabIndexQueryParameter(index)">
             <p:ajax event="tabChange"
                     listener="#{UserListView.onTabChange}"
                     update="filterMenuWrapper configureColumnsForm"/>
@@ -154,6 +154,11 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.users}" icon="fa fa-user"/>
+    </ui:define>
+
+    <ui:define name="page-scripts">
+        <h:outputScript name="js/defaultScript.js" target="body"/>
+        <h:outputScript name="js/tabView.js" target="body"/>
     </ui:define>
 
 </ui:composition>
