@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -28,17 +29,16 @@ public class AuthorityListView extends BaseForm {
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:authoritiesTab";
 
     /**
-     * Default constructor that also sets the LazyBeanModel instance of this
-     * bean.
+     * Initialize AuthorityListView.
      */
-    public AuthorityListView() {
-        super();
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getAuthorityService()));
+    @PostConstruct
+    public void init() {
+        setLazyBeanModel(new LazyBeanModel(ServiceManager.getAuthorityService()));
         sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
     /**
-     * Create new authority.
+     * Navigate to the authority edit page to create a new authority.
      *
      * @return page address
      */
