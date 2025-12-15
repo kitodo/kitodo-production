@@ -45,7 +45,6 @@ import org.kitodo.config.KitodoConfig;
 public class ProcessKeywords {
     private static final Logger logger = LogManager.getLogger(ProcessKeywords.class);
 
-    public static final int LENGTH_MIN_REASONABLE = 1;
     public static final int LENGTH_MIN_DEFAULT = 3;
 
     private static final String ANY_METADATA_MARKER = "mdWrap";
@@ -97,7 +96,7 @@ public class ProcessKeywords {
 
         // keywords for project search in default search
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
-        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle, true), LENGTH_MIN_REASONABLE);
+        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle, true), LENGTH_MIN_DEFAULT);
 
         // keywords for batch search + default search
         this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()), LENGTH_MIN_DEFAULT);
