@@ -117,6 +117,7 @@ import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessExportDTO;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -1802,6 +1803,32 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      */
     public int getNumberOfChildren(int processId) throws DAOException {
         return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent.id = " + processId));
+    }
+
+    /**
+     * Checks whether the given parent process has any child processes
+     * that are not in a completed state.
+     *
+     * @param parentProcess
+     *            the parent process whose child processes are being checked
+     * @return true if there is at least one incomplete child process,
+     *         false if all children are completed
+     */
+    public boolean hasIncompleteChildren(Process parentProcess) {
+        String hql = "FROM Process p WHERE p.parent = :parent "
+                + "AND (p.sortHelperStatus NOT IN (:completedStates) OR p.sortHelperStatus IS NULL)";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("parent", parentProcess);
+        parameters.put("completedStates", List.of(
+                ProcessState.COMPLETED20.getValue(),
+                ProcessState.COMPLETED.getValue()
+        ));
+        try {
+            return dao.has(hql, parameters);
+        } catch (DAOException e) {
+            logger.error(e.getMessage(), e);
+            return true;
+        }
     }
 
     public static void deleteProcess(int processID) throws DAOException, IOException {
