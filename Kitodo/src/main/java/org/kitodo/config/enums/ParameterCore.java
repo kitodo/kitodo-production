@@ -316,6 +316,12 @@ public enum ParameterCore implements ParameterInterface {
     METS_EDITOR_MAX_UPLOADED_MEDIA(new Parameter<UndefinedParameter>("metsEditor.maxUploadedMedia")),
 
     /**
+     * Link to documentation of advanced pagination.
+     */
+    METS_EDITOR_ADVANCED_PAGINATION_DOCUMENTATION(new Parameter<>("metsEditor.advancedPaginationDocumentation",
+            "https://github.com/kitodo/kitodo-production/wiki/Paginierung#paginierung-f%C3%BCr-fortgeschrittene")),
+
+    /**
      * Comma-separated list of Strings which may be enclosed in double quotes.
      * Separators available for double page pagination modes.
      */
