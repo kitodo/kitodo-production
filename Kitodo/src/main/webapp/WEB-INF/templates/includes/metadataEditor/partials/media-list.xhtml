@@ -114,7 +114,7 @@
         </p:outputPanel>
         
         <ui:fragment rendered="#{LoginForm.loggedUser.isShowPhysicalPageNumberBelowThumbnail()}">
-            <p:outputPanel class="thumbnail-banner">
+            <p:outputPanel class="thumbnail-banner physical">
                 <h:outputText rendered="#{media.type eq 'VIDEO'}">
                     #{msgs.video} #{media.shortId}
                 </h:outputText>
@@ -123,6 +123,13 @@
                 </h:outputText>
                 <h:outputText rendered="#{media.type eq 'IMAGE'}">
                     #{msgs.image} #{media.shortId}
+                </h:outputText>
+            </p:outputPanel>
+        </ui:fragment>
+        <ui:fragment rendered="#{LoginForm.loggedUser.isShowLogicalPageNumberBelowThumbnail()}">
+            <p:outputPanel class="thumbnail-banner logical">
+                <h:outputText>
+                        #{msgs.page} #{media.orderlabel}
                 </h:outputText>
             </p:outputPanel>
         </ui:fragment>

@@ -60,10 +60,10 @@ jobs:
       - name: import default
         run:
             mysql -u root -proot kitodo < $GITHUB_WORKSPACE/Kitodo/setup/default.sql
-      - name: set up JDK 17
+      - name: set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'adopt'
       - name: check java version
         run:

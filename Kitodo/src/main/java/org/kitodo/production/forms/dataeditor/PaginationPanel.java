@@ -49,8 +49,6 @@ public class PaginationPanel {
 
     private final DataEditorForm dataEditor;
     private boolean fictitiousCheckboxChecked = false;
-    private List<SelectItem> paginationSelectionItems;
-    private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
     private String paginationStartValue = "1";
     private Map<PaginatorType, String> paginationTypeSelectItems;
     private PaginatorType paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
@@ -95,38 +93,6 @@ public class PaginationPanel {
         show();
         PrimeFaces.current().ajax().update("fileReferencesUpdatedDialog");
         PrimeFaces.current().executeScript("PF('fileReferencesUpdatedDialog').show();");
-    }
-
-    /**
-     * Returns the selected items of the paginationSelection select menu.
-     *
-     * @return the selected items of the paginationSelection
-     */
-    public List<Integer> getPaginationSelectionSelectedItems() {
-        return paginationSelectionSelectedItems;
-    }
-
-    /**
-     * Sets the selected items of the paginationSelection select menu.
-     *
-     * @param selectedItems
-     *            selected items to set
-     */
-    public void setPaginationSelectionSelectedItems(List<Integer> selectedItems) {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
-        
-        List<Pair<PhysicalDivision, LogicalDivision>> selection = selectedItems.stream()
-            .map(physicalDivisions::get)
-            .map((p) -> new ImmutablePair<>(p, p.getLogicalDivisions().get(0)))
-            .collect(Collectors.toList());
-
-        try {
-            dataEditor.updateSelection(selection, Collections.emptyList());
-        }  catch (NoSuchMetadataFieldException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-
-        this.paginationSelectionSelectedItems = selectedItems;
     }
 
     /**
@@ -206,16 +172,6 @@ public class PaginationPanel {
     }
 
     /**
-     * Returns the items for the paginationSelection select menu.
-     *
-     * @return the items for the paginationSelection
-     */
-    public List<SelectItem> getPaginationSelectionItems() {
-        return paginationSelectionItems;
-    }
-
-
-    /**
      * Returns the items for the paginationTypeSelect select menu.
      *
      * @return the items for the paginationTypeSelect
@@ -266,30 +222,35 @@ public class PaginationPanel {
                 .isPaginateFromFirstPageByDefault();
     }
 
-    private void preparePaginationSelectionItems() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
-        paginationSelectionItems = new ArrayList<>(physicalDivisions.size());
-        for (int i = 0; i < physicalDivisions.size(); i++) {
-            View view = View.of(physicalDivisions.get(i));
-            String label = dataEditor.getStructurePanel().buildViewLabel(view);
-            paginationSelectionItems.add(new SelectItem(i, label));
-        }
-    }
-
     /**
      * prepare selected items to pagination.
      */
-    public void preparePaginationSelectionSelectedItems() {
-        paginationSelectionSelectedItems = new ArrayList<>();
+    public List<Integer> prepareSelectedItemsForPagination() {
+        List<Integer> selectedItemsPreparedForPagination = new ArrayList<>();
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
-        for (Pair<PhysicalDivision, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
+        List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = dataEditor.getSelectedMedia();
+        for (Pair<PhysicalDivision, LogicalDivision> selectedElement : selectedMedia) {
             for (int i = 0; i < physicalDivisions.size(); i++) {
                 PhysicalDivision physicalDivision = physicalDivisions.get(i);
                 if (physicalDivision.equals(selectedElement.getKey())) {
-                    paginationSelectionSelectedItems.add(i);
+                    selectedItemsPreparedForPagination.add(i);
                 }
             }
         }
+        return selectedItemsPreparedForPagination;
+    }
+
+    private static PaginatorType resolveDefaultPaginationType() {
+        String defaultType = ServiceManager.getUserService().getCurrentUser().getDefaultPaginationType();
+        if (defaultType != null && !defaultType.isBlank()) {
+            try {
+                return PaginatorType.valueOf(defaultType);
+            } catch (IllegalArgumentException ex) {
+                // Fallback if the saved value is not valid
+                return PaginatorType.ARABIC;
+            }
+        }
+        return PaginatorType.ARABIC;
     }
 
     private void preparePaginationTypeSelectItems() {
@@ -298,6 +259,7 @@ public class PaginationPanel {
         paginationTypeSelectItems.put(PaginatorType.ROMAN, "roman");
         paginationTypeSelectItems.put(PaginatorType.UNCOUNTED, "uncounted");
         paginationTypeSelectItems.put(PaginatorType.FREETEXT, "paginationFreetext");
+        paginationTypeSelectItems.put(PaginatorType.ALPHABETIC, "alphabetic");
         paginationTypeSelectItems.put(PaginatorType.ADVANCED, "paginationAdvanced");
     }
 
@@ -311,6 +273,8 @@ public class PaginationPanel {
                 "paginierung_blatt.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "sheetCountingRectoVerso",
                 "paginierung_blatt_rectoverso.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.VERSORECTO_FOLIATION, "sheetCountingVersoRecto",
+                "paginierung_blatt_versorecto.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO, "pageCountRectoVerso",
                 "paginierung_seite_rectoverso.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "pageCountDouble",
@@ -327,7 +291,8 @@ public class PaginationPanel {
      * This method is invoked if the start pagination action button is clicked.
      */
     public void startPaginationClick() {
-        if (paginationSelectionSelectedItems.isEmpty()) {
+        List<Integer> itemsForPagination = prepareSelectedItemsForPagination();
+        if (itemsForPagination.isEmpty()) {
             Helper.setErrorMessage("fehlerBeimEinlesen", "No pages selected for pagination.");
             return;
         }
@@ -344,11 +309,11 @@ public class PaginationPanel {
             List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
                     .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
             if (selectPaginationScopeSelectedItem) {
-                for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
+                for (int i = itemsForPagination.get(0); i < physicalDivisions.size(); i++) {
                     physicalDivisions.get(i).setOrderlabel(paginator.next());
                 }
             } else {
-                for (int i : paginationSelectionSelectedItems) {
+                for (int i : itemsForPagination) {
                     physicalDivisions.get(i).setOrderlabel(paginator.next());
                 }
             }
@@ -357,8 +322,6 @@ public class PaginationPanel {
         }
         dataEditor.getMetadataPanel().update();
         dataEditor.refreshStructurePanel();
-        preparePaginationSelectionItems();
-        preparePaginationSelectionSelectedItems();
         PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                 + Helper.getTranslation("paginationSaved") + "','severity':'info'})");
     }
@@ -367,14 +330,20 @@ public class PaginationPanel {
      * Show.
      */
     public void show() {
-        paginationSelectionSelectedItems = new ArrayList<>();
-        paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
+        paginationTypeSelectSelectedItem = resolveDefaultPaginationType();
         selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;
-        preparePaginationSelectionItems();
-        preparePaginationSelectionSelectedItems();
         prepareSelectPaginationScopeSelectedItem();
+    }
+
+    /**
+     * Retrieves the link to the documentation for advanced pagination in the METS editor.
+     *
+     * @return the documentation link for advanced pagination as defined by the kitodo_config.properties
+     */
+    public String getAdvancedPaginationDocumentation() {
+        return ConfigCore.getParameterOrDefaultValue(ParameterCore.METS_EDITOR_ADVANCED_PAGINATION_DOCUMENTATION);
     }
 }

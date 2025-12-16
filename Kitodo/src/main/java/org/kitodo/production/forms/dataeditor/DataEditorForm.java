@@ -935,7 +935,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         );
     
         // update pagination panel
-        getPaginationPanel().preparePaginationSelectionSelectedItems();
+        getPaginationPanel().prepareSelectedItemsForPagination();
     }
 
 

@@ -526,7 +526,6 @@ function updateMetadataEditorView(showMetadataColumn) {
     metadataEditor.detailMap.update();
     metadataEditor.gallery.mediaView.update();
     scrollToSelectedTreeNode();
-    scrollToSelectedPaginationRow();
 }
 
 function resizeMap() {
