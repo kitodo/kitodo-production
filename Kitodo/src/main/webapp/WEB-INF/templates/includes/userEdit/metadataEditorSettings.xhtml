@@ -17,10 +17,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html">
 
     <!--@elvariable id="isViewMode" type="boolean"-->
-    <p:panelGrid id="metadataEditorSettings"
-                 columns="2"
+    <p:panelGrid columns="2"
                  layout="grid">
-
         <p:column>
             <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="metaDataLanguage"
@@ -48,19 +46,8 @@
                                    itemLabel="#{UserForm.getGalleryViewModeTranslation(viewMode)}"/>
                 </p:selectOneRadio>
             </h:panelGroup>
-            <h:panelGroup styleClass="panel-grid-cell">
-                <p:commandButton onclick="PF('changeShortcutsDialog').show()"
-                                 id="showShortcutsDialogButton"
-                                 value="#{msgs['shortcuts.change']}"
-                                 icon="fa fa-pencil fa-lg"
-                                 iconPos="right"
-                                 styleClass="secondary">
-                </p:commandButton>
-            </h:panelGroup>
         </p:column>
-
         <p:column>
-
             <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="showCommentsByDefault"
                                value="#{msgs['userEdit.metadataEditorSettings.showCommentsByDefault']}"/>
@@ -71,32 +58,76 @@
                                          onchange="toggleSave()"/>
             </h:panelGroup>
             <h:panelGroup styleClass="panel-grid-cell">
-                <p:outputLabel for="showPaginationPanelByDefault"
-                               value="#{msgs['userEdit.metadataEditorSettings.showPaginationByDefault']}"/>
-                <p:selectBooleanCheckbox id="showPaginationPanelByDefault"
-                                         styleClass="switch input"
-                                         disabled="#{isViewMode}"
-                                         value="#{UserForm.userObject.showPaginationByDefault}"
-                                         onchange="toggleSave()"/>
+                    <p:outputLabel for="showShortcutsDialogButton"
+                                   value="#{msgs['shortcuts']}"/>
+                    <p:commandButton onclick="PF('changeShortcutsDialog').show()"
+                                     id="showShortcutsDialogButton"
+                                     value="#{msgs['shortcuts.change']}"
+                                     icon="fa fa-pencil fa-lg"
+                                     iconPos="right"
+                                     styleClass="secondary">
+                    </p:commandButton>
             </h:panelGroup>
-            <h:panelGroup styleClass="panel-grid-cell">
-                <p:outputLabel for="paginateFromFirstPageByDefault"
-                               value="#{msgs['userEdit.metadataEditorSettings.paginateFromFirstPageByDefault']}"/>
-                <p:selectBooleanCheckbox id="paginateFromFirstPageByDefault"
-                                         styleClass="switch input"
+        </p:column>
+    </p:panelGrid>
+
+    <h:panelGroup layout="block"
+                  styleClass="horizontal-separator"/>
+
+    <p:panelGrid columns="2"
+                 layout="grid">
+        <p:column>
+                <h:panelGroup styleClass="panel-grid-cell">
+                        <p:outputLabel for="showPaginationPanelByDefault"
+                                       value="#{msgs['userEdit.metadataEditorSettings.showPaginationByDefault']}"/>
+                        <p:selectBooleanCheckbox id="showPaginationPanelByDefault"
+                                                 styleClass="switch input"
+                                                 disabled="#{isViewMode}"
+                                                 value="#{UserForm.userObject.showPaginationByDefault}"
+                                                 onchange="toggleSave()"/>
+                </h:panelGroup>
+                <h:panelGroup styleClass="panel-grid-cell">
+                        <p:outputLabel for="paginateFromFirstPageByDefault"
+                                       value="#{msgs['userEdit.metadataEditorSettings.paginateFromFirstPageByDefault']}"/>
+                        <p:selectBooleanCheckbox id="paginateFromFirstPageByDefault"
+                                                 styleClass="switch input"
+                                                 disabled="#{isViewMode}"
+                                                 value="#{UserForm.userObject.paginateFromFirstPageByDefault}"
+                                                 onchange="toggleSave()"/>
+                </h:panelGroup>
+                <h:panelGroup styleClass="panel-grid-cell">
+                        <p:outputLabel for="defaultPaginationType"
+                                       value="#{msgs['userEdit.metadataEditorSettings.defaultPaginationType']}"/>
+                        <p:selectOneMenu id="defaultPaginationType"
+                                         value="#{UserForm.userObject.defaultPaginationType}"
                                          disabled="#{isViewMode}"
-                                         value="#{UserForm.userObject.paginateFromFirstPageByDefault}"
-                                         onchange="toggleSave()"/>
-            </h:panelGroup>
-            <h:panelGroup styleClass="panel-grid-cell">
-                <p:outputLabel for="showPhysicalPageNumberBelowThumbnail"
-                               value="#{msgs['userEdit.metadataEditorSettings.showPhysicalPageNumberBelowThumbnail']}"/>
-                <p:selectBooleanCheckbox id="showPhysicalPageNumberBelowThumbnail"
-                                         styleClass="switch input"
-                                         disabled="#{isViewMode}"
-                                         value="#{UserForm.userObject.showPhysicalPageNumberBelowThumbnail}"
-                                         onchange="toggleSave()"/>
-            </h:panelGroup>
+                                         required="#{empty param['editForm:saveButtonToggler']}">
+                                <f:selectItems value="#{UserForm.paginationTypes}"/>
+                                <p:ajax oncomplete="toggleSave()"/>
+                        </p:selectOneMenu>
+
+                </h:panelGroup>
+        </p:column>
+        <p:column>
+                <h:panelGroup styleClass="panel-grid-cell">
+                        <p:outputLabel for="showPhysicalPageNumberBelowThumbnail"
+                                       value="#{msgs['userEdit.metadataEditorSettings.showPhysicalPageNumberBelowThumbnail']}"/>
+                        <p:selectBooleanCheckbox id="showPhysicalPageNumberBelowThumbnail"
+                                                 styleClass="switch input"
+                                                 disabled="#{isViewMode}"
+                                                 value="#{UserForm.userObject.showPhysicalPageNumberBelowThumbnail}"
+                                                 onchange="toggleSave()"/>
+                </h:panelGroup>
+                <h:panelGroup styleClass="panel-grid-cell">
+                        <p:outputLabel for="showLogicalPageNumberBelowThumbnail"
+                                       value="#{msgs['userEdit.metadataEditorSettings.showLogicalPageNumberBelowThumbnail']}"/>
+                        <p:selectBooleanCheckbox id="showLogicalPageNumberBelowThumbnail"
+                                                 styleClass="switch input"
+                                                 disabled="#{isViewMode}"
+                                                 value="#{UserForm.userObject.showLogicalPageNumberBelowThumbnail}"
+                                                 onchange="toggleSave()"/>
+                </h:panelGroup>
+
         </p:column>
     </p:panelGrid>
 </ui:composition>
