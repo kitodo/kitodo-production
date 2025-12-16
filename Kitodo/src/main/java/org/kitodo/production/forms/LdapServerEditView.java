@@ -65,7 +65,7 @@ public class LdapServerEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapServerService().save(ldapServer);
-            return LdapServerListView.VIEW_PATH;
+            return LdapServerListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
@@ -81,7 +81,7 @@ public class LdapServerEditView extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
         }
-        return LdapServerListView.VIEW_PATH;
+        return LdapServerListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
     }
 
     /**

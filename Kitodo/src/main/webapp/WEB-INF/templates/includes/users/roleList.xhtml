@@ -16,6 +16,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+    <!--@elvariable id="firstRow" type="java.lang.Integer"-->
     <!--@elvariable id="item" type="org.kitodo.production.dto.RoleDTO"-->
     <p:dataTable var="item"
                  id="rolesTable"
@@ -33,7 +34,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{RoleListView.onPageChange}"/>
+                listener="#{RoleListView.onPageChange}" 
+                oncomplete="kitodo.updateQueryParameter('firstRow', PF('rolesTable').paginator.getFirst());"/>
         <p:column headerText="#{msgs.role}"
                   sortBy="#{item.title}"
                   rendered="#{RoleListView.showColumn('role.role')}">
@@ -57,6 +59,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRole() and not SecurityAccessController.hasAuthorityToEditRole()}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerFirstRow" value="#{RoleListView.firstRow}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
@@ -66,6 +69,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditRole()}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerFirstRow" value="#{RoleListView.firstRow}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 

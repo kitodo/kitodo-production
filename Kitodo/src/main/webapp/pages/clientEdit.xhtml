@@ -15,9 +15,15 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerFirstRow" type="java.lang.Integer"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{ClientEditView.load(id)}"/>
+        <f:viewParam name="referrerFirstRow"/>
+        <f:viewAction action="#{ClientEditView.setReferrerFirstRowFromTemplate(referrerFirstRow)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
@@ -43,8 +49,12 @@
                           rendered="#{isViewMode}"/>
         </h3>
 
-        <p:button value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
+        <p:button value="#{msgs.cancel}" 
+                  outcome="users?tabIndex=2&amp;firstRow=#{ClientEditView.referrerFirstRow}" 
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg" 
+                  iconPos="right" 
+                  styleClass="secondary"/>
 
         <p:commandButton id="saveButtonToggler"
                   actionListener="#{ClientEditView.setSaveDisabled(false)}"

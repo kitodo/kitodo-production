@@ -9,19 +9,23 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-/**
- * Methods and functions related to the Primefaces TabView component.
- */
 // eslint-disable-next-line no-use-before-define
-var tabView = tabView || {};
+var kitodo = kitodo || {};
 
 /**
- * Update the current browser URL to include the selected tabIndex.
+ * Update the current browser URL to include the selected query parameter and value.
  * 
- * @param int tabIndex the selected tab index
+ * @param str key the query parmaeter name
+ * @param str value the query parameter value
  */
-tabView.updateTabIndexQueryParameter = function (tabIndex) {
+kitodo.updateQueryParameter = function (key, value) {
     const url = new URL(window.location.href);
-    url.searchParams.set("tabIndex", tabIndex);
+    url.searchParams.set(key, value);
+    window.history.replaceState({}, "", url);
+};
+
+kitodo.removeQueryParameter = function (key) {
+    const url = new URL(window.location.href);
+    url.searchParams.delete(key);
     window.history.replaceState({}, "", url);
 };

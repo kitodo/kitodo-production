@@ -32,7 +32,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{AuthorityListView.onPageChange}"/>
+                listener="#{AuthorityListView.onPageChange}"
+                oncomplete="kitodo.updateQueryParameter('firstRow', PF('authoritiesTable').paginator.getFirst());"/>
         <p:column headerText="#{msgs.authority}" sortBy="#{item.title}">
             <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"
                           title="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
@@ -52,6 +53,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewAuthority() and not SecurityAccessController.hasAuthorityToEditAuthority()}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerFirstRow" value="#{AuthorityListView.firstRow}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
             </h:form>

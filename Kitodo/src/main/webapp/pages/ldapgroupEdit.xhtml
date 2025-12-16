@@ -17,10 +17,17 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="duplicate" type="java.lang.Boolean"-->
+    <!--@elvariable id="referrerFirstRow" type="java.lang.Integer"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewParam name="duplicate"/>
         <f:viewAction action="#{LdapGroupEditView.load(id, duplicate)}"/>
+        <f:viewParam name="referrerFirstRow"/>
+        <f:viewAction action="#{LdapGroupEditView.setReferrerFirstRowFromTemplate(referrerFirstRow)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
@@ -45,7 +52,7 @@
         </h3>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
-                  outcome="users?keepPagination=true"
+                  outcome="users?tabIndex=4&amp;firstRow=#{LdapGroupEditView.referrerFirstRow}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"

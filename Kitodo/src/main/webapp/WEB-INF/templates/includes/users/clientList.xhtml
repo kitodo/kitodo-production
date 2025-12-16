@@ -30,7 +30,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{ClientListView.onPageChange}"/>
+                listener="#{ClientListView.onPageChange}"
+                oncomplete="kitodo.updateQueryParameter('firstRow', PF('clientsTable').paginator.getFirst());"/>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.name}"
                   rendered="#{ClientListView.showColumn('client.client')}">
@@ -48,6 +49,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewClient() and not SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerFirstRow" value="#{ClientListView.firstRow}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
                 <h:link outcome="clientEdit"
@@ -55,6 +57,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerFirstRow" value="#{ClientListView.firstRow}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteClient"

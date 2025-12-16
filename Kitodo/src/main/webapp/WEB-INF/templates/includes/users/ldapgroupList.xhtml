@@ -32,7 +32,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{LdapGroupListView.onPageChange}"/>
+                listener="#{LdapGroupListView.onPageChange}"
+                oncomplete="kitodo.updateQueryParameter('firstRow', PF('ldapGroupsTable').paginator.getFirst());"/>
         <p:column headerText="#{msgs.ldapGroup}"
                   sortBy="#{item.title}"
                   rendered="#{LdapGroupListView.showColumn('ldapgroup.ldapgroup')}">
@@ -68,6 +69,7 @@
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}">
                     <f:param name="id" value="#{item.id}"/>
                     <f:param name="duplicate" value="true"/>
+                    <f:param name="referrerFirstRow" value="#{LdapGroupListView.firstRow}" />
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:link>
                 <p:commandLink id="deleteLdapgroup"

@@ -93,7 +93,7 @@ public class AuthorityEditView extends BaseForm {
         try {
             this.authority.setTitle(this.title + "_" + this.type);
             ServiceManager.getAuthorityService().save(this.authority);
-            return AuthorityListView.VIEW_PATH;
+            return AuthorityListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.AUTHORITY.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

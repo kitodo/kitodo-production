@@ -71,7 +71,7 @@ public class RoleEditView extends BaseForm {
             updateAssignedAuthorities(globalAuthoritiesSelection, role);
             updateAssignedAuthorities(clientAuthoritiesSelection, role);
             ServiceManager.getRoleService().save(role);
-            return RoleListView.VIEW_PATH;
+            return RoleListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

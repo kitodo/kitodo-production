@@ -17,9 +17,15 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerFirstRow" type="java.lang.Integer"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{RoleEditView.load(id)}"/>
+        <f:viewParam name="referrerFirstRow"/>
+        <f:viewAction action="#{RoleEditView.setReferrerFirstRowFromTemplate(referrerFirstRow)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
@@ -49,7 +55,7 @@
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="users?keepPagination=true"
+                  outcome="users?tabIndex=1&amp;firstRow=#{RoleEditView.referrerFirstRow}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>

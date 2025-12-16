@@ -52,7 +52,7 @@ public class LdapGroupEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapGroupService().save(ldapGroup);
-            return LdapGroupListView.VIEW_PATH;
+            return LdapGroupListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
@@ -66,7 +66,7 @@ public class LdapGroupEditView extends BaseForm {
      */
     public String delete() {
         if (LdapGroupListView.deleteLdapGroup(ldapGroup)) {
-            return LdapGroupListView.VIEW_PATH;
+            return LdapGroupListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
         }
         return this.stayOnCurrentPage;
     }

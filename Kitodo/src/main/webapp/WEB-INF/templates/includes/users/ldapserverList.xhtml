@@ -30,7 +30,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{LdapServerListView.onPageChange}"/>
+                listener="#{LdapServerListView.onPageChange}"
+                oncomplete="kitodo.updateQueryParameter('firstRow', PF('ldapServersTable').paginator.getFirst());"/>
         <p:column headerText="#{msgs.ldapServer}"
                   sortBy="#{item.title}">
             <h:outputText value="#{item.title}"
@@ -51,6 +52,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapServer')}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerFirstRow" value="#{LdapServerListView.firstRow}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteLdapserver"

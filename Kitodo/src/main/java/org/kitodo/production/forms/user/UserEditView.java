@@ -137,7 +137,7 @@ public class UserEditView extends BaseForm {
             return this.stayOnCurrentPage;
         }
         
-        return usersPage;
+        return UserListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
     }
 
 }

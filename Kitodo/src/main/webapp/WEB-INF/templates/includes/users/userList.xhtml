@@ -76,7 +76,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
-                listener="#{UserListView.onPageChange}"/>
+                listener="#{UserListView.onPageChange}"
+                oncomplete="kitodo.updateQueryParameter('firstRow', PF('usersTable').paginator.getFirst());"/>
         <p:column headerText="#{msgs.username}"
                   sortBy="#{item.surname}"
                   rendered="#{UserListView.showColumn('user.username')}">
@@ -124,6 +125,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerFirstRow" value="#{UserListView.firstRow}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
@@ -133,6 +135,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerFirstRow" value="#{UserListView.firstRow}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 

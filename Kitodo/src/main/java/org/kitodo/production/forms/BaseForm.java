@@ -82,6 +82,7 @@ public class BaseForm implements Serializable {
     protected List<ListColumn> selectedColumns;
 
     protected int firstRow;
+    protected int referrerFirstRow;
     protected SortMeta sortBy;
 
     /**
@@ -98,6 +99,41 @@ public class BaseForm implements Serializable {
      */
     public void setFirstRow(int firstRow) {
         this.firstRow = firstRow;
+    }
+
+    /**
+     * Set first row from the view parameter (query parameter), which might be unavailable or an arbitrary value.
+     */
+    public void setFirstRowFromTemplate(String firstRow) {
+        if (Objects.nonNull(firstRow) && !firstRow.isEmpty()) {
+            try {
+                this.firstRow = Integer.parseInt(firstRow);
+            } catch (NumberFormatException e) {
+                this.firstRow = 0;
+            }
+        }
+    }
+
+    /**
+     * Get the referrer first row, which remembers the firstRow parameter for the previous list view (while editing a specific row).
+     * 
+     * @return referrer first row
+     */
+    public int getReferrerFirstRow() {
+        return this.referrerFirstRow;
+    }
+
+    /**
+     * Set referrer first row from the view parameter (query parameter), which might be unavailable or an arbitrary value.
+     */
+    public void setReferrerFirstRowFromTemplate(String referrerFirstRow) {
+        if (Objects.nonNull(referrerFirstRow) && !referrerFirstRow.isEmpty()) {
+            try {
+                this.referrerFirstRow = Integer.parseInt(referrerFirstRow);
+            } catch (NumberFormatException e) {
+                this.referrerFirstRow = 0;
+            }
+        }
     }
 
     /**

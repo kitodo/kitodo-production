@@ -69,7 +69,7 @@ public class ClientEditView extends BaseForm {
             for (Role role : rolesForClient) {
                 ServiceManager.getRoleService().save(role);
             }
-            return usersPage;
+            return ClientListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
