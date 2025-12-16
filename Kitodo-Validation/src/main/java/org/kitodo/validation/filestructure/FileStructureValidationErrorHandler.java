@@ -22,10 +22,23 @@ public class FileStructureValidationErrorHandler implements ErrorHandler {
 
     private final List<SAXParseException> validationErrors;
 
+    /**
+     * Constructor for initializing a handler for capturing validation errors during
+     * XML schema validation. This handler collects any encountered {@link SAXParseException}
+     * instances into an internal list for later retrieval.
+     */
     public FileStructureValidationErrorHandler() {
         this.validationErrors = new ArrayList<>();
     }
 
+    /**
+     * Retrieves the list of validation errors encountered during XML schema validation.
+     * These errors are represented as {@link SAXParseException} instances, which include
+     * details such as the line number, column number, and description of the error.
+     *
+     * @return a list of {@link SAXParseException} objects representing validation errors,
+     * or an empty list if no errors were encountered.
+     */
     public List<SAXParseException> getValidationErrors() {
         return validationErrors;
     }

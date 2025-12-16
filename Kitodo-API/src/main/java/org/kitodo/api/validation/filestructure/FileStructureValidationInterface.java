@@ -30,6 +30,10 @@ public interface FileStructureValidationInterface extends ValidationInterface {
      * @param xsdFileUri
      *            The location of the schema to validate against.
      * @return A ValidationResult, with result boolean and resultMessages.
+     * @throws SAXException
+     *          when initializing the XML validator fails.
+     * @throws IOException
+     *          when XML validator throws an IOException during validation.
      */
     ValidationResult validate(URI xmlFileUri, URI xsdFileUri) throws SAXException, IOException;
 
@@ -41,6 +45,10 @@ public interface FileStructureValidationInterface extends ValidationInterface {
      * @param xsdFiles
      *            Collection of URIs pointing to the schema files to validate against.
      * @return A ValidationResult, with result boolean and resultMessages.
+     * @throws SAXException
+     *          when initializing the XML validator fails.
+     * @throws IOException
+     *          when XML validator throws an IOException during validation.
      */
     ValidationResult validate(String xmlString, Collection<URI> xsdFiles) throws IOException, SAXException;
 
@@ -52,6 +60,10 @@ public interface FileStructureValidationInterface extends ValidationInterface {
      * @param xsdFileUri
      *            The location of the schema to validate against.
      * @return A ValidationResult, with result boolean and resultMessages.
+     * @throws SAXException
+     *          when initializing the XML validator fails.
+     * @throws IOException
+     *          when XML validator throws an IOException during validation.
      */
     ValidationResult validate(String xmlString, URI xsdFileUri) throws SAXException, IOException;
 

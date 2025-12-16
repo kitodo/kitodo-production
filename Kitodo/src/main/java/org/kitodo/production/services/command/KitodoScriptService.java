@@ -239,9 +239,6 @@ public class KitodoScriptService {
             case "searchForMedia":
                 searchForMedia(processes);
                 break;
-            case "resaveMetadataFile":
-                resaveMetadataFile(processes);
-                break;
             case "importProcesses":
                 String indir = parameters.get("indir");
                 String project = parameters.get("project");

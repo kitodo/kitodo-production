@@ -122,7 +122,7 @@ public class XmlResponseHandler {
         return hits;
     }
 
-    public static int extractNumberOfRecords(String content, SearchInterfaceType type) {
+    private static int extractNumberOfRecords(String content, SearchInterfaceType type) {
         return extractNumberOfRecords(transformResponseToDocument(content), type);
     }
 
@@ -147,6 +147,13 @@ public class XmlResponseHandler {
     /**
      * Check and return whether the given XML string 'xmlString' contains no error message and at least one record.
      * Throws as NoRecordFoundException otherwise.
+     *
+     * @param searchInterfaceType
+     *          SearchInterfaceType containing information about XPath of potential error message in result document
+     * @param xmlString
+     *          String containing XML document
+     * @param identifier
+     *          String containing ID of queried record
      *
      * @throws NoRecordFoundException if the given XML string contains an error message or no record
      */
