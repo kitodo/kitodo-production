@@ -750,7 +750,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      * @return value of defaultChildProcessImportConfiguration
      */
     public ImportConfiguration getDefaultChildProcessImportConfiguration() {
-        initialize(new ProjectDAO(), defaultImportConfiguration);
+        initialize(new ProjectDAO(), defaultChildProcessImportConfiguration);
         return defaultChildProcessImportConfiguration;
     }
 

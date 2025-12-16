@@ -50,6 +50,7 @@ import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProcessExportDTO;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -599,6 +600,25 @@ public class ProcessServiceIT {
     @Disabled("functionality nowhere used, no longer implemented")
     public void testFindAllIDs() throws Exception {
         // TODO delete test stub
+    }
+
+    @Test
+    public void shouldDetectIncompleteChildren() throws Exception {
+        Integer parentId = testProcessIds.get(MockDatabase.HIERARCHY_PARENT);
+        Process parent = processService.getById(parentId);
+        assertNotNull(parent, "Parent in hierarchy not found!");
+
+        boolean hasIncomplete = processService.hasIncompleteChildren(parent);
+        assertTrue(hasIncomplete, "Parent should report incomplete children but did not!");
+
+        for (Process child : parent.getChildren()) {
+            child.setSortHelperStatus(ProcessState.COMPLETED.getValue());
+            processService.save(child);
+        }
+
+        boolean hasIncompleteAfterUpdate = processService.hasIncompleteChildren(parent);
+        assertFalse(hasIncompleteAfterUpdate,
+                "Parent should not report incomplete children after all children were completed!");
     }
 
     @Test

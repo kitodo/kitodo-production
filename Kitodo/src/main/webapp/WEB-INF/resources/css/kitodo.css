@@ -3384,10 +3384,22 @@ button.settings-loaded-task::after {
     overflow-x: hidden;
 }
 
+#paginationForm {
+    display: flex;
+    flex-direction: column;
+}
+
 #paginationBox,
 #paginationBox_content,
 #paginationForm {
     height: 100%;
+}
+
+#paginationForm .dialogButtonWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--default-half-size);
+    justify-content: space-between;
 }
 
 #paginationForm\:paginationWrapperPanel,
@@ -3396,12 +3408,32 @@ button.settings-loaded-task::after {
 }
 
 #paginationForm\:paginationWrapperPanel {
-    height: calc(100% - 80px);
+    height: calc(100% - 57px);
     overflow-y: scroll;
+}
+
+#paginationForm\:paginationGrid {
+    margin-left: -5px;
+    margin-top: 5px;
+    width: calc(100% + 10px);
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell {
+    padding: 0;
 }
 
 #paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div {
     margin: 0;
+    padding: 5px;
+}
+
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div:empty {
+    padding: 0;
 }
 
 .ui-tree-draghelper.ui-draggable-dragging {
@@ -3416,17 +3448,28 @@ button.settings-loaded-task::after {
     filter: opacity(35%);
 }
 
-#paginationForm\:paginationSelection {
-    width: 100%;
+#paginationForm\:paginationWrapperPanel .ui-g .ui-panelgrid-cell > div#paginationForm\:advancedPaginationControls {
+    padding-top: 23px;
+}
+
+#paginationForm\:advancedPaginationControls div {
+    display: inline-block;
+    width: calc(100% - 25px);
+}
+
+#paginationForm\:advancedPaginationControls a {
+    float: right;
+    line-height: var(--input-height);
 }
 
 #paginationForm\:apply,
-#paginationForm\:cancel {
-    max-width: calc(50% - 2px);
+#paginationForm\:reset {
+    flex-grow: 1;
+    min-width: 200px;
 }
 
 #paginationForm\:apply span.ui-button-text,
-#paginationForm\:cancel span.ui-button-text {
+#paginationForm\:reset span.ui-button-text {
     overflow-x: hidden;
     text-overflow: ellipsis;
     width: auto;
@@ -3435,6 +3478,12 @@ button.settings-loaded-task::after {
 #paginationForm\:updateMediaReferencesButton {
     margin: 0;
     width: 100%;
+    height: auto;
+    min-height: 36px;
+}
+
+#paginationForm\:updateMediaReferencesButton .ui-button-text {
+    line-height: 1.4;
 }
 
 #metadataAccordion,
@@ -4029,6 +4078,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 .thumbnail-parent {
     display: block;
     position: relative;
+    text-align: center;
 }
 
 .thumbnail-parent audio,
@@ -4219,6 +4269,8 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     word-break: break-word;
     color: var(--pure-white);
     font-size: smaller;
+    max-width: 150px;
+    padding: 0 5px;
     text-align: center;
 }
 

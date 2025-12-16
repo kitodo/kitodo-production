@@ -104,6 +104,21 @@ public enum PaginatorMode {
                 return value.concat("°¡r¿v½");
             }
         }
+    },
+
+    /**
+     * Alternating a back side (“v”), then a front side (“r”) (1v, 2r, 2v, 3r, … /
+     * [1]v, [2]r, [2]v, [3]r, …).
+     */
+    VERSORECTO_FOLIATION(7) {
+        @Override
+        String format(String value, String next, boolean fictitious, String separator) {
+            if (fictitious) {
+                return "½[" + value + "°]¡r¿v½";
+            } else {
+                return '½' + value + "°¡r¿v½";
+            }
+        }
     };
 
     /**

@@ -21,39 +21,35 @@
     <p:panel id="paginationBox" styleClass="wrapperPanel">
         <h:form id="paginationForm">
             <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
-                <p:panelGrid columns="1" layout="grid">
-                        <h:panelGroup layout="block">
-                            <p:commandButton id="updateMediaReferencesButton"
-                                             action="#{DataEditorForm.paginationPanel.updateMediaReferences()}"
-                                             process="@this"
-                                             value="#{msgs.updateFileReferences}"
-                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                             icon="fa fa-magic fa-lg"
-                                             iconPos="right"
-                                             styleClass="secondary"
-                                             update="paginationForm:paginationSelection,logicalTree,galleryWrapperPanel"
-                                             immediate="true"/>
+                <p:commandButton id="updateMediaReferencesButton"
+                                 action="#{DataEditorForm.paginationPanel.updateMediaReferences()}"
+                                 process="@this"
+                                 value="#{msgs.updateFileReferences}"
+                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
+                                 icon="fa fa-magic fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary"
+                                 update="logicalTree,galleryWrapperPanel"
+                                 immediate="true"/>
+                <p:panelGrid id="paginationGrid"
+                             columns="2"
+                             layout="grid">
+                        <h:panelGroup layout="block"
+                                      id="paginationScopeWrapper">
+                                <p:outputLabel value="#{msgs.paginationScope}:"
+                                               for="selectPaginationScope"/>
+                                <p:selectOneMenu id="selectPaginationScope"
+                                                 disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
+                                                 autoWidth="false"
+                                                 value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
+                                        <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems.entrySet()}"
+                                                       var="scope"
+                                                       itemValue="#{scope.key}"
+                                                       itemLabel="#{HelperForm.getTranslated(scope.value)}"/>
+                                </p:selectOneMenu>
                         </h:panelGroup>
-                        <h:panelGroup layout="block">
-                            <p:selectManyMenu id="paginationSelection"
-                                              value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
-                                              required="#{not empty param['paginationForm:apply']}"
-                                              requiredMessage="#{msgs.paginationNoPagesSelected}"
-                                              disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                              filter="true"
-                                              filterMatchMode="contains"
-                                              onchange="metadataEditor.pagination.onChange(event);"
-                                              showCheckbox="true">
-                                <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
-                                <p:ajax event="change"
-                                        oncomplete="metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
-                                        update="galleryHeadingWrapper
-                                                imagePreviewForm:mediaDetail
-                                                metadataAccordion:logicalMetadataWrapperPanel
-                                                metadataAccordion:physicalMetadataWrapperPanel"/>
-                            </p:selectManyMenu>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block">
+                        <h:panelGroup layout="block"
+                                      id="paginationTypeWrapper">
                             <p:outputLabel for="paginationTypeSelect"
                                            value="#{msgs.pagination}"/>
                             <p:selectOneMenu id="paginationTypeSelect"
@@ -63,22 +59,28 @@
                                                var="type"
                                                itemValue="#{type.key}"
                                                itemLabel="#{HelperForm.getTranslated(type.value)}"/>
-                                <p:ajax event="itemSelect" update="paginationForm:advancedPaginationControls"/>
+                                <p:ajax event="itemSelect"
+                                        update="paginationForm"
+                                />
                             </p:selectOneMenu>
                         </h:panelGroup>
-                        <h:panelGroup layout="block">
+                        <h:panelGroup layout="block"
+                                      id="paginationStartValueWrapper"
+                                      rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'UNCOUNTED'}">
                             <p:outputLabel value="#{msgs.paginationStartValue}:"
                                            for="paginationStartValue"/>
                             <p:inputText id="paginationStartValue"
-                                           padControl="false"
-                                           required="true"
-                                           disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                           value="#{DataEditorForm.paginationPanel.paginationStartValue}"
-                                           label="#{msgs.paginationStartValue}"
-                                           class="input"
-                                           requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
+                                         padControl="false"
+                                         required="true"
+                                         disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
+                                         value="#{DataEditorForm.paginationPanel.paginationStartValue}"
+                                         label="#{msgs.paginationStartValue}"
+                                         class="input"
+                                         requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
                         </h:panelGroup>
-                        <h:panelGroup layout="block" id="advancedPaginationControls">
+                        <h:panelGroup layout="block"
+                                      id="advancedPaginationControls"
+                                      rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}">
                             <!-- Advanced pagination -->
                             <script type="text/javascript">
                                 function writeToPaginationStartValue(before, after) {
@@ -96,87 +98,78 @@
                                     return false;
                                 }
                             </script>
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationText}"
-                                title="#{msgs.paginationTextHint}"
-                                onclick="return writeToPaginationStartValue('`','`')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationNoIncrement}"
-                                title="#{msgs.paginationNoIncrementHint}"
-                                onclick="return writeToPaginationStartValue('','\260')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationHalfIncrement}"
-                                title="#{msgs.paginationHalfIncrementHint}"
-                                onclick="return writeToPaginationStartValue('','\275')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationOneIncrement}"
-                                title="#{msgs.paginationOneIncrementHint}"
-                                onclick="return writeToPaginationStartValue('','\271')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationTwoIncrement}"
-                                title="#{msgs.paginationTwoIncrementHint}"
-                                onclick="return writeToPaginationStartValue('','\262')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationThreeIncrement}"
-                                title="#{msgs.paginationThreeIncrementHint}"
-                                onclick="return writeToPaginationStartValue('','\263')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationRectoUse}"
-                                title="#{msgs.paginationRectoUseHint}"
-                                onclick="return writeToPaginationStartValue('\241','')"
-                            />
-                            <p:commandButton
-                                rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem eq 'ADVANCED'}"
-                                styleClass="secondary"
-                                style="margin-right: 2px; margin-bottom: 2px; "
-                                value="#{msgs.paginationVersoUse}"
-                                title="#{msgs.paginationVersoUseHint}"
-                                onclick="return writeToPaginationStartValue('\277','')"
-                            />
-                        </h:panelGroup>
-                        <h:panelGroup layout="block">
-                            <p:outputLabel value="#{msgs.paginationScope}:"
-                                           for="selectPaginationScope"/>
-                            <p:selectOneMenu id="selectPaginationScope"
-                                             disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                             autoWidth="false"
-                                             value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
-                                <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems.entrySet()}"
-                                               var="scope"
-                                               itemValue="#{scope.key}"
-                                               itemLabel="#{HelperForm.getTranslated(scope.value)}"/>
-                            </p:selectOneMenu>
+                            <div>
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationText}"
+                                        title="#{msgs.paginationTextHint}"
+                                        onclick="return writeToPaginationStartValue('`','`')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationNoIncrement}"
+                                        title="#{msgs.paginationNoIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\260')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationHalfIncrement}"
+                                        title="#{msgs.paginationHalfIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\275')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationOneIncrement}"
+                                        title="#{msgs.paginationOneIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\271')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationTwoIncrement}"
+                                        title="#{msgs.paginationTwoIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\262')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationThreeIncrement}"
+                                        title="#{msgs.paginationThreeIncrementHint}"
+                                        onclick="return writeToPaginationStartValue('','\263')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationRectoUse}"
+                                        title="#{msgs.paginationRectoUseHint}"
+                                        onclick="return writeToPaginationStartValue('\241','')"
+                                />
+                                <p:commandButton
+                                        styleClass="secondary"
+                                        style="margin-right: 2px; margin-bottom: 2px; "
+                                        value="#{msgs.paginationVersoUse}"
+                                        title="#{msgs.paginationVersoUseHint}"
+                                        onclick="return writeToPaginationStartValue('\277','')"
+                                />
+                            </div>
+                                <h:outputLink id="advancedPaginationHelp"
+                                        value="#{DataEditorForm.paginationPanel.advancedPaginationDocumentation}"
+                                        styleClass="help-button"
+                                        target="_blank"
+                                        title="#{msgs['tooltip.metadataeditor.advancedPaginationHelp']}">
+                                        <i class="fa fa-lg fa-question-circle-o"/>
+                                </h:outputLink>
+                                <p:tooltip for="advancedPaginationHelp"
+                                           value="#{msgs['tooltip.metadataEditor.advancedPaginationHelp']}"/>
+
                         </h:panelGroup>
                         <h:panelGroup layout="block"
                                       id="selectPaginationModeWrapper"
-                                      rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'ADVANCED'}">
+                                      rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'ADVANCED' and DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'UNCOUNTED'}">
                             <p:outputLabel value="#{msgs.counting}:"
                                            for="selectPaginationMode"/>
                             <p:selectOneMenu
@@ -217,18 +210,8 @@
             <h:panelGroup layout="block"
                           rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                           styleClass="dialogButtonWrapper">
-                <p:commandButton id="apply"
-                                 action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
-                                 styleClass="primary right"
-                                 icon="fa fa-check fa-lg"
-                                 iconPos="right"
-                                 onclick="window.pagesScrollPosition = $('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop();
-                                          PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 oncomplete="$('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop(pagesScrollPosition);"
-                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
-                                 value="#{msgs.apply}"/>
-                <p:commandButton id="cancel"
-                                 value="#{msgs.cancel}"
+                <p:commandButton id="reset"
+                                 value="#{msgs.reset}"
                                  action="#{DataEditorForm.paginationPanel.show()}"
                                  styleClass="secondary left"
                                  icon="fa fa-times fa-lg"
@@ -236,6 +219,15 @@
                                  immediate="true"
                                  process="@this"
                                  update="paginationForm"/>
+                <p:commandButton id="apply"
+                                 action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
+                                 styleClass="primary right"
+                                 icon="fa fa-check fa-lg"
+                                 iconPos="right"
+                                 onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
+                                 update="notifications, @(.ui-tree), metadataAccordion:logicalMetadataWrapperPanel, galleryHeadingWrapper, imagePreviewForm:structuredPagesField, imagePreviewForm:thumbnailStripe"
+                                 oncomplete="scrollToSelectedPreviewThumbnail()"
+                                 value="#{msgs.apply}"/>
             </h:panelGroup>
         </h:form>
     </p:panel>
