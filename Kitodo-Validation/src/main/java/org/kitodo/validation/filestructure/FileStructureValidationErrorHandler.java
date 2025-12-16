@@ -36,8 +36,7 @@ public class FileStructureValidationErrorHandler implements ErrorHandler {
      * These errors are represented as {@link SAXParseException} instances, which include
      * details such as the line number, column number, and description of the error.
      *
-     * @return a list of {@link SAXParseException} objects representing validation errors,
-     * or an empty list if no errors were encountered.
+     * @return a list of {@link SAXParseException} objects representing validation errors
      */
     public List<SAXParseException> getValidationErrors() {
         return validationErrors;
