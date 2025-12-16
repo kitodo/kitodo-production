@@ -35,6 +35,7 @@ import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
 import org.kitodo.production.services.data.RoleService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.data.PageEvent;
@@ -82,7 +83,6 @@ public class BaseForm implements Serializable {
     protected List<ListColumn> selectedColumns;
 
     protected int firstRow;
-    protected int referrerFirstRow;
     protected SortMeta sortBy;
 
     /**
@@ -115,33 +115,14 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Get the referrer first row, which remembers the firstRow parameter for the previous list view (while editing a specific row).
+     * Event listener in case a user navigates to a different page in the list view.
      * 
-     * @return referrer first row
-     */
-    public int getReferrerFirstRow() {
-        return this.referrerFirstRow;
-    }
-
-    /**
-     * Set referrer first row from the view parameter (query parameter), which might be unavailable or an arbitrary value.
-     */
-    public void setReferrerFirstRowFromTemplate(String referrerFirstRow) {
-        if (Objects.nonNull(referrerFirstRow) && !referrerFirstRow.isEmpty()) {
-            try {
-                this.referrerFirstRow = Integer.parseInt(referrerFirstRow);
-            } catch (NumberFormatException e) {
-                this.referrerFirstRow = 0;
-            }
-        }
-    }
-
-    /**
-     * Update first row to show in datatable on PageEvent.
      * @param pageEvent PageEvent triggered by data tables paginator
      */
     public void onPageChange(PageEvent pageEvent) {
-        this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
+        DataTable source = (DataTable) pageEvent.getSource();
+        String script = "kitodo.updateQueryParameter('firstRow', '" + source.getRows() * pageEvent.getPage() + "');";
+        PrimeFaces.current().executeScript(script);
     }
 
     /**

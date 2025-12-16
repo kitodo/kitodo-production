@@ -17,13 +17,13 @@
     xmlns:p="http://primefaces.org/ui">
 
     <!--@elvariable id="id" type="java.lang.Integer"-->
-    <!--@elvariable id="referrerFirstRow" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
 
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{ClientEditView.load(id)}"/>
-        <f:viewParam name="referrerFirstRow"/>
-        <f:viewAction action="#{ClientEditView.setReferrerFirstRowFromTemplate(referrerFirstRow)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{ClientEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
@@ -50,7 +50,7 @@
         </h3>
 
         <p:button value="#{msgs.cancel}" 
-                  outcome="users?tabIndex=2&amp;firstRow=#{ClientEditView.referrerFirstRow}" 
+                  outcome="users?tabIndex=2&amp;#{ClientEditView.referrerListOptions}" 
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" 
                   iconPos="right" 

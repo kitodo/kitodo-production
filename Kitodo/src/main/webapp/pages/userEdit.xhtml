@@ -23,13 +23,13 @@
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <!--@elvariable id="isEditMode" type="boolean"-->
     <!--@elvariable id="isViewMode" type="boolean"-->
-    <!--@elvariable id="referrerFirstRow" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
 
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{UserEditView.load(id)}"/>
-        <f:viewParam name="referrerFirstRow"/>
-        <f:viewAction action="#{UserEditView.setReferrerFirstRowFromTemplate(referrerFirstRow)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{UserEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
@@ -58,7 +58,7 @@
         </h3>
         <p:button id="cancel" 
                   value="#{msgs.cancel}" 
-                  outcome="users?tabIndex=0&amp;firstRow=#{UserEditView.referrerFirstRow}" 
+                  outcome="users?tabIndex=0&amp;#{UserEditView.referrerListOptions}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" 
                   iconPos="right" 

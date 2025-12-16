@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -32,7 +33,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("LdapGroupListView")
 @ViewScoped
-public class LdapGroupListView extends BaseForm {
+public class LdapGroupListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=4";
 
@@ -108,6 +109,13 @@ public class LdapGroupListView extends BaseForm {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Declare the allowed sort fields for sanitizing the query parameter "sortField".
+     */
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "homeDirectory", "gidNumber");
     }
 
     /**

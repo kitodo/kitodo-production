@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -31,7 +32,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("LdapServerListView")
 @ViewScoped
-public class LdapServerListView extends BaseForm {
+public class LdapServerListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=5";
 
@@ -91,6 +92,13 @@ public class LdapServerListView extends BaseForm {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
         }
         return VIEW_PATH;
+    }
+
+    /**
+     * Declare the allowed sort fields for sanitizing the query parameter "sortField".
+     */
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "url");
     }
 
 }

@@ -30,7 +30,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("LdapGroupEditView")
 @ViewScoped
-public class LdapGroupEditView extends BaseForm {
+public class LdapGroupEditView extends BaseEditView {
 
     private static final Logger logger = LogManager.getLogger(LdapGroupEditView.class);
 
@@ -52,7 +52,7 @@ public class LdapGroupEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLdapGroupService().save(ldapGroup);
-            return LdapGroupListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
+            return LdapGroupListView.VIEW_PATH + "&" + getReferrerListOptions();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
@@ -66,7 +66,7 @@ public class LdapGroupEditView extends BaseForm {
      */
     public String delete() {
         if (LdapGroupListView.deleteLdapGroup(ldapGroup)) {
-            return LdapGroupListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
+            return LdapGroupListView.VIEW_PATH + "&" + getReferrerListOptions();
         }
         return this.stayOnCurrentPage;
     }

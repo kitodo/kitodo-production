@@ -28,7 +28,7 @@ import org.kitodo.production.services.ServiceManager;
 
 @Named("AuthorityEditView")
 @ViewScoped
-public class AuthorityEditView extends BaseForm {
+public class AuthorityEditView extends BaseEditView {
     
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "authorityEdit");
     
@@ -93,7 +93,7 @@ public class AuthorityEditView extends BaseForm {
         try {
             this.authority.setTitle(this.title + "_" + this.type);
             ServiceManager.getAuthorityService().save(this.authority);
-            return AuthorityListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
+            return AuthorityListView.VIEW_PATH + "&" + getReferrerListOptions();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.AUTHORITY.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

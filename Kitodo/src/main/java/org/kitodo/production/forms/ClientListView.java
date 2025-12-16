@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -26,10 +27,12 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 @Named("ClientListView")
 @ViewScoped
-public class ClientListView extends BaseForm {
+public class ClientListView extends BaseListView {
 
     private static final Logger logger = LogManager.getLogger(ClientListView.class);
 
@@ -41,6 +44,7 @@ public class ClientListView extends BaseForm {
     @PostConstruct
     public void init() {
         setLazyBeanModel(new LazyBeanModel(ServiceManager.getClientService()));
+        sortBy = SortMeta.builder().field("name").order(SortOrder.ASCENDING).build();
 
         columns = new ArrayList<>();
         try {
@@ -48,7 +52,7 @@ public class ClientListView extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client");
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client");        
     }
 
     /**
@@ -88,6 +92,15 @@ public class ClientListView extends BaseForm {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
         }
         return false;
+    }
+
+    /**
+     * The set of allowed sort fields (columns) to sanitize the URL query parameter "sortField".
+     * 
+     * @return the set of allowed sort fields (columns)
+     */
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("name");
     }
 
 }

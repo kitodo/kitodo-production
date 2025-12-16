@@ -51,7 +51,29 @@ public class UsersTabView extends BaseForm {
      */
     @Override
     public void setFirstRowFromTemplate(String firstRow) {
-        BaseForm activeListView = Map.ofEntries(
+        BaseForm activeListView = getActiveListView();
+
+        if (Objects.nonNull(activeListView)) {
+            activeListView.setFirstRowFromTemplate(firstRow);
+        }
+    }
+
+    /**
+     * Sets the sort by query parameters for the currently active list view.
+     * 
+     * @param field the sort by field
+     * @param order the sort by order
+     */
+    public void setSortByFromTemplate(String field, String order) {
+        BaseListView activeListView = getActiveListView();
+
+        if (Objects.nonNull(activeListView)) {
+            activeListView.setSortByFromTemplate(field, order);
+        }
+    }
+
+    private BaseListView getActiveListView() {
+        return Map.ofEntries(
             entry(0, userListView), 
             entry(1, roleListView), 
             entry(2, clientListView), 
@@ -59,10 +81,5 @@ public class UsersTabView extends BaseForm {
             entry(4, ldapGroupListView), 
             entry(5, ldapServerListView)
         ).get(getActiveTabIndex());
-
-        if (Objects.nonNull(activeListView)) {
-            activeListView.setFirstRowFromTemplate(firstRow);
-        }
     }
-
 }

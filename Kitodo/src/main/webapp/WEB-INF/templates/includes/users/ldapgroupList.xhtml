@@ -31,9 +31,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page"
-                listener="#{LdapGroupListView.onPageChange}"
-                oncomplete="kitodo.updateQueryParameter('firstRow', PF('ldapGroupsTable').paginator.getFirst());"/>
+        <p:ajax event="page" listener="#{LdapGroupListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{LdapGroupListView.onSortChange}"/>
         <p:column headerText="#{msgs.ldapGroup}"
                   sortBy="#{item.title}"
                   rendered="#{LdapGroupListView.showColumn('ldapgroup.ldapgroup')}">
@@ -61,6 +60,7 @@
                         styleClass="action"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapGroup')}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{LdapGroupListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <h:link outcome="ldapgroupEdit"
@@ -69,7 +69,7 @@
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}">
                     <f:param name="id" value="#{item.id}"/>
                     <f:param name="duplicate" value="true"/>
-                    <f:param name="referrerFirstRow" value="#{LdapGroupListView.firstRow}" />
+                    <f:param name="referrerListOptions" value="#{LdapGroupListView.combinedListOptions}" />
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:link>
                 <p:commandLink id="deleteLdapgroup"

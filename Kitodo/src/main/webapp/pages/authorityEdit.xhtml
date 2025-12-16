@@ -24,8 +24,8 @@
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{AuthorityEditView.load(id)}"/>    
-        <f:viewParam name="referrerFirstRow"/>
-        <f:viewAction action="#{AuthorityEditView.setReferrerFirstRowFromTemplate(referrerFirstRow)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{AuthorityEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
@@ -51,7 +51,7 @@
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="users?tabIndex=3&amp;firstRow=#{AuthorityEditView.referrerFirstRow}"
+                  outcome="users?tabIndex=3&amp;#{AuthorityEditView.referrerListOptions}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>

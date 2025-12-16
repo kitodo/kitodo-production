@@ -14,6 +14,7 @@ package org.kitodo.production.forms.user;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -27,7 +28,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.BaseListView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.security.SecuritySession;
@@ -39,7 +40,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("UserListView")
 @ViewScoped
-public class UserListView extends BaseForm {
+public class UserListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=0";
     
@@ -187,6 +188,13 @@ public class UserListView extends BaseForm {
      */
     public FilterMenu getFilterMenu() {
         return filterMenu;
+    }
+
+    /**
+     * Declare the allowed sort fields for sanitizing the query parameter "sortField".
+     */
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("surname", "location");
     }
 
     /**

@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -32,7 +33,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("RoleListView")
 @ViewScoped
-public class RoleListView extends BaseForm {
+public class RoleListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=1";
 
@@ -139,6 +140,15 @@ public class RoleListView extends BaseForm {
      */
     public void setShowRolesOfAllAvailableClients(boolean showRolesOfAllAvailableClients) {
         ((LazyRoleModel)this.lazyBeanModel).setShowRolesOfAllAvailableClients(showRolesOfAllAvailableClients);
+    }
+
+    /**
+     * The set of allowed sort fields (columns) to sanitize the URL query parameter "sortField".
+     * 
+     * @return the set of allowed sort fields (columns)
+     */
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "client.name");
     }
 
     /**

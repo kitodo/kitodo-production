@@ -32,7 +32,7 @@ import org.kitodo.production.services.ServiceManager;
 
 @Named("ClientEditView")
 @ViewScoped
-public class ClientEditView extends BaseForm {
+public class ClientEditView extends BaseEditView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "clientEdit");
 
@@ -69,7 +69,7 @@ public class ClientEditView extends BaseForm {
             for (Role role : rolesForClient) {
                 ServiceManager.getRoleService().save(role);
             }
-            return ClientListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
+            return ClientListView.VIEW_PATH + "&" + getReferrerListOptions();
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

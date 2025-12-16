@@ -29,9 +29,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page"
-                listener="#{LdapServerListView.onPageChange}"
-                oncomplete="kitodo.updateQueryParameter('firstRow', PF('ldapServersTable').paginator.getFirst());"/>
+        <p:ajax event="page" listener="#{LdapServerListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{LdapServerListView.onSortChange}"/>
         <p:column headerText="#{msgs.ldapServer}"
                   sortBy="#{item.title}">
             <h:outputText value="#{item.title}"
@@ -52,7 +51,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapServer')}">
                     <f:param name="id" value="#{item.id}" />
-                    <f:param name="referrerFirstRow" value="#{LdapServerListView.firstRow}" />
+                    <f:param name="referrerListOptions" value="#{LdapServerListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteLdapserver"

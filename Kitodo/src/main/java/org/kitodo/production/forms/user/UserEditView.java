@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.BaseEditView;
 import org.kitodo.production.forms.LoginForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -35,7 +35,7 @@ import org.kitodo.production.services.data.UserService;
 
 @Named("UserEditView")
 @ViewScoped
-public class UserEditView extends BaseForm {
+public class UserEditView extends BaseEditView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
@@ -137,7 +137,7 @@ public class UserEditView extends BaseForm {
             return this.stayOnCurrentPage;
         }
         
-        return UserListView.VIEW_PATH + "&firstRow=" + getReferrerFirstRow();
+        return UserListView.VIEW_PATH  + "&" + getReferrerListOptions();
     }
 
 }

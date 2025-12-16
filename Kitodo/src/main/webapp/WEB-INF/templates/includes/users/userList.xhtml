@@ -75,9 +75,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page"
-                listener="#{UserListView.onPageChange}"
-                oncomplete="kitodo.updateQueryParameter('firstRow', PF('usersTable').paginator.getFirst());"/>
+        <p:ajax event="page" listener="#{UserListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{UserListView.onSortChange}"/>
         <p:column headerText="#{msgs.username}"
                   sortBy="#{item.surname}"
                   rendered="#{UserListView.showColumn('user.username')}">
@@ -125,7 +124,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
-                    <f:param name="referrerFirstRow" value="#{UserListView.firstRow}" />
+                    <f:param name="referrerListOptions" value="#{UserListView.combinedListOptions}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
@@ -135,7 +134,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
-                    <f:param name="referrerFirstRow" value="#{UserListView.firstRow}" />
+                    <f:param name="referrerListOptions" value="#{UserListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 

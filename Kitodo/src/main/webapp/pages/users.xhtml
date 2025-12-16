@@ -24,6 +24,11 @@
         <!--@elvariable id="firstRow" type="java.lang.Integer"-->
         <f:viewParam name="firstRow"/>
         <f:viewAction action="#{UsersTabView.setFirstRowFromTemplate(firstRow)}" />
+        <!--@elvariable id="sortField" type="java.lang.String"-->
+        <f:viewParam name="sortField"/>
+        <!--@elvariable id="sortOrder" type="java.lang.String"-->
+        <f:viewParam name="sortOrder"/>
+        <f:viewAction action="#{UsersTabView.setSortByFromTemplate(sortField, sortOrder)}" />
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -114,7 +119,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true" onTabShow="kitodo.updateQueryParameter('tabIndex', index); kitodo.removeQueryParameter('firstRow');">
+        <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true" onTabShow="kitodo.tabView.onTabShow(index)">
             <p:ajax event="tabChange"
                     listener="#{UsersTabView.onTabChange}"
                     update="filterMenuWrapper configureColumnsForm"/>
@@ -154,6 +159,7 @@
     <ui:define name="page-scripts">
         <h:outputScript name="js/defaultScript.js" target="body"/>
         <h:outputScript name="js/queryParams.js" target="body"/>
+        <h:outputScript name="js/tabView.js" target="body"/>
     </ui:define>
 
 </ui:composition>

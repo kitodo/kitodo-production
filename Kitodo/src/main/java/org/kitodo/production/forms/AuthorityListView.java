@@ -12,6 +12,7 @@
 package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -24,7 +25,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("AuthorityListView")
 @ViewScoped
-public class AuthorityListView extends BaseForm {
+public class AuthorityListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=3";
 
@@ -44,6 +45,15 @@ public class AuthorityListView extends BaseForm {
      */
     public String newAuthority() {
         return AuthorityEditView.VIEW_PATH;
+    }
+
+    /**
+     * The set of allowed sort fields (columns) to sanitize the URL query parameter "sortField".
+     * 
+     * @return the set of allowed sort fields (columns)
+     */
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "type");
     }
 
 }
