@@ -52,6 +52,7 @@ public class AuthorityListView extends BaseListView {
      * 
      * @return the set of allowed sort fields (columns)
      */
+    @Override
     protected Set<String> getAllowedSortFields() {
         return Set.of("title", "type");
     }

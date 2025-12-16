@@ -193,6 +193,7 @@ public class UserListView extends BaseListView {
     /**
      * Declare the allowed sort fields for sanitizing the query parameter "sortField".
      */
+    @Override
     protected Set<String> getAllowedSortFields() {
         return Set.of("surname", "location");
     }
