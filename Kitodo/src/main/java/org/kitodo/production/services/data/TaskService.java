@@ -558,6 +558,8 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      *             if the task cannot be closed
      * @throws SAXException
      *             if the task cannot be closed
+     * @throws FileStructureValidationException
+     *             if the task cannot be closed
      */
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
             throws DAOException, IOException, SAXException, FileStructureValidationException {

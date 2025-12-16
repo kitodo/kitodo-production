@@ -143,16 +143,17 @@ public class MetsService {
             FileStructureValidationException {
         try (InputStream inputStream = ServiceManager.getFileService().read(uri)) {
             logger.info("Reading {}", uri.toString());
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            inputStream.transferTo(outputStream);
-            try (InputStream xmlValidationStream = new ByteArrayInputStream(outputStream.toByteArray())) {
-                XMLUtils.checkIfXmlIsWellFormed(new String(xmlValidationStream.readAllBytes(), StandardCharsets.UTF_8));
-            }
-            if (validateAgainstSchema) {
-                ServiceManager.getFileStructureValidationService().validateInternalRecord(outputStream.toString(), true, null);
-            }
-            try (InputStream metsDocumentStream = new ByteArrayInputStream(outputStream.toByteArray())) {
-                return metsXmlElementAccess.read(metsDocumentStream);
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                inputStream.transferTo(outputStream);
+                try (InputStream xmlValidationStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                    XMLUtils.checkIfXmlIsWellFormed(new String(xmlValidationStream.readAllBytes(), StandardCharsets.UTF_8));
+                }
+                if (validateAgainstSchema) {
+                    ServiceManager.getFileStructureValidationService().validateInternalRecord(outputStream.toString(), true, null);
+                }
+                try (InputStream metsDocumentStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                    return metsXmlElementAccess.read(metsDocumentStream);
+                }
             }
         }
     }

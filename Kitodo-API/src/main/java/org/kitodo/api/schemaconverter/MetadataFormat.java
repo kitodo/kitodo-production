@@ -21,6 +21,13 @@ public enum MetadataFormat {
 
     private final String schemaDefinitionFileName;
 
+    /**
+     * Constructs a MetadataFormat instance with the specified schema file name.
+     *
+     * @param schemaFileName
+     *        the name of the schema definition file associated with this metadata format,
+     *        or null if no file name is specified
+     */
     MetadataFormat(String schemaFileName) {
         this.schemaDefinitionFileName = schemaFileName;
     }
@@ -80,6 +87,11 @@ public enum MetadataFormat {
         }
     }
 
+    /**
+     * Retrieves the schema definition file name associated with this metadata format.
+     *
+     * @return the schema definition file name as a string, or null if no file name is defined
+     */
     public String getSchemaDefinitionFileName() {
         return schemaDefinitionFileName;
     }

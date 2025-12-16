@@ -21,6 +21,13 @@ public class FileStructureValidationException extends Exception {
     private final ValidationResult validationResult;
     boolean externalDataValidation = false;
 
+    /**
+     * Constructs a new FileStructureValidationException with the specified detail
+     * message and validation result.
+     *
+     * @param message the detail message describing the exception
+     * @param validationResult the result of the file structure validation process
+     */
     public FileStructureValidationException(String message, ValidationResult validationResult) {
         super(message);
         this.validationResult = validationResult;
