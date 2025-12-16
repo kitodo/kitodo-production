@@ -82,17 +82,17 @@
                 <ul>
                     <li>
                         <p:commandButton id="addFilter"
-                                         action="#{UserEditView.addFilterToUser}"
+                                         action="#{UserListView.addFilterToUser}"
                                          icon="fa fa-floppy-o fa-lg"
                                          value="#{msgs.addFilter}" update="@form"/>
                     </li>
-                    <ui:repeat value="#{UserEditView.userFilters}" var="filter">
+                    <ui:repeat value="#{UserListView.userFilters}" var="filter">
                         <li>
                             <p:commandLink value="#{filter}"
-                                           action="#{UserEditView.changeFilter(filter)}"
+                                           action="#{UserListView.changeFilter(filter)}"
                                            title="#{filter}"/>
                             <p:commandLink title="#{msgs.removeFilter}"
-                                           action="#{UserEditView.removeFilterFromUser(filter)}"
+                                           action="#{UserListView.removeFilterFromUser(filter)}"
                                            styleClass="filter-delete plain"
                                            update="@form">
                                 <i class="fa fa-trash-o fa-lg"/>
