@@ -158,7 +158,9 @@
                         <p:column><p:outputLabel value="#{msgs.id}"/></p:column>
                         <p:column colspan="3">
                             <p:inputText id="processID" value="#{SearchForm.idin}"
-                                         styleClass="extended-search-input-field"/>
+                                         styleClass="extended-search-input-field">
+                                <p:keyFilter mask="pint"/>
+                            </p:inputText>
                         </p:column>
                     </p:row>
                     <p:row>
