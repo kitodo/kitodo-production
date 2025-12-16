@@ -11,17 +11,22 @@
 
 package org.kitodo.production.forms.user;
 
+import static java.util.Map.entry;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
@@ -36,6 +41,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.metadata.pagination.PaginatorType;
 
 @Named("UserEditViewMetadataTab")
 @ViewScoped
@@ -60,6 +66,15 @@ public class UserEditViewMetadataTab extends BaseForm {
             "downItemMulti",
             "upItem",
             "upItemMulti");
+
+    private static final LinkedHashMap<String, PaginatorType> paginationTypes = new LinkedHashMap<>(Map.ofEntries(
+            entry("arabic", PaginatorType.ARABIC),
+            entry("roman", PaginatorType.ROMAN),
+            entry("alphabetic", PaginatorType.ALPHABETIC),
+            entry("uncounted", PaginatorType.UNCOUNTED),
+            entry("paginationFreetext", PaginatorType.FREETEXT),
+            entry("paginationAdvanced", PaginatorType.ADVANCED)
+    ));
 
     private SortedMap<String, String> shortcuts;
 
@@ -117,6 +132,24 @@ public class UserEditViewMetadataTab extends BaseForm {
         }
 
         return true;
+    }
+
+    /**
+     * Get map of available pagination types.
+     *
+     * @return a map where keys are instances of PaginatorType and values are their
+     *         respective descriptions as strings
+     */
+    public Map<String, PaginatorType> getPaginationTypes() {
+        return  paginationTypes.entrySet().stream()
+                .map(e -> entry(Helper.getTranslation(e.getKey()), e.getValue()))
+                .sorted(Map.Entry.comparingByKey(Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> a,
+                        LinkedHashMap::new
+                ));
     }
 
     /**
