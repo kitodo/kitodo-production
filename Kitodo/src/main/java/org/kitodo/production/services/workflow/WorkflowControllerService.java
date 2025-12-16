@@ -55,6 +55,7 @@ import org.kitodo.production.helper.validation.LtpValidationHelper;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.CommentService;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.xml.sax.SAXException;
@@ -68,6 +69,7 @@ public class WorkflowControllerService {
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
     private final TaskService taskService = ServiceManager.getTaskService();
     private final CommentService commentService = ServiceManager.getCommentService();
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     /**
      * Set Task status up.
