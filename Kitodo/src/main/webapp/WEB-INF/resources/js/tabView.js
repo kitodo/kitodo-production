@@ -30,4 +30,5 @@ kitodo.tabView.onTabShow = function(index) {
     kitodo.removeQueryParameter('firstRow'); 
     kitodo.removeQueryParameter('sortField');
     kitodo.removeQueryParameter('sortOrder');
+    kitodo.removeQueryParameter('filter');
 }

@@ -13,10 +13,14 @@ package org.kitodo.production.forms;
 
 import static java.util.Map.entry;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.data.SortEvent;
@@ -92,12 +96,20 @@ public class BaseListView extends BaseForm {
     }
 
     /**
-     * Return combined the list options (URL query parameters) that should be forwarded to edit views.
+     * Return combined the list options (URL query parameters) that can be forwarded to edit view or used to reload page.
      * 
      * @return the combined list view options (URL query parameters)
      */
     public String getCombinedListOptions() {
-        return "firstRow=" + getFirstRow() + "&sortField=" + getSortByField() + "&sortOrder=" + getSortByOrder();
+        return Map.ofEntries(
+            entry("firstRow",  String.valueOf(getFirstRow())),
+            entry("sortField", getSortByField()), 
+            entry("sortOrder", getSortByOrder()), 
+            entry("filter", getFilter())
+        ).entrySet().stream()
+            .filter(entry -> Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty())
+            .map(entry -> entry.getKey() + "=" + entry.getValue().replace("&", "%26"))
+            .collect(Collectors.joining("&"));
     }
 
 }

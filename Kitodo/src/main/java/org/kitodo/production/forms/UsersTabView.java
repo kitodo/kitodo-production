@@ -72,6 +72,23 @@ public class UsersTabView extends BaseForm {
         }
     }
 
+    /**
+     * Sets the filter from a URL query parameter.
+     * 
+     * @param encodedFilter the filter value provided as encoded URL query parameter
+     */
+    public void setFilterFromTemplate(String encodedFilter) {
+        if (getActiveTabIndex() == 0) {
+            // user list view
+            userListView.setFilterFromTemplate(encodedFilter);
+        }
+    }
+
+    /**
+     * Return the currently active list view.
+     * 
+     * @return the currently active list view
+     */
     private BaseListView getActiveListView() {
         return Map.ofEntries(
             entry(0, userListView), 

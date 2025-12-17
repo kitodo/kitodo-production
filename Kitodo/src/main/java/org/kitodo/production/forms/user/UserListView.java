@@ -14,6 +14,7 @@ package org.kitodo.production.forms.user;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
@@ -167,7 +168,7 @@ public class UserListView extends BaseListView {
     public String changeFilter(String filter) {
         filterMenu.parseFilters(filter);
         setFilter(filter);
-        return VIEW_PATH;
+        return VIEW_PATH + "&" + getCombinedListOptions();
     }
 
     /**
@@ -179,6 +180,23 @@ public class UserListView extends BaseListView {
     public void setFilter(String filter) {
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
+        String script = "kitodo.updateQueryParameter('filter', '" + filter.replace("&", "%26") +  "');";
+        PrimeFaces.current().executeScript(script);
+    }
+
+    /**
+     * Set filter based on the URL query parameter "filter", which can be any string.
+     * 
+     * @param encodedFilter the filter as URL query parameter to be set as new filter
+     */
+    public void setFilterFromTemplate(String encodedFilter) {
+        logger.error("UserListView.setFilterFromTemplate called with: " + encodedFilter);
+        if (Objects.nonNull(encodedFilter) && !encodedFilter.isEmpty()) {
+            String decodedFilter = encodedFilter.replace("%26", "&");
+            logger.error("UserListView.setFilterFromTemplate with decoded filter: " + decodedFilter);
+            this.filterMenu.parseFilters(decodedFilter);
+            this.setFilter(decodedFilter);
+        }
     }
 
     /**

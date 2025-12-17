@@ -29,6 +29,9 @@
         <!--@elvariable id="sortOrder" type="java.lang.String"-->
         <f:viewParam name="sortOrder"/>
         <f:viewAction action="#{UsersTabView.setSortByFromTemplate(sortField, sortOrder)}" />
+        <!--@elvariable id="filter" type="java.lang.String"-->
+        <f:viewParam name="filter"/>
+        <f:viewAction action="#{UsersTabView.setFilterFromTemplate(filter)}" />
     </f:metadata>
 
     <ui:define name="contentHeader">

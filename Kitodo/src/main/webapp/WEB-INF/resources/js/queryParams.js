@@ -20,7 +20,11 @@ var kitodo = kitodo || {};
  */
 kitodo.updateQueryParameter = function (key, value) {
     const url = new URL(window.location.href);
-    url.searchParams.set(key, value);
+    if (value === "") {
+        url.searchParams.delete(key);
+    } else {
+        url.searchParams.set(key, value);
+    }
     window.history.replaceState({}, "", url);
 };
 
