@@ -189,7 +189,14 @@ public class BaseForm implements Serializable {
      */
     public User getUser() {
         if (Objects.isNull(this.user)) {
-            this.user = ServiceManager.getUserService().getCurrentUser();
+            try {
+                User authenticatedUser = ServiceManager.getUserService().getCurrentUser();
+                // reload user from database, since authenticated user object might contain outdated data,
+                // e.g. outdated filters
+                this.user = ServiceManager.getUserService().getById(authenticatedUser.getId());
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, ObjectType.USER.getTranslationSingular(), getUser().getId());
+            }
         }
         return this.user;
     }
