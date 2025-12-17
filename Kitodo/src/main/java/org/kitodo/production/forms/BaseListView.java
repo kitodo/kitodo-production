@@ -13,9 +13,6 @@ package org.kitodo.production.forms;
 
 import static java.util.Map.entry;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +24,13 @@ import org.primefaces.event.data.SortEvent;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
+/**
+ * Base class for a list view.
+ * 
+ * <p>Manages list view state (e.g. sort order, current page, filter) via URL query parameters.</p>
+ * 
+ * <p>(BaseForm methods specific to list views should be moved here in the future)</p>
+ */
 public class BaseListView extends BaseForm {
     
     /**

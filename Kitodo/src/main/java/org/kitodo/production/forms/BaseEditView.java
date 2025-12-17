@@ -11,6 +11,13 @@
 
 package org.kitodo.production.forms;
 
+/**
+ * Base class for an edit view.
+ * 
+ * <p>Manages the view state, e.g. forwarded list view options via URL query parameters.</p>
+ * 
+ * <p>(BaseForm methods specific to edit views should be moved here in the future)</p>
+ */
 public class BaseEditView extends BaseForm {
 
     protected String referrerListOptions;
