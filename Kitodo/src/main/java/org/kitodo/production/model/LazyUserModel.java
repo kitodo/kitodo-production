@@ -44,7 +44,7 @@ public class LazyUserModel extends LazyBeanModel {
 
     public LazyUserModel(UserService service) {
         super(service);
-        this.userService = service;   // ✔ store real type
+        this.userService = service;
     }
 
     @Override
