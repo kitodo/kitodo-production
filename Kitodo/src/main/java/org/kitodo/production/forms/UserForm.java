@@ -833,17 +833,17 @@ public class UserForm extends BaseForm {
 
     public String getRoleTitles(User user) {
         List<String> roles = getLazyUserModel().getRolesCache().get(user.getId());
-        return (roles == null || roles.isEmpty()) ? "" : String.join(", ", roles);
+        return (Objects.isNull(roles) || roles.isEmpty()) ? "" : String.join(", ", roles);
     }
 
     public String getProjectTitles(User user) {
         List<String> projects = getLazyUserModel().getProjectsCache().get(user.getId());
-        return (projects == null || projects.isEmpty()) ? "" : String.join(", ", projects);
+        return (Objects.isNull(projects) || projects.isEmpty()) ? "" : String.join(", ", projects);
     }
 
     public String getClientNames(User user) {
         List<String> clients = getLazyUserModel().getClientsCache().get(user.getId());
-        return (clients == null || clients.isEmpty()) ? "" : String.join(", ", clients);
+        return (Objects.isNull(clients)  || clients.isEmpty()) ? "" : String.join(", ", clients);
     }
 
     public boolean hasTasksInProgress(User user) {
