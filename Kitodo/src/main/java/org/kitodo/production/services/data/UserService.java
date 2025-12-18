@@ -656,7 +656,8 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
             return Collections.emptyMap();
         }
 
-        String hql = "SELECT DISTINCT u.id "
+        // We only need the user IDs; returning a constant boolean simplifies post-processing.
+        String hql = "SELECT DISTINCT u.id, true "
                 + "FROM Task t "
                 + "JOIN t.processingUser u "
                 + "WHERE u.id IN (:ids) "
@@ -667,17 +668,11 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         params.put("ids", userIds);
         params.put("status", TaskStatus.INWORK);
 
-        List<Object> rows = dao.getProjectionByQuery(hql, params)
-                .stream()
-                .map(r -> (Object) r[0])
-                .collect(Collectors.toList());
+        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
 
         Map<Integer, Boolean> result = new HashMap<>();
-
-        // mark users who have tasks
-        for (Object idObj : rows) {
-            Integer userId = (Integer) idObj;
-            result.put(userId, true);
+        for (Object[] row : rows) {
+            result.put((Integer) row[0], (Boolean) row[1]);
         }
 
         return result;

@@ -11,15 +11,15 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -31,9 +31,12 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -252,5 +255,110 @@ public class UserServiceIT {
     public void returnCorrectUserIndependentOfLoginOrLdapLoginByLdapLogin() {
         User user = userService.getByLdapLoginOrLogin("doraLDP");
         assertEquals("Dora, Anna", user.getFullName(), "Returned user was wrong");
+    }
+
+    @Test
+    public void shouldLoadSameRolesIndividuallyAndInBulk() throws DAOException {
+        List<User> users = ServiceManager.getUserService().getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<String>> bulkRoles =
+                ServiceManager.getUserService().loadRolesForUsers(userIds);
+        for (User user : users) {
+            List<String> expectedRoles = user.getRoles().stream()
+                    .map(Role::getTitle)
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> actualRoles = bulkRoles
+                    .getOrDefault(user.getId(), Collections.emptyList())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            assertEquals(
+                    expectedRoles,
+                    actualRoles,
+                    "Roles mismatch for user " + user.getId()
+            );
+        }
+    }
+
+    @Test
+    public void shouldLoadSameClientsIndividuallyAndInBulk() throws Exception {
+        List<User> users = userService.getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<String>> bulkClients = userService.loadClientsForUsers(userIds);
+        for (User user : users) {
+            List<String> expected = user.getClients().stream()
+                    .map(Client::getName)
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> actual = bulkClients
+                    .getOrDefault(user.getId(), Collections.emptyList())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            assertEquals(
+                    expected,
+                    actual,
+                    "Clients mismatch for user " + user.getId()
+            );
+        }
+    }
+
+    @Test
+    public void shouldLoadSameProjectsIndividuallyAndInBulk() throws Exception {
+        List<User> users = userService.getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<String>> bulkProjects =
+                userService.loadProjectsForUsers(userIds);
+        for (User user : users) {
+            List<String> expectedProjects = user.getProjects().stream()
+                    .map(Project::getTitle)
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> actualProjects = bulkProjects
+                    .getOrDefault(user.getId(), Collections.emptyList())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            assertEquals(
+                    expectedProjects,
+                    actualProjects,
+                    "Projects mismatch for user " + user.getId()
+            );
+        }
+    }
+
+    @Test
+    public void shouldLoadSameTasksInProgressIndividuallyAndInBulk() throws Exception {
+        List<User> users = userService.getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, Boolean> bulkTasksInProgress =
+                userService.loadTasksInProgressForUsers(userIds);
+        for (User user : users) {
+            boolean expected = user.getProcessingTasks().stream()
+                    .anyMatch(task ->
+                            task.getProcessingStatus() == TaskStatus.INWORK
+                                    && task.getProcess() != null
+                    );
+            boolean actual = bulkTasksInProgress
+                    .getOrDefault(user.getId(), false);
+
+            assertEquals(
+                    expected,
+                    actual,
+                    "Tasks-in-progress mismatch for user " + user.getId()
+            );
+        }
     }
 }
