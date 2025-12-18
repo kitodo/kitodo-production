@@ -91,18 +91,18 @@
         </p:column>
         <p:column headerText="#{msgs.roles}"
                   rendered="#{UserForm.showColumn('user.roles')}">
-            <h:outputText value="#{UserForm.getRoleTitles(item.roles)}"
-                          title="#{UserForm.getRoleTitles(item.roles)}"/>
+            <h:outputText value="#{UserForm.getRoleTitles(item)}"
+                          title="#{UserForm.getRoleTitles(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.clients}"
                   rendered="#{UserForm.showColumn('user.clients')}">
-            <h:outputText value="#{UserForm.getClientNames(item.clients)}"
-                          title="#{UserForm.getClientNames(item.clients)}"/>
+            <h:outputText value="#{UserForm.getClientNames(item)}"
+                          title="#{UserForm.getClientNames(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.projects}"
                   rendered="#{UserForm.showColumn('user.projects')}">
-            <h:outputText value="#{UserForm.getProjectTitles(item.projects)}"
-                          title="#{UserForm.getProjectTitles(item.projects)}"/>
+            <h:outputText value="#{UserForm.getProjectTitles(item)}"
+                          title="#{UserForm.getProjectTitles(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.loggedIn}"
                   rendered="#{UserForm.showColumn('user.loggedIn')}"
@@ -138,14 +138,14 @@
 
                 <h:panelGroup styleClass="action"
                               rendered="#{SecurityAccessController.hasAuthorityToUnassignTasks()}"
-                              title="#{empty UserForm.getTasksInProgress(item) ? msgs.userWithoutTasks : msgs.unassignTasks}">
+                              title="#{UserForm.hasTasksInProgress(item) ? msgs.unassignTasks : msgs.userWithoutTasks}">
                     <p:commandLink id="unassignTasks"
                                    action="#{UserForm.resetTasksToOpen(item)}"
-                                   styleClass="#{empty UserForm.getTasksInProgress(item) ? 'ui-state-disabled' : ''}"
-                                   disabled="#{empty UserForm.getTasksInProgress(item)}"
+                                   styleClass="#{UserForm.hasTasksInProgress(item) ? '' : 'ui-state-disabled'}"
+                                   disabled="#{not UserForm.hasTasksInProgress(item)}"
                                    update="@this">
                         <h:outputText><i class="fa fa-user-times"/></h:outputText>
-                        <p:confirm message=" #{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
+                        <p:confirm message="#{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
                     </p:commandLink>
                 </h:panelGroup>
 
