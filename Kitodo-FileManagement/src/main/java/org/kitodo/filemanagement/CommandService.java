@@ -39,7 +39,7 @@ class CommandService {
         CommandResult commandResult = command.runCommand(script);
         List<String> commandResultMessages = commandResult.getMessages();
         if (!commandResultMessages.isEmpty() && commandResultMessages.get(0).contains("IOException")) {
-            throw new IOException(commandResultMessages.get(1));
+            throw new IOException(commandResultMessages.get(0));
         }
         return commandResult;
     }
