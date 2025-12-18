@@ -37,10 +37,10 @@ public class LazyUserModel extends LazyBeanModel {
 
     private final UserService userService;
 
-    private final Map<Integer, List<String>> rolesCache = new HashMap<>();
-    private final Map<Integer, List<String>> clientsCache = new HashMap<>();
-    private final Map<Integer, List<String>> projectsCache = new HashMap<>();
-    private final Map<Integer, Boolean> tasksCache = new HashMap<>();
+    private Map<Integer, List<String>> rolesCache = new HashMap<>();
+    private Map<Integer, List<String>> clientsCache = new HashMap<>();
+    private Map<Integer, List<String>> projectsCache = new HashMap<>();
+    private Map<Integer, Boolean> tasksCache = new HashMap<>();
 
     public LazyUserModel(UserService service) {
         super(service);
@@ -70,18 +70,14 @@ public class LazyUserModel extends LazyBeanModel {
             }
             setRowCount(toIntExact(searchService.countResults(filterMap)));
             entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
-            rolesCache.clear();
-            clientsCache.clear();
-            projectsCache.clear();
-            tasksCache.clear();
             List<Integer> ids = new ArrayList<>(entities.size());
             for (Object o : entities) {
                 ids.add(((User) o).getId());
             }
-            rolesCache.putAll(userService.loadRolesForUsers(ids));
-            clientsCache.putAll(userService.loadClientsForUsers(ids));
-            projectsCache.putAll(userService.loadProjectsForUsers(ids));
-            tasksCache.putAll(userService.loadTasksInProgressForUsers(ids));
+            rolesCache = userService.loadRolesForUsers(ids);
+            clientsCache = userService.loadClientsForUsers(ids);
+            projectsCache = userService.loadProjectsForUsers(ids);
+            tasksCache = userService.loadTasksInProgressForUsers(ids);
             logger.info("{} entities loaded!", entities.size());
             return stopwatch.stop(entities);
         } catch (DAOException | SQLGrammarException e) {
