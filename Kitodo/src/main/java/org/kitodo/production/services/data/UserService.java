@@ -671,10 +671,12 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         List<Object[]> rows = dao.getProjectionByQuery(hql, params);
 
         Map<Integer, Boolean> result = new HashMap<>();
-        for (Object[] row : rows) {
-            result.put((Integer) row[0], (Boolean) row[1]);
+        for (Integer userId : userIds) {
+            result.put(userId, false);
         }
-
+        for (Object[] row : rows) {
+            result.put((Integer) row[0], true);
+        }
         return result;
     }
 }
