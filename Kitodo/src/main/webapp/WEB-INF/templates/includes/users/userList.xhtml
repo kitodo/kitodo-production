@@ -138,13 +138,13 @@
 
                 <h:panelGroup styleClass="action"
                               rendered="#{SecurityAccessController.hasAuthorityToUnassignTasks()}"
-                              title="#{empty UserForm.getTasksInProgress(item) ? msgs.userWithoutTasks : msgs.unassignTasks}">
+                              title="#{UserForm.hasTasksInProgress(item) ? msgs.unassignTasks : msgs.userWithoutTasks}">
                     <p:commandLink id="unassignTasks"
                                    action="#{UserForm.resetTasksToOpen(item)}"
-                                   styleClass="#{empty UserForm.getTasksInProgress(item) ? 'ui-state-disabled' : ''}"
-                                   disabled="#{empty UserForm.getTasksInProgress(item)}"
+                                   styleClass="#{UserForm.hasTasksInProgress(item) ? '' : 'ui-state-disabled'}"
+                                   disabled="#{not UserForm.hasTasksInProgress(item)}"
                                    update="@this">
-                        <h:outputText><i class="fa fa-user-times"/></h:outputText>
+                    <h:outputText><i class="fa fa-user-times"/></h:outputText>
                         <p:confirm message=" #{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
                     </p:commandLink>
                 </h:panelGroup>

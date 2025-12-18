@@ -304,20 +304,15 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      */
     public void replaceProcessingUser(Task task, User user) {
         User currentProcessingUser = task.getProcessingUser();
-
         if (Objects.isNull(user) && Objects.isNull(currentProcessingUser)) {
             logger.info("do nothing - there is neither a new nor an old user");
         } else if (Objects.isNull(user)) {
-            currentProcessingUser.getProcessingTasks().remove(task);
             task.setProcessingUser(null);
         } else if (Objects.isNull(currentProcessingUser)) {
-            user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         } else if (Objects.equals(currentProcessingUser.getId(), user.getId())) {
             logger.info("do nothing - both are the same");
         } else {
-            currentProcessingUser.getProcessingTasks().remove(task);
-            user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         }
     }
@@ -803,6 +798,41 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
                 .filter(t -> Objects.nonNull(t.getProcessingUser())
                         && authenticatedUserId != t.getProcessingUser().getId())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieve and return all tasks assigned to the given user
+     * that are currently in progress and linked to a process.
+     *
+     * @param user the processing user
+     * @return list of tasks in progress for the given user
+     */
+    public List<Task> getTasksInProgress(User user) {
+        String hql = "FROM Task t WHERE t.processingUser = :user "
+                + "AND t.processingStatus = :status "
+                + "AND t.process IS NOT NULL";
+        Map<String, Object> params = Map.of(
+                "user", user,
+                "status", TaskStatus.INWORK
+        );
+        return dao.getByQuery(hql, params);
+    }
+
+    /**
+     * Returns whether the user has at least one task in progress.
+     * @param user the processing user
+     * @return true if the user has tasks in progress, otherwise false
+     */
+    public boolean hasTasksInProgress(User user) throws DAOException {
+        String hql = "FROM Task t "
+                + "WHERE t.processingUser = :user "
+                + "AND t.processingStatus = :status "
+                + "AND t.process IS NOT NULL";
+
+        return dao.has(hql, Map.of(
+                "user", user,
+                "status", TaskStatus.INWORK
+        ));
     }
 
     /**

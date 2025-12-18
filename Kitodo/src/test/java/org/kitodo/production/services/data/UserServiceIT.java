@@ -229,7 +229,7 @@ public class UserServiceIT {
     @Test
     public void shouldGetUserTasksInProgress() throws DAOException {
         User user = userService.getByLdapLoginOrLogin("nowakLDP");
-        List<Task> tasks = userService.getTasksInProgress(user);
+        List<Task> tasks = ServiceManager.getTaskService().getTasksInProgress(user);
         assertEquals(1, tasks.size(), "Number of tasks in process is incorrect!");
         assertEquals("Progress", tasks.get(0).getTitle(), "Title of task is incorrect!");
     }
