@@ -13,12 +13,12 @@ package org.kitodo.production.model;
 
 import static java.lang.Math.toIntExact;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.SQLGrammarException;
@@ -37,10 +37,10 @@ public class LazyUserModel extends LazyBeanModel {
 
     private final UserService userService;
 
-    private Map<Integer, List<String>> rolesCache = Map.of();
-    private Map<Integer, List<String>> clientsCache = Map.of();
-    private Map<Integer, List<String>> projectsCache = Map.of();
-    private Map<Integer, Boolean> tasksCache = Map.of();
+    private Map<Integer, List<String>> rolesCache = new HashMap<>();
+    private Map<Integer, List<String>> clientsCache = new HashMap<>();
+    private Map<Integer, List<String>> projectsCache = new HashMap<>();
+    private Map<Integer, Boolean> tasksCache = new HashMap<>();
 
     public LazyUserModel(UserService service) {
         super(service);
@@ -62,14 +62,10 @@ public class LazyUserModel extends LazyBeanModel {
             setRowCount(toIntExact(searchService.countResults(filterMap)));
             entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
             logger.info("{} entities loaded!", entities.size());
-            rolesCache = Map.of();
-            clientsCache = Map.of();
-            projectsCache = Map.of();
-            tasksCache = Map.of();
-            List<Integer> ids = (List<Integer>) entities.stream()
-                    .map(u -> ((User)u).getId())
-                    .collect(Collectors.toList());
-            // Load roles for all users in one query
+            List<Integer> ids = new ArrayList<>(entities.size());
+            for (Object o : entities) {
+                ids.add(((User) o).getId());
+            }
             rolesCache = userService.loadRolesForUsers(ids);
             clientsCache = userService.loadClientsForUsers(ids);
             projectsCache = userService.loadProjectsForUsers(ids);
