@@ -143,12 +143,12 @@
                 <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
             </p:commandLink>
             <h:panelGroup styleClass="action"
-                          title="#{process.hasChildren() ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                          title="#{ProcessForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
                 <p:commandLink id="deleteProcess"
                                action="#{ProcessListView.delete(process)}"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                               disabled="#{process.hasChildren()}"
+                               disabled="#{ProcessForm.hasChildren(process)}"
                                process="@this"
                                update="processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
