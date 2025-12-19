@@ -13,10 +13,12 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -879,6 +881,40 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             return templateTasks.get(0).getId();
         }
         return -1;
+    }
+
+    /**
+     * Loads titles of open and in-work tasks for the given processes.
+     *
+     * @param processIds IDs of processes to load task titles for
+     * @return task titles grouped by process ID and task status
+     */
+    public Map<Integer, Map<TaskStatus, List<String>>> loadTaskTitlesForProcesses(List<Integer> processIds) throws DAOException {
+        Map<Integer, Map<TaskStatus, List<String>>> result = new HashMap<>();
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
+            return result;
+        }
+        String hql = "SELECT t.process.id, t.processingStatus, t.title "
+                        + "FROM Task t "
+                        + "WHERE t.process.id IN (:ids) "
+                        + "AND t.processingStatus IN (:open, :inwork) "
+                        + "ORDER BY t.process.id, t.processingStatus, t.ordering";
+
+        List<Object[]> rows = dao.getProjectionByQuery(hql, Map.of(
+                "ids", processIds,
+                "open", TaskStatus.OPEN,
+                "inwork", TaskStatus.INWORK
+        ));
+        for (Object[] row : rows) {
+            Integer processId = (Integer) row[0];
+            TaskStatus status = (TaskStatus) row[1];
+            String title = (String) row[2];
+            result
+                    .computeIfAbsent(processId, id -> new EnumMap<>(TaskStatus.class))
+                    .computeIfAbsent(status, s -> new ArrayList<>())
+                    .add(title);
+        }
+        return result;
     }
 
     /**

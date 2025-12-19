@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -159,7 +160,7 @@ public class TaskDAO extends BaseDAO<Task> {
         if (Objects.isNull(process.getId())) {
             throw new DAOException("can not count task status for process that has id of null");
         }
-        
+
         // initialize counts
         Map<TaskStatus, Integer> counts = new HashMap<>();
         counts.put(TaskStatus.OPEN, 0);
@@ -197,22 +198,24 @@ public class TaskDAO extends BaseDAO<Task> {
         }
     }
 
+    /**
+     * Loads task status counts for the given processes including all their descendant processes.
+     *
+     * <p>The result maps each root process ID to a count per TaskStatus.</p>
+     *
+     * @param processIds the IDs of the root processes to query
+     * @return a map of process ID to task status counts
+     */
     @SuppressWarnings("unchecked")
-    public Map<Integer, EnumMap<TaskStatus, Integer>>
-    loadTaskStatusCountsForProcesses(List<Integer> processIds) throws DAOException {
-
+    public Map<Integer, EnumMap<TaskStatus, Integer>> loadTaskStatusCountsForProcesses(
+            List<Integer> processIds) throws DAOException {
         Map<Integer, EnumMap<TaskStatus, Integer>> result = new HashMap<>();
-
         if (processIds == null || processIds.isEmpty()) {
             return result;
         }
-
-        Stopwatch stopwatch = new Stopwatch(this,
-                "loadTaskStatusCountsForProcesses",
+        Stopwatch stopwatch = new Stopwatch(this,"loadTaskStatusCountsForProcesses",
                 "processIds", processIds.toString());
-
         try (Session session = HibernateUtil.getSession()) {
-
             NativeQuery<Object[]> query = session.createNativeQuery(
                     "WITH RECURSIVE process_tree (root_id, id) AS ("
                             + "  SELECT p.id, p.id FROM process p WHERE p.id IN (:ids) "
@@ -236,35 +239,28 @@ public class TaskDAO extends BaseDAO<Task> {
             query.addScalar("cnt", StandardBasicTypes.INTEGER);
 
             List<Object[]> rows = query.list();
-
             for (Object[] row : rows) {
                 Integer rootId = (Integer) row[0];
                 Integer statusValue = (Integer) row[1];
                 Integer count = (Integer) row[2];
 
                 EnumMap<TaskStatus, Integer> map =
-                        result.computeIfAbsent(rootId, id -> {
-                            EnumMap<TaskStatus, Integer> m =
-                                    new EnumMap<>(TaskStatus.class);
-                            for (TaskStatus s : TaskStatus.values()) {
-                                m.put(s, 0);
-                            }
-                            return m;
-                        });
-
+                        result.computeIfAbsent(rootId, id -> createEmptyStatusMap());
                 if (statusValue != null) {
-                    TaskStatus status =
-                            TaskStatus.getStatusFromValue(statusValue);
-                    map.put(status, count);
+                    map.put(TaskStatus.getStatusFromValue(statusValue), count);
                 }
             }
-
             return stopwatch.stop(result);
-
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
     }
 
-
+    private static EnumMap<TaskStatus, Integer> createEmptyStatusMap() {
+        EnumMap<TaskStatus, Integer> map = new EnumMap<>(TaskStatus.class);
+        for (TaskStatus s : TaskStatus.values()) {
+            map.put(s, 0);
+        }
+        return map;
+    }
 }
