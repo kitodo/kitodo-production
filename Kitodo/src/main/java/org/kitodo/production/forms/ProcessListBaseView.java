@@ -15,12 +15,15 @@ import com.itextpdf.text.DocumentException;
 
 import java.io.IOException;
 import java.net.URI;
+
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +32,10 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FileStructureValidationException;
+import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
@@ -164,6 +169,51 @@ public class ProcessListBaseView extends ValidatableForm {
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
         stopwatch.stop();
+    }
+
+    private LazyProcessModel getLazyProcessModel() {
+        return (LazyProcessModel) this.lazyBeanModel;
+    }
+
+    public Map<TaskStatus, Integer> getCachedTaskStatusCounts(Process process) {
+        LazyProcessModel model = getLazyProcessModel();
+        EnumMap<TaskStatus, Integer> cached = model.getTaskStatusCounts(process);
+
+        if (cached != null) {
+            return cached;
+        }
+        // fallback (should rarely happen)
+        try {
+            return new TaskDAO().countTaskStatusForProcessAndItsAncestors(process);
+        } catch (DAOException e) {
+            logger.warn("Fallback task status counting failed", e);
+            return Map.of();
+        }
+    }
+
+    public double progress(Process process, TaskStatus status) {
+        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
+
+        int total = counts.values().stream().mapToInt(Integer::intValue).sum();
+
+        // keep legacy semantics
+        if (total == 0) {
+            return status == TaskStatus.LOCKED ? 100.0 : 0.0;
+        }
+
+        return 100.0 * counts.getOrDefault(status, 0) / total;
+    }
+
+    public double progressClosed(Process process) {
+        return progress(process, TaskStatus.DONE);
+    }
+
+    public double progressInProcessing(Process process) {
+        return progress(process, TaskStatus.INWORK);
+    }
+
+    public double progressOpen(Process process) {
+        return progress(process, TaskStatus.OPEN);
     }
 
     /**

@@ -13,6 +13,8 @@ package org.kitodo.production.model;
 
 import static java.lang.Math.toIntExact;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ProcessService;
@@ -49,6 +54,9 @@ public class LazyProcessModel extends LazyBeanModel {
 
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
+
+    private Map<Integer, EnumMap<TaskStatus, Integer>> taskStatusCache = new HashMap<>();
+
 
     /**
      * Creates a lazyBeanModel instance that allows fetching data from the data
@@ -142,6 +150,13 @@ public class LazyProcessModel extends LazyBeanModel {
                 this.showInactiveProjects)));
             entities = ((ProcessService) searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
                 this.showClosedProcesses, this.showInactiveProjects);
+            List<Integer> ids = new ArrayList<>();
+            for (Object o : entities) {
+                Process process = (Process) o;
+                ids.add(process.getId());
+            }
+            taskStatusCache =
+                    new TaskDAO().loadTaskStatusCountsForProcesses(ids);
             logger.trace("{} entities loaded!", entities.size());
             return stopwatch.stop(entities);
         } catch (DAOException e) {
@@ -166,4 +181,13 @@ public class LazyProcessModel extends LazyBeanModel {
             return stopwatch.stop(null);
         }
     }
+
+    public Map<Integer, EnumMap<TaskStatus, Integer>> getTaskStatusCache() {
+        return taskStatusCache;
+    }
+
+    public EnumMap<TaskStatus, Integer> getTaskStatusCounts(Process process) {
+        return taskStatusCache.get(process.getId());
+    }
+
 }
