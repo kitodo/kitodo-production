@@ -107,6 +107,8 @@ public class ProcessForm extends TemplateBaseForm {
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
     private String settingImportConfigurationResultMessage;
     private boolean importConfigurationsSetSuccessfully = false;
+    private boolean initialized = false;
+
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -1067,20 +1069,6 @@ public class ProcessForm extends TemplateBaseForm {
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
         stopwatch.stop();
-    }
-
-    /**
-     * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
-     * "INWORK".
-     *
-     * @param process
-     *          process for which current task titles are returned
-     * @return String containing titles of current tasks of given process
-     */
-    public String getCurrentTaskTitles(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTaskTitles");
-        return stopwatch.stop(ServiceManager.getProcessService().createProgressTooltip(process));
-
     }
 
     /**
