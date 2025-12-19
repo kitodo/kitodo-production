@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,4 +196,75 @@ public class TaskDAO extends BaseDAO<Task> {
             throw new DAOException(e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public Map<Integer, EnumMap<TaskStatus, Integer>>
+    loadTaskStatusCountsForProcesses(List<Integer> processIds) throws DAOException {
+
+        Map<Integer, EnumMap<TaskStatus, Integer>> result = new HashMap<>();
+
+        if (processIds == null || processIds.isEmpty()) {
+            return result;
+        }
+
+        Stopwatch stopwatch = new Stopwatch(this,
+                "loadTaskStatusCountsForProcesses",
+                "processIds", processIds.toString());
+
+        try (Session session = HibernateUtil.getSession()) {
+
+            NativeQuery<Object[]> query = session.createNativeQuery(
+                    "WITH RECURSIVE process_tree (root_id, id) AS ("
+                            + "  SELECT p.id, p.id FROM process p WHERE p.id IN (:ids) "
+                            + "  UNION ALL "
+                            + "  SELECT pt.root_id, c.id "
+                            + "  FROM process c "
+                            + "  JOIN process_tree pt ON c.parent_id = pt.id"
+                            + ") "
+                            + "SELECT "
+                            + "  pt.root_id AS root_id, "
+                            + "  t.processingStatus AS processingStatus, "
+                            + "  COUNT(t.id) AS cnt "
+                            + "FROM process_tree pt "
+                            + "LEFT JOIN task t ON t.process_id = pt.id "
+                            + "GROUP BY pt.root_id, t.processingStatus",
+                    Object[].class
+            );
+            query.setParameter("ids", processIds);
+            query.addScalar("root_id", StandardBasicTypes.INTEGER);
+            query.addScalar("processingStatus", StandardBasicTypes.INTEGER);
+            query.addScalar("cnt", StandardBasicTypes.INTEGER);
+
+            List<Object[]> rows = query.list();
+
+            for (Object[] row : rows) {
+                Integer rootId = (Integer) row[0];
+                Integer statusValue = (Integer) row[1];
+                Integer count = (Integer) row[2];
+
+                EnumMap<TaskStatus, Integer> map =
+                        result.computeIfAbsent(rootId, id -> {
+                            EnumMap<TaskStatus, Integer> m =
+                                    new EnumMap<>(TaskStatus.class);
+                            for (TaskStatus s : TaskStatus.values()) {
+                                m.put(s, 0);
+                            }
+                            return m;
+                        });
+
+                if (statusValue != null) {
+                    TaskStatus status =
+                            TaskStatus.getStatusFromValue(statusValue);
+                    map.put(status, count);
+                }
+            }
+
+            return stopwatch.stop(result);
+
+        } catch (PersistenceException e) {
+            throw new DAOException(e);
+        }
+    }
+
+
 }
