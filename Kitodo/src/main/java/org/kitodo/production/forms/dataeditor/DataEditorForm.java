@@ -1420,18 +1420,23 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public boolean canLinkedProcessBeOpenedInMetadataEditor() {
         Optional<LogicalDivision> divisionOptional = structurePanel.getSelectedStructure();
-        if (divisionOptional.isPresent()) {
-            try {
-                Integer processId = ServiceManager.getDataEditorService().getLinkedProcessId(divisionOptional.get());
-                if (Objects.nonNull(processId)) {
-                    Process linkedProcess = ServiceManager.getProcessService().getById(processId);
-                    User blockingUser = MetadataLock.getLockUser(linkedProcess.getId());
-                    return (ServiceManager.getUserService().getCurrentUser().getProjects().contains(linkedProcess.getProject())
-                            && (Objects.isNull(blockingUser) || blockingUser.equals(this.user)));
-                }
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        try {
+            Integer processId = null;
+            if (divisionOptional.isPresent()) {
+                // for linked child processes: retrieve ID of linked process from corresponding logical division
+                processId = ServiceManager.getDataEditorService().getLinkedProcessId(divisionOptional.get());
+            } else if (Objects.nonNull(linkedProcessId)) {
+                // for linked parent processes: use previously retrieved ID of linked process
+                processId = linkedProcessId;
             }
+            if (Objects.nonNull(processId)) {
+                Process linkedProcess = ServiceManager.getProcessService().getById(processId);
+                User blockingUser = MetadataLock.getLockUser(linkedProcess.getId());
+                return (ServiceManager.getUserService().getCurrentUser().getProjects().contains(linkedProcess.getProject())
+                        && (Objects.isNull(blockingUser) || blockingUser.equals(this.user)));
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return false;
     }
