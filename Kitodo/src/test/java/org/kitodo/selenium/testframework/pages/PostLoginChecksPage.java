@@ -20,7 +20,7 @@ public class PostLoginChecksPage extends Page<PostLoginChecksPage> {
     private WebElement logoutButton;
 
     public PostLoginChecksPage() {
-        super("pages/checks.jsf");
+        super("pages/checks");
     }
 
     @Override

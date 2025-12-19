@@ -1064,9 +1064,9 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
         TaskManager.addTask(new ImportEadProcessesThread(this, user, client));
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
-            return "system.jsf?tabIndex=0&faces-redirect=true";
+            return "system?tabIndex=0&faces-redirect=true";
         } else {
-            return "desktop.jsf?faces-redirect=true";
+            return "desktop?faces-redirect=true";
         }
     }
 

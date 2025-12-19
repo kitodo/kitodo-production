@@ -111,7 +111,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement metadataTable;
 
     public ProcessFromTemplatePage() {
-        super("pages/processFromTemplate.jsf");
+        super("pages/processFromTemplate");
     }
 
     @Override

@@ -114,7 +114,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      * Initialize edit page for LTP validation configurations.
      */
     public LtpValidationConfigurationEditPage() {
-        super("pages/ltpValidationConfigurationEdit.jsf");
+        super("pages/ltpValidationConfigurationEdit");
     }
 
     /**

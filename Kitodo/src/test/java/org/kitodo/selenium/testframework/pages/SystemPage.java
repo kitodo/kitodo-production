@@ -78,7 +78,7 @@ public class SystemPage extends Page<SystemPage> {
 
 
     public SystemPage() {
-        super("pages/system.jsf");
+        super("pages/system");
     }
 
     /**
