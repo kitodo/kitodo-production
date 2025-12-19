@@ -1366,6 +1366,11 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         return taskLayoutLoaded;
     }
 
+    /**
+     * Check whether access conditions to metadata of given process are fulfilled.
+     * @param process process to check access conditions for
+     * @param linkedProcess flag indicating whether the process is a linked process or not
+     */
     private void checkProcessMetadataAccessConditions(Process process, boolean linkedProcess) {
         linkedProcessId = null;
         errorMessage = null;
@@ -1389,7 +1394,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      * - the currently selected structure tree node represents a linked process
      * - the linked process belongs to a project assigned to the current user
      * - the linked process is currently opened in the metadata editor by another user
-     * Sets properties containing error message and error title used in corresponding popup dialog accordingly.
+     * Sets properties containing error message and error title used in the corresponding popup dialog accordingly.
      */
     public void checkConditionsForOpeningLinkedProcessInMetadataEditor() {
         linkedProcessClicked = true;
@@ -1405,6 +1410,30 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    /**
+     * Checks and returns whether
+     * - the currently selected structure tree node represents a linked process
+     * - the linked process belongs to a project assigned to the current user
+     * - the linked process is currently opened in the metadata editor by another user
+     */
+    public boolean canLinkedProcessBeOpenedInMetadataEditor() {
+        Optional<LogicalDivision> divisionOptional = structurePanel.getSelectedStructure();
+        if (divisionOptional.isPresent()) {
+            try {
+                Integer processId = ServiceManager.getDataEditorService().getLinkedProcessId(divisionOptional.get());
+                if (Objects.nonNull(processId)) {
+                    Process linkedProcess = ServiceManager.getProcessService().getById(processId);
+                    User blockingUser = MetadataLock.getLockUser(linkedProcess.getId());
+                    return (ServiceManager.getUserService().getCurrentUser().getProjects().contains(linkedProcess.getProject())
+                            && (Objects.isNull(blockingUser) || blockingUser.equals(this.user)));
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+        return false;
     }
 
     /**

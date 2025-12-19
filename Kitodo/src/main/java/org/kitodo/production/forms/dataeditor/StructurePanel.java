@@ -323,7 +323,7 @@ public class StructurePanel implements Serializable {
     public TreeNode<Object> getSelectedLogicalNodeIfSingle() {
         List<TreeNode<Object>> nodes = getSelectedLogicalNodes();
         if (Objects.nonNull(nodes) && nodes.size() == 1) {
-            return nodes.get(0);
+            return nodes.getFirst();
         }
         return null;
     }
@@ -1173,10 +1173,10 @@ public class StructurePanel implements Serializable {
             StructureTreeOperations.selectTreeNodes(selectedTreeNodes);
 
             // workaround to store ID of linked parent process
-            List<TreeNode<Object>> currentlySelectedLogicalNodes = getSelectedLogicalNodes();
-            if (selectedTreeNodes.isEmpty() && !currentlySelectedLogicalNodes.isEmpty()
-                    && currentlySelectedLogicalNodes.getFirst().getData() instanceof StructureTreeNode) {
-                setLinkedParentProcessId(currentlySelectedLogicalNodes);
+            TreeNode<Object> currentlySelectedLogicalNode = getSelectedLogicalNodeIfSingle();
+            if (selectedTreeNodes.isEmpty() && Objects.nonNull(currentlySelectedLogicalNode)
+                    && currentlySelectedLogicalNode.getData() instanceof StructureTreeNode) {
+                setLinkedParentProcessId(currentlySelectedLogicalNode);
             }
 
             // remember new selection
@@ -1185,13 +1185,49 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void setLinkedParentProcessId(List<TreeNode<Object>> currentlySelectedLogicalNodes) {
-        String nodeLabel = ((StructureTreeNode) currentlySelectedLogicalNodes.getFirst().getData()).getLabel();
+    /**
+     * This method determines the ID of a linked parent process via it's label in the logical structure tree.
+     * Since the workpiece of a process does not contain a reference to potential parent processes (this relation
+     * is only stored in the database and "simulated" in the structure tree visible in the metadata editor), the
+     *
+     * @param logicalNode
+     *          TreeNode representing the linked parent process
+     */
+    private void setLinkedParentProcessId(TreeNode<Object> logicalNode) {
+        String nodeLabel = ((StructureTreeNode) logicalNode.getData()).getLabel();
         if (nodeLabel.contains("[") && nodeLabel.indexOf("[") < nodeLabel.indexOf("]")) {
             String idString = nodeLabel.substring(nodeLabel.indexOf("[") + 1, nodeLabel.indexOf("]"));
             if (StringUtils.isNumeric(idString)) {
                 dataEditor.setLinkedProcessId(Integer.parseInt(idString));
             }
+        }
+    }
+
+    /**
+     * Checks whether conditions are met for displayed the menu option to edit metadata of a linked process.
+     * The conditions are:
+     * - exactly one tree node in the logical tree is selected and the tree node represents a linked process
+     * - no logical tree node is selected; this represents the case when a linked parent process is selected (the logical
+     *      nodes of these parent processes are not contained within the logical tree of the current process,
+     *      thus the selected logical node is null in this case)
+     * @return whether the option to edit metadata of a linked process is displayed or not
+     */
+    public boolean isMetadataEditingPossible() {
+        List<TreeNode<Object>> selectedNodes = getSelectedLogicalNodes();
+        if (selectedNodes.isEmpty()) {
+            // no logical node is selected; this represents selection of linked parent processes
+            return true;
+        } else if (selectedNodes.size() == 1) {
+            // exactly one logical node is selected; metadata can be edited if node represents "linked" process
+            TreeNode<Object> selectedNode = selectedNodes.getFirst();
+            if (selectedNode.getData() instanceof StructureTreeNode) {
+                return ((StructureTreeNode) selectedNode.getData()).isLinked();
+            } else {
+                return false;
+            }
+        } else {
+            // multiple logical tree nodes are selected
+            return false;
         }
     }
 
