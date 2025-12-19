@@ -531,6 +531,11 @@ body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link .ui-menuitem-icon {
     color: var(--blue);
 }
 
+body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link.ui-state-disabled .ui-menuitem-text,
+body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link.ui-state-disabled .ui-menuitem-icon {
+    color: var(--medium-gray);
+}
+
 body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link.ui-state-hover {
     background: var(--focused-blue);
     text-decoration: none;

@@ -258,7 +258,8 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs['metadataEdit']}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked or DataEditorForm.structurePanel.selectedLogicalNodeIfSingle eq null}"
+                        rendered="#{DataEditorForm.structurePanel.isMetadataEditingPossible()}"
+                        disabled="#{!DataEditorForm.canLinkedProcessBeOpenedInMetadataEditor()}"
                         icon="fa fa-list-alt fa-lg"
                         styleClass="plain editLinkedMetadata"
                         onclick="$('#loadingScreen').show()"
@@ -269,7 +270,8 @@
             <p:menuitem value="#{msgs['metadataEditNewTab']}"
                         target="_blank"
                         url="#{DataEditorForm.getUrlOfLinkedProcess()}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked or DataEditorForm.structurePanel.selectedLogicalNodeIfSingle eq null}"
+                        rendered="#{DataEditorForm.structurePanel.isMetadataEditingPossible()}"
+                        disabled="#{!DataEditorForm.canLinkedProcessBeOpenedInMetadataEditor()}"
                         icon="fa fa-list-alt fa-lg"
                         styleClass="plain editLinkedMetadata"
                         process="@this"/>
