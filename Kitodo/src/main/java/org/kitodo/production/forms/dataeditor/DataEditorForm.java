@@ -1409,7 +1409,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * Checks and returns whether
      * - the currently selected structure tree node represents a linked process
      * - the linked process belongs to a project assigned to the current user
-     * - the linked process is currently opened in the metadata editor by another user
+     * - the linked process is currently opened in the metadata editor by another user.
      */
     public boolean canLinkedProcessBeOpenedInMetadataEditor() {
         Optional<LogicalDivision> divisionOptional = structurePanel.getSelectedStructure();
