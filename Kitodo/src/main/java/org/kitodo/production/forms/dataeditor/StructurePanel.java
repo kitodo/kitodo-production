@@ -1198,7 +1198,11 @@ public class StructurePanel implements Serializable {
         if (nodeLabel.contains("[") && nodeLabel.indexOf("[") < nodeLabel.indexOf("]")) {
             String idString = nodeLabel.substring(nodeLabel.indexOf("[") + 1, nodeLabel.indexOf("]"));
             if (StringUtils.isNumeric(idString)) {
-                dataEditor.setLinkedProcessId(Integer.parseInt(idString));
+                try {
+                    dataEditor.setLinkedProcessId(Integer.parseInt(idString));
+                } catch (NumberFormatException e) {
+                    logger.error(e);
+                }
             }
         }
     }
