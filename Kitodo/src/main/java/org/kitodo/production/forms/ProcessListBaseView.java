@@ -32,8 +32,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
@@ -279,9 +279,9 @@ public class ProcessListBaseView extends ValidatableForm {
     public double progress(Process process, TaskStatus status) {
         Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
         int total = counts.values().stream().mapToInt(Integer::intValue).sum();
-        // keep legacy semantics
         if (total == 0) {
-            return status == TaskStatus.LOCKED ? 100.0 : 0.0;
+            counts.put(TaskStatus.LOCKED, 1);
+            total = 1;
         }
         return 100.0 * counts.getOrDefault(status, 0) / total;
     }
