@@ -103,8 +103,6 @@ public class ProcessForm extends TemplateBaseForm {
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
     private String settingImportConfigurationResultMessage;
     private boolean importConfigurationsSetSuccessfully = false;
-    private boolean initialized = false;
-
 
     @Inject
     private CustomListColumnInitializer initializer;
