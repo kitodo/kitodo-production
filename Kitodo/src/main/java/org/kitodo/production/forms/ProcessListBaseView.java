@@ -277,9 +277,9 @@ public class ProcessListBaseView extends BaseForm {
     public double progress(Process process, TaskStatus status) {
         Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
         int total = counts.values().stream().mapToInt(Integer::intValue).sum();
-        // keep legacy semantics
         if (total == 0) {
-            return status == TaskStatus.LOCKED ? 100.0 : 0.0;
+            counts.put(TaskStatus.LOCKED, 1);
+            total = 1;
         }
         return 100.0 * counts.getOrDefault(status, 0) / total;
     }
