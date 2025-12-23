@@ -395,41 +395,6 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Create and return String containing the titles of all given roles joined by a ", ".
-     *
-     * @param roles list of roles
-     * @return String containing role titles
-     */
-    public String getRoleTitles(List<Role> roles) {
-        return RoleService.getRoleTitles(roles);
-    }
-
-    /**
-     * Create and return String containing the names of all given clients joined by a ", ".
-     *
-     * @param clients list of roles
-     * @return String containing client names
-     */
-    public String getClientNames(List<Client> clients) {
-        return ClientService.getClientNames(clients);
-    }
-
-    /**
-     * Create and return String containing the titles of all given projects joined by a ", ".
-     *
-     * @param projects list of roles
-     * @return String containing project titles
-     */
-    public String getProjectTitles(List<Project> projects) {
-        try {
-            return ServiceManager.getProjectService().getProjectTitles(projects);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
-    }
-
-    /**
      * Reset first row to 0 if given String 'keepPagination' is empty.
      *
      * @param keepPagination String parameter indicating if first row should be reset to 0
