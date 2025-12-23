@@ -63,7 +63,7 @@ public class BeanQuery {
     private final Collection<String> restrictions = new ArrayList<>();
     private final List<String> restrictionAlternatives = new ArrayList<>();
     private boolean indexFiltersAsAlternatives = false;
-    private Pair<String, String> sorting = Pair.of("id", "ASC");
+    private Pair<String, String> sorting;
     private final Map<String, Pair<FilterField, String>> indexQueries = new HashMap<>();
     private final Map<String, Object> parameters = new HashMap<>();
 
@@ -77,6 +77,7 @@ public class BeanQuery {
         this.beanClass = beanClass;
         className = beanClass.getSimpleName();
         varName = className.toLowerCase();
+        sorting = Pair.of(varName + ".id", "ASC");
     }
 
     /**
