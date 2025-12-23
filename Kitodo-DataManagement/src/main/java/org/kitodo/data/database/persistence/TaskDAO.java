@@ -230,8 +230,7 @@ public class TaskDAO extends BaseDAO<Task> {
                             + "  COUNT(t.id) AS cnt "
                             + "FROM process_tree pt "
                             + "LEFT JOIN task t ON t.process_id = pt.id "
-                            + "GROUP BY pt.root_id, t.processingStatus",
-                    Object[].class
+                            + "GROUP BY pt.root_id, t.processingStatus"
             );
             query.setParameter("ids", processIds);
             query.addScalar("root_id", StandardBasicTypes.INTEGER);
