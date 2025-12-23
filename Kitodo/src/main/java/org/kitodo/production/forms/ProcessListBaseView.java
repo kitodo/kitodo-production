@@ -234,7 +234,7 @@ public class ProcessListBaseView extends BaseForm {
         if (Objects.isNull(list) || list.isEmpty()) {
             return;
         }
-        if (!sb.isEmpty()) {
+        if (sb.length() > 0) {
             sb.append(NL);
         }
         sb.append(Helper.getTranslation(status.getTitle())).append(":");
