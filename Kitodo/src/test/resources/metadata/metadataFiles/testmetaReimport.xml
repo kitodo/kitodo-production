@@ -22,12 +22,10 @@
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
-    <mets:fileSec/>
     <mets:structMap TYPE="LOGICAL">
         <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
-        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence"/>
+        <mets:div ID="PHYS_0000" TYPE="physSequence"/>
     </mets:structMap>
-    <mets:structLink/>
 </mets:mets>

@@ -49,6 +49,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -58,6 +59,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Tests for ProcessService class.
@@ -295,7 +297,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindLinkableParentProcesses() throws DAOException, IOException {
+    public void shouldFindLinkableParentProcesses() throws Exception {
         assertEquals(1, processService.findLinkableParentProcesses(MockDatabase.HIERARCHY_PARENT, 1).size(), "Processes were not found in index!");
     }
 
@@ -622,7 +624,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testCountMetadata() throws DAOException, IOException {
+    public void testCountMetadata() throws DAOException, IOException, SAXException, FileStructureValidationException {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         Process process = ServiceManager.getProcessService().getById(testProcessId);

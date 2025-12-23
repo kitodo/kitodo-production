@@ -34,6 +34,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
@@ -45,6 +46,7 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 public class HierarchyMigrationTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(HierarchyMigrationTask.class);
@@ -156,7 +158,8 @@ public class HierarchyMigrationTask extends EmptyTask {
                     return;
                 }
             }
-        } catch (IOException | DAOException | ProcessGenerationException | CommandException e) {
+        } catch (IOException | DAOException | ProcessGenerationException | CommandException | SAXException
+                 | FileStructureValidationException e) {
             setException(e);
         }
     }
@@ -167,7 +170,8 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-    void migrate(Process process) throws IOException, ProcessGenerationException, DAOException, CommandException {
+    void migrate(Process process) throws IOException, ProcessGenerationException, DAOException, CommandException,
+            SAXException, FileStructureValidationException {
         logger.info("Starting to convert process {} (ID {})...", process.getTitle(), process.getId());
         long begin = System.nanoTime();
         migrateMetadataFiles(process);
@@ -206,7 +210,8 @@ public class HierarchyMigrationTask extends EmptyTask {
     /**
      * Reads the parent record identifier from the anchor file.
      */
-    private static Optional<String> getParentRecordId(Process process) throws IOException {
+    private static Optional<String> getParentRecordId(Process process) throws IOException, SAXException,
+            FileStructureValidationException {
         URI metadataFilePath = fileService.getMetadataFilePath(process);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
         Workpiece anchorWorkpiece = metsService.loadWorkpiece(anchorFilePath);
@@ -229,7 +234,8 @@ public class HierarchyMigrationTask extends EmptyTask {
      *         current number of the child process
      */
     private List<Integer> createParentProcess(Process childProcess)
-            throws ProcessGenerationException, IOException, CommandException, DAOException {
+            throws ProcessGenerationException, IOException, CommandException, DAOException, SAXException,
+            FileStructureValidationException {
 
         processGenerator.generateProcess(childProcess.getTemplate().getId(), childProcess.getProject().getId());
         Process parentProcess = processGenerator.getGeneratedProcess();
@@ -247,7 +253,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         return parentData;
     }
 
-    private void checkTaskAndId(Process parentProcess) throws IOException {
+    private void checkTaskAndId(Process parentProcess) throws IOException, SAXException, FileStructureValidationException {
         URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
         ProcessService.checkTasks(parentProcess, workpiece.getLogicalStructure().getType());
@@ -302,7 +308,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      * @param process
      *            process to migrate
      */
-    private void createParentMetsFile(Process process) throws IOException {
+    private void createParentMetsFile(Process process) throws IOException, SAXException, FileStructureValidationException {
         URI metadataFileUri = fileService.getMetadataFilePath(process);
         URI anchorFileUri = fileService.createAnchorFile(metadataFileUri);
         Workpiece workpiece = metsService.loadWorkpiece(anchorFileUri);
@@ -323,7 +329,8 @@ public class HierarchyMigrationTask extends EmptyTask {
      *            URI of the metadata file
      * @return the current number, may be {@code null}
      */
-    private static Integer convertChildMetsFile(URI metadataFilePath) throws IOException {
+    private static Integer convertChildMetsFile(URI metadataFilePath) throws IOException, SAXException,
+            FileStructureValidationException {
         Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
         LogicalDivision childStructureRoot = workpiece.getLogicalStructure().getChildren().get(0);
         workpiece.setLogicalStructure(childStructureRoot);
@@ -365,7 +372,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      *            parent
      */
     private static void linkProcessInParent(Process childProcess, List<Integer> parentData)
-            throws IOException, DAOException {
+            throws IOException, DAOException, SAXException, FileStructureValidationException {
 
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
         Integer currentNo = convertChildMetsFile(metadataFilePath);

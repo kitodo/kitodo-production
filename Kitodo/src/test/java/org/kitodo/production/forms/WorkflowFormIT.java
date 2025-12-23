@@ -15,8 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -30,14 +29,13 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TaskService;
 
 public class WorkflowFormIT {
 
-    private WorkflowForm currentWorkflowForm = new WorkflowForm();
+    private final WorkflowForm currentWorkflowForm = new WorkflowForm();
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
 
@@ -71,12 +69,11 @@ public class WorkflowFormIT {
      *
      */
     @Test
-    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException,
-            WorkflowException, IOException {
+    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws Exception {
         //Get first template which already has template tasks assigned and assign it to the new workflow
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Workflow workflow = new Workflow("one_step_workflow");
-        workflow.setTemplates(Arrays.asList(firstTemplate));
+        workflow.setTemplates(Collections.singletonList(firstTemplate));
         ServiceManager.getWorkflowService().save(workflow);
         firstTemplate.setWorkflow(workflow);
         ServiceManager.getTemplateService().save(firstTemplate);

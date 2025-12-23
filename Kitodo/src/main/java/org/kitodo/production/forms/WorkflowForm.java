@@ -45,6 +45,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -58,6 +59,7 @@ import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("WorkflowForm")
 @SessionScoped
@@ -162,7 +164,7 @@ public class WorkflowForm extends BaseForm {
             } else {
                 return this.stayOnCurrentPage;
             }
-        } catch (IOException | DAOException e) {
+        } catch (IOException | DAOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
@@ -175,8 +177,20 @@ public class WorkflowForm extends BaseForm {
     /**
      * Update the tasks of the templates associated with the current workflow and delete associated
      * editor settings.
+     *
+     * @throws DAOException
+     *          when removing data editor settings of a specific task from the database fails
+     * @throws IOException
+     *          when creating a new workflow fails because the referenced diagram file cannot be opened
+     * @throws WorkflowException
+     *          when converting the workflow to a template fails
+     * @throws SAXException
+     *          when activating next tasks in workflow fails
+     * @throws FileStructureValidationException
+     *          when activating next tasks in workflow fails
      */
-    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException {
+    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException, SAXException,
+            FileStructureValidationException {
         Converter converter = new Converter(this.workflow.getTitle());
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());

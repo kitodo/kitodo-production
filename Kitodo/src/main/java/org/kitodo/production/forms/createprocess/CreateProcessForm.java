@@ -17,6 +17,7 @@ import static org.kitodo.constants.StringConstants.CREATE;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,13 +61,14 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.ValidatableForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
@@ -83,10 +85,11 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.thread.ImportEadProcessesThread;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
+import org.xml.sax.SAXException;
 
 @Named("CreateProcessForm")
 @ViewScoped
-public class CreateProcessForm extends BaseForm implements MetadataTreeTableInterface, RulesetSetupInterface {
+public class CreateProcessForm extends ValidatableForm implements MetadataTreeTableInterface, RulesetSetupInterface {
 
     private static final Logger logger = LogManager.getLogger(CreateProcessForm.class);
 
@@ -231,7 +234,11 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return value of processMetadata
      */
     public ProcessMetadata getProcessMetadata() {
-        return currentProcess.getProcessMetadata();
+        if (Objects.nonNull(currentProcess)) {
+            return currentProcess.getProcessMetadata();
+        } else {
+            return new ProcessMetadata();
+        }
     }
 
     /**
@@ -374,7 +381,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 rulesetFile = getMainProcess().getRuleset().getFile();
             }
             Helper.setErrorMessage("rulesetNotFound", new Object[] {rulesetFile }, logger, e);
-        } catch (IOException | ProcessGenerationException e) {
+        } catch (IOException | ProcessGenerationException | SAXException | FileStructureValidationException e) {
             logger.error(e.getLocalizedMessage(), e);
         }
         return this.stayOnCurrentPage;
@@ -399,7 +406,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 + "&faces-redirect=true";
     }
 
-    private boolean canCreateProcess() throws IOException, DAOException {
+    private boolean canCreateProcess() throws IOException, DAOException, SAXException, FileStructureValidationException {
         validationResultHashMap = new HashMap<>();
         if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             if ((Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
@@ -470,7 +477,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         return styleClass;
     }
 
-    private String parentTypeIfForbidden() throws IOException {
+    private String parentTypeIfForbidden() throws IOException, SAXException, FileStructureValidationException {
         URI metadataFileUri = ServiceManager.getProcessService()
                 .getMetadataFileUri(titleRecordLinkTab.getTitleRecordProcess());
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
@@ -508,7 +515,15 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public void prepareProcess(int templateId, int projectId, String referringView, Integer parentId, boolean showDialog) {
         this.referringView = referringView;
+        validationErrors = new ArrayList<>();
         ProcessGenerator processGenerator = new ProcessGenerator();
+        try {
+            ServiceManager.getFileStructureValidationService().validateRulesetByTemplateId(templateId);
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidRuleset"));
+            showValidationExceptionDialog(e, referringView);
+            return;
+        }
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
             if (generated) {
@@ -522,7 +537,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 if (Objects.nonNull(project)) {
                     if (Objects.nonNull(project.getDefaultImportConfiguration())) {
                         project.setDefaultImportConfiguration(ServiceManager.getImportConfigurationService().getById(
-                            project.getDefaultImportConfiguration().getId()));
+                                project.getDefaultImportConfiguration().getId()));
                     }
                     setCurrentImportConfiguration(project.getDefaultImportConfiguration());
                 }
@@ -535,6 +550,32 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         } catch (ProcessGenerationException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    /**
+     * Handles the schema validation exception encountered during the import of a record.
+     * Depending on whether the validation pertains to external or internal records,
+     * it sets an appropriate validation error title and note. Additionally, it provides
+     * debug folder information if configured and displays a validation exception dialog.
+     *
+     * @param exception the exception indicating a schema validation failure during the
+     *                  record import process. This exception provides details about
+     *                  whether the issue pertains to external or internal data.
+     */
+    public void handleImportRecordSchemaValidationException(FileStructureValidationException exception) {
+        String filename = "catalogRecord.xml";
+        if (exception.isExternalDataValidation()) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidExternalRecord"));
+            setValidationErrorNoteEmphasized(Helper.getTranslation("validation.informMaintainer"));
+        } else {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidInternalRecord"));
+            setValidationErrorNoteEmphasized(Helper.getTranslation("validation.fixMetadataMapping"));
+            filename = "internalRecord.xml";
+        }
+        if (isDebugFolderConfigured()) {
+            setValidationErrorNote(Helper.getTranslation("validation.debugFolderMessage", filename));
+        }
+        showValidationExceptionDialog(exception, referringView);
     }
 
     private void initParentConfiguration(Integer parentId, Workpiece workpiece) throws DAOException, IOException {
@@ -595,9 +636,20 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     /**
      * Create process hierarchy.
+     *
+     * @throws DAOException
+     *            when saving processes fails
+     * @throws ProcessGenerationException
+     *            when creating processes fails
+     * @throws IOException
+     *            when creating process folders fails
+     * @throws SAXException
+     *            when schema definition for metadata file validation contains invalid XML syntax
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
     public void createProcessHierarchy()
-            throws DAOException, ProcessGenerationException, IOException {
+            throws DAOException, ProcessGenerationException, IOException, SAXException, FileStructureValidationException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
         if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
@@ -653,7 +705,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @throws DAOException thrown if child process could not be saved
      * @throws IOException thrown if link between child and parent process could not be added
      */
-    private void saveChildProcessLinks() throws IOException, DAOException {
+    private void saveChildProcessLinks() throws IOException, DAOException, SAXException, FileStructureValidationException {
         this.progress = 0;
         if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
             PrimeFaces.current().executeScript("PF('progressDialog')");
@@ -905,10 +957,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
         }
     }
-    
+
     /**
      * Returns the details of the missing record identifier error.
-     * 
+     *
      * @return the details as a list of error description
      */
     public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
@@ -1095,5 +1147,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public void setValidate(Boolean validate) {
         this.validate = validate;
+    }
+
+    @Override
+    public void proceed() {
+        try {
+            this.catalogImportDialog.performImport(false);
+        } catch (FileStructureValidationException e) {
+            handleImportRecordSchemaValidationException(e);
+        }
     }
 }

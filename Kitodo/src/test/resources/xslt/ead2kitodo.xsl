@@ -16,45 +16,40 @@
                 xmlns="urn:isbn:1-931666-22-9"
                 xpath-default-namespace="urn:isbn:1-931666-22-9"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:kitodo="http://meta.kitodo.org/v1/">
 
     <xsl:output method="xml" indent="yes" encoding="utf-8"/>
     <xsl:strip-space elements="*"/>
 
     <xsl:template match="/">
-        <mets:mdWrap>
-            <mets:xmlData>
-                <kitodo:kitodo>
-                    <!-- ### Classify document type ### -->
-                    <xsl:choose>
-                        <xsl:when test="c/@level='file'">
-                            <kitodo:metadata name="docType">
-                                <xsl:text>verzeichnungseinheit</xsl:text>
-                            </kitodo:metadata>
-                            <kitodo:metadata name="id">
-                                <xsl:value-of select="replace(c/@id, 'VE_', '')"/>
-                            </kitodo:metadata>
-                            <xsl:apply-templates select="@*|node()"/>
-                        </xsl:when>
-                        <xsl:when test="c/@level='item'">
-                            <kitodo:metadata name="docType">
-                                <xsl:text>vorgang</xsl:text>
-                            </kitodo:metadata>
-                            <kitodo:metadata name="id">
-                                <xsl:value-of select="replace(c/@id, 'VE_', '')"/>
-                            </kitodo:metadata>
-                            <xsl:apply-templates select="@*|node()"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <kitodo:metadata name="docType">
-                                <xsl:text>UNKNOWN</xsl:text>
-                            </kitodo:metadata>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </kitodo:kitodo>
-            </mets:xmlData>
-        </mets:mdWrap>
+        <kitodo:kitodo>
+            <!-- ### Classify document type ### -->
+            <xsl:choose>
+                <xsl:when test="c/@level='file'">
+                    <kitodo:metadata name="docType">
+                        <xsl:text>verzeichnungseinheit</xsl:text>
+                    </kitodo:metadata>
+                    <kitodo:metadata name="id">
+                        <xsl:value-of select="replace(c/@id, 'VE_', '')"/>
+                    </kitodo:metadata>
+                    <xsl:apply-templates select="@*|node()"/>
+                </xsl:when>
+                <xsl:when test="c/@level='item'">
+                    <kitodo:metadata name="docType">
+                        <xsl:text>vorgang</xsl:text>
+                    </kitodo:metadata>
+                    <kitodo:metadata name="id">
+                        <xsl:value-of select="replace(c/@id, 'VE_', '')"/>
+                    </kitodo:metadata>
+                    <xsl:apply-templates select="@*|node()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <kitodo:metadata name="docType">
+                        <xsl:text>UNKNOWN</xsl:text>
+                    </kitodo:metadata>
+                </xsl:otherwise>
+            </xsl:choose>
+        </kitodo:kitodo>
     </xsl:template>
 
     <!-- ### Name BK ### -->

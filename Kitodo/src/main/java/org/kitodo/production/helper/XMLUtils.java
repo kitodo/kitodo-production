@@ -27,6 +27,8 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -54,6 +56,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
@@ -289,4 +292,26 @@ public class XMLUtils {
         return count;
     }
 
+    /**
+     * Checks if the provided XML content is well-formed.
+     * If the XML is not well-formed, an exception is thrown.
+     *
+     * @param xmlContent the XML content as a String to be checked for well-formedness
+     * @throws IOException if an I/O error occurs during processing
+     * @throws SAXException if the XML content is not well-formed or an error occurs during parsing
+     */
+    public static void checkIfXmlIsWellFormed(String xmlContent) throws IOException, SAXException {
+        SAXParser saxParser;
+        try {
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setValidating(false);
+            saxParserFactory.setNamespaceAware(true);
+
+            saxParser = saxParserFactory.newSAXParser();
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+        InputSource inputSource = new InputSource(new StringReader(xmlContent));
+        saxParser.parse(inputSource, new DefaultHandler());
+    }
 }

@@ -1,0 +1,81 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="validationErrorsDialog"
+              widgetVar="validationErrorsDialog"
+              showHeader="false"
+              modal="true"
+              width="800px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <!--@elvariable id="validatableForm" type="org.kitodo.production.forms.ValidatableForm"-->
+        <h:panelGroup>
+            <h3>
+                <h:outputFormat value="#{validatableForm.validationErrorTitle}"/>
+            </h3>
+            <p>
+                <h:outputText value="#{validatableForm.validationErrorDescription}"/>
+            </p>
+            <div class="select-note ui-messages-error">
+                <p:dataList id="validationErrorsList"
+                            value="#{validatableForm.validationErrors}"
+                            var="error"
+                            itemStyleClass="error-item">
+                    <p:outputLabel value="#{error}"/>
+                </p:dataList>
+            </div>
+            <p>
+                <h:outputText styleClass="validation-note"
+                              value="#{validatableForm.validationErrorNote}"/>
+            </p>
+            <p>
+                <strong>
+                    <h:outputText value="#{validatableForm.validationErrorNoteEmphasized}"/>
+                </strong>
+            </p>
+        </h:panelGroup>
+
+        <p:panelGrid>
+            <p:row>
+                <h:form id="validationErrorButtonForm">
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="ignoreButton"
+                                         icon="fa fa-check fa-lg"
+                                         iconPos="right"
+                                         action="#{validatableForm.proceed()}"
+                                         process="@this"
+                                         onclick='PF("validationErrorsDialog").hide();'
+                                         rendered="#{validatableForm.isSchemaValidationSkippable()}"
+                                         update="editForm"
+                                         value="#{msgs['validation.proceedAnyway']}"
+                                         styleClass="primary right"/>
+                        <p:commandButton id="cancelButton"
+                                         icon="fa fa-close fa-lg"
+                                         iconPos="right"
+                                         action="#{validatableForm.getRedirectionPath()}"
+                                         value="#{msgs.cancel}"
+                                         oncomplete='PF("validationErrorsDialog").hide();'
+                                         styleClass="secondary right"/>
+                    </h:panelGroup>
+                </h:form>
+            </p:row>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>

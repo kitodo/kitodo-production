@@ -390,7 +390,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return a new METS XML element access
      */
     private static MetsXmlElementAccessInterface createMetsXmlElementAccess() {
-        return new KitodoServiceLoader<MetsXmlElementAccessInterface>(MetsXmlElementAccessInterface.class).loadModule();
+        return new KitodoServiceLoader<>(MetsXmlElementAccessInterface.class).loadModule();
     }
 
     /**
@@ -399,7 +399,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return a file management
      */
     private static FileManagementInterface getFileManagement() {
-        return new KitodoServiceLoader<FileManagementInterface>(FileManagementInterface.class).loadModule();
+        return new KitodoServiceLoader<>(FileManagementInterface.class).loadModule();
     }
 
     /**
@@ -408,7 +408,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return a ruleset management
      */
     private static RulesetManagementInterface getRulesetManagement() {
-        return new KitodoServiceLoader<RulesetManagementInterface>(RulesetManagementInterface.class).loadModule();
+        return new KitodoServiceLoader<>(RulesetManagementInterface.class).loadModule();
     }
 
     /**

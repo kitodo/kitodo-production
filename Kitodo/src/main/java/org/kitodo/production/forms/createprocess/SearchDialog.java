@@ -24,8 +24,10 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 public class SearchDialog {
 
@@ -85,7 +87,7 @@ public class SearchDialog {
                 this.createProcessForm.getTitleRecordLinkTab().setParentAsTitleRecord(originalProcess.getParent());
             }
             this.createProcessForm.getProcessMetadata().getProcessDetails().setMetadata(root.getMetadata());
-        } catch (IOException e) {
+        } catch (IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {"template-metadata" }, logger, e);
         }
     }

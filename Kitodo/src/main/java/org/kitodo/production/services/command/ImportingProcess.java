@@ -58,6 +58,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -70,6 +71,7 @@ import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.validation.MetadataValidationService;
+import org.xml.sax.SAXException;
 
 /**
  * A process to import. For each process to be imported (that is, a process
@@ -185,7 +187,8 @@ final class ImportingProcess {
      *            presence of child processes
      */
     void validate(RulesetManagementInterface ruleset, boolean strictValidation,
-            Map<String, ImportingProcess> importingProcesses) throws IOException, DAOException {
+            Map<String, ImportingProcess> importingProcesses) throws IOException, DAOException, SAXException,
+            FileStructureValidationException {
 
         this.importingProcesses = importingProcesses;
         logger.info("Starting to validate " + this.directoryName);
@@ -409,7 +412,7 @@ final class ImportingProcess {
      *             if media files are missing
      */
     void executeAction(int action) throws IOException, DAOException, ProcessGenerationException,
-            MediaNotFoundException, InvalidImagesException {
+            MediaNotFoundException, InvalidImagesException, SAXException, FileStructureValidationException {
 
         assert action >= 0 && action <= numberOfFileSystemItems + 1
                 : "action out of range: " + action + " [0.." + (numberOfFileSystemItems + 1) + "]";
@@ -431,8 +434,8 @@ final class ImportingProcess {
      * @param action
      *            processing step
      */
-    private void executeActionForCorrectProcess(int action) throws IOException, DAOException,
-            ProcessGenerationException, DAOException, InvalidImagesException, MediaNotFoundException {
+    private void executeActionForCorrectProcess(int action) throws IOException, ProcessGenerationException, DAOException,
+            InvalidImagesException, MediaNotFoundException, SAXException, FileStructureValidationException {
 
         if (action == 0) {
             if (Objects.nonNull(processTitleRule) && Objects.isNull(title)) {
@@ -495,7 +498,8 @@ final class ImportingProcess {
      *            the newly created process
      */
     private void copyAndAdjustMetsFile(Process process)
-            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException {
+            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException, SAXException,
+            FileStructureValidationException {
 
         Workpiece workpiece = metsService.loadWorkpiece(sourceDir.resolve(META_FILE_NAME).toUri());
         workpiece.setId(processId.toString());

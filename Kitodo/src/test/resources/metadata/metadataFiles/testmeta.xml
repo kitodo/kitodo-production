@@ -22,16 +22,16 @@
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
                     <kitodo:metadata name="TitleDocMain">Otsar ha-kavod</kitodo:metadata>
                     <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
-                    <kitodo:metadata name="TypeOfResource" type="group">
+                    <kitodo:metadataGroup name="TypeOfResource">
                         <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>
                         <kitodo:metadata name="typIdentifierPPN">10457187X</kitodo:metadata>
                         <kitodo:metadata name="typIdentifierURI">http://d-nb.info/gnd/4023287-6</kitodo:metadata>
-                    </kitodo:metadata>
-                    <kitodo:metadata type="group" name="FormerOwner">
+                    </kitodo:metadataGroup>
+                    <kitodo:metadataGroup name="FormerOwner">
                         <kitodo:metadata name="authorityURI">http://d-nb.info/gnd/</kitodo:metadata>
                         <kitodo:metadata name="authorityValue">http://d-nb.info/gnd/</kitodo:metadata>
                         <kitodo:metadata name="displayName">, </kitodo:metadata>
-                    </kitodo:metadata>
+                    </kitodo:metadataGroup>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
@@ -72,7 +72,7 @@
         </mets:div>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
-        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence">
+        <mets:div ID="PHYS_0000" TYPE="physSequence">
             <mets:div ID="PHYS_0001" ORDER="1" ORDERLABEL="uncounted" TYPE="page">
                 <mets:fptr FILEID="FILE_0001"/>
             </mets:div>

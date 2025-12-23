@@ -19,6 +19,7 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
@@ -36,6 +37,7 @@ public class XMLUtilsTest {
     private static final String TEST_ELEMENT = "testElement";
     private static final String TEST_CHILD_ELEMENT = "testChildElement";
     private static final String XML_STRING = "<document><element>Text</element></document>";
+    private static final String MALFORMED_XML_STRING = "<document><element>Text</element></document><document>";
     private static final String EXPECTED_EXCEPTION_MESSAGE = "javax.xml.transform.TransformerException: "
             + "A location step was expected following the '/' or '//' token.";
     private static Locale originalDefaultLocale;
@@ -82,6 +84,14 @@ public class XMLUtilsTest {
     @Test
     public void shouldParseXMLString() {
         Assertions.assertDoesNotThrow(() -> XMLUtils.parseXMLString(XML_STRING));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenParsingMalformedXmlContent() {
+        SAXException saxException = Assertions.assertThrows(SAXException.class,
+                () -> XMLUtils.checkIfXmlIsWellFormed(MALFORMED_XML_STRING));
+        Assertions.assertEquals("The markup in the document following the root element must be well-formed.",
+                saxException.getMessage());
     }
 
     @Test

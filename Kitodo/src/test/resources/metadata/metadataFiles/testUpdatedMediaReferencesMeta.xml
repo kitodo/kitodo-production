@@ -12,7 +12,7 @@
 <mets:mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
     <mets:metsHdr CREATEDATE="2022-11-14T10:46:14.828+01:00" LASTMODDATE="2023-01-05T14:18:06.974+01:00"/>
     <mets:dmdSec ID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99">
-        <mets:mdWrap MDTYPE="OTHER">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo>
                     <kitodo:metadata name="title">Test process for checking updated media references</kitodo:metadata>

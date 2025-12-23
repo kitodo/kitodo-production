@@ -12,7 +12,7 @@
 <mets:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
     <mets:metsHdr CREATEDATE="2023-05-04T13:47:53.495+02:00" LASTMODDATE="2024-10-14T09:59:54.871Z"/>
     <mets:dmdSec ID="uuid-7804f52e-4e5d-36d2-9883-adc6892bdfd0">
-        <mets:mdWrap>
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo>
                     <kitodo:metadata name="title">Test link page to next division</kitodo:metadata>
