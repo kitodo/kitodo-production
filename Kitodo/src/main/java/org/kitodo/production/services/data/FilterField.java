@@ -15,6 +15,8 @@ import java.util.Objects;
 
 import net.bytebuddy.utility.nullability.MaybeNull;
 
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.ProcessKeywords;
 import org.kitodo.data.database.enums.TaskStatus;
 
@@ -92,8 +94,7 @@ enum FilterField {
             case "stepinwork": return TASK_ONGOING;
             case "stepdone": return TASK_FINISHED;
             case "stepdonetitle": return TASK_FINISHED;
-            case "stepdoneuser": return TASK_FINISHED_USER;
-
+            case "stepdoneuser": return getTaskFinishedUser();
             case "prozess": return PROCESS_TITLE;
             case "elternprozessid":
                 return PARENT_PROCESS_ID;
@@ -108,7 +109,7 @@ enum FilterField {
             case "schrittinarbeit": return TASK_ONGOING;
             case "schrittabgeschlossen": return TASK_FINISHED;
             case "abgeschlossenerschritttitel": return TASK_FINISHED;
-            case "abgeschlossenerschrittbenutzer": return TASK_FINISHED_USER;
+            case "abgeschlossenerschrittbenutzer": return getTaskFinishedUser();
             default: return null;
         }
     }
@@ -152,6 +153,14 @@ enum FilterField {
         this.queryObject = queryObject;
         this.searchField = searchField;
         this.minTokenLength = minTokenLength;
+    }
+
+    private static FilterField getTaskFinishedUser() {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
+            return TASK_FINISHED_USER;
+        } else {
+            return null;
+        }
     }
 
     /**
