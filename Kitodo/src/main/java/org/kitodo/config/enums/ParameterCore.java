@@ -415,11 +415,11 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Turn on or off whether each assignment of processes to or removal from
-     * batches shall result in rewriting each processes' wiki field in order to
+     * batches shall result in rewriting each processes comments in order to
      * leave a note there. Enabling this function may slow down operations in the
      * batches dialogue. Boolean, defaults to {@code false}.
      */
-    BATCHES_LOG_CHANGES(new Parameter<>("batches.logChangesToWikiField", false)),
+    BATCHES_LOG_CHANGES(new Parameter<>("batches.logChangesToComments", false)),
 
     /*
      * Task manager
