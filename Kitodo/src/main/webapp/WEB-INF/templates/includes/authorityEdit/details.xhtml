@@ -20,12 +20,12 @@
             <p:outputPanel>
                 <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                 <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
-                             value="#{AuthorityForm.title}" placeholder="#{msgs.title}"
+                             value="#{AuthorityEditView.title}" placeholder="#{msgs.title}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </p:outputPanel>
             <p:outputPanel>
                 <p:outputLabel for="types" value="#{msgs.type}"/>
-                <p:selectOneMenu id="types" value="#{AuthorityForm.type}" disabled="#{isViewMode}"
+                <p:selectOneMenu id="types" value="#{AuthorityEditView.type}" disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItem itemLabel="clientAssignable" itemValue="clientAssignable"/>
                     <f:selectItem itemLabel="globalAssignable" itemValue="globalAssignable"/>

@@ -26,7 +26,7 @@ import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.forms.CurrentTaskForm;
 import org.kitodo.production.forms.ProcessForm;
-import org.kitodo.production.forms.UserForm;
+import org.kitodo.production.forms.user.UserListView;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
 
@@ -76,7 +76,7 @@ public class FilterMenu {
 
     private ProcessForm processForm = null;
     private CurrentTaskForm taskForm = null;
-    private UserForm userForm = null;
+    private UserListView userListView = null;
     private List<Suggestion> suggestions;
     private final List<ParsedFilter> parsedFilters;
     private String filterInEditMode;
@@ -106,10 +106,10 @@ public class FilterMenu {
     /**
      * Constructor of filter menu for users.
      *
-     * @param userForm instance of UserForm
+     * @param userListView instance of UserListView
      */
-    public FilterMenu(UserForm userForm) {
-        this.userForm = userForm;
+    public FilterMenu(UserListView userListView) {
+        this.userListView = userListView;
         suggestions = createSuggestionsForUserCategory("");
         parsedFilters = new ArrayList<>();
     }
@@ -148,7 +148,7 @@ public class FilterMenu {
                 suggestions = createSuggestionsForProcessCategory(input);
             } else if (Objects.nonNull(taskForm)) {
                 suggestions = createSuggestionsForTaskCategory(input);
-            } else if (Objects.nonNull(userForm)) {
+            } else if (Objects.nonNull(userListView)) {
                 suggestions = createSuggestionsForUserCategory(input);
             }
         } else {
@@ -178,7 +178,7 @@ public class FilterMenu {
                     String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
                     suggestions = createSuggestionsForTaskValue(checkFilterCategory(category, taskCategories), lastPart);
                 }
-            } else if (Objects.nonNull(userForm)) {
+            } else if (Objects.nonNull(userListView)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
                     suggestions = createSuggestionsForUserCategory(matcherNextCategory.group());
@@ -399,8 +399,8 @@ public class FilterMenu {
             processForm.setFilter(newFilter.toString());
         } else if (Objects.nonNull(taskForm)) {
             taskForm.setFilter(newFilter.toString());
-        } else if (Objects.nonNull(userForm)) {
-            userForm.setFilter(newFilter.toString());
+        } else if (Objects.nonNull(userListView)) {
+            userListView.setFilter(newFilter.toString());
         }
     }
 }
