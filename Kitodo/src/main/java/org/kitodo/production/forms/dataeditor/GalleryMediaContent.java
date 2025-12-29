@@ -263,7 +263,7 @@ public class GalleryMediaContent {
         try {
             InputStream viewData = ServiceManager.getFileService().read(uri);
             return DefaultStreamedContent.builder().stream(() -> viewData).contentType(mimeType)
-                    .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength(viewData.available())
+                    .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength((long) viewData.available())
                     .build();
         } catch (IOException e) {
             logger.catching(e);

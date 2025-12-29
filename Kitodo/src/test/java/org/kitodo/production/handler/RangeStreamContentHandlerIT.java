@@ -96,7 +96,7 @@ public class RangeStreamContentHandlerIT extends BasePrimefaceTest {
         InputStream inputStream = toInputStream(data, StandardCharsets.UTF_8);
         StreamedContent streamedContent = DefaultStreamedContent.builder().stream(() -> inputStream)
                 .contentType(MIMETYPE).name(Paths.get(FILENAME).getFileName().toString())
-                .contentLength(inputStream.available()).build();
+                .contentLength((long) inputStream.available()).build();
 
         when(valueExpression.getValue(facesContext.getELContext())).thenReturn(streamedContent);
 
