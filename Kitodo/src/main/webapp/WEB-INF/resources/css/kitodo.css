@@ -2762,6 +2762,10 @@ form#metadata div label,
     vertical-align: top;
 }
 
+#editFolderDialog .ui-panelgrid-cell {
+    width: 100%;
+}
+
 #uploadFileDialog {
     max-height: 550px;
 }
