@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/baseEditView.xhtml"
+        template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -33,24 +33,27 @@
             <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}', #{msgs.ruleset}: '#{MassImportForm.rulesetTitle}')"
                           styleClass="shortable" />
         </h3>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="projects"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
-        <p:commandButton id="importButton"
-                         value="#{msgs.massImport}"
-                         disabled="#{MassImportForm.massImportDisabled}"
-                         actionListener="#{MassImportForm.prepare()}"
-                         action="#{MassImportForm.startMassImport()}"
-                         icon="fa fa-download fa-lg"
-                         iconPos="right"
-                         onclick="setConfirmUnload(false);PF('massImportProgressDialog').show();PF('massImportProgressBar').start();"
-                         update="notifications sticky-notifications :massImportProgressForm">
-            <p:resetInput target=":massImportProgressForm"/>
-        </p:commandButton>
+        <h:form id="massImportButtonForm"
+                enctype="application/x-www-form-urlencoded">
+            <p:button id="cancel"
+                      value="#{msgs.cancel}"
+                      onclick="setConfirmUnload(false);"
+                      outcome="projects"
+                      icon="fa fa-times fa-lg"
+                      iconPos="right"
+                      styleClass="secondary"/>
+            <p:commandButton id="importButton"
+                             value="#{msgs.massImport}"
+                             disabled="#{MassImportForm.massImportDisabled}"
+                             actionListener="#{MassImportForm.prepare()}"
+                             action="#{MassImportForm.startMassImport()}"
+                             icon="fa fa-download fa-lg"
+                             iconPos="right"
+                             onclick="setConfirmUnload(false);PF('massImportProgressDialog').show();PF('massImportProgressBar').start();"
+                             update="notifications sticky-notifications :massImportProgressForm">
+                <p:resetInput target=":massImportProgressForm"/>
+            </p:commandButton>
+        </h:form>
     </ui:define>
 
     <ui:define name="pageTabView">

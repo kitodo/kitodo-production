@@ -46,9 +46,9 @@ public class MassImportST extends BaseTestSelenium {
     private static MassImportPage massImportPage;
     private static final String CSV_UPLOAD_FILENAME = "test_import";
     private static final String CSV_UPLOAD_FILE_EXTENSION = ".csv";
-    private static final String CSV_CELL_SELECTOR = "#editForm\\:recordsTable_data tr .ui-cell-editor-output";
-    private static final String RECORDS_TABLE = "editForm:recordsTable";
-    private static final String CSV_SEPARATOR = "editForm:csvSeparator";
+    private static final String CSV_CELL_SELECTOR = "#recordsForm\\:recordsTable_data tr .ui-cell-editor-output";
+    private static final String RECORDS_TABLE = "recordsForm:recordsTable";
+    private static final String CSV_SEPARATOR = "fileUploadForm:csvSeparator";
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -88,7 +88,7 @@ public class MassImportST extends BaseTestSelenium {
         Thread.sleep(Browser.getDelayAfterLogout());
         massImportPage.selectCatalogueGbv();
         Thread.sleep(Browser.getDelayAfterLogout());
-        List<WebElement> csvRows = Browser.getDriver().findElement(By.id("editForm:recordsTable_data"))
+        List<WebElement> csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
                 .findElements(By.tagName("tr"));
         assertEquals(3, csvRows.size(), "CSV file not parsed correctly");
         List<WebElement> updatedCsvCells = Browser.getDriver().findElements(By.cssSelector(CSV_CELL_SELECTOR));
