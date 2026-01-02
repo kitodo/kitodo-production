@@ -74,7 +74,7 @@
         <primefaces.version>12.0.0</primefaces.version>
         <primefaces.extensions.version>12.0.11</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
-        <log4j.version>2.19.0</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <junit.version>5.9.3</junit.version>
         <opensearch.version>2.15.0</opensearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
