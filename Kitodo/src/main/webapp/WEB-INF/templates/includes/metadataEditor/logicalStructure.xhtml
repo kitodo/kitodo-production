@@ -231,7 +231,7 @@
             <p:menuitem value="#{msgs.selectAssignedMedia}"
                         action="#{DataEditorForm.structurePanel.selectAssignedMedia}"
                         onclick="metadataEditor.logicalTree.selectAssignedMedia()"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.STRUCTURE_NODE_TYPE}"
+                        rendered="#{DataEditorForm.structurePanel.canSelectAssignedMedia()}"
                         icon="fa fa-check-square-o fa-sm"
                         styleClass="plain selectAssignedMedia"
                         process="@this"/>
