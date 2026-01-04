@@ -57,7 +57,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRole() and not SecurityAccessController.hasAuthorityToEditRole()}">
                     <f:param name="id" value="#{item.id}" />
-                    <f:param name="referrerFirstRow" value="#{RoleListView.firstRow}" />
+                    <f:param name="referrerListOptions" value="#{RoleListView.combinedListOptions}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
