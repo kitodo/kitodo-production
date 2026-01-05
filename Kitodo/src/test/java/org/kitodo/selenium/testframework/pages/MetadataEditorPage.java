@@ -405,7 +405,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         List<WebElement> menuItems = contextMenu.findElements(By.className("ui-menuitem"));
         assertEquals(5, menuItems.size(), "Wrong number of context menu items");
         // click "add element" option
-        menuItems.get(0).click();
+        menuItems.getFirst().click();
         // open "structure element type selection" menu
         clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection"), 1000, 1000, 5);
         // click first option

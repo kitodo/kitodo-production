@@ -49,7 +49,7 @@ public class LazyBeanModelIT {
     @Test
     public void shouldGetRowData() throws Exception {
         List<?> clients = clientService.getAll();
-        Client firstClient = (Client) clients.get(0);
+        Client firstClient = (Client) clients.getFirst();
         Client lazyClient = (Client) lazyBeanModel.getRowData(String.valueOf(firstClient.getId()));
         assertEquals(firstClient.getName(), lazyClient.getName());
     }
@@ -65,11 +65,11 @@ public class LazyBeanModelIT {
         clients = lazyBeanModel.load(0, 10, sortNameAsc, null);
         assertEquals(3, clients.size());
 
-        Client client = (Client) clients.get(0);
+        Client client = (Client) clients.getFirst();
         assertEquals("First client", client.getName());
 
         clients = lazyBeanModel.load(0, 2, sortNameDesc, null);
-        client = (Client) clients.get(0);
+        client = (Client) clients.getFirst();
         assertEquals("Second client", client.getName());
     }
 
@@ -88,11 +88,11 @@ public class LazyBeanModelIT {
         List<?> dockets = lazyBeanModelDocket.load(0, 2, sortTitleAsc, null);
         assertEquals(2, dockets.size());
 
-        Docket docket = (Docket) dockets.get(0);
+        Docket docket = (Docket) dockets.getFirst();
         assertEquals("default", docket.getTitle());
 
         dockets = lazyBeanModelDocket.load(0, 2, sortTitleDesc, null);
-        docket = (Docket) dockets.get(0);
+        docket = (Docket) dockets.getFirst();
         assertEquals("tester", docket.getTitle());
     }
 }

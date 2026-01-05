@@ -431,7 +431,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         metadata.put("topstruct", topstruct);
         List<LogicalDivision> children = logicalStructure.getChildren();
         metadata.put("firstchild",
-            children.isEmpty() ? Collections.emptyMap() : getMetadataEntries(children.get(0).getMetadata()));
+            children.isEmpty() ? Collections.emptyMap() : getMetadataEntries(children.getFirst().getMetadata()));
         metadata.put("physSequence", getMetadataEntries(workpiece.getPhysicalStructure().getMetadata()));
 
         String docType = null;
@@ -455,11 +455,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 if (!filteredViews.isEmpty()) {
                     MetadataEntry metadataEntry = new MetadataEntry();
                     metadataEntry.setValue(value);
-                    if (filteredViews.get(0).isComplex()) {
-                        table.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.get(0),
+                    if (filteredViews.getFirst().isComplex()) {
+                        table.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.getFirst(),
                             Collections.singletonList(metadataEntry));
                     } else {
-                        table.createMetadataEntryEdit((SimpleMetadataViewInterface) filteredViews.get(0),
+                        table.createMetadataEntryEdit((SimpleMetadataViewInterface) filteredViews.getFirst(),
                             Collections.singletonList(metadataEntry));
                     }
                 }
@@ -525,7 +525,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             return;
         }
 
-        IndividualIssue firstIssue = individualIssuesForProcess.get(0);
+        IndividualIssue firstIssue = individualIssuesForProcess.getFirst();
         Map<String, String> genericFields = firstIssue.getGenericFields();
         prepareTheAppropriateYearProcess(dateMark(yearSimpleMetadataView.getScheme(), firstIssue.getDate()),
             genericFields);
@@ -571,7 +571,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         LogicalDivision logicalStructure = new LogicalDivision();
         MetadataEntry dateMetadataEntry = new MetadataEntry();
         dateMetadataEntry.setKey(monthSimpleMetadataView.getId());
-        dateMetadataEntry.setValue(dateMark(monthSimpleMetadataView.getScheme(), individualIssues.get(0).getDate()));
+        dateMetadataEntry.setValue(dateMark(monthSimpleMetadataView.getScheme(), individualIssues.getFirst().getDate()));
         logicalStructure.getMetadata().add(dateMetadataEntry);
 
         for (IndividualIssue individualIssue : individualIssues) {

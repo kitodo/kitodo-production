@@ -595,7 +595,7 @@ public class Course extends ArrayList<Block> {
         if (super.isEmpty()) {
             return null;
         }
-        LocalDate firstAppearance = super.get(0).getFirstAppearance();
+        LocalDate firstAppearance = super.getFirst().getFirstAppearance();
         for (int index = 1; index < super.size(); index++) {
             LocalDate otherFirstAppearance = super.get(index).getFirstAppearance();
             if (otherFirstAppearance.isBefore(firstAppearance)) {
@@ -615,7 +615,7 @@ public class Course extends ArrayList<Block> {
         if (super.isEmpty()) {
             return null;
         }
-        LocalDate lastAppearance = super.get(0).getLastAppearance();
+        LocalDate lastAppearance = super.getFirst().getLastAppearance();
         for (int index = 1; index < super.size(); index++) {
             LocalDate otherLastAppearance = super.get(index).getLastAppearance();
             if (otherLastAppearance.isAfter(lastAppearance)) {

@@ -79,7 +79,7 @@ public class SearchingST extends BaseTestSelenium {
 
         processesPage.searchInSearchField("möhö");
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertEquals("", processesPage.getProcessTitles().get(0), "There should be no processes found"));
+            () -> assertEquals("", processesPage.getProcessTitles().getFirst(), "There should be no processes found"));
     }
 
 
@@ -91,14 +91,14 @@ public class SearchingST extends BaseTestSelenium {
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
             () -> assertEquals(1, processesPage.countListedProcesses(), "There should be one processes found"));
         List<String> processTitles = processesPage.getProcessTitles();
-        assertEquals("Second process", processTitles.get(0), "Wrong process found");
+        assertEquals("Second process", processTitles.getFirst(), "Wrong process found");
 
         processesPage.navigateToExtendedSearch();
         processesPage = SearchingST.extendedSearchPage.seachByTaskStatus();
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
             () -> assertEquals(1, processesPage.countListedProcesses(), "There should be one process found"));
         processTitles = processesPage.getProcessTitles();
-        assertEquals("Second process", processTitles.get(0), "Wrong process found");
+        assertEquals("Second process", processTitles.getFirst(), "Wrong process found");
     }
 
     /**
@@ -123,7 +123,7 @@ public class SearchingST extends BaseTestSelenium {
                 .ignoreExceptions().untilAsserted(() -> {
                     List<String> processTitles = processesPage.getProcessTitles();
                     assertEquals(1, processTitles.size(), "Case insensitive filter should match only one process");
-                    assertEquals("First process", processTitles.get(0),
+                    assertEquals("First process", processTitles.getFirst(),
                         "Case insensitive filter should match \"First process\"");
                 });
     }
@@ -154,7 +154,7 @@ public class SearchingST extends BaseTestSelenium {
         tasksPage.typeCharactersIntoFilter("i");
         List<WebElement> suggestions = tasksPage.getSuggestions();
         assertEquals(1, suggestions.size(), "Displayed wrong number of suggestions for input \"i\"");
-        assertEquals("id:", suggestions.get(0).getText(), "Displayed wrong suggestion for input \"i\"");
+        assertEquals("id:", suggestions.getFirst().getText(), "Displayed wrong suggestion for input \"i\"");
 
         tasksPage.selectSuggestion(0);
         assertEquals("id:", tasksPage.getFilterInputValue(), "Filter input value is wrong");

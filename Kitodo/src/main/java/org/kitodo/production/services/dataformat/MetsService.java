@@ -102,7 +102,7 @@ public class MetsService {
         LogicalDivision logicalDivision = workpiece.getLogicalStructure();
         String type = logicalDivision.getType();
         while (Objects.isNull(type) && !logicalDivision.getChildren().isEmpty()) {
-            logicalDivision = logicalDivision.getChildren().get(0);
+            logicalDivision = logicalDivision.getChildren().getFirst();
             type = logicalDivision.getType();
         }
         return type;

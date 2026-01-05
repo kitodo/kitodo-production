@@ -91,7 +91,7 @@ public class TitleRecordLinkTabIT {
 
         assertEquals(1, testedTitleRecordLinkTab.getPossibleParentProcesses().size(),
             "Wrong number of possibleParentProcesses found!");
-        assertEquals("4", testedTitleRecordLinkTab.getPossibleParentProcesses().get(0).getValue(),
+        assertEquals("4", testedTitleRecordLinkTab.getPossibleParentProcesses().getFirst().getValue(),
             "Wrong possibleParentProcesses found!");
     }
 
@@ -110,7 +110,7 @@ public class TitleRecordLinkTabIT {
 
         assertEquals(1, testedTitleRecordLinkTab.getPossibleParentProcesses().size(),
             "Wrong number of potential parent processes found!");
-        assertTrue(testedTitleRecordLinkTab.getPossibleParentProcesses().get(0).isDisabled(),
+        assertTrue(testedTitleRecordLinkTab.getPossibleParentProcesses().getFirst().isDisabled(),
             "Process of unassigned project should be deactivated in TitleRecordLinkTab!");
 
         // re-add first project to user

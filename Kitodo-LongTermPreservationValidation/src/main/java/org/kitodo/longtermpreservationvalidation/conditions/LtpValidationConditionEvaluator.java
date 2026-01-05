@@ -119,7 +119,7 @@ public class LtpValidationConditionEvaluator {
             return getConditionIncorrectNumberOfValuesResult(value);
         }
 
-        if (value.toLowerCase().equals(condition.getValues().get(0).toLowerCase())) {
+        if (value.toLowerCase().equals(condition.getValues().getFirst().toLowerCase())) {
             return new LtpValidationConditionResult(true, null, value);
         }
 
@@ -190,7 +190,7 @@ public class LtpValidationConditionEvaluator {
 
         try {
             float valueFloat = Float.parseFloat(value);
-            float conditionFloat = Float.parseFloat(condition.getValues().get(0));
+            float conditionFloat = Float.parseFloat(condition.getValues().getFirst());
             if (valueFloat >= conditionFloat) {
                 return new LtpValidationConditionResult(true, null, value);
             }
@@ -219,7 +219,7 @@ public class LtpValidationConditionEvaluator {
 
         try {
             float valueFloat = Float.parseFloat(value);
-            float conditionFloat = Float.parseFloat(condition.getValues().get(0));
+            float conditionFloat = Float.parseFloat(condition.getValues().getFirst());
             if (valueFloat <= conditionFloat) {
                 return new LtpValidationConditionResult(true, null, value);
             }
@@ -277,7 +277,7 @@ public class LtpValidationConditionEvaluator {
         }
 
         try {
-            Pattern pattern = Pattern.compile(condition.getValues().get(0), Pattern.CASE_INSENSITIVE);
+            Pattern pattern = Pattern.compile(condition.getValues().getFirst(), Pattern.CASE_INSENSITIVE);
             if (pattern.matcher(value).matches()) {
                 return new LtpValidationConditionResult(true, null, value);
             }

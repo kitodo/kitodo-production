@@ -155,7 +155,7 @@ public class ImportServiceTest {
         tasks.add(secondTask);
         tasks.add(thirdTask);
         process.setTasks(tasks);
-        assertEquals(date, process.getTasks().get(0).getProcessingEnd(), "Wrong processing end for closed task before update");
+        assertEquals(date, process.getTasks().getFirst().getProcessingEnd(), "Wrong processing end for closed task before update");
         ImportService.updateTasks(process);
         assertTrue(process.getTasks().get(0).getProcessingEnd().after(date), "Processing end of CLOSED task should have been updated");
         assertNull(process.getTasks().get(1).getProcessingEnd(), "Processing end of OPEN task should remain null after update");

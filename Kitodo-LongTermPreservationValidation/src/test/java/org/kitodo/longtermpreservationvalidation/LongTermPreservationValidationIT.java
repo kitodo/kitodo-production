@@ -101,8 +101,8 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult result = validator.validate(TIF_URI, FileType.TIFF, Collections.singletonList(condition));
 
         assertEquals(LtpValidationResultState.ERROR, result.getState());
-        assertFalse(result.getConditionResults().get(0).getPassed());
-        assertEquals(LtpValidationConditionError.CONDITION_FALSE, result.getConditionResults().get(0).getError());
+        assertFalse(result.getConditionResults().getFirst().getPassed());
+        assertEquals(LtpValidationConditionError.CONDITION_FALSE, result.getConditionResults().getFirst().getError());
     }
 
     /**
@@ -120,10 +120,10 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult result = validator.validate(TIF_URI, FileType.TIFF, Collections.singletonList(condition));
 
         assertEquals(LtpValidationResultState.ERROR, result.getState());
-        assertFalse(result.getConditionResults().get(0).getPassed());
+        assertFalse(result.getConditionResults().getFirst().getPassed());
         assertEquals(
                 LtpValidationConditionError.INCORRECT_NUMBER_OF_CONDITION_VALUES,
-                result.getConditionResults().get(0).getError()
+                result.getConditionResults().getFirst().getError()
         );
     }
 
@@ -142,8 +142,8 @@ public class LongTermPreservationValidationIT {
 
         LtpValidationResult result = validator.validate(TIF_URI, FileType.TIFF, Collections.singletonList(condition));
         assertEquals(LtpValidationResultState.ERROR, result.getState());
-        assertFalse(result.getConditionResults().get(0).getPassed());
-        assertEquals(LtpValidationConditionError.CONDITION_FALSE, result.getConditionResults().get(0).getError());
+        assertFalse(result.getConditionResults().getFirst().getPassed());
+        assertEquals(LtpValidationConditionError.CONDITION_FALSE, result.getConditionResults().getFirst().getError());
     }
 
     /**
@@ -191,10 +191,10 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult result = validator.validate(TIF_URI, FileType.TIFF, Collections.singletonList(condition));
 
         assertEquals(LtpValidationResultState.ERROR, result.getState());
-        assertFalse(result.getConditionResults().get(0).getPassed());
+        assertFalse(result.getConditionResults().getFirst().getPassed());
         assertEquals(
                 LtpValidationConditionError.PROPERTY_DOES_NOT_EXIST,
-                result.getConditionResults().get(0).getError()
+                result.getConditionResults().getFirst().getError()
         );
     }
 
@@ -213,10 +213,10 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult result = validator.validate(TIF_URI, FileType.TIFF, Collections.singletonList(condition));
 
         assertEquals(LtpValidationResultState.WARNING, result.getState());
-        assertFalse(result.getConditionResults().get(0).getPassed());
+        assertFalse(result.getConditionResults().getFirst().getPassed());
         assertEquals(
                 LtpValidationConditionError.PROPERTY_DOES_NOT_EXIST,
-                result.getConditionResults().get(0).getError()
+                result.getConditionResults().getFirst().getError()
         );
     }
 
@@ -243,10 +243,10 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult invalidResult = validator.validate(TIF_URI, FileType.TIFF,
             Collections.singletonList(invalidCondition));
         assertEquals(LtpValidationResultState.ERROR, invalidResult.getState());
-        assertFalse(invalidResult.getConditionResults().get(0).getPassed());
+        assertFalse(invalidResult.getConditionResults().getFirst().getPassed());
         assertEquals(
                 LtpValidationConditionError.CONDITION_FALSE,
-                invalidResult.getConditionResults().get(0).getError()
+                invalidResult.getConditionResults().getFirst().getError()
         );
     }
 
@@ -273,10 +273,10 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult invalidResult = validator.validate(TIF_URI, FileType.TIFF,
             Collections.singletonList(invalidCondition));
         assertEquals(LtpValidationResultState.ERROR, invalidResult.getState());
-        assertFalse(invalidResult.getConditionResults().get(0).getPassed());
+        assertFalse(invalidResult.getConditionResults().getFirst().getPassed());
         assertEquals(
                 LtpValidationConditionError.CONDITION_FALSE,
-                invalidResult.getConditionResults().get(0).getError()
+                invalidResult.getConditionResults().getFirst().getError()
         );
     }
 
@@ -303,10 +303,10 @@ public class LongTermPreservationValidationIT {
         LtpValidationResult invalidResult = validator.validate(TIF_URI, FileType.TIFF,
             Collections.singletonList(invalidCondition));
         assertEquals(LtpValidationResultState.ERROR, invalidResult.getState());
-        assertFalse(invalidResult.getConditionResults().get(0).getPassed());
+        assertFalse(invalidResult.getConditionResults().getFirst().getPassed());
         assertEquals(
                 LtpValidationConditionError.CONDITION_FALSE,
-                invalidResult.getConditionResults().get(0).getError()
+                invalidResult.getConditionResults().getFirst().getError()
         );
     }
 
@@ -327,7 +327,7 @@ public class LongTermPreservationValidationIT {
         assertEquals(LtpValidationResultState.ERROR, invalidResult.getState());
         assertEquals(
                 LtpValidationConditionError.PATTERN_INVALID_SYNTAX,
-                invalidResult.getConditionResults().get(0).getError()
+                invalidResult.getConditionResults().getFirst().getError()
         );
     }
 

@@ -66,7 +66,7 @@ public class FLocatXmlElementAccess {
     }
 
     private final URI getAndRepairUri(FileType file) {
-        String href = file.getFLocat().get(0).getHref();
+        String href = file.getFLocat().getFirst().getHref();
         try {
             return new URI(href);
         } catch (URISyntaxException exception) {

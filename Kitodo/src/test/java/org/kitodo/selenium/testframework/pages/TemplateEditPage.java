@@ -66,7 +66,7 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
 
     public TemplateEditPage insertTemplateData(Template template) {
         titleInput.sendKeys(template.getTitle());
-        Browser.getDriver().findElements(By.className("ui-chkbox")).get(0).click();
+        Browser.getDriver().findElements(By.className("ui-chkbox")).getFirst().click();
         clickElement(workflowSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(workflowSelect.getAttribute("id") + "_0")));
 

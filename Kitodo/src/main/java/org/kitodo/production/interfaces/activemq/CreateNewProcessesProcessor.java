@@ -164,7 +164,7 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
         } else if (processHierarchy.size() > 1) {
             throw new ProcessorException(processHierarchy.size() + " processes were imported");
         }
-        return processHierarchy.get(0);
+        return processHierarchy.getFirst();
     }
 
     /* In the second and middle part of the processing routine, the process

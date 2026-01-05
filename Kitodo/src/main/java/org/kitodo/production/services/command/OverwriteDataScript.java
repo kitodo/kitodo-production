@@ -34,7 +34,7 @@ public class OverwriteDataScript extends EditDataScript {
 
         for (Metadata metadatum : metadataCollection) {
             if (metadatum instanceof MetadataEntry && metadatum.getKey().equals(metadataScript.getMetadataKey())) {
-                ((MetadataEntry) metadatum).setValue(metadataScript.getValues().get(0));
+                ((MetadataEntry) metadatum).setValue(metadataScript.getValues().getFirst());
                 break;
             }
             if (metadatum instanceof MetadataGroup) {

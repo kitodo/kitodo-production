@@ -103,7 +103,7 @@ public class SelectTemplateDialogView implements Serializable {
         }
         List<Template> availableTemplates = this.project.getActiveTemplates();
         if (availableTemplates.size() == 1) {
-            this.selectedTemplateId = availableTemplates.get(0).getId();
+            this.selectedTemplateId = availableTemplates.getFirst().getId();
         }
         if (this.selectedTemplateId > 0) {
             try {

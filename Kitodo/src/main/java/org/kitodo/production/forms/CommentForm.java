@@ -254,7 +254,7 @@ public class CommentForm extends BaseForm {
             return Collections.emptyList();
         } else {
             return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                    currentTaskOptions.get(0).getOrdering(),
+                    currentTaskOptions.getFirst().getOrdering(),
                     this.process.getId());
         }
     }
@@ -354,7 +354,7 @@ public class CommentForm extends BaseForm {
      */
     public void newComment(Boolean isCorrectionComment) {
         if (getSizeOfPreviousStepsForProblemReporting() > 0) {
-            setCorrectionTaskId(getPreviousStepsForProblemReporting().get(0).getId().toString());
+            setCorrectionTaskId(getPreviousStepsForProblemReporting().getFirst().getId().toString());
         } else {
             setCorrectionTaskId("");
         }

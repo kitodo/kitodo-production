@@ -221,7 +221,7 @@ public class KitodoScriptServiceIT {
 
         ServiceManager.getKitodoScriptService().execute(processes,
             "action:generateImages \"folders:jpgs/max,jpgs/thumbs\" images:all");
-        EmptyTask taskImageGeneratorThread = TaskManager.getTaskList().get(0);
+        EmptyTask taskImageGeneratorThread = TaskManager.getTaskList().getFirst();
         while (taskImageGeneratorThread.isStartable() || taskImageGeneratorThread.isStoppable()) {
             Thread.sleep(400);
         }
@@ -284,7 +284,7 @@ public class KitodoScriptServiceIT {
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
-        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should not contain metadata beforehand");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -305,7 +305,7 @@ public class KitodoScriptServiceIT {
         metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         workpiece = metadataFile.getWorkpiece();
-        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(2, metadataOfChapter.size(), "metadata should have been added");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -330,7 +330,7 @@ public class KitodoScriptServiceIT {
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
-        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should contain metadata beforehand");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -351,7 +351,7 @@ public class KitodoScriptServiceIT {
         metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         workpiece = metadataFile.getWorkpiece();
-        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(0, metadataOfChapter.size(), "metadata should have been deleted");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -376,7 +376,7 @@ public class KitodoScriptServiceIT {
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
-        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should contain metadata beforehand");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -397,7 +397,7 @@ public class KitodoScriptServiceIT {
         metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         workpiece = metadataFile.getWorkpiece();
-        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(1, metadataOfChapter.size(), "metadata should not have been deleted");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -422,7 +422,7 @@ public class KitodoScriptServiceIT {
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         Workpiece workpiece = metadataFile.getWorkpiece();
-        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        Collection<Metadata> metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(1, metadataOfChapter.size(), "should contain metadata beforehand");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");
@@ -443,7 +443,7 @@ public class KitodoScriptServiceIT {
         metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
         workpiece = metadataFile.getWorkpiece();
-        metadataOfChapter = workpiece.getLogicalStructure().getChildren().get(0).getMetadata();
+        metadataOfChapter = workpiece.getLogicalStructure().getChildren().getFirst().getMetadata();
         assertEquals(1, metadataOfChapter.size(), "metadata should not have been deleted");
 
         assertTrue(mainMetsFile.exists(), "File meta.xml should exist");

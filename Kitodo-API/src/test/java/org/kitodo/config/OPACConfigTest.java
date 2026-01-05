@@ -60,7 +60,7 @@ class OPACConfigTest {
         List<String> mappingFiles = OPACConfig.getXsltMappingFiles("Kalliope");
         assertFalse(mappingFiles.isEmpty());
         assertEquals(1, mappingFiles.size());
-        assertEquals("mods2kitodo.xsl", mappingFiles.get(0));
+        assertEquals("mods2kitodo.xsl", mappingFiles.getFirst());
     }
 
     @Test

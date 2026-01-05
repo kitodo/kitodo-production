@@ -226,7 +226,7 @@ public class TaskServiceIT {
         int expected = 1;
         assertEquals(expected, actual, "Task's list size is incorrect!");
 
-        Task task = tasks.get(0);
+        Task task = tasks.getFirst();
         assertEquals(8, task.getId().intValue(), "");
         assertEquals("Progress", task.getTitle(), "");
         assertEquals(3, task.getOrdering().intValue(), "");
@@ -238,7 +238,7 @@ public class TaskServiceIT {
         int actual = tasks.size();
         assertEquals(3, actual, "Task's list size is incorrect!");
 
-        Task task = tasks.get(0);
+        Task task = tasks.getFirst();
         assertEquals(8, task.getId().intValue(), "");
         assertEquals("Progress", task.getTitle(), "");
         assertEquals(3, task.getOrdering().intValue(), "");
@@ -251,7 +251,7 @@ public class TaskServiceIT {
         int expected = 1;
         assertEquals(expected, actual, "Task's list size is incorrect!");
 
-        Task task = tasks.get(0);
+        Task task = tasks.getFirst();
         assertEquals(6, task.getId().intValue(), "");
         assertEquals("Finished", task.getTitle(), "");
         assertEquals(1, task.getOrdering().intValue(), "");

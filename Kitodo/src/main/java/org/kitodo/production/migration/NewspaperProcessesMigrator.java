@@ -359,10 +359,10 @@ public class NewspaperProcessesMigrator {
         Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath);
         // Copy metadata from year to issue
         Collection<Metadata> processMetadataFromYear = new ArrayList<>(
-                yearWorkpiece.getLogicalStructure().getChildren().get(0).getMetadata());
+                yearWorkpiece.getLogicalStructure().getChildren().getFirst().getMetadata());
         List<LogicalDivision> issuesIncludedStructuralElements = workpiece.getLogicalStructure().getChildren()
-                .get(0).getChildren();
-        issuesIncludedStructuralElements.get(0).getMetadata().addAll(processMetadataFromYear);
+                .getFirst().getChildren();
+        issuesIncludedStructuralElements.getFirst().getMetadata().addAll(processMetadataFromYear);
 
         RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
@@ -378,7 +378,7 @@ public class NewspaperProcessesMigrator {
         titelMetadata.setValue(processTitle);
         titelMetadata.setKey(titleKey);
         titelMetadata.setDomain(MdSec.DMD_SEC);
-        issuesIncludedStructuralElements.get(0).getMetadata().add(titelMetadata);
+        issuesIncludedStructuralElements.getFirst().getMetadata().add(titelMetadata);
     }
 
     /**
@@ -394,13 +394,13 @@ public class NewspaperProcessesMigrator {
         if (numberOfChildren == 0) {
             return null;
         }
-        LogicalDivision firstChild = children.get(0);
+        LogicalDivision firstChild = children.getFirst();
         if (numberOfChildren > 1) {
             children.subList(1, numberOfChildren).stream()
                     .flatMap(theLogicalDivision -> theLogicalDivision.getChildren().stream())
                     .forEachOrdered(firstChild.getChildren()::add);
             String firstOrderlabel = firstChild.getOrderlabel();
-            String lastOrderlabel = children.get(children.size() - 1).getOrderlabel();
+            String lastOrderlabel = children.getLast().getOrderlabel();
             if (Objects.nonNull(firstOrderlabel) && !firstOrderlabel.equals(lastOrderlabel)) {
                 firstChild.setOrderlabel(firstOrderlabel + '/' + lastOrderlabel);
             }
@@ -425,7 +425,7 @@ public class NewspaperProcessesMigrator {
             throws IOException, ConfigurationException, SAXException, FileStructureValidationException {
 
         LogicalDivision yearFileYearLogicalDivision = metsService.loadWorkpiece(yearMetadata)
-                .getLogicalStructure().getChildren().get(0);
+                .getLogicalStructure().getChildren().getFirst();
         String year = MetadataEditor.getMetadataValue(yearFileYearLogicalDivision, FIELD_TITLE_SORT);
         if (Objects.isNull(year) || !year.matches(YEAR_OR_DOUBLE_YEAR)) {
             logger.debug("\"{}\" is not a year number. Falling back to {}.", year, FIELD_TITLE);
@@ -433,7 +433,7 @@ public class NewspaperProcessesMigrator {
         }
         LogicalDivision processYearLogicalDivision = years.computeIfAbsent(year, theYear -> {
             // remove existing layers in the year
-            yearFileYearLogicalDivision.getChildren().get(0).getChildren().get(0).getChildren().clear();
+            yearFileYearLogicalDivision.getChildren().getFirst().getChildren().getFirst().getChildren().clear();
             MetadataEditor.writeMetadataEntry(yearFileYearLogicalDivision, yearSimpleMetadataView, theYear);
             return yearFileYearLogicalDivision;
         });
@@ -532,7 +532,7 @@ public class NewspaperProcessesMigrator {
 
         int index = 0;
         for (LogicalDivision child : logicalDivision.getChildren()) {
-            String firstSimpleMetadataValue = MetadataEditor.readSimpleMetadataValues(child, simpleMetadataView).get(0);
+            String firstSimpleMetadataValue = MetadataEditor.readSimpleMetadataValues(child, simpleMetadataView).getFirst();
             int comparison = firstSimpleMetadataValue.compareTo(value);
             if (comparison <= -1) {
                 index++;

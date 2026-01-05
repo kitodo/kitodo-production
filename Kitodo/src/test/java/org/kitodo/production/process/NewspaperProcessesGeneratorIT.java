@@ -176,7 +176,7 @@ public class NewspaperProcessesGeneratorIT {
         LogicalDivision logicalStructure = metsService
                 .loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId))).getLogicalStructure();
         LogicalDivision logicalDivision = issue
-                ? logicalStructure.getChildren().get(0).getChildren().get(0)
+                ? logicalStructure.getChildren().getFirst().getChildren().getFirst()
                 : logicalStructure;
         return logicalDivision.getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("ProcessTitle")).map(MetadataEntry.class::cast)

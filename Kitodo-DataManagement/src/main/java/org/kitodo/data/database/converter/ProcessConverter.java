@@ -83,7 +83,7 @@ public class ProcessConverter {
             return null;
         } else {
             tasks.sort(Comparator.comparing(Task::getProcessingBegin));
-            return tasks.get(0);
+            return tasks.getFirst();
         }
     }
 

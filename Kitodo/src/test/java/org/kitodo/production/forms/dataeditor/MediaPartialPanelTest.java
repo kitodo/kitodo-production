@@ -66,7 +66,7 @@ public class MediaPartialPanelTest {
     }
 
     private static MediaPartial getMediaPartialOfLogicalDivision(List<LogicalDivision> logicalDivisions, int index) {
-        return logicalDivisions.get(index).getViews().get(0).getPhysicalDivision().getMediaPartial();
+        return logicalDivisions.get(index).getViews().getFirst().getPhysicalDivision().getMediaPartial();
     }
 
     /**
