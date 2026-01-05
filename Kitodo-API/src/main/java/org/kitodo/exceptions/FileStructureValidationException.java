@@ -18,8 +18,8 @@ import org.kitodo.api.validation.ValidationResult;
  */
 public class FileStructureValidationException extends Exception {
 
-    private final ValidationResult validationResult;
-    boolean externalDataValidation = false;
+    private final transient ValidationResult validationResult;
+    private boolean externalDataValidation = false;
 
     /**
      * Constructs a new FileStructureValidationException with the specified detail
