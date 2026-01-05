@@ -50,12 +50,12 @@ public class LegalTextEditor implements Serializable {
         legalTextTitles.add(LegalTexts.DATA_PRIVACY);
         legalTextTitles.add(LegalTexts.IMPRINT);
 
-        currentLegalTextTitle = legalTextTitles.get(0);
+        currentLegalTextTitle = legalTextTitles.getFirst();
 
         FacesContext.getCurrentInstance().getApplication().getSupportedLocales()
                 .forEachRemaining(availableLocales::add);
         if (!availableLocales.isEmpty()) {
-            currentLanguage = availableLocales.get(0).getLanguage();
+            currentLanguage = availableLocales.getFirst().getLanguage();
         }
         loadText();
     }

@@ -192,7 +192,7 @@ public class CurrentTaskForm extends ValidatableForm {
         if (batches.isEmpty()) {
             return stopwatch.stop(takeOverTask());
         } else if (batches.size() == 1) {
-            Integer batchId = batches.get(0).getId();
+            Integer batchId = batches.getFirst().getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);
@@ -265,7 +265,7 @@ public class CurrentTaskForm extends ValidatableForm {
         if (batches.isEmpty()) {
             return stopwatch.stop(taskEditPath + "&id=" + getTaskIdForPath());
         } else if (batches.size() == 1) {
-            Integer batchId = batches.get(0).getId();
+            Integer batchId = batches.getFirst().getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);

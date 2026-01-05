@@ -81,7 +81,7 @@ public class DocketEditView extends BaseEditView {
         } else {
             if (Objects.nonNull(this.docket.getId())) {
                 if (dockets.size() == 1) {
-                    return !dockets.get(0).getId().equals(this.docket.getId());
+                    return !dockets.getFirst().getId().equals(this.docket.getId());
                 } else {
                     return true;
                 }

@@ -607,8 +607,8 @@ public class MetadataEditor {
      */
     public static View getFirstViewForPhysicalDivision(PhysicalDivision physicalDivision) {
         List<LogicalDivision> logicalDivisions = physicalDivision.getLogicalDivisions();
-        if (!logicalDivisions.isEmpty() && Objects.nonNull(logicalDivisions.get(0))) {
-            for (View view : logicalDivisions.get(0).getViews()) {
+        if (!logicalDivisions.isEmpty() && Objects.nonNull(logicalDivisions.getFirst())) {
+            for (View view : logicalDivisions.getFirst().getViews()) {
                 if (Objects.nonNull(view) && Objects.equals(view.getPhysicalDivision(), physicalDivision)) {
                     return view;
                 }

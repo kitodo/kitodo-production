@@ -1189,7 +1189,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 document.setPageSize(rectangle);
                 document.open();
                 if (!rowList.isEmpty()) {
-                    Paragraph paragraph = new Paragraph(rowList.get(0).get(0).toString());
+                    Paragraph paragraph = new Paragraph(rowList.getFirst().getFirst().toString());
                     document.add(paragraph);
                     document.add(getPdfTable(rowList));
                 }

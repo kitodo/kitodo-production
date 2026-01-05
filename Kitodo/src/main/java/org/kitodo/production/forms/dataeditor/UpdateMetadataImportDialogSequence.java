@@ -172,7 +172,7 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
         try {
             if (!createProcessForm.getProcesses().isEmpty()) {
                 Process process = dataEditorForm.getProcess();
-                TempProcess tempProcess = createProcessForm.getProcesses().get(0);
+                TempProcess tempProcess = createProcessForm.getProcesses().getFirst();
                 
                 List<MetadataComparison> metadataComparisons = updateMetadataDialog.getMetadataComparisons();
                 metadataComparisons.clear();

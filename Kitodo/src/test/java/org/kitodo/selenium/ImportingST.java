@@ -238,7 +238,7 @@ public class ImportingST extends BaseTestSelenium {
         assertEquals(1, processesPage.countListedProcesses(), "Exactly one imported parent process should be displayed");
         List<String> processIds = processesPage.getProcessIds();
         assertEquals(1, processIds.size(), "Exactly one process ID should be visible");
-        int processId = Integer.parseInt(processIds.get(0));
+        int processId = Integer.parseInt(processIds.getFirst());
         processesPage.filterByChildren();
         List<String> childProcessIds = processesPage.getProcessIds();
         assertEquals(3, childProcessIds.size(), "Wrong number of child processes");

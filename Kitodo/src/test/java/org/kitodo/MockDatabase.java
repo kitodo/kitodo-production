@@ -624,7 +624,7 @@ public class MockDatabase {
         multiVolumeWork.setTitle("Multi volume work test process");
         Project project = ServiceManager.getProjectService().getById(1);
         multiVolumeWork.setProject(project);
-        multiVolumeWork.setTemplate(project.getTemplates().get(0));
+        multiVolumeWork.setTemplate(project.getTemplates().getFirst());
         multiVolumeWork.setRuleset(ServiceManager.getRulesetService().getById(1));
         ServiceManager.getProcessService().save(multiVolumeWork);
         return multiVolumeWork.getId();
@@ -643,7 +643,7 @@ public class MockDatabase {
         templateProcess.setBaseType("Volume");
         templateProcess.setTitle("Test volume");
         templateProcess.setProject(firstProject);
-        templateProcess.setTemplate(firstProject.getTemplates().get(0));
+        templateProcess.setTemplate(firstProject.getTemplates().getFirst());
         templateProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         templateProcess.setInChoiceListShown(true);
         ServiceManager.getProcessService().save(templateProcess);
@@ -1241,7 +1241,7 @@ public class MockDatabase {
      */
     public static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
-        Template template = projectTwo.getTemplates().get(0);
+        Template template = projectTwo.getTemplates().getFirst();
         Process mediaReferencesProcess = new Process();
         mediaReferencesProcess.setTitle(processTitle);
         mediaReferencesProcess.setProject(projectTwo);
@@ -1866,8 +1866,8 @@ public class MockDatabase {
         ppnField.setImportConfiguration(gbvConfiguration);
 
         gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
-        gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
-        gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
+        gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().getFirst());
+        gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().getFirst());
         gbvConfiguration.setClients(clients);
         ServiceManager.getImportConfigurationService().save(gbvConfiguration);
 
@@ -1986,8 +1986,8 @@ public class MockDatabase {
         idField.setImportConfiguration(customConfiguration);
 
         customConfiguration.setSearchFields(Collections.singletonList(idField));
-        customConfiguration.setIdSearchField(customConfiguration.getSearchFields().get(0));
-        customConfiguration.setDefaultSearchField(customConfiguration.getSearchFields().get(0));
+        customConfiguration.setIdSearchField(customConfiguration.getSearchFields().getFirst());
+        customConfiguration.setDefaultSearchField(customConfiguration.getSearchFields().getFirst());
 
         // add URL parameters
         UrlParameter firstParameter = new UrlParameter();

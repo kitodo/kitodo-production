@@ -107,7 +107,7 @@ public class RulesetManagementIT {
             Arrays.asList("defaultStringKey", "anyURIKey", "booleanKey", "dateKey", "namespaceDefaultAnyURIKey",
                 "namespaceStringKey"));
 
-        MetadataViewInterface booleanMvi = mvwviList.get(0).getMetadata().get();
+        MetadataViewInterface booleanMvi = mvwviList.getFirst().getMetadata().get();
         assertFalse(booleanMvi.isComplex());
         assertInstanceOf(SimpleMetadataViewInterface.class, booleanMvi);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
@@ -156,7 +156,7 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
             Collections.singletonList("contributor"));
 
-        MetadataViewInterface contributorMvi = mvwviList.get(0).getMetadata().get();
+        MetadataViewInterface contributorMvi = mvwviList.getFirst().getMetadata().get();
         assertEquals("contributor", contributorMvi.getId());
         assertEquals("Contributor ‹person›", contributorMvi.getLabel());
         assertTrue(contributorMvi.isComplex());
@@ -227,11 +227,11 @@ public class RulesetManagementIT {
             Collections.emptyList());
 
         assertThat(
-            ((SimpleMetadataViewInterface) mvwviList.get(0).getMetadata().get()).getSelectItems(Collections.emptyList())
+            ((SimpleMetadataViewInterface) mvwviList.getFirst().getMetadata().get()).getSelectItems(Collections.emptyList())
                     .keySet(),
             contains("dan", "dut", "eng", "fre", "ger"));
         assertThat(
-            ((SimpleMetadataViewInterface) mvwviListDe.get(0).getMetadata().get())
+            ((SimpleMetadataViewInterface) mvwviListDe.getFirst().getMetadata().get())
                     .getSelectItems(Collections.emptyList()).keySet(),
             contains("dan", "ger", "eng", "fre", "dut"));
 
@@ -292,7 +292,7 @@ public class RulesetManagementIT {
             Arrays.asList("defaultStringKey", "anyURIKey", "booleanKey", "dateKey", "namespaceDefaultAnyURIKey",
                 "namespaceStringKey", "integerKey", "optionsKey"));
 
-        MetadataViewInterface booleanMvi = mvwviList.get(0).getMetadata().get();
+        MetadataViewInterface booleanMvi = mvwviList.getFirst().getMetadata().get();
         assertFalse(booleanMvi.isComplex());
         assertInstanceOf(SimpleMetadataViewInterface.class, booleanMvi);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
@@ -483,7 +483,7 @@ public class RulesetManagementIT {
         List<MetadataViewWithValuesInterface> nestedMvwviList = nestedSettings
                 .getSortedVisibleMetadata(Collections.emptyList(), Collections.emptyList());
         assertEquals(1, nestedMvwviList.size());
-        assertEquals("testAlwaysShowing", nestedMvwviList.get(0).getMetadata().get().getId());
+        assertEquals("testAlwaysShowing", nestedMvwviList.getFirst().getMetadata().get().getId());
 
         // 2a. Also with nested metadata, all fields except those that are
         // excluded should be allowed to be added.
@@ -1110,12 +1110,12 @@ public class RulesetManagementIT {
         List<Metadata> defaultReplace = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToReplaceByDefault")).collect(Collectors.toList());
         assertEquals(1, defaultReplace.size());
-        assertEquals("replaced value", ((MetadataEntry) defaultReplace.get(0)).getValue());
+        assertEquals("replaced value", ((MetadataEntry) defaultReplace.getFirst()).getValue());
 
         List<Metadata> explicitReplace = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToReplaceExplicitly")).collect(Collectors.toList());
         assertEquals(1, explicitReplace.size());
-        assertEquals("replaced value", ((MetadataEntry) explicitReplace.get(0)).getValue());
+        assertEquals("replaced value", ((MetadataEntry) explicitReplace.getFirst()).getValue());
 
         List<Metadata> add = metadata.stream().filter(element -> element.getKey().equals("metadataToAdd"))
                 .collect(Collectors.toList());
@@ -1142,13 +1142,13 @@ public class RulesetManagementIT {
         List<Metadata> keep = metadata.stream().filter(element -> element.getKey().equals("metadataToKeep"))
                 .collect(Collectors.toList());
         assertEquals(1, keep.size());
-        assertEquals("value not to replace", ((MetadataEntry) keep.get(0)).getValue());
+        assertEquals("value not to replace", ((MetadataEntry) keep.getFirst()).getValue());
 
         List<Metadata> keepNoEdit = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
                 .collect(Collectors.toList());
         assertEquals(1, keepNoEdit.size());
-        assertEquals("value not to replace", ((MetadataEntry) keepNoEdit.get(0)).getValue());
+        assertEquals("value not to replace", ((MetadataEntry) keepNoEdit.getFirst()).getValue());
     }
 
     @Test
@@ -1181,7 +1181,7 @@ public class RulesetManagementIT {
                 .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
                 .collect(Collectors.toList());
         assertEquals(1, replaceInEdit.size());
-        assertEquals("replaced value", ((MetadataEntry) replaceInEdit.get(0)).getValue());
+        assertEquals("replaced value", ((MetadataEntry) replaceInEdit.getFirst()).getValue());
     }
 
     /**

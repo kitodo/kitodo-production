@@ -38,7 +38,7 @@ class MetsKitodoValidator {
      *         of KitodoType
      */
     static boolean checkMetsKitodoFormatOfMets(Mets mets) {
-        return JaxbXmlUtils.objectListContainsType(mets.getDmdSec().get(0).getMdWrap().getXmlData().getAny(),
+        return JaxbXmlUtils.objectListContainsType(mets.getDmdSec().getFirst().getMdWrap().getXmlData().getAny(),
             KitodoType.class);
     }
 

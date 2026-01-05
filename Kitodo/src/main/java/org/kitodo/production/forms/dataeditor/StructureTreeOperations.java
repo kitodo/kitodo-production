@@ -161,7 +161,7 @@ public class StructureTreeOperations {
                 PhysicalDivision physicalDivision = (PhysicalDivision) structureTreeNode.getDataObject();
 
                 if (!physicalDivision.getLogicalDivisions().isEmpty()) {
-                    return new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0));
+                    return new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().getFirst());
                 } else {
                     return new ImmutablePair<>(physicalDivision, null);
                 }
