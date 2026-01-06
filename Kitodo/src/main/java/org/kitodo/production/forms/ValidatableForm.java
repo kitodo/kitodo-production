@@ -192,7 +192,11 @@ public class ValidatableForm extends BaseForm {
         if (Objects.isNull(redirectionPath) || redirectionPath.contains(REDIRECT_PARAMETER)) {
             setRedirectionPath(redirectionPath);
         } else {
-            setRedirectionPath(redirectionPath + "?" + REDIRECT_PARAMETER);
+            if (redirectionPath.contains("?")) {
+                setRedirectionPath(redirectionPath + "&" + REDIRECT_PARAMETER);
+            } else {
+                setRedirectionPath(redirectionPath + "?" + REDIRECT_PARAMETER);
+            }
         }
         setValidationErrorDescription(exception.getMessage());
         setValidationErrors(exception.getValidationResult().getResultMessages());

@@ -803,6 +803,7 @@ public class KitodoScriptService {
         for (Process process : processes) {
             URI metadataFileUri = processService.getMetadataFileUri(process);
             Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri, false);
+            fileService.createBackupFile(process);
             metsService.saveWorkpiece(workpiece, metadataFileUri);
         }
     }

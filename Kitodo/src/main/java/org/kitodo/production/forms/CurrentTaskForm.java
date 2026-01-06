@@ -67,7 +67,7 @@ import org.xml.sax.SAXException;
 
 @Named("CurrentTaskForm")
 @SessionScoped
-public class CurrentTaskForm extends BaseForm {
+public class CurrentTaskForm extends ValidatableForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
@@ -307,8 +307,12 @@ public class CurrentTaskForm extends BaseForm {
         Stopwatch stopwatch = new Stopwatch(this, "closeTaskByUser");
         try {
             this.workflowControllerService.closeTaskByUser(this.currentTask);
-        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
+        } catch (DAOException | IOException | SAXException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+            return stopwatch.stop(this.stayOnCurrentPage);
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
+            showValidationExceptionDialog(e, null);
             return stopwatch.stop(this.stayOnCurrentPage);
         }
         return stopwatch.stop(tasksPage);
