@@ -16,9 +16,13 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui" >
+
+    <!-- determines the encoding type of form parameters, if a file upload is involved, the 'multipart/form-data' encoding is required -->
+    <ui:param name="formEnctype" value="application/x-www-form-urlencoded" />
+
     <ui:define name="content">
         <p:panel id="listWrapper">
-            <h:form id="editForm" enctype="multipart/form-data">
+            <h:form id="editForm" enctype="#{formEnctype}">
                 <p:panel styleClass="content-header">
                     <ui:insert name="contentHeader">
                         <h3>Kitodo.Production</h3>
