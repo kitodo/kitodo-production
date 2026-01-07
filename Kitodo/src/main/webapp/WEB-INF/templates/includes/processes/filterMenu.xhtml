@@ -16,28 +16,34 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:p="http://primefaces.org/ui">
-    <p:remoteCommand name="removeFilter"
-                     action="#{ProcessForm.filterMenu.removeFilter}"
-                     oncomplete="setFilterInputPadding()"
-                     update="processesTabView:processesForm:processesTable
+    <h:form id="filterCommands">
+        <p:remoteCommand name="removeFilter"
+                         id="removeFilterCommand"
+                         action="#{ProcessForm.filterMenu.removeFilter}"
+                         oncomplete="setFilterInputPadding()"
+                         update="processesTabView:processesForm:processesTable
                              parsedFiltersForm:parsedFilters
                              processCount"/>
-    <p:remoteCommand name="removeFilterForEdit"
-                     action="#{ProcessForm.filterMenu.removeFilter}"
-                     oncomplete="setFilterInputPadding()"
-                     update="parsedFiltersForm:parsedFilters"/>
-    <p:remoteCommand name="updateSuggestions"
-                     action="#{ProcessForm.filterMenu.updateSuggestions}"
-                     update="filterOptionsForm:suggestions"/>
-    <p:remoteCommand name="submitFilters"
-                     action="#{ProcessForm.filterMenu.submitFilters}"
-                     onstart="PF('processesTable').getPaginator().setPage(0);"
-                     oncomplete="setFilterInputPadding();"
-                     update="processesTabView:processesForm:processesTable
+        <p:remoteCommand name="removeFilterForEdit"
+                         id="removeFilterForEditCommand"
+                         action="#{ProcessForm.filterMenu.removeFilter}"
+                         oncomplete="setFilterInputPadding()"
+                         update="parsedFiltersForm:parsedFilters"/>
+        <p:remoteCommand name="updateSuggestions"
+                         id="updateSuggestionsCommand"
+                         action="#{ProcessForm.filterMenu.updateSuggestions}"
+                         update="filterOptionsForm:suggestions"/>
+        <p:remoteCommand name="submitFilters"
+                         id="submitFiltersCommand"
+                         action="#{ProcessForm.filterMenu.submitFilters}"
+                         onstart="PF('processesTable').getPaginator().setPage(0);"
+                         oncomplete="setFilterInputPadding();"
+                         update="processesTabView:processesForm:processesTable
                              processCount
                              filterInputForm:filterfield
                              parsedFiltersForm:parsedFilters
                              filterOptionsForm:suggestions"/>
+    </h:form>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">

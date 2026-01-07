@@ -29,8 +29,8 @@ import org.kitodo.production.services.ServiceManager;
 
 /**
  * This is a web service interface to close steps. You have to provide the step
- * id as “id”; you can add a field “message” which will be added to the wiki
- * field.
+ * id as “id”; you can add a field “message” which will be added to the process
+ * comments.
  */
 public class FinalizeStepProcessor extends ActiveMQProcessor {
 
@@ -46,7 +46,7 @@ public class FinalizeStepProcessor extends ActiveMQProcessor {
 
     /**
      * This is the main routine processing incoming tickets. It gets an CurrentTaskForm object, sets it to the
-     * appropriate step which is retrieved from the database, appends the message − if any − to the wiki field, and
+     * appropriate step which is retrieved from the database, appends the message − if any − to process comments, and
      * executes the form’s the step close function.
      *
      * @param ticket

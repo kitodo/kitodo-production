@@ -66,7 +66,7 @@
                                           cancelIcon="fa fa-times fa-lg"
                                           cancelLabel="#{msgs.cancel}"/>
                         </h:panelGroup>
-                        <h:panelGroup id="progressDiv" style="display:none">
+                        <h:panelGroup id="progressDiv">
                             <h:outputLabel for="progressBar">#{msgs.taskImageGeneratorThread}</h:outputLabel>
                             <p:progressBar id="progressBar"
                                            widgetVar="progressBar"
@@ -99,7 +99,7 @@
                 function handleLastFileUploadRequest(fileupload) {
                     if (fileupload.files.length === 0) {
                         generateMedia();
-                        document.getElementById('progressDiv').style.display = 'block';
+                        document.getElementById('uploadFileDialogForm:progressDiv').style.display = 'block';
                         PF('uploadMedia').disableButton(PF('uploadMedia').chooseButton)
                         PF('progressBar').start();
                         PF('closeButton').disable();
