@@ -148,7 +148,7 @@ public class MetsService {
                 try (InputStream xmlValidationStream = new ByteArrayInputStream(outputStream.toByteArray())) {
                     XMLUtils.checkIfXmlIsWellFormed(new String(xmlValidationStream.readAllBytes(), StandardCharsets.UTF_8));
                 } catch (SAXException e) {
-                    logger.error("Malformed XML: {}", e.getMessage());
+                    logger.error("Error loading workpiece. Metadata file '{}' contains malformed XML: {}", uri, e.getMessage());
                     throw e;
                 }
                 if (validateAgainstSchema) {
