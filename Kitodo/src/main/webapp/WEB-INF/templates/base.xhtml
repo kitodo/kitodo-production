@@ -84,17 +84,20 @@
             <o:highlight styleClass="ui-state-error" />
             <ui:fragment id="activityMonitors"
                          rendered="#{not empty SessionClientController.currentSessionClient and session.maxInactiveInterval gt 0}">
-                <p:idleMonitor timeout="#{(session.maxInactiveInterval - SessionClientController.getAutomaticLogoutWarningSeconds()) * 1000}"
-                               multiWindowSupport="true"
-                               onidle="PF('logoutTimer').start()"
-                               onactive="PF('logoutTimer').pause()">
-                    <p:ajax event="idle"
-                            listener="#{activityMonitor.onIdle}"/>
-                    <p:ajax event="active"
-                            oncomplete="PF('logoutTimer').currentTimeout = #{SessionClientController.getAutomaticLogoutWarningSeconds()};"
-                            listener="#{activityMonitor.onActive}"
-                            update="sticky-notifications"/>
-                </p:idleMonitor>
+                <h:form id="activityMonitorForm">
+                    <p:idleMonitor timeout="#{(session.maxInactiveInterval - SessionClientController.getAutomaticLogoutWarningSeconds()) * 1000}"
+                                   id="activityMonitor"
+                                   multiWindowSupport="true"
+                                   onidle="PF('logoutTimer').start()"
+                                   onactive="PF('logoutTimer').pause()">
+                        <p:ajax event="idle"
+                                listener="#{activityMonitor.onIdle}"/>
+                        <p:ajax event="active"
+                                oncomplete="PF('logoutTimer').currentTimeout = #{SessionClientController.getAutomaticLogoutWarningSeconds()};"
+                                listener="#{activityMonitor.onActive}"
+                                update="sticky-notifications"/>
+                    </p:idleMonitor>
+                </h:form>
                 <h:form id="timerForm">
                     <pe:timer id="timer"
                               resetValues="pause"

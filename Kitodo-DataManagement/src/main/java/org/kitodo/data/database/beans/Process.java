@@ -71,9 +71,6 @@ public class Process extends BaseTemplateBean {
     @Column(name = "sortHelperDocstructs")
     private Integer sortHelperDocstructs;
 
-    @Column(name = "wikiField", columnDefinition = "longtext")
-    private String wikiField = "";
-
     @Column(name = "processBaseUri")
     private String processBaseUri;
 
@@ -284,28 +281,6 @@ public class Process extends BaseTemplateBean {
      */
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
-    }
-
-    /**
-     * Returns the contents of the wiki field as HTML. Wiki means that something
-     * can be changed quickly by anyone. It is a kind of sticky note on which
-     * editors can exchange information about a process.
-     *
-     * @return wiki field as HTML
-     */
-    public String getWikiField() {
-        return this.wikiField;
-    }
-
-    /**
-     * Sets the content of the wiki field. Primitive HTML tags formatting may be
-     * used.
-     *
-     * @param wikiField
-     *            wiki field as HTML
-     */
-    public void setWikiField(String wikiField) {
-        this.wikiField = wikiField;
     }
 
     /**

@@ -326,6 +326,22 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Determines whether it is possible to select the assigned media of the currently selected logical node.
+     * This method checks if a single logical node is selected, verifies that it is of type "Structure",
+     * and ensures that it does not represent a linked process.
+     *
+     * @return {@code true} if the selected logical node is of type "Structure" and does not represent a linked process;
+     *         {@code false} otherwise.
+     */
+    public boolean canSelectAssignedMedia() {
+        TreeNode<Object> selectedLogicalNode = getSelectedLogicalNodeIfSingle();
+        if (Objects.isNull(selectedLogicalNode) || !(selectedLogicalNode.getData() instanceof StructureTreeNode structureTreeNode)) {
+            return false;
+        }
+        return STRUCTURE_NODE_TYPE.equals(selectedLogicalNode.getType()) && !structureTreeNode.isLinked();
+    }
+
+    /**
      * Get selected logical TreeNodes as List.
      *
      * @return value of selectedLogicalNodes as List

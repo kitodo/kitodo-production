@@ -158,7 +158,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetProcess() throws Exception {
         Process process = processService.getById(1);
-        boolean condition = process.getTitle().equals(firstProcess) && process.getWikiField().equals("field");
+        boolean condition = process.getTitle().equals(firstProcess);
         assertTrue(condition, "Process was not found in database!");
 
         assertEquals(5, process.getTasks().size(), "Process was found but tasks were not inserted!");

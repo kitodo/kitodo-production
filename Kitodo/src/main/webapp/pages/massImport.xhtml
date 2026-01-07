@@ -25,6 +25,9 @@
         <f:viewAction action="#{MassImportForm.prepareMassImport(templateId, projectId)}"/>
     </f:metadata>
 
+    <!-- overwrite baseEditView.xhtml form parameter encoding to use multipart because of CSV file upload -->
+    <ui:param name="formEnctype" value="multipart/form-data" />
+
     <ui:define name="contentHeader">
         <h3 id="headerText">
             <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}', #{msgs.ruleset}: '#{MassImportForm.rulesetTitle}')"
