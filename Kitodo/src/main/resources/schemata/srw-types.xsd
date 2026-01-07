@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ZiNG SRU/SRW WSDL Specification                   -->
+<!-- Version 1.1                                       -->
+<!-- 20 July 2004                                       -->
+<xsd:schema targetNamespace="http://www.loc.gov/zing/srw/" xmlns:diag="http://www.loc.gov/zing/srw/diagnostic/" xmlns:xcql="http://www.loc.gov/zing/cql/xcql/" xmlns="http://www.loc.gov/zing/srw/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:import namespace="http://www.loc.gov/zing/cql/xcql/" schemaLocation="xcql.xsd"/>
+  <xsd:import namespace="http://www.loc.gov/zing/srw/diagnostic/" schemaLocation="diagnostics.xsd"/>
+  <xsd:complexType name="requestType">
+    <xsd:sequence>
+      <xsd:element ref="version"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="responseType">
+    <xsd:sequence>
+      <xsd:element ref="version"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="searchRetrieveRequest" type="searchRetrieveRequestType" nillable="false"/>
+  <xsd:complexType name="searchRetrieveRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="requestType">
+        <xsd:sequence>
+          <xsd:element ref="query"/>
+          <xsd:element ref="startRecord" minOccurs="0"/>
+          <xsd:element ref="maximumRecords" minOccurs="0"/>
+          <xsd:element ref="recordPacking" minOccurs="0"/>
+          <xsd:element ref="recordSchema" minOccurs="0"/>
+          <xsd:element ref="recordXPath" minOccurs="0"/>
+          <xsd:element ref="resultSetTTL" minOccurs="0"/>
+          <xsd:element ref="sortKeys" minOccurs="0"/>
+          <xsd:element ref="stylesheet" minOccurs="0"/>
+          <xsd:element ref="extraRequestData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="searchRetrieveResponse" type="searchRetrieveResponseType" nillable="false"/>
+  <xsd:complexType name="searchRetrieveResponseType">
+    <xsd:complexContent>
+      <xsd:extension base="responseType">
+        <xsd:sequence>
+          <xsd:element ref="numberOfRecords"/>
+          <xsd:element ref="resultSetId" minOccurs="0"/>
+          <xsd:element ref="resultSetIdleTime" minOccurs="0"/>
+          <xsd:element ref="records" minOccurs="0"/>
+          <xsd:element ref="nextRecordPosition" minOccurs="0"/>
+          <xsd:element ref="echoedSearchRetrieveRequest" minOccurs="0"/>
+          <xsd:element ref="diagnostics" minOccurs="0"/>
+          <xsd:element ref="extraResponseData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="scanRequest" type="scanRequestType" nillable="false"/>
+  <xsd:complexType name="scanRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="requestType">
+        <xsd:sequence>
+          <xsd:element ref="scanClause"/>
+          <xsd:element ref="responsePosition" minOccurs="0"/>
+          <xsd:element ref="maximumTerms" minOccurs="0"/>
+          <xsd:element ref="stylesheet" minOccurs="0"/>
+          <xsd:element ref="extraRequestData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="scanResponse" type="scanResponseType" nillable="false"/>
+  <xsd:complexType name="scanResponseType">
+    <xsd:complexContent>
+      <xsd:extension base="responseType">
+        <xsd:sequence>
+          <xsd:element ref="terms" minOccurs="0"/>
+          <xsd:element ref="echoedScanRequest" minOccurs="0"/>
+          <xsd:element ref="diagnostics" minOccurs="0"/>
+          <xsd:element ref="extraResponseData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="explainRequest" type="explainRequestType" nillable="false"/>
+  <xsd:complexType name="explainRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="requestType">
+        <xsd:sequence>
+          <xsd:element ref="recordPacking" minOccurs="0"/>
+          <xsd:element ref="stylesheet" minOccurs="0"/>
+          <xsd:element ref="extraRequestData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="explainResponse" type="explainResponseType" nillable="false"/>
+  <xsd:complexType name="explainResponseType">
+    <xsd:complexContent>
+      <xsd:extension base="responseType">
+        <xsd:sequence>
+          <xsd:element ref="record"/>
+          <xsd:element ref="echoedExplainRequest" minOccurs="0"/>
+          <xsd:element ref="diagnostics" minOccurs="0"/>
+          <xsd:element ref="extraResponseData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="version" type="xsd:string" nillable="false"/>
+  <xsd:element name="query" type="xsd:string" nillable="false"/>
+  <xsd:element name="startRecord" type="xsd:positiveInteger" default="1" nillable="false"/>
+  <xsd:element name="maximumRecords" type="xsd:nonNegativeInteger" nillable="false"/>
+  <xsd:element name="recordPacking" type="xsd:string" nillable="false"/>
+  <xsd:element name="recordSchema" type="xsd:string" nillable="false"/>
+  <xsd:element name="recordXPath" type="xsd:string" nillable="false"/>
+  <xsd:element name="resultSetTTL" type="xsd:nonNegativeInteger" nillable="false"/>
+  <xsd:element name="stylesheet" type="xsd:anyURI" nillable="false"/>
+  <xsd:element name="sortKeys" type="xsd:string" nillable="false"/>
+  <xsd:element name="extraRequestData" type="extraDataType" nillable="false"/>
+  <xsd:element name="numberOfRecords" type="xsd:nonNegativeInteger" nillable="false"/>
+  <xsd:element name="resultSetId" type="xsd:string" nillable="false"/>
+  <xsd:element name="resultSetIdleTime" type="xsd:positiveInteger" nillable="false"/>
+  <xsd:element name="records" type="recordsType" nillable="false"/>
+  <xsd:complexType name="recordsType">
+    <xsd:sequence>
+      <xsd:element ref="record" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="record" type="recordType" nillable="false"/>
+  <xsd:complexType name="recordType">
+    <xsd:sequence>
+      <xsd:element ref="recordSchema"/>
+      <xsd:element ref="recordPacking"/>
+      <xsd:element ref="recordData"/>
+      <xsd:element ref="recordPosition" minOccurs="0"/>
+      <xsd:element ref="extraRecordData" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="recordData" type="stringOrXmlFragment" nillable="false"/>
+  <xsd:element name="recordPosition" type="xsd:positiveInteger" nillable="false"/>
+  <xsd:element name="extraRecordData" type="extraDataType" nillable="false"/>
+  <xsd:element name="nextRecordPosition" type="xsd:positiveInteger" nillable="false"/>
+  <xsd:element name="diagnostics" type="diagnosticsType" nillable="false"/>
+  <xsd:complexType name="diagnosticsType">
+    <xsd:sequence>
+      <xsd:element ref="diag:diagnostic" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="extraResponseData" type="extraDataType" nillable="false"/>
+  <xsd:element name="echoedSearchRetrieveRequest" type="echoedSearchRetrieveRequestType" nillable="false"/>
+  <xsd:complexType name="echoedSearchRetrieveRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="requestType">
+        <xsd:sequence>
+          <xsd:element ref="query"/>
+          <xsd:element name="xQuery" type="xcql:operandType" nillable="false"/>
+          <xsd:element ref="startRecord" minOccurs="0"/>
+          <xsd:element ref="maximumRecords" minOccurs="0"/>
+          <xsd:element ref="recordPacking" minOccurs="0"/>
+          <xsd:element ref="recordSchema" minOccurs="0"/>
+          <xsd:element ref="recordXPath" minOccurs="0"/>
+          <xsd:element ref="resultSetTTL" minOccurs="0"/>
+          <xsd:element ref="sortKeys" minOccurs="0"/>
+          <xsd:element name="xSortKeys" type="xSortKeysType" nillable="false" minOccurs="0"/>
+          <xsd:element ref="stylesheet" minOccurs="0"/>
+          <xsd:element ref="extraRequestData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="xSortKeysType">
+    <xsd:sequence>
+      <xsd:element ref="sortKey" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="sortKey" type="sortKeyType" nillable="false"/>
+  <xsd:complexType name="sortKeyType">
+    <xsd:sequence>
+      <xsd:element ref="path"/>
+      <xsd:element ref="schema" minOccurs="0"/>
+      <xsd:element ref="ascending" minOccurs="0"/>
+      <xsd:element ref="caseSensitive" minOccurs="0"/>
+      <xsd:element ref="missingValue" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="path" type="xsd:string" nillable="false"/>
+  <xsd:element name="schema" type="xsd:string" nillable="false"/>
+  <xsd:element name="ascending" type="xsd:boolean" nillable="false"/>
+  <xsd:element name="caseSensitive" type="xsd:boolean" nillable="false"/>
+  <xsd:element name="missingValue" type="xsd:string" nillable="false"/>
+  <xsd:element name="scanClause" type="xsd:string" nillable="false"/>
+  <xsd:element name="responsePosition" type="xsd:nonNegativeInteger" default="1" nillable="false"/>
+  <xsd:element name="maximumTerms" type="xsd:positiveInteger" nillable="false"/>
+  <xsd:element name="terms" type="termsType" nillable="false"/>
+  <xsd:complexType name="termsType">
+    <xsd:sequence>
+      <xsd:element ref="term" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="term" type="termType" nillable="false"/>
+  <xsd:complexType name="termType">
+    <xsd:sequence>
+      <xsd:element ref="value"/>
+      <xsd:element ref="numberOfRecords" minOccurs="0"/>
+      <xsd:element ref="displayTerm" minOccurs="0"/>
+      <xsd:element name="whereInList" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="first"/>
+            <xsd:enumeration value="last"/>
+            <xsd:enumeration value="only"/>
+            <xsd:enumeration value="inner"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element ref="extraTermData" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="value" type="xsd:string" nillable="false"/>
+  <xsd:element name="displayTerm" type="xsd:string" nillable="false"/>
+  <xsd:element name="extraTermData" type="extraDataType" nillable="false"/>
+  <xsd:element name="echoedScanRequest" type="echoedScanRequestType" nillable="false"/>
+  <xsd:complexType name="echoedScanRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="requestType">
+        <xsd:sequence>
+          <xsd:element ref="scanClause"/>
+          <xsd:element name="xScanClause" type="xcql:searchClauseType"/>
+          <xsd:element ref="responsePosition" minOccurs="0"/>
+          <xsd:element ref="maximumTerms" minOccurs="0"/>
+          <xsd:element ref="stylesheet" minOccurs="0"/>
+          <xsd:element ref="extraRequestData" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="echoedExplainRequest" type="explainRequestType"/>
+  <xsd:complexType name="extraDataType">
+    <xsd:sequence>
+      <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="xmlFragment" mixed="false">
+    <xsd:sequence>
+      <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="stringOrXmlFragment" mixed="true">
+    <xsd:sequence>
+      <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

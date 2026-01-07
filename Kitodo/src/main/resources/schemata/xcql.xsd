@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ZiNG SRU/SRW WSDL Specification                   -->
+<!-- Version 1.1                                       -->
+<!-- 14 Feb 2004                                       -->
+
+<xsd:schema targetNamespace="http://www.loc.gov/zing/cql/xcql/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.loc.gov/zing/cql/xcql/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:complexType name="operandType">
+    <xsd:sequence>
+      <xsd:element ref="prefixes" minOccurs="0"/>
+      <xsd:choice>
+        <xsd:element ref="triple"/>
+        <xsd:element ref="searchClause"/>
+      </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="prefixes" type="prefixesType" nillable="false"/>
+  <xsd:complexType name="prefixesType">
+    <xsd:sequence>
+      <xsd:element ref="prefix" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="prefix" type="prefixType" nillable="false"/>
+  <xsd:complexType name="prefixType">
+    <xsd:sequence>
+      <xsd:element ref="name"/>
+      <xsd:element ref="identifier"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="name" type="xsd:string" nillable="false"/>
+  <xsd:element name="identifier" type="xsd:string" nillable="false"/>
+  <xsd:element name="triple" type="tripleType" nillable="false"/>
+  <xsd:complexType name="tripleType">
+    <xsd:all>
+      <xsd:element ref="boolean"/>
+      <xsd:element ref="leftOperand"/>
+      <xsd:element ref="rightOperand"/>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:element name="boolean" type="booleanType" nillable="false"/>
+  <xsd:complexType name="booleanType">
+    <xsd:all>
+      <xsd:element ref="value"/>
+      <xsd:element ref="modifiers" minOccurs="0"/>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:element name="leftOperand" type="operandType" nillable="false"/>
+  <xsd:element name="rightOperand" type="operandType" nillable="false"/>
+  <xsd:element name="value" type="xsd:string" nillable="false"/>
+  <xsd:element name="modifiers" type="modifiersType" nillable="false"/>
+  <xsd:complexType name="modifiersType">
+    <xsd:sequence>
+      <xsd:element ref="modifier" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="modifier" type="modifierType" nillable="false"/>
+  <xsd:complexType name="modifierType">
+    <xsd:sequence>
+      <xsd:element ref="type"/>
+      <xsd:sequence minOccurs="0">
+        <xsd:element ref="comparison"/>
+        <xsd:element ref="value"/>
+      </xsd:sequence>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="type" type="xsd:string" nillable="false"/>
+  <xsd:element name="comparison" type="xsd:string" nillable="false"/>
+  <xsd:element name="searchClause" type="searchClauseType" nillable="false"/>
+  <xsd:complexType name="searchClauseType">
+    <xsd:all>
+      <xsd:element ref="index"/>
+      <xsd:element ref="relation"/>
+      <xsd:element ref="term"/>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:element name="index" type="xsd:string" nillable="false"/>
+  <xsd:element name="relation" type="relationType" nillable="false"/>
+  <xsd:complexType name="relationType">
+    <xsd:all>
+      <xsd:element ref="value"/>
+      <xsd:element ref="modifiers" minOccurs="0"/>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:element name="term" type="xsd:string" nillable="false"/>
+</xsd:schema>

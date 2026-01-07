@@ -1434,7 +1434,8 @@ body .ui-dialog .ui-dialog-content {
     padding: var(--default-double-size) 0;
 }
 
-.ui-dialog-content h3 {
+body .ui-dialog-content h3,
+body .ui-dialog-content p.validation-note {
     margin-bottom: var(--default-double-size);
     padding: 0 var(--default-double-size);
 }
@@ -1993,6 +1994,13 @@ body .ui-messages .ui-messages-error .ui-messages-close:hover {
 #messagesWrapper .ui-messages-close:hover {
     color: var(--orange);
     cursor: pointer;
+}
+
+body .ui-messages-info .ui-widget-content,
+body .ui-messages-warn .ui-widget-content,
+body .ui-messages-error .ui-widget-content {
+    background-color: inherit;
+    color: inherit;
 }
 
 .pagination-select-items .ui-chkbox {

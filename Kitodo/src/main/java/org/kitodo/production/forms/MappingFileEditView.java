@@ -30,13 +30,15 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 @Named
 @ViewScoped
-public class MappingFileEditView extends BaseForm {
+public class MappingFileEditView extends ValidatableForm {
 
     private static final Logger logger = LogManager.getLogger(MappingFileEditView.class);
     private MappingFile mappingFile = new MappingFile();
@@ -67,13 +69,18 @@ public class MappingFileEditView extends BaseForm {
      * @return projects page or empty String
      */
     public String save() {
+        validationErrors = new ArrayList<>();
         try {
+            ServiceManager.getFileStructureValidationService().validateMappingFile(mappingFile);
             ServiceManager.getMappingFileService().save(mappingFile);
             return projectsPage;
-        } catch (DAOException e) {
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidMappingFile"));
+            showValidationExceptionDialog(e, null);
+        } catch (DAOException | IOException | SAXException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
-            return this.stayOnCurrentPage;
         }
+        return this.stayOnCurrentPage;
     }
 
     /**

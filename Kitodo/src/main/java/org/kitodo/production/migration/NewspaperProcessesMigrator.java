@@ -52,6 +52,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.tasks.NewspaperMigrationTask;
@@ -66,6 +67,7 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 /**
  * Tool for converting newspaper processes from Production v. 2 format to
@@ -303,7 +305,8 @@ public class NewspaperProcessesMigrator {
      *            index of process to convert in the processes object
      *            list passed to the constructor—<b>not</b> the process ID
      */
-    public void convertProcess(int index) throws DAOException, IOException, ConfigurationException {
+    public void convertProcess(int index) throws DAOException, IOException, ConfigurationException, SAXException,
+            FileStructureValidationException {
         final long begin = System.nanoTime();
         Integer processId = processes.get(index).getId();
         Process process = processService.getById(processId);
@@ -352,7 +355,7 @@ public class NewspaperProcessesMigrator {
     }
 
     private void moveMetadataFromYearToIssue(Process process, String processTitle, URI yearFilePath,
-            Workpiece workpiece) throws IOException {
+            Workpiece workpiece) throws IOException, SAXException, FileStructureValidationException {
         Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath);
         // Copy metadata from year to issue
         Collection<Metadata> processMetadataFromYear = new ArrayList<>(
@@ -419,7 +422,7 @@ public class NewspaperProcessesMigrator {
      */
     private String createLinkStructureAndCopyDates(Process process, URI yearMetadata,
             LogicalDivision metaFileYearLogicalDivision)
-            throws IOException, ConfigurationException {
+            throws IOException, ConfigurationException, SAXException, FileStructureValidationException {
 
         LogicalDivision yearFileYearLogicalDivision = metsService.loadWorkpiece(yearMetadata)
                 .getLogicalStructure().getChildren().get(0);

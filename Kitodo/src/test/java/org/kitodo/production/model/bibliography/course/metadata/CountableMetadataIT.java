@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -49,7 +50,7 @@ public class CountableMetadataIT {
     private Issue issue;
     private CountableMetadata countableMetadata;
     private static int processId = -1;
-    private static final int EXPECTED_NUMBER_OF_METADATA_TYPES = 12;
+    private static final int EXPECTED_NUMBER_OF_METADATA_TYPES = 14;
     private static final int PUBLICATION_YEAR = 1990;
     private static final Month PUBLICATION_MONTH = Month.MARCH;
     private static final LocalDate BLOCK_START = LocalDate.of(PUBLICATION_YEAR, PUBLICATION_MONTH, 1);
@@ -123,7 +124,9 @@ public class CountableMetadataIT {
     @Test
     public void shouldGetValue() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
-        countableMetadata.setMetadataDetail(metadataTypes.get(0));
+        ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
+                .collect(Collectors.toList()).get(0);
+        countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> issuePair = new ImmutablePair<>(DEFINE_DATE.plusWeeks(1), issue);
         String value = countableMetadata.getValue(issuePair, YEAR_START);
@@ -133,7 +136,8 @@ public class CountableMetadataIT {
     @Test
     public void shouldMatch() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
-        ProcessDetail firstMetadataType = metadataTypes.get(0);
+        ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
+                .collect(Collectors.toList()).get(0);
         countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> deletePair = new ImmutablePair<>(DELETE_DATE, issue);

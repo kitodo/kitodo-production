@@ -64,6 +64,9 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "metadata_format")
     private String metadataFormat;
 
+    @Column(name = "validate_external_data")
+    private Boolean validateExternalData = true;
+
     @Column(name = "default_import_depth")
     private Integer defaultImportDepth;
 
@@ -305,6 +308,24 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setMetadataFormat(String metadataFormat) {
         this.metadataFormat = metadataFormat;
+    }
+
+    /**
+     * Get validateExternalData.
+     *
+     * @return value of validateExternalData
+     */
+    public Boolean getValidateExternalData() {
+        return validateExternalData;
+    }
+
+    /**
+     * Set validateExternalData.
+     *
+     * @param validateExternalData as java.lang.Boolean
+     */
+    public void setValidateExternalData(Boolean validateExternalData) {
+        this.validateExternalData = validateExternalData;
     }
 
     /**

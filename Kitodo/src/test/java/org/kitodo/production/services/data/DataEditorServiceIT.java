@@ -44,12 +44,14 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.primefaces.model.DefaultTreeNode;
+import org.xml.sax.SAXException;
 
 public class DataEditorServiceIT {
 
@@ -92,9 +94,10 @@ public class DataEditorServiceIT {
      * Test retrieving title value.
      * @throws DAOException when adding test process fails.
      * @throws IOException when adding test process fails.
+     * @throws SAXException when adding test process fails.
      */
     @Test
-    public void shouldGetTitleValue() throws DAOException, IOException {
+    public void shouldGetTitleValue() throws DAOException, IOException, SAXException, FileStructureValidationException {
         LogicalDivision logicalRoot = getLogicalRoot();
         assertEquals(EXPECTED_TITLE, DataEditorService.getTitleValue(logicalRoot, TITLE_DOC_MAIN),
                 String.format("Title value of logical root should be '%s'", EXPECTED_TITLE));
@@ -104,9 +107,10 @@ public class DataEditorServiceIT {
      * Test retrieving addable metadata for metadata group.
      * @throws DAOException when adding test process fails.
      * @throws IOException when adding test process fails.
+     * @throws SAXException when adding test process fails.
      */
     @Test
-    public void shouldGetAddableMetadataForGroup() throws DAOException, IOException {
+    public void shouldGetAddableMetadataForGroup() throws DAOException, IOException, SAXException, FileStructureValidationException {
         LogicalDivision logicalRoot = getLogicalRoot();
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
@@ -131,9 +135,10 @@ public class DataEditorServiceIT {
      * Test retrieving addable metadata for logical structure element.
      * @throws IOException when adding test process fails.
      * @throws DAOException when adding test process fails.
+     * @throws SAXException when adding test process fails.
      */
     @Test
-    public void shouldGetAddableMetadataForStructureElement() throws IOException, DAOException {
+    public void shouldGetAddableMetadataForStructureElement() throws IOException, DAOException, SAXException, FileStructureValidationException {
         LogicalDivision logicalRoot = getLogicalRoot();
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
@@ -152,9 +157,11 @@ public class DataEditorServiceIT {
      * Test retrieving functional metadata of type 'recordIdentifier' from process.
      * @throws DAOException when adding or loading test process fails
      * @throws IOException when loading meta xml or ruleset file fails
+     * @throws SAXException when loading meta xml or ruleset file fails
      */
     @Test
-    public void shouldGetRecordIdentifierValueOfProcess() throws DAOException, IOException {
+    public void shouldGetRecordIdentifierValueOfProcess() throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         addTestProcess();
         Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
@@ -171,9 +178,10 @@ public class DataEditorServiceIT {
      * metadata re-import being met.
      * @throws DAOException when adding or loading test process fails
      * @throws IOException when loading meta xml or ruleset file fails
+     * @throws SAXException when loading meta xml or ruleset file fails
      */
     @Test
-    public void shouldFailToUpdateMetadata() throws DAOException, IOException {
+    public void shouldFailToUpdateMetadata() throws DAOException, IOException, SAXException, FileStructureValidationException {
         addTestProcess();
         Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
@@ -189,7 +197,7 @@ public class DataEditorServiceIT {
         return ServiceManager.getProcessService().getById(testProcessId);
     }
 
-    private LogicalDivision getLogicalRoot() throws DAOException, IOException {
+    private LogicalDivision getLogicalRoot() throws DAOException, IOException, SAXException, FileStructureValidationException {
         Process testProcess = addTestProcess();
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);

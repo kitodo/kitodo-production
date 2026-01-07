@@ -144,6 +144,12 @@
         </p:tabView>
     </ui:define>
 
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/validationErrorsDialog.xhtml">
+            <ui:param name="validatableForm" value="#{RulesetForm}"/>
+        </ui:include>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>

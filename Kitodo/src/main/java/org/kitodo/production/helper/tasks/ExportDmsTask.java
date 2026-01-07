@@ -19,9 +19,11 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 /**
  * The class ExportDmsTask accepts an {@link org.kitodo.export.ExportDms} for a
@@ -83,7 +85,7 @@ public class ExportDmsTask extends EmptyTask {
                 setProgress(100);
                 new WorkflowControllerService().close(exportDms.getWorkflowTask());
             }
-        } catch (RuntimeException | DAOException | IOException e) {
+        } catch (RuntimeException | DAOException | IOException | SAXException | FileStructureValidationException e) {
             setException(e);
             exportSuccessful = false;
         }

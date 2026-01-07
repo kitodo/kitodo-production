@@ -42,6 +42,7 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
@@ -54,6 +55,7 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.xml.sax.SAXException;
 
 public class StructurePanel implements Serializable {
     private static final Logger logger = LogManager.getLogger(StructurePanel.class);
@@ -949,13 +951,13 @@ public class StructurePanel implements Serializable {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SAXException | FileStructureValidationException e) {
             /*
              * Error case: The metadata file of the parent process cannot be
              * loaded. Show the process title of the parent process and the
              * warning sign.
              */
-            Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
+            Helper.setErrorMessage(Helper.getTranslation("metadataReadError", parent.getTitle()), e.getMessage(), logger, e);
             addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
         }
     }

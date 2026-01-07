@@ -63,11 +63,13 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.ValidatableForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LocaleHelper;
@@ -80,10 +82,11 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
+import org.xml.sax.SAXException;
 
 @Named("DataEditorForm")
 @ViewScoped
-public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
+public class DataEditorForm extends ValidatableForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
 
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
@@ -310,8 +313,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
-        } catch (FileNotFoundException e) {
-            metadataFileLoadingError = e.getLocalizedMessage();
+        } catch (FileNotFoundException | SAXException e) {
+            metadataFileLoadingError = e.getMessage();
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
+            showValidationExceptionDialog(e, this.referringView);
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -397,7 +403,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private boolean openMetsFile() throws IOException, InvalidImagesException, MediaNotFoundException {
+    private boolean openMetsFile() throws IOException, InvalidImagesException, MediaNotFoundException, SAXException,
+            FileStructureValidationException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);

@@ -30,6 +30,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
@@ -46,8 +47,9 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
+import org.xml.sax.SAXException;
 
-public class ProcessListBaseView extends BaseForm {
+public class ProcessListBaseView extends ValidatableForm {
 
     private static final Logger logger = LogManager.getLogger(ProcessListBaseView.class);
     private ChartMode chartMode;
@@ -190,7 +192,7 @@ public class ProcessListBaseView extends BaseForm {
             try {
                 URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(selectedProcess);
                 workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-            } catch (IOException e) {
+            } catch (IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);
                 return;
@@ -533,7 +535,7 @@ public class ProcessListBaseView extends BaseForm {
         Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "exportMets");
         try {
             ProcessService.exportMets(processId);
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
         }
@@ -590,7 +592,7 @@ public class ProcessListBaseView extends BaseForm {
         if (process.getChildren().isEmpty()) {
             try {
                 ProcessService.deleteProcess(process.getId());
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
             }

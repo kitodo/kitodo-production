@@ -12,12 +12,25 @@
 package org.kitodo.api.schemaconverter;
 
 public enum MetadataFormat {
-    MODS,
-    MARC,
-    PICA,
-    EAD,
-    OTHER,
-    KITODO;
+    MODS("mods-3-8.xsd"),
+    MARC("MARC21slim.xsd"),
+    PICA("pica-xml-v1-0.xsd"),
+    EAD("ead.xsd"),
+    OTHER(null),
+    KITODO("kitodo.xsd");
+
+    private final String schemaDefinitionFileName;
+
+    /**
+     * Constructs a MetadataFormat instance with the specified schema file name.
+     *
+     * @param schemaFileName
+     *        the name of the schema definition file associated with this metadata format,
+     *        or null if no file name is specified
+     */
+    MetadataFormat(String schemaFileName) {
+        this.schemaDefinitionFileName = schemaFileName;
+    }
 
     /**
      * Determine and return the adequate MetadataFormat for given String 'formatString'.
@@ -72,5 +85,14 @@ public enum MetadataFormat {
             default:
                 return "";
         }
+    }
+
+    /**
+     * Retrieves the schema definition file name associated with this metadata format.
+     *
+     * @return the schema definition file name as a string, or null if no file name is defined
+     */
+    public String getSchemaDefinitionFileName() {
+        return schemaDefinitionFileName;
     }
 }
