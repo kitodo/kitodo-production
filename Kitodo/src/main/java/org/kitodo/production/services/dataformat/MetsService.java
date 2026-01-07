@@ -147,6 +147,9 @@ public class MetsService {
                 inputStream.transferTo(outputStream);
                 try (InputStream xmlValidationStream = new ByteArrayInputStream(outputStream.toByteArray())) {
                     XMLUtils.checkIfXmlIsWellFormed(new String(xmlValidationStream.readAllBytes(), StandardCharsets.UTF_8));
+                } catch (SAXException e) {
+                    logger.error("Malformed XML: {}", e.getMessage());
+                    throw e;
                 }
                 if (validateAgainstSchema) {
                     ServiceManager.getFileStructureValidationService().validateInternalRecord(outputStream.toString(), true, null);
