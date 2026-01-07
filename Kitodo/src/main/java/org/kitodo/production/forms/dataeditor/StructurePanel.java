@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -322,7 +323,7 @@ public class StructurePanel implements Serializable {
     public TreeNode<Object> getSelectedLogicalNodeIfSingle() {
         List<TreeNode<Object>> nodes = getSelectedLogicalNodes();
         if (Objects.nonNull(nodes) && nodes.size() == 1) {
-            return nodes.get(0);
+            return nodes.getFirst();
         }
         return null;
     }
@@ -1171,9 +1172,66 @@ public class StructurePanel implements Serializable {
             // select those tree nodes
             StructureTreeOperations.selectTreeNodes(selectedTreeNodes);
 
+            // workaround to store ID of linked parent process
+            TreeNode<Object> currentlySelectedLogicalNode = getSelectedLogicalNodeIfSingle();
+            if (selectedTreeNodes.isEmpty() && Objects.nonNull(currentlySelectedLogicalNode)
+                    && currentlySelectedLogicalNode.getData() instanceof StructureTreeNode) {
+                setLinkedParentProcessId(currentlySelectedLogicalNode);
+            }
+
             // remember new selection
             previouslySelectedLogicalNodes = getSelectedLogicalNodes();
             setSelectedLogicalNodes(new ArrayList<>(selectedTreeNodes));
+        }
+    }
+
+    /**
+     * This method determines the ID of a linked parent process via it's label in the logical structure tree.
+     * Since the workpiece of a process does not contain a reference to potential parent processes (this relation
+     * is only stored in the database and "simulated" in the structure tree visible in the metadata editor), the
+     *
+     * @param logicalNode
+     *          TreeNode representing the linked parent process
+     */
+    private void setLinkedParentProcessId(TreeNode<Object> logicalNode) {
+        String nodeLabel = ((StructureTreeNode) logicalNode.getData()).getLabel();
+        if (nodeLabel.contains("[") && nodeLabel.indexOf("[") < nodeLabel.indexOf("]")) {
+            String idString = nodeLabel.substring(nodeLabel.indexOf("[") + 1, nodeLabel.indexOf("]"));
+            if (StringUtils.isNumeric(idString)) {
+                try {
+                    dataEditor.setLinkedProcessId(Integer.parseInt(idString));
+                } catch (NumberFormatException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether conditions are met for displayed the menu option to edit metadata of a linked process.
+     * The conditions are:
+     * - exactly one tree node in the logical tree is selected and the tree node represents a linked process
+     * - no logical tree node is selected; this represents the case when a linked parent process is selected (the logical
+     *      nodes of these parent processes are not contained within the logical tree of the current process,
+     *      thus the selected logical node is null in this case)
+     * @return whether the option to edit metadata of a linked process is displayed or not
+     */
+    public boolean isMetadataEditingPossible() {
+        List<TreeNode<Object>> selectedNodes = getSelectedLogicalNodes();
+        if (selectedNodes.isEmpty()) {
+            // no logical node is selected; this represents selection of linked parent processes
+            return true;
+        } else if (selectedNodes.size() == 1) {
+            // exactly one logical node is selected; metadata can be edited if node represents "linked" process
+            TreeNode<Object> selectedNode = selectedNodes.getFirst();
+            if (selectedNode.getData() instanceof StructureTreeNode) {
+                return ((StructureTreeNode) selectedNode.getData()).isLinked();
+            } else {
+                return false;
+            }
+        } else {
+            // multiple logical tree nodes are selected
+            return false;
         }
     }
 
