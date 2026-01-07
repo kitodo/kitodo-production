@@ -20,31 +20,31 @@
     <p:dataTable id="workflowTable"
                  styleClass="default-layout"
                  var="item"
-                 value="#{WorkflowForm.lazyBeanModel}"
-                 first="#{WorkflowForm.firstRow}"
+                 value="#{WorkflowListView.lazyBeanModel}"
+                 first="#{WorkflowListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{WorkflowForm.sortBy}"
+                 sortBy="#{WorkflowListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page"
-                listener="#{WorkflowForm.onPageChange}"/>
+        <p:ajax event="page" listener="#{WorkflowListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{WorkflowListView.onSortChange}"/>
 
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{item.title.keyword}"
-                  rendered="#{ProjectForm.showColumn('workflow.title')}">
+                  sortBy="#{item.title}"
+                  rendered="#{WorkflowListView.showColumn('workflow.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.status}"
                   sortBy="#{item.status}"
-                  rendered="#{ProjectForm.showColumn('workflow.status')}">
+                  rendered="#{WorkflowListView.showColumn('workflow.status')}">
             <h:outputText value="#{msgs[item.status]}"
                           title="#{msgs[item.status]}"/>
         </p:column>
@@ -62,6 +62,7 @@
                             rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow())}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
+                        <f:param name="referrerListOptions" value="#{WorkflowListView.combinedListOptions}" />
                     </h:link>
 
                     <h:link id="editWorkflow"
@@ -71,40 +72,42 @@
                             rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
+                        <f:param name="referrerListOptions" value="#{WorkflowListView.combinedListOptions}" />
                     </h:link>
 
-                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}"
+                    <h:link outcome="workflowEdit"
                                    styleClass="action"
                                    title="#{msgs.duplicateWorkflow}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
-                    </h:commandLink>
+                        <f:param name="id" value="#{item.id}"/>
+                        <f:param name="duplicate" value="true"/>
+                        <f:param name="referrerListOptions" value="#{WorkflowListView.combinedListOptions}" />
+                    </h:link>
 
                     <h:panelGroup styleClass="action"
                                   title="#{item.status eq 'ACTIVE' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
                         <p:commandLink id="archiveWorkflow"
-                                       action="#{WorkflowForm.archive}"
+                                       action="#{WorkflowListView.archive(item)}"
                                        disabled="#{item.status ne 'ACTIVE'}"
                                        styleClass="#{item.status ne 'ACTIVE' ? 'disabled' : ''}"
                                        rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
                                        update="workflowTable">
                             <h:outputText title="#{msgs.archive}"><i class="fa fa-archive"/></h:outputText>
-                            <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                             <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmArchiveWorkflow}"
                                        icon="ui-icon-alert"/>
                         </p:commandLink>
                     </h:panelGroup>
 
                     <p:commandLink id="deleteWorkflow"
-                                   action="#{WorkflowForm.delete}"
+                                   action="#{WorkflowListView.delete(item)}"
                                    styleClass="action"
                                    title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
                                    update="workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                        <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                         <p:confirm header="#{msgs.confirmDelete}"
-                                   message="#{WorkflowForm.formatString('confirmDeleteWorkflow', item.title)}"
+                                   message="#{WorkflowListView.formatString('confirmDeleteWorkflow', item.title)}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:form>

@@ -537,7 +537,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific docket.
      *
-     * <!-- Used in DocketForm to find out whether a docket is used in a
+     * <!-- Used in DocketListView to find out whether a docket is used in a
      * process. (Then it may not be deleted.) Is only checked for isEmpty(). -->
      *
      * @param docketId
@@ -554,7 +554,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific ruleset.
      *
-     * <!-- Used in RulesetForm to find out whether a ruleset is used in a
+     * <!-- Used in RulesetListView to find out whether a ruleset is used in a
      * process. (Then it may not be deleted.) Is only checked for isEmpty(). -->
      *
      * @param rulesetId

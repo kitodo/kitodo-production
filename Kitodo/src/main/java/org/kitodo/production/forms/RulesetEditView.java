@@ -24,8 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,42 +43,23 @@ import org.kitodo.production.services.data.RulesetService;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
-@Named("RulesetForm")
-@SessionScoped
-public class RulesetForm extends BaseForm {
+@Named("RulesetEditView")
+@ViewScoped
+public class RulesetEditView extends BaseEditView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
+
     private Ruleset ruleset;
-    private static final Logger logger = LogManager.getLogger(RulesetForm.class);
+    private static final Logger logger = LogManager.getLogger(RulesetEditView.class);
     private static final String AT_MARK = "@";
 
-    private final String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
-
-    @Named("ProjectForm")
-    private final ProjectForm projectForm;
-
     /**
-     * Default constructor with inject project form that also sets the
-     * LazyBeanModel instance of this bean.
-     *
-     * @param projectForm
-     *            managed bean
+     * Initialize Rulset form.
      */
-    @Inject
-    public RulesetForm(ProjectForm projectForm) {
+    public RulesetEditView() {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRulesetService()));
-        this.projectForm = projectForm;
         sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
-    }
-
-    /**
-     * Initialize new Ruleset.
-     *
-     * @return page
-     */
-    public String createNewRuleset() {
-        this.ruleset = new Ruleset();
-        this.ruleset.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
-        return rulesetEditPath;
     }
 
     /**
@@ -95,7 +75,7 @@ public class RulesetForm extends BaseForm {
                     return this.stayOnCurrentPage;
                 }
                 ServiceManager.getRulesetService().save(this.ruleset);
-                return projectsPage;
+                return RulesetListView.VIEW_PATH +  "&" + getReferrerListOptions();
             } else {
                 Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
                 return this.stayOnCurrentPage;
@@ -153,16 +133,18 @@ public class RulesetForm extends BaseForm {
      * @param id
      *            ID of the ruleset to load
      */
-    public void load(int id) {
-        try {
-            if (!Objects.equals(id, 0)) {
-                setRuleset(ServiceManager.getRulesetService().getById(id));
+    public void load(Integer id) {
+        if (Objects.nonNull(id) && !Objects.equals(id, 0)) {
+            try {
+                this.ruleset = ServiceManager.getRulesetService().getById(id);
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id }, logger, e);
             }
-            setSaveDisabled(true);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id },
-                logger, e);
+        } else {
+            this.ruleset = new Ruleset();
+            this.ruleset.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         }
+        setSaveDisabled(true);
     }
 
     /*
@@ -171,25 +153,6 @@ public class RulesetForm extends BaseForm {
 
     public Ruleset getRuleset() {
         return this.ruleset;
-    }
-
-    public void setRuleset(Ruleset inPreference) {
-        this.ruleset = inPreference;
-    }
-
-    /**
-     * Set ruleset by ID.
-     *
-     * @param rulesetID
-     *            ID of the ruleset to set.
-     */
-    public void setRulesetById(int rulesetID) {
-        try {
-            setRuleset(ServiceManager.getRulesetService().getById(rulesetID));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.RULESET.getTranslationSingular(), rulesetID }, logger, e);
-        }
     }
 
     /**

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,9 @@ import org.kitodo.production.services.ServiceManager;
 
 @Named
 @ViewScoped
-public class MappingFileEditView extends BaseForm {
+public class MappingFileEditView extends BaseEditView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "mappingFileEdit");
 
     private static final Logger logger = LogManager.getLogger(MappingFileEditView.class);
     private MappingFile mappingFile = new MappingFile();
@@ -69,7 +72,7 @@ public class MappingFileEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getMappingFileService().save(mappingFile);
-            return projectsPage;
+            return MappingFileListView.VIEW_PATH +  "&" + getReferrerListOptions();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

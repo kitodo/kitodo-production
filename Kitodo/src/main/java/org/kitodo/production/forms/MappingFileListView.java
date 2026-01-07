@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
@@ -31,10 +32,11 @@ import org.primefaces.model.SortOrder;
 
 @Named("MappingFileListView")
 @ViewScoped
-public class MappingFileListView extends BaseForm {
+public class MappingFileListView extends BaseListView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=6";
 
     private static final Logger logger = LogManager.getLogger(MappingFileListView.class);
-    private final String mappingFileEditPath = MessageFormat.format(REDIRECT_PATH, "mappingFileEdit");
 
     /**
      * Empty default constructor that also sets the LazyBeanModel instance of
@@ -67,7 +69,7 @@ public class MappingFileListView extends BaseForm {
      * @return path to 'mappingFileEdit' view
      */
     public String newMappingFile() {
-        return mappingFileEditPath;
+        return MappingFileEditView.VIEW_PATH;
     }
 
     /**
@@ -81,6 +83,16 @@ public class MappingFileListView extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * The set of allowed sort fields (columns) to sanitize the URL query parameter "sortField".
+     * 
+     * @return the set of allowed sort fields (columns)
+     */
+    @Override
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "file", "inputMetadataFormat", "outputMetadataFormat", "prestructuredImport");
     }
 
 }

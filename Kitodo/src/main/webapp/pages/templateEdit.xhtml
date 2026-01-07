@@ -18,21 +18,28 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:o="http://omnifaces.org/ui">
+
     <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="duplicate" type="java.lang.Boolean"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
-        <o:viewAction action="#{TemplateForm.loadTemplate(id)}" if="#{not empty id}"/>
+        <f:viewParam name="duplicate"/>
+        <f:viewAction action="#{TemplateEditView.load(id, duplicate)}" />
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{TemplateEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{TemplateForm.template.id eq null and empty TemplateForm.template.title and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
+              value="#{TemplateEditView.template.id eq null and empty TemplateEditView.template.title and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
     <!--@elvariable id="isDuplicateMode" type="boolean"-->
     <ui:param name="isDuplicateMode"
-              value="#{TemplateForm.template.id eq null and not empty TemplateForm.template.title and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
+              value="#{TemplateEditView.template.id eq null and not empty TemplateEditView.template.title and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{TemplateForm.template.id ne null and not TemplateForm.currentTemplateInUse and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
+              value="#{TemplateEditView.template.id ne null and not TemplateEditView.currentTemplateInUse and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewTemplate()}"/>
@@ -47,35 +54,35 @@
             <h:outputText value="#{msgs.duplicateTemplate}"
                           styleClass="shortable"
                           rendered="#{isDuplicateMode}"/>
-            <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})"
+            <h:outputText value="#{msgs.editTemplate} (#{TemplateEditView.template.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewTemplate} (#{TemplateForm.template.title})"
+            <h:outputText value="#{msgs.viewTemplate} (#{TemplateEditView.template.title})"
                           styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
 
         <p:button id="cancel"
                   value="#{isViewMode ? msgs.close : msgs.cancel}"
-                  outcome="#{'projects'}"
+                  outcome="projects?tabIndex=1&amp;#{TemplateEditView.referrerListOptions}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
 
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{TemplateForm.setSaveDisabled(false)}"
+                         actionListener="#{TemplateEditView.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
 
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{TemplateForm.save}"
+                         action="#{TemplateEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          rendered="#{not isViewMode}"
-                         disabled="#{TemplateForm.saveDisabled}"
+                         disabled="#{TemplateEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.templateSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"
                          immediate="true"/>
@@ -89,7 +96,7 @@
                     <ui:param name="isViewMode" value="#{isViewMode}" />
                 </ui:include>
             </p:tab>
-            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty TemplateForm.template.title}">
+            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty TemplateEditView.template.title}">
                 <ui:include src="/WEB-INF/templates/includes/templateEdit/taskList.xhtml">
                     <ui:param name="isCreateMode" value="#{isCreateMode}" />
                     <ui:param name="isEditMode" value="#{isEditMode}" />

@@ -57,15 +57,6 @@ import org.primefaces.model.SortOrder;
 
 public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
 
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("file.keyword", "file");
-        SORT_FIELD_MAPPING.put("orderMetadataByRuleset", "orderMetadataByRuleset");
-    }
-
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
     private static volatile RulesetService instance = null;
 
@@ -112,7 +103,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
             Map<?, String> filtersNotImplemented) throws DAOException {
         BeanQuery beanQuery = new BeanQuery(Ruleset.class);
         beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        beanQuery.defineSorting(sortField, sortOrder);
         return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 

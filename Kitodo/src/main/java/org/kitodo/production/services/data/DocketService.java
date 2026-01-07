@@ -25,14 +25,6 @@ import org.primefaces.model.SortOrder;
 
 public class DocketService extends BaseBeanService<Docket, DocketDAO> {
 
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("file.keyword", "file");
-    }
-
     private static volatile DocketService instance = null;
 
     /**
@@ -78,7 +70,7 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
             Map<?, String> filtersNotImplemented) throws DAOException {
         BeanQuery beanQuery = new BeanQuery(Docket.class);
         beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        beanQuery.defineSorting(sortField, sortOrder);
         return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 

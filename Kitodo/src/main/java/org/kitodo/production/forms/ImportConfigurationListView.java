@@ -14,7 +14,9 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -28,6 +30,7 @@ import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
@@ -35,13 +38,15 @@ import org.primefaces.model.SortOrder;
 
 @Named("ImportConfigurationListView")
 @ViewScoped
-public class ImportConfigurationListView extends BaseForm {
+public class ImportConfigurationListView extends BaseListView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=4";
 
     private static final Logger logger = LogManager.getLogger(ImportConfigurationListView.class);
-    private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
 
-    public ImportConfigurationListView() {
-        super();
+    @PostConstruct
+    public void init() {
+        setLazyBeanModel(new LazyBeanModel(ServiceManager.getImportConfigurationService()));
         sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
     }
 
@@ -66,7 +71,7 @@ public class ImportConfigurationListView extends BaseForm {
      * @return path to 'importConfigurationEdit' view
      */
     public String newImportConfiguration() {
-        return importConfigurationEditPath;
+        return ImportConfigurationEditView.VIEW_PATH;
     }
 
     /**
@@ -98,5 +103,15 @@ public class ImportConfigurationListView extends BaseForm {
         } catch (ConfigException e) {
             Helper.setErrorMessage(e.getMessage());
         }
+    }
+
+    /**
+     * The set of allowed sort fields (columns) to sanitize the URL query parameter "sortField".
+     * 
+     * @return the set of allowed sort fields (columns)
+     */
+    @Override
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "configurationType", "interfaceType", "metadataFormat", "defaultImportDepth");
     }
 }
