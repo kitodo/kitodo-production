@@ -44,8 +44,6 @@ public class MetsKitodoHeaderHandlerTest {
     @Test
     public void addNoteToExistingAgentSection() {
         String noteMessage = "test note";
-        List<String> expectedNotes = new ArrayList<>();
-        expectedNotes.add(noteMessage);
 
         MetsType.MetsHdr.Agent agent = new MetsType.MetsHdr.Agent();
         agent.setName("Kitodo");
@@ -55,7 +53,8 @@ public class MetsKitodoHeaderHandlerTest {
         mets.setMetsHdr(metsHeader);
         Mets actual = MetsKitodoHeaderHandler.addNoteToMetsHeader(noteMessage, mets);
 
-        List<String> resultNotes = actual.getMetsHdr().getAgent().get(0).getNote();
-        assertEquals(expectedNotes, resultNotes, "MetsHeader notes differ.");
+        List<MetsType.MetsHdr.Agent.Note> resultNotes = actual.getMetsHdr().getAgent().get(0).getNote();
+        assertEquals(1, resultNotes.size(), "Expecting one note in mets header agent section.");
+        assertEquals(noteMessage, resultNotes.getFirst().getValue(), "Note in mets header agent section differ.");
     }
 }
