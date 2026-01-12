@@ -49,12 +49,15 @@ public class LazyUserModel extends LazyBeanModel {
 
     /**
      * Loads a paginated and sorted list of users and preloads related role, client, project, and task data.
+     *
      * @param first
      *            index of the first record to load (zero-based)
      * @param pageSize
      *            number of records to load
-     * @param sortBy
-     *            map containing sorting metadata (field and order)
+     * @param sortField
+     *            field name to sort by
+     * @param sortOrder
+     *            sort order
      * @param filters
      *            map containing filtering metadata
      * @return list of loaded user entities for the current page
