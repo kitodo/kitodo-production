@@ -23,18 +23,13 @@ import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ClientService;
-import org.kitodo.production.services.data.RoleService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.data.PageEvent;

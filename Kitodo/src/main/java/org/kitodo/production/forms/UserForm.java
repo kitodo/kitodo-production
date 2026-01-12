@@ -275,11 +275,11 @@ public class UserForm extends BaseForm {
      * user from a connected LDAP service.
      */
     public void checkAndDelete() {
-        if (!hasTasksInProgress(userObject)) {
-            deleteUser(userObject);
-        } else {
+        if (hasTasksInProgress(userObject)) {
             PrimeFaces.current().ajax().update("usersTabView:confirmResetTasksDialog");
             PrimeFaces.current().executeScript("PF('confirmResetTasksDialog').show();");
+        } else {
+            deleteUser(userObject);
         }
     }
 
@@ -788,24 +788,43 @@ public class UserForm extends BaseForm {
         return (LazyUserModel) lazyBeanModel;
     }
 
+    /**
+     * Returns a comma-separated list of role titles for the given user.
+     *
+     * @param user the user whose roles are returned
+     */
     public String getRoleTitles(User user) {
         List<String> roles = getLazyUserModel().getRolesCache().get(user.getId());
         return (Objects.isNull(roles) || roles.isEmpty()) ? "" : String.join(", ", roles);
     }
 
+    /**
+     * Returns a comma-separated list of project titles for the given user.
+     *
+     * @param user the user whose projects are returned
+     */
     public String getProjectTitles(User user) {
         List<String> projects = getLazyUserModel().getProjectsCache().get(user.getId());
         return (Objects.isNull(projects) || projects.isEmpty()) ? "" : String.join(", ", projects);
     }
 
+    /**
+     * Returns a comma-separated list of client names for the given user.
+     *
+     * @param user the user whose clients are returned
+     */
     public String getClientNames(User user) {
         List<String> clients = getLazyUserModel().getClientsCache().get(user.getId());
         return (Objects.isNull(clients) || clients.isEmpty()) ? "" : String.join(", ", clients);
     }
 
+    /**
+     * Indicates whether the given user has at least one task currently in progress.
+     *
+     * @param user the user to check
+     */
     public boolean hasTasksInProgress(User user) {
         return Boolean.TRUE.equals(getLazyUserModel().getTasksCache().get(user.getId()));
-
     }
 
     private void deselectRoleClientColumn() {
