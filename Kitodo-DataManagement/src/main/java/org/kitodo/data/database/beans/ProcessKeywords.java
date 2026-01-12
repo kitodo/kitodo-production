@@ -92,25 +92,25 @@ public class ProcessKeywords {
      */
     public ProcessKeywords(Process process) {
         // keywords for title search + default search
-        this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()), LENGTH_MIN_DEFAULT);
+        this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()));
 
         // keywords for project search in default search
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
-        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle, true), LENGTH_MIN_DEFAULT);
+        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle, true));
 
         // keywords for batch search + default search
-        this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()), LENGTH_MIN_DEFAULT);
+        this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()));
 
         // keywords for task search in default search
-        this.taskKeywords = filterMinLength(initTaskKeywords(process.getTasksUnmodified()), LENGTH_MIN_DEFAULT);
+        this.taskKeywords = filterMinLength(initTaskKeywords(process.getTasksUnmodified()));
 
         // more keywords for default search only
         this.defaultKeywords = new HashSet<String>();
         if (Objects.nonNull(process.getId())) {
             defaultKeywords.add(process.getId().toString());
         }
-        defaultKeywords.addAll(filterMinLength(initCommentKeywords(process.getComments()), LENGTH_MIN_DEFAULT));
-        defaultKeywords.addAll(filterMinLength(initMetadataKeywords(process), LENGTH_MIN_DEFAULT));
+        defaultKeywords.addAll(filterMinLength(initCommentKeywords(process.getComments())));
+        defaultKeywords.addAll(filterMinLength(initMetadataKeywords(process)));
 
         if (logger.isTraceEnabled()) {
             logKeywords(process.getId());
@@ -343,16 +343,13 @@ public class ProcessKeywords {
      * Filter minimum-length tokens. Only tokens at least three characters long
      * should be indexed, because you'll never search for tokens that are too
      * short anyway, but it would bloat the index a lot.
-     * 
-     * @param tokens
-     *            input set, is changed!
-     * @param minLength
-     *            minimum length of contained strings
+     *
+     * @param tokens input set, is changed!
      * @return input set
      */
-    private static Set<String> filterMinLength(Set<String> tokens, int minLength) {
+    private static Set<String> filterMinLength(Set<String> tokens) {
         for (Iterator<String> iterator = tokens.iterator(); iterator.hasNext();) {
-            if (iterator.next().length() < minLength) {
+            if (iterator.next().length() < ProcessKeywords.LENGTH_MIN_DEFAULT) {
                 iterator.remove();
             }
         }
