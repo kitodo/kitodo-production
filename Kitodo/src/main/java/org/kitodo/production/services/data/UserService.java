@@ -582,14 +582,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
                 + "WHERE u.id IN (:ids)";
         Map<String, Object> params = new HashMap<>();
         params.put("ids", userIds);
-        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
-        Map<Integer, List<String>> result = new HashMap<>();
-        for (Object[] row : rows) {
-            Integer userId = (Integer) row[0];
-            String title = (String) row[1];
-            result.computeIfAbsent(userId, k -> new ArrayList<>()).add(title);
-        }
-        return result;
+        return executeUserStringMappingQuery(hql, params);
     }
 
     /**
@@ -608,14 +601,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
                 + "WHERE u.id IN (:ids)";
         Map<String, Object> params = new HashMap<>();
         params.put("ids", userIds);
-        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
-        Map<Integer, List<String>> result = new HashMap<>();
-        for (Object[] row : rows) {
-            Integer userId = (Integer) row[0];
-            String clientName = (String) row[1];
-            result.computeIfAbsent(userId, k -> new ArrayList<>()).add(clientName);
-        }
-        return result;
+        return executeUserStringMappingQuery(hql, params);
     }
 
     /**
@@ -634,12 +620,23 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
                 + "WHERE u.id IN (:ids)";
         Map<String, Object> params = new HashMap<>();
         params.put("ids", userIds);
+        return executeUserStringMappingQuery(hql, params);
+    }
+
+    /**
+     * Executes an HQL query that returns a map of userId -> list of string values.
+     *
+     * @param hql    the HQL query to execute
+     * @param params query parameters
+     * @return a map of userId to list of string values
+     */
+    private Map<Integer, List<String>> executeUserStringMappingQuery(String hql, Map<String, Object> params) {
         List<Object[]> rows = dao.getProjectionByQuery(hql, params);
         Map<Integer, List<String>> result = new HashMap<>();
         for (Object[] row : rows) {
             Integer userId = (Integer) row[0];
-            String projectTitle = (String) row[1];
-            result.computeIfAbsent(userId, k -> new ArrayList<>()).add(projectTitle);
+            String value = (String) row[1];
+            result.computeIfAbsent(userId, k -> new ArrayList<>()).add(value);
         }
         return result;
     }
