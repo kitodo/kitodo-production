@@ -23,18 +23,13 @@ import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ClientService;
-import org.kitodo.production.services.data.RoleService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.data.PageEvent;
@@ -372,41 +367,6 @@ public class BaseForm implements Serializable {
             return dateFormat.format(date);
         }
         return "";
-    }
-
-    /**
-     * Create and return String containing the titles of all given roles joined by a ", ".
-     *
-     * @param roles list of roles
-     * @return String containing role titles
-     */
-    public String getRoleTitles(List<Role> roles) {
-        return RoleService.getRoleTitles(roles);
-    }
-
-    /**
-     * Create and return String containing the names of all given clients joined by a ", ".
-     *
-     * @param clients list of roles
-     * @return String containing client names
-     */
-    public String getClientNames(List<Client> clients) {
-        return ClientService.getClientNames(clients);
-    }
-
-    /**
-     * Create and return String containing the titles of all given projects joined by a ", ".
-     *
-     * @param projects list of roles
-     * @return String containing project titles
-     */
-    public String getProjectTitles(List<Project> projects) {
-        try {
-            return ServiceManager.getProjectService().getProjectTitles(projects);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
     }
 
     /**

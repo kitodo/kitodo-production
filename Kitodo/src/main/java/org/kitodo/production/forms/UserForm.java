@@ -58,7 +58,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyBeanModel;
+import org.kitodo.production.model.LazyUserModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.password.KitodoPassword;
@@ -110,7 +110,7 @@ public class UserForm extends BaseForm {
     @Inject
     public UserForm(LoginForm loginForm) {
         super();
-        super.setLazyBeanModel(new LazyBeanModel(userService));
+        super.setLazyBeanModel(new LazyUserModel(userService));
         this.loginForm = loginForm;
     }
 
@@ -275,13 +275,14 @@ public class UserForm extends BaseForm {
      * user from a connected LDAP service.
      */
     public void checkAndDelete() {
-        if (getTasksInProgress(userObject).isEmpty()) {
-            deleteUser(userObject);
-        } else {
+        if (hasTasksInProgress(userObject)) {
             PrimeFaces.current().ajax().update("usersTabView:confirmResetTasksDialog");
             PrimeFaces.current().executeScript("PF('confirmResetTasksDialog').show();");
+        } else {
+            deleteUser(userObject);
         }
     }
+
 
     /**
      * Unassign all tasks in work from user and set their status back to open and delete the user.
@@ -781,6 +782,49 @@ public class UserForm extends BaseForm {
      */
     public FilterMenu getFilterMenu() {
         return filterMenu;
+    }
+
+    private LazyUserModel getLazyUserModel() {
+        return (LazyUserModel) lazyBeanModel;
+    }
+
+    /**
+     * Returns a comma-separated list of role titles for the given user.
+     *
+     * @param user the user whose roles are returned
+     */
+    public String getRoleTitles(User user) {
+        List<String> roles = getLazyUserModel().getRolesCache().get(user.getId());
+        return (Objects.isNull(roles) || roles.isEmpty()) ? "" : String.join(", ", roles);
+    }
+
+    /**
+     * Returns a comma-separated list of project titles for the given user.
+     *
+     * @param user the user whose projects are returned
+     */
+    public String getProjectTitles(User user) {
+        List<String> projects = getLazyUserModel().getProjectsCache().get(user.getId());
+        return (Objects.isNull(projects) || projects.isEmpty()) ? "" : String.join(", ", projects);
+    }
+
+    /**
+     * Returns a comma-separated list of client names for the given user.
+     *
+     * @param user the user whose clients are returned
+     */
+    public String getClientNames(User user) {
+        List<String> clients = getLazyUserModel().getClientsCache().get(user.getId());
+        return (Objects.isNull(clients) || clients.isEmpty()) ? "" : String.join(", ", clients);
+    }
+
+    /**
+     * Indicates whether the given user has at least one task currently in progress.
+     *
+     * @param user the user to check
+     */
+    public boolean hasTasksInProgress(User user) {
+        return Boolean.TRUE.equals(getLazyUserModel().getTasksCache().get(user.getId()));
     }
 
     private void deselectRoleClientColumn() {
