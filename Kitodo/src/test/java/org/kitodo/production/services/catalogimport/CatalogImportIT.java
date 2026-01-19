@@ -90,7 +90,7 @@ public class CatalogImportIT {
     public void shouldImportProcessHierarchy() throws Exception {
         LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(CHILD_RECORD_ID,
                 MockDatabase.getKalliopeImportConfiguration(), PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH,
-                Collections.singleton("CatalogIDPredecessorPeriodical"));
+                Collections.singleton("CatalogIDPredecessorPeriodical"), false);
         assertEquals(IMPORT_DEPTH, processes.size());
     }
 

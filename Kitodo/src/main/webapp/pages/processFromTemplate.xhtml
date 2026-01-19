@@ -143,13 +143,16 @@
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/searchEdit.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/addMetadata.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/maxNumberOfRecordsExceeded.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/validationErrorsDialog.xhtml">
+            <ui:param name="validatableForm" value="#{CreateProcessForm}"/>
+        </ui:include>
     </ui:define>
 
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.projects}" url="projects" icon="fa fa-archive"/>
         <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
-        <p:menuitem value="#{msgs.createNewProcessFromTemplate}" rendered="#{empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.newProcess}" rendered="#{empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
     </ui:define>
 
     <ui:define name="page-scripts">

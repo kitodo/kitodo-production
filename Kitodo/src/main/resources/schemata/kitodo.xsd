@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<!--======================-->
+<!-- CURRENT VERSION: 1.0 -->
+<!--======================-->
+
+<!-- Change History -->
+
+<!-- August, 2018 -->
+<!-- Version 1.0 -->
+<!-- Changes:
+	 initial Draft completed
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           targetNamespace="http://meta.kitodo.org/v1/" xmlns="http://meta.kitodo.org/v1/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="kitodo" type="kitodoType"/>
+    <xs:complexType name="kitodoType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="metadata" type="metadataType" minOccurs="0"/>
+            <xs:element name="metadataGroup" type="metadataGroupType" minOccurs="0"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="version"/>
+    </xs:complexType>
+
+    <xs:complexType name="metadataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name"/>
+                <xs:attribute type="xs:boolean" name="anchorId"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="metadataGroupType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="metadata" type="metadataType" minOccurs="0"/>
+            <xs:element name="metadataGroup" type="metadataGroupType" minOccurs="0"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="name"/>
+    </xs:complexType>
+</xs:schema>

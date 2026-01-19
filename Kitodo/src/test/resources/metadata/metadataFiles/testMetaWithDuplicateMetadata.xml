@@ -21,7 +21,7 @@
         </mets:agent>
     </mets:metsHdr>
     <mets:dmdSec ID="DMDLOG_0000">
-        <mets:mdWrap MDTYPE="MODS">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
                     <kitodo:metadata name="TitleDocMain">Second process</kitodo:metadata>
@@ -37,7 +37,7 @@
         </mets:mdWrap>
     </mets:dmdSec>
     <mets:dmdSec ID="DMDLOG_0001">
-        <mets:mdWrap MDTYPE="MODS">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
                     <kitodo:metadata name="TitleDocMain">Chapter</kitodo:metadata>

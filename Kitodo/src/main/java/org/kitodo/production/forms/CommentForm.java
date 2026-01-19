@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
@@ -36,6 +37,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 @Named("CommentForm")
 @SessionScoped
@@ -267,7 +269,7 @@ public class CommentForm extends BaseForm {
     public String solveProblem(Comment comment) {
         try {
             this.workflowControllerService.solveProblem(comment, TaskEditType.MANUAL_SINGLE);
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
         refreshProcess(comment.getCurrentTask().getProcess());

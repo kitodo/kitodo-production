@@ -33,12 +33,14 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
+import org.xml.sax.SAXException;
 
 /**
  * Service for schema manipulations.
@@ -62,8 +64,13 @@ public class SchemaService {
      *            class inside method is used
      * @param process
      *            object
+     * @throws SAXException
+     *            when schema definition for metadata file validation contains invalid XML syntax
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
-    public void tempConvert(Workpiece workpiece, Process process) throws IOException, DAOException, URISyntaxException {
+    public void tempConvert(Workpiece workpiece, Process process) throws IOException, DAOException, URISyntaxException,
+            SAXException, FileStructureValidationException {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
          * Metsstruktur übernommen
@@ -221,7 +228,8 @@ public class SchemaService {
      *            current structure
      * @return whether the current structure shall be deleted
      */
-    private boolean convertChildrenLinksForExportRecursive(LogicalDivision structure) throws DAOException, IOException {
+    private boolean convertChildrenLinksForExportRecursive(LogicalDivision structure) throws DAOException, IOException,
+            SAXException, FileStructureValidationException {
 
         LinkedMetsResource link = structure.getLink();
         if (Objects.nonNull(link)) {
@@ -253,7 +261,8 @@ public class SchemaService {
         return journalIssueCount;
     }
 
-    private void addLinksToParents(Process process, Workpiece workpiece) throws IOException {
+    private void addLinksToParents(Process process, Workpiece workpiece) throws IOException, SAXException,
+            FileStructureValidationException {
         Process parentProcess = process.getParent();
         while (Objects.nonNull(parentProcess)) {
             addParentLinkForExport(workpiece, parentProcess);
@@ -261,7 +270,8 @@ public class SchemaService {
         }
     }
 
-    private void addParentLinkForExport(Workpiece workpiece, Process parent) throws IOException {
+    private void addParentLinkForExport(Workpiece workpiece, Process parent) throws IOException, SAXException,
+            FileStructureValidationException {
         LogicalDivision linkHolder = new LogicalDivision();
         linkHolder.setLink(new LinkedMetsResource());
         setLinkForExport(linkHolder, parent);
@@ -270,8 +280,8 @@ public class SchemaService {
         workpiece.setLogicalStructure(linkHolder);
     }
 
-    private void setLinkForExport(LogicalDivision structure, Process process) throws IOException {
-
+    private void setLinkForExport(LogicalDivision structure, Process process) throws IOException, SAXException,
+            FileStructureValidationException {
         LinkedMetsResource link = structure.getLink();
         link.setLoctype("URL");
         String uriWithVariables = process.getProject().getMetsPointerPath();
@@ -283,7 +293,8 @@ public class SchemaService {
         structure.setType(ServiceManager.getProcessService().getBaseType(process));
     }
 
-    private void copyLabelAndOrderlabel(Process source, LogicalDivision destination) throws IOException {
+    private void copyLabelAndOrderlabel(Process source, LogicalDivision destination) throws IOException, SAXException,
+            FileStructureValidationException {
         URI sourceMetadataUri = processService.getMetadataFileUri(source);
         LogicalDivision sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getLogicalStructure();
         if (Objects.isNull(destination.getLabel())) {

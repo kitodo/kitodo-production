@@ -28,6 +28,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -35,6 +36,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 public class BatchTaskHelper extends BatchHelper {
     private List<Task> steps;
@@ -194,7 +196,7 @@ public class BatchTaskHelper extends BatchHelper {
                     task.setEditType(TaskEditType.MANUAL_MULTI);
                     new WorkflowControllerService().close(task);
                 }
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }

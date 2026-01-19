@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:m="http://meta.kitodo.org/v1/">
-<dmdSec ID="metadata"><mdWrap><xmlData><m:kitodo>
+<dmdSec ID="metadata"><mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO"><xmlData><m:kitodo>
 
 <m:metadata name="CRNumber">17</m:metadata>
 <m:metadata name="CaseNumber">123</m:metadata>
@@ -14,7 +14,7 @@
 </m:kitodo></xmlData></mdWrap></dmdSec>
 <structMap TYPE="LOGICAL"><div DMDID="metadata" TYPE="case">
 
-<div><mptr xlink:href="p2c1_valid"/></div>
-<div><mptr xlink:href="p2c2_missing"/></div>
+<div><mptr LOCTYPE="OTHER" xlink:href="p2c1_valid"/></div>
+<div><mptr LOCTYPE="OTHER" xlink:href="p2c2_missing"/></div>
 
 </div></structMap></mets>

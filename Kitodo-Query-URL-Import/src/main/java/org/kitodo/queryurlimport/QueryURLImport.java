@@ -69,6 +69,7 @@ import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
+import org.kitodo.api.externaldatamanagement.XmlResponseHandler;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -287,10 +288,6 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 }
                 try (InputStream inputStream = httpEntity.getContent()) {
                     String content = IOUtils.toString(inputStream, Charset.defaultCharset());
-                    if (Objects.nonNull(interfaceType) && Objects.nonNull(interfaceType.getNumberOfRecordsString())
-                            && XmlResponseHandler.extractNumberOfRecords(content, interfaceType) < 1) {
-                        throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
-                    }
                     return createRecordFromXMLElement(dataImport, content);
                 }
             }

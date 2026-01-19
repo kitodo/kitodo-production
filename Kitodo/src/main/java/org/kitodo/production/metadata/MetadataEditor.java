@@ -44,8 +44,10 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 /**
  * This class contains some methods to handle metadata (semi) automatically.
@@ -77,9 +79,14 @@ public class MetadataEditor {
      * @param childProcessId
      *            Database ID of the child process to be linked
      * @throws IOException
-     *             if the METS file cannot be read or written
+     *            when the METS file cannot be read or written
+     * @throws SAXException
+     *            when XML validation error occurs when loading the metadata file
+     * @throws FileStructureValidationException
+     *            when XML validation of metadata files fails
      */
-    public static void addLink(Process process, String insertionPosition, int childProcessId) throws IOException {
+    public static void addLink(Process process, String insertionPosition, int childProcessId) throws IOException,
+            SAXException, FileStructureValidationException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         List<String> indices = Arrays.asList(insertionPosition.split(Pattern.quote(INSERTION_POSITION_SEPARATOR)));
@@ -138,9 +145,14 @@ public class MetadataEditor {
      *            ID of process whose link will be remove from workpiece of
      *            parent process
      * @throws IOException
-     *             thrown if meta.xml could not be loaded
+     *            when the METS file cannot be read or written
+     * @throws SAXException
+     *            when XML validation error occurs when loading the metadata file
+     * @throws FileStructureValidationException
+     *            when XML validation of metadata files fails
      */
-    public static void removeLink(Process parentProcess, int childProcessId) throws IOException {
+    public static void removeLink(Process parentProcess, int childProcessId) throws IOException, SAXException,
+            FileStructureValidationException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         if (removeLinkRecursive(workpiece.getLogicalStructure(), childProcessId)) {

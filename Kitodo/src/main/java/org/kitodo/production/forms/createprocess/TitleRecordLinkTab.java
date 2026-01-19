@@ -37,6 +37,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
@@ -46,6 +47,7 @@ import org.kitodo.production.services.dataformat.MetsService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.xml.sax.SAXException;
 
 /**
  * Backing bean for the title record link tab.
@@ -128,7 +130,7 @@ public class TitleRecordLinkTab {
             try {
                 titleRecordProcess = ServiceManager.getProcessService().getById(Integer.valueOf(chosenParentProcess));
                 createInsertionPositionSelectionTree();
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage("errorLoadingOne",
                         new Object[] {possibleParentProcesses.parallelStream()
                                 .filter(selectItem -> selectItem.getValue().equals(chosenParentProcess)).findAny()
@@ -141,10 +143,17 @@ public class TitleRecordLinkTab {
     /**
      * Sets up the variables for the tree for the insertion position selection.
      *
+     * @throws DAOException
+     *          when creating insertion position selection fails
      * @throws IOException
-     *             if the METS file cannot be read
+     *          when the ruleset cannot be loaded
+     * @throws SAXException
+     *          when XML validation cannot be performed because of an XML syntax error
+     * @throws FileStructureValidationException
+     *          when a validation error occurs in the METS file when the workpiece is loaded
      */
-    public void createInsertionPositionSelectionTree() throws DAOException, IOException {
+    public void createInsertionPositionSelectionTree() throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         if (Objects.isNull(titleRecordProcess)) {
             return;
         }
@@ -188,10 +197,19 @@ public class TitleRecordLinkTab {
      *            the current ruleset
      * @param priorityList
      *            the user’s metadata language priority list
+     * @throws IOException
+     *            when creating a tooltip for insertion tree fails
+     * @throws DAOException
+     *            when loading linked processes or determining their document types fails
+     * @throws SAXException
+     *            when determining the insertion position fails
+     * @throws FileStructureValidationException
+     *            when creating a tooltip for the insertion tree, or determining the insertion position fails
      */
     private void createInsertionPositionSelectionTreeRecursive(String positionPrefix,
             LogicalDivision currentLogicalDivision, TreeNode parentNode,
-            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException {
+            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException,
+            SAXException, FileStructureValidationException {
 
         String type;
         List<String> tooltip = Collections.emptyList();
@@ -246,7 +264,8 @@ public class TitleRecordLinkTab {
      * @throws IOException
      *             if the METS file cannot be read
      */
-    private List<String> getToolTip(RulesetManagementInterface ruleset, Process linkedProcess) throws IOException {
+    private List<String> getToolTip(RulesetManagementInterface ruleset, Process linkedProcess) throws IOException,
+            SAXException, FileStructureValidationException {
 
         Collection<String> summaryKeys = ruleset.getFunctionalKeys(FunctionalMetadata.DISPLAY_SUMMARY);
         List<String> toolTip = new ArrayList<>();

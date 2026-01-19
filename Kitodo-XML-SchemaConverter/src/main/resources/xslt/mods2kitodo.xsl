@@ -14,7 +14,6 @@
 
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:kitodo="http://meta.kitodo.org/v1/">
 
@@ -22,68 +21,64 @@
     <xsl:strip-space elements="*"/>
 
     <xsl:template match="mods:mods">
-        <mets:mdWrap MDTYPE="MODS">
-            <mets:xmlData>
-                <kitodo:kitodo>
-                    <xsl:apply-templates select="@*|node()"/>
-                    <!-- ### DocType ### -->
-                    <kitodo:metadata name="docType">
-                        <xsl:variable name="genre" select="mods:genre[@authority='gnd-content']"/>
+        <kitodo:kitodo>
+            <xsl:apply-templates select="@*|node()"/>
+            <!-- ### DocType ### -->
+            <kitodo:metadata name="docType">
+                <xsl:variable name="genre" select="mods:genre[@authority='gnd-content']"/>
+                <xsl:choose>
+                    <xsl:when test="(mods:originInfo/mods:issuance[.='continuing'])
+                                or  (mods:originInfo/mods:issuance[.='serial'])">
                         <xsl:choose>
-                            <xsl:when test="(mods:originInfo/mods:issuance[.='continuing'])
-                                        or  (mods:originInfo/mods:issuance[.='serial'])">
-                                <xsl:choose>
-                                    <xsl:when test="$genre = 'Zeitschrift'">
-                                        <xsl:text>Periodical</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="$genre = 'Zeitung'">
-                                        <xsl:text>Newspaper</xsl:text>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>Periodical</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
+                            <xsl:when test="$genre = 'Zeitschrift'">
+                                <xsl:text>Periodical</xsl:text>
                             </xsl:when>
-                            <xsl:when
-                                    test="((mods:relatedItem/mods:identifier[@type='localparentid']) or (mods:relatedItem[@type='host']))">
-                                <xsl:choose>
-                                    <xsl:when test="((mods:originInfo/mods:issuance[.='monographic'])
-                                                  or (mods:originInfo/mods:issuance[.='integrating resource'])
-                                                  or (mods:originInfo/mods:issuance[.='single unit'])
-                                                  or (mods:typeOfResource[@manuscript='yes'][.='text']))">
-                                        <xsl:text>Volume</xsl:text>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>MultiVolumeWork</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
+                            <xsl:when test="$genre = 'Zeitung'">
+                                <xsl:text>Newspaper</xsl:text>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:choose>
-                                    <xsl:when
-                                            test="(mods:originInfo/mods:issuance[.='monographic']) and (mods:genre[@authoriy='gnd-content'][.='Altkarte'])">
-                                        <xsl:text>Map</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when
-                                            test="(mods:originInfo/mods:issuance[.='monographic']) or (mods:originInfo/mods:issuance[.='integrating resource'])">
-                                        <xsl:text>Monograph</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="mods:originInfo/mods:issuance[.='single unit']">
-                                        <xsl:text>Volume</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="(mods:originInfo/mods:issuance[.='multipart monograph'])">
-                                        <xsl:text>MultiVolumeWork</xsl:text>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>Monograph</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
+                                <xsl:text>Periodical</xsl:text>
                             </xsl:otherwise>
                         </xsl:choose>
-                    </kitodo:metadata>
-                </kitodo:kitodo>
-            </mets:xmlData>
-        </mets:mdWrap>
+                    </xsl:when>
+                    <xsl:when
+                            test="((mods:relatedItem/mods:identifier[@type='localparentid']) or (mods:relatedItem[@type='host']))">
+                        <xsl:choose>
+                            <xsl:when test="((mods:originInfo/mods:issuance[.='monographic'])
+                                          or (mods:originInfo/mods:issuance[.='integrating resource'])
+                                          or (mods:originInfo/mods:issuance[.='single unit'])
+                                          or (mods:typeOfResource[@manuscript='yes'][.='text']))">
+                                <xsl:text>Volume</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>MultiVolumeWork</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when
+                                    test="(mods:originInfo/mods:issuance[.='monographic']) and (mods:genre[@authoriy='gnd-content'][.='Altkarte'])">
+                                <xsl:text>Map</xsl:text>
+                            </xsl:when>
+                            <xsl:when
+                                    test="(mods:originInfo/mods:issuance[.='monographic']) or (mods:originInfo/mods:issuance[.='integrating resource'])">
+                                <xsl:text>Monograph</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="mods:originInfo/mods:issuance[.='single unit']">
+                                <xsl:text>Volume</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="(mods:originInfo/mods:issuance[.='multipart monograph'])">
+                                <xsl:text>MultiVolumeWork</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>Monograph</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </kitodo:metadata>
+        </kitodo:kitodo>
     </xsl:template>
 
     <!-- ### TitleDocMain ### -->

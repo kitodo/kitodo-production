@@ -123,6 +123,30 @@
                 <label>Nachname</label>
             </key>
         </key>
+        <key id="FormerOwner">
+            <label>Vorheriger Besitzer</label>
+            <key id="authorityURI">
+                <label>Authority URI</label>
+            </key>
+            <key id="authorityValue">
+                <label>Authority Value</label>
+            </key>
+            <key id="displayName">
+                <label>Anzeigename</label>
+            </key>
+        </key>
+        <key id="TypeOfResource">
+            <label>Art der Ressource</label>
+            <key id="typDisplayForm">
+                <label>Anzeigename Ressourcenart</label>
+            </key>
+            <key id="typIdentifierPPN">
+                <label>PPN</label>
+            </key>
+            <key id="typIdentifierURI">
+                <label>URI</label>
+            </key>
+        </key>
     </declaration>
     <correlation>
         <restriction key="Person">
