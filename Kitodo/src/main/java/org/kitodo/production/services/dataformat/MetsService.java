@@ -142,7 +142,7 @@ public class MetsService {
     public Workpiece loadWorkpiece(URI uri, boolean validateAgainstSchema) throws IOException, SAXException,
             FileStructureValidationException {
         try (InputStream inputStream = ServiceManager.getFileService().read(uri)) {
-            logger.info("Reading {}", uri.toString());
+            logger.debug("Reading {}", uri.toString());
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 inputStream.transferTo(outputStream);
                 try (InputStream xmlValidationStream = new ByteArrayInputStream(outputStream.toByteArray())) {
@@ -194,7 +194,7 @@ public class MetsService {
      */
     public void saveWorkpiece(Workpiece workpiece, URI uri) throws IOException {
         try (OutputStream outputStream = ServiceManager.getFileService().write(uri)) {
-            logger.info("Saving {}", uri.toString());
+            logger.debug("Saving {}", uri.toString());
             save(workpiece, outputStream);
         }
     }
