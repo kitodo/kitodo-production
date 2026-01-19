@@ -102,6 +102,7 @@ public class UserEditViewMetadataTab extends BaseTabEditView<User> {
      * @param userObject
      *            the user currently being edited
      */
+    @Override
     public void load(User userObject) {
         this.userObject = userObject;
         try {
@@ -121,6 +122,7 @@ public class UserEditViewMetadataTab extends BaseTabEditView<User> {
      *
      * @return true if information can be saved and was updated on user object
      */
+    @Override
     public boolean save() {
         try {
             ObjectMapper mapper = new ObjectMapper();

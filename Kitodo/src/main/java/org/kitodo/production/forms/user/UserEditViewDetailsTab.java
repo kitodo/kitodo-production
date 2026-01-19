@@ -124,6 +124,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
      * @param userObject
      *            the user currently being edited
      */
+    @Override
     public void load(User userObject) {
         this.userObject = userObject;
         this.clientsOfUser = UserService.getClientsOfUserSorted(userObject);
@@ -135,6 +136,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
      *
      * @return true if user information can be saved, else false
      */
+    @Override
     public boolean save() {
         if (Objects.isNull(userObject.getId())) {
             Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();

@@ -79,6 +79,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
      * @param userObject
      *            the user currently being edited
      */
+    @Override
     public void load(User userObject) {
         // reset when user is loaded
         this.userObject = userObject;

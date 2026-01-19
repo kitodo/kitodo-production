@@ -77,6 +77,7 @@ public class UserEditViewRolesTab extends BaseTabEditView<User> {
      * @param userObject
      *            the user currently being edited
      */
+    @Override
     public void load(User userObject) {
         this.userObject = userObject;
 

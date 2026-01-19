@@ -65,6 +65,7 @@ public class BaseTabView extends BaseForm {
      *
      * @param event TabChangeEvent is fired when the user changes the tab
      */
+    @Override
     public void onTabChange(TabChangeEvent event) {
         String tabId = event.getTab().getId();
         setActiveTabId(tabId);
