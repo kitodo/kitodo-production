@@ -43,7 +43,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class UserListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=0";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tab=usersTab";
     
     private static final Logger logger = LogManager.getLogger(UserListView.class);
 

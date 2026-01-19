@@ -13,18 +13,25 @@ package org.kitodo.production.forms;
 
 import static java.util.Map.entry;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import org.kitodo.production.forms.user.UserListView;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.security.SecurityAccessService;
 
 @Named("UsersTabView")
 @ViewScoped
-public class UsersTabView extends BaseForm {
+public class UsersTabView extends BaseTabView {
+
+    private static SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     @Inject
     private UserListView userListView;
@@ -43,6 +50,14 @@ public class UsersTabView extends BaseForm {
 
     @Inject
     private LdapServerListView ldapServerListView;
+
+    /**
+     * Initialize users tab view.
+     */
+    @PostConstruct
+    public void init() {
+        setActiveTabId("usersTab");
+    }
 
     /**
      * Apply view parameter "firstRow" to currently active list view depending on tab index.
@@ -78,10 +93,25 @@ public class UsersTabView extends BaseForm {
      * @param encodedFilter the filter value provided as encoded URL query parameter
      */
     public void setFilterFromTemplate(String encodedFilter) {
-        if (getActiveTabIndex() == 0) {
+        if (getActiveTabId().equals("usersTab")) {
             // user list view
             userListView.setFilterFromTemplate(encodedFilter);
         }
+    }
+
+    /** 
+     * Overwrite allowed tab ids for sanitization of URL parameter 
+     */
+    @Override
+    protected List<String> getAllowedTabIds() {
+        List<String> allowedTabs = new LinkedList<>();
+        if (securityAccessService.hasAuthorityToViewUserList()) allowedTabs.add("usersTab");
+        if (securityAccessService.hasAuthorityToViewRoleList()) allowedTabs.add("rolesTab");
+        if (securityAccessService.hasAuthorityToViewClientList()) allowedTabs.add("clientsTab");
+        if (securityAccessService.hasAuthorityToViewAuthorityList()) allowedTabs.add("authoritiesTab");
+        if (securityAccessService.hasAuthorityToViewLdapGroupList()) allowedTabs.add("ldapGroupsTab");
+        if (securityAccessService.hasAuthorityToViewLdapServerList()) allowedTabs.add("ldapServersTab");
+        return allowedTabs;
     }
 
     /**
@@ -91,12 +121,14 @@ public class UsersTabView extends BaseForm {
      */
     private BaseListView getActiveListView() {
         return Map.ofEntries(
-            entry(0, userListView), 
-            entry(1, roleListView), 
-            entry(2, clientListView), 
-            entry(3, authorityListView), 
-            entry(4, ldapGroupListView), 
-            entry(5, ldapServerListView)
-        ).get(getActiveTabIndex());
+            entry("usersTab", userListView), 
+            entry("rolesTab", roleListView), 
+            entry("clientsTab", clientListView), 
+            entry("authoritiesTab", authorityListView), 
+            entry("ldapGroupsTab", ldapGroupListView), 
+            entry("ldapServersTab", ldapServerListView)
+        ).get(getActiveTabId());
     }
+
+    
 }

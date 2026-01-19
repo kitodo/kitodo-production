@@ -19,11 +19,11 @@ kitodo.tabView = kitodo.tabView || {};
  * Event handler that is called when a user changes a tab in
  * one of the main views (users tabs, projects tabs).
  * 
- * @param int index the tabIndex of the tab now shown
+ * @param string tab the id of the new active tab (should match id attribute of the `p:tab` component)
  */
-kitodo.tabView.onTabShow = function(index) {
-    // write tabIndex into browser URL such that the page can be refreshed without loosing the active tab state
-    kitodo.updateQueryParameter('tabIndex', index); 
+kitodo.tabView.onTabChange = function(tabId) {
+    // write tabId into browser URL such that the page can be refreshed without loosing the active tab state
+    kitodo.updateQueryParameter('tab', tabId); 
 
     // remove URL query parameters related to list view pagination, sort state and filter state
     // such that it is not applied to another list in another tab

@@ -34,7 +34,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class RoleListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=1";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tab=rolesTab";
 
     private static final Logger logger = LogManager.getLogger(RoleListView.class);
     

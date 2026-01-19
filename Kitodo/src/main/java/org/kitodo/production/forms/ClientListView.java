@@ -36,7 +36,7 @@ public class ClientListView extends BaseListView {
 
     private static final Logger logger = LogManager.getLogger(ClientListView.class);
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=2";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tab=clientsTab";
     
     /**
      * Initialize ClientListView.
