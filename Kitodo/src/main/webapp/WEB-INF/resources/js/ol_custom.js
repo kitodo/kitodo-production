@@ -310,12 +310,8 @@ class KitodoDetailMap {
         // Map image coordinates to map coordinates to be able to use image extent in pixels.
         const extent = this.createImageExtent(this.#image.dimensions);
         const projection = this.createProjection(extent);
-    
-        if (this.#map) {
-            // make last OpenLayers map forget canvas target 
-            // (triggers OpenLayers cleanup code and allows garbage collection)
-            this.#map.setTarget(null);
-        }
+        // triggering cleanup code via "this.#map.setTarget(null)" does not seem to be necessary anymore and indeed
+        // causes an error with PrimeFaces 13 when selecting a new image.
 
         // initialize new OpenLayers map
         this.#map = new ol.Map({
