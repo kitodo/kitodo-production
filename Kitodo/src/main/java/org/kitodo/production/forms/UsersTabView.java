@@ -100,18 +100,18 @@ public class UsersTabView extends BaseTabView {
     }
 
     /** 
-     * Overwrite allowed tab ids for sanitization of URL parameter 
+     * Overwrite allowed tab ids for sanitization of URL parameter.
      */
     @Override
     protected List<String> getAllowedTabIds() {
-        List<String> allowedTabs = new LinkedList<>();
-        if (securityAccessService.hasAuthorityToViewUserList()) allowedTabs.add("usersTab");
-        if (securityAccessService.hasAuthorityToViewRoleList()) allowedTabs.add("rolesTab");
-        if (securityAccessService.hasAuthorityToViewClientList()) allowedTabs.add("clientsTab");
-        if (securityAccessService.hasAuthorityToViewAuthorityList()) allowedTabs.add("authoritiesTab");
-        if (securityAccessService.hasAuthorityToViewLdapGroupList()) allowedTabs.add("ldapGroupsTab");
-        if (securityAccessService.hasAuthorityToViewLdapServerList()) allowedTabs.add("ldapServersTab");
-        return allowedTabs;
+        return List.of(
+            securityAccessService.hasAuthorityToViewUserList() ? "usersTab" : null,
+            securityAccessService.hasAuthorityToViewRoleList() ? "rolesTab" : null,
+            securityAccessService.hasAuthorityToViewClientList() ? "clientsTab" : null,
+            securityAccessService.hasAuthorityToViewAuthorityList() ? "authoritiesTab" : null,
+            securityAccessService.hasAuthorityToViewLdapGroupList() ? "ldapGroupsTab" : null,
+            securityAccessService.hasAuthorityToViewLdapServerList() ? "ldapServersTab" : null
+        ).stream().filter(Objects::nonNull).toList();
     }
 
     /**
