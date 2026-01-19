@@ -39,6 +39,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.TiffHeader;
 import org.kitodo.production.enums.GenerationMode;
@@ -62,10 +63,11 @@ import org.kitodo.production.thread.TaskImageGeneratorThread;
 import org.kitodo.utils.Stopwatch;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("CurrentTaskForm")
 @SessionScoped
-public class CurrentTaskForm extends BaseForm {
+public class CurrentTaskForm extends ValidatableForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
@@ -158,7 +160,7 @@ public class CurrentTaskForm extends BaseForm {
                     this.workflowControllerService.assignTaskToUser(this.currentTask);
                     ServiceManager.getTaskService().save(this.currentTask);
                 }
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
@@ -305,8 +307,12 @@ public class CurrentTaskForm extends BaseForm {
         Stopwatch stopwatch = new Stopwatch(this, "closeTaskByUser");
         try {
             this.workflowControllerService.closeTaskByUser(this.currentTask);
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | SAXException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+            return stopwatch.stop(this.stayOnCurrentPage);
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
+            showValidationExceptionDialog(e, null);
             return stopwatch.stop(this.stayOnCurrentPage);
         }
         return stopwatch.stop(tasksPage);
@@ -664,7 +670,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return whether there are folders with images that are supposed to validated.
      */
     public boolean isImageValidationPossible() {
-        return currentTask.getValidationFolders().size() > 0;
+        return !currentTask.getValidationFolders().isEmpty();
     }
 
 

@@ -91,18 +91,18 @@
         </p:column>
         <p:column headerText="#{msgs.roles}"
                   rendered="#{UserListView.showColumn('user.roles')}">
-            <h:outputText value="#{UserListView.getRoleTitles(item.roles)}"
-                          title="#{UserListView.getRoleTitles(item.roles)}"/>
+            <h:outputText value="#{UserListView.getRoleTitles(item)}"
+                          title="#{UserListView.getRoleTitles(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.clients}"
                   rendered="#{UserListView.showColumn('user.clients')}">
-            <h:outputText value="#{UserListView.getClientNames(item.clients)}"
-                          title="#{UserListView.getClientNames(item.clients)}"/>
+            <h:outputText value="#{UserListView.getClientNames(item)}"
+                          title="#{UserListView.getClientNames(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.projects}"
                   rendered="#{UserListView.showColumn('user.projects')}">
-            <h:outputText value="#{UserListView.getProjectTitles(item.projects)}"
-                          title="#{UserListView.getProjectTitles(item.projects)}"/>
+            <h:outputText value="#{UserListView.getProjectTitles(item)}"
+                          title="#{UserListView.getProjectTitles(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.loggedIn}"
                   rendered="#{UserListView.showColumn('user.loggedIn')}"
@@ -140,14 +140,14 @@
 
                 <h:panelGroup styleClass="action"
                               rendered="#{SecurityAccessController.hasAuthorityToUnassignTasks()}"
-                              title="#{empty UserListView.getTasksInProgress(item) ? msgs.userWithoutTasks : msgs.unassignTasks}">
+                              title="#{UserListView.hasTasksInProgress(item) ? msgs.unassignTasks : msgs.userWithoutTasks}">
                     <p:commandLink id="unassignTasks"
                                    action="#{UserListView.resetTasksToOpen(item)}"
-                                   styleClass="#{empty UserListView.getTasksInProgress(item) ? 'ui-state-disabled' : ''}"
-                                   disabled="#{empty UserListView.getTasksInProgress(item)}"
+                                   styleClass="#{UserListView.hasTasksInProgress(item) ? '' : 'ui-state-disabled'}"
+                                   disabled="#{not UserListView.hasTasksInProgress(item)}"
                                    update="@this">
                         <h:outputText><i class="fa fa-user-times"/></h:outputText>
-                        <p:confirm message=" #{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
+                        <p:confirm message="#{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
                     </p:commandLink>
                 </h:panelGroup>
 

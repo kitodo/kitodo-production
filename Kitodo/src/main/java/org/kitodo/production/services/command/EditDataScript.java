@@ -27,11 +27,13 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.KitodoScriptExecutionException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 public abstract class EditDataScript {
 
@@ -127,8 +129,12 @@ public abstract class EditDataScript {
      * Generates the value of the MetadatScript and from the parentProcess.
      * @param metadataScript the script to generate the value for
      * @param parentProcess the process to take the value from
+     * @throws IOException when reading metadata file fails
+     * @throws SAXException when reading metadata file fails
+     * @throws FileStructureValidationException when validating the metadata file fails
      */
-    public void generateValueFromParent(MetadataScript metadataScript, Process parentProcess) throws IOException {
+    public void generateValueFromParent(MetadataScript metadataScript, Process parentProcess) throws IOException,
+            SAXException, FileStructureValidationException {
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(parentProcess);
         Workpiece workpiece = metadataFile.getWorkpiece();

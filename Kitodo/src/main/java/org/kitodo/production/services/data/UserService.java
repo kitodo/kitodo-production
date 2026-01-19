@@ -138,6 +138,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     @Override
     public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         HashMap<String, Object> filterMap;
+
         try {
             filterMap = ServiceManager.getFilterService().getSQLFilterMap(filters, User.class);
         } catch (NoSuchFieldException | NumberFormatException e) {
@@ -563,5 +564,116 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         return getClientsOfUser(user).stream()
                 .sorted(Comparator.comparing(Client::getName, String.CASE_INSENSITIVE_ORDER))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Loads all role titles for the given user IDs in a single query.
+     *
+     * @param userIds list of user IDs
+     * @return a map of userId and list of role titles
+     */
+    public Map<Integer, List<String>> loadRolesForUsers(List<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        String hql = "SELECT u.id, r.title "
+                + "FROM User u "
+                + "JOIN u.roles r "
+                + "WHERE u.id IN (:ids)";
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", userIds);
+        return executeUserStringMappingQuery(hql, params);
+    }
+
+    /**
+     * Loads all client names for the given user IDs in a single query.
+     *
+     * @param userIds list of user IDs
+     * @return a map of userId and list of client names
+     */
+    public Map<Integer, List<String>> loadClientsForUsers(List<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        String hql = "SELECT u.id, c.name "
+                + "FROM User u "
+                + "JOIN u.clients c "
+                + "WHERE u.id IN (:ids)";
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", userIds);
+        return executeUserStringMappingQuery(hql, params);
+    }
+
+    /**
+     * Loads all project titles for the given user IDs in a single query.
+     *
+     * @param userIds list of user IDs
+     * @return a map of userId and list of project titles
+     */
+    public Map<Integer, List<String>> loadProjectsForUsers(List<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        String hql = "SELECT u.id, p.title "
+                + "FROM User u "
+                + "JOIN u.projects p "
+                + "WHERE u.id IN (:ids)";
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", userIds);
+        return executeUserStringMappingQuery(hql, params);
+    }
+
+    /**
+     * Executes an HQL query that returns a map of userId -> list of string values.
+     *
+     * @param hql    the HQL query to execute
+     * @param params query parameters
+     * @return a map of userId to list of string values
+     */
+    private Map<Integer, List<String>> executeUserStringMappingQuery(String hql, Map<String, Object> params) {
+        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
+        Map<Integer, List<String>> result = new HashMap<>();
+        for (Object[] row : rows) {
+            Integer userId = (Integer) row[0];
+            String value = (String) row[1];
+            result.computeIfAbsent(userId, k -> new ArrayList<>()).add(value);
+        }
+        return result;
+    }
+
+    /**
+     * Loads a boolean flag for each user ID indicating whether the user
+     * has at least one task currently in progress.
+     *
+     * @param userIds list of user IDs
+     * @return map of userId → true/false
+     */
+    public Map<Integer, Boolean> loadTasksInProgressForUsers(List<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // We only need the user IDs; returning a constant boolean simplifies post-processing.
+        String hql = "SELECT DISTINCT u.id, true "
+                + "FROM Task t "
+                + "JOIN t.processingUser u "
+                + "WHERE u.id IN (:ids) "
+                + "AND t.processingStatus = :status "
+                + "AND t.process IS NOT NULL";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", userIds);
+        params.put("status", TaskStatus.INWORK);
+
+        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
+
+        Map<Integer, Boolean> result = new HashMap<>();
+        for (Integer userId : userIds) {
+            result.put(userId, false);
+        }
+        for (Object[] row : rows) {
+            result.put((Integer) row[0], true);
+        }
+        return result;
     }
 }

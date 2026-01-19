@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mets xmlns="http://www.loc.gov/METS/" xmlns:kitodo="http://meta.kitodo.org/v1/">
-    <dmdSec ID="1">
+    <dmdSec ID="DMDLOG_001">
         <mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
             <xmlData>
                 <kitodo:kitodo>
@@ -20,10 +20,9 @@
         </mdWrap>
     </dmdSec>
     <structMap TYPE="LOGICAL">
-        <div DMDID="1" TYPE="Monograph"/>
+        <div DMDID="DMDLOG_001" TYPE="Monograph"/>
     </structMap>
     <structMap TYPE="PHYSICAL">
         <div/>
     </structMap>
-    <structLink/>
 </mets>

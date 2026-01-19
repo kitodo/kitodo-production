@@ -7,7 +7,7 @@
         </mets:agent>
     </mets:metsHdr>
     <mets:dmdSec ID="uuid-83867038-fca7-3001-9e9c-2ca97bc1b168">
-        <mets:mdWrap>
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo>
                     <kitodo:metadata name="pathimagefiles">file:/2/images/Sec_Proc_tif</kitodo:metadata>
@@ -16,7 +16,7 @@
         </mets:mdWrap>
     </mets:dmdSec>
     <mets:dmdSec ID="uuid-017a6d80-fde9-3445-a239-bc86ba0c9f14">
-        <mets:mdWrap>
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo>
                     <kitodo:metadata name="TitleDocMain">Second process</kitodo:metadata>
@@ -27,7 +27,6 @@
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
-    <mets:fileSec/>
     <mets:structMap TYPE="PHYSICAL">
         <mets:div ID="PHYS_0000" DMDID="uuid-83867038-fca7-3001-9e9c-2ca97bc1b168" TYPE="physSequence"/>
     </mets:structMap>

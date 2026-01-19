@@ -27,9 +27,11 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.xml.sax.SAXException;
 
 public class CommentFormIT {
 
@@ -82,7 +84,8 @@ public class CommentFormIT {
     }
 
     @Test
-    public void shouldGetPreviousStepsForProblemReporting() throws DAOException, IOException {
+    public void shouldGetPreviousStepsForProblemReporting() throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         CommentForm commentForm = new CommentForm();
         Process testProcess = ServiceManager.getProcessService().getById(1);
         commentForm.setProcessById(testProcess.getId());

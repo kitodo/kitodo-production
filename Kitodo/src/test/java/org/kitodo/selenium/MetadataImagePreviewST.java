@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -34,6 +35,7 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.xml.sax.SAXException;
 
 /**
  * Tests the image preview panel (OpenLayers map) in the metadata editor.
@@ -289,11 +291,11 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
     /**
      * Cleanup test environment by removing temporal dummy processes from database and index.
      * @throws DAOException when dummy process cannot be removed from database
-     * @throws CustomResponseException when dummy process cannot be removed from index
      * @throws IOException when deleting test files fails.
+     * @throws SAXException when deleting test files fails.
      */
     @AfterAll
-    public static void cleanup() throws DAOException, IOException {
+    public static void cleanup() throws DAOException, IOException, SAXException, FileStructureValidationException {
         ProcessService.deleteProcess(processId);
     }
 

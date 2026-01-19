@@ -53,7 +53,7 @@
         <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
 
         <p:panel id="metadataEditorContainer"
-                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError()}"
+                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getValidationErrors()}"
                  style="margin: auto 16px; padding: 0;">
 
             <p:panel id="metadataEditor">
@@ -288,6 +288,9 @@
             <ui:param name="selectRecordUpdate" value="" />
         </ui:include>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/errorPopup.xhtml" />
+        <ui:include src="/WEB-INF/templates/includes/validationErrorsDialog.xhtml">
+            <ui:param name="validatableForm" value="#{DataEditorForm}"/>
+        </ui:include>
     </ui:define>
 
     <ui:define name="breadcrumbs">
