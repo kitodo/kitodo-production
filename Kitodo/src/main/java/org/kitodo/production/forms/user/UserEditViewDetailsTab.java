@@ -34,7 +34,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.BaseTabEditView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.password.KitodoPassword;
@@ -45,7 +45,7 @@ import org.primefaces.PrimeFaces;
 
 @Named("UserEditViewDetailsTab")
 @ViewScoped
-public class UserEditViewDetailsTab extends BaseForm {
+public class UserEditViewDetailsTab extends BaseTabEditView<User> {
     
     /**
      * The user object that is being edited (variable "user" references to the user currently logged in, see BaseForm).
@@ -211,7 +211,7 @@ public class UserEditViewDetailsTab extends BaseForm {
      * authentication is active also on ldap server.
      */
     public void changePasswordForCurrentUser() {
-        if (isOldPasswordInvalid()) {
+        if (!isOldPasswordValid()) {
             Helper.setErrorMessage("passwordsDontMatchOld");
         } else {
             try {
@@ -258,21 +258,23 @@ public class UserEditViewDetailsTab extends BaseForm {
             return Collections.emptySet();
         }
         KitodoPassword validPassword = new KitodoPassword(passwordToEncrypt);
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        return validator.validate(validPassword);
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = factory.getValidator();
+            return validator.validate(validPassword);
+        }
     }
 
     /**
      * Check whether the old password matches the password stored in the database.
      * 
-     * @return true if the old password does not match the password stored in the database
+     * @return true if the old password does match the password stored in the database
      */
-    private boolean isOldPasswordInvalid() {
-        if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
-            return !Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
+    private boolean isOldPasswordValid() {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
+            // user has admin rights and old password doesn't matter
+            return true;
         }
-        return false;
+        return Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
     }
 
 }

@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.BaseTabEditView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortMeta;
@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("UserEditViewProjectsTab")
 @ViewScoped
-public class UserEditViewProjectsTab extends BaseForm {
+public class UserEditViewProjectsTab extends BaseTabEditView<User> {
 
     /**
      * The user object that is being edited (variable "user" references to the user currently logged in, see BaseForm).
@@ -89,15 +89,6 @@ public class UserEditViewProjectsTab extends BaseForm {
                 logger, e);
             this.projects = new LinkedList<>();
         }
-    }
-
-    /**
-     * Save user projects tab.
-     *
-     * @return true if information can be saved and was updated on user object
-     */
-    public boolean save() {
-        return true;
     }
 
     /**

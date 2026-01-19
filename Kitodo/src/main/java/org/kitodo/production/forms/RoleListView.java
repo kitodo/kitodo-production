@@ -22,7 +22,6 @@ import jakarta.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -92,20 +91,9 @@ public class RoleListView extends BaseListView {
      */
     public static boolean deleteRole(Role role) {
         try {
-            if (!role.getUsers().isEmpty()) {
-                for (User user : role.getUsers()) {
-                    user.getRoles().remove(role);
-                }
-                role.setUsers(new ArrayList<>());
-                ServiceManager.getRoleService().save(role);
-            }
             if (!role.getTasks().isEmpty()) {
                 Helper.setErrorMessage("roleAssignedError");
                 return false;
-            }
-            if (!role.getAuthorities().isEmpty()) {
-                role.setAuthorities(new ArrayList<>());
-                ServiceManager.getRoleService().save(role);
             }
             ServiceManager.getRoleService().remove(role);
             return true;

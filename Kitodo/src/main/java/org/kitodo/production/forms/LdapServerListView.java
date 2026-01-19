@@ -36,7 +36,7 @@ public class LdapServerListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=5";
 
-    private static final Logger logger = LogManager.getLogger(LdapServerEditView.class);    
+    private static final Logger logger = LogManager.getLogger(LdapServerListView.class);    
 
     private List<LdapServer> ldapServers;
 
