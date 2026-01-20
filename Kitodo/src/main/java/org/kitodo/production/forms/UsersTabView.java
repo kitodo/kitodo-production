@@ -16,6 +16,7 @@ import static java.util.Map.entry;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -103,14 +104,14 @@ public class UsersTabView extends BaseTabView {
      */
     @Override
     protected List<String> getAllowedTabIds() {
-        return List.of(
+        return Stream.of(
             securityAccessService.hasAuthorityToViewUserList() ? "usersTab" : null,
             securityAccessService.hasAuthorityToViewRoleList() ? "rolesTab" : null,
             securityAccessService.hasAuthorityToViewClientList() ? "clientsTab" : null,
             securityAccessService.hasAuthorityToViewAuthorityList() ? "authoritiesTab" : null,
             securityAccessService.hasAuthorityToViewLdapGroupList() ? "ldapGroupsTab" : null,
             securityAccessService.hasAuthorityToViewLdapServerList() ? "ldapServersTab" : null
-        ).stream().filter(Objects::nonNull).toList();
+        ).filter(Objects::nonNull).toList();
     }
 
     /**
