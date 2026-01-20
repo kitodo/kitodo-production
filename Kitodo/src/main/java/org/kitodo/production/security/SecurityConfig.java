@@ -62,7 +62,7 @@ public class SecurityConfig {
     private static final String VIEW_ROLE = "viewRole_";
     private static final String VIEW_TEMPLATE = "viewTemplate_";
     private static final String VIEW_WORKFLOW = "viewProcess_";
-    private static final String LOGIN_PAGE = "/pages/login.jsf";
+    private static final String LOGIN_PAGE = "/pages/login";
 
     /**
      * Constructor for SecurityConfig which also sets instance variable for
@@ -173,7 +173,7 @@ public class SecurityConfig {
 
     private void authorizePageLdapGroupEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/ldapgroupEdit*").hasAnyAuthority(
                 "editLdapGroup_" + GLOBAL,
                 "viewLdapGroup_" + GLOBAL)
         );
@@ -181,7 +181,7 @@ public class SecurityConfig {
 
     private void authorizePageRoleEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/roleEdit*").hasAnyAuthority(
                 EDIT_ROLE + GLOBAL,
                 EDIT_ROLE + CLIENT_ANY,
                 VIEW_ROLE + GLOBAL,
@@ -191,7 +191,7 @@ public class SecurityConfig {
 
     private void authorizePageUsers(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/users.jsf").hasAnyAuthority(
+            .requestMatchers("/pages/users").hasAnyAuthority(
                 VIEW_ALL_USERS + GLOBAL,
                 VIEW_ALL_USERS + CLIENT_ANY,
                 VIEW_ALL_ROLES + GLOBAL,
@@ -203,7 +203,7 @@ public class SecurityConfig {
 
     private void authorizePageTasks(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/tasks.jsf").hasAnyAuthority(
+            .requestMatchers("/pages/tasks").hasAnyAuthority(
                 VIEW_ALL_TASKS + GLOBAL,
                 VIEW_ALL_TASKS + CLIENT_ANY)
         );
@@ -211,7 +211,7 @@ public class SecurityConfig {
 
     private void authorizePageWorkflowEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/workflowEdit*").hasAnyAuthority(
                 EDIT_WORKFLOW + GLOBAL,
                 EDIT_WORKFLOW + CLIENT_ANY,
                 VIEW_WORKFLOW + GLOBAL,
@@ -221,7 +221,7 @@ public class SecurityConfig {
 
     private void authorizePageRulesetEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/rulesetEdit*").hasAnyAuthority(
                 EDIT_RULESET + GLOBAL,
                 EDIT_RULESET + CLIENT_ANY,
                 VIEW_RULESET + GLOBAL,
@@ -231,7 +231,7 @@ public class SecurityConfig {
 
     private void authorizePageDocketEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/docketEdit*").hasAnyAuthority(
                 EDIT_DOCKET + GLOBAL,
                 EDIT_DOCKET + CLIENT_ANY,
                 VIEW_DOCKET + GLOBAL,
@@ -241,7 +241,7 @@ public class SecurityConfig {
 
     private void authorizePageTemplateEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/templateEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/templateEdit*").hasAnyAuthority(
                 EDIT_TEMPLATE + GLOBAL,
                 EDIT_TEMPLATE + CLIENT_ANY,
                 VIEW_TEMPLATE + GLOBAL,
@@ -251,7 +251,7 @@ public class SecurityConfig {
 
     private void authorizePageProjectEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/projectEdit*").hasAnyAuthority(
                 EDIT_PROJECT + GLOBAL,
                 EDIT_PROJECT + CLIENT_ANY,
                 VIEW_PROJECT + GLOBAL,
@@ -261,7 +261,7 @@ public class SecurityConfig {
 
     private void authorizePageProjects(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/projects.jsf").hasAnyAuthority(
+            .requestMatchers("/pages/projects").hasAnyAuthority(
                 VIEW_ALL_PROJECTS + GLOBAL,
                 VIEW_ALL_PROJECTS + CLIENT_ANY,
                 VIEW_ALL_TEMPLATES + GLOBAL,
@@ -276,7 +276,7 @@ public class SecurityConfig {
 
     private void authorizePageProcessEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/processEdit*").hasAnyAuthority(
                 EDIT_PROCESS + GLOBAL,
                 EDIT_PROCESS + CLIENT_ANY,
                 VIEW_PROCESS + GLOBAL,
@@ -286,7 +286,7 @@ public class SecurityConfig {
 
     private void authorizePageProcesses(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/processes.jsf").hasAnyAuthority(
+            .requestMatchers("/pages/processes").hasAnyAuthority(
                 VIEW_ALL_PROCESSES + GLOBAL,
                 VIEW_ALL_PROCESSES + CLIENT_ANY)
         );
@@ -294,7 +294,7 @@ public class SecurityConfig {
 
     private void authorizePageIndexing(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
+            .requestMatchers("/pages/indexingPage").hasAnyAuthority(
                 "editIndex_" + GLOBAL,
                 "viewIndex_" + GLOBAL)
         );
@@ -302,7 +302,7 @@ public class SecurityConfig {
 
     private void authorizePageClientEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
+            .requestMatchers("/pages/clientEdit*").hasAnyAuthority(
                 EDIT_CLIENT + GLOBAL,
                 EDIT_CLIENT + CLIENT_ANY,
                 VIEW_CLIENT + GLOBAL,
@@ -314,7 +314,7 @@ public class SecurityConfig {
         http.formLogin(login -> login
                 .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/pages/desktop.jsf")
+                .defaultSuccessUrl("/pages/desktop")
                 .successHandler(new CustomLoginSuccessHandler())
                 .permitAll())
             .logout(logout -> logout

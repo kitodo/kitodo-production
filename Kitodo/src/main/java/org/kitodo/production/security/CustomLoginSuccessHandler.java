@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final String DESKTOP_LANDING_PAGE = "/pages/desktop.jsf";
-    private static final String EMPTY_LANDING_PAGE = "/pages/checks.jsf";
+    private static final String DESKTOP_LANDING_PAGE = "/pages/desktop";
+    private static final String EMPTY_LANDING_PAGE = "/pages/checks";
     private static final String SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
     private static final String OMNIFACES_EVENT = "omnifaces.event";
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();

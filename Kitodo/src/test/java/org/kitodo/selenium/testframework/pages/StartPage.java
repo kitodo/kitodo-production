@@ -16,7 +16,7 @@ import org.kitodo.selenium.testframework.Browser;
 public class StartPage extends Page<StartPage> {
 
     public StartPage() {
-        super("pages/desktop.jsf");
+        super("pages/desktop");
     }
 
     @Override
