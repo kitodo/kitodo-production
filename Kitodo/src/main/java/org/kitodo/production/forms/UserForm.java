@@ -271,7 +271,7 @@ public class UserForm extends BaseForm {
      *         are "INWORK" and belong to process, not template
      */
     public List<Task> getTasksInProgress(User user) {
-        return ServiceManager.getUserService().getTasksInProgress(user);
+        return ServiceManager.getTaskService().getTasksInProgress(user);
     }
 
     /**
