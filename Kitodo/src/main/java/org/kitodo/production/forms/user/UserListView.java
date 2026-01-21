@@ -87,7 +87,7 @@ public class UserListView extends BaseListView {
      *         are "INWORK" and belong to process, not template
      */
     public static List<Task> getTasksInProgress(User user) {
-        return ServiceManager.getUserService().getTasksInProgress(user);
+        return ServiceManager.getTaskService().getTasksInProgress(user);
     }
 
     /**
