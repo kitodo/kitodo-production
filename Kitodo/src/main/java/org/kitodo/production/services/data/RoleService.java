@@ -163,4 +163,25 @@ public class RoleService extends BaseBeanService<Role, RoleDAO> {
                     .collect(Collectors.joining(COMMA_DELIMITER));
         }
     }
+    
+    /**
+     * Remove a role by disassociating any remaining users and authorities from it and deleting it from the database.
+     * 
+     * @param role the role to be removed
+     */
+    @Override
+    public void remove(Role role) throws DAOException {
+        if (!role.getUsers().isEmpty()) {
+            for (User user : role.getUsers()) {
+                user.getRoles().remove(role);
+            }
+            role.setUsers(new ArrayList<>());
+            save(role);
+        }
+        if (!role.getAuthorities().isEmpty()) {
+            role.setAuthorities(new ArrayList<>());
+            save(role);
+        }
+        super.remove(role);
+    }
 }

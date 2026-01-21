@@ -30,7 +30,7 @@
         <h:panelGroup>
             <h3>#{msgs.confirmDelete}</h3>
             <div class="select-note ui-messages-error">
-                #{UserForm.formatString('confirmDeleteUserWithTasks', UserForm.userObject.fullName)}
+                #{UserListView.formatString('confirmDeleteUserWithTasks', UserListView.confirmResetTasksDialogUser.fullName)}
             </div>
         </h:panelGroup>
         <h:panelGroup>
@@ -38,7 +38,7 @@
                 <p:commandButton
                         id="yesButton"
                         value="#{msgs.yes}"
-                        action="#{UserForm.resetTasksAndDeleteUser}"
+                        action="#{UserListView.resetTasksAndDeleteUser(UserListView.confirmResetTasksDialogUser)}"
                         oncomplete="PF('confirmResetTasksDialog').hide();"
                         styleClass="ui-confirmdialog-yes primary right"
                         style="margin-right: 10px"
@@ -63,51 +63,51 @@
                  id="usersTable"
                  widgetVar="usersTable"
                  styleClass="default-layout"
-                 value="#{UserForm.lazyBeanModel}"
-                 first="#{UserForm.firstRow}"
+                 value="#{UserListView.lazyBeanModel}"
+                 first="#{UserListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
                  rowStyleClass="#{item.active ? '' : 'deactivated'}"
-                 sortBy="#{UserForm.sortBy}"
+                 sortBy="#{UserListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page"
-                listener="#{UserForm.onPageChange}"/>
+        <p:ajax event="page" listener="#{UserListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{UserListView.onSortChange}"/>
         <p:column headerText="#{msgs.username}"
                   sortBy="#{item.surname}"
-                  rendered="#{UserForm.showColumn('user.username')}">
+                  rendered="#{UserListView.showColumn('user.username')}">
             <h:outputText value="#{item.surname}, #{item.name}"
                           title="#{item.surname}, #{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.location}"
                   sortBy="#{item.location}"
-                  rendered="#{UserForm.showColumn('user.location')}">
+                  rendered="#{UserListView.showColumn('user.location')}">
             <h:outputText title="#{item.location}"
                           value="#{item.location}"/>
         </p:column>
         <p:column headerText="#{msgs.roles}"
-                  rendered="#{UserForm.showColumn('user.roles')}">
-            <h:outputText value="#{UserForm.getRoleTitles(item)}"
-                          title="#{UserForm.getRoleTitles(item)}"/>
+                  rendered="#{UserListView.showColumn('user.roles')}">
+            <h:outputText value="#{UserListView.getRoleTitles(item)}"
+                          title="#{UserListView.getRoleTitles(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.clients}"
-                  rendered="#{UserForm.showColumn('user.clients')}">
-            <h:outputText value="#{UserForm.getClientNames(item)}"
-                          title="#{UserForm.getClientNames(item)}"/>
+                  rendered="#{UserListView.showColumn('user.clients')}">
+            <h:outputText value="#{UserListView.getClientNames(item)}"
+                          title="#{UserListView.getClientNames(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.projects}"
-                  rendered="#{UserForm.showColumn('user.projects')}">
-            <h:outputText value="#{UserForm.getProjectTitles(item)}"
-                          title="#{UserForm.getProjectTitles(item)}"/>
+                  rendered="#{UserListView.showColumn('user.projects')}">
+            <h:outputText value="#{UserListView.getProjectTitles(item)}"
+                          title="#{UserListView.getProjectTitles(item)}"/>
         </p:column>
         <p:column headerText="#{msgs.loggedIn}"
-                  rendered="#{UserForm.showColumn('user.loggedIn')}"
+                  rendered="#{UserListView.showColumn('user.loggedIn')}"
                   styleClass="checkboxColumn">
-            <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
+            <ui:fragment rendered="#{UserListView.checkUserLoggedIn(item)}">
                 <h:outputText title="#{msgs.active}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
                 </h:outputText>
@@ -124,6 +124,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{UserListView.combinedListOptions}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
@@ -133,16 +134,17 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{UserListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
                 <h:panelGroup styleClass="action"
                               rendered="#{SecurityAccessController.hasAuthorityToUnassignTasks()}"
-                              title="#{UserForm.hasTasksInProgress(item) ? msgs.unassignTasks : msgs.userWithoutTasks}">
+                              title="#{UserListView.hasTasksInProgress(item) ? msgs.unassignTasks : msgs.userWithoutTasks}">
                     <p:commandLink id="unassignTasks"
-                                   action="#{UserForm.resetTasksToOpen(item)}"
-                                   styleClass="#{UserForm.hasTasksInProgress(item) ? '' : 'ui-state-disabled'}"
-                                   disabled="#{not UserForm.hasTasksInProgress(item)}"
+                                   action="#{UserListView.resetTasksToOpen(item)}"
+                                   styleClass="#{UserListView.hasTasksInProgress(item) ? '' : 'ui-state-disabled'}"
+                                   disabled="#{not UserListView.hasTasksInProgress(item)}"
                                    update="@this">
                         <h:outputText><i class="fa fa-user-times"/></h:outputText>
                         <p:confirm message="#{msgs.confirmUnassignTasks}" header="#{msgs.confirmRelease}"/>
@@ -150,14 +152,13 @@
                 </h:panelGroup>
 
                 <p:commandLink id="deleteUser"
-                               action="#{UserForm.checkAndDelete}"
+                               action="#{UserListView.delete(item)}"
                                styleClass="action"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteUser()}"
                                update="usersTabView:usersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{UserForm.userById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{UserForm.formatString('confirmDeleteUser', item.fullName)}"
+                               message="#{UserListView.formatString('confirmDeleteUser', item.fullName)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

@@ -17,17 +17,23 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{RoleForm.load(id)}"/>
+        <f:viewAction action="#{RoleEditView.load(id)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{RoleEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
+              value="#{RoleEditView.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityToAddRole()}"/>
+              value="#{RoleEditView.role.id eq null and SecurityAccessController.hasAuthorityToAddRole()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewRole()}"/>
@@ -35,13 +41,13 @@
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editRole} (#{RoleForm.role.title})"
+            <h:outputText value="#{msgs.editRole} (#{RoleEditView.role.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.createNewRole}"
                           styleClass="shortable"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.viewRole} (#{RoleForm.role.title})"
+            <h:outputText value="#{msgs.viewRole} (#{RoleEditView.role.title})"
                           styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
@@ -49,13 +55,13 @@
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="users?keepPagination=true"
+                  outcome="users?tab=rolesTab&amp;#{RoleEditView.referrerListOptions}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
 
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{RoleForm.setSaveDisabled(false)}"
+                  actionListener="#{RoleEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
 
@@ -63,7 +69,7 @@
                   widgetVar="save"
                   rendered="#{isEditMode || isCreateMode}"
                   value="#{msgs.save}"
-                  action="#{RoleForm.save}"
+                  action="#{RoleEditView.save}"
                   icon="fa fa-floppy-o fa-lg"
                   iconPos="right"
                   onclick="setConfirmUnload(false);PF('notifications').renderMessage({
@@ -72,7 +78,7 @@
                                  'severity':'info'});"
 
                   update="notifications"
-                  disabled="#{RoleForm.saveDisabled}"/>
+                  disabled="#{RoleEditView.saveDisabled}"/>
     </ui:define>
 
     <ui:define name="pageTabView">

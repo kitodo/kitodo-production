@@ -18,19 +18,19 @@
     <p:dataTable var="item"
                  id="ldapServersTable"
                  styleClass="default-layout"
-                 value="#{LdapServerForm.ldapServers}"
-                 first="#{LdapServerForm.firstRow}"
+                 value="#{LdapServerListView.ldapServers}"
+                 first="#{LdapServerListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{LdapServerForm.sortBy}"
+                 sortBy="#{LdapServerListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page"
-                listener="#{LdapServerForm.onPageChange}"/>
+        <p:ajax event="page" listener="#{LdapServerListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{LdapServerListView.onSortChange}"/>
         <p:column headerText="#{msgs.ldapServer}"
                   sortBy="#{item.title}">
             <h:outputText value="#{item.title}"
@@ -48,20 +48,21 @@
             <h:form id="actionForm">
                 <h:link outcome="ldapserverEdit"
                         styleClass="action"
+                        title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapServer')}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerListOptions" value="#{LdapServerListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteLdapserver"
-                               action="#{LdapServerForm.delete}"
+                               action="#{LdapServerListView.deleteById(item.id)}"
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityGlobal('deleteLdapServer')}"
                                update="usersTabView:ldapServersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{LdapServerForm.ldapServerById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{LdapServerForm.formatString('confirmDeleteLdapgroup', item.title)}"
+                               message="#{LdapServerListView.formatString('confirmDeleteLdapgroup', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

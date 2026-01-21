@@ -19,9 +19,9 @@
 
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.Project"-->
     <p:dataTable id="projectDatatable"
-                 sortBy="#{UserForm.projectListSortBy}"
+                 sortBy="#{UserEditViewProjectsTab.sortBy}"
                  var="item"
-                 value="#{UserForm.userObject.projects}">
+                 value="#{UserEditViewProjectsTab.userObject.projects}">
         <p:column headerText="#{msgs.projectList}" sortBy="#{item.title}">
             <h:outputText value="#{item.title}"/>
         </p:column>
@@ -30,7 +30,7 @@
         </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromProject"
-                           action="#{UserForm.deleteFromProject}"
+                           action="#{UserEditViewProjectsTab.deleteFromProject}"
                            styleClass="action"
                            title="#{msgs.deleteFromProject}"
                            rendered="#{isEditMode || isCreateMode}"
