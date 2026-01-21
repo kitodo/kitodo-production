@@ -190,10 +190,8 @@ public class UserListView extends BaseListView {
      * @param encodedFilter the filter as URL query parameter to be set as new filter
      */
     public void setFilterFromTemplate(String encodedFilter) {
-        logger.error("UserListView.setFilterFromTemplate called with: " + encodedFilter);
         if (Objects.nonNull(encodedFilter) && !encodedFilter.isEmpty()) {
             String decodedFilter = encodedFilter.replace("%26", "&");
-            logger.error("UserListView.setFilterFromTemplate with decoded filter: " + decodedFilter);
             this.filterMenu.parseFilters(decodedFilter);
             this.setFilter(decodedFilter);
         }
