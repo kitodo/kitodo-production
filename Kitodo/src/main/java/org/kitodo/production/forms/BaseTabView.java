@@ -80,7 +80,7 @@ public class BaseTabView extends BaseForm {
      * <p>This method needs to be overwritten by each tab view. It should only return tabs that are actually 
      * shown to the user (considering authorities), such that the correct index can be calculated.
      * 
-     * @return the set of allowed tab ids
+     * @return the list of allowed tab ids
      */
     protected List<String> getAllowedTabIds() {
         return Collections.emptyList();

@@ -31,7 +31,7 @@ import org.kitodo.production.services.security.SecurityAccessService;
 @ViewScoped
 public class UsersTabView extends BaseTabView {
 
-    private static SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
+    private static final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     @Inject
     private UserListView userListView;
