@@ -49,7 +49,7 @@ public class MetsKitodoHeaderHandler {
         if (!agents.isEmpty()) {
             MetsType.MetsHdr.Agent.Note agentNote = new MetsType.MetsHdr.Agent.Note();
             agentNote.setValue(noteMessage);
-            agents.get(0).getNote().add(agentNote);
+            agents.getFirst().getNote().add(agentNote);
         }
         return mets;
     }
