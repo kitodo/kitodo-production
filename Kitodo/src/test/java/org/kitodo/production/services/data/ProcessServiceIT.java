@@ -28,6 +28,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -729,5 +733,22 @@ public class ProcessServiceIT {
 
         // cleanup
         ProcessTestUtils.removeTestProcess(testProcessId);
+    }
+
+    @Test
+    public void shouldFindProcessIdsWithChildren() throws Exception {
+        ProcessService processService = ServiceManager.getProcessService();
+        List<Process> processes = processService.getAll();
+        List<Integer> allIds = processes.stream()
+                .map(Process::getId)
+                .collect(Collectors.toList());
+        Set<Integer> expected = processes.stream()
+                .filter(p -> Objects.nonNull(p.getChildren()) && !p.getChildren().isEmpty())
+                .map(Process::getId)
+                .collect(Collectors.toSet());
+        Set<Integer> actual = processService.findProcessIdsWithChildren(allIds);
+
+        assertEquals(expected.size(), actual.size(), "Unexpected number of parent processes");
+        assertTrue(actual.containsAll(expected), "Returned parent process IDs do not match expected");
     }
 }
