@@ -146,8 +146,8 @@ public class Paginator implements Iterator<String> {
      *            page information
      */
     private void createFragment(StringBuilder stringBuilder, PaginatorState fragmentType, Boolean pageType) {
-        if (pageType == null && fragmentType.equals(PaginatorState.DECIMAL)) {
-            fragments.addLast(new DecimalNumeral(stringBuilder.toString()));
+        if (fragmentType.equals(PaginatorState.DECIMAL)) {
+            fragments.addLast(new DecimalNumeral(stringBuilder.toString(), pageType));
         } else if (pageType == null && (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)
                 || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN))) {
             fragments.addLast(
