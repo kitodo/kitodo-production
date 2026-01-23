@@ -9,9 +9,9 @@ Editor: Ray Denenberg	raydenenberg@gmail.com
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!-- -->
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
-		schemaLocation="http://www.loc.gov/mods/xml.xsd"/>
+		schemaLocation="mods-xml.xsd"/>
 	<xs:import namespace="http://www.w3.org/1999/xlink"
-		schemaLocation="http://www.loc.gov/standards/xlink/xlink.xsd"/>
+		schemaLocation="xlink.xsd"/>
 	<!-- 
 MODS: Metadata Object Description Schema. See http://www.loc.gov/standards/mods/
 
