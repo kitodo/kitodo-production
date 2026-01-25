@@ -34,7 +34,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class MappingFileListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=6";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=mappingFilesTab";
 
     private static final Logger logger = LogManager.getLogger(MappingFileListView.class);
 

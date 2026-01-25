@@ -41,7 +41,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class TemplateListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=1";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=templateTab";
 
     private static final Logger logger = LogManager.getLogger(TemplateEditView.class);
 

@@ -34,7 +34,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class LtpValidationConfigurationListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=7";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=ltpValidationConfigurationsTab";
 
     private static final Logger logger = LogManager.getLogger(LtpValidationConfigurationListView.class);
     

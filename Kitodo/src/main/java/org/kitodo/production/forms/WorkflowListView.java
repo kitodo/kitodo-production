@@ -40,7 +40,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class WorkflowListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=2";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=workflowTab";
 
     private static final Logger logger = LogManager.getLogger(WorkflowEditView.class);
   

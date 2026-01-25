@@ -34,7 +34,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class DocketListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=3";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=docketTab";
 
     private static final Logger logger = LogManager.getLogger(DocketEditView.class);
 

@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class ProjectListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=0";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=projectTab";
     private static final Logger logger = LogManager.getLogger(ProjectListView.class);
 
     /**

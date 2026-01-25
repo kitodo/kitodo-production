@@ -18,9 +18,9 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <!--@elvariable id="tabIndex" type="java.lang.String"-->
-        <f:viewParam name="tabIndex"/>
-        <f:viewAction action="#{ProjectsTabView.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <!--@elvariable id="tab type="java.lang.String"-->
+        <f:viewParam name="tab"/>
+        <f:viewAction action="#{ProjectsTabView.setActiveTabIdFromTemplate(tab)}" />
         <!--@elvariable id="firstRow" type="java.lang.Integer"-->
         <f:viewParam name="firstRow"/>
         <f:viewAction action="#{ProjectsTabView.setFirstRowFromTemplate(firstRow)}" />
@@ -35,7 +35,7 @@
         <h3>#{msgs.projects}</h3>
         <h:panelGroup id="convertButtonWrapper">
             <h:form id="convertMenu"
-                    rendered="#{ProjectsTabView.activeTabIndex eq 5}">
+                    rendered="#{ProjectsTabView.activeTabId eq 'importConfigurationsTab'}">
                 <p:commandButton value="#{msgs['importConfig.migration.importCatalogConfigurations']}"
                                  id="convertCatalogConfigurations"
                                  styleClass="secondary"
@@ -44,7 +44,7 @@
             </h:form>
         </h:panelGroup>
         <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:outputPanel rendered="#{ProjectsTabView.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'projectTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -56,7 +56,7 @@
                             update="projectsTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{ProjectsTabView.activeTabIndex eq 1}">
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'templateTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -68,7 +68,7 @@
                             update="projectsTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{ProjectsTabView.activeTabIndex eq 2}">
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'workflowTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -80,7 +80,7 @@
                             update="projectsTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{ProjectsTabView.activeTabIndex eq 3}">
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'docketTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -92,7 +92,7 @@
                             update="projectsTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{ProjectsTabView.activeTabIndex eq 4}">
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'rulesetTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -138,8 +138,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{ProjectsTabView.activeTabIndex}" prependId="false"
-                   id="projectsTabView" widgetVar="projectsTabView" dynamic="true" onTabShow="kitodo.tabView.onTabShow(index)">
+        <p:tabView activeIndex="#{ProjectsTabView.derivedActiveTabIndex}" prependId="false"
+                   id="projectsTabView" widgetVar="projectsTabView" dynamic="true">
             <p:ajax event="tabChange"
                     listener="#{ProjectsTabView.onTabChange}"
                     update="convertButtonWrapper configureColumnsForm"/>

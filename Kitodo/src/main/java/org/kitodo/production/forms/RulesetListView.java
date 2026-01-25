@@ -34,7 +34,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class RulesetListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tabIndex=4";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=rulesetTab";
 
     private static final Logger logger = LogManager.getLogger(RulesetEditView.class);
 
