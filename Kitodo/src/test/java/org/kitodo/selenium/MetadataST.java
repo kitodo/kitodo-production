@@ -44,8 +44,10 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.xml.sax.SAXException;
 
 /**
  * Tests for functions in the metadata editor.
@@ -53,12 +55,13 @@ import org.openqa.selenium.interactions.Actions;
 public class MetadataST extends BaseTestSelenium {
 
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
-    private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
+    private static final String TEST_SIMPLE_METADATA_FILE = "testSimpleMetadata.xml";
     private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
     private static final String TEST_LINK_PAGE_TO_NEXT_DIVISION_MEDIA_FILE = "testLinkPageToNextDivisionMeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
+    private static int firstChildId = -1;
     private static int renamingMediaProcessId = -1;
     private static int dragndropProcessId = -1;
     private static int createStructureAndDragndropProcessId = -1;
@@ -82,12 +85,13 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void prepareMetadataLockProcess() throws DAOException, IOException {
         insertTestProcessForMetadataLockTest();
-        ProcessTestUtils.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
+        ProcessTestUtils.copyTestMetadataFile(metadataLockProcessId, TEST_SIMPLE_METADATA_FILE);
     }
 
     private static void prepareProcessHierarchyProcesses() throws DAOException, IOException {
         processHierarchyTestProcessIds = linkProcesses();
         copyTestParentProcessMetadataFile();
+        copyTestChildProcessMetadataFile();
         updateChildProcessIdsInParentProcessMetadataFile();
     }
 
@@ -921,16 +925,16 @@ public class MetadataST extends BaseTestSelenium {
         // wait until logical structure tree is available
         MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+                .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
 
         // select first page
         metaDataEditor.selectStructureTreeNode("0_0", false, false);
 
         // verify metadata shows of first page is displayed
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-            .until(() -> Browser.getDriver().findElement(
-                By.id("metadataAccordion:metadata:metadataTable:0:inputText")
-            ).getAttribute("value").equals("-"));
+                .until(() -> Browser.getDriver().findElement(
+                        By.id("metadataAccordion:metadata:metadataTable:0:inputText")
+                ).getAttribute("value").equals("-"));
 
         // select second page with ctrl
         metaDataEditor.selectStructureTreeNode("0_1", true, false);
@@ -993,6 +997,33 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verifies that user can edit metadata of linked process using context menu in metadata editor.
+     */
+    @Test
+    public void editLinkedProcessMetadataTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editParentProcessMetadata();
+        WebDriver webDriver = Browser.getDriver();
+
+        // make sure we are in the correct parent process
+        String headerText = webDriver.findElement(By.id("headerText")).getText();
+        assertTrue(headerText.startsWith(PARENT_PROCESS_TITLE));
+
+        // open context menu of first linked child process
+        Pages.getMetadataEditorPage().openContextMenuForLinkedChildProcessById(firstChildId);
+
+        // wait for context menu to be displayed
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id("contextMenuLogicalTree")).isDisplayed());
+
+        // click option to edit metadata of linked process
+        Pages.getMetadataEditorPage().clickStructureTreeContextMenuEntry("editLinkedMetadata");
+
+        // verify that header now shows title of linked child process
+        headerText = webDriver.findElement(By.id("headerText")).getText();
+        assertTrue(headerText.startsWith(FIRST_CHILD_PROCESS_TITLE));
+    }
+
+    /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */
@@ -1008,7 +1039,7 @@ public class MetadataST extends BaseTestSelenium {
      * @throws IOException when deleting test files fails.
      */
     @AfterAll
-    public static void cleanup() throws DAOException, IOException {
+    public static void cleanup() throws Exception {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);
         }
@@ -1095,6 +1126,12 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void copyTestParentProcessMetadataFile() throws IOException, DAOException {
         ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
+    }
+
+    private static void copyTestChildProcessMetadataFile() throws IOException, DAOException {
+        Process parentProcess = ServiceManager.getProcessService().getById(parentProcessId);
+        firstChildId = parentProcess.getChildren().getFirst().getId();
+        ProcessTestUtils.copyTestMetadataFile(firstChildId, TEST_SIMPLE_METADATA_FILE);
     }
 
     private static void updateChildProcessIdsInParentProcessMetadataFile() throws IOException, DAOException {

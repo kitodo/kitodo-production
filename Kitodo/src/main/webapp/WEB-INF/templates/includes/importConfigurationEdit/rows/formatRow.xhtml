@@ -82,6 +82,17 @@
                 <p:tooltip for="parentMappingFileHelp"
                            value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
             </div>
+            <div>
+                <p:outputLabel for="validateExternalData" value="#{msgs['importConfig.field.validateExternalData']}" />
+                <p:selectBooleanCheckbox id="validateExternalData" styleClass="switch input-with-button"
+                                         value="#{importConfigurationEditView.importConfiguration.validateExternalData}">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
+                <p:commandButton id="validateExternalDataHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="validateExternalDataHelp"
+                           value="#{msgs['tooltip.importConfig.validateExternalDataHelp']}"/>
+            </div>
         </p:panel>
         <p:panel styleClass="column-wrapper">
             <div>

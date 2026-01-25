@@ -19,9 +19,11 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.process.NewspaperProcessesGenerator;
+import org.xml.sax.SAXException;
 
 /**
  * A thread to create newspaper processes in the background.
@@ -30,7 +32,7 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
     /**
      * The generator object.
      */
-    private NewspaperProcessesGenerator generator;
+    private final NewspaperProcessesGenerator generator;
 
     /**
      * Creates a new thread that generates newspaper processes.
@@ -85,7 +87,7 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
             }
             super.setProgress(100);
         } catch (ConfigurationException | DAOException | DoctypeMissingException | IOException
-                | ProcessGenerationException | CommandException e) {
+                 | ProcessGenerationException | CommandException | SAXException | FileStructureValidationException e) {
             setException(e);
         }
     }

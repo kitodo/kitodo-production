@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.text.StrTokenizer;
+import org.apache.commons.text.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.Workpiece;
@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.KitodoScriptExecutionException;
 import org.kitodo.exceptions.MediaNotFoundException;
@@ -52,6 +53,7 @@ import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.xml.sax.SAXException;
 
 public class KitodoScriptService {
     private static volatile KitodoScriptService instance = null;
@@ -99,10 +101,11 @@ public class KitodoScriptService {
      *            from frontend passed as String
      */
     public void execute(List<Process> processes, String script)
-            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException, SAXException,
+            FileStructureValidationException {
         this.parameters = new HashMap<>();
         // decompose and capture all script parameters
-        StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
+        StringTokenizer tokenizer = new StringTokenizer(script, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
             if (Objects.nonNull(tok) && tok.contains(":")) {
@@ -127,7 +130,8 @@ public class KitodoScriptService {
     }
 
     private boolean executeScript(List<Process> processes, String script)
-            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException, SAXException,
+            FileStructureValidationException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -165,6 +169,9 @@ public class KitodoScriptService {
             case "doit2":
                 exportDms(processes, String.valueOf(Boolean.FALSE));
                 break;
+            case "resaveMetadataFile":
+                resaveMetadataFile(processes);
+                break;
             default:
                 return executeOtherScript(processes, script);
         }
@@ -172,7 +179,8 @@ public class KitodoScriptService {
     }
 
     private boolean executeOtherScript(List<Process> processes, String script)
-            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException, SAXException,
+            FileStructureValidationException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "runscript":
@@ -212,7 +220,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeRemainingScript(List<Process> processes)
-            throws IOException, InvalidImagesException, MediaNotFoundException {
+            throws IOException, InvalidImagesException, MediaNotFoundException, SAXException, FileStructureValidationException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "generateImages":
@@ -264,7 +272,7 @@ public class KitodoScriptService {
                         .readMetadataFile(process);
                 deleteDataScript.process(metadataFile, process, script);
                 Helper.setMessage("deleteDataOk", currentProcessTitle);
-            } catch (IOException | KitodoScriptExecutionException e) {
+            } catch (IOException | KitodoScriptExecutionException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage("deleteDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
         }
@@ -287,14 +295,14 @@ public class KitodoScriptService {
                     }
                 }
                 Helper.setMessage("addDataOk", currentProcessTitle);
-            } catch (IOException | KitodoScriptExecutionException e) {
+            } catch (IOException | KitodoScriptExecutionException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage("addDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
         }
     }
 
     private void generateScriptValues(AddDataScript addDataScript, List<MetadataScript> metadataScripts,
-            Process parentProcess) throws IOException {
+            Process parentProcess) throws IOException, SAXException, FileStructureValidationException {
         for (MetadataScript metadataScript : metadataScripts) {
             addDataScript.generateValueFromParent(metadataScript, parentProcess);
         }
@@ -311,7 +319,7 @@ public class KitodoScriptService {
                         .readMetadataFile(process);
                 overwriteDataScript.process(metadataFile, process, script);
                 Helper.setMessage("overwriteDataOk", currentProcessTitle);
-            } catch (IOException | KitodoScriptExecutionException e) {
+            } catch (IOException | KitodoScriptExecutionException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage("overwriteDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
         }
@@ -323,7 +331,7 @@ public class KitodoScriptService {
                 LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage("ContentFiles updated: ", process.getTitle());
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | RuntimeException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage("Error while updating content files", logger, e);
             }
         }
@@ -365,7 +373,7 @@ public class KitodoScriptService {
                     } else {
                         Helper.setMessage(Helper.getTranslation("kitodoScript.processSkipped", title));
                     }
-                } catch (DAOException | IOException e) {
+                } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                     Helper.setErrorMessage("kitodoScript.errorDeleting",
                             "process " + title, logger, e);
                 }
@@ -384,7 +392,7 @@ public class KitodoScriptService {
                         .readMetadataFile(process);
                 addDataScript.process(metadataFile, process, script);
                 Helper.setMessage("addDataOk", currentProcessTitle);
-            } catch (IOException | KitodoScriptExecutionException e) {
+            } catch (IOException | KitodoScriptExecutionException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage("addDataError", currentProcessTitle + ": " + e.getMessage(), logger, e);
             }
         }
@@ -444,7 +452,7 @@ public class KitodoScriptService {
     }
 
     private void searchForMedia(List<Process> processes)
-            throws IOException, InvalidImagesException, MediaNotFoundException {
+            throws IOException, InvalidImagesException, MediaNotFoundException, SAXException, FileStructureValidationException {
         FileService fileService = ServiceManager.getFileService();
         MetsService metsService = ServiceManager.getMetsService();
         ProcessService processService = ServiceManager.getProcessService();
@@ -785,6 +793,18 @@ public class KitodoScriptService {
             ServiceManager.getTaskService().save(task);
         } catch (DAOException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
+        }
+    }
+
+    private void resaveMetadataFile(List<Process> processes) throws IOException, FileStructureValidationException,
+            SAXException {
+        MetsService metsService = ServiceManager.getMetsService();
+        ProcessService processService = ServiceManager.getProcessService();
+        for (Process process : processes) {
+            URI metadataFileUri = processService.getMetadataFileUri(process);
+            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri, false);
+            fileService.createBackupFile(process);
+            metsService.saveWorkpiece(workpiece, metadataFileUri);
         }
     }
 }

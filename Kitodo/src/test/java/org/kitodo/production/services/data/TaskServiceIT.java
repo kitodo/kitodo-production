@@ -17,12 +17,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
@@ -271,5 +274,24 @@ public class TaskServiceIT {
 
         title = taskTitlesDistinct.get(2);
         assertEquals("Closed", title, "Incorrect sorting of distinct titles for tasks!");
+    }
+
+    @Test
+    public void shouldGetTasksInProgressForUser() throws Exception {
+        UserService userService = ServiceManager.getUserService();
+        ProcessService processService = ServiceManager.getProcessService();
+
+        User user = userService.getById(1);
+        List<Task> expected = processService.getAll().stream()
+                .flatMap(p -> p.getTasks().stream())
+                .filter(t -> user.equals(t.getProcessingUser()))
+                .filter(t -> t.getProcessingStatus() == TaskStatus.INWORK)
+                .filter(t -> Objects.nonNull(t.getProcess()))
+                .collect(Collectors.toList());
+
+        List<Task> actual = taskService.getTasksInProgress(user);
+
+        assertEquals(expected.size(), actual.size(), "Unexpected task count");
+        assertTrue(actual.containsAll(expected), "Returned tasks do not match expected INWORK tasks");
     }
 }

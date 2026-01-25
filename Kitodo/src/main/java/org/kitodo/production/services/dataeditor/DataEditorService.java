@@ -55,12 +55,15 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -391,18 +394,47 @@ public class DataEditorService {
     /**
      * Re-imports catalog metadata of given process and return list of resulting metadata comparison that are displayed
      * to the user.
-     * @param process Process for which metadata update is performed
-     * @param workpiece Workpiece of given process
-     * @param oldMetadataSet Set containing old metadata
-     * @return list of metadata comparisons
+     *
+     * @param process
+     *          Process for which metadata update is performed
+     * @param workpiece
+     *          Workpiece of given process
+     * @param oldMetadataSet
+     *          Set containing old metadata
+     * @return
+     *          list of metadata comparisons
+     * @throws IOException
+     *          when opening process' ruleset fails
+     * @throws UnsupportedFormatException
+     *          when external data record of temp process contains data in unsupported format
+     * @throws XPathExpressionException
+     *          when error message XPath in ImportConfiguration has syntax errors
+     * @throws NoRecordFoundException
+     *          when no record with given ID 'recordID' could be found
+     * @throws ProcessGenerationException
+     *          when imported temp process is null
+     * @throws ParserConfigurationException
+     *          when parsing import XML document fails
+     * @throws URISyntaxException
+     *          when loading MappingFiles from ImportConfiguration fails
+     * @throws TransformerException
+     *          when when loading document in internal format fails
+     * @throws InvalidMetadataValueException
+     *          when generating atstsl fields fails
+     * @throws NoSuchMetadataFieldException
+     *          when generating atstsl fields fails
+     * @throws SAXException
+     *          when parsing import XML document fails
+     * @throws FileStructureValidationException
+     *          when XML validation of imported data record fails
      */
     public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece,
                                                                    HashSet<Metadata> oldMetadataSet,
                                                                    List<Locale.LanguageRange> languages,
                                                                    String selectedDivisionType)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
-            ProcessGenerationException, ParserConfigurationException, URISyntaxException, InvalidMetadataValueException,
-            TransformerException, NoSuchMetadataFieldException, SAXException {
+            ProcessGenerationException, ParserConfigurationException, URISyntaxException, TransformerException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException, SAXException, FileStructureValidationException {
         String recordID = getRecordIdentifierValueOfProcess(process, workpiece);
         ImportConfiguration importConfig = process.getImportConfiguration();
         if (Objects.isNull(recordID) || Objects.isNull(importConfig)) {
@@ -560,5 +592,21 @@ public class DataEditorService {
                     logger.info("Keep existing values for metadata {}", comparison.getMetadataKey());
             }
         }
+    }
+
+    /**
+     * Return the ID of linked process represented by the given logical division. Returns null if given logical division
+     * does not represent a linked process.
+     *
+     * @param logicalDivision logical division potentially representing a linked process
+     * @return ID of linked process
+     * @throws DAOException if linked process cannot be loaded from database
+     */
+    public Integer getLinkedProcessId(LogicalDivision logicalDivision) throws DAOException {
+        LinkedMetsResource resource = logicalDivision.getLink();
+        if (Objects.nonNull(resource)) {
+            return ServiceManager.getProcessService().processIdFromUri(resource.getUri());
+        }
+        return null;
     }
 }

@@ -39,6 +39,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -150,14 +151,15 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
                 createProcessForm.getProject().getId(), 
                 createProcessForm.getTemplate().getId(), 
                 1,
-                createProcessForm.getRulesetManagement().getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER)
+                createProcessForm.getRulesetManagement().getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER),
+                    false
             );
             createProcessForm.setProcesses(processes);
             showMetadataComparisonDialog();
         } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
-                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
-                     | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
-                     | NoSuchMetadataFieldException e) {
+                 | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
+                 | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
+                 | NoSuchMetadataFieldException | FileStructureValidationException e) {
             logger.error("error when selecting record in hitlist", e);
         }
     }

@@ -299,6 +299,20 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     }
 
     /**
+     * Checks whether the given project has any processes assigned to it.
+     *
+     * @param projectId
+     *            the ID of the project to check
+     * @return return true if at least one process belongs to the project,
+     *            false otherwise
+     */
+    public boolean hasProcesses(int projectId) throws DAOException {
+        return dao.has("FROM Process AS process WHERE process.project.id = :project_id",
+                Collections.singletonMap("project_id", projectId)
+        );
+    }
+
+    /**
      * Delete project with ID 'projectID'.
      *
      * @param projectID ID of project to be deleted

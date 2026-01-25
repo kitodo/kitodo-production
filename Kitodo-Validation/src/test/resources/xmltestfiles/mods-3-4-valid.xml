@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<mods xmlns="http://www.loc.gov/mods/v3" version="3.4"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.loc.gov/mods/v3 https://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+    <identifier>12345</identifier>
+    <titleInfo>
+        <title>This is a MODS 3.4 example document</title>
+    </titleInfo>
+    <language>
+        <languageTerm authority="iso639-2b" type="code">ger</languageTerm>
+    </language>
+    <physicalDescription>
+        <form authority="marcform">electronic</form>
+        <internetMediaType>text/html</internetMediaType>
+        <digitalOrigin>born digital</digitalOrigin>
+    </physicalDescription>
+    <targetAudience>general</targetAudience>
+    <typeOfResource>text</typeOfResource>
+</mods>

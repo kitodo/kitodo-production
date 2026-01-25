@@ -31,7 +31,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.BaseListView;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyBeanModel;
+import org.kitodo.production.model.LazyUserModel;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
@@ -43,7 +43,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class UserListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=0";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tab=usersTab";
     
     private static final Logger logger = LogManager.getLogger(UserListView.class);
 
@@ -57,7 +57,7 @@ public class UserListView extends BaseListView {
      */
     @PostConstruct
     public void init() {
-        setLazyBeanModel(new LazyBeanModel(userService));
+        setLazyBeanModel(new LazyUserModel(userService));
 
         columns = new ArrayList<>();
         try {
@@ -87,7 +87,7 @@ public class UserListView extends BaseListView {
      *         are "INWORK" and belong to process, not template
      */
     public static List<Task> getTasksInProgress(User user) {
-        return ServiceManager.getUserService().getTasksInProgress(user);
+        return ServiceManager.getTaskService().getTasksInProgress(user);
     }
 
     /**
@@ -116,12 +116,12 @@ public class UserListView extends BaseListView {
      * user from a connected LDAP service.
      */
     public void delete(User userObject) {
-        if (getTasksInProgress(userObject).isEmpty()) {
-            deleteUser(userObject);
-        } else {
+        if (hasTasksInProgress(userObject)) {
             confirmResetTasksDialogUser = userObject;
             PrimeFaces.current().ajax().update("usersTabView:confirmResetTasksDialog");
             PrimeFaces.current().executeScript("PF('confirmResetTasksDialog').show();");
+        } else {
+            deleteUser(userObject);
         }
     }
 
@@ -190,10 +190,8 @@ public class UserListView extends BaseListView {
      * @param encodedFilter the filter as URL query parameter to be set as new filter
      */
     public void setFilterFromTemplate(String encodedFilter) {
-        logger.error("UserListView.setFilterFromTemplate called with: " + encodedFilter);
         if (Objects.nonNull(encodedFilter) && !encodedFilter.isEmpty()) {
             String decodedFilter = encodedFilter.replace("%26", "&");
-            logger.error("UserListView.setFilterFromTemplate with decoded filter: " + decodedFilter);
             this.filterMenu.parseFilters(decodedFilter);
             this.setFilter(decodedFilter);
         }
@@ -206,6 +204,45 @@ public class UserListView extends BaseListView {
      */
     public FilterMenu getFilterMenu() {
         return filterMenu;
+    }
+
+    /**
+     * Returns a comma-separated list of role titles for the given user.
+     *
+     * @param user the user whose roles are returned
+     */
+    public String getRoleTitles(User user) {
+        List<String> roles = getLazyUserModel().getRolesCache().get(user.getId());
+        return (Objects.isNull(roles) || roles.isEmpty()) ? "" : String.join(", ", roles);
+    }
+
+    /**
+     * Returns a comma-separated list of project titles for the given user.
+     *
+     * @param user the user whose projects are returned
+     */
+    public String getProjectTitles(User user) {
+        List<String> projects = getLazyUserModel().getProjectsCache().get(user.getId());
+        return (Objects.isNull(projects) || projects.isEmpty()) ? "" : String.join(", ", projects);
+    }
+
+    /**
+     * Returns a comma-separated list of client names for the given user.
+     *
+     * @param user the user whose clients are returned
+     */
+    public String getClientNames(User user) {
+        List<String> clients = getLazyUserModel().getClientsCache().get(user.getId());
+        return (Objects.isNull(clients) || clients.isEmpty()) ? "" : String.join(", ", clients);
+    }
+
+    /**
+     * Indicates whether the given user has at least one task currently in progress.
+     *
+     * @param user the user to check
+     */
+    public boolean hasTasksInProgress(User user) {
+        return Boolean.TRUE.equals(getLazyUserModel().getTasksCache().get(user.getId()));
     }
 
     /**
@@ -227,6 +264,11 @@ public class UserListView extends BaseListView {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.USER.getTranslationSingular()}, logger, e);
         }
+    }
+
+
+    private LazyUserModel getLazyUserModel() {
+        return (LazyUserModel) lazyBeanModel;
     }
 
 }

@@ -36,11 +36,13 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.xml.sax.SAXException;
 
 public class MetadataValidationService {
     private static final Logger logger = LogManager.getLogger(MetadataValidationService.class);
@@ -128,7 +130,7 @@ public class MetadataValidationService {
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | RuntimeException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
         }

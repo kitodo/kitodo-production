@@ -35,6 +35,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
@@ -42,10 +43,11 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.RulesetService;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("RulesetEditView")
 @ViewScoped
-public class RulesetEditView extends BaseEditView {
+public class RulesetEditView extends ValidatableForm {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
@@ -70,17 +72,26 @@ public class RulesetEditView extends BaseEditView {
     public String save() {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
+                validationErrors = new ArrayList<>();
                 if (existsRulesetWithSameName()) {
                     Helper.setErrorMessage("rulesetTitleDuplicated");
                     return this.stayOnCurrentPage;
                 }
-                ServiceManager.getRulesetService().save(this.ruleset);
-                return RulesetListView.VIEW_PATH +  "&" + getReferrerListOptions();
+                // validate ruleset file against ruleset.xsd before saving
+                try {
+                    ServiceManager.getFileStructureValidationService().validateRuleset(this.ruleset);
+                    ServiceManager.getRulesetService().save(this.ruleset);
+                    return RulesetListView.VIEW_PATH +  "&" + getReferrerListOptions();
+                } catch (FileStructureValidationException e) {
+                    setValidationErrorTitle(Helper.getTranslation("validation.invalidRuleset"));
+                    showValidationExceptionDialog(e, null);
+                    return this.stayOnCurrentPage;
+                }
             } else {
                 Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
                 return this.stayOnCurrentPage;
             }
-        } catch (DAOException e) {
+        } catch (DAOException | IOException | SAXException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                 e);
             return this.stayOnCurrentPage;

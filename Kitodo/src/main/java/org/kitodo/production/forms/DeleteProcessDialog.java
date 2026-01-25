@@ -19,10 +19,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.xml.sax.SAXException;
 
 public class DeleteProcessDialog {
 
@@ -59,7 +61,7 @@ public class DeleteProcessDialog {
                 ProcessService.deleteProcess(child);
             }
             ProcessService.deleteProcess(process);
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
@@ -77,7 +79,7 @@ public class DeleteProcessDialog {
             try {
                 ServiceManager.getProcessService().save(child);
                 ProcessService.deleteProcess(process);
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger,
                         e);
             }

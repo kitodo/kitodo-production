@@ -329,6 +329,25 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     }
 
     /**
+     * Open context menu (right click) for linked child process with given process id.
+     *
+     * @param childProcessId ID of linked child process to open context menu for
+     */
+    public void openContextMenuForLinkedChildProcessById(int childProcessId) {
+        List<WebElement> linkedChildProcesses = Browser.getDriver().findElements(By.className("ui-treenode-label"));
+        for (WebElement linkedChildProcess : linkedChildProcesses) {
+            String linkedChildProcessText = linkedChildProcess.getText().strip();
+            if (linkedChildProcessText.startsWith("[" + childProcessId + "]")) {
+                new Actions(Browser.getDriver()).contextClick(linkedChildProcess).build().perform();
+                await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+                        () -> contextMenuLogicalTree.isDisplayed()
+                );
+                break;
+            }
+        }
+    }
+
+    /**
      * Click on a menu entry in the structure tree context menu.
      * 
      * @param menuItemClassName the class name of the menu entry

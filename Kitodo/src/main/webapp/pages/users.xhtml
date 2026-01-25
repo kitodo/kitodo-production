@@ -18,9 +18,9 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
-        <f:viewParam name="tabIndex"/>
-        <f:viewAction action="#{UsersTabView.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <!--@elvariable id="tab type="java.lang.String"-->
+        <f:viewParam name="tab"/>
+        <f:viewAction action="#{UsersTabView.setActiveTabIdFromTemplate(tab)}" />
         <!--@elvariable id="firstRow" type="java.lang.Integer"-->
         <f:viewParam name="firstRow"/>
         <f:viewAction action="#{UsersTabView.setFirstRowFromTemplate(firstRow)}" />
@@ -38,10 +38,10 @@
         <h3>#{msgs.users}</h3>
         <!-- Filters -->
         <h:panelGroup id="filterMenuWrapper">
-            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabId eq 'usersTab'}">
                 <ui:include src="/WEB-INF/templates/includes/users/filterMenu.xhtml"/>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 1 and RoleListView.hasPermissionToSeeAllClientRoles}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabId eq 'rolesTab' and RoleListView.hasPermissionToSeeAllClientRoles}">
                 <h:form id="allClientsRolesForm">
                     <p:selectBooleanCheckbox id="showAllClientsRoles"
                                              value="#{RoleListView.showRolesOfAllAvailableClients}"
@@ -55,7 +55,7 @@
         </h:panelGroup>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabId eq 'usersTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -67,7 +67,7 @@
                             update="usersTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 1}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabId eq 'rolesTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -79,7 +79,7 @@
                             update="usersTabView"/>
                 </p:selectCheckboxMenu>
             </p:outputPanel>
-            <p:outputPanel rendered="#{UsersTabView.activeTabIndex eq 4}">
+            <p:outputPanel rendered="#{UsersTabView.activeTabId eq 'ldapGroupsTab'}">
                 <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                     label=""
                                     showHeader="false"
@@ -122,7 +122,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{UsersTabView.activeTabIndex}" id="usersTabView" dynamic="true" onTabShow="kitodo.tabView.onTabShow(index)">
+        <p:tabView id="usersTabView" activeIndex="#{UsersTabView.derivedActiveTabIndex}" dynamic="true">
             <p:ajax event="tabChange"
                     listener="#{UsersTabView.onTabChange}"
                     update="filterMenuWrapper configureColumnsForm"/>

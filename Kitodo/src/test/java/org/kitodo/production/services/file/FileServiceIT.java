@@ -42,10 +42,12 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.thread.RenameMediaThread;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.xml.sax.SAXException;
 
 public class FileServiceIT {
     /**
@@ -131,7 +133,8 @@ public class FileServiceIT {
     }
 
     @Test
-    public void testRenamingOfMultipleProcesses() throws DAOException, IOException, InterruptedException {
+    public void testRenamingOfMultipleProcesses() throws DAOException, IOException, InterruptedException, SAXException,
+            FileStructureValidationException {
         mediaRenamingFirstProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_1);
         mediaRenamingSecondProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_2);
         ProcessTestUtils.copyTestFiles(mediaRenamingFirstProcessId, TEST_RENAME_MEDIA_FILE);
@@ -179,7 +182,8 @@ public class FileServiceIT {
         }
     }
 
-    private boolean mediaFilesNamedAccordingToOrderAttribute(int processId) throws DAOException, IOException {
+    private boolean mediaFilesNamedAccordingToOrderAttribute(int processId) throws DAOException, IOException,
+            SAXException, FileStructureValidationException {
         Process process = ServiceManager.getProcessService().getById(processId);
         int filenameLength = process.getProject().getFilenameLength();
         for (PhysicalDivision page : getProcessPages(process)) {
@@ -194,7 +198,8 @@ public class FileServiceIT {
         return true;
     }
 
-    private static List<PhysicalDivision> getProcessPages(Process process) throws IOException {
+    private static List<PhysicalDivision> getProcessPages(Process process) throws IOException, SAXException,
+            FileStructureValidationException {
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
         return workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();

@@ -35,6 +35,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -42,6 +43,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
+import org.xml.sax.SAXException;
 
 @Named("TemplateEditView")
 @ViewScoped
@@ -87,6 +89,22 @@ public class TemplateEditView extends BaseEditView {
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
         ServiceManager.getTemplateService().setShowInactiveTemplates(showInactiveTemplates);
+    }
+
+    /**
+     * Remove template if there is no assigned processes.
+     */
+    public void delete() {
+        if (!this.template.getProcesses().isEmpty()) {
+            Helper.setErrorMessage("processAssignedError");
+        } else {
+            try {
+                TemplateService.deleteTemplate(template);
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
+            }
+        }
     }
 
     /**
@@ -335,7 +353,7 @@ public class TemplateEditView extends BaseEditView {
                 ServiceManager.getTemplateService().save(this.template);
                 template = ServiceManager.getTemplateService().getById(this.template.getId());
                 new WorkflowControllerService().activateNextTasks(template.getTasks());
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;

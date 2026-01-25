@@ -44,6 +44,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
@@ -61,6 +62,7 @@ import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 /**
  * The class provides a service for tasks. The service can be used to perform
@@ -304,22 +306,35 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      */
     public void replaceProcessingUser(Task task, User user) {
         User currentProcessingUser = task.getProcessingUser();
-
         if (Objects.isNull(user) && Objects.isNull(currentProcessingUser)) {
             logger.info("do nothing - there is neither a new nor an old user");
         } else if (Objects.isNull(user)) {
-            currentProcessingUser.getProcessingTasks().remove(task);
             task.setProcessingUser(null);
         } else if (Objects.isNull(currentProcessingUser)) {
-            user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         } else if (Objects.equals(currentProcessingUser.getId(), user.getId())) {
             logger.info("do nothing - both are the same");
         } else {
-            currentProcessingUser.getProcessingTasks().remove(task);
-            user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         }
+    }
+
+    /**
+     * Retrieve and return all tasks assigned to the given user
+     * that are currently in progress and linked to a process.
+     *
+     * @param user the processing user
+     * @return list of tasks in progress for the given user
+     */
+    public List<Task> getTasksInProgress(User user) {
+        String hql = "FROM Task t WHERE t.processingUser = :user "
+                + "AND t.processingStatus = :status "
+                + "AND t.process IS NOT NULL";
+        Map<String, Object> params = Map.of(
+                "user", user,
+                "status", TaskStatus.INWORK
+        );
+        return dao.getByQuery(hql, params);
     }
 
     /**
@@ -485,7 +500,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             dd = ServiceManager.getProcessService()
                     .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(po), prefs)
                     .getDigitalDocument();
-        } catch (IOException e2) {
+        } catch (IOException | SAXException | FileStructureValidationException e2) {
             logger.error(e2);
         }
         VariableReplacer replacer = new VariableReplacer(dd.getWorkpiece(), po, task);
@@ -506,7 +521,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
                 executedSuccessful = commandResult.isSuccessful();
             }
             finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
-        } catch (IOException | DAOException | InvalidImagesException e) {
+        } catch (IOException | DAOException | InvalidImagesException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
@@ -554,9 +569,13 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      *             if the task cannot be saved
      * @throws IOException
      *             if the task cannot be closed
+     * @throws SAXException
+     *             if the task cannot be closed
+     * @throws FileStructureValidationException
+     *             if the task cannot be closed
      */
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
-            throws DAOException, IOException {
+            throws DAOException, IOException, SAXException, FileStructureValidationException {
         if (automatic) {
             task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
@@ -601,7 +620,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             generator.setSupervisor(executingThread);
             generator.run();
             finishOrReturnAutomaticTask(task, automatic, Objects.isNull(executingThread.getException()));
-        } catch (IOException | DAOException e) {
+        } catch (IOException | DAOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -610,9 +629,17 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * Execute DMS export.
      *
      * @param task
-     *            as Task object
+     *          as Task object
+     * @throws DAOException
+     *          when starting export fails
+     * @throws IOException
+     *          when starting export fails
+     * @throws SAXException
+     *          when starting export fails
+     * @throws FileStructureValidationException
+     *          when starting export fails
      */
-    public void executeDmsExport(Task task) throws DAOException, IOException {
+    public void executeDmsExport(Task task) throws DAOException, IOException, SAXException, FileStructureValidationException {
         new ExportDms(task).startExport(task);
     }
 

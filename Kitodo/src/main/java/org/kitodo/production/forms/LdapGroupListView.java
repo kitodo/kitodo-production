@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 @ViewScoped
 public class LdapGroupListView extends BaseListView {
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tabIndex=4";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "&tab=ldapGroupsTab";
 
     private static final Logger logger = LogManager.getLogger(LdapGroupListView.class);  
 

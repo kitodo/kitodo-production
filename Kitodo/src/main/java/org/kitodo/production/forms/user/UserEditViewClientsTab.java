@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.BaseTabEditView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortMeta;
@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 
 @Named("UserEditViewClientsTab")
 @ViewScoped
-public class UserEditViewClientsTab extends BaseForm {
+public class UserEditViewClientsTab extends BaseTabEditView<User> {
 
     private static final Logger logger = LogManager.getLogger(UserEditViewClientsTab.class);
 
@@ -79,6 +79,7 @@ public class UserEditViewClientsTab extends BaseForm {
      * @param userObject
      *            the user currently being edited
      */
+    @Override
     public void load(User userObject) {
         // reset when user is loaded
         this.userObject = userObject;
@@ -91,15 +92,6 @@ public class UserEditViewClientsTab extends BaseForm {
                     e);
             this.clients = new LinkedList<>();
         }
-    }
-
-    /**
-     * Save clients tab.
-     *
-     * @return true if user clients data was saved
-     */
-    public boolean save() {
-        return true;
     }
 
     /**

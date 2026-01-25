@@ -15,7 +15,7 @@ var kitodo = kitodo || {};
 /**
  * Update the current browser URL to include the selected query parameter and value.
  * 
- * @param str key the query parmaeter name
+ * @param str key the query parameter name
  * @param str value the query parameter value
  */
 kitodo.updateQueryParameter = function (key, value) {

@@ -11,6 +11,9 @@
 
 package org.kitodo.api.externaldatamanagement;
 
+import java.util.Collections;
+import java.util.List;
+
 public enum SearchInterfaceType {
     SRU("sru", "http://www.loc.gov/zing/srw/", "record", "startRecord", "1",
             "maximumRecords", "query", "numberOfRecords",
@@ -82,5 +85,23 @@ public enum SearchInterfaceType {
      */
     public String getDefaultStartValue() {
         return defaultStartValue;
+    }
+
+    /**
+     * Get XML schema definition file for given interface type. Currently, returns specific schema definitions for
+     * OAI and SRU interfaces.
+     *
+     * @param interfaceType type of search interface as String for which the XML schema definition is returned
+     *
+     * @return name of XML schema definition file as String
+     */
+    public static List<String> getSchemaFile(String interfaceType) {
+        if (SearchInterfaceType.OAI.name().equals(interfaceType)) {
+            return List.of("OAI-PMH.xsd");
+        }
+        if (SearchInterfaceType.SRU.name().equals(interfaceType)) {
+            return List.of("srw-types.xsd");
+        }
+        return Collections.emptyList();
     }
 }

@@ -38,14 +38,14 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.BaseTabEditView;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.PaginatorType;
 
 @Named("UserEditViewMetadataTab")
 @ViewScoped
-public class UserEditViewMetadataTab extends BaseForm {
+public class UserEditViewMetadataTab extends BaseTabEditView<User> {
 
     /**
      * The user object that is being edited (variable "user" references to the user currently logged in, see BaseForm).
@@ -102,6 +102,7 @@ public class UserEditViewMetadataTab extends BaseForm {
      * @param userObject
      *            the user currently being edited
      */
+    @Override
     public void load(User userObject) {
         this.userObject = userObject;
         try {
@@ -121,8 +122,8 @@ public class UserEditViewMetadataTab extends BaseForm {
      *
      * @return true if information can be saved and was updated on user object
      */
+    @Override
     public boolean save() {
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             this.userObject.setShortcuts(mapper.writeValueAsString(shortcuts));
@@ -130,7 +131,6 @@ public class UserEditViewMetadataTab extends BaseForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular()}, logger, e);
             return false;
         }
-
         return true;
     }
 
