@@ -13,6 +13,7 @@ package org.kitodo.dataformat.access;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.Agent;
@@ -61,7 +62,7 @@ public class AgentXmlElementAccess {
     AgentXmlElementAccess(Agent agent) {
         this();
         processingNote.setName(agent.getName());
-        processingNote.setNote(String.join(System.lineSeparator(), agent.getNote()));
+        processingNote.setNote(agent.getNote().stream().map(Agent.Note::getValue).collect(Collectors.joining(System.lineSeparator())));
         processingNote.setRole("OTHER".equals(agent.getROLE()) ? agent.getOTHERROLE() : agent.getROLE());
         processingNote.setType("OTHER".equals(agent.getTYPE()) ? agent.getOTHERTYPE() : agent.getROLE());
     }
@@ -85,7 +86,9 @@ public class AgentXmlElementAccess {
         Agent agent = new Agent();
         agent.setName(processingNote.getName());
         for (String paragraph : processingNote.getNote().split(System.lineSeparator())) {
-            agent.getNote().add(paragraph);
+            Agent.Note agentNote = new Agent.Note();
+            agentNote.setValue(paragraph);
+            agent.getNote().add(agentNote);
         }
         if (KNOWN_ROLES.contains(processingNote.getRole())) {
             agent.setROLE(processingNote.getRole());
