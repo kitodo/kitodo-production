@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.persistence;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -211,7 +210,7 @@ public class TaskDAO extends BaseDAO<Task> {
     public Map<Integer, EnumMap<TaskStatus, Integer>> loadTaskStatusCountsForProcesses(
             List<Integer> processIds) throws DAOException {
         Map<Integer, EnumMap<TaskStatus, Integer>> result = new HashMap<>();
-        if (processIds == null || processIds.isEmpty()) {
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
             return result;
         }
         Stopwatch stopwatch = new Stopwatch(this,"loadTaskStatusCountsForProcesses",
@@ -247,7 +246,7 @@ public class TaskDAO extends BaseDAO<Task> {
 
                 EnumMap<TaskStatus, Integer> map =
                         result.computeIfAbsent(rootId, id -> createEmptyStatusMap());
-                if (statusValue != null) {
+                if (Objects.nonNull(statusValue)) {
                     map.put(TaskStatus.getStatusFromValue(statusValue), count);
                 }
             }

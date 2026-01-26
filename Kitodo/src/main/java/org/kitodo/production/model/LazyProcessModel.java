@@ -59,7 +59,7 @@ public class LazyProcessModel extends LazyBeanModel {
     private boolean showInactiveProjects = false;
 
     private Map<Integer, EnumMap<TaskStatus, Integer>> taskStatusCache = new HashMap<>();
-    public Map<Integer, Map<TaskStatus, List<String>>> taskTitleCache = new HashMap<>();
+    private Map<Integer, Map<TaskStatus, List<String>>> taskTitleCache = new HashMap<>();
     private Set<Integer> processesWithChildren = new HashSet<>();
 
     /**
@@ -187,14 +187,30 @@ public class LazyProcessModel extends LazyBeanModel {
         }
     }
 
+    /**
+     * Returns the cached task titles grouped by process ID and task status.
+     *
+     * @return map of process ID to task titles grouped by Taskstatus
+     */
     public Map<Integer, Map<TaskStatus, List<String>>> getTaskTitleCache() {
         return taskTitleCache;
     }
 
+    /**
+     * Returns the cached task status counts for the given process.
+     *
+     * @param process the process whose task status counts are requested
+     * @return map of TaskStatus to count
+     */
     public EnumMap<TaskStatus, Integer> getTaskStatusCounts(Process process) {
         return taskStatusCache.get(process.getId());
     }
 
+    /**
+     * Returns the IDs of processes that have at least one child process.
+     *
+     * @return set of process IDs with children
+     */
     public Set<Integer> getProcessesWithChildren() {
         return processesWithChildren;
     }
