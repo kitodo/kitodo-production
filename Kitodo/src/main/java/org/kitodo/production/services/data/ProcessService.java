@@ -2384,14 +2384,14 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         if (Objects.isNull(processIds) || processIds.isEmpty()) {
             return Collections.emptySet();
         }
-        String hql = "SELECT DISTINCT p.parent "
+        String hql = "SELECT DISTINCT p.parent.id "
                         + "FROM Process p "
                         + "WHERE p.parent.id IN (:ids)";
 
         Map<String, Object> parameters = Map.of("ids", processIds);
-        List<Process> parents = getByQuery(hql, parameters);
-        return parents.stream()
-                .map(Process::getId)
+        List<Object[]> rows = dao.getProjectionByQuery(hql, parameters);
+        return rows.stream()
+                .map(row -> (Integer) row[0])
                 .collect(Collectors.toSet());
     }
 
