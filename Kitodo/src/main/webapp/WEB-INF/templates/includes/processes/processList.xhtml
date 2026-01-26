@@ -54,7 +54,7 @@
             <p:column id="selectionColumn" styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
 
             <p:column styleClass="hierarchy-info">
-                <p:rowToggler rendered="#{process.getParentID() ne 0 or ProcessForm.hasChildren(process) or ProcessForm.getCurrentTasksForUser(process).size() gt 0}"/>
+                <p:rowToggler rendered="#{process.getParentID() ne 0 or ProcessForm.hasChildren(process) or ProcessForm.hasVisibleTasks(process)}"/>
                 <h:outputText rendered="#{process.getParentID() ne 0 and not ProcessForm.hasChildren(process)}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
                 <h:outputText rendered="#{process.getParentID() eq 0 and ProcessForm.hasChildren(process)}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
                 <h:outputText rendered="#{process.getParentID() ne 0 and ProcessForm.hasChildren(process)}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
@@ -221,7 +221,7 @@
                             </h:panelGroup>
                         </p:panelGrid>
                     </p:panelGrid>
-                    <p:panel header="#{msgs.tasks}:" rendered="#{ProcessForm.getCurrentTasksForUser(process).size() gt 0}">
+                    <p:panel header="#{msgs.tasks}:" rendered="#{ProcessForm.hasVisibleTasks(process)}">
                         <p:dataList value="#{ProcessForm.getCurrentTasksForUser(process)}" var="task">
                             <h:outputText value="#{task.title}"/>
                                 <!-- assign task -->
