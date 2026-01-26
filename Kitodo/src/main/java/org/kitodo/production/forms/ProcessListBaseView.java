@@ -66,11 +66,9 @@ public class ProcessListBaseView extends BaseForm {
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
     private final HashMap<Integer, Boolean> exportable = new HashMap<>();
-    private static final String NL = "\n";
 
     boolean allSelected = false;
     HashSet<Integer> excludedProcessIds = new HashSet<>();
-
 
     /**
      * Constructor.
@@ -231,15 +229,16 @@ public class ProcessListBaseView extends BaseForm {
                               TaskStatus status,
                               Map<TaskStatus, List<String>> titles) {
         List<String> list = titles.get(status);
+        String newLine = "\n";
         if (Objects.isNull(list) || list.isEmpty()) {
             return;
         }
         if (sb.length() > 0) {
-            sb.append(NL);
+            sb.append(newLine);
         }
         sb.append(Helper.getTranslation(status.getTitle())).append(":");
         for (String t : list) {
-            sb.append(NL).append(" - ").append(Helper.getTranslation(t));
+            sb.append(newLine).append(" - ").append(Helper.getTranslation(t));
         }
     }
 

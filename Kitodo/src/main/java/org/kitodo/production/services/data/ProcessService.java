@@ -2321,7 +2321,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @return IDs of processes that have children
      */
     public Set<Integer> findProcessIdsWithChildren(Collection<Integer> processIds) throws DAOException {
-        if (processIds == null || processIds.isEmpty()) {
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
             return Collections.emptySet();
         }
         String hql = "SELECT DISTINCT p.parent "
