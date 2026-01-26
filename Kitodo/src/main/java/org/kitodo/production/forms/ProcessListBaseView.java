@@ -790,9 +790,10 @@ public class ProcessListBaseView extends BaseForm {
             if (!exportable.containsKey(process.getId())) {
                 boolean processHasChildren = hasChildren(process);
                 if (processHasChildren) {
+                    // superordinate processes normally do not contain images but should always be exportable
                     exportable.put(process.getId(), true);
                 } else {
-                    exportable.put(process.getId(), ProcessService.canBeExported(process, false));
+                    exportable.put(process.getId(), ProcessService.canBeExported(process));
                 }
             }
             return stopwatch.stop(exportable.get(process.getId()));
