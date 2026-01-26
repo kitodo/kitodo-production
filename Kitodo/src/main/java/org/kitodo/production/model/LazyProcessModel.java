@@ -162,16 +162,7 @@ public class LazyProcessModel extends LazyBeanModel {
                 Process process = (Process) o;
                 ids.add(process.getId());
             }
-            taskStatusCache = new TaskDAO().loadTaskStatusCountsForProcesses(ids);
-            taskTitleCache = ServiceManager.getTaskService().loadTaskTitlesForProcesses(ids);
-            processesWithChildren = ServiceManager.getProcessService().findProcessIdsWithChildren(ids);
-            List<Integer> userRoleIds = ServiceManager.getUserService()
-                    .getAuthenticatedUser()
-                    .getRoles()
-                    .stream()
-                    .map(Role::getId)
-                    .collect(Collectors.toList());
-            processesWithVisibleTasks = ServiceManager.getProcessService().findProcessIdsWithVisibleTasks(ids, userRoleIds);
+            loadProcessCaches(ids);
             logger.trace("{} entities loaded!", entities.size());
             return stopwatch.stop(entities);
         } catch (DAOException e) {
@@ -184,6 +175,24 @@ public class LazyProcessModel extends LazyBeanModel {
             logger.error(e.getMessage(), e);
         }
         return stopwatch.stop(new LinkedList<>());
+    }
+
+    private void loadProcessCaches(List<Integer> processIds) throws DAOException {
+        taskStatusCache = new TaskDAO().loadTaskStatusCountsForProcesses(processIds);
+        taskTitleCache = ServiceManager.getTaskService()
+                .loadTaskTitlesForProcesses(processIds);
+        processesWithChildren = ServiceManager.getProcessService()
+                .findProcessIdsWithChildren(processIds);
+
+        List<Integer> userRoleIds = ServiceManager.getUserService()
+                .getAuthenticatedUser()
+                .getRoles()
+                .stream()
+                .map(Role::getId)
+                .collect(Collectors.toList());
+
+        processesWithVisibleTasks = ServiceManager.getProcessService()
+                .findProcessIdsWithVisibleTasks(processIds, userRoleIds);
     }
 
     @Override
