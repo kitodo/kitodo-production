@@ -388,7 +388,7 @@ public class UploadFileDialog {
     }
 
     private void addMediaToWorkpiece() throws InvalidImagesException, MediaNotFoundException {
-        ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+        ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece(), false);
 
         List<View> views = selectedMedia.stream()
                 .map(v -> MetadataEditor.createUnrestrictedViewOn(v.getKey()))

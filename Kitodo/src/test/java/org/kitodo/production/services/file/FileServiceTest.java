@@ -178,7 +178,7 @@ public class FileServiceTest {
         URI testmeta = Paths.get("./src/test/resources/metadata/metadataFiles/testmeta.xml").toUri();
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(testmeta);
 
-        assertThrows(MediaNotFoundException.class, () -> fileService.searchForMedia(process, workpiece));
+        assertThrows(MediaNotFoundException.class, () -> fileService.searchForMedia(process, workpiece, false));
     }
 
     @Test

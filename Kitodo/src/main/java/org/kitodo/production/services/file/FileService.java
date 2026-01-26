@@ -56,6 +56,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -1093,8 +1094,10 @@ public class FileService {
      *         Process in which folders should be searched for media
      * @param workpiece
      *         Workpiece to which the media are to be added
+     * @param searchInConfiguredFoldersOnly
+     *         Flag controlling whether media should only be searched in folders configured correspondingly in project settings
      */
-    public boolean searchForMedia(Process process, Workpiece workpiece)
+    public boolean searchForMedia(Process process, Workpiece workpiece, boolean searchInConfiguredFoldersOnly)
             throws InvalidImagesException, MediaNotFoundException {
         final long begin = System.nanoTime();
         List<Folder> folders = process.getProject().getFolders();
@@ -1105,9 +1108,11 @@ public class FileService {
         }
         Map<String, Map<Subfolder, URI>> currentMedia = new TreeMap<>(metadataImageComparator);
         for (Subfolder subfolder : subfolders.values()) {
-            for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
-                currentMedia.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
-                currentMedia.get(element.getKey()).put(subfolder, element.getValue());
+            if (!(searchInConfiguredFoldersOnly && LinkingMode.NO.equals(subfolder.getFolder().getLinkingMode()))) {
+                for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
+                    currentMedia.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
+                    currentMedia.get(element.getKey()).put(subfolder, element.getValue());
+                }
             }
         }
 

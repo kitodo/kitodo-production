@@ -228,7 +228,9 @@ public class KitodoScriptService {
                 generateImages(processes, mode, foldersList);
                 break;
             case "searchForMedia":
-                searchForMedia(processes);
+                String subfolders = parameters.get("subfolders");
+                boolean configuredOnly = "configured".equals(subfolders);
+                searchForMedia(processes, configuredOnly);
                 break;
             case "importProcesses":
                 String indir = parameters.get("indir");
@@ -438,7 +440,7 @@ public class KitodoScriptService {
         }
     }
 
-    private void searchForMedia(List<Process> processes)
+    private void searchForMedia(List<Process> processes, boolean configuredFoldersOnly)
             throws IOException, InvalidImagesException, MediaNotFoundException {
         FileService fileService = ServiceManager.getFileService();
         MetsService metsService = ServiceManager.getMetsService();
@@ -447,7 +449,7 @@ public class KitodoScriptService {
         for (Process process : processes) {
             URI metadataFileUri = processService.getMetadataFileUri(process);
             Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
-            fileService.searchForMedia(process, workpiece);
+            fileService.searchForMedia(process, workpiece, configuredFoldersOnly);
             metsService.saveWorkpiece(workpiece, metadataFileUri);
         }
     }
