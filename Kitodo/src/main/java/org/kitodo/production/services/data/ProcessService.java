@@ -2396,6 +2396,36 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
+     * Finds all process IDs that have at least one visible task
+     * for the given roles.
+     *
+     * @param processIds process IDs to check
+     * @param roleIds role IDs used to determine task visibility
+     * @return IDs of processes that have visible tasks
+     */
+    public Set<Integer> findProcessIdsWithVisibleTasks(
+            Collection<Integer> processIds,
+            Collection<Integer> roleIds) throws DAOException {
+        String hql =
+                "SELECT DISTINCT t.process.id "
+                        + "FROM Task t "
+                        + "JOIN t.roles r "
+                        + "WHERE t.process.id IN (:processIds) "
+                        + "AND t.processingStatus IN (:statuses) "
+                        + "AND r.id IN (:roleIds)";
+
+        Map<String, Object> params = Map.of(
+                "processIds", processIds,
+                "roleIds", roleIds,
+                "statuses", List.of(TaskStatus.OPEN, TaskStatus.INWORK)
+        );
+        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
+        return rows.stream()
+                .map(row -> (Integer) row[0])
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Checks and returns whether the process with the given ID 'processId' can be exported or not.
      * @param process the process
      * @param processHasChildren whether process has children

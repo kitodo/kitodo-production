@@ -195,6 +195,16 @@ public class ProcessListBaseView extends ValidatableForm {
     }
 
     /**
+     * Checks whether the given process has visible tasks.
+     *
+     * @param process the process to check
+     * @return true if the process has visible tasks, otherwise false
+     */
+    public boolean hasVisibleTasks(Process process) {
+        return getLazyProcessModel().hasVisibleTasks(process);
+    }
+
+    /**
      * Returns the titles of open and in-work tasks for the given process.
      *
      * <p>For parent processes, no task titles are returned.</p>

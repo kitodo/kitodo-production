@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TaskDAO;
@@ -61,6 +63,7 @@ public class LazyProcessModel extends LazyBeanModel {
     private Map<Integer, EnumMap<TaskStatus, Integer>> taskStatusCache = new HashMap<>();
     private Map<Integer, Map<TaskStatus, List<String>>> taskTitleCache = new HashMap<>();
     private Set<Integer> processesWithChildren = new HashSet<>();
+    private Set<Integer> processesWithVisibleTasks = new HashSet<>();
 
     /**
      * Creates a lazyBeanModel instance that allows fetching data from the data
@@ -162,6 +165,13 @@ public class LazyProcessModel extends LazyBeanModel {
             taskStatusCache = new TaskDAO().loadTaskStatusCountsForProcesses(ids);
             taskTitleCache = ServiceManager.getTaskService().loadTaskTitlesForProcesses(ids);
             processesWithChildren = ServiceManager.getProcessService().findProcessIdsWithChildren(ids);
+            List<Integer> userRoleIds = ServiceManager.getUserService()
+                    .getAuthenticatedUser()
+                    .getRoles()
+                    .stream()
+                    .map(Role::getId)
+                    .collect(Collectors.toList());
+            processesWithVisibleTasks = ServiceManager.getProcessService().findProcessIdsWithVisibleTasks(ids, userRoleIds);
             logger.trace("{} entities loaded!", entities.size());
             return stopwatch.stop(entities);
         } catch (DAOException e) {
@@ -213,6 +223,16 @@ public class LazyProcessModel extends LazyBeanModel {
      */
     public Set<Integer> getProcessesWithChildren() {
         return processesWithChildren;
+    }
+
+    /**
+     * Checks whether the given process has any visible tasks.
+     *
+     * @param process the process to check
+     * @return true if the process has visible tasks, false otherwise
+     */
+    public boolean hasVisibleTasks(Process process) {
+        return processesWithVisibleTasks.contains(process.getId());
     }
 
 }
