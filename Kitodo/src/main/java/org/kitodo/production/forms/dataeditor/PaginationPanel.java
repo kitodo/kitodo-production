@@ -78,7 +78,7 @@ public class PaginationPanel {
         boolean mediaReferencesChanged = false;
         try {
             mediaReferencesChanged = ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(),
-                    dataEditor.getWorkpiece());
+                    dataEditor.getWorkpiece(), false);
         } catch (InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         } catch (MediaNotFoundException e) {

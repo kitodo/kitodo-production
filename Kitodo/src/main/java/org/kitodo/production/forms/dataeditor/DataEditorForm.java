@@ -414,7 +414,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             workpiece.setId(process.getId().toString());
         }
         metadataFileLoadingError = "";
-        return ServiceManager.getFileService().searchForMedia(process, workpiece);
+        return ServiceManager.getFileService().searchForMedia(process, workpiece, false);
     }
 
     private void init() {

@@ -504,7 +504,7 @@ final class ImportingProcess {
             link.setUri(processService.getProcessURI(importedChildProcess.processId));
             addLinkInDatabase(process, importedChildProcess.processId);
         }
-        fileService.searchForMedia(process, workpiece);
+        fileService.searchForMedia(process, workpiece, false);
         Path outputMetsFile = outputDir.resolve(META_FILE_NAME);
         metsService.saveWorkpiece(workpiece, outputMetsFile.toUri());
         logger.info("Wrote METS file " + outputMetsFile);
