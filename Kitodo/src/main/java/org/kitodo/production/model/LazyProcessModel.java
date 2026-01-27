@@ -157,6 +157,8 @@ public class LazyProcessModel extends LazyBeanModel {
                 this.showInactiveProjects)));
             entities = ((ProcessService) searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
                 this.showClosedProcesses, this.showInactiveProjects);
+            PrimeFaces.current()
+                    .executeScript("updateProcessCount()");
             List<Integer> ids = new ArrayList<>();
             for (Object o : entities) {
                 Process process = (Process) o;

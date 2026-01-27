@@ -61,7 +61,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
-import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -1131,14 +1130,8 @@ public class ProcessForm extends TemplateBaseForm {
      * 
      * @return amount of processes
      */
-    public String getAmount() throws DAOException {
-        Stopwatch stopwatch = new Stopwatch(this, "getAmount");
-        HashMap<String, String> filterMap = new HashMap<>();
-        if (!StringUtils.isBlank(this.filter)) {
-            filterMap.put(FilterService.FILTER_STRING, this.filter);
-        }
-        return stopwatch.stop(ServiceManager.getProcessService().countResults(filterMap,
-                isShowClosedProcesses(), isShowInactiveProjects()).toString());
+    public Integer getAmount() {
+        return lazyBeanModel == null ? 0 : lazyBeanModel.getRowCount();
     }
 
     /**
