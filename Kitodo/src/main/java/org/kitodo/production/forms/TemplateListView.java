@@ -43,7 +43,7 @@ public class TemplateListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=templateTab";
 
-    private static final Logger logger = LogManager.getLogger(TemplateEditView.class);
+    private static final Logger logger = LogManager.getLogger(TemplateListView.class);
 
     private boolean showInactiveTemplates = false;
     private List<String> templateFilters;
@@ -102,7 +102,7 @@ public class TemplateListView extends BaseListView {
     }
 
     /**
-     * Remove template if there is no assigned processes.
+     * Remove template if there is no assigned process.
      */
     public void delete(Template template) {
         if (!template.getProcesses().isEmpty()) {

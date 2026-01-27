@@ -42,7 +42,7 @@ public class WorkflowListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=workflowTab";
 
-    private static final Logger logger = LogManager.getLogger(WorkflowEditView.class);
+    private static final Logger logger = LogManager.getLogger(WorkflowListView.class);
   
     private final transient FileService fileService = ServiceManager.getFileService();
     

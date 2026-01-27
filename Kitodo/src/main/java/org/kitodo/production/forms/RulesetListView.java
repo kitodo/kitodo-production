@@ -36,12 +36,12 @@ public class RulesetListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=rulesetTab";
 
-    private static final Logger logger = LogManager.getLogger(RulesetEditView.class);
+    private static final Logger logger = LogManager.getLogger(RulesetListView.class);
 
     
 
     /**
-     * Initialize Rulset form.
+     * Initialize Ruleset form.
      */
     @PostConstruct
     public void init() {

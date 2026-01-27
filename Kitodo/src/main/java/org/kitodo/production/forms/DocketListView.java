@@ -36,7 +36,7 @@ public class DocketListView extends BaseListView {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=docketTab";
 
-    private static final Logger logger = LogManager.getLogger(DocketEditView.class);
+    private static final Logger logger = LogManager.getLogger(DocketListView.class);
 
     /**
      * Initialize Docket form.

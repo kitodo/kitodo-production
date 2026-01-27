@@ -388,7 +388,7 @@ public class TemplateEditView extends BaseEditView {
                 return false;
             } else if (count == 1) {
                 Integer templateId = this.template.getId();
-                if (Objects.nonNull(templateId) && templates.get(0).getId().equals(templateId)) {
+                if (Objects.nonNull(templateId) && templates.getFirst().getId().equals(templateId)) {
                     return true;
                 }
                 Helper.setErrorMessage(ERROR_OCCURRED, TITLE_USED);

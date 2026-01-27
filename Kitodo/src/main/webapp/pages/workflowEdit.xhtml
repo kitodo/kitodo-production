@@ -19,10 +19,13 @@
         xmlns:p="http://primefaces.org/ui">
 
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
         <f:viewParam name="id"/>
+        <!--@elvariable id="duplicate" type="java.lang.Boolean"-->
         <f:viewParam name="duplicate"/>
         <f:viewAction action="#{WorkflowEditView.load(id, duplicate)}"/>
         <f:viewParam name="migration" value="#{WorkflowEditView.migration}" converterId="jakarta.faces.convert.BooleanConverter" />
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
         <f:viewParam name="referrerListOptions"/>
         <f:viewAction action="#{WorkflowEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
