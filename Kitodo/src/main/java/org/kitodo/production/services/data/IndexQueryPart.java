@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.data.database.beans.ProcessKeywords;
 
 /**
  * A portion of the filter entered by the user that is resolved through the
@@ -45,7 +46,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
     IndexQueryPart(FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
-            if (value.length() >= filterField.getMinTokenLength()) {
+            if (value.length() >= ProcessKeywords.LENGTH_MIN_DEFAULT) {
                 this.lookfor.add(normalize(value));
             }
         }
