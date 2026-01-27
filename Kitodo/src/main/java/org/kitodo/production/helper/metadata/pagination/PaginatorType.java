@@ -41,7 +41,8 @@ public enum PaginatorType {
                     throw b;
                 }
             }
-            return mode.format('´' + AlphabeticNumeral.format(value) + '´', '´' + AlphabeticNumeral.format(value + 1) + '´', fictitious,
+            AlphabeticNumeral alphabeticNumeral = new AlphabeticNumeral(valueString, null);
+            return mode.format('´' + alphabeticNumeral.format(value) + '´', '´' + alphabeticNumeral.format(value + 1) + '´', fictitious,
                     separator);
         }
     },
@@ -92,7 +93,8 @@ public enum PaginatorType {
                     throw b;
                 }
             }
-            return mode.format(RomanNumeral.format(value, true), RomanNumeral.format(value + 1, true), fictitious,
+            RomanNumeral romanNumeral = new RomanNumeral(valueString, true, null);
+            return mode.format(romanNumeral.format(new HalfInteger(value, false)), romanNumeral.format(new HalfInteger(value + 1, false)), fictitious,
                 separator);
         }
     },

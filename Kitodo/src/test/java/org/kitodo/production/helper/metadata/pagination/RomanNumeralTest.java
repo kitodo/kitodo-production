@@ -20,7 +20,8 @@ public class RomanNumeralTest {
     @Test
     public void testOutputInputLowercase() {
         for (int i = 1; i <= 4999; i++) {
-            String encoded = RomanNumeral.format(i, false);
+            RomanNumeral romanNumeral = new RomanNumeral(null, false, null);
+            String encoded = romanNumeral.format(new HalfInteger(i, false));
             int decoded = RomanNumeral.parseInt(encoded);
             assertEquals(i, decoded);
         }
@@ -29,7 +30,8 @@ public class RomanNumeralTest {
     @Test
     public void testOutputInputUppercase() {
         for (int i = 1; i <= 4999; i++) {
-            String encoded = RomanNumeral.format(i, true);
+            RomanNumeral romanNumeral = new RomanNumeral(null, true, null);
+            String encoded = romanNumeral.format(new HalfInteger(i, false));
             int decoded = RomanNumeral.parseInt(encoded);
             assertEquals(i, decoded);
         }
@@ -53,17 +55,19 @@ public class RomanNumeralTest {
 
     @Test
     public void testFormatUppercase() {
-        assertEquals("XV", RomanNumeral.format(15, true));
-        assertEquals("CDI", RomanNumeral.format(401, true));
-        assertEquals("CMII", RomanNumeral.format(902, true));
-        assertEquals("MMMMCDXLIII", RomanNumeral.format(4443, true));
+        RomanNumeral romanNumeral = new RomanNumeral(null, true, null);
+        assertEquals("XV", romanNumeral.format(new HalfInteger(15, false)));
+        assertEquals("CDI", romanNumeral.format(new HalfInteger(401, false)));
+        assertEquals("CMII", romanNumeral.format(new HalfInteger(902, false)));
+        assertEquals("MMMMCDXLIII", romanNumeral.format(new HalfInteger(4443, false)));
     }
 
     @Test
     public void testFormatLowercase() {
-        assertEquals("xxv", RomanNumeral.format(25, false));
-        assertEquals("miii", RomanNumeral.format(1003, false));
-        assertEquals("cmxii", RomanNumeral.format(912, false));
-        assertEquals("mmmmdcclxvi", RomanNumeral.format(4766, false));
+        RomanNumeral romanNumeral = new RomanNumeral(null, false, null);
+        assertEquals("xxv", romanNumeral.format(new HalfInteger(25, false)));
+        assertEquals("miii", romanNumeral.format(new HalfInteger(1003, false)));
+        assertEquals("cmxii", romanNumeral.format(new HalfInteger(912, false)));
+        assertEquals("mmmmdcclxvi", romanNumeral.format(new HalfInteger(4766, false)));
     }
 }

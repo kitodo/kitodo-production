@@ -84,9 +84,9 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return '[' + value + "`]v" + separator + "[`" + next + "°]r";
+                return '[' + value + "`]v" + separator + "[`" + next + "°`]r`";
             } else {
-                return value + "`v" + separator + '`' + next + "°r";
+                return value + "`v" + separator + '`' + next + "°`r`";
             }
         }
     },
@@ -99,9 +99,9 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return '[' + value + "°]¡r¿v½";
+                return "`[`" + value + "°`]`¡`r`¿`v`½";
             } else {
-                return value.concat("°¡r¿v½");
+                return value.concat("°¡`r`¿`v`½");
             }
         }
     },
@@ -114,9 +114,9 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return "½[" + value + "°]¡r¿v½";
+                return "½`[`" + value + "°`]`¡`r`¿`v`½";
             } else {
-                return '½' + value + "°¡r¿v½";
+                return '½' + value + "°¡`r`¿`v`½";
             }
         }
     };
