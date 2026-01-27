@@ -63,7 +63,8 @@ public enum PaginatorMode {
     },
 
     /**
-     *
+     * The counter is increased on every second page. The pages are numbered alternating counter and "UNCOUNTED".
+     * (1, UNCOUNTED, 2, UNCOUNTED, … / [1], [UNCOUNTED], [2], [UNCOUNTED], …)
      */
     FOLIATION_WITH_EMPTY_PAGE(8) {
         @Override
