@@ -758,8 +758,8 @@ public class ProjectEditView extends BaseEditView {
     /**
      * Method being used as viewAction for project edit form.
      *
-     * @param id
-     *         ID of the ruleset to load
+     * @param id ID of the ruleset to load
+     * @param duplicate whether to duplicate the project
      */
     public void loadProject(Integer id, Boolean duplicate) {
         SecurityAccessController securityAccessController = new SecurityAccessController();

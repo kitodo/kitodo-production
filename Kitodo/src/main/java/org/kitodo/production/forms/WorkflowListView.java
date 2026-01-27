@@ -64,15 +64,6 @@ public class WorkflowListView extends BaseListView {
     }
 
     /**
-     * Get list of workflow statues for select list.
-     *
-     * @return array of SelectItem objects
-     */
-    public WorkflowStatus[] getWorkflowStatuses() {
-        return WorkflowStatus.values();
-    }
-
-    /**
      * Archive active workflow.
      */
     public void archive(Workflow workflow) {

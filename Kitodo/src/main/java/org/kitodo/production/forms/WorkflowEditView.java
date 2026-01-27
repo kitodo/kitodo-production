@@ -405,8 +405,8 @@ public class WorkflowEditView extends BaseEditView {
      * parameter 'id' is '0', the form for creating a new workflow will be
      * displayed.
      *
-     * @param id
-     *            of the workflow to load
+     * @param id of the workflow to load
+     * @param duplicate whether to duplicate the workflow
      */
     public void load(Integer id, Boolean duplicate) {
         if (Objects.nonNull(duplicate) && duplicate) {
