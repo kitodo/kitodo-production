@@ -27,8 +27,17 @@ public class AlphabeticNumeral implements Fragment {
      */
     private HalfInteger increment;
 
-    AlphabeticNumeral(String value) {
+    /**
+     * Indicates the pagination context for the numeral.
+     * A value of {@code true} represents an odd (left) page.
+     * A value of {@code false} represents an even (right) page.
+     * A value of {@code null} indicates that the numeral can appear on any page.
+     */
+    private final Boolean page;
+
+    AlphabeticNumeral(String value, Boolean page) {
         this.value = parseInt(value);
+        this.page = page;
     }
 
     /**
@@ -74,18 +83,20 @@ public class AlphabeticNumeral implements Fragment {
      * @param value value to format
      * @return the formatted value
      */
-    @Override
-    public String format(HalfInteger value) {
-        return format(value.intValue());
+
+    public String format(int value) {
+        return format(new HalfInteger(value, false));
     }
 
     /**
      * Returns the value formatted as alphabetic characters.
      *
-     * @param number numeric value to format
+     * @param value numeric value to format
      * @return the formatted value
      */
-    public static String format(int number) {
+    @Override
+    public String format(HalfInteger value) {
+        int number = value.intValue();
         StringBuilder result = new StringBuilder();
 
         while (number > 0) {
@@ -95,8 +106,11 @@ public class AlphabeticNumeral implements Fragment {
             result.insert(0, letter);
             number = number / ALPHABET_SIZE;
         }
-
-        return result.toString();
+        if (page == null || page == value.isHalf()) {
+            return result.toString();
+        } else {
+            return "";
+        }
     }
 
     /**

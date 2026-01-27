@@ -148,12 +148,11 @@ public class Paginator implements Iterator<String> {
     private void createFragment(StringBuilder stringBuilder, PaginatorState fragmentType, Boolean pageType) {
         if (fragmentType.equals(PaginatorState.DECIMAL)) {
             fragments.addLast(new DecimalNumeral(stringBuilder.toString(), pageType));
-        } else if (pageType == null && (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)
-                || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN))) {
+        } else if (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN) || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN)) {
             fragments.addLast(
-                new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)));
-        } else if (pageType == null && fragmentType.equals(PaginatorState.ALPHABETIC)) {
-            fragments.addLast(new AlphabeticNumeral(stringBuilder.toString()));
+                new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN), pageType));
+        } else if (fragmentType.equals(PaginatorState.ALPHABETIC)) {
+            fragments.addLast(new AlphabeticNumeral(stringBuilder.toString(), pageType));
         } else if (fragmentType.equals(PaginatorState.INCREMENT)) {
             if (fragments.isEmpty() || Objects.isNull(fragments.peekLast())) {
                 fragments.addLast(new StaticText("", pageType));
