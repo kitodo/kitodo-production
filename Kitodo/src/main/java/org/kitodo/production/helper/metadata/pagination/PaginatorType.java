@@ -94,8 +94,12 @@ public enum PaginatorType {
                 }
             }
             RomanNumeral romanNumeral = new RomanNumeral(valueString, true, null);
-            return mode.format(romanNumeral.format(new HalfInteger(value, false)), romanNumeral.format(new HalfInteger(value + 1, false)), fictitious,
-                separator);
+            return mode.format(
+                    romanNumeral.format(new HalfInteger(value, false)),
+                    romanNumeral.format(new HalfInteger(value + 1, false)),
+                    fictitious,
+                    separator
+            );
         }
     },
 
