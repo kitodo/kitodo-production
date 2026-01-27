@@ -55,12 +55,27 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return '[' + value + "½]";
+                return "`[`" + value + "½`]`";
             } else {
                 return value.concat("½");
             }
         }
     },
+
+    /**
+     *
+     */
+    FOLIATION_WITH_EMPTY_PAGE(8) {
+        @Override
+        String format(String value, String next, boolean fictitious, String separator) {
+            if (fictitious) {
+                return "`[`¿`UNCOUNTED`¡" + value + "½`]`";
+            } else {
+                return "¿`UNCOUNTED`¡" + value + "½";
+            }
+        }
+    },
+
 
     /**
      * Normal pagination (1, 2, 3, 4, … / [1], [2], [3], [4], …).
