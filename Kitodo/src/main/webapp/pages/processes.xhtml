@@ -42,7 +42,7 @@
             <h:panelGroup id="processCount" layout="inline">
                 #{msgs.hits}: #{ProcessForm.amount}
             </h:panelGroup>
-            <h:form id="headerForm" style="display:none">
+            <h:form id="headerForm">
                 <p:remoteCommand name="updateProcessCount"
                                  update=":processCount"
                                  process="@this" />
