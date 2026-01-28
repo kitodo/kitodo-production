@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.faces.model.SelectItem;
@@ -42,26 +41,21 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
-import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
 
 /**
  * Backing bean for the add doc struc type dialog of the metadata editor.
  */
-public class AddDocStrucTypeDialog {
+public class AddDocStrucTypeDialog extends AddNodeDialog {
     private static final Logger logger = LogManager.getLogger(AddDocStrucTypeDialog.class);
 
-    private final DataEditorForm dataEditor;
     private List<SelectItem> selectionItemsForChildren;
     private List<SelectItem> selectionItemsForParent;
     private List<SelectItem> selectionItemsForSiblings;
@@ -77,10 +71,6 @@ public class AddDocStrucTypeDialog {
     private String selectLastPageOnAddNode;
     private List<SelectItem> selectPageOnAddNodeItems;
     private List<View> preselectedViews;
-    private String processNumber = "";
-    private Process selectedProcess = null;
-    private List<Process> processes = Collections.emptyList();
-    private boolean linkSubDialogVisible = false;
     private static final String PREVIEW_MODE = "preview";
     private static final String LIST_MODE = "list";
     private TreeNode previouslySelectedLogicalNode;
@@ -91,25 +81,7 @@ public class AddDocStrucTypeDialog {
      * @see "WEB-INF/templates/includes/metadataEditor/dialogs/addDocStrucType.xhtml"
      */
     AddDocStrucTypeDialog(DataEditorForm dataEditor) {
-        this.dataEditor = dataEditor;
-    }
-
-    /**
-     * Check and return if sub dialog is visible.
-     *
-     * @return sub dialog visibility
-     */
-    public boolean isLinkSubDialogVisible() {
-        return this.linkSubDialogVisible;
-    }
-
-    /**
-     * Set sub dialog visibility.
-     *
-     * @param visible whether sub dialog is visible or not
-     */
-    public void setLinkSubDialogVisible(boolean visible) {
-        this.linkSubDialogVisible = visible;
+        super(dataEditor);
     }
 
     /**
@@ -431,37 +403,6 @@ public class AddDocStrucTypeDialog {
         }
     }
 
-    /** 
-     * Determines the logical parent division that can be used as a basis for the dialog.
-     * 
-     * <p>In case physical divisions are selected, the parent logical division is returned.</p>
-     * 
-     * <p>In case a single logical division is selected, the logical division itself is returned.</p>
-     * 
-     * <p>In case multiple divisions are selected, or physical divisions have multiple different parents, nothing is returned.</p>
-     */
-    private Optional<LogicalDivision> getTargetLogicalDivisionFromNodeSelection() {
-        Set<LogicalDivision> logicalDivisionSet =  dataEditor.getStructurePanel().getSelectedLogicalNodes().stream()
-            .map(StructureTreeOperations::getTreeNodeLogicalParentOrSelf)
-            .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
-            .collect(Collectors.toSet());
-
-        if (logicalDivisionSet.isEmpty()) {
-            // determine logical parent division for selection of media (in case of gallery selection)
-            logicalDivisionSet.addAll(
-                dataEditor.getSelectedMedia().stream()
-                    .map(Pair::getRight)
-                    .collect(Collectors.toSet())
-            );
-        }
-
-        if (logicalDivisionSet.size() == 1) {
-            LogicalDivision logicalDivision = logicalDivisionSet.iterator().next();
-            return Optional.of(logicalDivision);
-        }
-        return Optional.empty();
-    }
-
     /**
      * Update lists of available doc struct types that can be added to the currently selected structure element in the
      * currently selected position.
@@ -600,9 +541,6 @@ public class AddDocStrucTypeDialog {
      */
     public void resetValues() {
         preselectedViews = Collections.emptyList();
-        processNumber = "";
-        processes = Collections.emptyList();
-        linkSubDialogVisible = false;
         inputMetaDataValue = "";
         elementsToAddSpinnerValue = 1;
         selectFirstPageOnAddNode = null;
@@ -614,116 +552,12 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Returns the process number. The process number is an input field where
-     * the user can enter the process number or the process title, and then it
-     * is searched for. But search is only when the button is clicked (too much
-     * load otherwise).
-     *
-     * @return the process number
-     */
-    public String getProcessNumber() {
-        return processNumber;
-    }
-
-    /**
-     * Sets the process number when the user entered it.
-     *
-     * @param processNumber
-     *            process number to set
-     */
-    public void setProcessNumber(String processNumber) {
-        this.processNumber = processNumber;
-    }
-
-    /**
-     * Function for the button for the search. Looks for suitable processes. If
-     * the process number is a number and the process exists, it is already
-     * found. Otherwise it must be searched for, excluding the wrong ruleset or
-     * the wrong client.
-     */
-    public void search() {
-        if (processNumber.trim().isEmpty()) {
-            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
-            return;
-        }
-        try {
-            Set<String> allowedSubstructuralElements = DataEditorService.getStructuralElementView(this.dataEditor)
-                    .getAllowedSubstructuralElements().keySet();
-            List<Integer> ids = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
-                dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements)
-                    .stream().map(Process::getId).collect(Collectors.toList());
-            if (ids.isEmpty()) {
-                alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));
-            }
-            processes = new LinkedList<>();
-            for (int processId : ids) {
-                processes.add(ServiceManager.getProcessService().getById(processId));
-            }
-        } catch (DAOException e) {
-            logger.catching(e);
-            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.error", e.getMessage()));
-        }
-    }
-
-    /**
-     * Displays a dialog box with a message to the user.
-     *
-     * @param message
-     *            message to show
-     */
-    private void alert(String message) {
-        PrimeFaces.current().executeScript("alert('" + message + "');");
-    }
-
-    /**
-     * Returns the process selected by the user in the drop-down list.
-     *
-     * @return the selected process
-     */
-    public Process getSelectedProcess() {
-        return selectedProcess;
-    }
-
-    /**
-     * Sets the number of the process selected by the user.
-     *
-     * @param selectedProcess
-     *            selected process
-     */
-    public void setSelectedProcess(Process selectedProcess) {
-        this.selectedProcess = selectedProcess;
-    }
-
-    /**
-     * Returns the list of items to populate the drop-down list to select a
-     * process.
-     *
-     * @return the list of processes
-     */
-    public List<Process> getProcesses() {
-        return processes;
-    }
-
-    /**
      * Get preselectedViews.
      *
      * @return value of preselectedViews
      */
     public List<View> getPreselectedViews() {
         return preselectedViews;
-    }
-
-    /**
-     * Adds the link when the user clicks OK.
-     */
-    public void addProcessLink() {
-        dataEditor.getCurrentChildren().add(selectedProcess);
-        MetadataEditor.addLink(getTargetLogicalDivisionFromNodeSelection().orElseThrow(IllegalStateException::new),
-            selectedProcess.getId());
-        dataEditor.getStructurePanel().show(true);
-        dataEditor.getPaginationPanel().show();
-        selectedProcess = null;
-        processes = Collections.emptyList();
     }
 
     /**
@@ -744,9 +578,8 @@ public class AddDocStrucTypeDialog {
     }
 
     private StructuralElementViewInterface getDivisionViewOfStructure(String structure) {
-        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement()
-                .getStructuralElementView(structure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        return divisionView;
+        return dataEditor.getRulesetManagement().getStructuralElementView(structure, dataEditor.getAcquisitionStage(),
+                dataEditor.getPriorityList());
     }
 
     /**
