@@ -74,7 +74,7 @@ public class AlphabeticNumeral implements Fragment {
 
     @Override
     public String toString() {
-        return format(value) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
+        return format(new HalfInteger(value, false)) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
     }
 
     /**
@@ -83,19 +83,21 @@ public class AlphabeticNumeral implements Fragment {
      * @param value value to format
      * @return the formatted value
      */
-
-    public String format(int value) {
-        return format(new HalfInteger(value, false));
+    @Override
+    public String format(HalfInteger value) {
+        return format(value, page);
     }
 
     /**
      * Returns the value formatted as alphabetic characters.
      *
-     * @param value numeric value to format
+     * @param value
+     *      numeric value to format
+     * @param page
+     *      Indicates on which type of page this AlphabeticNumeral should be shown (true = odd pages, false = even pages, null = all pages)
      * @return the formatted value
      */
-    @Override
-    public String format(HalfInteger value) {
+    public static String format(HalfInteger value, Boolean page) {
         int number = value.intValue();
         StringBuilder result = new StringBuilder();
 

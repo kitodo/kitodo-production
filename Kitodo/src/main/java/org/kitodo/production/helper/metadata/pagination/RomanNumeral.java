@@ -49,10 +49,13 @@ public class RomanNumeral implements Fragment {
      *
      * @param inputValue
      *            value to format
+     * @param uppercase
+     *            If true, produces upper case roman numerals, else lower case
+     * @param page
+     *            Indicates on which type of page this RomanNumeral should be shown (true = odd pages, false = even pages, null = all pages)
      * @return Roman numeral for the value
      */
-    @Override
-    public String format(HalfInteger inputValue) {
+    public static String format(HalfInteger inputValue, boolean uppercase, Boolean page) {
         int value = inputValue.intValue();
         StringBuilder result = new StringBuilder();
         while (value >= 1000) {
@@ -68,6 +71,17 @@ public class RomanNumeral implements Fragment {
         } else {
             return "";
         }
+    }
+
+    /**
+     * Returns the Roman numeral for the value as string.
+     * @param value
+     *            value to format
+     * @return Roman numeral for the value
+     */
+    @Override
+    public String format(HalfInteger value) {
+        return format(value, uppercase, page);
     }
 
     /**

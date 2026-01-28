@@ -20,8 +20,7 @@ public class RomanNumeralTest {
     @Test
     public void testOutputInputLowercase() {
         for (int i = 1; i <= 4999; i++) {
-            RomanNumeral romanNumeral = new RomanNumeral(null, false, null);
-            String encoded = romanNumeral.format(new HalfInteger(i, false));
+            String encoded = RomanNumeral.format(new HalfInteger(i, false), false, null);
             int decoded = RomanNumeral.parseInt(encoded);
             assertEquals(i, decoded);
         }
@@ -30,8 +29,7 @@ public class RomanNumeralTest {
     @Test
     public void testOutputInputUppercase() {
         for (int i = 1; i <= 4999; i++) {
-            RomanNumeral romanNumeral = new RomanNumeral(null, true, null);
-            String encoded = romanNumeral.format(new HalfInteger(i, false));
+            String encoded = RomanNumeral.format(new HalfInteger(i, false), true, null);
             int decoded = RomanNumeral.parseInt(encoded);
             assertEquals(i, decoded);
         }
@@ -55,19 +53,17 @@ public class RomanNumeralTest {
 
     @Test
     public void testFormatUppercase() {
-        RomanNumeral romanNumeral = new RomanNumeral(null, true, null);
-        assertEquals("XV", romanNumeral.format(new HalfInteger(15, false)));
-        assertEquals("CDI", romanNumeral.format(new HalfInteger(401, false)));
-        assertEquals("CMII", romanNumeral.format(new HalfInteger(902, false)));
-        assertEquals("MMMMCDXLIII", romanNumeral.format(new HalfInteger(4443, false)));
+        assertEquals("XV", RomanNumeral.format(new HalfInteger(15, false), true, null));
+        assertEquals("CDI", RomanNumeral.format(new HalfInteger(401, false), true, null));
+        assertEquals("CMII", RomanNumeral.format(new HalfInteger(902, false), true, null));
+        assertEquals("MMMMCDXLIII", RomanNumeral.format(new HalfInteger(4443, false), true, null));
     }
 
     @Test
     public void testFormatLowercase() {
-        RomanNumeral romanNumeral = new RomanNumeral(null, false, null);
-        assertEquals("xxv", romanNumeral.format(new HalfInteger(25, false)));
-        assertEquals("miii", romanNumeral.format(new HalfInteger(1003, false)));
-        assertEquals("cmxii", romanNumeral.format(new HalfInteger(912, false)));
-        assertEquals("mmmmdcclxvi", romanNumeral.format(new HalfInteger(4766, false)));
+        assertEquals("xxv", RomanNumeral.format(new HalfInteger(25, false), false, null));
+        assertEquals("miii", RomanNumeral.format(new HalfInteger(1003, false), false, null));
+        assertEquals("cmxii", RomanNumeral.format(new HalfInteger(912, false), false, null));
+        assertEquals("mmmmdcclxvi", RomanNumeral.format(new HalfInteger(4766, false), false, null));
     }
 }

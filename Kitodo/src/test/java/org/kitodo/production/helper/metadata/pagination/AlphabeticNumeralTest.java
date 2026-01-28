@@ -20,8 +20,7 @@ public class AlphabeticNumeralTest {
     @Test
     public void testOutputInput() {
         for (int i = 1; i <= 4999; i++) {
-            AlphabeticNumeral alphabeticNumeral = new AlphabeticNumeral(null, null);
-            String encoded = alphabeticNumeral.format(i);
+            String encoded = AlphabeticNumeral.format(new HalfInteger(i, false), null);
             int decoded = AlphabeticNumeral.parseInt(encoded);
             assertEquals(i, decoded);
         }
@@ -38,10 +37,9 @@ public class AlphabeticNumeralTest {
 
     @Test
     public void testFormat() {
-        AlphabeticNumeral alphabeticNumeral = new AlphabeticNumeral(null, null);
-        assertEquals("c", alphabeticNumeral.format(3));
-        assertEquals("z", alphabeticNumeral.format(26));
-        assertEquals("bb", alphabeticNumeral.format(54));
-        assertEquals("qwf", alphabeticNumeral.format(12096));
+        assertEquals("c", AlphabeticNumeral.format(new HalfInteger(3, false), null));
+        assertEquals("z", AlphabeticNumeral.format(new HalfInteger(26, false), null));
+        assertEquals("bb", AlphabeticNumeral.format(new HalfInteger(54, false), null));
+        assertEquals("qwf", AlphabeticNumeral.format(new HalfInteger(12096, false), null));
     }
 }
