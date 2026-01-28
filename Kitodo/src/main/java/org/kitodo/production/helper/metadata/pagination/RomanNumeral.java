@@ -50,11 +50,13 @@ public class RomanNumeral implements Fragment {
      * @param inputValue
      *            value to format
      * @param uppercase
-     *            if true, the Roman numeral is upper case, otherwise lower case
+     *            If true, produces upper case roman numerals, else lower case
+     * @param page
+     *            Indicates on which type of page this RomanNumeral should be shown (true = odd pages, false = even pages, null = all pages)
      * @return Roman numeral for the value
      */
-    public static String format(int inputValue, boolean uppercase) {
-        int value = inputValue;
+    public static String format(HalfInteger inputValue, boolean uppercase, Boolean page) {
+        int value = inputValue.intValue();
         StringBuilder result = new StringBuilder();
         while (value >= 1000) {
             result.append(uppercase ? 'M' : 'm');
@@ -64,12 +66,22 @@ public class RomanNumeral implements Fragment {
         value %= 100;
         result.append(TENS[value / 10]);
         result.append(ONES[value % 10]);
-        return uppercase ? result.toString().toUpperCase() : result.toString();
+        if (page == null || page == inputValue.isHalf()) {
+            return uppercase ? result.toString().toUpperCase() : result.toString();
+        } else {
+            return "";
+        }
     }
 
+    /**
+     * Returns the Roman numeral for the value as string.
+     * @param value
+     *            value to format
+     * @return Roman numeral for the value
+     */
     @Override
     public String format(HalfInteger value) {
-        return format(value.intValue(), uppercase);
+        return format(value, uppercase, page);
     }
 
     /**
@@ -128,6 +140,14 @@ public class RomanNumeral implements Fragment {
     private HalfInteger increment;
 
     /**
+     * Indicates the pagination context for the numeral.
+     * A value of {@code true} represents an odd (left) page.
+     * A value of {@code false} represents an even (right) page.
+     * A value of {@code null} indicates that the numeral can appear on any page.
+     */
+    private final Boolean page;
+
+    /**
      * If true, produces upper case roman numerals, else lower case.
      */
     private final boolean uppercase;
@@ -137,9 +157,10 @@ public class RomanNumeral implements Fragment {
      */
     private final int value;
 
-    RomanNumeral(String value, boolean uppercase) {
+    RomanNumeral(String value, boolean uppercase, Boolean page) {
         this.value = parseInt(value);
         this.uppercase = uppercase;
+        this.page = page;
     }
 
     @Override
@@ -164,6 +185,6 @@ public class RomanNumeral implements Fragment {
      */
     @Override
     public String toString() {
-        return format(value, uppercase) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
+        return format(new HalfInteger(value, false)) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
     }
 }

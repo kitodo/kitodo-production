@@ -271,6 +271,8 @@ public class PaginationPanel {
                 "paginierung_spalte.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "sheetCounting",
                 "paginierung_blatt.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "sheetCountingWithEmptyPage",
+                "paginierung_blatt_leerseite.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "sheetCountingRectoVerso",
                 "paginierung_blatt_rectoverso.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.VERSORECTO_FOLIATION, "sheetCountingVersoRecto",
