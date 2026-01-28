@@ -83,34 +83,34 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement mappingFileFormatDialog;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newElementButton_button")
+    @FindBy(id = "newElementForm:newElementButton_button")
     private WebElement newElementButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newProjectButton")
+    @FindBy(id = "newElementForm:newProjectButton")
     private WebElement newProjectButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newLtpValidationConfigurationButton")
+    @FindBy(id = "newElementForm:newLtpValidationConfigurationButton")
     private WebElement newLtpValidationConfigurationButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newTemplateButton")
+    @FindBy(id = "newElementForm:newTemplateButton")
     private WebElement newTemplateButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newWorkflowButton")
+    @FindBy(id = "newElementForm:newWorkflowButton")
     private WebElement newWorkflowButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newDocketButton")
+    @FindBy(id = "newElementForm:newDocketButton")
     private WebElement newDocketButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectForm:newRulesetButton")
+    @FindBy(id = "newElementForm:newRulesetButton")
     private WebElement newRulesetButton;
 
-    @FindBy(id = "projectForm:newOpacConfigurationButton")
+    @FindBy(id = "newElementForm:newOpacConfigurationButton")
     private WebElement newImportConfigurationButton;
 
     @SuppressWarnings("unused")
@@ -142,27 +142,27 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement mappingFileOkButton;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/projectEdit.jsf?referer=projects&id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/projectEdit.jsf') and contains(@href, 'id=1')]")
     private WebElement editProjectLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/templateEdit.jsf?id=4']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/templateEdit.jsf') and contains(@href, 'id=4')]")
     private WebElement editTemplateLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/workflowEdit.jsf?id=2']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/workflowEdit.jsf') and contains(@href, 'id=2')]")
     private WebElement editWorkflowLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/docketEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/docketEdit.jsf') and contains(@href, 'id=1')]")
     private WebElement editDocketLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/rulesetEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/rulesetEdit.jsf') and contains(@href, 'id=1')]")
     private WebElement editRulesetLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/importConfigurationEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/importConfigurationEdit.jsf') and contains(@href, 'id=1')]")
     private WebElement editImportConfigurationLink;
 
     @SuppressWarnings("unused")

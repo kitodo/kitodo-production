@@ -23,8 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,48 +34,17 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
-import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 
-@Named("DocketForm")
-@SessionScoped
-public class DocketForm extends BaseForm {
+@Named("DocketEditView")
+@ViewScoped
+public class DocketEditView extends BaseEditView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "docketEdit");
+
     private Docket docket = new Docket();
-    private static final Logger logger = LogManager.getLogger(DocketForm.class);
-
-    private final String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
-
-    @Named("ProjectForm")
-    private final ProjectForm projectForm;
-
-    /**
-     * Default constructor with inject project form that also sets the
-     * LazyBeanModel instance of this bean.
-     *
-     * @param projectForm
-     *            managed bean
-     */
-    @Inject
-    public DocketForm(ProjectForm projectForm) {
-        super();
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getDocketService()));
-        this.projectForm = projectForm;
-        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
-    }
-
-    /**
-     * Creates a new Docket.
-     *
-     * @return the navigation String
-     */
-    public String newDocket() {
-        this.docket = new Docket();
-        this.docket.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
-        return docketEditPath;
-    }
-
+    private static final Logger logger = LogManager.getLogger(DocketEditView.class);
+    
     /**
      * Save docket.
      *
@@ -90,7 +58,7 @@ public class DocketForm extends BaseForm {
                     return this.stayOnCurrentPage;
                 }
                 ServiceManager.getDocketService().save(docket);
-                return projectsPage;
+                return DocketListView.VIEW_PATH +  "&" + getReferrerListOptions();
             } else {
                 Helper.setErrorMessage("docketNotFound");
                 return this.stayOnCurrentPage;
@@ -104,22 +72,6 @@ public class DocketForm extends BaseForm {
     private boolean hasValidRulesetFilePath(Docket d, String pathToRulesets) {
         File rulesetFile = new File(pathToRulesets + d.getFile());
         return rulesetFile.exists();
-    }
-
-    /**
-     * Delete docket.
-     */
-    public void delete() {
-        try {
-            if (hasAssignedProcessesOrTemplates(this.docket.getId())) {
-                Helper.setErrorMessage("docketInUse");
-            } else {
-                ServiceManager.getDocketService().remove(this.docket);
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger,
-                e);
-        }
     }
 
     private boolean existsDocketWithSameName() {
@@ -139,11 +91,6 @@ public class DocketForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcessesOrTemplates(int docketId) throws DAOException {
-        return !ServiceManager.getProcessService().findByDocket(docketId).isEmpty()
-                || !ServiceManager.getTemplateService().findByDocket(docketId).isEmpty();
-    }
-
     /**
      * Method being used as viewAction for docket edit form.
      *
@@ -153,7 +100,12 @@ public class DocketForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
+                // load existing docket
                 setDocket(ServiceManager.getDocketService().getById(id));
+            } else {
+                // new docket
+                this.docket = new Docket();
+                this.docket.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
             }
             setSaveDisabled(true);
         } catch (DAOException e) {

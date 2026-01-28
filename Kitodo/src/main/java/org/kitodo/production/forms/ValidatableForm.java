@@ -19,7 +19,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.primefaces.PrimeFaces;
 
-public class ValidatableForm extends BaseForm {
+public class ValidatableForm extends BaseEditView {
 
     protected String validationErrorTitle;
     protected String validationErrorDescription;

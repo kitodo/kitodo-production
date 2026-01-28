@@ -46,7 +46,7 @@
                         rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{project.id}" />
-                    <f:param name="referer" value="desktop"/>
+                    <f:param name="referrer" value="desktop"/>
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
                 <h:link styleClass="action"

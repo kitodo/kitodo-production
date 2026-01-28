@@ -31,7 +31,7 @@
             <h:form id="templateForm">
                 <p:dataTable var="item"
                              id="selectTemplateTable"
-                             value="#{ProjectForm.templates}"
+                             value="#{ProjectEditView.templates}"
                              lazy="true"
                              paginator="true"
                              rows="#{LoginForm.loggedUser.tableSize}"
@@ -45,7 +45,7 @@
                     </p:column>
                     <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                         <p:commandLink id="addTemplate"
-                                       action="#{ProjectForm.addTemplate}"
+                                       action="#{ProjectEditView.addTemplate}"
                                        styleClass="action"
                                        title="#{msgs.addTemplate}"
                                        update="editForm:projectTabView:templateTable"

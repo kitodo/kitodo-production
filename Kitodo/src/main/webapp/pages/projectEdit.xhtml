@@ -17,53 +17,63 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="duplicate" type="java.lang.Boolean"-->
+    <!--@elvariable id="referrer" type="java.lang.String"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProjectForm.loadProject(id)}"/>
-        <f:viewAction action="#{ProjectForm.setProjectEditReferer(request.getParameter('referer'))}"/>
+        <f:viewParam name="duplicate"/>
+        <f:viewParam name="referrer"/>
+        <f:viewAction action="#{ProjectEditView.loadProject(id, duplicate)}"/>
+        <f:viewAction action="#{ProjectEditView.setProjectEditReferrerFromTemplate(referrer)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{ProjectEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h:outputScript name="js/toggleLock.js" target="body"/>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
+            <h:outputText value="#{msgs.editProject} (#{ProjectEditView.project.title})"
                           styleClass="shortable"
-                          rendered="#{ProjectForm.project.id ne null}"/>
+                          rendered="#{ProjectEditView.project.id ne null}"/>
             <h:outputText value="#{msgs.newProject}"
                           styleClass="shortable"
-                          rendered="#{ProjectForm.project.id eq null and empty ProjectForm.project.title}"/>
+                          rendered="#{ProjectEditView.project.id eq null and empty ProjectEditView.project.title}"/>
             <h:outputText value="#{msgs.duplicateProject}"
                           styleClass="shortable"
-                          rendered="#{ProjectForm.project.id eq null and not empty ProjectForm.project.title}"/>
+                          rendered="#{ProjectEditView.project.id eq null and not empty ProjectEditView.project.title}"/>
         </h3>
         <p:commandButton
-                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
-                icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
+                value="#{ProjectEditView.locked ? msgs.locked : msgs.unlocked}"
+                icon="#{ProjectEditView.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
                 iconPos="right"
                 styleClass="callto"
                 id="detailLockedButton"
                 update="editForm"
-                action="#{ProjectForm.switchLock()}">
+                action="#{ProjectEditView.switchLock()}">
         </p:commandButton>
         <p:button value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="#{not empty param['referer'] ? param['referer'] : ProjectForm.projectEditReferer}"
+                  outcome="#{ProjectEditView.projectEditReferrerViewPath}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProjectForm.setSaveDisabled(false)}"
+                         actionListener="#{ProjectEditView.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{ProjectForm.save()}"
+                         action="#{ProjectEditView.save()}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{ProjectForm.saveDisabled}"
+                         disabled="#{ProjectEditView.saveDisabled}"
                          update="notifications editForm:error-messages"/>
     </ui:define>
 
@@ -72,8 +82,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="projectTabView" activeIndex="#{ProjectForm.editActiveTabIndex}">
-            <p:ajax event="tabChange" listener="#{ProjectForm.onEditTabChange}"/>
+        <p:tabView id="projectTabView" activeIndex="#{ProjectEditView.editActiveTabIndex}">
+            <p:ajax event="tabChange" listener="#{ProjectEditView.onEditTabChange}"/>
             <p:tab title="#{msgs.details}">
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditDetail.xhtml"/>
             </p:tab>
@@ -95,11 +105,11 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
-        <p:menuitem value="#{msgs.editProject}" rendered="#{not empty ProjectForm.project.title}" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs.editProject}" rendered="#{not empty ProjectEditView.project.title}" icon="fa fa-archive"/>
         <p:menuitem value="#{msgs.newProject}"
-                    rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}" icon="fa fa-archive"/>
+                    rendered="#{empty ProjectEditView.project.title and empty ProjectEditView.project.folders}" icon="fa fa-archive"/>
         <p:menuitem value="#{msgs.duplicateProject}"
-                    rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}" icon="fa fa-archive"/>
+                    rendered="#{empty ProjectEditView.project.title and not empty ProjectEditView.project.folders}" icon="fa fa-archive"/>
     </ui:define>
 
     <ui:define name="dialog">

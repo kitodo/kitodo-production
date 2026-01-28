@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,14 +25,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
 public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
-
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("active", "active");
-    }
 
     private static volatile WorkflowService instance = null;
 
@@ -80,7 +71,7 @@ public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
             Map<?, String> filtersNotImplemented) throws DAOException {
         BeanQuery beanQuery = new BeanQuery(Workflow.class);
         beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        beanQuery.defineSorting(sortField, sortOrder);
         return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 

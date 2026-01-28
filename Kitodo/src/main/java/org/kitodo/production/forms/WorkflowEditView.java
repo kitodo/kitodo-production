@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import org.apache.commons.io.IOUtils;
@@ -49,7 +49,6 @@ import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TemplateService;
@@ -57,15 +56,15 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
-import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
-@Named("WorkflowForm")
-@SessionScoped
-public class WorkflowForm extends BaseForm {
+@Named("WorkflowEditView")
+@ViewScoped
+public class WorkflowEditView extends BaseEditView {
 
-    private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
+
+    private static final Logger logger = LogManager.getLogger(WorkflowEditView.class);
     private Workflow workflow = new Workflow();
 
     private final transient DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
@@ -75,21 +74,13 @@ public class WorkflowForm extends BaseForm {
     private String xmlDiagram;
     private WorkflowStatus workflowStatus;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
-    private static final String SVG_EXTENSION = ".svg";
+    public static final String SVG_EXTENSION = ".svg";
     private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
     private static final String XML_DIAGRAM_URI = "xmlDiagramURI";
-    private final String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
+
     private Integer roleId;
     private boolean migration;
     private static final String MIGRATION_FORM_PATH = MessageFormat.format(REDIRECT_PATH,"system");
-
-    /**
-     * Constructor.
-     */
-    public WorkflowForm() {
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getWorkflowService()));
-        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
-    }
 
     /**
      * Get list of workflow statues for select list.
@@ -160,7 +151,7 @@ public class WorkflowForm extends BaseForm {
                     migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
                 }
-                return projectsPage;
+                return WorkflowListView.VIEW_PATH + "&" + getReferrerListOptions();
             } else {
                 return this.stayOnCurrentPage;
             }
@@ -234,7 +225,7 @@ public class WorkflowForm extends BaseForm {
             return MIGRATION_FORM_PATH;
         }
 
-        return "projects?keepPagination=true&faces-redirect=true";
+        return WorkflowListView.VIEW_PATH + "&" + getReferrerListOptions();
     }
 
     /**
@@ -331,7 +322,13 @@ public class WorkflowForm extends BaseForm {
         }
     }
 
-    private String decodeXMLDiagramName(String xmlDiagramName) {
+    /**
+     * Rewrite diagram filename to diagram name.
+     * 
+     * @param xmlDiagramName the filename
+     * @return the diagram name
+     */
+    public static String decodeXMLDiagramName(String xmlDiagramName) {
         if (xmlDiagramName.contains(BPMN_EXTENSION)) {
             return xmlDiagramName.replace(BPMN_EXTENSION, "");
         }
@@ -339,7 +336,13 @@ public class WorkflowForm extends BaseForm {
 
     }
 
-    private String encodeXMLDiagramName(String xmlDiagramName) {
+    /**
+     * Rewrite diagram name to file name.
+     * 
+     * @param xmlDiagramName the diagram name
+     * @return the filename
+     */
+    public static String encodeXMLDiagramName(String xmlDiagramName) {
         if (!xmlDiagramName.contains(BPMN_EXTENSION)) {
             return xmlDiagramName + BPMN_EXTENSION;
         }
@@ -351,26 +354,12 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
-     * Create new workflow.
-     *
-     * @return page
-     */
-    public String newWorkflow() {
-        this.workflow = new Workflow();
-        this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
-        return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
-    }
-
-    /**
      * Duplicate the selected workflow.
      *
      * @param itemId
      *            ID of the workflow to duplicate
-     * @return page address; either redirect to the edit workflow page or return
-     *         'null' if the workflow could not be retrieved, which will prompt JSF
-     *         to remain on the same page and reuse the bean.
      */
-    public String duplicate(Integer itemId) {
+    public void loadAsDuplicate(Integer itemId) {
         try {
             Workflow baseWorkflow = ServiceManager.getWorkflowService().getById(itemId);
 
@@ -389,13 +378,10 @@ public class WorkflowForm extends BaseForm {
                 saveFile(xmlDiagramCopyURI, this.xmlDiagram);
             } catch (IOException e) {
                 Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
-                return this.stayOnCurrentPage;
             }
-            return workflowEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
                 logger, e);
-            return this.stayOnCurrentPage;
         }
     }
 
@@ -419,23 +405,30 @@ public class WorkflowForm extends BaseForm {
      * parameter 'id' is '0', the form for creating a new workflow will be
      * displayed.
      *
-     * @param id
-     *            of the workflow to load
+     * @param id of the workflow to load
+     * @param duplicate whether to duplicate the workflow
      */
-    public void load(int id) {
-        try {
-            if (!Objects.equals(id, 0)) {
-                Workflow workflow = ServiceManager.getWorkflowService().getById(id);
-                setWorkflow(workflow);
-                setWorkflowStatus(workflow.getStatus());
-                readXMLDiagram();
-                this.dataEditorSettingsDefined = this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow);
+    public void load(Integer id, Boolean duplicate) {
+        if (Objects.nonNull(duplicate) && duplicate) {
+            loadAsDuplicate(id);
+        } else {
+            if (Objects.nonNull(id) && !Objects.equals(id, 0)) {
+                try {
+                    Workflow workflow = ServiceManager.getWorkflowService().getById(id);
+                    setWorkflow(workflow);
+                    setWorkflowStatus(workflow.getStatus());
+                    readXMLDiagram();
+                    this.dataEditorSettingsDefined = this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow);
+                } catch (DAOException e) {
+                    Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                        logger, e);
+                }
+            } else {
+                this.workflow = new Workflow();
+                this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
             }
-            setSaveDisabled(false);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
-                logger, e);
         }
+        setSaveDisabled(false);
     }
 
     /**

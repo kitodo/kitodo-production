@@ -20,38 +20,38 @@
     <p:dataTable id="rulesetTable"
                  styleClass="default-layout"
                  var="item"
-                 value="#{RulesetForm.lazyBeanModel}"
-                 first="#{RulesetForm.firstRow}"
+                 value="#{RulesetListView.lazyBeanModel}"
+                 first="#{RulesetListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{RulesetForm.sortBy}"
+                 sortBy="#{RulesetListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page"
-                listener="#{RulesetForm.onPageChange}"/>
+        <p:ajax event="page" listener="#{RulesetListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{RulesetListView.onSortChange}"/>
 
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{item.title.keyword}"
-                  rendered="#{ProjectForm.showColumn('ruleset.title')}">
+                  sortBy="#{item.title}"
+                  rendered="#{RulesetListView.showColumn('ruleset.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
-                  sortBy="#{item.file.keyword}"
-                  rendered="#{ProjectForm.showColumn('ruleset.filename')}">
+                  sortBy="#{item.file}"
+                  rendered="#{RulesetListView.showColumn('ruleset.filename')}">
             <h:outputText value="#{item.file}"
                           title="#{item.file}"/>
         </p:column>
 
         <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial;"
                   sortBy="#{item.orderMetadataByRuleset}"
-                  rendered="#{ProjectForm.showColumn('ruleset.sorting')}">
+                  rendered="#{RulesetListView.showColumn('ruleset.sorting')}">
             <ui:fragment rendered="#{item.orderMetadataByRuleset}">
                 <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
             </ui:fragment>
@@ -71,6 +71,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRuleset() and not SecurityAccessController.hasAuthorityToEditRuleset()}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerListOptions" value="#{RulesetListView.combinedListOptions}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
                 <h:link id="editRuleset"
@@ -79,18 +80,18 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditRuleset()}">
                     <f:param name="id" value="#{item.id}" />
+                    <f:param name="referrerListOptions" value="#{RulesetListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteRuleset"
-                               action="#{RulesetForm.delete}"
+                               action="#{RulesetListView.delete(item)}"
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteRuleset()}"
                                update="rulesetTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{RulesetForm.rulesetById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{RulesetForm.formatString('confirmDeleteRuleset', item.title)}"
+                               message="#{RulesetListView.formatString('confirmDeleteRuleset', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

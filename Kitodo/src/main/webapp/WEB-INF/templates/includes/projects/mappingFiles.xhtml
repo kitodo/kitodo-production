@@ -33,6 +33,9 @@
                 currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                 paginatorPosition="bottom">
 
+      <p:ajax event="page" listener="#{MappingFileListView.onPageChange}"/>
+      <p:ajax event="sort" listener="#{MappingFileListView.onSortChange}"/>
+
       <p:column headerText="#{msgs.title}"
                 sortBy="#{item.title}">
          <h:outputText value="#{item.title}"
@@ -81,6 +84,7 @@
                     title="#{msgs.view}"
                     rendered="#{SecurityAccessController.hasAuthorityToViewMappingFile() and not SecurityAccessController.hasAuthorityToEditMappingFile()}">
                <f:param name="id" value="#{item.id}"/>
+               <f:param name="referrerListOptions" value="#{MappingFileListView.combinedListOptions}" />
                <i class="fa fa-eye fa-lg"/>
             </h:link>
 
@@ -90,6 +94,7 @@
                     title="#{msgs.edit}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditMappingFile()}">
                <f:param name="id" value="#{item.id}"/>
+               <f:param name="referrerListOptions" value="#{MappingFileListView.combinedListOptions}" />
                <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
 

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,8 @@ import org.xml.sax.SAXException;
 @Named
 @ViewScoped
 public class MappingFileEditView extends ValidatableForm {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "mappingFileEdit");
 
     private static final Logger logger = LogManager.getLogger(MappingFileEditView.class);
     private MappingFile mappingFile = new MappingFile();
@@ -73,7 +76,7 @@ public class MappingFileEditView extends ValidatableForm {
         try {
             ServiceManager.getFileStructureValidationService().validateMappingFile(mappingFile);
             ServiceManager.getMappingFileService().save(mappingFile);
-            return projectsPage;
+            return MappingFileListView.VIEW_PATH +  "&" + getReferrerListOptions();
         } catch (FileStructureValidationException e) {
             setValidationErrorTitle(Helper.getTranslation("validation.invalidMappingFile"));
             showValidationExceptionDialog(e, null);

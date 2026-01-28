@@ -20,30 +20,30 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.title}" />
                 <p:inputText id="title" placeholder="#{msgs.title}" class="input"
-                             value="#{ProjectForm.project.title}"
-                             disabled="#{ProjectForm.locked}"
+                             value="#{ProjectEditView.project.title}"
+                             disabled="#{ProjectEditView.locked}"
                              required="#{not empty param['editForm:save']}">
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />
-                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjectForm.project.numberOfPages}"
-                             disabled="#{ProjectForm.locked}">
+                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjectEditView.project.numberOfPages}"
+                             disabled="#{ProjectEditView.locked}">
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="band" value="#{msgs.numberVolumes}" />
-                <p:inputText id="band" placeholder="1" class="input" value="#{ProjectForm.project.numberOfVolumes}"
-                             disabled="#{ProjectForm.locked}">
+                <p:inputText id="band" placeholder="1" class="input" value="#{ProjectEditView.project.numberOfVolumes}"
+                             disabled="#{ProjectEditView.locked}">
                 </p:inputText>
             </div>
-            <ui:fragment rendered="#{ProjectForm.copyTemplates}">
+            <ui:fragment rendered="#{ProjectEditView.copyTemplates}">
                 <div>
                     <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
                     <p:selectBooleanCheckbox id="copyTemplates"
                                              styleClass="switch input"
-                                             value="#{ProjectForm.copyTemplates}"
-                                             disabled="#{ProjectForm.locked}">
+                                             value="#{ProjectEditView.copyTemplates}"
+                                             disabled="#{ProjectEditView.locked}">
                         <p:ajax event="change" oncomplete="toggleSave()" />
                     </p:selectBooleanCheckbox>
                 </div>
@@ -52,8 +52,8 @@
                 <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
                 <p:selectBooleanCheckbox id="projectIsActive"
                                          styleClass="switch input"
-                                         value="#{ProjectForm.project.active}"
-                                         disabled="#{ProjectForm.locked}">
+                                         value="#{ProjectEditView.project.active}"
+                                         disabled="#{ProjectEditView.locked}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
@@ -63,10 +63,10 @@
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
                 <p:datePicker id="startdate"
                               styleClass="input-with-button"
-                              value="#{ProjectForm.project.startDate}"
+                              value="#{ProjectEditView.project.startDate}"
                               showOn="button"
                               showIcon="true"
-                              disabled="#{ProjectForm.locked}">
+                              disabled="#{ProjectEditView.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
                 </p:datePicker>
             </div>
@@ -74,10 +74,10 @@
                 <p:outputLabel for="enddate" value="#{msgs.endDate}" />
                 <p:datePicker id="enddate"
                               styleClass="input-with-button"
-                              value="#{ProjectForm.project.endDate}"
+                              value="#{ProjectEditView.project.endDate}"
                               showOn="button"
                               showIcon="true"
-                            disabled="#{ProjectForm.locked}">
+                            disabled="#{ProjectEditView.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
                 </p:datePicker>
             </div>
@@ -87,8 +87,8 @@
                                minValue="1"
                                decimalPlaces="0"
                                class="input"
-                               value="#{ProjectForm.project.filenameLength}"
-                               disabled="#{ProjectForm.locked}">
+                               value="#{ProjectEditView.project.filenameLength}"
+                               disabled="#{ProjectEditView.locked}">
                 </p:inputNumber>
             </div>
         </p:panel>

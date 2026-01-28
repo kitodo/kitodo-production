@@ -38,16 +38,6 @@ import org.primefaces.model.SortOrder;
 
 public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
 
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title", "title");
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("metsRightsOwner.keyword", "metsRightsOwner");
-        SORT_FIELD_MAPPING.put("active", "active");
-    }
-
     private static volatile ProjectService instance = null;
 
     private final UserService userService = ServiceManager.getUserService();
@@ -116,7 +106,7 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
             sortOrder = SortOrder.ASCENDING;
         }
         BeanQuery query = getProjectsQuery();
-        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        query.defineSorting(sortField, sortOrder);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
 
