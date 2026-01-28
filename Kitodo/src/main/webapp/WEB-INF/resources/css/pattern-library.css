@@ -1003,7 +1003,7 @@ body .ui-spinner .ui-spinner-button.ui-button.ui-state-hover {
     line-height: 0;
 }
 
-.ui-datatable tr.deactivated {
+body .ui-datatable tr.deactivated {
     color: var(--medium-gray);
 }
 
