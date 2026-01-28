@@ -2375,15 +2375,62 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
+     * Finds all process IDs that have at least one child process.
+     *
+     * @param processIds process IDs to check
+     * @return IDs of processes that have children
+     */
+    public Set<Integer> findProcessIdsWithChildren(Collection<Integer> processIds) throws DAOException {
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        String hql = "SELECT DISTINCT p.parent.id "
+                        + "FROM Process p "
+                        + "WHERE p.parent.id IN (:ids)";
+
+        Map<String, Object> parameters = Map.of("ids", processIds);
+        List<Object[]> rows = dao.getProjectionByQuery(hql, parameters);
+        return rows.stream()
+                .map(row -> (Integer) row[0])
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Finds all process IDs that have at least one visible task
+     * for the given roles.
+     *
+     * @param processIds process IDs to check
+     * @param roleIds role IDs used to determine task visibility
+     * @return IDs of processes that have visible tasks
+     */
+    public Set<Integer> findProcessIdsWithVisibleTasks(
+            Collection<Integer> processIds,
+            Collection<Integer> roleIds) throws DAOException {
+        String hql =
+                "SELECT DISTINCT t.process.id "
+                        + "FROM Task t "
+                        + "JOIN t.roles r "
+                        + "WHERE t.process.id IN (:processIds) "
+                        + "AND t.processingStatus IN (:statuses) "
+                        + "AND r.id IN (:roleIds)";
+
+        Map<String, Object> params = Map.of(
+                "processIds", processIds,
+                "roleIds", roleIds,
+                "statuses", List.of(TaskStatus.OPEN, TaskStatus.INWORK)
+        );
+        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
+        return rows.stream()
+                .map(row -> (Integer) row[0])
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Checks and returns whether the process with the given ID 'processId' can be exported or not.
      * @param process the process
      * @return whether process can be exported or not
      */
     public static boolean canBeExported(Process process) throws DAOException {
-        // superordinate processes normally do not contain images but should always be exportable
-        if (process.hasChildren()) {
-            return true;
-        }
         Folder generatorSource = process.getProject().getGeneratorSource();
         // processes without a generator source should be exportable because they may contain multimedia files
         // that are not used as generator sources
