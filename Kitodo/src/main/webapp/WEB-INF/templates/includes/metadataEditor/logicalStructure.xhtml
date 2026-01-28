@@ -156,7 +156,7 @@
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
             <p:menuitem value="#{msgs.addElement}"
-                        rendered="#{DataEditorForm.structurePanel.isAddingElementOrLinkingProcessPossible()}"
+                        rendered="#{DataEditorForm.structurePanel.isAddingElementPossible()}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -168,7 +168,7 @@
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
             <p:menuitem value="#{msgs['dataEditor.linkProcess']}"
-                        rendered="#{DataEditorForm.structurePanel.isAddingElementOrLinkingProcessPossible()}"
+                        rendered="#{DataEditorForm.structurePanel.isLinkingProcessPossible()}"
                         styleClass="plain link-process"
                         disabled="#{readOnly}"
                         icon="fa fa-external-link fa-sm"

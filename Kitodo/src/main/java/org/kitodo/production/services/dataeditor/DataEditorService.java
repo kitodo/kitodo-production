@@ -609,4 +609,37 @@ public class DataEditorService {
         }
         return null;
     }
+
+    /**
+     * Checks whether conditions are met for displaying the context menu option to link another process as a
+     * subordinate process.
+     * The conditions are:
+     * - no media is selected
+     * - exactly one logical node is selected
+     * - selected logical node does not already represent a linked process
+     * - Logical structure represented by the selected node has allowed substructures that are defined as document types
+     *   in the current ruleset
+     * @param dataEditor DataEditorForm instance used to determine conditions
+     * @param treeNode TreeNode representing the selected structure
+     * @return whether the option to link a process is displayed
+     */
+    public boolean linkingProcessPossible(DataEditorForm dataEditor, TreeNode<?> treeNode) {
+        List<?> selectedMedia = dataEditor.getSelectedMedia();
+        if (Objects.nonNull(treeNode) && selectedMedia.isEmpty()) {
+            Object data = treeNode.getData();
+            if (data instanceof StructureTreeNode structureTreeNode) {
+                if (structureTreeNode.getDataObject() instanceof LogicalDivision logicalDivision) {
+                    RulesetManagementInterface ruleset = dataEditor.getRulesetManagement();
+                    List<Locale.LanguageRange> locales = dataEditor.getPriorityList();
+                    Map<String, String> documentTypes = ruleset.getStructuralElements(locales);
+                    StructuralElementViewInterface structureElement = ruleset.getStructuralElementView(logicalDivision.getType(),
+                            dataEditor.getAcquisitionStage(), locales);
+                    Map<String, String> allowedSubstructures = structureElement.getAllowedSubstructuralElements();
+                    allowedSubstructures.keySet().retainAll(documentTypes.keySet());
+                    return (!(structureTreeNode.isLinked() || allowedSubstructures.isEmpty()));
+                }
+            }
+        }
+        return false;
+    }
 }
