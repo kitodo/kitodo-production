@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.PersistenceException;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -222,7 +222,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
-            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
+            if (logger.isTraceEnabled() && !Strings.CI.contains(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
@@ -248,7 +248,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             debugLogQuery(query, Collections.emptyMap());
             Query<T> queryObject = session.createQuery(query);
-            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
+            if (logger.isTraceEnabled() && !Strings.CI.contains(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
@@ -276,7 +276,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             debugLogQuery(query, parameters);
             Query<String> queryObject = session.createQuery(query);
             addParameters(queryObject, parameters);
-            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
+            if (logger.isTraceEnabled() && !Strings.CI.contains(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }
@@ -496,7 +496,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try (Session session = HibernateUtil.getSession()) {
             String query = String.format("FROM %s ORDER BY id ASC", cls.getSimpleName());
             debugLogQuery(query, Collections.emptyMap());
-            if (logger.isTraceEnabled() && !StringUtils.containsIgnoreCase(query, " WHERE ")) {
+            if (logger.isTraceEnabled() && !Strings.CI.contains(query, " WHERE ")) {
                 logger.trace("Probable performance issue:", new Throwable(
                         "Location where the code loads ALL object instances"));
             }

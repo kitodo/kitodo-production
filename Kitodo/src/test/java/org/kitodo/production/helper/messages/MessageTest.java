@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class MessageTest {
 
-    private final Locale locale = new Locale("EN");
+    private final Locale locale = Locale.of("EN");
     private final String customBundle = "test_messages";
     private final String defaultBundle = "messages.messages";
 
