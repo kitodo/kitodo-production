@@ -216,4 +216,26 @@ public class PaginatorTest {
         assertEquals("c r", paginator.next());
         assertEquals("c v", paginator.next());
     }
+
+    @Test
+    public void foliationWithEmptyPage() {
+        Paginator paginator = new Paginator("¿UNCOUNTED¡1½");
+        assertEquals("1", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+        assertEquals("2", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+
+        paginator = new Paginator("¿UNCOUNTED¡VI½");
+        assertEquals("VI", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+        assertEquals("VII", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+
+        paginator = new Paginator("¿UNCOUNTED¡´z´½");
+        assertEquals("z", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+        assertEquals("aa", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+    }
+
 }
