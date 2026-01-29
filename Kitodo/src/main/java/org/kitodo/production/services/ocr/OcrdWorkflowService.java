@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -81,7 +82,7 @@ public class OcrdWorkflowService {
     private static Pair<?, ?> getImmutablePairFromPath(Path filePath, Path ocrdWorkflowsDirectory) {
         String path = filePath.toString();
         path = path.replace(ocrdWorkflowsDirectory.toString(), StringUtils.EMPTY);
-        path = StringUtils.removeStart(path, "/");
+        path = Strings.CS.removeStart(path, "/");
         return ImmutablePair.of(path, path);
     }
 
