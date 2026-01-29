@@ -55,7 +55,7 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return "[" + value + "½]";
+                return '[' + value + "½]";
             } else {
                 return value.concat("½");
             }
@@ -115,7 +115,7 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return "[" + value + "°]¡r¿`v`½";
+                return '[' + value + "°]¡r¿`v`½";
             } else {
                 return value.concat("°¡r¿`v`½");
             }
