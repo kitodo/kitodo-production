@@ -636,7 +636,7 @@ public class DataEditorService {
                             dataEditor.getAcquisitionStage(), locales);
                     Map<String, String> allowedSubstructures = structureElement.getAllowedSubstructuralElements();
                     allowedSubstructures.keySet().retainAll(documentTypes.keySet());
-                    return (!(structureTreeNode.isLinked() || allowedSubstructures.isEmpty()));
+                    return !structureTreeNode.isLinked() && !allowedSubstructures.isEmpty();
                 }
             }
         }
