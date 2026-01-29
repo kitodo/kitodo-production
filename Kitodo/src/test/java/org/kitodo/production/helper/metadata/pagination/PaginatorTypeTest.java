@@ -222,6 +222,16 @@ public class PaginatorTypeTest {
     }
 
     @Test
+    public void testArabicFormatFoliationWithEmptyPage() {
+        assertEquals("¿UNCOUNTED¡1½", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", false, UNUSED_STRING));
+    }
+
+    @Test
+    public void testArabicFormatFoliationWithEmptyPageFictious() {
+        assertEquals("[¿UNCOUNTED¡1½]", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", true, UNUSED_STRING));
+    }
+
+    @Test
     public void testFreetextFormatColumns() {
         assertEquals("`Hello world!`²",
             PaginatorType.FREETEXT.format(PaginatorMode.COLUMNS, HELLO_WORLD_STRING, false, UNUSED_STRING));
@@ -484,6 +494,11 @@ public class PaginatorTypeTest {
     }
 
     @Test
+    public void testRomanFormatFoliationWithEmptyPage() {
+        assertEquals("¿UNCOUNTED¡III½", PaginatorType.ROMAN.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "3", false, UNUSED_STRING));
+    }
+
+    @Test
     public void testAlphabeticFormatColumnsFictious() {
         assertEquals("[´e´²]", PaginatorType.ALPHABETIC.format(PaginatorMode.COLUMNS, "e", true, UNUSED_STRING));
     }
@@ -508,7 +523,13 @@ public class PaginatorTypeTest {
         assertEquals("´m´°¡r¿`v`½", PaginatorType.ALPHABETIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "m", false, UNUSED_STRING));
     }
 
-
+    @Test
+    public void testAlphabeticFormatFoliationWithEmptyPage() {
+        assertEquals(
+                "¿UNCOUNTED¡´x´½",
+                PaginatorType.ALPHABETIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "x", false, UNUSED_STRING)
+        );
+    }
 
     @Test
     public void testUncountedFormatColumns() {
