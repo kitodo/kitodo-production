@@ -88,7 +88,7 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
 
         // click on edit button of first ltp validation configuration
         Browser.getDriver()
-                .findElementById("ltpValidationConfigurationsTable:0:actionForm:editLtpValidationConfiguration")
+                .findElement(By.id("ltpValidationConfigurationsTable:0:actionForm:editLtpValidationConfiguration"))
                 .click();
         pollAssertTrue(() -> Pages.getLtpValidationConfigurationEditPage().isDisplayed());
 
@@ -145,7 +145,7 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
 
         // click edit button of newly created configuration
         Browser.getDriver()
-                .findElementById("ltpValidationConfigurationsTable:1:actionForm:editLtpValidationConfiguration")
+                .findElement(By.id("ltpValidationConfigurationsTable:1:actionForm:editLtpValidationConfiguration"))
                 .click();
         pollAssertTrue(() -> Pages.getLtpValidationConfigurationEditPage().isDisplayed());
 
@@ -173,7 +173,7 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
         // delete newly created ltp configuration
         Pages.getProjectsPage().goTo().goToLtpValidationConfigurationsTab();
         Browser.getDriver()
-                .findElementById("ltpValidationConfigurationsTable:1:actionForm:deleteLtpValidationConfiguration")
+                .findElement(By.id("ltpValidationConfigurationsTable:1:actionForm:deleteLtpValidationConfiguration"))
                 .click();
         pollAssertTrue(() -> Browser.getDriver().findElement(By.id("deleteConfirmDialog_content")).getText()
                 .contains("Wellformed Gif"));
@@ -235,6 +235,6 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
      * projects page.
      */
     private WebElement getLtpValidationConfigurationTable() {
-        return Browser.getDriver().findElementById(LTP_VALIDATION_CONFIGURATION_TABLE_ID);
+        return Browser.getDriver().findElement(By.id(LTP_VALIDATION_CONFIGURATION_TABLE_ID));
     }
 }

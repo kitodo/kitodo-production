@@ -414,7 +414,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private void setDownloadDocketLink() {
         int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
-        downloadDocketLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":downloadDocket");
+        downloadDocketLink = Browser.getDriver().findElement(By.id(PROCESSES_TABLE + ":" + index + ":downloadDocket"));
     }
 
     /**
@@ -423,12 +423,12 @@ public class ProcessesPage extends Page<ProcessesPage> {
      */
     private void setEditMetadataLink(String processTitle) {
         int index = getRowIndex(processesTable, processTitle, 3);
-        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
+        editMetadataLink = Browser.getDriver().findElement(By.id(PROCESSES_TABLE + ":" + index + ":editMetadata"));
     }
 
     private void setDownloadLogLink() {
         int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
-        downloadLogLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":exportLogXml");
+        downloadLogLink = Browser.getDriver().findElement(By.id(PROCESSES_TABLE + ":" + index + ":exportLogXml"));
     }
 
     /**
@@ -512,7 +512,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
      */
     public void goToCalendar(int processId) throws Exception {
         String xpath = String.format(CALENDER_ACTION_XPATH, processId);
-        WebElement openCalendarLink = Browser.getDriver().findElementByXPath(xpath);
+        WebElement openCalendarLink = Browser.getDriver().findElement(By.xpath(xpath));
         if (isNotAt()) {
             goTo();
         }

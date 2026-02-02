@@ -15,6 +15,7 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -193,7 +194,7 @@ public abstract class Page<T> {
      *            the url to which is redirected after click
      */
     protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
-        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
+        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(60));
         for (int attempt = 1; attempt < 4; attempt++) {
             try {
                 await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
@@ -272,7 +273,7 @@ public abstract class Page<T> {
                 .until(() -> confirmRemoveButton.isDisplayed());
         confirmRemoveButton.click();
         Thread.sleep(Browser.getDelayAfterDelete());
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(60));
         wait.until(ExpectedConditions.urlContains(getUrl()));
     }
 

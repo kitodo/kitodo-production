@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -409,7 +410,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection"), 1000, 1000, 5);
         // click first option
         clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"), 1000, 500, 3);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 3);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(3));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1")));
         // add structure element with selected type by clicking "accept"/"apply" button
         Thread.sleep(1000);
