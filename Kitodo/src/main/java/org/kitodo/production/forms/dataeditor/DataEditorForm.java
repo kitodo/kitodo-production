@@ -110,6 +110,8 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     private final ChangeDocStrucTypeDialog changeDocStrucTypeDialog;
 
+    private final LinkProcessDialog linkProcessDialog;
+
     /**
      * Backing bean for the edit pages dialog.
      */
@@ -250,6 +252,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
         this.uploadFileDialog = new UploadFileDialog(this);
+        this.linkProcessDialog = new LinkProcessDialog(this);
     }
 
     /**
@@ -695,6 +698,10 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public ChangeDocStrucTypeDialog getChangeDocStrucTypeDialog() {
         return changeDocStrucTypeDialog;
+    }
+
+    public LinkProcessDialog getLinkProcessDialog() {
+        return linkProcessDialog;
     }
 
     /**

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
@@ -1233,6 +1235,36 @@ public class StructurePanel implements Serializable {
             // multiple logical tree nodes are selected
             return false;
         }
+    }
+
+    /**
+     * Checks whether conditions are met for displaying the context menu option to add a new structure element is
+     * displayed for the currently selected node(s) in the logical structure tree.
+     * The conditions are:
+     * - no media is selected
+     * - exactly one logical node is selected
+     * - the selected node does not already represent a linked process
+     * @return whether the option to add a new structure element is displayed
+     */
+    public boolean isAddingElementPossible() {
+        List<?> selectedMedia = dataEditor.getSelectedMedia();
+        TreeNode<?> selectedLogicalNode = getSelectedLogicalNodeIfSingle();
+        if (Objects.nonNull(selectedLogicalNode) && selectedMedia.isEmpty()) {
+            if (selectedLogicalNode.getData() instanceof StructureTreeNode structureTreeNode) {
+                return (!structureTreeNode.isLinked());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether conditions are met for displaying the context menu option to link another process as a
+     * subordinate process.
+     *
+     * @return whether the option to link another process is displayed
+     **/
+    public boolean isLinkingProcessPossible() {
+        return ServiceManager.getDataEditorService().linkingProcessPossible(dataEditor, getSelectedLogicalNodeIfSingle());
     }
 
     /**
