@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -31,6 +34,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.SessionNotCreatedException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -87,21 +91,60 @@ public class Browser {
 
         if (!driverFile.exists()) {
             logger.debug("{} does not exist, providing chrome driver now", driverFile.getAbsolutePath());
-            WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR);
+            WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR, null);
         }
 
-        ChromeDriverService service = new ChromeDriverService.Builder()
+        ChromeDriverService service = getChromeDriverService(driverFile);
+        ChromeOptions options = getChromeOptions();
+
+        try {
+            webDriver = new ChromeDriver(service, options);
+        } catch (SessionNotCreatedException e) {
+            logger.error("SessionNotCreatedException encountered: Chrome driver could not be started");
+            String exceptionMessage = e.getMessage();
+            if (Objects.nonNull(exceptionMessage) && exceptionMessage.contains("Current browser version is")) {
+                Pattern pattern = Pattern.compile(".*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*");
+                Matcher matcher = pattern.matcher(exceptionMessage);
+                if (matcher.find()) {
+                    String version = matcher.group(1);
+                    logger.error("Trying to download Chrome driver for installed Chrome version: {}", version);
+                    WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR, version);
+                    service = getChromeDriverService(driverFile);
+                    options = getChromeOptions();
+                    try {
+                        webDriver = new ChromeDriver(service, options);
+                    } catch (SessionNotCreatedException sessionNotCreatedException) {
+                        escalateSessionNotCreatedException("SessionNotCreatedException encountered: Chrome driver could not be started: "
+                                + sessionNotCreatedException.getMessage());
+                    }
+                } else {
+                    escalateSessionNotCreatedException("ERROR: unable to extract Chrome version from exception message!");
+                }
+            } else {
+                escalateSessionNotCreatedException("ERROR: exception message does not contain information about current Chrome version!");
+            }
+        }
+    }
+
+    private static void escalateSessionNotCreatedException(String exceptionMessage) {
+        logger.error(exceptionMessage);
+        throw new RuntimeException(exceptionMessage);
+    }
+
+    private static ChromeDriverService getChromeDriverService(File driverFile) {
+        return new ChromeDriverService.Builder()
                 .usingDriverExecutable(driverFile)
                 .usingAnyFreePort()
                 .build();
+    }
 
+    private static ChromeOptions getChromeOptions() {
         Map<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("download.default_directory", DOWNLOAD_DIR);
         chromePrefs.put("download.prompt_for_download", false);
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("prefs", chromePrefs);
-
-        webDriver = new ChromeDriver(service, options);
+        return options;
     }
 
     private static File getDriverFile() {

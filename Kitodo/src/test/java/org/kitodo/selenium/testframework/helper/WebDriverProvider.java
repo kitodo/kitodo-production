@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -118,24 +119,31 @@ public class WebDriverProvider {
      *            The folder in which the downloaded files will be put in.
      *  @param extractFolder
      *            The folder in which the extracted files will be put in.
+     * @param installedChromeVersion
+     *            The version of chrome that is installed on the system.
      */
-    public static void provideChromeDriver(String downloadFolder, String extractFolder)
+    public static void provideChromeDriver(String downloadFolder, String extractFolder, String installedChromeVersion)
             throws IOException {
-        String chromeDriverVersion = fetchLatestStableChromeDriverVersion();
+        String chromeDriverVersion = installedChromeVersion;
+        if (Objects.isNull(chromeDriverVersion)) {
+            chromeDriverVersion = fetchLatestStableChromeDriverVersion();
+        }
         String chromeDriverUrl = CHROME_FOR_TESTING_URL + chromeDriverVersion + '/';
         String driverFilename = CHROME_DRIVER;
         File chromeDriverFile;
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFilename = driverFilename + EXE;
             File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_WIN_SUBDIR + File.separator + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + '/'
-                    + CHROME_DRIVER_WIN_SUBDIR + ZIP), chromeDriverZipFile);
+            URL chromeUrl = new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + '/' + CHROME_DRIVER_WIN_SUBDIR + ZIP);
+            logger.info("Downloading ChromeDriver for Windows from {}", chromeUrl);
+            FileUtils.copyURLToFile(chromeUrl, chromeDriverZipFile);
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_WIN_SUBDIR);
         } else if (SystemUtils.IS_OS_MAC_OSX) {
             File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_MAC_SUBDIR + File.separator + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_MAC_PREFIX + File.separator
-                    + CHROME_DRIVER_MAC_SUBDIR + ZIP), chromeDriverZipFile);
+            URL chromeUrl = new URL(chromeDriverUrl + CHROME_DRIVER_MAC_PREFIX + File.separator + CHROME_DRIVER_MAC_SUBDIR + ZIP);
+            logger.info("Downloading ChromeDriver for MACOS from {}", chromeUrl);
+            FileUtils.copyURLToFile(chromeUrl, chromeDriverZipFile);
             File theDir = new File(extractFolder);
             if (!theDir.exists()) {
                 if (!theDir.mkdir()) {
@@ -146,8 +154,9 @@ public class WebDriverProvider {
                     CHROME_DRIVER_MAC_SUBDIR);
         } else {
             File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_LINUX_SUBDIR + File.separator + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_LINUX_PREFIX + File.separator
-                    + CHROME_DRIVER_LINUX_SUBDIR + ZIP), chromeDriverZipFile);
+            URL chromeUrl = new URL(chromeDriverUrl + CHROME_DRIVER_LINUX_PREFIX + File.separator + CHROME_DRIVER_LINUX_SUBDIR + ZIP);
+            logger.info("Downloading ChromeDriver for Linux from {}", chromeUrl);
+            FileUtils.copyURLToFile(chromeUrl, chromeDriverZipFile);
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_LINUX_SUBDIR);
         }
