@@ -73,13 +73,11 @@ public class CopierData {
     /**
      * Creates a new CopierData bean.
      *
-     * @param fileformat
+     * @param fileFormat
      *            the document to modify
-     * @param template
-     *            the related Production process
      */
-    public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
-        this.fileformat = fileformat;
+    public CopierData(LegacyMetsModsDigitalDocumentHelper fileFormat) {
+        this.fileformat = fileFormat;
         this.destination = null;
         this.process = new Process();
     }
