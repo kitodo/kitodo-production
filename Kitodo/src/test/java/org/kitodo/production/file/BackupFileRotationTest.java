@@ -34,8 +34,8 @@ import org.kitodo.production.services.file.FileService;
 public class BackupFileRotationTest {
 
     private static final String BACKUP_FILE_NAME = "testMeta.xml";
-    private static ProcessService processService = ServiceManager.getProcessService();
-    private static FileService fileService = new FileService();
+    private static final ProcessService processService = ServiceManager.getProcessService();
+    private static final FileService fileService = new FileService();
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -220,14 +220,16 @@ public class BackupFileRotationTest {
     }
 
     private void assertFileHasContent(String fileName, String expectedContent) throws IOException {
-        InputStreamReader inputStreamReader = new InputStreamReader(fileService.read(URI.create(fileName)));
-        BufferedReader br = new BufferedReader(inputStreamReader);
-        String line;
-        StringBuilder content = new StringBuilder();
-        while ((line = br.readLine()) != null) {
-            content.append(line);
+        StringBuilder content;
+        try (InputStreamReader inputStreamReader = new InputStreamReader(fileService.read(URI.create(fileName)))) {
+            BufferedReader br = new BufferedReader(inputStreamReader);
+            String line;
+            content = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                content.append(line);
+            }
+            br.close();
         }
-        br.close();
         assertEquals(expectedContent, content.toString(), "File " + fileName + " does not contain expected content:");
     }
 
