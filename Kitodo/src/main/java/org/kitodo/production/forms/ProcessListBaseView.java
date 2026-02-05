@@ -214,10 +214,6 @@ public class ProcessListBaseView extends BaseForm {
         Map<TaskStatus, List<String>> titles =
                 getLazyProcessModel().getTaskTitleCache().get(process.getId());
 
-        if (hasChildren(process)) {
-            return null;
-        }
-
         if (Objects.isNull(titles) || titles.isEmpty()) {
             return "";
         }
