@@ -363,7 +363,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         searchTermInput.sendKeys(searchTerm);
     }
 
-    public ProcessesPage save() throws IllegalAccessException, InstantiationException {
+    public ProcessesPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
@@ -372,7 +372,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         switchToTabByIndex(index, processFromTemplateTabView);
     }
 
-    public void cancel() throws IllegalAccessException, InstantiationException {
+    public void cancel() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(cancelButton, Pages.getProjectsPage().getUrl());
         Pages.getProcessesPage();
     }

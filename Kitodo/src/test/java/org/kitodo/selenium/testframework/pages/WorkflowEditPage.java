@@ -70,12 +70,12 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         activeOption.click();
     }
 
-    public ProjectsPage save() throws IllegalAccessException, InstantiationException {
+    public ProjectsPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 
-    public SystemPage saveForMigration() throws IllegalAccessException, InstantiationException {
+    public SystemPage saveForMigration() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getSystemPage().getUrl());
         return Pages.getSystemPage();
     }

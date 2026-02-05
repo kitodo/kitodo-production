@@ -69,12 +69,12 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
         return this;
     }
 
-    public ProjectsPage save() throws IllegalAccessException, InstantiationException {
+    public ProjectsPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 
-    public ProjectsPage saveOnce() throws IllegalAccessException, InstantiationException {
+    public ProjectsPage saveOnce() throws ReflectiveOperationException {
         WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(60));
         Browser.getDriver().findElement(By.id(SAVE_BUTTON_ID)).click();
         if (Browser.isAlertPresent() && Pages.getProjectsPage().getUrl().contains("login")) {

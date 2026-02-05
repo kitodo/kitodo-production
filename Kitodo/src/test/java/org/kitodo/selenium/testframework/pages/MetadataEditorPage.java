@@ -201,7 +201,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         moveAction.dragAndDrop(secondChildNode, dropArea).build().perform();
     }
 
-    public ProcessesPage saveAndExit() throws InstantiationException, IllegalAccessException {
+    public ProcessesPage saveAndExit() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveAndExitButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
