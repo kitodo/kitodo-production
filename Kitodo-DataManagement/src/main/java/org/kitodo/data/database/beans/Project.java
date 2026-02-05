@@ -38,8 +38,6 @@ import jakarta.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.data.database.persistence.ProjectDAO;
@@ -103,8 +101,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Process> processes;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Template> templates;
 
     @ManyToOne(fetch = FetchType.LAZY)
