@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang3.text.StrTokenizer;
+import org.apache.commons.text.StringTokenizer;
 
 public class MetadataScript {
 
@@ -33,7 +33,7 @@ public class MetadataScript {
      */
     public MetadataScript(String command) {
         Map<String, String> parameters = new HashMap<>();
-        StrTokenizer tokenizer = new StrTokenizer(command, ' ', '\"');
+        StringTokenizer tokenizer = new StringTokenizer(command, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
             if (Objects.nonNull(tok) && tok.contains(":")) {
