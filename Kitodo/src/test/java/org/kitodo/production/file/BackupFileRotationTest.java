@@ -221,14 +221,13 @@ public class BackupFileRotationTest {
 
     private void assertFileHasContent(String fileName, String expectedContent) throws IOException {
         StringBuilder content;
-        try (InputStreamReader inputStreamReader = new InputStreamReader(fileService.read(URI.create(fileName)))) {
-            BufferedReader br = new BufferedReader(inputStreamReader);
+        try (InputStreamReader inputStreamReader = new InputStreamReader(fileService.read(URI.create(fileName)));
+             BufferedReader br = new BufferedReader(inputStreamReader)) {
             String line;
             content = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 content.append(line);
             }
-            br.close();
         }
         assertEquals(expectedContent, content.toString(), "File " + fileName + " does not contain expected content:");
     }
