@@ -15,6 +15,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ public class Browser {
     /**
      * Provides the web driver, sets timeout and window size.
      */
-    public static void Initialize() throws IOException {
+    public static void Initialize() throws IOException, URISyntaxException {
         if (BROWSER_TYPE.equals(BrowserType.CHROME)) {
             provideChromeDriver();
         }
@@ -86,7 +87,7 @@ public class Browser {
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
     }
 
-    private static void provideChromeDriver() throws IOException {
+    private static void provideChromeDriver() throws IOException, URISyntaxException {
         File driverFile = getDriverFile();
 
         if (!driverFile.exists()) {
@@ -118,10 +119,10 @@ public class Browser {
                                 + sessionNotCreatedException.getMessage());
                     }
                 } else {
-                    escalateSessionNotCreatedException("ERROR: unable to extract Chrome version from exception message!");
+                    escalateSessionNotCreatedException("Unable to extract Chrome version from exception message!");
                 }
             } else {
-                escalateSessionNotCreatedException("ERROR: exception message does not contain information about current Chrome version!");
+                escalateSessionNotCreatedException("Exception message does not contain information about current Chrome version!");
             }
         }
     }
@@ -159,7 +160,7 @@ public class Browser {
         return new File(DRIVER_DIR + driver);
     }
 
-    private static void provideGeckoDriver() throws IOException {
+    private static void provideGeckoDriver() throws IOException, URISyntaxException {
         String driverFileName = "geckodriver";
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFileName = driverFileName.concat(".exe");
