@@ -1116,7 +1116,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return amount of processes
      */
     public Integer getAmount() {
-        return lazyBeanModel == null ? 0 : lazyBeanModel.getRowCount();
+        return Objects.isNull(lazyBeanModel) ? 0 : lazyBeanModel.getRowCount();
     }
 
     /**
