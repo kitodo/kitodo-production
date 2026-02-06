@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
@@ -107,7 +108,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
                 .until(() -> userMenuButton.isDisplayed());
         RemoteWebDriver driver = Browser.getDriver();
         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("logout-form:logout")));
-        WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(60));
         webDriverWait.until(ExpectedConditions.urlContains(Pages.getLoginPage().getUrl()));
     }
 
@@ -116,7 +117,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
                 .until(() -> userMenuButton.isDisplayed());
 
         userMenuButton.click();
-        WebElement element = Browser.getDriver().findElementById("sessionClient").findElement(By.tagName("b"));
+        WebElement element = Browser.getDriver().findElement(By.id("sessionClient")).findElement(By.tagName("b"));
         return element.getText();
     }
 

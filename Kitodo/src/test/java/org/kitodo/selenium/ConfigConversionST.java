@@ -73,7 +73,7 @@ public class ConfigConversionST extends BaseTestSelenium {
                 .atMost(5, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(Browser.getDriver()
-                        .findElementById("importResultsForm:successfulImports").isDisplayed()));
+                        .findElement(By.id("importResultsForm:successfulImports")).isDisplayed()));
 
         // assert successful opac config imports
         assertTrue(importConfigurationsTab.allCatalogsImportedSuccessfully(Arrays.asList(GBV, KALLIOPE, K10PLUS)));
