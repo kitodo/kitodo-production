@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +159,7 @@ public class TaskDAO extends BaseDAO<Task> {
         if (Objects.isNull(process.getId())) {
             throw new DAOException("can not count task status for process that has id of null");
         }
-        
+
         // initialize counts
         Map<TaskStatus, Integer> counts = new HashMap<>();
         counts.put(TaskStatus.OPEN, 0);
@@ -195,5 +196,71 @@ public class TaskDAO extends BaseDAO<Task> {
             // due to recursive query, which might not be supported by some databases
             throw new DAOException(e);
         }
+    }
+
+    /**
+     * Loads task status counts for the given processes including all their descendant processes.
+     *
+     * <p>The result maps each root process ID to a count per TaskStatus.</p>
+     *
+     * @param processIds the IDs of the root processes to query
+     * @return a map of process ID to task status counts
+     */
+    @SuppressWarnings("unchecked")
+    public Map<Integer, EnumMap<TaskStatus, Integer>> loadTaskStatusCountsForProcesses(
+            List<Integer> processIds) throws DAOException {
+        Map<Integer, EnumMap<TaskStatus, Integer>> result = new HashMap<>();
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
+            return result;
+        }
+        Stopwatch stopwatch = new Stopwatch(this,"loadTaskStatusCountsForProcesses",
+                "processIds", processIds.toString());
+        try (Session session = HibernateUtil.getSession()) {
+            NativeQuery<Object[]> query = session.createNativeQuery(
+                    "WITH RECURSIVE process_tree (root_id, id) AS ("
+                            + "  SELECT p.id, p.id FROM process p WHERE p.id IN (:ids) "
+                            + "  UNION ALL "
+                            + "  SELECT pt.root_id, c.id "
+                            + "  FROM process c "
+                            + "  JOIN process_tree pt ON c.parent_id = pt.id"
+                            + ") "
+                            + "SELECT "
+                            + "  pt.root_id AS root_id, "
+                            + "  t.processingStatus AS processingStatus, "
+                            + "  COUNT(t.id) AS cnt "
+                            + "FROM process_tree pt "
+                            + "LEFT JOIN task t ON t.process_id = pt.id "
+                            + "GROUP BY pt.root_id, t.processingStatus",
+                    Object[].class
+            );
+            query.setParameter("ids", processIds);
+            query.addScalar("root_id", StandardBasicTypes.INTEGER);
+            query.addScalar("processingStatus", StandardBasicTypes.INTEGER);
+            query.addScalar("cnt", StandardBasicTypes.INTEGER);
+
+            List<Object[]> rows = query.list();
+            for (Object[] row : rows) {
+                Integer rootId = (Integer) row[0];
+                Integer statusValue = (Integer) row[1];
+                Integer count = (Integer) row[2];
+
+                EnumMap<TaskStatus, Integer> map =
+                        result.computeIfAbsent(rootId, id -> createEmptyStatusMap());
+                if (Objects.nonNull(statusValue)) {
+                    map.put(TaskStatus.getStatusFromValue(statusValue), count);
+                }
+            }
+            return stopwatch.stop(result);
+        } catch (PersistenceException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private static EnumMap<TaskStatus, Integer> createEmptyStatusMap() {
+        EnumMap<TaskStatus, Integer> map = new EnumMap<>(TaskStatus.class);
+        for (TaskStatus s : TaskStatus.values()) {
+            map.put(s, 0);
+        }
+        return map;
     }
 }
