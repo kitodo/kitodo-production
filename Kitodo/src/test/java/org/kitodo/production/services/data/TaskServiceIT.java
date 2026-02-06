@@ -313,7 +313,7 @@ public class TaskServiceIT {
                 List<String> expected = p.getTasks().stream()
                         .filter(t -> t.getProcessingStatus() == status)
                         .map(Task::getTitle)
-                        .collect(Collectors.toList());
+                        .toList();
 
                 List<String> actual = processResults.getOrDefault(status, List.of());
 

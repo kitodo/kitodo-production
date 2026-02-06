@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -48,8 +47,8 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.converter.ProcessConverter;
@@ -787,7 +786,7 @@ public class ProcessServiceIT {
     }
 
     private boolean hasVisibleTaskForUser(Process process, Set<Integer> userRoles) {
-        if (process.getTasks() == null) {
+        if (Objects.isNull(process.getTasks())) {
             return false;
         }
         for (Task task : process.getTasks()) {
@@ -797,7 +796,7 @@ public class ProcessServiceIT {
             }
             for (Integer roleId : task.getRoleIds()) {
                 if (userRoles.contains(roleId)) {
-                        return true;
+                    return true;
                 }
             }
         }
