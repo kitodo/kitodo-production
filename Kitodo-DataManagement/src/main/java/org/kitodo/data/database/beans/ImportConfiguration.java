@@ -30,8 +30,6 @@ import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
 import org.kitodo.data.database.persistence.MappingFileDAO;
@@ -166,8 +164,7 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "metadata_record_title_xpath")
     private String metadataRecordTitleXPath;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "client_x_importconfiguration", joinColumns = {
         @JoinColumn(name = "importconfiguration_id",
                 foreignKey = @ForeignKey(name = "FK_client_x_importconfiguration_importconfiguration_id")) },

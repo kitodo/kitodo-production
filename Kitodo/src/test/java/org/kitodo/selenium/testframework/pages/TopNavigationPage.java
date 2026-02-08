@@ -112,7 +112,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         webDriverWait.until(ExpectedConditions.urlContains(Pages.getLoginPage().getUrl()));
     }
 
-    public String getSessionClient() throws InterruptedException {
+    public String getSessionClient() throws InterruptedException{
         await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> userMenuButton.isDisplayed());
 
@@ -121,7 +121,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         return element.getText();
     }
 
-    public void acceptClientSelection() throws IllegalAccessException, InstantiationException {
+    public void acceptClientSelection() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(acceptClientSelectionButton, Pages.getDesktopPage().getUrl());
     }
 

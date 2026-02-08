@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -510,8 +511,10 @@ public class Block {
      */
     public void setFirstAppearanceDate(Date firstAppearance) {
         if (Objects.nonNull(firstAppearance)) {
-            firstAppearance.setHours(5);
-            setFirstAppearance(firstAppearance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(firstAppearance);
+            gregorianCalendar.set(GregorianCalendar.HOUR_OF_DAY, 5);
+            setFirstAppearance(gregorianCalendar.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         }
     }
 
@@ -553,8 +556,10 @@ public class Block {
      */
     public void setLastAppearanceDate(Date lastAppearance) {
         if (Objects.nonNull(lastAppearance)) {
-            lastAppearance.setHours(5);
-            setLastAppearance(lastAppearance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(lastAppearance);
+            gregorianCalendar.set(GregorianCalendar.HOUR_OF_DAY, 5);
+            setLastAppearance(gregorianCalendar.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         }
     }
 

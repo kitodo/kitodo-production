@@ -164,7 +164,7 @@ public class SystemPage extends Page<SystemPage> {
     }
 
     public WorkflowEditPage createNewWorkflow()
-            throws IllegalAccessException, InstantiationException {
+            throws ReflectiveOperationException {
         WebElement element = Browser.getDriver()
                 .findElement(By.xpath(
                     "//*[@id=\"systemTabView:migrationForm:aggregatedTasksTable:1:createWorkflowActionButton\"]"));

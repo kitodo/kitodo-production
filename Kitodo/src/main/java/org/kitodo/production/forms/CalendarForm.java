@@ -686,7 +686,14 @@ public class CalendarForm implements Serializable {
      */
     public void setYearStart(Date date) {
         if (Objects.nonNull(date)) {
-            course.setYearStart(MonthDay.of(date.getMonth() + 1, date.getDate()));
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(date);
+            course.setYearStart(
+                MonthDay.of(
+                    gregorianCalendar.get(GregorianCalendar.MONTH) + 1,
+                    gregorianCalendar.get(GregorianCalendar.DAY_OF_MONTH)
+                )
+            );
         }
     }
 
