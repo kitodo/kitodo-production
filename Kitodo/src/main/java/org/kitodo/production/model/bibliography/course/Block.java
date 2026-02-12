@@ -138,7 +138,7 @@ public class Block {
      *            metadata to add
      */
     public void addMetadata(CountableMetadata countableMetadata) {
-        metadata.add(0, countableMetadata);
+        metadata.addFirst(countableMetadata);
     }
 
     /**

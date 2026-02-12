@@ -1812,7 +1812,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static List<Process> getAllParentProcesses(Process process) {
         List<Process> parents = new ArrayList<>();
         while (Objects.nonNull(process.getParent())) {
-            parents.add(0, process.getParent());
+            parents.addFirst(process.getParent());
             process = process.getParent();
         }
         return parents;
