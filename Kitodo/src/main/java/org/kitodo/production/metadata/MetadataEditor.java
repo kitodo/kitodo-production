@@ -346,7 +346,7 @@ public class MetadataEditor {
                 }
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                logicalDivision.getChildren().add(0, newStructure);
+                logicalDivision.getChildren().addFirst(newStructure);
                 break;
             case LAST_CHILD_OF_CURRENT_ELEMENT:
                 logicalDivision.getChildren().add(newStructure);
@@ -407,7 +407,7 @@ public class MetadataEditor {
                 siblings.add(siblings.indexOf(parent), newPhysicalDivision);
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                parent.getChildren().add(0, newPhysicalDivision);
+                parent.getChildren().addFirst(newPhysicalDivision);
                 break;
             case LAST_CHILD_OF_CURRENT_ELEMENT:
                 parent.getChildren().add(newPhysicalDivision);
@@ -489,7 +489,7 @@ public class MetadataEditor {
             List<LogicalDivision> logicalDivisionList = determineLogicalDivisionPathToChild(
                 logicalDivisionChild, number);
             if (!logicalDivisionList.isEmpty()) {
-                logicalDivisionList.add(0, logicalDivision);
+                logicalDivisionList.addFirst(logicalDivision);
                 return logicalDivisionList;
             }
         }
