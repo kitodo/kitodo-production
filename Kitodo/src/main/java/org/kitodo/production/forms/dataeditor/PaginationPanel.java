@@ -12,22 +12,16 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import jakarta.faces.model.SelectItem;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
-import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.InvalidImagesException;
