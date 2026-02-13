@@ -127,7 +127,7 @@ public class LtpValidationReportDialog implements Serializable {
             return 0;
         }
         return resultsByFolder.values().stream().reduce(0,
-            (sum, resultsByFile) -> sum + (int) resultsByFile.values().stream().count(), Integer::sum);
+            (sum, resultsByFile) -> sum + resultsByFile.size(), Integer::sum);
     }
 
     /**

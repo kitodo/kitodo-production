@@ -127,10 +127,7 @@ public class KitodoJhoveRepInfoParser {
             if (propertyArity == PropertyArity.SCALAR) {
                 if (propertyValue instanceof NisoImageMetadata) {
                     NisoImageMetadata metadata = (NisoImageMetadata) propertyValue;
-                    for (Map.Entry<String, String> e : KitodoJhoveNisoImageMetadataHelper
-                            .nisoImageMetadataToMap(metadata).entrySet()) {
-                        propertyMap.put(e.getKey(), e.getValue());
-                    }
+                    propertyMap.putAll(KitodoJhoveNisoImageMetadataHelper.nisoImageMetadataToMap(metadata));
                 } else {
                     propertyMap.put(propertyKey, String.valueOf(propertyValue));
                 }
@@ -173,7 +170,7 @@ public class KitodoJhoveRepInfoParser {
     private static String propertiesToString(Map<String, Property> properties) {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : hierarchicalPropertiesToSimpleMap(properties).entrySet()) {
-            builder.append("- " + entry.getKey() + ": " + entry.getValue() + "\n");
+            builder.append("- ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
         return builder.toString();
     }
@@ -247,29 +244,29 @@ public class KitodoJhoveRepInfoParser {
         List<String> checksums = info.getChecksum().stream().map((c) -> c.getType() + ":" + c.getValue())
                 .collect(Collectors.toList());
 
-        builder.append("RepInfo object " + info.toString() + "\n");
-        builder.append("URI: " + info.getUri() + "\n");
-        builder.append("Format: " + info.getFormat() + "\n");
-        builder.append("MimeType: " + info.getMimeType() + "\n");
-        builder.append("Note: " + info.getNote() + "\n");
-        builder.append("Size: " + info.getSize() + "\n");
-        builder.append("Valid: " + info.getValid() + "\n");
-        builder.append("Version: " + info.getVersion() + "\n");
-        builder.append("Well-Formed: " + info.getWellFormed() + "\n");
-        builder.append("CheckSums: " + StringUtils.join(checksums, ",") + "\n");
-        builder.append("Created: " + info.getCreated() + "\n");
-        builder.append("Last-Modified: " + info.getLastModified() + "\n");
+        builder.append("RepInfo object ").append(info).append("\n");
+        builder.append("URI: ").append(info.getUri()).append("\n");
+        builder.append("Format: ").append(info.getFormat()).append("\n");
+        builder.append("MimeType: ").append(info.getMimeType()).append("\n");
+        builder.append("Note: ").append(info.getNote()).append("\n");
+        builder.append("Size: ").append(info.getSize()).append("\n");
+        builder.append("Valid: ").append(info.getValid()).append("\n");
+        builder.append("Version: ").append(info.getVersion()).append("\n");
+        builder.append("Well-Formed: ").append(info.getWellFormed()).append("\n");
+        builder.append("CheckSums: ").append(StringUtils.join(checksums, ",")).append("\n");
+        builder.append("Created: ").append(info.getCreated()).append("\n");
+        builder.append("Last-Modified: ").append(info.getLastModified()).append("\n");
         builder.append("Messages:\n");
         for (Message message : info.getMessage()) {
-            builder.append("- Message: " + message.getMessage() + "\n");
-            builder.append("  - Submessage: " + message.getSubMessage() + "\n");
+            builder.append("- Message: ").append(message.getMessage()).append("\n");
+            builder.append("  - Submessage: ").append(message.getSubMessage()).append("\n");
         }
-        builder.append("Profiles: " + StringUtils.join(info.getProfile(), ",") + "\n");
+        builder.append("Profiles: ").append(StringUtils.join(info.getProfile(), ",")).append("\n");
         builder.append("Properties:\n");
         builder.append(propertiesToString(info.getProperty()));
-        builder.append("SigMatches: " + StringUtils.join(info.getSigMatch(), ",") + "\n");
-        builder.append("URLFlag: " + info.getURLFlag() + "\n");
-        builder.append("isConsistent: " + info.isConsistent() + "\n");
+        builder.append("SigMatches: ").append(StringUtils.join(info.getSigMatch(), ",")).append("\n");
+        builder.append("URLFlag: ").append(info.getURLFlag()).append("\n");
+        builder.append("isConsistent: ").append(info.isConsistent()).append("\n");
         return builder.toString();
     }
 

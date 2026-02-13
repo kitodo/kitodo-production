@@ -389,7 +389,7 @@ public class StructurePanel implements Serializable {
      */
     public void setSelectedLogicalNodes(List<TreeNode<Object>> selected) {
         if (Objects.nonNull(selected)) {
-            this.setSelectedLogicalNodesAsArray(selected.toArray(new TreeNode[selected.size()]));
+            this.setSelectedLogicalNodesAsArray(selected.toArray(new TreeNode[0]));
         }
     }
 
@@ -451,7 +451,7 @@ public class StructurePanel implements Serializable {
      */
     public void setSelectedPhysicalNodes(List<TreeNode<Object>> selected) {
         if (Objects.nonNull(selected)) {
-            this.setSelectedPhysicalNodesAsArray(selected.toArray(new TreeNode[selected.size()]));
+            this.setSelectedPhysicalNodesAsArray(selected.toArray(new TreeNode[0]));
         }
     }
 
