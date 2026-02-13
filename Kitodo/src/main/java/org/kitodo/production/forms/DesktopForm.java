@@ -13,8 +13,12 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.json.JsonException;
 
@@ -26,11 +30,14 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessProgressHelper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -47,6 +54,10 @@ public class DesktopForm extends BaseForm {
     private List<Task> taskList = new ArrayList<>();
     private List<Process> processList = new ArrayList<>();
     private List<Project> projectList = new ArrayList<>();
+    private Map<Integer, EnumMap<TaskStatus, Integer>> taskStatusCache = new HashMap<>();
+    private Map<Integer, Map<TaskStatus, List<String>>> taskTitleCache = new HashMap<>();
+    private Set<Integer> processesWithChildren = new HashSet<>();
+    private final ProcessProgressHelper progressService = new ProcessProgressHelper();
 
     /**
      * Default constructor.
@@ -100,12 +111,30 @@ public class DesktopForm extends BaseForm {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
                 processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
+                preloadProcessCaches();
             }
         } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
                 logger, e);
         }
         return processList;
+    }
+
+    private void preloadProcessCaches() throws DAOException {
+        if (processList.isEmpty()) {
+            return;
+        }
+        List<Integer> ids = processList.stream()
+                .map(Process::getId)
+                .toList();
+        taskStatusCache =
+                new TaskDAO().loadTaskStatusCountsForProcesses(ids);
+        taskTitleCache =
+                ServiceManager.getTaskService()
+                        .loadTaskTitlesForProcesses(ids);
+        processesWithChildren =
+                ServiceManager.getProcessService()
+                        .findProcessIdsWithChildren(ids);
     }
 
     /**
@@ -219,6 +248,103 @@ public class DesktopForm extends BaseForm {
         }
         return 0L;
     }
+
+    /**
+     * Returns whether the given process has child processes based on the preloaded desktop cache.
+     * @param process the process to check
+     * @return true if the process has children, otherwise false
+     */
+    public boolean hasChildren(Process process) {
+        return processesWithChildren.contains(process.getId());
+    }
+
+    /**
+     * Returns whether the given process has any tasks based on the preloaded desktop cache.
+     *
+     * @param process the process to check
+     * @return true if the process has tasks, otherwise false
+     */
+    public boolean hasAnyTasks(Process process) {
+        EnumMap<TaskStatus, Integer> counts =
+                taskStatusCache.get(process.getId());
+        if (counts == null) {
+            return false;
+        }
+        return counts.values().stream().mapToInt(Integer::intValue).sum() > 0;
+    }
+
+    /**
+     * Returns cached task status counts for the given process.
+     */
+    private Map<TaskStatus, Integer> getCachedTaskStatusCounts(Process process) {
+        return taskStatusCache.getOrDefault(
+                process.getId(),
+                new EnumMap<>(TaskStatus.class)
+        );
+    }
+
+    /**
+     * Returns formatted titles of open and in-work tasks based on the preloaded desktop cache.
+     *
+     * @param process the process
+     * @return formatted task titles or empty string if none exist
+     */
+    public String getCurrentTaskTitles(Process process) {
+        return progressService.buildTaskTitleTooltip(
+                taskTitleCache.get(process.getId())
+        );
+    }
+
+    /**
+     * Calculates the percentage of tasks with the given status based on the preloaded desktop cache.
+     *
+     * @param process the process
+     * @param status the task status
+     * @return progress percentage for the given status
+     */
+    public double progress(Process process, TaskStatus status) {
+        return progressService.progress(
+                getCachedTaskStatusCounts(process),
+                status
+        );
+    }
+
+    /**
+     * Returns the percentage of completed tasks of the given process.
+     *
+     * @param process the process
+     * @return percentage of completed tasks
+     */
+    public double progressClosed(Process process) {
+        return progressService.progressClosed(
+                getCachedTaskStatusCounts(process)
+        );
+    }
+
+    /**
+     * Returns the percentage of tasks currently in processing of the given process.
+     *
+     * @param process the process
+     * @return percentage of tasks in processing
+     */
+    public double progressInProcessing(Process process) {
+        return progressService.progressInProcessing(
+                getCachedTaskStatusCounts(process)
+        );
+    }
+
+    /**
+     * Returns the percentage of startable tasks of the given process.
+     *
+     * @param process the process
+     * @return percentage of startable tasks
+     */
+    public double progressOpen(Process process) {
+        return progressService.progressOpen(
+                getCachedTaskStatusCounts(process)
+        );
+    }
+
 
     /**
      * Empties the lists for caching.

@@ -32,7 +32,9 @@
                           value="#{process.title}"/>
         </p:column>
         <p:column headerText="#{msgs.status}">
-            <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
+            <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml">
+                <ui:param name="progressBean" value="#{DesktopForm}" />
+            </ui:include>
         </p:column>
 
         <p:column styleClass="comment-column"
@@ -99,12 +101,12 @@
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                 </p:commandLink>
                 <h:panelGroup styleClass="action"
-                              title="#{ProcessForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                              title="#{DesktopForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
                     <p:commandLink id="deleteProcess"
                                    action="#{DesktopForm.deleteProcess(process.id)}"
-                                   title="#{ ProcessForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}"
+                                   title="#{DesktopForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                                   disabled="#{ProcessForm.hasChildren(process)}"
+                                   disabled="#{DesktopForm.hasChildren(process)}"
                                    update="processTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <p:confirm header="#{msgs.confirmDelete}"
