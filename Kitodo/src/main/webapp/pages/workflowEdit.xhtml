@@ -19,20 +19,26 @@
         xmlns:p="http://primefaces.org/ui">
 
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
         <f:viewParam name="id"/>
-        <f:viewAction action="#{WorkflowForm.load(id)}"/>
-        <f:viewParam name="migration" value="#{WorkflowForm.migration}" converterId="jakarta.faces.convert.BooleanConverter" />
+        <!--@elvariable id="duplicate" type="java.lang.Boolean"-->
+        <f:viewParam name="duplicate"/>
+        <f:viewAction action="#{WorkflowEditView.load(id, duplicate)}"/>
+        <f:viewParam name="migration" value="#{WorkflowEditView.migration}" converterId="jakarta.faces.convert.BooleanConverter" />
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{WorkflowEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title eq null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
+              value="#{WorkflowEditView.workflow.id eq null and WorkflowEditView.workflow.title eq null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
     <!--@elvariable id="isDuplicateMode" type="boolean"-->
     <ui:param name="isDuplicateMode"
-              value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title ne null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
+              value="#{WorkflowEditView.workflow.id eq null and WorkflowEditView.workflow.title ne null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{WorkflowForm.workflow.id ne null and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
+              value="#{WorkflowEditView.workflow.id ne null and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewWorkflow()}"/>
@@ -52,24 +58,24 @@
             <h:outputText value="#{msgs.duplicateWorkflow}"
                           styleClass="shortable"
                           rendered="#{isDuplicateMode}"/>
-            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
+            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowEditView.workflow.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})"
+            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowEditView.workflow.title})"
                           styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton value="#{isViewMode ? msgs.close : msgs.cancel}"
-                  action="#{WorkflowForm.cancel()}"
+                  action="#{WorkflowEditView.cancel()}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="#{isViewMode ? 'primary' : 'secondary'}"/>
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{WorkflowForm.setSaveDisabled(false)}"
+                  actionListener="#{WorkflowEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton id="save"
-                         action="#{WorkflowForm.saveAndRedirect}"
+                         action="#{WorkflowEditView.saveAndRedirect}"
                          widgetVar="save"
                          value="#{msgs.save}"
                          rendered="#{not isViewMode}"
@@ -80,9 +86,9 @@
                               'summary':'#{msgs.workflowSaving}',
                               'detail':'#{msgs.youWillBeRedirected}',
                               'severity':'info'});"
-                         disabled="#{WorkflowForm.saveDisabled}">
+                         disabled="#{WorkflowEditView.saveDisabled}">
             <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmUpdateWorkflow}"
-                       disabled="#{not WorkflowForm.hasWorkflowDataEditorSettingsDefined()}"
+                       disabled="#{not WorkflowEditView.hasWorkflowDataEditorSettingsDefined()}"
                        icon="ui-icon-alert"/>
         </p:commandButton>
     </ui:define>

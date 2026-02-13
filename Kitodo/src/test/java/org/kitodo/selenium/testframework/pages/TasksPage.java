@@ -84,11 +84,11 @@ public class TasksPage extends Page<TasksPage> {
         String secondElementId = TASK_TABLE + ":" + index + ":taskDetailTableSecond";
         await("Wait for first task details to become visible").atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(firstElementId)).isDisplayed()));
-                WebElement firstDetails = Browser.getDriver().findElementById(firstElementId);
+                WebElement firstDetails = Browser.getDriver().findElement(By.id(firstElementId));
         List<String> taskDetails = getTableDataByColumn(firstDetails, 1);
         await("Wait for second task details to become visible").atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(secondElementId)).isDisplayed()));
-                WebElement secondDetails = Browser.getDriver().findElementById(secondElementId);
+                WebElement secondDetails = Browser.getDriver().findElement(By.id(secondElementId));
         taskDetails.addAll(getTableDataByColumn(secondDetails, 1));
         return taskDetails;
     }
@@ -209,12 +209,12 @@ public class TasksPage extends Page<TasksPage> {
 
     private void setEditTaskLink(String taskTitle, String processTitle) {
         int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
-        editTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":editOwnTask");
+        editTaskLink = Browser.getDriver().findElement(By.id(TASK_TABLE + ":" + index + ":editOwnTask"));
     }
 
     private void setTakeTaskLink(String taskTitle, String processTitle) {
         int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
-        takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":take");
+        takeTaskLink = Browser.getDriver().findElement(By.id(TASK_TABLE + ":" + index + ":take"));
     }
 
     private int getRowIndexForTask(WebElement dataTable, String searchedTaskTitle, String searchedProcessTitle) {

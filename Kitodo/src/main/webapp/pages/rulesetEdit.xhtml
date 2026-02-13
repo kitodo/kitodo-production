@@ -17,17 +17,23 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{RulesetForm.load(id)}"/>
+        <f:viewAction action="#{RulesetEditView.load(id)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{RulesetEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{RulesetForm.ruleset.id ne null and SecurityAccessController.hasAuthorityToEditRuleset()}"/>
+              value="#{RulesetEditView.ruleset.id ne null and SecurityAccessController.hasAuthorityToEditRuleset()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{RulesetForm.ruleset.id eq null and SecurityAccessController.hasAuthorityToAddRuleset()}"/>
+              value="#{RulesetEditView.ruleset.id eq null and SecurityAccessController.hasAuthorityToAddRuleset()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewRuleset()}"/>
@@ -38,33 +44,33 @@
             <h:outputText value="#{msgs.createNewRuleset}"
                           styleClass="shortable"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.editRuleset} (#{RulesetForm.ruleset.title})"
+            <h:outputText value="#{msgs.editRuleset} (#{RulesetEditView.ruleset.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewRuleset} (#{RulesetForm.ruleset.title})"
+            <h:outputText value="#{msgs.viewRuleset} (#{RulesetEditView.ruleset.title})"
                           styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:button value="#{msgs.cancel}"
-                  outcome="projects?keepPagination=true"
+                  outcome="projects?tab=rulesetTab&amp;#{RulesetEditView.referrerListOptions}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{RulesetForm.setSaveDisabled(false)}"
+                  actionListener="#{RulesetEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{RulesetForm.save}"
+                         action="#{RulesetEditView.save}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          rendered="#{isEditMode || isCreateMode}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{RulesetForm.saveDisabled}"/>
+                         disabled="#{RulesetEditView.saveDisabled}"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -75,13 +81,13 @@
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title" class="input" placeholder="#{msgs.title}"
-                                         value="#{RulesetForm.ruleset.title}" disabled="#{isViewMode}"
+                                         value="#{RulesetEditView.ruleset.title}" disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.file}"/>
-                            <p:selectOneMenu id="file" value="#{RulesetForm.ruleset.file}" disabled="#{isViewMode}">
-                                <f:selectItems value="#{RulesetForm.rulesetFilenames}" var="rulesetFile" itemValue="#{rulesetFile}"
+                            <p:selectOneMenu id="file" value="#{RulesetEditView.ruleset.file}" disabled="#{isViewMode}">
+                                <f:selectItems value="#{RulesetEditView.rulesetFilenames}" var="rulesetFile" itemValue="#{rulesetFile}"
                                                itemLabel="#{rulesetFile}"/>
                                 <p:ajax oncomplete="toggleSave()"
                                         update="editForm:rulesetTabView:functionalMetadataGrid"/>
@@ -92,7 +98,7 @@
                         <div>
                             <p:outputLabel for="sortByRuleset" value="#{msgs.metadataSortByRuleset}"/>
                             <p:selectBooleanCheckbox id="sortByRuleset" styleClass="switch input" disabled="#{isViewMode}"
-                                                     value="#{RulesetForm.ruleset.orderMetadataByRuleset}"
+                                                     value="#{RulesetEditView.ruleset.orderMetadataByRuleset}"
                                                      onchange="toggleSave()"/>
                         </div>
                     </p:panel>
@@ -103,7 +109,7 @@
                                   allSuffix="ALL_FUNCTIONAL_METADATA" />
                     <p:panelGrid layout="grid"
                                  id="functionalMetadataGrid"
-                                 rendered="#{RulesetForm.ruleset ne null and RulesetForm.ruleset.id ne null}"
+                                 rendered="#{RulesetEditView.ruleset ne null and RulesetEditView.ruleset.id ne null}"
                                  columns="4">
                         <ui:repeat value="#{KitodoFunctionalMetadata.ALL_FUNCTIONAL_METADATA}"
                                    var="currentMetadata">
@@ -118,17 +124,17 @@
                                                  style="height: min-content; float: right;"
                                                  icon="fa fa-lg fa-question-circle-o"/>
                                 <p:tooltip for="currentMetadataHelp"
-                                           value="#{RulesetForm.getFunctionalMetadataDescription(currentMetadata.mark)} "/>
+                                           value="#{RulesetEditView.getFunctionalMetadataDescription(currentMetadata.mark)} "/>
                                 <p:dataTable id="currentMetadataList"
                                              styleClass="functional-metadata-list"
-                                             value="#{RulesetForm.getFunctionalMetadataKeys(currentMetadata)}"
+                                             value="#{RulesetEditView.getFunctionalMetadataKeys(currentMetadata)}"
                                              emptyMessage="#{msgs['noRecordsFound']}"
                                              style="margin-top: 3px;"
                                              var="currentKey">
                                     <p:column id="#{currentKey}Label"
                                               headerText="Label">
-                                        <h:outputText value="#{RulesetForm.getMetadataLabel(currentKey)}"
-                                                      title="#{RulesetForm.getMetadataLabel(currentKey)}" />
+                                        <h:outputText value="#{RulesetEditView.getMetadataLabel(currentKey)}"
+                                                      title="#{RulesetEditView.getMetadataLabel(currentKey)}" />
                                     </p:column>
                                     <p:column id="#{currentKey}Key"
                                               headerText="Key">

@@ -34,15 +34,17 @@
                               rendered="#{not empty DataEditorForm.blockingUser}"/>
             </h:panelGroup>
         </h:panelGroup>
-        <h:panelGroup layout="block"
-                      styleClass="dialogButtonWrapper">
-            <p:commandButton action="#{DataEditorForm.confirmMetadataLocked()}"
-                             onclick="setConfirmUnload(false);PF('metadataLockedDialog').hide()"
-                             value="#{msgs['ok']}"
-                             id="okButton"
-                             styleClass="primary right"
-                             icon="fa fa-close"
-                             iconPos="right"/>
-        </h:panelGroup>
+        <h:form id="metadataLockedButtonForm">
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton action="#{DataEditorForm.confirmMetadataLocked()}"
+                                 onclick="setConfirmUnload(false);PF('metadataLockedDialog').hide()"
+                                 value="#{msgs['ok']}"
+                                 id="okButton"
+                                 styleClass="primary right"
+                                 icon="fa fa-close"
+                                 iconPos="right"/>
+            </h:panelGroup>
+        </h:form>
     </p:dialog>
 </ui:composition>

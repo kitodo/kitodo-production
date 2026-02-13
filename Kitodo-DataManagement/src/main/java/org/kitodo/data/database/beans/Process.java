@@ -39,8 +39,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
@@ -109,8 +107,7 @@ public class Process extends BaseTemplateBean {
     @BatchSize(size = 50)
     private List<Task> tasks;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @BatchSize(size = 50)
     private List<Comment> comments;
 
@@ -133,8 +130,7 @@ public class Process extends BaseTemplateBean {
                 @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
     private List<Property> workpieces;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(mappedBy = "processes")
+    @ManyToMany(mappedBy = "processes", fetch = FetchType.EAGER)
     @BatchSize(size = 50)
     private List<Batch> batches = new ArrayList<>();
 
@@ -756,77 +752,6 @@ public class Process extends BaseTemplateBean {
      */
     public void setOcrdWorkflowId(String ocrdWorkflowId) {
         this.ocrdWorkflowId = ocrdWorkflowId;
-    }
-
-    /**
-     * Returns the percentage of tasks in the process that are completed. The
-     * total of tasks awaiting preconditions, startable, in progress, and
-     * completed is {@code 100.0d}.
-     *
-     * @return percentage of tasks completed
-     */
-    public Double getProgressClosed() {
-        if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
-            return 0.0;
-        }
-        return getTaskProgress(MAX_AGE_NANOSS).get(TaskStatus.DONE);
-    }
-
-    /**
-     * Returns the percentage of tasks in the process that are currently being
-     * processed. The progress total of tasks waiting for preconditions,
-     * startable, in progress, and completed is {@code 100.0d}.
-     *
-     * @return percentage of tasks in progress
-     */
-    public Double getProgressInProcessing() {
-        if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
-            return 0.0;
-        }
-        return getTaskProgress(MAX_AGE_NANOSS).get(TaskStatus.INWORK);
-    }
-
-    /**
-     * Returns the percentage of the process's tasks that are now ready to be
-     * processed but have not yet been started. The progress total of tasks
-     * waiting for preconditions, startable, in progress, and completed is
-     * {@code 100.0d}.
-     *
-     * @return percentage of startable tasks
-     */
-    public Double getProgressOpen() {
-        if (CollectionUtils.isEmpty(tasks) && !hasChildren()) {
-            return 0.0;
-        }
-        return getTaskProgress(MAX_AGE_NANOSS).get(TaskStatus.OPEN);
-    }
-
-    private Map<TaskStatus, Double> getTaskProgress(long maxAgeNanos) {
-        long now = System.nanoTime();
-        if (Objects.isNull(this.taskProgress) || now - taskProgress.getLeft() > maxAgeNanos) {
-            Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
-            this.taskProgress = Pair.of(System.nanoTime(), taskProgress);
-        } else {
-            this.taskProgress = Pair.of(now, taskProgress.getValue());
-        }
-        Map<TaskStatus, Double> value = taskProgress.getValue();
-        return value;
-    }
-
-    /**
-     * Returns a coded overview of the progress of the process. The larger the
-     * number, the more advanced the process is, so it can be used to sort by
-     * progress. The numeric code consists of twelve digits, each three digits
-     * from 000 to 100 indicate the percentage of tasks completed, currently in
-     * progress, ready to start and not yet ready, in that order. For example,
-     * 000000025075 means that 25% of the tasks are ready to be started and 75%
-     * of the tasks are not yet ready to be started because previous tasks have
-     * not yet been processed.
-     * 
-     * @return overview of the processing status
-     */
-    public String getProgressCombined() {
-        return ProcessConverter.getCombinedProgressFromTaskPercentages(getTaskProgress(MAX_AGE_NANOSS));
     }
 
     /**

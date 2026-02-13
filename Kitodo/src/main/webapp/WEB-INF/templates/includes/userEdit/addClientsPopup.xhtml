@@ -28,7 +28,7 @@
                 <h3>#{msgs.clientAddTo}</h3>
                 <p:dataTable var="client"
                              id="selectClientTable"
-                             value="#{UserForm.clients}"
+                             value="#{UserEditViewClientsTab.clients}"
                              lazy="true"
                              paginator="true"
                              rows="#{LoginForm.loggedUser.tableSize}"
@@ -41,7 +41,7 @@
                     <p:column headerText="#{msgs.actions}"
                               styleClass="actionsColumn">
                         <p:commandLink id="addUserClient"
-                                       action="#{UserForm.addToClient}"
+                                       action="#{UserEditViewClientsTab.addToClient}"
                                        styleClass="action"
                                        title="add to client"
                                        update="editForm:userTabView:clientDatatable userClientForm:selectClientTable"

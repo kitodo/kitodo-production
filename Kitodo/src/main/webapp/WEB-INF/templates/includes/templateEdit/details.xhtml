@@ -22,8 +22,8 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.templateTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.templateTitle}"
-                             value="#{TemplateForm.template.title}"
-                             title="#{TemplateForm.template.title}"
+                             value="#{TemplateEditView.template.title}"
+                             title="#{TemplateEditView.template.title}"
                              class="input" disabled="#{isViewMode}"
                              required="#{not empty param['editForm:save']}">
                 </p:inputText>
@@ -31,22 +31,22 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.projects}"/>
-                <p:selectManyCheckbox  id="project" value="#{TemplateForm.assignedProjects}" layout="grid" columns="1"
+                <p:selectManyCheckbox  id="project" value="#{TemplateEditView.assignedProjects}" layout="grid" columns="1"
                                        converter="#{projectConverter}" required="#{not empty param['editForm:save']}"
                                        styleClass="input #{isViewMode ? 'disabled' : ''}" disabled="#{isViewMode}">
-                    <f:selectItems value="#{TemplateForm.projects}"
+                    <f:selectItems value="#{TemplateEditView.projects}"
                                    var="project"
                                    itemLabel="#{project.title}"
                                    itemValue="#{project}"
-                                   itemDisabled="#{TemplateForm.isUserNotAssignedToProject(project)}"/>
+                                   itemDisabled="#{TemplateEditView.isUserNotAssignedToProject(project)}"/>
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectManyCheckbox >
             </div>
 
             <div>
                 <p:outputLabel for="active" value="#{msgs.active}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}"
-                                         title="#{TemplateForm.template.active}"
+                <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateEditView.template.active}"
+                                         title="#{TemplateEditView.template.active}"
                                          disabled="#{isViewMode}">
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
@@ -55,10 +55,10 @@
         <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
-                <p:selectOneMenu id="ruleset" value="#{TemplateForm.template.ruleset}"
-                                 title="#{TemplateForm.template.ruleset}" converter="#{rulesetConverter}"
+                <p:selectOneMenu id="ruleset" value="#{TemplateEditView.template.ruleset}"
+                                 title="#{TemplateEditView.template.ruleset}" converter="#{rulesetConverter}"
                                  required="#{not empty param['editForm:save']}" disabled="#{isViewMode}">
-                    <f:selectItems value="#{TemplateForm.rulesets}"
+                    <f:selectItems value="#{TemplateEditView.rulesets}"
                                    var="ruleset"
                                    itemValue="#{ruleset}"
                                    itemLabel="#{ruleset.title}"/>
@@ -68,10 +68,10 @@
 
             <div>
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
-                <p:selectOneMenu id="docket" value="#{TemplateForm.template.docket}"
-                                 title="#{TemplateForm.template.docket}" converter="#{docketConverter}"
+                <p:selectOneMenu id="docket" value="#{TemplateEditView.template.docket}"
+                                 title="#{TemplateEditView.template.docket}" converter="#{docketConverter}"
                                  required="#{not empty param['editForm:save']}" disabled="#{isViewMode}">
-                    <f:selectItems value="#{TemplateForm.dockets}"
+                    <f:selectItems value="#{TemplateEditView.dockets}"
                                    var="docket"
                                    itemValue="#{docket}"
                                    itemLabel="#{docket.title}"/>
@@ -81,11 +81,11 @@
 
             <div>
                 <p:outputLabel for="workflow" value="#{msgs.workflow}"/>
-                <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}"
-                                 title="#{TemplateForm.template.workflow}" disabled="#{isViewMode}"
+                <p:selectOneMenu id="workflow" value="#{TemplateEditView.template.workflow}"
+                                 title="#{TemplateEditView.template.workflow}" disabled="#{isViewMode}"
                                  converter="#{workflowConverter}"
                                  required="#{not empty param['editForm:save']}">
-                    <f:selectItems value="#{TemplateForm.workflows}"
+                    <f:selectItems value="#{TemplateEditView.workflows}"
                                    var="workflow"
                                    itemValue="#{workflow}"
                                    itemLabel="#{workflow.title}"/>
@@ -95,13 +95,13 @@
 
             <p:outputPanel rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
                 <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
-                <p:selectOneMenu id="ocrdWorkflow" value="#{TemplateForm.ocrdWorkflow}"
+                <p:selectOneMenu id="ocrdWorkflow" value="#{TemplateEditView.ocrdWorkflow}"
                                  disabled="#{isViewMode}"
                                  converter="#{ocrdWorkflowConverter}">
                     <f:selectItem itemValue="#{null}"
                                   itemLabel="#{msgs.notSelected}"
                                   noSelectionOption="true"/>
-                    <f:selectItems value="#{TemplateForm.ocrdWorkflows}"
+                    <f:selectItems value="#{TemplateEditView.ocrdWorkflows}"
                                    var="ocrdWorkflow"
                                    itemValue="#{ocrdWorkflow}"
                                    itemLabel="#{ocrdWorkflow.value}"/>

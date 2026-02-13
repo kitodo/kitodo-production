@@ -26,11 +26,10 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.xml.bind.JAXBException;
 
@@ -55,58 +54,27 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProjectService;
-import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 
-@Named("ProjectForm")
-@SessionScoped
-public class ProjectForm extends BaseForm {
+@Named("ProjectEditView")
+@ViewScoped
+public class ProjectEditView extends BaseEditView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projectEdit");
+
     public static final String MIMETYPE_PREFIX_AUDIO = "audio";
-    private static final Logger logger = LogManager.getLogger(ProjectForm.class);
+    private static final Logger logger = LogManager.getLogger(ProjectEditView.class);
     public static final String MIMETYPE_PREFIX_VIDEO = "video";
     private Project project;
     private List<Template> deletedTemplates = new ArrayList<>();
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
-    private SortMeta templateListSortBy;
 
     /**
      * An encapsulation of the content generator properties of the folder in a
      * way suitable to the JSF design.
      */
     private FolderGenerator generator = new FolderGenerator(this.myFolder);
-
-    /**
-     * Initialize the list of displayed list columns.
-     */
-    @PostConstruct
-    public void init() {
-        // Lists of available list columns
-        columns = new ArrayList<>();
-        try {
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("project"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("template"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("workflow"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("docket"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ruleset"));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-
-        // Lists of selected list columns
-        selectedColumns = new ArrayList<>();
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("project"));
-        selectedColumns
-                .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("template"));
-        selectedColumns
-                .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("docket"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ruleset"));
-
-        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
-        templateListSortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
-    }
 
     /**
      * The folder currently under edit in the pop-up dialog.
@@ -127,9 +95,7 @@ public class ProjectForm extends BaseForm {
 
     private boolean copyTemplates;
 
-    private final String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
-
-    private String projectEditReferer = DEFAULT_LINK;
+    private String projectEditReferrer = DEFAULT_LINK;
 
     /**
      * Cash for the list of possible MIME types. So that the list does not have
@@ -141,7 +107,7 @@ public class ProjectForm extends BaseForm {
      * Empty default constructor that also sets the LazyBeanModel instance of
      * this bean.
      */
-    public ProjectForm() {
+    public ProjectEditView() {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getProjectService()));
     }
@@ -190,39 +156,23 @@ public class ProjectForm extends BaseForm {
         deletedFolders = new ArrayList<>();
     }
 
-    /**
-     * Create new project.
-     *
-     * @return page address
-     */
-    public String newProject() {
-        this.project = new Project();
-        this.locked = false;
-        this.project.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
-        return projectEditPath;
-    }
 
     /**
      * Duplicate the selected project.
      *
      * @param itemId
      *            ID of the project to duplicate
-     * @return page address; either redirect to the edit project page or return
-     *         'null' if the project could not be retrieved, which will prompt
-     *         JSF to remain on the same page and reuse the bean.
      */
-    public String duplicate(Integer itemId) {
+    public void loadAsDuplicate(Integer itemId) {
         setCopyTemplates(true);
         this.locked = false;
         try {
             this.baseProject = ServiceManager.getProjectService().getById(itemId);
             this.project = ServiceManager.getProjectService().duplicateProject(baseProject);
             this.setSaveDisabled(false);
-            return projectEditPath + "&referer=projects";
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
                 e);
-            return this.stayOnCurrentPage;
         }
     }
 
@@ -243,7 +193,7 @@ public class ProjectForm extends BaseForm {
 
                 ServiceManager.getProjectService().save(project);
 
-                return projectsPage;
+                return getProjectEditReferrerViewPath();
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
@@ -808,13 +758,13 @@ public class ProjectForm extends BaseForm {
     /**
      * Method being used as viewAction for project edit form.
      *
-     * @param id
-     *         ID of the ruleset to load
+     * @param id ID of the ruleset to load
+     * @param duplicate whether to duplicate the project
      */
-    public void loadProject(int id) {
+    public void loadProject(Integer id, Boolean duplicate) {
         SecurityAccessController securityAccessController = new SecurityAccessController();
         try {
-            if (!securityAccessController.hasAuthorityToEditProject(id)) {
+            if (Objects.nonNull(id) && !securityAccessController.hasAuthorityToEditProject(id)) {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
@@ -822,20 +772,28 @@ public class ProjectForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
                     logger, e);
         }
-        try {
-            if (!Objects.equals(id, 0)) {
+        if (Objects.nonNull(duplicate) && duplicate) {
+            // load existing project as duplicate
+            loadAsDuplicate(id);
+        } else if (Objects.nonNull(id) && !Objects.equals(id, 0)) {
+            // load existing project
+            try {
                 Optional<Project> projectWithFolderOpt = ServiceManager.getProjectService().getProjectWithFolders(id);
                 projectWithFolderOpt.ifPresent(project -> {
                     setProject(project);
                     this.locked = true;
                 });
+                setSaveDisabled(true);
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
+                    logger, e);
             }
-            setSaveDisabled(true);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
-                logger, e);
+        }  else {
+            // create new project
+            this.project = new Project();
+            this.locked = false;
+            this.project.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         }
-
     }
 
     /**
@@ -857,26 +815,30 @@ public class ProjectForm extends BaseForm {
      * Set referring view which will be returned when the user clicks "save" or
      * "cancel" on the project edit page.
      *
-     * @param referer
+     * @param referrer
      *            the referring view
      */
-    public void setProjectEditReferer(String referer) {
-        if (!referer.isEmpty()) {
-            if ("projects".equals(referer)) {
-                this.projectEditReferer = referer;
+    public void setProjectEditReferrerFromTemplate(String referrer) {
+        if (!referrer.isEmpty()) {
+            if ("projects".equals(referrer)) {
+                this.projectEditReferrer = referrer;
             } else {
-                this.projectEditReferer = DEFAULT_LINK;
+                this.projectEditReferrer = DEFAULT_LINK;
             }
         }
     }
 
     /**
-     * Get project edit page referring view.
+     * Return the full view path to the referring view (including list options if it was the project list).
      *
-     * @return project edit page referring view
+     * @return the full view path of the referring view
      */
-    public String getProjectEditReferer() {
-        return this.projectEditReferer;
+    public String getProjectEditReferrerViewPath() {
+        if (this.projectEditReferrer.equals("projects")) {
+            return ProjectListView.VIEW_PATH +  "&" + getReferrerListOptions();
+        } else {
+            return DEFAULT_LINK;
+        }
     }
 
     /**
@@ -901,21 +863,4 @@ public class ProjectForm extends BaseForm {
         return ServiceManager.getLtpValidationConfigurationService().listByMimeType(myFolder.getMimeType());
     }
 
-    /**
-     * Get the current sorting configuration for the project's template list.
-     *
-     * @return the SortMeta object representing the sorting configuration
-     */
-    public SortMeta getTemplateListSortBy() {
-        return templateListSortBy;
-    }
-
-    /**
-     * Set the sorting configuration for the project's template list.
-     *
-     * @param templateListSortBy the SortMeta object representing the sorting configuration
-     */
-    public void setTemplateListSortBy(SortMeta templateListSortBy) {
-        this.templateListSortBy = templateListSortBy;
-    }
 }

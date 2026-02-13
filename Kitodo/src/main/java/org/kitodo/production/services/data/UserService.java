@@ -42,7 +42,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -458,20 +457,6 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
                 ServiceManager.getFilterService().remove(filter);
             }
         }
-    }
-
-    /**
-     * Retrieve and return the list of tasks that are assigned to the user and
-     * that are "INWORK" and belong to process, not template.
-     *
-     * @return list of tasks that are currently assigned to the user and that
-     *         are "INWORK" and belong to process, not template
-     */
-    public List<Task> getTasksInProgress(User user) {
-        return user.getProcessingTasks().stream()
-                .filter(
-                    task -> task.getProcessingStatus().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
-                .collect(Collectors.toList());
     }
 
     /**

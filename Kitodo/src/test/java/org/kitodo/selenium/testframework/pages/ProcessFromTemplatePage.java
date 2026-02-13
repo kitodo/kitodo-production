@@ -120,11 +120,11 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     public WebElement getCatalogMenu() {
-        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":catalogueSelectMenu_input");
+        return Browser.getDriver().findElement(By.id(OPAC_SEARCH_FORM + ":catalogueSelectMenu_input"));
     }
 
     public WebElement getSearchFieldMenu() {
-        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":fieldSelectMenu_input");
+        return Browser.getDriver().findElement(By.id(OPAC_SEARCH_FORM + ":fieldSelectMenu_input"));
     }
 
     /**
@@ -132,7 +132,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
      * @return 'Search' button as WebElement.
      */
     public WebElement getSearchButton() {
-        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":performCatalogSearch");
+        return Browser.getDriver().findElement(By.id(OPAC_SEARCH_FORM + ":performCatalogSearch"));
     }
 
     /**
@@ -140,7 +140,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
      * @return template process menu
      */
     public WebElement getTemplateProcessMenu() {
-        return Browser.getDriver().findElementById("searchEditForm:processSelect_input");
+        return Browser.getDriver().findElement(By.id("searchEditForm:processSelect_input"));
     }
 
     private void selectCatalog(String catalogName) throws InterruptedException {
@@ -363,7 +363,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         searchTermInput.sendKeys(searchTerm);
     }
 
-    public ProcessesPage save() throws IllegalAccessException, InstantiationException {
+    public ProcessesPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
@@ -372,7 +372,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         switchToTabByIndex(index, processFromTemplateTabView);
     }
 
-    public void cancel() throws IllegalAccessException, InstantiationException {
+    public void cancel() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(cancelButton, Pages.getProjectsPage().getUrl());
         Pages.getProcessesPage();
     }

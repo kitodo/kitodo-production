@@ -61,7 +61,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
-import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -1070,20 +1069,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
-     * "INWORK".
-     *
-     * @param process
-     *          process for which current task titles are returned
-     * @return String containing titles of current tasks of given process
-     */
-    public String getCurrentTaskTitles(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTaskTitles");
-        return stopwatch.stop(ServiceManager.getProcessService().createProgressTooltip(process));
-
-    }
-
-    /**
      * Get all parent processes recursively for the given process.
      *
      * @return List of Processes
@@ -1145,14 +1130,8 @@ public class ProcessForm extends TemplateBaseForm {
      * 
      * @return amount of processes
      */
-    public String getAmount() throws DAOException {
-        Stopwatch stopwatch = new Stopwatch(this, "getAmount");
-        HashMap<String, String> filterMap = new HashMap<>();
-        if (!StringUtils.isBlank(this.filter)) {
-            filterMap.put(FilterService.FILTER_STRING, this.filter);
-        }
-        return stopwatch.stop(ServiceManager.getProcessService().countResults(filterMap,
-                isShowClosedProcesses(), isShowInactiveProjects()).toString());
+    public Integer getAmount() {
+        return Objects.isNull(lazyBeanModel) ? 0 : lazyBeanModel.getRowCount();
     }
 
     /**

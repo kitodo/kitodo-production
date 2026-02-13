@@ -81,15 +81,15 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement editUserLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/roleEdit?id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/roleEdit') and contains(@href, 'id=1')]")
     private WebElement editRoleLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/clientEdit?id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/clientEdit') and contains(@href, 'id=1')]")
     private WebElement editClientLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/ldapgroupEdit?id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/ldapgroupEdit') and contains(@href, 'id=1')]")
     private WebElement editLdapGroupLink;
 
     @SuppressWarnings("unused")

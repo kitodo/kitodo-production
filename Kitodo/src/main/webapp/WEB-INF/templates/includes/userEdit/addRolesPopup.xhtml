@@ -30,7 +30,7 @@
                 <h3>#{msgs.rolesAdd}</h3>
                 <p:dataTable var="item"
                              id="selectRoleTable"
-                             value="#{UserForm.roles}"
+                             value="#{UserEditViewRolesTab.availableRoles}"
                              lazy="true"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
@@ -49,7 +49,7 @@
                               width="40"
                               styleClass="actionsColumn">
                         <p:commandLink id="addRole"
-                                       action="#{UserForm.addToRole}"
+                                       action="#{UserEditViewRolesTab.addToRole}"
                                        styleClass="action"
                                        title="add to user group"
                                        update="editForm:userTabView:roleDatatable roleForm:selectRoleTable"

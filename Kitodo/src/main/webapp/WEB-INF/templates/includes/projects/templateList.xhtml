@@ -22,22 +22,21 @@
                  widgetVar="templateTable"
                  styleClass="default-layout"
                  var="item"
-                 value="#{TemplateForm.lazyBeanModel}"
-                 first="#{TemplateForm.firstRow}"
+                 value="#{TemplateListView.lazyBeanModel}"
+                 first="#{TemplateListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{TemplateForm.sortBy}"
+                 sortBy="#{TemplateListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page"
-                listener="#{TemplateForm.onPageChange}"/>
-        <p:ajax event="rowToggle"
-                oncomplete="registerRowToggleEvents();" />
+        <p:ajax event="page" listener="#{TemplateListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{TemplateListView.onSortChange}"/>
+        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
         <p:column styleClass="rowTogglerColumn"
                   resizable="false"
@@ -47,15 +46,15 @@
 
         <p:column id="titleColumn"
                   headerText="#{msgs.title}"
-                  sortBy="#{item.title.keyword}"
-                  rendered="#{ProjectForm.showColumn('template.title')}">
+                  sortBy="#{item.title}"
+                  rendered="#{TemplateListView.showColumn('template.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.ruleset}"
-                  sortBy="#{item.ruleset.title.keyword}"
-                  rendered="#{ProjectForm.showColumn('template.ruleset')}">
+                  sortBy="#{item.ruleset.title}"
+                  rendered="#{TemplateListView.showColumn('template.ruleset')}">
             <h:outputText value="#{item.ruleset.title}"
                           title="#{item.ruleset.title}"/>
         </p:column>
@@ -96,40 +95,44 @@
                             outcome="templateEdit"
                             styleClass="action"
                             title="#{msgs.view}"
-                            rendered="#{TemplateForm.isTemplateUsed(item.id) or (SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate())}">
+                            rendered="#{TemplateListView.isTemplateUsed(item.id) or (SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate())}">
                         <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
+                        <f:param name="referrerListOptions" value="#{TemplateListView.combinedListOptions}" />
                     </h:link>
 
                     <h:link id="editTemplate"
                             outcome="templateEdit"
                             styleClass="action"
                             title="#{msgs.edit}"
-                            rendered="#{not TemplateForm.isTemplateUsed(item.id) and SecurityAccessController.hasAuthorityToEditTemplate()}">
+                            rendered="#{not TemplateListView.isTemplateUsed(item.id) and SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                         <f:param name="id" value="#{item.id}"/>
+                        <f:param name="referrerListOptions" value="#{TemplateListView.combinedListOptions}" />
                     </h:link>
 
-                    <h:commandLink action="#{TemplateForm.duplicate(item.id)}"
-                                   immediate="true"
-                                   styleClass="action"
-                                   title="#{msgs.duplicateTemplate}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}">
+                    <h:link outcome="templateEdit"
+                            immediate="true"
+                            styleClass="action"
+                            title="#{msgs.duplicateTemplate}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
-                    </h:commandLink>
+                        <f:param name="id" value="#{item.id}"/>
+                        <f:param name="duplicate" value="true"/>
+                        <f:param name="referrerListOptions" value="#{TemplateListView.combinedListOptions}" />
+                    </h:link>
 
                     <h:panelGroup styleClass="action"
-                                  title="#{TemplateForm.isTemplateUsed(item.id) ? msgs.cannotDeleteTemplate : msgs.delete}">
+                                  title="#{TemplateListView.isTemplateUsed(item.id) ? msgs.cannotDeleteTemplate : msgs.delete}">
                         <p:commandLink id="deleteTemplate"
-                                       action="#{TemplateForm.delete}"
-                                       disabled="#{TemplateForm.isTemplateUsed(item.id)}"
+                                       action="#{TemplateListView.delete(item)}"
+                                       disabled="#{TemplateListView.isTemplateUsed(item.id)}"
                                        title="#{msgs.delete}"
                                        rendered="#{SecurityAccessController.hasAuthorityToDeleteTemplate()}"
                                        update="templateTable">
                             <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                            <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
                             <p:confirm header="#{msgs.confirmDelete}"
-                                       message="#{TemplateForm.formatString('confirmDeleteTemplate', item.title)}"
+                                       message="#{TemplateListView.formatString('confirmDeleteTemplate', item.title)}"
                                        icon="ui-icon-alert"/>
                         </p:commandLink>
                     </h:panelGroup>
@@ -198,7 +201,7 @@
                 <o:graphicImage title="#{item.workflow.title}"
                                 styleClass="workflow-diagram"
                                 rendered="#{item.workflow ne null}"
-                                value="#{TemplateForm.getDiagramImage(item.workflow.title)}"
+                                value="#{TemplateListView.getDiagramImage(item.workflow.title)}"
                                 dataURI="true" />
             </div>
         </p:rowExpansion>
@@ -211,16 +214,16 @@
                 style="display: inline-block;">
             <p:selectCheckboxMenu id="templateFilters"
                                   panelStyleClass="filter-panel"
-                                  value="#{TemplateForm.selectedTemplateFilters}"
+                                  value="#{TemplateListView.selectedTemplateFilters}"
                                   styleClass="secondary"
                                   showHeader="false"
                                   label="#{msgs.filter}">
-                <f:selectItems value="#{TemplateForm.templateFilters}"
+                <f:selectItems value="#{TemplateListView.templateFilters}"
                                var="templateFilter"
                                itemLabel="#{msgs[templateFilter]}"/>
                 <p:ajax event="change"
                         onstart="PF('templateTable').getPaginator().setPage(0);"
-                        listener="#{TemplateForm.templateFiltersChanged}"
+                        listener="#{TemplateListView.templateFiltersChanged}"
                         update="templateTable"/>
             </p:selectCheckboxMenu>
         </h:form>

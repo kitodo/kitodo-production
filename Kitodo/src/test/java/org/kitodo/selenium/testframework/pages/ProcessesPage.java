@@ -340,10 +340,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     /**
      * Set 'edit metadata' link for default process with title saved in PROCESS_TITLE and click it.
-     * @throws IllegalAccessException when retrieving metadata editor page fails
-     * @throws InstantiationException when retrieving metadata editor page fails
+     * @throws ReflectiveOperationException when retrieving metadata editor page fails
      */
-    public void editMetadata() throws IllegalAccessException, InstantiationException {
+    public void editMetadata() throws ReflectiveOperationException {
         setEditMetadataLink(SECOND_PROCESS_TITLE);
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
     }
@@ -351,20 +350,18 @@ public class ProcessesPage extends Page<ProcessesPage> {
     /**
      * Set 'edit metadata' link for default process with given title 'processTitle' and click it.
      * @param processTitle title of process whose 'edit metadata' link is clicked
-     * @throws InstantiationException when retrieving metadata editor page fails
-     * @throws IllegalAccessException when retrieving metadata editor page fails
+     * @throws ReflectiveOperationException when retrieving metadata editor page fails
      */
-    public void editMetadata(String processTitle) throws InstantiationException, IllegalAccessException {
+    public void editMetadata(String processTitle) throws ReflectiveOperationException {
         setEditMetadataLink(processTitle);
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
     }
 
     /**
      * Open second process in metadata editor.
-     * @throws IllegalAccessException when navigating to metadata editor page fails
-     * @throws InstantiationException when navigating to metadata editor page fails
+     * @throws ReflectiveOperationException when navigating to metadata editor page fails
      */
-    public void editSecondProcessMetadata() throws IllegalAccessException, InstantiationException {
+    public void editSecondProcessMetadata() throws ReflectiveOperationException {
         try {
             setEditMetadataLink(SECOND_PROCESS_TITLE);
             clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
@@ -375,10 +372,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     /**
      * Open parent process in metadata editor.
-     * @throws IllegalAccessException when navigating to metadata editor page fails
-     * @throws InstantiationException when navigating to metadata editor page fails
+     * @throws ReflectiveOperationException when navigating to metadata editor page fails
      */
-    public void editParentProcessMetadata() throws InstantiationException, IllegalAccessException {
+    public void editParentProcessMetadata() throws ReflectiveOperationException {
         try {
             setEditMetadataLink(PARENT_PROCESS_TITLE);
             clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
@@ -414,7 +410,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private void setDownloadDocketLink() {
         int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
-        downloadDocketLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":downloadDocket");
+        downloadDocketLink = Browser.getDriver().findElement(By.id(PROCESSES_TABLE + ":" + index + ":downloadDocket"));
     }
 
     /**
@@ -423,12 +419,12 @@ public class ProcessesPage extends Page<ProcessesPage> {
      */
     private void setEditMetadataLink(String processTitle) {
         int index = getRowIndex(processesTable, processTitle, 3);
-        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
+        editMetadataLink = Browser.getDriver().findElement(By.id(PROCESSES_TABLE + ":" + index + ":editMetadata"));
     }
 
     private void setDownloadLogLink() {
         int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
-        downloadLogLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":exportLogXml");
+        downloadLogLink = Browser.getDriver().findElement(By.id(PROCESSES_TABLE + ":" + index + ":exportLogXml"));
     }
 
     /**
@@ -442,7 +438,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         switchToTabByIndex(index, processesTabView);
     }
 
-    public void navigateToExtendedSearch() throws IllegalAccessException, InstantiationException {
+    public void navigateToExtendedSearch() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(searchForProcessesButton, Pages.getExtendedSearchPage().getUrl());
     }
 
@@ -512,7 +508,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
      */
     public void goToCalendar(int processId) throws Exception {
         String xpath = String.format(CALENDER_ACTION_XPATH, processId);
-        WebElement openCalendarLink = Browser.getDriver().findElementByXPath(xpath);
+        WebElement openCalendarLink = Browser.getDriver().findElement(By.xpath(xpath));
         if (isNotAt()) {
             goTo();
         }
@@ -556,10 +552,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     /**
      * Clicks 'create child process' link in actions column and waits for redirect to 'create new process' page.
-     * @throws InstantiationException when retrieving process from template page fails
-     * @throws IllegalAccessException when retrieving process from template page fails
+     * @throws ReflectiveOperationException when retrieving process from template page fails
      */
-    public void createChildProcess() throws InstantiationException, IllegalAccessException {
+    public void createChildProcess() throws ReflectiveOperationException {
         List<WebElement> processTitleCells = processesTable.findElements(By.cssSelector("tr td:nth-child(4)"));
         Optional<WebElement> mvwTitleCell = processTitleCells.stream().filter(row -> row.getText()
                 .equals(MULTI_VOLUME_WORK_PROCESS_TITLE)).findFirst();

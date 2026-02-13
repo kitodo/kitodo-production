@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,9 @@ import org.kitodo.production.services.ServiceManager;
 
 @Named("LtpValidationConfigurationEditView")
 @ViewScoped
-public class LtpValidationConfigurationEditView extends BaseForm {
+public class LtpValidationConfigurationEditView extends BaseEditView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "ltpValidationConfigurationEdit");
 
     private static final Logger logger = LogManager.getLogger(LtpValidationConfigurationEditView.class);
     private LtpValidationConfiguration configuration = new LtpValidationConfiguration();
@@ -111,7 +114,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLtpValidationConfigurationService().save(configuration);
-            return projectsPage;
+            return LtpValidationConfigurationListView.VIEW_PATH +  "&" + getReferrerListOptions();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING,
                 new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);

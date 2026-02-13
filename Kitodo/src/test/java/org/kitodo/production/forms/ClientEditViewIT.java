@@ -20,9 +20,9 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
-public class ClientFormIT {
+public class ClientEditViewIT {
 
-    private final ClientForm clientForm = new ClientForm();
+    private final ClientEditView clientEditView = new ClientEditView();
 
     /**
      * Setup Database and start elasticsearch.
@@ -46,19 +46,22 @@ public class ClientFormIT {
         MockDatabase.cleanDatabase();
     }
 
+    /**
+     * Tests whether client roles can be copied from another client when adding a new client.
+     */
     @Test
     public void testRoleAdding() throws DAOException {
-        clientForm.setClient(ServiceManager.getClientService().getById(1));
+        clientEditView.load(1);
         int numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
         final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
                 .size();
 
         assertEquals(9, numberOfRolesForFirstClient, "Number of roles is incorrect");
 
-        clientForm.getRolesForClient();
-        clientForm.setClientToCopyRoles(ServiceManager.getClientService().getById(2));
-        clientForm.copyRolesToClient();
-        clientForm.save();
+        clientEditView.getRolesForClient();
+        clientEditView.setClientToCopyRoles(ServiceManager.getClientService().getById(2));
+        clientEditView.copyRolesToClient();
+        clientEditView.save();
 
         numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
         int numberOfOldAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()

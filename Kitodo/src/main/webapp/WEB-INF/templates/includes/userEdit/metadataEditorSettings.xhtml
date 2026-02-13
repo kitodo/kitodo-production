@@ -24,10 +24,10 @@
                 <p:outputLabel for="metaDataLanguage"
                                value="#{msgs.metadataLanguage}"/>
                 <p:selectOneMenu id="metaDataLanguage"
-                                 value="#{UserForm.userObject.metadataLanguage}"
+                                 value="#{UserEditViewMetadataTab.userObject.metadataLanguage}"
                                  disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{UserForm.metadataLanguages.entrySet().toArray()}"
+                    <f:selectItems value="#{UserEditViewMetadataTab.metadataLanguages.entrySet().toArray()}"
                                    var="language"
                                    itemLabel="#{language.key}"
                                    itemValue="#{language.value}"/>
@@ -39,11 +39,11 @@
                                value="#{msgs['userEdit.metadataEditorSettings.defaultGalleryView']}"/>
                 <p:selectOneRadio id="defaultGalleryView"
                                   styleClass="ui-corner-all"
-                                  value="#{UserForm.userObject.defaultGalleryViewMode}"
+                                  value="#{UserEditViewMetadataTab.userObject.defaultGalleryViewMode}"
                                   onchange="toggleSave()">
-                    <f:selectItems value="#{UserForm.galleryViewModes}"
+                    <f:selectItems value="#{UserEditViewMetadataTab.galleryViewModes}"
                                    var="viewMode"
-                                   itemLabel="#{UserForm.getGalleryViewModeTranslation(viewMode)}"/>
+                                   itemLabel="#{UserEditViewMetadataTab.getGalleryViewModeTranslation(viewMode)}"/>
                 </p:selectOneRadio>
             </h:panelGroup>
         </p:column>
@@ -54,7 +54,7 @@
                 <p:selectBooleanCheckbox id="showCommentsByDefault"
                                          styleClass="switch input"
                                          disabled="#{isViewMode}"
-                                         value="#{UserForm.userObject.showCommentsByDefault}"
+                                         value="#{UserEditViewMetadataTab.userObject.showCommentsByDefault}"
                                          onchange="toggleSave()"/>
             </h:panelGroup>
             <h:panelGroup styleClass="panel-grid-cell">
@@ -83,7 +83,7 @@
                         <p:selectBooleanCheckbox id="showPaginationPanelByDefault"
                                                  styleClass="switch input"
                                                  disabled="#{isViewMode}"
-                                                 value="#{UserForm.userObject.showPaginationByDefault}"
+                                                 value="#{UserEditViewMetadataTab.userObject.showPaginationByDefault}"
                                                  onchange="toggleSave()"/>
                 </h:panelGroup>
                 <h:panelGroup styleClass="panel-grid-cell">
@@ -92,17 +92,17 @@
                         <p:selectBooleanCheckbox id="paginateFromFirstPageByDefault"
                                                  styleClass="switch input"
                                                  disabled="#{isViewMode}"
-                                                 value="#{UserForm.userObject.paginateFromFirstPageByDefault}"
+                                                 value="#{UserEditViewMetadataTab.userObject.paginateFromFirstPageByDefault}"
                                                  onchange="toggleSave()"/>
                 </h:panelGroup>
                 <h:panelGroup styleClass="panel-grid-cell">
                         <p:outputLabel for="defaultPaginationType"
                                        value="#{msgs['userEdit.metadataEditorSettings.defaultPaginationType']}"/>
                         <p:selectOneMenu id="defaultPaginationType"
-                                         value="#{UserForm.userObject.defaultPaginationType}"
+                                         value="#{UserEditViewMetadataTab.userObject.defaultPaginationType}"
                                          disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}">
-                                <f:selectItems value="#{UserForm.paginationTypes}"/>
+                                <f:selectItems value="#{UserEditViewMetadataTab.paginationTypes}"/>
                                 <p:ajax oncomplete="toggleSave()"/>
                         </p:selectOneMenu>
 
@@ -115,7 +115,7 @@
                         <p:selectBooleanCheckbox id="showPhysicalPageNumberBelowThumbnail"
                                                  styleClass="switch input"
                                                  disabled="#{isViewMode}"
-                                                 value="#{UserForm.userObject.showPhysicalPageNumberBelowThumbnail}"
+                                                 value="#{UserEditViewMetadataTab.userObject.showPhysicalPageNumberBelowThumbnail}"
                                                  onchange="toggleSave()"/>
                 </h:panelGroup>
                 <h:panelGroup styleClass="panel-grid-cell">
@@ -124,7 +124,7 @@
                         <p:selectBooleanCheckbox id="showLogicalPageNumberBelowThumbnail"
                                                  styleClass="switch input"
                                                  disabled="#{isViewMode}"
-                                                 value="#{UserForm.userObject.showLogicalPageNumberBelowThumbnail}"
+                                                 value="#{UserEditViewMetadataTab.userObject.showLogicalPageNumberBelowThumbnail}"
                                                  onchange="toggleSave()"/>
                 </h:panelGroup>
 

@@ -92,11 +92,11 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
         return this;
     }
 
-    public void saveTask()throws IllegalAccessException, InstantiationException {
+    public void saveTask() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getTemplateEditPage().getUrl());
     }
 
-    public ProjectsPage save() throws IllegalAccessException, InstantiationException {
+    public ProjectsPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }

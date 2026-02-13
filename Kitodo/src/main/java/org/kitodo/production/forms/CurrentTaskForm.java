@@ -834,18 +834,6 @@ public class CurrentTaskForm extends ValidatableForm {
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user that are
-     * currently in progress.
-     *
-     * @return list of tasks that are currently assigned to the user that are
-     *         currently in progress.
-     */
-    public List<Task> getTasksInProgress() {
-        Stopwatch stopwatch = new Stopwatch(this, "getTasksInProgress");
-        return stopwatch.stop(ServiceManager.getUserService().getTasksInProgress(this.user));
-    }
-
-    /**
      * Get taskListPath.
      *
      * @return value of taskListPath

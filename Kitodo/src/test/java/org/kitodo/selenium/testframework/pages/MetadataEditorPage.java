@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -200,7 +201,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         moveAction.dragAndDrop(secondChildNode, dropArea).build().perform();
     }
 
-    public ProcessesPage saveAndExit() throws InstantiationException, IllegalAccessException {
+    public ProcessesPage saveAndExit() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveAndExitButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
@@ -402,14 +403,14 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
                         .findElement(By.id(SAVE_AND_EXIT_BUTTON_ID))::isDisplayed);
         WebElement contextMenu = Browser.getDriver().findElement(By.id("contextMenuLogicalTree"));
         List<WebElement> menuItems = contextMenu.findElements(By.className("ui-menuitem"));
-        assertEquals(4, menuItems.size(), "Wrong number of context menu items");
+        assertEquals(5, menuItems.size(), "Wrong number of context menu items");
         // click "add element" option
         menuItems.get(0).click();
         // open "structure element type selection" menu
         clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection"), 1000, 1000, 5);
         // click first option
         clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"), 1000, 500, 3);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 3);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(3));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1")));
         // add structure element with selected type by clicking "accept"/"apply" button
         Thread.sleep(1000);

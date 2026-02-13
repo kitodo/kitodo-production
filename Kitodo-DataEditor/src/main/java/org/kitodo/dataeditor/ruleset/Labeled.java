@@ -177,7 +177,7 @@ public class Labeled {
             if (langAttribute.isPresent()) {
                 labelMap.put(langAttribute.get(), label.getValue());
             } else {
-                labelMap.put(new Locale(ruleset.getDefaultLang()), label.getValue());
+                labelMap.put(Locale.of(ruleset.getDefaultLang()), label.getValue());
                 labelMap.put(UNDEFINED_LOCALE, label.getValue());
             }
         }

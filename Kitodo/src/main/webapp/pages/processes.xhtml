@@ -39,11 +39,15 @@
         <h3 id="headerText">
             <h:outputText value="#{msgs.processes}"
                           styleClass="shortable" />
-            <h:outputText id="processCount"
-                          value=" #{msgs.hits}: #{ProcessForm.amount}"
-                          styleClass="shortable" />
+            <h:panelGroup id="processCount" layout="inline">
+                #{msgs.hits}: #{ProcessForm.amount}
+            </h:panelGroup>
+            <h:form id="headerForm">
+                <p:remoteCommand name="updateProcessCount"
+                                 update=":processCount"
+                                 process="@this" />
+            </h:form>
         </h3>
-
         <!-- Filters -->
         <h:panelGroup id="filterMenuWrapper">
             <p:outputPanel rendered="#{ProcessForm.activeTabIndex eq 0}">

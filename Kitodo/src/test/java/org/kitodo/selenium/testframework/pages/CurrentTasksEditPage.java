@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
@@ -56,7 +57,7 @@ public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
         confirmButton.click();
 
         Thread.sleep(Browser.getDelayAfterDelete());
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(60));
         wait.until(ExpectedConditions.urlContains(Pages.getTasksPage().getUrl()));
     }
 
@@ -69,7 +70,7 @@ public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
         confirmButton.click();
 
         Thread.sleep(Browser.getDelayAfterDelete());
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(60));
         wait.until(ExpectedConditions.urlContains(Pages.getTasksPage().getUrl()));
     }
 }

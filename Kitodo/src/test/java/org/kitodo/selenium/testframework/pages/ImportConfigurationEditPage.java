@@ -122,7 +122,7 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
         assignMappingFile();
     }
 
-    public void save() throws InstantiationException, IllegalAccessException {
+    public void save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
     }
 

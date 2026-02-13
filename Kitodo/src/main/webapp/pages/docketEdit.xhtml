@@ -17,17 +17,23 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{DocketForm.load(id)}"/>
+        <f:viewAction action="#{DocketEditView.load(id)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{DocketEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{DocketForm.docket.id ne null and SecurityAccessController.hasAuthorityToEditDocket()}"/>
+              value="#{DocketEditView.docket.id ne null and SecurityAccessController.hasAuthorityToEditDocket()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{DocketForm.docket.id eq null and SecurityAccessController.hasAuthorityToAddDocket()}"/>
+              value="#{DocketEditView.docket.id eq null and SecurityAccessController.hasAuthorityToAddDocket()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewDocket()}"/>
@@ -38,32 +44,32 @@
             <h:outputText value="#{msgs.createNewDocket}"
                           styleClass="shortable"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.editDocket} (#{DocketForm.docket.title})"
+            <h:outputText value="#{msgs.editDocket} (#{DocketEditView.docket.title})"
                           styleClass="shortable"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewDocket} (#{DocketForm.docket.title})"
+            <h:outputText value="#{msgs.viewDocket} (#{DocketEditView.docket.title})"
                           styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
 
         <p:button id="cancel" value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="projects?keepPagination=true"
+                  outcome="projects?tab=docketTab&amp;#{DocketEditView.referrerListOptions}"
                   icon="fa fa-times fa-lg" iconPos="right"
                   styleClass="secondary"/>
 
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{DocketForm.setSaveDisabled(false)}"
+                  actionListener="#{DocketEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
 
         <p:commandButton id="save"
                          value="#{msgs.save}"
-                         action="#{DocketForm.save}"
+                         action="#{DocketEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          rendered="#{isEditMode || isCreateMode}"
-                         disabled="#{DocketForm.saveDisabled}"
+                         disabled="#{DocketEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({
                             'summary':'#{msgs.docketSaving}',
                             'detail':'#{msgs.youWillBeRedirected}',
@@ -77,14 +83,14 @@
                     <p:panel styleClass="column-wrapper">
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
-                            <p:inputText id="title" class="input" value="#{DocketForm.docket.title}"
+                            <p:inputText id="title" class="input" value="#{DocketEditView.docket.title}"
                                          placeholder="#{msgs.title}" disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.file}"/>
-                            <p:selectOneMenu id="file" value="#{DocketForm.docket.file}" disabled="#{isViewMode}">
-                                <f:selectItems value="#{DocketForm.docketFiles}" var="docketFile" itemValue="#{docketFile}"
+                            <p:selectOneMenu id="file" value="#{DocketEditView.docket.file}" disabled="#{isViewMode}">
+                                <f:selectItems value="#{DocketEditView.docketFiles}" var="docketFile" itemValue="#{docketFile}"
                                                itemLabel="#{docketFile}"/>
                                 <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>

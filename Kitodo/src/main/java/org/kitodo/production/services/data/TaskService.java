@@ -13,10 +13,12 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -306,22 +308,35 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      */
     public void replaceProcessingUser(Task task, User user) {
         User currentProcessingUser = task.getProcessingUser();
-
         if (Objects.isNull(user) && Objects.isNull(currentProcessingUser)) {
             logger.info("do nothing - there is neither a new nor an old user");
         } else if (Objects.isNull(user)) {
-            currentProcessingUser.getProcessingTasks().remove(task);
             task.setProcessingUser(null);
         } else if (Objects.isNull(currentProcessingUser)) {
-            user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         } else if (Objects.equals(currentProcessingUser.getId(), user.getId())) {
             logger.info("do nothing - both are the same");
         } else {
-            currentProcessingUser.getProcessingTasks().remove(task);
-            user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         }
+    }
+
+    /**
+     * Retrieve and return all tasks assigned to the given user
+     * that are currently in progress and linked to a process.
+     *
+     * @param user the processing user
+     * @return list of tasks in progress for the given user
+     */
+    public List<Task> getTasksInProgress(User user) {
+        String hql = "FROM Task t WHERE t.processingUser = :user "
+                + "AND t.processingStatus = :status "
+                + "AND t.process IS NOT NULL";
+        Map<String, Object> params = Map.of(
+                "user", user,
+                "status", TaskStatus.INWORK
+        );
+        return dao.getByQuery(hql, params);
     }
 
     /**
@@ -893,6 +908,40 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             return templateTasks.get(0).getId();
         }
         return -1;
+    }
+
+    /**
+     * Loads titles of open and in-work tasks for the given processes.
+     *
+     * @param processIds IDs of processes to load task titles for
+     * @return task titles grouped by process ID and task status
+     */
+    public Map<Integer, Map<TaskStatus, List<String>>> loadTaskTitlesForProcesses(List<Integer> processIds) throws DAOException {
+        Map<Integer, Map<TaskStatus, List<String>>> result = new HashMap<>();
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
+            return result;
+        }
+        String hql = "SELECT t.process.id, t.processingStatus, t.title "
+                        + "FROM Task t "
+                        + "WHERE t.process.id IN (:ids) "
+                        + "AND t.processingStatus IN (:open, :inwork) "
+                        + "ORDER BY t.process.id, t.processingStatus, t.ordering";
+
+        List<Object[]> rows = dao.getProjectionByQuery(hql, Map.of(
+                "ids", processIds,
+                "open", TaskStatus.OPEN,
+                "inwork", TaskStatus.INWORK
+        ));
+        for (Object[] row : rows) {
+            Integer processId = (Integer) row[0];
+            TaskStatus status = (TaskStatus) row[1];
+            String title = (String) row[2];
+            result
+                    .computeIfAbsent(processId, id -> new EnumMap<>(TaskStatus.class))
+                    .computeIfAbsent(status, s -> new ArrayList<>())
+                    .add(title);
+        }
+        return result;
     }
 
     /**

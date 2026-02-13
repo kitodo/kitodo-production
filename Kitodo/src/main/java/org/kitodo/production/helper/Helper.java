@@ -466,7 +466,7 @@ public class Helper {
                 errorMessages.put(language, Error.getResourceBundle("messages.errors", "errors", language));
             }
         } else {
-            Locale defaultLocale = new Locale("EN");
+            Locale defaultLocale = Locale.of("EN");
             commonMessages.put(defaultLocale, Message.getResourceBundle("messages.messages", "messages", defaultLocale));
             errorMessages.put(defaultLocale, Error.getResourceBundle("messages.errors", "errors", defaultLocale));
         }

@@ -175,7 +175,7 @@ public class TitleRecordLinkTab {
             selectedInsertionPosition = null;
             Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
         } else {
-            selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
+            selectedInsertionPosition = (String) selectableInsertionPositions.getLast()
                     .getValue();
         }
     }

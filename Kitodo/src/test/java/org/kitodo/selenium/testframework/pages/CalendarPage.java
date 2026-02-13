@@ -239,20 +239,20 @@ public class CalendarPage extends Page<CalendarPage> {
     }
 
     private List<String> readMetadataTypes(String issueName) {
-        List<WebElement> metadataTypeLabels = Browser.getDriver().findElementsByXPath("//div[text()='" + issueName
-                + " erschien']/following-sibling::div[@aria-hidden='false']//div[@title='Art']/label");
+        List<WebElement> metadataTypeLabels = Browser.getDriver().findElements(By.xpath("//div[text()='" + issueName
+                + " erschien']/following-sibling::div[@aria-hidden='false']//div[@title='Art']/label"));
         return metadataTypeLabels.stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
     private WebElement getById(String id) {
-        return Browser.getDriver().findElementById(id);
+        return Browser.getDriver().findElement(By.id(id));
     }
 
     private WebElement getByCSS(String cssSelector) {
-        return Browser.getDriver().findElementByCssSelector(cssSelector);
+        return Browser.getDriver().findElement(By.cssSelector((cssSelector)));
     }
 
     private WebElement getByXPath(String xpath) {
-        return Browser.getDriver().findElementByXPath(xpath);
+        return Browser.getDriver().findElement(By.xpath(xpath));
     }
 }

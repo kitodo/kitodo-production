@@ -18,7 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="taskTable"
                  var="item"
-                 value="#{TemplateForm.template.tasks}"
+                 value="#{TemplateEditView.template.tasks}"
                  rowKey="#{item.id}">
 
         <!-- ordering -->
@@ -43,13 +43,13 @@
                     <h:outputText value="#{item.correction}"/>
 
                     <h:outputText value="#{msgs.processingBegin}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{TemplateForm.getFormattedDate(item.processingBegin)}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{TemplateEditView.getFormattedDate(item.processingBegin)}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.lastEdited}: " rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{TemplateForm.getFormattedDate(item.processingTime)}" rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{TemplateEditView.getFormattedDate(item.processingTime)}" rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.processingEnd}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{TemplateForm.getFormattedDate(item.getProcessingEnd)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{TemplateEditView.getFormattedDate(item.getProcessingEnd)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.lastUpdatedBy}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
@@ -67,11 +67,11 @@
 
     <p:panelGrid columns="1">
         <p:row>
-            <ui:fragment rendered="#{TemplateForm.template.workflow ne null and not empty TemplateForm.template.tasks}">
-                <h3><p:outputLabel value="#{msgs.workflow}: #{TemplateForm.template.workflow.title}"/></h3>
-                <h:link outcome="workflowEdit?id=#{TemplateForm.template.workflow.id}"
-                        title="#{TemplateForm.template.workflow.title}">
-                    <o:graphicImage value="#{TemplateForm.tasksDiagram}"
+            <ui:fragment rendered="#{TemplateEditView.template.workflow ne null and not empty TemplateEditView.template.tasks}">
+                <h3><p:outputLabel value="#{msgs.workflow}: #{TemplateEditView.template.workflow.title}"/></h3>
+                <h:link outcome="workflowEdit?id=#{TemplateEditView.template.workflow.id}"
+                        title="#{TemplateEditView.template.workflow.title}">
+                    <o:graphicImage value="#{TemplateEditView.tasksDiagram}"
                                     dataURI="true" />
                 </h:link>
             </ui:fragment>

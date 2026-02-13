@@ -13,18 +13,26 @@ package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -272,4 +280,92 @@ public class TaskServiceIT {
         title = taskTitlesDistinct.get(2);
         assertEquals("Closed", title, "Incorrect sorting of distinct titles for tasks!");
     }
+
+    @Test
+    public void shouldGetTasksInProgressForUser() throws Exception {
+        UserService userService = ServiceManager.getUserService();
+        ProcessService processService = ServiceManager.getProcessService();
+
+        User user = userService.getById(1);
+        List<Task> expected = processService.getAll().stream()
+                .flatMap(p -> p.getTasks().stream())
+                .filter(t -> user.equals(t.getProcessingUser()))
+                .filter(t -> t.getProcessingStatus() == TaskStatus.INWORK)
+                .filter(t -> Objects.nonNull(t.getProcess()))
+                .collect(Collectors.toList());
+
+        List<Task> actual = taskService.getTasksInProgress(user);
+
+        assertEquals(expected.size(), actual.size(), "Unexpected task count");
+        assertTrue(actual.containsAll(expected), "Returned tasks do not match expected INWORK tasks");
+    }
+
+    @Test
+    public void shouldLoadTaskTitlesForProcesses() throws Exception {
+        List<Integer> ids = List.of(1, 2);
+        Map<Integer, Map<TaskStatus, List<String>>> actualMap = taskService.loadTaskTitlesForProcesses(ids);
+
+        for (Integer id : ids) {
+            Process p = ServiceManager.getProcessService().getById(id);
+            Map<TaskStatus, List<String>> processResults = actualMap.get(id);
+
+            for (TaskStatus status : List.of(TaskStatus.OPEN, TaskStatus.INWORK)) {
+                List<String> expected = p.getTasks().stream()
+                        .filter(t -> t.getProcessingStatus() == status)
+                        .map(Task::getTitle)
+                        .toList();
+
+                List<String> actual = processResults.getOrDefault(status, List.of());
+
+                assertEquals(expected.size(), actual.size(), "Size mismatch for " + status);
+                assertTrue(actual.containsAll(expected), "Content mismatch for " + status);
+            }
+        }
+    }
+
+    @Test
+    public void shouldLoadTaskStatusCountsForProcesses() throws Exception {
+        TaskDAO dao = new TaskDAO();
+        List<Process> processes = ServiceManager.getProcessService().getAll();
+
+        List<Integer> rootIds = processes.stream()
+                .map(Process::getId)
+                .collect(Collectors.toList());
+
+        Map<Integer, EnumMap<TaskStatus, Integer>> actual =
+                dao.loadTaskStatusCountsForProcesses(rootIds);
+
+        for (Process root : processes) {
+            EnumMap<TaskStatus, Integer> expected = new EnumMap<>(TaskStatus.class);
+            for (TaskStatus s : TaskStatus.values()) {
+                expected.put(s, 0);
+            }
+            collectCounts(root, expected);
+            EnumMap<TaskStatus, Integer> actualCounts = actual.get(root.getId());
+            assertNotNull(actualCounts, "No result returned for process " + root.getId());
+
+            for (TaskStatus status : TaskStatus.values()) {
+                assertEquals(
+                        expected.get(status),
+                        actualCounts.get(status),
+                        "Mismatch for process " + root.getId() + " and status " + status
+                );
+            }
+        }
+    }
+
+    private void collectCounts(Process process, EnumMap<TaskStatus, Integer> counts) {
+        if (Objects.isNull(process)) {
+            return;
+        }
+        for (Task task : process.getTasks()) {
+            counts.merge(task.getProcessingStatus(), 1, Integer::sum);
+        }
+        if (Objects.nonNull(process.getChildren())) {
+            for (Process child : process.getChildren()) {
+                collectCounts(child, counts);
+            }
+        }
+    }
+
 }

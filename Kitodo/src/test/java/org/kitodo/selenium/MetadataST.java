@@ -1052,7 +1052,7 @@ public class MetadataST extends BaseTestSelenium {
         ProcessService.deleteProcess(linkPageToNextDivisionProcessId);
     }
 
-    private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {
+    private void login(String username) throws ReflectiveOperationException, InterruptedException {
         User metadataUser = ServiceManager.getUserService().getByLogin(username);
         Pages.getLoginPage().goTo().performLogin(metadataUser);
     }

@@ -30,6 +30,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.data.PageEvent;
@@ -96,11 +97,27 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Update first row to show in datatable on PageEvent.
+     * Set first row from the view parameter (query parameter), which might be unavailable or an arbitrary value.
+     */
+    public void setFirstRowFromTemplate(String firstRow) {
+        if (Objects.nonNull(firstRow) && !firstRow.isEmpty()) {
+            try {
+                this.firstRow = Integer.parseInt(firstRow);
+            } catch (NumberFormatException e) {
+                this.firstRow = 0;
+            }
+        }
+    }
+
+    /**
+     * Event listener in case a user navigates to a different page in the list view.
+     * 
      * @param pageEvent PageEvent triggered by data tables paginator
      */
     public void onPageChange(PageEvent pageEvent) {
-        this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
+        DataTable source = (DataTable) pageEvent.getSource();
+        String script = "kitodo.updateQueryParameter('firstRow', '" + source.getRows() * pageEvent.getPage() + "');";
+        PrimeFaces.current().executeScript(script);
     }
 
     /**
@@ -167,7 +184,14 @@ public class BaseForm implements Serializable {
      */
     public User getUser() {
         if (Objects.isNull(this.user)) {
-            this.user = ServiceManager.getUserService().getCurrentUser();
+            try {
+                User authenticatedUser = ServiceManager.getUserService().getCurrentUser();
+                // reload user from database, since authenticated user object might contain outdated data,
+                // e.g. outdated filters
+                this.user = ServiceManager.getUserService().getById(authenticatedUser.getId());
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, ObjectType.USER.getTranslationSingular(), getUser().getId());
+            }
         }
         return this.user;
     }

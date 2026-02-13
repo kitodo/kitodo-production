@@ -31,7 +31,7 @@
                 <h3>#{msgs.addProjects}</h3>
                 <p:dataTable var="item"
                              id="selectProjectTable"
-                             value="#{UserForm.projects}"
+                             value="#{UserEditViewProjectsTab.projects}"
                              lazy="true"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
@@ -44,7 +44,7 @@
                     <p:column headerText="#{msgs.actions}"
                               styleClass="actionsColumn">
                         <p:commandLink id="addUserProject"
-                                       action="#{UserForm.addToProject}"
+                                       action="#{UserEditViewProjectsTab.addToProject}"
                                        styleClass="action"
                                        title="add to project"
                                        update="editForm:userTabView:projectDatatable userProjectForm:selectProjectTable"

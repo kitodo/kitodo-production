@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
@@ -31,11 +32,12 @@ import org.primefaces.model.SortOrder;
 
 @Named("LtpValidationConfigurationListView")
 @ViewScoped
-public class LtpValidationConfigurationListView extends BaseForm {
+public class LtpValidationConfigurationListView extends BaseListView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "projects") + "&tab=ltpValidationConfigurationsTab";
 
     private static final Logger logger = LogManager.getLogger(LtpValidationConfigurationListView.class);
-    private final String ltpValidationConfigurationEditPath = MessageFormat.format(REDIRECT_PATH,
-        "ltpValidationConfigurationEdit");
+    
 
     /**
      * Empty default constructor that also sets the LazyBeanModel instance of
@@ -68,7 +70,7 @@ public class LtpValidationConfigurationListView extends BaseForm {
      * @return path to 'ltpValidationConfigurationEdit' view
      */
     public String newLtpValidationConfiguration() {
-        return ltpValidationConfigurationEditPath;
+        return LtpValidationConfigurationEditView.VIEW_PATH;
     }
 
     /**
@@ -84,6 +86,16 @@ public class LtpValidationConfigurationListView extends BaseForm {
             Helper.setErrorMessage(ERROR_DELETING,
                 new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * The set of allowed sort fields (columns) to sanitize the URL query parameter "sortField".
+     * 
+     * @return the set of allowed sort fields (columns)
+     */
+    @Override
+    protected Set<String> getAllowedSortFields() {
+        return Set.of("title", "mimeType");
     }
 
 }

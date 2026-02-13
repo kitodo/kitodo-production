@@ -159,10 +159,10 @@ public class ChangeDocStrucTypeDialog {
                 .determineLogicalDivisionPathToChild(parentLogicalStructure,
                     dataEditor.getProcess().getId());
         if (parentHierarchyPath.isEmpty()) {
-            throw new IllegalStateException("proces is not linked in parent process");
+            throw new IllegalStateException("process is not linked in parent process");
         }
         return getAllowedSubstructuralElements(
-            ((LinkedList<LogicalDivision>) parentHierarchyPath).getLast().getType());
+            parentHierarchyPath.getLast().getType());
     }
 
     private Map<String, String> getAllowedSubstructuralElements(String parentType) {

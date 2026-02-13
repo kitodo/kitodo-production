@@ -15,17 +15,23 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ClientForm.load(id)}"/>
+        <f:viewAction action="#{ClientEditView.load(id)}"/>
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{ClientEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{ClientForm.client.id ne null and SecurityAccessController.hasAuthorityToEditClient()}"/>
+              value="#{ClientEditView.client.id ne null and SecurityAccessController.hasAuthorityToEditClient()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{ClientForm.client.id eq null and SecurityAccessController.hasAuthorityToAddClient()}"/>
+              value="#{ClientEditView.client.id eq null and SecurityAccessController.hasAuthorityToAddClient()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode" value="#{not isEditMode and not isCreateMode}"/>
 
@@ -43,11 +49,15 @@
                           rendered="#{isViewMode}"/>
         </h3>
 
-        <p:button value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
+        <p:button value="#{msgs.cancel}" 
+                  outcome="users?tab=clientsTab&amp;#{ClientEditView.referrerListOptions}" 
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg" 
+                  iconPos="right" 
+                  styleClass="secondary"/>
 
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{ClientForm.setSaveDisabled(false)}"
+                  actionListener="#{ClientEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
 
@@ -55,11 +65,11 @@
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{ClientForm.save}"
+                         action="#{ClientEditView.save}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         disabled="#{ClientForm.saveDisabled}"
+                         disabled="#{ClientEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
     </ui:define>
 
@@ -74,20 +84,20 @@
                                          class="input"
                                          disabled="#{isViewMode}"
                                          placeholder="#{msgs.name}"
-                                         value="#{ClientForm.client.name}"
+                                         value="#{ClientEditView.client.name}"
                                          required="true"/>
                         </div>
                     </p:panel>
                     <p:panel styleClass="column-wrapper">
                         <div>
-                            <p:dataTable id="clientRoleDatatable" var="role" value="#{ClientForm.getRolesForClient()}">
+                            <p:dataTable id="clientRoleDatatable" var="role" value="#{ClientEditView.getRolesForClient()}">
                                 <p:column id="titleColumn"
                                           headerText="#{msgs.roles}">
                                     <h:outputText value="#{role.title}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <p:commandLink id="deleteFromClient"
-                                                   action="#{ClientForm.deleteRoleFromClient(role)}"
+                                                   action="#{ClientEditView.deleteRoleFromClient(role)}"
                                                    styleClass="action"
                                                    title="#{msgs.clientDeleteFrom}"
                                                    rendered="#{role.id==null}"
@@ -100,16 +110,16 @@
                             </p:dataTable>
                         </div>
                         <div rendered="#{isEditMode || isCreateMode}">
-                            <p:selectOneMenu id="clientToCopyRoles" converter="#{clientConverter}" value="#{ClientForm.clientToCopyRoles}"  >
+                            <p:selectOneMenu id="clientToCopyRoles" converter="#{clientConverter}" value="#{ClientEditView.clientToCopyRoles}"  >
                                 <f:selectItem value="#{null}" itemLabel="#{msgs.clientSelect}"/>
-                                <f:selectItems value="#{ClientForm.possibleClientsForCopying}" var="client" itemValue="#{client}" itemLabel="#{client.name}"/>
+                                <f:selectItems value="#{ClientEditView.possibleClientsForCopying}" var="client" itemValue="#{client}" itemLabel="#{client.name}"/>
                                 <p:ajax update="copyRolesToClient"/>
                             </p:selectOneMenu>
                             <p:commandButton id="copyRolesToClient"
                                              update="editForm:clientsTabView:clientRoleDatatable"
                                              oncomplete="toggleSave()"
-                                             disabled="#{ClientForm.clientToCopyRoles eq null}"
-                                             action="#{ClientForm.copyRolesToClient()}"
+                                             disabled="#{ClientEditView.clientToCopyRoles eq null}"
+                                             action="#{ClientEditView.copyRolesToClient()}"
                                              value="#{msgs.copyRolesToClient}"/>
                         </div>
                     </p:panel>

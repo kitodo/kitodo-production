@@ -18,24 +18,23 @@
         xmlns:p="http://primefaces.org/ui">
     <!--@elvariable id="item" type="org.kitodo.production.dto.ProjectDTO"-->
     <p:dataTable var="item"
-                 value="#{ProjectForm.lazyBeanModel}"
-                 first="#{ProjectForm.firstRow}"
+                 value="#{ProjectListView.lazyBeanModel}"
+                 first="#{ProjectListView.firstRow}"
                  lazy="true"
                  id="projectsTable"
                  styleClass="default-layout"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{ProjectForm.sortBy}"
+                 sortBy="#{ProjectListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page"
-                listener="#{ProjectForm.onPageChange}"/>
-        <p:ajax event="rowToggle"
-                oncomplete="registerRowToggleEvents();" />
+        <p:ajax event="page" listener="#{ProjectListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{ProjectListView.onSortChange}"/>
+        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
         <p:column styleClass="rowTogglerColumn"
                   resizable="false"
@@ -44,15 +43,15 @@
         </p:column>
 
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{item.title.keyword}"
-                  rendered="#{ProjectForm.showColumn('project.title')}">
+                  sortBy="#{item.title}"
+                  rendered="#{ProjectListView.showColumn('project.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.metsRightsOwner}"
-                  sortBy="#{item.metsRightsOwner.keyword}"
-                  rendered="#{ProjectForm.showColumn('project.metsRightsOwner')}">
+                  sortBy="#{item.metsRightsOwner}"
+                  rendered="#{ProjectListView.showColumn('project.metsRightsOwner')}">
             <h:outputText value="#{item.metsRightsOwner}"
                           title="#{item.metsRightsOwner}"/>
         </p:column>
@@ -60,7 +59,7 @@
         <p:column headerText="#{msgs.active}"
                   styleClass="checkboxColumn"
                   sortBy="#{item.active}"
-                  rendered="#{ProjectForm.showColumn('project.active')}">
+                  rendered="#{ProjectListView.showColumn('project.active')}">
             <h:outputText>
                 <ui:fragment rendered="#{item.isActive()}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
@@ -95,7 +94,8 @@
                         outcome="projectEdit"
                         title="#{msgs.view}">
                     <f:param name="id" value="#{item.id}" />
-                    <f:param name="referer" value="projects"/>
+                    <f:param name="referrer" value="projects"/>
+                    <f:param name="referrerListOptions" value="#{ProjectListView.combinedListOptions}" />
                     <h:outputText><i class="fa fa-eye fa-lg"/></h:outputText>
                 </h:link>
 
@@ -121,16 +121,21 @@
                         outcome="projectEdit"
                         title="#{msgs.edit}">
                     <f:param name="id" value="#{item.id}" />
-                    <f:param name="referer" value="projects"/>
+                    <f:param name="referrer" value="projects"/>
+                    <f:param name="referrerListOptions" value="#{ProjectListView.combinedListOptions}" />
                     <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 </h:link>
 
-                <h:commandLink styleClass="action"
+                <h:link styleClass="action"
                                rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
-                               action="#{ProjectForm.duplicate(item.id)}" immediate="true"
+                               outcome="projectEdit"
                                title="#{msgs.duplicateProject}">
                     <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
-                </h:commandLink>
+                    <f:param name="id" value="#{item.id}" />
+                    <f:param name="duplicate" value="true" />
+                    <f:param name="referrer" value="projects"/>
+                    <f:param name="referrerListOptions" value="#{ProjectListView.combinedListOptions}" />
+                </h:link>
 
                 <h:panelGroup styleClass="action"
                               rendered="#{SecurityAccessController.hasAuthorityToMassImportProcesses()}"
@@ -147,13 +152,13 @@
                 <h:panelGroup styleClass="action"
                               title="#{item.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
                     <p:commandLink id="deleteProject"
-                                   action="#{ProjectForm.delete(item.id)}"
+                                   action="#{ProjectListView.delete(item.id)}"
                                    update="projectsTable"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}"
                                    disabled="#{item.hasProcesses()}">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <p:confirm header="#{msgs.confirmDelete}"
-                                   message="#{ProjectForm.formatString('confirmDeleteProject', item.title)}"
+                                   message="#{ProjectListView.formatString('confirmDeleteProject', item.title)}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:panelGroup>
