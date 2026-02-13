@@ -12,8 +12,9 @@
 package org.kitodo.api.schemaconverter;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,8 +48,8 @@ public enum MetadataFormatConversion {
     MetadataFormatConversion(String filename, String source, MetadataFormat targetFormat) {
         this.fileName = filename;
         try {
-            this.source = Paths.get("xslt/" + source).toUri().toURL();
-        } catch (MalformedURLException e) {
+            this.source = new URI(source).toURL();
+        } catch (NullPointerException | MalformedURLException | URISyntaxException e) {
             this.source = null;
         }
         this.targetFormat = targetFormat;
