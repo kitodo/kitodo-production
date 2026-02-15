@@ -324,8 +324,8 @@ public final class ImportProcesses extends EmptyTask {
              * that when the parents are imported, the process ID of
              * the children is already known and can be written down
              * in the METS file. */
-            TreeSet<ImportingProcess> childrenFirst = new TreeSet<ImportingProcess>(
-                    Comparator.comparingInt(ImportingProcess::childDepth).thenComparing(ImportingProcess::toString));
+            TreeSet<ImportingProcess> childrenFirst = new TreeSet<>(Comparator.comparingInt(ImportingProcess::childDepth)
+                    .thenComparing(ImportingProcess::toString));
             childrenFirst.addAll(importingProcesses.values());
             importingProcessesIterator = childrenFirst.iterator();
         }

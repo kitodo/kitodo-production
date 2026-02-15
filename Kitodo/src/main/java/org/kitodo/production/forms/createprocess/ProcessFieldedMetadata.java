@@ -112,7 +112,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public ProcessFieldedMetadata() {
         super(null, null);
-        this.treeNode = new DefaultTreeNode<Object>();
+        this.treeNode = new DefaultTreeNode<>();
         treeNode.setExpanded(true);
         this.metadata = new HashSet<>();
         this.hiddenMetadata = Collections.emptyList();
@@ -154,7 +154,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     private void buildTreeNodeAndCreateMetadataTable() {
-        treeNode = new DefaultTreeNode<Object>();
+        treeNode = new DefaultTreeNode<>();
         treeNode.setExpanded(true);
         createMetadataTable();
     }
@@ -202,7 +202,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 new HashSet<>(template.metadata));
         copy = true;
         hiddenMetadata = template.hiddenMetadata;
-        treeNode = new DefaultTreeNode<Object>(this, template.getTreeNode().getParent());
+        treeNode = new DefaultTreeNode<>(this, template.getTreeNode().getParent());
         createMetadataTable();
         treeNode.setExpanded(true);
     }
@@ -330,7 +330,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                         + metadataKey + "\" in a single row. Must be 0 or 1 per row.");
         }
         ProcessFieldedMetadata metadata = new ProcessFieldedMetadata(this, complexMetadataView, value);
-        metadata.treeNode = new DefaultTreeNode<Object>(metadata, treeNode);
+        metadata.treeNode = new DefaultTreeNode<>(metadata, treeNode);
         metadata.createMetadataTable();
         metadata.treeNode.setExpanded(true);
     }
@@ -386,7 +386,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         } catch (IllegalStateException e) {
             logger.catching(Level.WARN, e);
             ProcessFieldedMetadata metadata = new ProcessFieldedMetadata(this, oneValue(values, MetadataGroup.class));
-            metadata.treeNode = new DefaultTreeNode<Object>(metadata, treeNode);
+            metadata.treeNode = new DefaultTreeNode<>(metadata, treeNode);
             metadata.createUndefinedMetadataTable();
             metadata.treeNode.setExpanded(true);
         }
@@ -516,7 +516,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 TreeNode<Object> copy = null;
                 if (childData instanceof ProcessSimpleMetadata) {
                     ProcessSimpleMetadata copyData = ((ProcessSimpleMetadata) childData).getClone();
-                    copy = new DefaultTreeNode<Object>(copyData, treeNode);
+                    copy = new DefaultTreeNode<>(copyData, treeNode);
                     copy.setExpanded(child.isExpanded());
                 } else if (childData instanceof ProcessFieldedMetadata) {
                     ProcessFieldedMetadata copyData = new ProcessFieldedMetadata((ProcessFieldedMetadata) childData);

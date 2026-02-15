@@ -47,7 +47,7 @@ public class FileManagement implements FileManagementInterface {
 
     private static final String IMAGES_DIRECTORY_NAME = "images";
 
-    private final CommandInterface commandService = new KitodoServiceLoader<CommandInterface>(CommandInterface.class)
+    private final CommandInterface commandService = new KitodoServiceLoader<>(CommandInterface.class)
             .loadModule();
 
     @Override

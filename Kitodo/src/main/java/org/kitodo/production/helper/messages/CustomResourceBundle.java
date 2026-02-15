@@ -35,7 +35,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
 
     private static final Logger logger = LogManager.getLogger(CustomResourceBundle.class);
     private static URLClassLoader urlClassLoader;
-    private static Map<String, Boolean> propertiesFileExistsMap = new HashMap<String, Boolean>();
+    private static Map<String, Boolean> propertiesFileExistsMap = new HashMap<>();
 
     @Override
     public Enumeration<String> getKeys() {
