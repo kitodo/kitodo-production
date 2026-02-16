@@ -53,7 +53,7 @@
         <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
 
         <p:panel id="metadataEditorContainer"
-                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getValidationErrors()}"
+                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getMetadataFileValidationErrors()}"
                  style="margin: auto 16px; padding: 0;">
 
             <p:panel id="metadataEditor">
