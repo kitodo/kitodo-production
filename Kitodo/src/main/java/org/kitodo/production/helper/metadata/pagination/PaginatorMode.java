@@ -63,6 +63,22 @@ public enum PaginatorMode {
     },
 
     /**
+     * The counter is increased on every second page. The pages are numbered alternating counter and "UNCOUNTED".
+     * (1, UNCOUNTED, 2, UNCOUNTED, … / [1], [UNCOUNTED], [2], [UNCOUNTED], …)
+     */
+    FOLIATION_WITH_EMPTY_PAGE(8) {
+        @Override
+        String format(String value, String next, boolean fictitious, String separator) {
+            if (fictitious) {
+                return "[¿UNCOUNTED¡" + value + "½]";
+            } else {
+                return "¿UNCOUNTED¡" + value + "½";
+            }
+        }
+    },
+
+
+    /**
      * Normal pagination (1, 2, 3, 4, … / [1], [2], [3], [4], …).
      */
     PAGES(1) {
@@ -99,9 +115,9 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return '[' + value + "°]¡r¿v½";
+                return '[' + value + "°]¡r¿`v`½";
             } else {
-                return value.concat("°¡r¿v½");
+                return value.concat("°¡r¿`v`½");
             }
         }
     },
@@ -114,9 +130,9 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return "½[" + value + "°]¡r¿v½";
+                return "½[" + value + "°]¡r¿`v`½";
             } else {
-                return '½' + value + "°¡r¿v½";
+                return '½' + value + "°¡r¿`v`½";
             }
         }
     };

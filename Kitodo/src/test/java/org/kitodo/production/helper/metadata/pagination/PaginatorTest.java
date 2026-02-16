@@ -92,7 +92,7 @@ public class PaginatorTest {
 
     @Test
     public void rectoVersoPagination() {
-        Paginator paginator = new Paginator("1° ¡r¿v½");
+        Paginator paginator = new Paginator("1° ¡r¿`v`½");
         assertEquals("1 r", paginator.next());
         assertEquals("1 v", paginator.next());
         assertEquals("2 r", paginator.next());
@@ -101,7 +101,7 @@ public class PaginatorTest {
 
     @Test
     public void rectoVersoPaginationStartRight() {
-        Paginator paginator = new Paginator("½1° ¡r¿v½");
+        Paginator paginator = new Paginator("½1° ¡r¿`v`½");
         assertEquals("1 v", paginator.next());
         assertEquals("2 r", paginator.next());
         assertEquals("2 v", paginator.next());
@@ -181,7 +181,7 @@ public class PaginatorTest {
 
     @Test
     public void handleRectoVersoForWhiteSpaceCharacterAsWell() {
-        Paginator paginator = new Paginator("1°¿ ¿(¿R¿ü¿c¿k¿s¿e¿i¿t¿e¿)½");
+        Paginator paginator = new Paginator("1°¿ ¿(¿R¿ü¿`c`¿k¿s¿e¿`i`¿t¿e¿)½");
         assertEquals("1", paginator.next());
         assertEquals("1 (Rückseite)", paginator.next());
         assertEquals("2", paginator.next());
@@ -208,7 +208,7 @@ public class PaginatorTest {
 
     @Test
     public void alphabeticPaginationRectoVerso() {
-        Paginator paginator = new Paginator("´a´° ¡r¿v½");
+        Paginator paginator = new Paginator("´a´° ¡r¿`v`½");
         assertEquals("a r", paginator.next());
         assertEquals("a v", paginator.next());
         assertEquals("b r", paginator.next());
@@ -216,4 +216,26 @@ public class PaginatorTest {
         assertEquals("c r", paginator.next());
         assertEquals("c v", paginator.next());
     }
+
+    @Test
+    public void foliationWithEmptyPage() {
+        Paginator paginator = new Paginator("¿UNCOUNTED¡1½");
+        assertEquals("1", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+        assertEquals("2", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+
+        paginator = new Paginator("¿UNCOUNTED¡VI½");
+        assertEquals("VI", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+        assertEquals("VII", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+
+        paginator = new Paginator("¿UNCOUNTED¡´z´½");
+        assertEquals("z", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+        assertEquals("aa", paginator.next());
+        assertEquals("UNCOUNTED", paginator.next());
+    }
+
 }

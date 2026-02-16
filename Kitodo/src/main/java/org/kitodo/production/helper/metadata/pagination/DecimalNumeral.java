@@ -32,13 +32,22 @@ public class DecimalNumeral implements Fragment {
     private HalfInteger increment;
 
     /**
+     * Indicates the pagination context for the numeral.
+     * A value of {@code true} represents an odd (left) page.
+     * A value of {@code false} represents an even (right) page.
+     * A value of {@code null} indicates that the numeral can appear on any page.
+     */
+    private final Boolean page;
+
+    /**
      * The initial value of this numeral.
      */
     private int value;
 
-    DecimalNumeral(String value) {
+    DecimalNumeral(String value, Boolean page) {
         this.value = Integer.parseInt(value);
         this.digits = "%0" + value.length() + "d";
+        this.page = page;
     }
 
     /**
@@ -47,7 +56,11 @@ public class DecimalNumeral implements Fragment {
      */
     @Override
     public String format(HalfInteger value) {
-        return String.format(digits, value.intValue());
+        if (page == null || page == value.isHalf()) {
+            return String.format(digits, value.intValue());
+        } else {
+            return "";
+        }
     }
 
     @Override

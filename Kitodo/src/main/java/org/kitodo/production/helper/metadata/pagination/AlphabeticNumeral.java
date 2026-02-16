@@ -27,8 +27,17 @@ public class AlphabeticNumeral implements Fragment {
      */
     private HalfInteger increment;
 
-    AlphabeticNumeral(String value) {
+    /**
+     * Indicates the pagination context for the numeral.
+     * A value of {@code true} represents an odd (left) page.
+     * A value of {@code false} represents an even (right) page.
+     * A value of {@code null} indicates that the numeral can appear on any page.
+     */
+    private final Boolean page;
+
+    AlphabeticNumeral(String value, Boolean page) {
         this.value = parseInt(value);
+        this.page = page;
     }
 
     /**
@@ -65,7 +74,7 @@ public class AlphabeticNumeral implements Fragment {
 
     @Override
     public String toString() {
-        return format(value) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
+        return format(new HalfInteger(value, false)) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
     }
 
     /**
@@ -76,16 +85,20 @@ public class AlphabeticNumeral implements Fragment {
      */
     @Override
     public String format(HalfInteger value) {
-        return format(value.intValue());
+        return format(value, page);
     }
 
     /**
      * Returns the value formatted as alphabetic characters.
      *
-     * @param number numeric value to format
+     * @param value
+     *      numeric value to format
+     * @param page
+     *      Indicates on which type of page this AlphabeticNumeral should be shown (true = odd pages, false = even pages, null = all pages)
      * @return the formatted value
      */
-    public static String format(int number) {
+    public static String format(HalfInteger value, Boolean page) {
+        int number = value.intValue();
         StringBuilder result = new StringBuilder();
 
         while (number > 0) {
@@ -95,8 +108,11 @@ public class AlphabeticNumeral implements Fragment {
             result.insert(0, letter);
             number = number / ALPHABET_SIZE;
         }
-
-        return result.toString();
+        if (page == null || page == value.isHalf()) {
+            return result.toString();
+        } else {
+            return "";
+        }
     }
 
     /**
