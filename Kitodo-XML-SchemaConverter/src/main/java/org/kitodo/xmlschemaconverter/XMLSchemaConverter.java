@@ -13,26 +13,17 @@ package org.kitodo.xmlschemaconverter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -44,7 +35,6 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.exceptions.ConfigException;
-import org.xml.sax.InputSource;
 
 public class XMLSchemaConverter implements SchemaConverterInterface {
     private static final FileFormat supportedSourceFileFormat = FileFormat.XML;
@@ -74,9 +64,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
                 throw new ConfigException("No mapping files found!");
             } else {
                 for (File mappingFile : mappingFiles) {
-                    try (InputStream fileStream = Files.newInputStream(mappingFile.toPath())) {
-                        xmlString = transformXmlByXslt(xmlString, fileStream);
-                    }
+                    xmlString = transformXmlByXslt(xmlString, mappingFile);
                 }
             }
             conversionResult = xmlString;
@@ -102,29 +90,19 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         return supportedSourceFileFormat.equals(format);
     }
 
-    private String transformXmlByXslt(String xmlString, InputStream stylesheetFile) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        try {
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        } catch (ParserConfigurationException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
-        factory.setNamespaceAware(true);
-        try {
-            StringWriter stringWriter = new StringWriter();
+    private String transformXmlByXslt(String xmlString, File stylesheetFile) {
+        try (StringWriter writer = new StringWriter()) {
+            StreamSource xsltSource = new StreamSource(stylesheetFile);
+            xsltSource.setSystemId(stylesheetFile.toURI().toString());
             TransformerFactory transformerFactory = new TransformerFactoryImpl();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             transformerFactory.setURIResolver((href, base) -> new StreamSource(href.replace("http:", "https:")));
             System.setProperty("http.agent", "Chrome");
-            Transformer xsltTransformer = transformerFactory.newTransformer(new StreamSource(stylesheetFile));
-            TransformerHandler handler
-                    = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
-            handler.setResult(new StreamResult(stringWriter));
-            Result saxResult = new SAXResult(handler);
+            Transformer transformer = transformerFactory.newTransformer(xsltSource);
             xmlString = removeBom(xmlString);
-            SAXSource saxSource = new SAXSource(new InputSource(new StringReader(xmlString)));
-            xsltTransformer.transform(saxSource, saxResult);
-            return stringWriter.toString();
-        } catch (TransformerException e) {
+            transformer.transform(new StreamSource(new StringReader(xmlString)), new StreamResult(writer));
+            return writer.toString();
+        } catch (TransformerException | IOException e) {
             throw new ConfigException("Error in transforming the response to internal format: " + e.getMessage(), e);
         }
     }
