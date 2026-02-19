@@ -21,7 +21,7 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.processTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.processTitle}"
-                             value="#{ProcessForm.newProcessTitle}"
+                             value="#{ProcessEditViewDetailsTab.newProcessTitle}"
                              class="input" disabled="#{isViewMode}"
                              required="#{empty param['editForm:saveButtonToggler'] and
                                          empty param['editForm:tabs:addTemplateProperty'] and
@@ -32,13 +32,13 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectOneMenu id="project" value="#{ProcessForm.process.project}" converter="#{projectConverter}"
+                <p:selectOneMenu id="project" value="#{ProcessEditViewDetailsTab.process.project}" converter="#{projectConverter}"
                                  disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProcessForm.projects}"
+                    <f:selectItems value="#{ProcessEditViewDetailsTab.projects}"
                                    var="project"
                                    itemValue="#{project}"
                                    itemLabel="#{project.title}"/>
@@ -49,12 +49,12 @@
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs['importConfig.configuration']}"/>
                 <p:selectOneMenu id="importConfiguration"
-                                 value="#{ProcessForm.process.importConfiguration}"
+                                 value="#{ProcessEditViewDetailsTab.process.importConfiguration}"
                                  converter="#{importConfigurationConverter}"
                                  disabled="#{isViewMode}">
                     <f:selectItem itemValue="#{null}"
                                   itemLabel="#{msgs['none']}"/>
-                    <f:selectItems value="#{ProcessForm.importConfigurations}"
+                    <f:selectItems value="#{ProcessEditViewDetailsTab.importConfigurations}"
                                    var="config"
                                    itemValue="#{config}"
                                    itemLabel="#{config.title}"/>
@@ -68,20 +68,20 @@
                                          disabled="#{isViewMode}"
                                          id="templateSwitch"
                                          onchange="toggleSave()"
-                                         value="#{ProcessForm.process.inChoiceListShown}"/>
+                                         value="#{ProcessEditViewDetailsTab.process.inChoiceListShown}"/>
             </div>
         </p:panel>
         <p:panel styleClass="column-wrapper">
 
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
-                <p:selectOneMenu id="ruleset" value="#{ProcessForm.process.ruleset}" converter="#{rulesetConverter}"
+                <p:selectOneMenu id="ruleset" value="#{ProcessEditViewDetailsTab.process.ruleset}" converter="#{rulesetConverter}"
                                  disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProcessForm.rulesets}"
+                    <f:selectItems value="#{ProcessEditViewDetailsTab.rulesets}"
                                    var="ruleset"
                                    itemValue="#{ruleset}"
                                    itemLabel="#{ruleset.title}"/>
@@ -91,13 +91,13 @@
 
             <div>
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
-                <p:selectOneMenu id="docket" value="#{ProcessForm.process.docket}" converter="#{docketConverter}"
+                <p:selectOneMenu id="docket" value="#{ProcessEditViewDetailsTab.process.docket}" converter="#{docketConverter}"
                                  disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProcessForm.dockets}"
+                    <f:selectItems value="#{ProcessEditViewDetailsTab.dockets}"
                                    var="docket"
                                    itemValue="#{docket}"
                                    itemLabel="#{docket.title}"/>
@@ -107,13 +107,13 @@
 
             <p:outputPanel rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
                 <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
-                <p:selectOneMenu id="ocrdWorkflow" value="#{ProcessForm.ocrdWorkflow}"
+                <p:selectOneMenu id="ocrdWorkflow" value="#{ProcessEditViewDetailsTab.ocrdWorkflow}"
                                  disabled="#{isViewMode}"
                                  converter="#{ocrdWorkflowConverter}">
                     <f:selectItem itemValue="#{null}"
-                                  itemLabel="#{not empty ProcessForm.ocrdWorkflowOfTemplate ? msgs['processConfig.fromTemplate'].concat(' (').concat(ProcessForm.ocrdWorkflowOfTemplate.value).concat(')') : msgs['notSelected']}"
+                                  itemLabel="#{not empty ProcessEditViewDetailsTab.ocrdWorkflowOfTemplate ? msgs['processConfig.fromTemplate'].concat(' (').concat(ProcessEditViewDetailsTab.ocrdWorkflowOfTemplate.value).concat(')') : msgs['notSelected']}"
                                   noSelectionOption="true"/>
-                    <f:selectItems value="#{ProcessForm.ocrdWorkflows}"
+                    <f:selectItems value="#{ProcessEditViewDetailsTab.ocrdWorkflows}"
                                    var="ocrdWorkflow"
                                    itemValue="#{ocrdWorkflow}"
                                    itemLabel="#{ocrdWorkflow.value}"/>

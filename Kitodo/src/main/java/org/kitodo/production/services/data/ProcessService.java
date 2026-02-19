@@ -156,7 +156,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("id", "id");
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("title", "title");
         SORT_FIELD_MAPPING.put("progressCombined", "sortHelperStatus");
         SORT_FIELD_MAPPING.put("lastEditingUser", "lastTask.processingUser.surname");
         SORT_FIELD_MAPPING.put("processingBeginLastTask", "lastTask.processingBegin");
@@ -165,7 +165,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 + " comment.process = process AND comment.type = 'ERROR' AND comment.corrected = false) > 0 THEN 2 WHEN"
                 + " (SELECT COUNT(comment) FROM Comment comment WHERE comment.process = process AND comment.type = "
                 + "'ERROR') > 0 THEN 1 ELSE 0 END");
-        SORT_FIELD_MAPPING.put("project.title.keyword", "project.title");
+        SORT_FIELD_MAPPING.put("project.title", "project.title");
         SORT_FIELD_MAPPING.put("creationDate", "creationDate");
     }
 

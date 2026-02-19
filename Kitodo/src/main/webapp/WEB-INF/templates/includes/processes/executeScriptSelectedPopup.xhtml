@@ -101,7 +101,7 @@
                                 <p:outputLabel for="selectionScriptFieldTextArea"
                                                value="#{msgs.script}"/>
                                 <p:inputTextarea id="selectionScriptFieldTextArea"
-                                                 value="#{ProcessForm.kitodoScriptSelection}"
+                                                 value="#{ProcessListView.kitodoScriptSelection}"
                                                  style="height: 65px; padding: 4px 8px;"
                                                  styleClass="input editDialog"/>
                             </div>
@@ -109,7 +109,7 @@
                     </h:panelGroup>
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
-                        <p:commandButton action="#{ProcessForm.executeKitodoScriptSelection}"
+                        <p:commandButton action="#{ProcessListView.executeKitodoScriptSelection}"
                                          id="save"
                                          update="processesTabView:processesForm:processesTable,processCount"
                                          oncomplete="PF('executeScriptSelectedDialog').hide();"

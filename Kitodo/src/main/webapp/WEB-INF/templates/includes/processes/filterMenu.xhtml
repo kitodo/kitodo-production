@@ -19,23 +19,23 @@
     <h:form id="filterCommands">
         <p:remoteCommand name="removeFilter"
                          id="removeFilterCommand"
-                         action="#{ProcessForm.filterMenu.removeFilter}"
+                         action="#{ProcessListView.filterMenu.removeFilter}"
                          oncomplete="setFilterInputPadding()"
                          update="processesTabView:processesForm:processesTable
                              parsedFiltersForm:parsedFilters
                              processCount"/>
         <p:remoteCommand name="removeFilterForEdit"
                          id="removeFilterForEditCommand"
-                         action="#{ProcessForm.filterMenu.removeFilter}"
+                         action="#{ProcessListView.filterMenu.removeFilter}"
                          oncomplete="setFilterInputPadding()"
                          update="parsedFiltersForm:parsedFilters"/>
         <p:remoteCommand name="updateSuggestions"
                          id="updateSuggestionsCommand"
-                         action="#{ProcessForm.filterMenu.updateSuggestions}"
+                         action="#{ProcessListView.filterMenu.updateSuggestions}"
                          update="filterOptionsForm:suggestions"/>
         <p:remoteCommand name="submitFilters"
                          id="submitFiltersCommand"
-                         action="#{ProcessForm.filterMenu.submitFilters}"
+                         action="#{ProcessListView.filterMenu.submitFilters}"
                          onstart="PF('processesTable').getPaginator().setPage(0);"
                          oncomplete="setFilterInputPadding();"
                          update="processesTabView:processesForm:processesTable
@@ -49,19 +49,19 @@
             <h:form id="filterInputForm">
                 <p:inputText forceId="true"
                              id="filterfield"
-                             value="#{ProcessForm.filterMenu.filterInEditMode}"
+                             value="#{ProcessListView.filterMenu.filterInEditMode}"
                              autocomplete="off"
                              placeholder="#{msgs.filter}">
                     <p:ajax event="keydown"
                             delay="1000"
-                            listener="#{ProcessForm.filterMenu.updateSuggestions(ProcessForm.filterMenu.filterInEditMode)}"
+                            listener="#{ProcessListView.filterMenu.updateSuggestions(ProcessListView.filterMenu.filterInEditMode)}"
                             onstart="return filterKeydownEvents(event);"
                             update="filterOptionsForm:suggestions"/>
                 </p:inputText>
             </h:form>
             <h:form id="parsedFiltersForm">
                 <p:dataList id="parsedFilters"
-                            value="#{ProcessForm.filterMenu.parsedFilters}"
+                            value="#{ProcessListView.filterMenu.parsedFilters}"
                             var="parsedFilter"
                             emptyMessage="">
                     <p:outputPanel styleClass="plainFilter hidden">#{parsedFilter.getPlainFilter()}</p:outputPanel>
@@ -70,7 +70,7 @@
                     <p:outputPanel styleClass="value">#{parsedFilter.value}</p:outputPanel>
                     <p:commandButton title="#{msgs.removeFilter}"
                                      icon="fa fa-times"
-                                     action="#{ProcessForm.filterMenu.removeFilter(parsedFilter)}"
+                                     action="#{ProcessListView.filterMenu.removeFilter(parsedFilter)}"
                                      oncomplete="setFilterInputPadding()"
                                      update="processesTabView:processesForm:processesTable
                                              parsedFilters
@@ -81,7 +81,7 @@
                 <div id="filterOptionsFormWrapper">
                     <!-- Suggestions -->
                     <p:dataList id="suggestions"
-                                value="#{ProcessForm.filterMenu.suggestions}"
+                                value="#{ProcessListView.filterMenu.suggestions}"
                                 var="menuItem"
                                 itemStyleClass="suggestion">
                         <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}"
@@ -89,14 +89,14 @@
                     </p:dataList>
                     <!-- Options at the end of overlay panel -->
                     <p:selectBooleanCheckbox id="showClosedProcesses"
-                                             value="#{ProcessForm.showClosedProcesses}"
+                                             value="#{ProcessListView.showClosedProcesses}"
                                              itemLabel="#{msgs.showClosedProcesses}"
                                              styleClass="switch">
                         <p:ajax onstart="PF('processesTable').getPaginator().setPage(0);"
                                 update="processesTabView:processesForm,processCount"/>
                     </p:selectBooleanCheckbox>
                     <p:selectBooleanCheckbox id="showInactiveProjects"
-                                             value="#{ProcessForm.showInactiveProjects}"
+                                             value="#{ProcessListView.showInactiveProjects}"
                                              itemLabel="#{msgs.showInactiveProjects}"
                                              styleClass="switch">
                         <p:ajax onstart="PF('processesTable').getPaginator().setPage(0);"
@@ -111,17 +111,17 @@
                 <ul>
                     <li>
                         <p:commandButton id="addFilter"
-                                         action="#{ProcessForm.addFilterToUser}"
+                                         action="#{ProcessListView.addFilterToUser}"
                                          icon="fa fa-floppy-o fa-lg"
                                          value="#{msgs.addFilter}" update="@form"/>
                     </li>
-                    <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
+                    <ui:repeat value="#{ProcessListView.userFilters}" var="filter">
                         <li>
                             <p:commandLink value="#{filter}"
-                                           action="#{ProcessForm.changeFilter(filter)}"
+                                           action="#{ProcessListView.changeFilter(filter)}"
                                            title="#{filter}"/>
                             <p:commandLink title="#{msgs.removeFilter}"
-                                           action="#{ProcessForm.removeFilterFromUser(filter)}"
+                                           action="#{ProcessListView.removeFilterFromUser(filter)}"
                                            styleClass="filter-delete plain"
                                            update="@form">
                                 <i class="fa fa-trash-o fa-lg"/>

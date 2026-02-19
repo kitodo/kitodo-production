@@ -34,11 +34,13 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ProcessState;
+import org.kitodo.production.forms.process.ProcessListView;
+import org.kitodo.production.forms.task.TaskEditView;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessFormIT {
 
-    private ProcessForm processForm = new ProcessForm();
+    private ProcessListView processListView = new ProcessListView();
 
     /**
      * Setup Database and start elasticsearch.
@@ -95,20 +97,20 @@ public class ProcessFormIT {
     @Test
     public void testProcessesSelection() throws Exception {
         List<Integer> selectedIds;
-        processForm.setAllSelected(true);
+        processListView.setAllSelected(true);
 
-        selectedIds = processForm.getSelectedProcesses()
+        selectedIds = processListView.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
         assertEquals(new ArrayList<>(Arrays.asList(1, 2, 4, 5)), selectedIds);
 
-        processForm.getExcludedProcessIds().add(4);
-        selectedIds = processForm.getSelectedProcesses()
+        processListView.getExcludedProcessIds().add(4);
+        selectedIds = processListView.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
 
         assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
 
-        processForm.setAllSelected(false);
-        selectedIds = processForm.getSelectedProcesses()
+        processListView.setAllSelected(false);
+        selectedIds = processListView.getSelectedProcesses()
                 .stream().map(Process::getId).sorted().collect(Collectors.toList());
         assertEquals(new ArrayList<>(Arrays.asList(1, 2, 5)), selectedIds);
     }
@@ -127,12 +129,10 @@ public class ProcessFormIT {
 
         // Reopen one task
         Task lastTask = process.getTasks().get(process.getTasks().size() - 1);
-        lastTask.setProcessingStatus(TaskStatus.OPEN);
-
-        ProcessForm form = new ProcessForm();
-        form.setProcess(process);
-        form.setTask(lastTask);
-
+        
+        TaskEditView form = new TaskEditView();
+        form.load(lastTask.getId());
+        form.getTask().setProcessingStatus(TaskStatus.OPEN);
         form.saveTaskAndRedirect();
 
         Process updated = ServiceManager.getProcessService().getById(process.getId());

@@ -99,12 +99,12 @@
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                 </p:commandLink>
                 <h:panelGroup styleClass="action"
-                              title="#{ProcessForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                              title="#{ProcessListView.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
                     <p:commandLink id="deleteProcess"
                                    action="#{DesktopForm.deleteProcess(process.id)}"
-                                   title="#{ ProcessForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}"
+                                   title="#{ ProcessListView.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                                   disabled="#{ProcessForm.hasChildren(process)}"
+                                   disabled="#{ProcessListView.hasChildren(process)}"
                                    update="processTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <p:confirm header="#{msgs.confirmDelete}"
