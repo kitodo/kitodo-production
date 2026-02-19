@@ -80,7 +80,7 @@ class MptrXmlElementAccess {
             return null;
         }
         LinkedMetsResource linkFromDiv = new LinkedMetsResource();
-        Mptr mptr = div.getMptr().get(0);
+        Mptr mptr = div.getMptr().getFirst();
         linkFromDiv.setLoctype(AllowedLoctypeValues.OTHER.toString().equals(mptr.getLOCTYPE()) ? mptr.getOTHERLOCTYPE()
                 : mptr.getLOCTYPE());
         linkFromDiv.setUri(URI.create(mptr.getHref()));

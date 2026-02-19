@@ -90,9 +90,9 @@ public class WorkflowFormIT {
         int numberOfTasksForFirstTemplateBeforeUpdate = firstTemplate.getTasks().size();
         assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
         List<DataEditorSetting> dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
-                firstTemplate.getTasks().get(0).getId());
+                firstTemplate.getTasks().getFirst().getId());
         List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
-                .getByTaskId(secondTemplate.getTasks().get(0).getId());
+                .getByTaskId(secondTemplate.getTasks().getFirst().getId());
         assertEquals(1, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
         List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
@@ -106,16 +106,16 @@ public class WorkflowFormIT {
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
         assertEquals(1, numberOfTasksAfterUpdate);
         dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
-                firstTemplate.getTasks().get(0).getId());
+                firstTemplate.getTasks().getFirst().getId());
         dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
-                .getByTaskId(secondTemplate.getTasks().get(0).getId());
+                .getByTaskId(secondTemplate.getTasks().getFirst().getId());
         assertEquals(0, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
         List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
         assertEquals(1, completeEditorSettingsAfterUpdate.size());
-        assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.get(0).getStructureWidth(), 0);
-        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getMetadataWidth(), 0);
-        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getGalleryWidth(), 0);
+        assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.getFirst().getStructureWidth(), 0);
+        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.getFirst().getMetadataWidth(), 0);
+        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.getFirst().getGalleryWidth(), 0);
     }
 
     private Task createAndSaveTemplateTask(TaskStatus taskStatus, int ordering, Template template) throws DAOException {

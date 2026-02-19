@@ -628,7 +628,7 @@ public class CalendarForm implements Serializable {
                     .collect(Collectors.toMap(ProcessDetail::getMetadataID, Function.identity()));
             course = new Course(xml, processDetailsByMetadataID);
             Helper.removeManagedBean("GranularityForm");
-            navigate(course.get(0));
+            navigate(course.getFirst());
         } catch (SAXException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, "errorSAXException", logger, e);
         } catch (IOException | DAOException e) {
@@ -744,7 +744,7 @@ public class CalendarForm implements Serializable {
                     Triple.of(selectedIssue.getDate(), selectedIssue.getIssue(), onlyThisIssue));
             List<ProcessDetail> metadataTypes = metadata.getAllMetadataTypes(getParentId());
             if (!metadataTypes.isEmpty()) {
-                metadata.setMetadataDetail(metadataTypes.get(0));
+                metadata.setMetadataDetail(metadataTypes.getFirst());
             }
             selectedBlock.addMetadata(metadata);
         } else {

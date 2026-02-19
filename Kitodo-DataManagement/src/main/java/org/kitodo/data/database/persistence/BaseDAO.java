@@ -196,7 +196,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                     new TreeMap<>(parameters).toString(), "first", Integer.toString(first), "max", Integer.toString(
                         max));
             List<?> objects = q.list();
-            if (objects.isEmpty() || objects.get(0) instanceof BaseBean) {
+            if (objects.isEmpty() || objects.getFirst() instanceof BaseBean) {
                 return stopwatch.stop((List<T>) objects);
             } else {
                 return stopwatch.stop((List<T>) (List<?>) ((List<Object[]>) objects).stream().map(array -> array[0])

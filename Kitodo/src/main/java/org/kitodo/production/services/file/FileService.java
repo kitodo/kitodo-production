@@ -1082,7 +1082,7 @@ public class FileService {
         canonicals.forEach(mediaToAdd.keySet()::remove);
         removeMissingMediaFromWorkpiece(mediaToRemove, workpiece, subfolders.values());
         List<PhysicalDivision> children = workpiece.getPhysicalStructure().getChildren();
-        boolean orderedChildren = (!children.isEmpty() && children.get(0).getOrder() > 0);
+        boolean orderedChildren = (!children.isEmpty() && children.getFirst().getOrder() > 0);
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece, orderedChildren);
         renumberPhysicalDivisions(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
@@ -1106,7 +1106,7 @@ public class FileService {
                     .map(View::of).forEachOrdered(logicalDivision.getViews()::add);
         } else if (logicalDivision.getChildren().size() == 1) {
             automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(workpiece,
-                logicalDivision.getChildren().get(0));
+                logicalDivision.getChildren().getFirst());
         }
     }
 
@@ -1225,7 +1225,7 @@ public class FileService {
 
         LogicalDivision actualLogicalRoot = workpiece.getLogicalStructure();
         while (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() == 1) {
-            actualLogicalRoot = actualLogicalRoot.getChildren().get(0);
+            actualLogicalRoot = actualLogicalRoot.getChildren().getFirst();
         }
         // If the newspaper has multiple issues in the process, then everything stays as it was
         if (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() != 1) {

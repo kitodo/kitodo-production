@@ -54,14 +54,14 @@ public class StructurePanelTest {
         Map<Integer, String> processTypeMap = new HashMap<>();
         Map<String, StructuralElementViewInterface> viewCache = new HashMap<>();
         processTypeMap.put(ServiceManager.getProcessService().processIdFromUri(link.getUri()), "Monograph");
-        TreeNode<Object> result = new DefaultTreeNode();
+        TreeNode<Object> result = new DefaultTreeNode<>();
 
         Method buildStructureTreeRecursively = StructurePanel.class.getDeclaredMethod("buildStructureTreeRecursively",
             LogicalDivision.class, TreeNode.class, Map.class, Map.class);
         buildStructureTreeRecursively.setAccessible(true);
         buildStructureTreeRecursively.invoke(underTest, structure, result, processTypeMap, viewCache);
 
-        assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
+        assertTrue(((StructureTreeNode) result.getChildren().getFirst().getData()).isLinked());
     }
 
     @Test

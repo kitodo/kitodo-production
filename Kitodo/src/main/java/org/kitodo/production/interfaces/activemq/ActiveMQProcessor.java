@@ -147,7 +147,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
         Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
                 securityUserDetails.getAuthorities());
-        Client clientId = ServiceManager.getClientService().getById(user.getClients().get(0).getId());
+        Client clientId = ServiceManager.getClientService().getById(user.getClients().getFirst().getId());
         securityUserDetails.setSessionClient(clientId);
         securityContext.setAuthentication(auth);
     }

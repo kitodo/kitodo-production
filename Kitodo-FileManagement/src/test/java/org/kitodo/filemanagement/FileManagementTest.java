@@ -287,7 +287,7 @@ public class FileManagementTest {
         FilenameFilter filter = new FileNameEndsWithFilter(".xml");
         List<URI> subUrisWithFilter = fileManagement.getSubUris(filter, directory);
         assertEquals(1, subUrisWithFilter.size());
-        assertEquals(secondSub, subUrisWithFilter.get(0));
+        assertEquals(secondSub, subUrisWithFilter.getFirst());
     }
 
     @Test

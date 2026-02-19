@@ -59,7 +59,7 @@ public class AuthorityDAO extends BaseDAO<Authority> {
         List<Authority> authorities = getByQuery("FROM Authority WHERE title = :title", Collections.singletonMap("title", title));
 
         if (!authorities.isEmpty()) {
-            return authorities.get(0);
+            return authorities.getFirst();
         }
         throw new DAOException(String.format("Authority '%s' cannot be found in database", title));
     }

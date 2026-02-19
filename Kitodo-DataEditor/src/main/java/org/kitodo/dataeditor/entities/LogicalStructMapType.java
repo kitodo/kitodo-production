@@ -121,7 +121,7 @@ public class LogicalStructMapType extends StructMapType {
     }
 
     private void addDivToDivAsFirstChild(DivType existingDiv, DivType newDiv) {
-        existingDiv.getDiv().add(0, newDiv);
+        existingDiv.getDiv().addFirst(newDiv);
     }
 
     private void addDivBeforeExistingDiv(DivType existingDiv, DivType newDiv) {

@@ -47,7 +47,7 @@ public class MetsServiceIT {
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getPhysicalStructure().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
+            workpiece.getPhysicalStructure().getChildren().getFirst().getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(

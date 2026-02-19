@@ -352,7 +352,7 @@ public class AddingST extends BaseTestSelenium {
         ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(4);
         List<UrlParameter> urlParameters = importConfiguration.getUrlParameters();
         assertEquals(1, urlParameters.size(), "Wrong number of custom URL parameters");
-        assertEquals("testkey", urlParameters.get(0).getParameterKey(), "Wrong URL parameter key");
-        assertEquals("testvalue", urlParameters.get(0).getParameterValue(), "Wrong URL parameter value");
+        assertEquals("testkey", urlParameters.getFirst().getParameterKey(), "Wrong URL parameter key");
+        assertEquals("testvalue", urlParameters.getFirst().getParameterValue(), "Wrong URL parameter value");
     }
 }

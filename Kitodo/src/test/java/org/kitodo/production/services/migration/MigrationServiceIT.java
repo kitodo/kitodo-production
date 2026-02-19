@@ -182,7 +182,7 @@ public class MigrationServiceIT {
         Map<Template, Template> matchingTemplates = migrationService.getMatchingTemplates(newTemplates);
 
         assertNotNull(matchingTemplates.get(template));
-        assertEquals(existingTemplates.get(0), matchingTemplates.get(template));
+        assertEquals(existingTemplates.getFirst(), matchingTemplates.get(template));
     }
 
     @Test
@@ -226,13 +226,13 @@ public class MigrationServiceIT {
         List<Process> firstTemplateProcesses = firstTemplate.getProcesses();
         assertEquals(2, firstTemplateProcesses.size());
         assertEquals(0, secondTemplate.getProcesses().size());
-        assertEquals(1, (long) firstTemplateProcesses.get(0).getTemplate().getId());
+        assertEquals(1, (long) firstTemplateProcesses.getFirst().getTemplate().getId());
         migrationService.addProcessesToTemplate(secondTemplate, firstTemplateProcesses);
 
         assertEquals(2, firstTemplateProcesses.size());
         secondTemplate = ServiceManager.getTemplateService().getById(2);
         assertEquals(2, secondTemplate.getProcesses().size());
-        assertEquals(2, (long) firstTemplateProcesses.get(0).getTemplate().getId());
+        assertEquals(2, (long) firstTemplateProcesses.getFirst().getTemplate().getId());
     }
 
     @Test
@@ -243,8 +243,8 @@ public class MigrationServiceIT {
             workflow);
 
         assertEquals(1, templatesForProcesses.size());
-        assertEquals(processes.get(0).getDocket(), templatesForProcesses.keySet().iterator().next().getDocket());
-        assertEquals(processes.get(0).getRuleset(), templatesForProcesses.keySet().iterator().next().getRuleset());
+        assertEquals(processes.getFirst().getDocket(), templatesForProcesses.keySet().iterator().next().getDocket());
+        assertEquals(processes.getFirst().getRuleset(), templatesForProcesses.keySet().iterator().next().getRuleset());
         assertEquals(2, templatesForProcesses.values().iterator().next().size());
 
     }
@@ -254,7 +254,7 @@ public class MigrationServiceIT {
         assertEquals("Finished, Closed, Progress, Open, Locked" + MigrationService.SEPARATOR + "9c43055e", migrationService.createTaskString(ServiceManager.getProcessService().getById(1).getTasks()));
         List<Task> secondTasks = ServiceManager.getProcessService().getById(2).getTasks();
         assertEquals("Additional, Processed and Some, Next Open" + MigrationService.SEPARATOR + "848a8483", migrationService.createTaskString(secondTasks));
-        secondTasks.get(0).setTitle("test/test");
+        secondTasks.getFirst().setTitle("test/test");
         assertEquals("test/test, Processed and Some, Next Open" + MigrationService.SEPARATOR + "56f49a2b", migrationService.createTaskString(secondTasks));
         assertEquals(MigrationService.SEPARATOR + "0", migrationService.createTaskString(ServiceManager.getProcessService().getById(3).getTasks()));
     }

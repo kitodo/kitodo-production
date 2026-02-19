@@ -55,7 +55,7 @@ public class SessionClientController {
     }
 
     private Client getFirstClientOfCurrentUser() {
-        return getAvailableClientsOfCurrentUser().get(0);
+        return getAvailableClientsOfCurrentUser().getFirst();
     }
 
     private boolean userHasOnlyOneClient() {

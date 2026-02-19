@@ -103,7 +103,7 @@ public class SelectProjectDialogView implements Serializable {
      */
     public void createProcessFromTemplate() {
         if (this.template.getProjects().size() == 1) {
-            this.selectedProjectId = this.template.getProjects().get(0).getId();
+            this.selectedProjectId = this.template.getProjects().getFirst().getId();
         }
         if (this.selectedProjectId > 0) {
             try {

@@ -503,7 +503,7 @@ public class ProcessServiceIT {
                 .getDigitalDocument();
 
         String processTitle = process.getTitle();
-        String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
+        String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().getFirst().getValue();
         assertEquals(processTitle, processTitleFromMetadata, "It was not possible to read metadata file!");
 
         FileLoader.deleteMetadataFile();

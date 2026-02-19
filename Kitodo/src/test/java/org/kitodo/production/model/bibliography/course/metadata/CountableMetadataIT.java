@@ -125,7 +125,7 @@ public class CountableMetadataIT {
     public void shouldGetValue() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
-                .collect(Collectors.toList()).get(0);
+                .collect(Collectors.toList()).getFirst();
         countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> issuePair = new ImmutablePair<>(DEFINE_DATE.plusWeeks(1), issue);
@@ -137,7 +137,7 @@ public class CountableMetadataIT {
     public void shouldMatch() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
-                .collect(Collectors.toList()).get(0);
+                .collect(Collectors.toList()).getFirst();
         countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> deletePair = new ImmutablePair<>(DELETE_DATE, issue);

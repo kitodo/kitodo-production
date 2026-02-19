@@ -465,7 +465,8 @@ public class ImportServiceIT {
     public void shouldGetProcessDetailValue() throws Exception {
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_KITODO_METADATA_FILE_PATH);
         assertFalse(processDetails.isEmpty(), "List of process details should not be empty");
-        assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(processDetails.get(0)), "Value of first process details should not be empty");
+        assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(processDetails.getFirst()),
+                "Value of first process details should not be empty");
     }
 
     /**
@@ -478,7 +479,7 @@ public class ImportServiceIT {
         String newProcessTitle = "New process title";
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_KITODO_METADATA_FILE_PATH);
         assertFalse(processDetails.isEmpty(), "Process detail list should not be empty");
-        ProcessDetail title = processDetails.get(0);
+        ProcessDetail title = processDetails.getFirst();
         assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(title), "Wrong title process detail before setting it");
         ImportService.setProcessDetailValue(title, newProcessTitle);
         assertEquals(newProcessTitle, ImportService.getProcessDetailValue(title), "Wrong title process detail after setting it");
@@ -583,7 +584,7 @@ public class ImportServiceIT {
         User user = ServiceManager.getUserService().getById(1);
         Client client = ServiceManager.getClientService().getById(1);
         Project eadProject = MockDatabase.insertProjectForEadImport(user, client);
-        Template eadTemplate = eadProject.getTemplates().get(0);
+        Template eadTemplate = eadProject.getTemplates().getFirst();
         CreateProcessForm createProcessForm = new CreateProcessForm();
         createProcessForm.setProject(eadProject);
         createProcessForm.setTemplate(eadTemplate);
@@ -745,7 +746,7 @@ public class ImportServiceIT {
         if (recordIdentifierMetadata.isEmpty()) {
             throw new ImportException("Functional metadata 'recordIdentifier' is not defined in ruleset");
         }
-        String recordIdMetadataKey = recordIdentifierMetadata.get(0);
+        String recordIdMetadataKey = recordIdentifierMetadata.getFirst();
         List<String> ids = Collections.singletonList(recordId);
         Process importedProcess = importService.importProcessForMassImport(PROJECT_ID, TEMPLATE_ID, importConfiguration,
                 Collections.singletonMap(recordIdMetadataKey, ids));

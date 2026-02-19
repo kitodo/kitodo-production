@@ -497,7 +497,7 @@ public class FileManagement implements FileManagementInterface {
                     createDirectory(dir, processTitle + suffix);
                 }
             } else {
-                sourceFolder = dir.resolve("/" + directories.get(0));
+                sourceFolder = dir.resolve("/" + directories.getFirst());
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

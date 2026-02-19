@@ -122,7 +122,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 Map<String, SortMeta> sortBy = new HashMap<>();
                 List<?> hits = hitModel.load(0, 10, sortBy, Collections.EMPTY_MAP);
                 if (hits.size() == 1) {
-                    getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+                    getRecordById(((SingleHit) hits.getFirst()).getIdentifier());
                 } else {
                     try {
                         ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
@@ -157,7 +157,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         // if more than one exemplar record was found, display a selection dialog to the user
         LinkedList<ExemplarRecord> exemplarRecords = ServiceManager.getImportService().getExemplarRecords();
         if (exemplarRecords.size() == 1) {
-            this.setSelectedExemplarRecord(exemplarRecords.get(0));
+            this.setSelectedExemplarRecord(exemplarRecords.getFirst());
         } else if (exemplarRecords.size() > 1) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
         }
@@ -265,7 +265,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                             createProcessForm.getProject().getId(), createProcessForm.getTemplate().getId(),
                             createProcessForm.getSelectedEadLevel(), createProcessForm.getSelectedParentEadLevel(), false);
             createProcessForm.setChildProcesses(new LinkedList<>(eadProcesses.subList(1, eadProcesses.size() - 1)));
-            processes = new LinkedList<>(Collections.singletonList(eadProcesses.get(0)));
+            processes = new LinkedList<>(Collections.singletonList(eadProcesses.getFirst()));
         }
         return processes;
     }

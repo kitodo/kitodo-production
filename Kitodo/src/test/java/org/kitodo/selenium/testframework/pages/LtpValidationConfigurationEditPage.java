@@ -394,7 +394,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      */
     public void clickRemoveConditionButton(int idx) throws Exception {
         int countBefore = getNumberOfValidationConditions();
-        allConditionsTable.findElements(By.tagName("tr")).get(idx + 1).findElements(By.tagName("a")).get(0).click();
+        allConditionsTable.findElements(By.tagName("tr")).get(idx + 1).findElements(By.tagName("a")).getFirst().click();
         Awaitility.await().until(() -> getNumberOfValidationConditions() == countBefore - 1);
     }
 
@@ -407,7 +407,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      * @return the input element of the property column
      */
     private WebElement getPropertyInputForCondition(int row) {
-        return allConditionsTable.findElements(By.tagName("tr")).get(row + 1).findElements(By.tagName("td")).get(0)
+        return allConditionsTable.findElements(By.tagName("tr")).get(row + 1).findElements(By.tagName("td")).getFirst()
                 .findElement(By.tagName("input"));
     }
 

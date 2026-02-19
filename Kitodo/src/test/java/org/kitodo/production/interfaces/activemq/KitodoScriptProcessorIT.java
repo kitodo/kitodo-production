@@ -80,7 +80,7 @@ public class KitodoScriptProcessorIT {
                 .findFields(
                         KitodoScriptProcessor.class, f -> f.getName().equals("kitodoScriptService"),
                         ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
-                .get(0);
+                .getFirst();
         field.setAccessible(true);
         field.set(underTest, kitodoScriptService);
 
@@ -98,7 +98,7 @@ public class KitodoScriptProcessorIT {
         // check results
         assertEquals("action:test", scriptCaptor.getValue(), "should have passed the script to be executed");
         assertEquals(1, processCaptor.getAllValues().size(), "should have passed one process");
-        assertEquals(1, processCaptor.getAllValues().get(0).get(0).getId(), "should have passed process 1");
+        assertEquals(1, processCaptor.getAllValues().getFirst().getFirst().getId(), "should have passed process 1");
     }
 
     @Test

@@ -318,7 +318,7 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
                 Helper.setErrorMessage(exception.getLocalizedMessage(), logger, exception);
             }
         }
-        return processes.get(0).getProcess();
+        return processes.getFirst().getProcess();
     }
 
     /**
@@ -530,7 +530,7 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
                 Workpiece workpiece = new Workpiece();
                 processes = new LinkedList<>(Collections.singletonList(new TempProcess(
                         processGenerator.getGeneratedProcess(), workpiece)));
-                currentProcess = processes.get(0);
+                currentProcess = processes.getFirst();
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
@@ -655,9 +655,9 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
         if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
                 && Objects.nonNull(this.titleRecordLinkTab.getSelectedInsertionPosition())
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
-            this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
+            this.processes = new LinkedList<>(Collections.singletonList(this.processes.getFirst()));
         }
-        processTempProcess(this.processes.get(0));
+        processTempProcess(this.processes.getFirst());
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved, so they have IDs before creating their process directories
@@ -682,9 +682,9 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (!this.processes.isEmpty() && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
-                titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
+                titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.getFirst().getProcess().getId());
             ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),
-                processes.get(0).getProcess());
+                processes.getFirst().getProcess());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
                 titleRecordLinkTab.getTitleRecordProcess().getTitle());

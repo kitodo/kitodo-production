@@ -50,7 +50,7 @@ public class ImportServiceTest {
         ImportService importService = new ImportService();
         List<Process> sortedProcesses = importService.sortProcessesByProjectID(processes, 9);
 
-        int projectIdOfFirstProcess = sortedProcesses.get(0).getProject().getId();
+        int projectIdOfFirstProcess = sortedProcesses.getFirst().getProject().getId();
 
         assertEquals(9, projectIdOfFirstProcess, "Process not sorted based on provided projectId");
     }

@@ -65,7 +65,7 @@ public class LtpValidationConfigurationService
         if (results.size() != 1) {
             throw new DAOException("Unable to find ltp validation configuration object with ID " + id + "!");
         }
-        return results.get(0);
+        return results.getFirst();
     }
 
     /**

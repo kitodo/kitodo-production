@@ -192,7 +192,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
 
     private User uniqueResult(List<User> users, String login) {
         if (users.size() == 1) {
-            return users.get(0);
+            return users.getFirst();
         } else if (users.isEmpty()) {
             throw new UsernameNotFoundException("Login '" + login + "' not found!");
         } else {

@@ -151,7 +151,7 @@ public class RangeStreamContentHandler extends BaseDynamicContentHandler {
         Range full = new Range(0, length - 1, length);
         List<Range> ranges = getRanges(request, response, length, streamedContent.getName());
 
-        if (ranges.isEmpty() || Objects.equals(ranges.get(0), full)) {
+        if (ranges.isEmpty() || Objects.equals(ranges.getFirst(), full)) {
             // Return full file.
             logger.info("Return full file");
             response.setContentType(streamedContent.getContentType());
@@ -161,7 +161,7 @@ public class RangeStreamContentHandler extends BaseDynamicContentHandler {
             copy(inputStream, outputStream, length, full.getStart(), full.getLength());
         } else if (ranges.size() == 1) {
             // Return single part of file.
-            Range r = ranges.get(0);
+            Range r = ranges.getFirst();
             logger.info("Returning part of file : from (" + r.getStart() + ") to (" + r.getEnd() + ")");
             response.setContentType(streamedContent.getContentType());
             response.setHeader("Content-Range", "bytes " + r.getStart() + "-" + r.getEnd() + "/" + r.getTotal());
