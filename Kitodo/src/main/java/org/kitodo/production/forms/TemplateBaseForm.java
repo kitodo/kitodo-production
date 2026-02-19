@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.process.ProcessListBaseView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 

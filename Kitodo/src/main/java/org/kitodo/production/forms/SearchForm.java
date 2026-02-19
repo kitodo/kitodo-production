@@ -28,6 +28,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.enums.FilterString;
+import org.kitodo.production.forms.process.ProcessListView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -67,23 +68,23 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
-    private final ProcessForm processForm;
+    private final ProcessListView processListView;
     private final CurrentTaskForm taskForm;
 
     /**
      * Constructor with inject process form.
      *
-     * @param processForm
+     * @param processListView
      *            managed bean
      */
     @Inject
-    public SearchForm(ProcessForm processForm, CurrentTaskForm taskForm) {
+    public SearchForm(ProcessListView processListView, CurrentTaskForm taskForm) {
         this.stepstatus.addAll(ServiceManager.getFilterService().initStepStatus());
         this.projects = ServiceManager.getFilterService().initProjects();
         this.stepTitles = ServiceManager.getFilterService().initStepTitles();
         this.processPropertyTitles = ServiceManager.getFilterService().initProcessPropertyTitles();
         this.user.addAll(ServiceManager.getFilterService().initUserList());
-        this.processForm = processForm;
+        this.processListView = processListView;
         this.taskForm = taskForm;
     }
 
@@ -213,8 +214,8 @@ public class SearchForm {
      * @return filter as java.lang.String
      */
     public String filterProcesses() {
-        processForm.changeFilter(createFilter());
-        return processForm.getProcessesPage();
+        processListView.changeFilter(createFilter());
+        return processListView.getProcessesPage();
     }
 
     /**

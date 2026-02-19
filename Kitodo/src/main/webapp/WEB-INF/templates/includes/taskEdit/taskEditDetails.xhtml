@@ -19,9 +19,9 @@
         <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
-                <p:selectOneMenu id="status" value="#{ProcessForm.task.processingStatus}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                <p:selectOneMenu id="status" value="#{TaskEditView.task.processingStatus}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
-                    <f:selectItems value="#{ProcessForm.taskStatuses}"
+                    <f:selectItems value="#{TaskEditView.taskStatuses}"
                                    var="status"
                                    itemValue="#{status}"
                                    itemLabel="#{msgs[status.title]}"/>

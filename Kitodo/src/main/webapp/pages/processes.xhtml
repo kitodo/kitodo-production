@@ -19,18 +19,30 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:o="http://omnifaces.org/ui">
     <f:metadata>
-        <f:viewParam name="tabIndex"/>
-        <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
-        <f:viewAction action="#{ProcessForm.setActiveTabIndexFromTemplate(tabIndex)}" />
+        <!--@elvariable id="tab type="java.lang.String"-->
+        <f:viewParam name="tab"/>
+        <f:viewAction action="#{ProcessesTabView.setActiveTabIdFromTemplate(tab)}" />
+        <!--@elvariable id="firstRow" type="java.lang.Integer"-->
+        <f:viewParam name="firstRow"/>
+        <f:viewAction action="#{ProcessesTabView.setFirstRowFromTemplate(firstRow)}" />
+        <!--@elvariable id="sortField" type="java.lang.String"-->
+        <f:viewParam name="sortField"/>
+        <!--@elvariable id="sortOrder" type="java.lang.String"-->
+        <f:viewParam name="sortOrder"/>
+        <f:viewAction action="#{ProcessesTabView.setSortByFromTemplate(sortField, sortOrder)}" />
+        <!--@elvariable id="filter" type="java.lang.String"-->
+        <f:viewParam name="filter"/>
+        <f:viewAction action="#{ProcessesTabView.setFilterFromTemplate(filter)}" />
+
         <!--@elvariable id="projecttitle" type="java.lang.String"-->
         <f:viewParam name="projecttitle"/>
-        <o:viewAction action="#{ProcessForm.changeFilter('project:' += projecttitle)}"
+        <o:viewAction action="#{ProcessListView.changeFilter('project:' += projecttitle)}"
                       if="#{not empty projecttitle}"
                       update="parsedFiltersForm:parsedFilters"/>
 
         <!--@elvariable id="input" type="java.lang.String"-->
         <f:viewParam name="input"/>
-        <o:viewAction action="#{ProcessForm.changeFilter('search:'.concat(input))}"
+        <o:viewAction action="#{ProcessListView.changeFilter('search:'.concat(input))}"
                       if="#{not empty input}"
                       update="parsedFiltersForm:parsedFilters"/>
     </f:metadata>
@@ -40,7 +52,7 @@
             <h:outputText value="#{msgs.processes}"
                           styleClass="shortable" />
             <h:panelGroup id="processCount" layout="inline">
-                #{msgs.hits}: #{ProcessForm.amount}
+                #{msgs.hits}: #{ProcessListView.amount}
             </h:panelGroup>
             <h:form id="headerForm">
                 <p:remoteCommand name="updateProcessCount"
@@ -50,7 +62,7 @@
         </h3>
         <!-- Filters -->
         <h:panelGroup id="filterMenuWrapper">
-            <p:outputPanel rendered="#{ProcessForm.activeTabIndex eq 0}">
+            <p:outputPanel rendered="#{ProcessesTabView.activeTabId eq 'processTab'}">
                 <ui:include src="/WEB-INF/templates/includes/processes/filterMenu.xhtml"/>
             </p:outputPanel>
         </h:panelGroup>
@@ -66,9 +78,9 @@
                                   showHeader="false"
                                   converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
-                                  value="#{ProcessForm.selectedColumns}">
-                <f:selectItems value="#{ProcessForm.columns}" />
-                <p:ajax listener="#{ProcessForm.saveSelectedColumns()}"
+                                  value="#{ProcessListView.selectedColumns}">
+                <f:selectItems value="#{ProcessListView.columns}" />
+                <p:ajax listener="#{ProcessListView.saveSelectedColumns()}"
                         update="processesTabView"/>
             </p:selectCheckboxMenu>
         </h:form>
@@ -77,9 +89,9 @@
     <ui:define name="pageTabView">
         <p:tabView id="processesTabView"
                    dynamic="true"
-                   activeIndex="#{ProcessForm.activeTabIndex}">
+                   activeIndex="#{ProcessesTabView.derivedActiveTabIndex}">
             <p:ajax event="tabChange"
-                    listener="#{ProcessForm.onTabChange}"
+                    listener="#{ProcessesTabView.onTabChange}"
                     update="filterMenuWrapper"/>
             <p:tab title="#{msgs.processes}" id="processTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">
@@ -98,15 +110,21 @@
         <p:menuitem value="#{msgs.processes}" icon="fa fa-clipboard" />
     </ui:define>
 
+    <ui:define name="page-scripts">
+        <h:outputScript name="js/defaultScript.js" target="body"/>
+        <h:outputScript name="js/queryParams.js" target="body"/>
+        <h:outputScript name="js/tabView.js" target="body"/>
+    </ui:define>
+
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/processes/batchCreatePopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processes/batchRenamePopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processes/executeScriptSelectedPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processes/deleteChildrenDialog.xhtml">
-            <ui:param name="ProcessListView" value="#{ProcessForm}"/>
+            <ui:param name="ProcessListView" value="#{ProcessListView}"/>
         </ui:include>
         <ui:include src="/WEB-INF/templates/includes/processes/statistics.xhtml">
-            <ui:param name="StatisticView" value="#{ProcessForm}"/>
+            <ui:param name="StatisticView" value="#{ProcessListView}"/>
         </ui:include>
         <ui:include src="/WEB-INF/templates/includes/processes/renameMediaConfirmDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processes/selectImportConfigurationDialog.xhtml"/>

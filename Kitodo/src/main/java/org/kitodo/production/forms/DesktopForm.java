@@ -174,7 +174,7 @@ public class DesktopForm extends BaseForm {
      * being edited by another user and placed in his home directory, otherwise
      * download.
      */
-    public void downloadToHome(int processId) {
+    public static void downloadToHome(int processId) {
         try {
             ProcessService.downloadToHome(new WebDav(), processId);
         } catch (DAOException e) {

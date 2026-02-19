@@ -27,27 +27,27 @@
         <h:form id="templatePropertyForm">
             <p:panelGrid columns="1" layout="grid">
 
-                    <h3>#{empty ProcessForm.templateProperty.title ? msgs.addTemplateProperty : msgs.editProperty}</h3>
+                    <h3>#{empty ProcessEditViewTemplatesTab.templateProperty.title ? msgs.addTemplateProperty : msgs.editProperty}</h3>
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
                         <div>
                             <p:outputLabel for="templatePropertyTitle"
                                            value="#{msgs.title}" />
                             <p:inputText id="templatePropertyTitle"
-                                         value="#{ProcessForm.templateProperty.title}"
+                                         value="#{ProcessEditViewTemplatesTab.templateProperty.title}"
                                          placeholder="#{msgs.title}"
                                          required="#{not empty param['templatePropertyForm:save']}"
                                          styleClass="input editDialog"/>
                         </div>
                         <div>
                             <p:outputLabel for="templatePropertyValue" value="#{msgs.value}" />
-                            <p:inputText id="templatePropertyValue" value="#{ProcessForm.templateProperty.value}"
+                            <p:inputText id="templatePropertyValue" value="#{ProcessEditViewTemplatesTab.templateProperty.value}"
                                          placeholder="#{msgs.value}" styleClass="input editDialog"/>
                         </div>
                     </h:panelGroup>
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
-                        <p:commandButton action="#{ProcessForm.saveTemplateProperty}"
+                        <p:commandButton action="#{ProcessEditViewTemplatesTab.saveTemplateProperty}"
                                          id="save"
                                          update="editForm"
                                          oncomplete="PF('editTemplateDialog').hide();toggleSave()"

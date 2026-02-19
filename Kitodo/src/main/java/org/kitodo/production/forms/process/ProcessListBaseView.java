@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.process;
 
 import com.itextpdf.text.DocumentException;
 
@@ -37,6 +37,8 @@ import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.BaseListView;
+import org.kitodo.production.forms.DeleteProcessDialog;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.model.LazyProcessModel;
@@ -52,7 +54,7 @@ import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
 import org.xml.sax.SAXException;
 
-public class ProcessListBaseView extends ValidatableForm {
+public class ProcessListBaseView extends BaseListView {
 
     private static final Logger logger = LogManager.getLogger(ProcessListBaseView.class);
     private ChartMode chartMode;
@@ -821,7 +823,7 @@ public class ProcessListBaseView extends ValidatableForm {
     @Override
     public void onPageChange(PageEvent pageEvent) {
         Stopwatch stopwatch = new Stopwatch(this, "onPageChange");
-        this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
+        super.onPageChange(pageEvent);
         if (allSelected) {
             PrimeFaces.current()
                     .executeScript("PF('processesTable').selectAllRows();");

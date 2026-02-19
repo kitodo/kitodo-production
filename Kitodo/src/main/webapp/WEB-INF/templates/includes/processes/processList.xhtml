@@ -23,41 +23,42 @@
                      widgetVar="processesTable"
                      styleClass="default-layout allSelectable"
                      var="process"
-                     value="#{ProcessForm.lazyBeanModel}"
+                     value="#{ProcessListView.lazyBeanModel}"
                      rowKey="#{process.id}"
-                     first="#{ProcessForm.firstRow}"
-                     selection="#{ProcessForm.selectedProcesses}"
+                     first="#{ProcessListView.firstRow}"
+                     selection="#{ProcessListView.selectedProcesses}"
                      lazy="true"
                      paginator="true"
                      resizableColumns="true"
                      rowSelectMode="none"
                      liveResize="true"
-                     sortBy="#{ProcessForm.sortBy}"
+                     sortBy="#{ProcessListView.sortBy}"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                     paginatorPosition="bottom"
-                     multiViewState="true">
+                     paginatorPosition="bottom">
 
 
             <p:ajax event="page"
-                    listener="#{ProcessForm.onPageChange}"/>
+                    listener="#{ProcessListView.onPageChange}"/>
+            <p:ajax event="sort" 
+                    listener="#{ProcessListView.onSortChange}"/>
             <p:ajax event="rowToggle"
                     oncomplete="registerRowToggleEvents();"/>
             <p:ajax event="rowSelectCheckbox"
-                    listener="#{ProcessForm.onRowSelect}"/>
+                    listener="#{ProcessListView.onRowSelect}"/>
             <p:ajax event="rowUnselectCheckbox"
-                    listener="#{ProcessForm.onRowUnselect}"/>
+                    listener="#{ProcessListView.onRowUnselect}"/>
             <p:ajax event="toggleSelect"
-                    listener="#{ProcessForm.selectAll}"/>
+                    listener="#{ProcessListView.selectAll}"/>
 
             <p:column id="selectionColumn" styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
 
             <p:column styleClass="hierarchy-info">
-                <p:rowToggler rendered="#{process.getParentID() ne 0 or ProcessForm.hasChildren(process) or ProcessForm.hasVisibleTasks(process)}"/>
-                <h:outputText rendered="#{process.getParentID() ne 0 and not ProcessForm.hasChildren(process)}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
-                <h:outputText rendered="#{process.getParentID() eq 0 and ProcessForm.hasChildren(process)}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
-                <h:outputText rendered="#{process.getParentID() ne 0 and ProcessForm.hasChildren(process)}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
+                <p:rowToggler rendered="#{process.getParentID() ne 0 or ProcessListView.hasChildren(process) or ProcessListView.hasVisibleTasks(process)}"/>
+                <h:outputText rendered="#{process.getParentID() ne 0 and not ProcessListView.hasChildren(process)}"><i class="fa fa-long-arrow-left" title="#{msgs.hierarchicalParents}"/></h:outputText>
+                <h:outputText rendered="#{process.getParentID() eq 0 and ProcessListView.hasChildren(process)}"><i class="fa fa-long-arrow-right" title="#{msgs.hierarchicalChildren}"/></h:outputText>
+                <h:outputText rendered="#{process.getParentID() ne 0 and ProcessListView.hasChildren(process)}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
             </p:column>
             <p:column id="idColumn"
                       width="70"
@@ -69,8 +70,8 @@
             </p:column>
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
-                      sortBy="#{process.title.keyword}"
-                      rendered="#{ProcessForm.showColumn('process.title')}">
+                      sortBy="#{process.title}"
+                      rendered="#{ProcessListView.showColumn('process.title')}">
                 <h:outputText value="#{process.title}"
                               title="#{process.title}"/>
             </p:column>
@@ -78,14 +79,14 @@
                       styleClass="progressColumn genericSortIcon"
                       headerText="#{msgs.status}"
                       sortBy="#{process.progressCombined}"
-                      rendered="#{ProcessForm.showColumn('process.state')}">
+                      rendered="#{ProcessListView.showColumn('process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
 
             <p:column id="lastTaskHandledByColumn"
                       headerText="#{msgs.lastEditingUser}"
                       sortBy="#{process.lastEditingUser}"
-                      rendered="#{ProcessForm.showColumn('process.lastEditingUser')}">
+                      rendered="#{ProcessListView.showColumn('process.lastEditingUser')}">
                 <h:outputText value="#{process.lastEditingUser}"
                               title="#{process.lastEditingUser}"/>
             </p:column>
@@ -93,23 +94,23 @@
                       headerText="#{msgs.processingBeginLastTask}"
                       styleClass="numeric"
                       sortBy="#{process.processingBeginLastTask}"
-                      rendered="#{ProcessForm.showColumn('process.processingBeginLastTask')}">
-                <h:outputText value="#{ProcessForm.convertProcessingDate(process.processingBeginLastTask)}"
-                              title="#{ProcessForm.convertProcessingDate(process.processingBeginLastTask)}"/>
+                      rendered="#{ProcessListView.showColumn('process.processingBeginLastTask')}">
+                <h:outputText value="#{ProcessListView.convertProcessingDate(process.processingBeginLastTask)}"
+                              title="#{ProcessListView.convertProcessingDate(process.processingBeginLastTask)}"/>
             </p:column>
             <p:column id="lastTaskProcessingEndColumn"
                       headerText="#{msgs.processingEndLastTask}"
                       styleClass="numeric"
                       sortBy="#{process.processingEndLastTask}"
-                      rendered="#{ProcessForm.showColumn('process.processingEndLastTask')}">
-                <h:outputText value="#{ProcessForm.convertProcessingDate(process.processingEndLastTask)}"
-                              title="#{ProcessForm.convertProcessingDate(process.processingEndLastTask)}"/>
+                      rendered="#{ProcessListView.showColumn('process.processingEndLastTask')}">
+                <h:outputText value="#{ProcessListView.convertProcessingDate(process.processingEndLastTask)}"
+                              title="#{ProcessListView.convertProcessingDate(process.processingEndLastTask)}"/>
             </p:column>
 
             <p:column styleClass="comment-column genericSortIcon"
                       width="85"
                       sortBy="#{process.correctionCommentStatus}"
-                      rendered="#{ProcessForm.showColumn('process.comments')}"
+                      rendered="#{ProcessListView.showColumn('process.comments')}"
                       headerText="#{msgs.comments}">
                 <h:panelGroup id="commentIcon">
                     <h:panelGroup styleClass="fa
@@ -117,7 +118,7 @@
                         #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                                   rendered="#{process.hasComments()}"/>
                     <h:outputText value="#{commentTooltipView.getLastComment(process)}"
-                                  rendered="#{ProcessForm.showLastComment() and process.hasComments()}"/>
+                                  rendered="#{ProcessListView.showLastComment() and process.hasComments()}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true" rendered="#{process.hasComments()}">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
@@ -126,29 +127,29 @@
                 </p:tooltip>
             </p:column>
             <p:column headerText="#{msgs.project}"
-                      sortBy="#{process.project.title.keyword}"
-                      rendered="#{ProcessForm.showColumn('process.project')}">
+                      sortBy="#{process.project.title}"
+                      rendered="#{ProcessListView.showColumn('process.project')}">
                 <h:outputText value="#{process.project.title}"
                               title="#{process.project.title}"/>
             </p:column>
             <p:column headerText="#{msgs.duration}"
                       sortBy="#{process.creationDate}"
                       styleClass="numeric"
-                      rendered="#{ProcessForm.showColumn('process.duration')}">
-                <h:outputText value="#{ProcessForm.getProcessDuration(process)}"
-                              title="#{ProcessForm.getProcessDuration(process)}"/>
+                      rendered="#{ProcessListView.showColumn('process.duration')}">
+                <h:outputText value="#{ProcessListView.getProcessDuration(process)}"
+                              title="#{ProcessListView.getProcessDuration(process)}"/>
             </p:column>
             <!-- columns for process properties that have been configured in kitodo config file! -->
-            <p:columns value="#{ProcessForm.getProcessPropertyNames()}"
+            <p:columns value="#{ProcessListView.getProcessPropertyNames()}"
                        var="propertyName"
                        headerText="#{fn:replace(propertyName, 'process.', '')}"
-                       rendered="#{ProcessForm.showColumn(propertyName)}">
-                <h:outputText value="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"
-                              title="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"/>
+                       rendered="#{ProcessListView.showColumn(propertyName)}">
+                <h:outputText value="#{ProcessListView.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"
+                              title="#{ProcessListView.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"/>
             </p:columns>
 
             <ui:include src="/WEB-INF/templates/includes/processes/processActionsColumn.xhtml">
-                <ui:param name="ProcessListView" value="#{ProcessForm}"/>
+                <ui:param name="ProcessListView" value="#{ProcessListView}"/>
                 <ui:param name="referer" value="processes"/>
             </ui:include>
 
@@ -162,44 +163,47 @@
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalParents}:"/>
                             <p:dataTable var="parent"
-                                         value="#{ProcessForm.getAllParentProcesses(process)}"
+                                         value="#{ProcessListView.getAllParentProcesses(process)}"
                                          rendered="#{process.getParentID() ne 0}">
                                 <p:column>
                                     <h:outputText value="#{parent.getTitle()} "
                                                   title="#{parent.getTitle()}"/>
                                     <p:commandLink value="#{msgs.show}"
                                                    process="@this"
-                                                   action="#{ProcessForm.changeFilter('id:'.concat(parent.getId()))}"/>
+                                                   action="#{ProcessListView.changeFilter('id:'.concat(parent.getId()))}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <h:link outcome="processEdit"
-                                            styleClass="#{not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
+                                            styleClass="#{not ProcessListView.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
                                             title="#{msgs.view}"
-                                            disabled="#{not ProcessForm.processInAssignedProject(parent.id)}"
+                                            disabled="#{not ProcessListView.processInAssignedProject(parent.id)}"
                                             rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-eye fa-lg"/>
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
+                                        <f:param name="referrerListOptions" value="#{ProcessListView.combinedListOptions}" />
                                     </h:link>
                                     <h:link outcome="processEdit"
-                                            styleClass="#{not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
+                                            styleClass="#{not ProcessListView.processInAssignedProject(parent.id) ? 'ui-state-disabled action' : 'action'}"
                                             title="#{msgs.edit}"
-                                            disabled="#{not ProcessForm.processInAssignedProject(parent.id)}"
+                                            disabled="#{not ProcessListView.processInAssignedProject(parent.id)}"
                                             rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                                         <i class="fa fa-pencil-square-o fa-lg"/>
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
+                                        <f:param name="referrerListOptions" value="#{ProcessListView.combinedListOptions}" />
                                     </h:link>
                                     <h:panelGroup styleClass="action"
                                                   title="#{MetadataLock.isLocked(parent.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(parent.id).fullName) : msgs['metadataEdit']}">
                                         <h:link id="editMetadata"
                                                 outcome="metadataEditor"
-                                                disabled="#{MetadataLock.isLocked(parent.id) or not ProcessForm.processInAssignedProject(parent.id)}"
-                                                styleClass="#{MetadataLock.isLocked(parent.id) or not ProcessForm.processInAssignedProject(parent.id) ? 'ui-state-disabled' : ''}"
+                                                disabled="#{MetadataLock.isLocked(parent.id) or not ProcessListView.processInAssignedProject(parent.id)}"
+                                                styleClass="#{MetadataLock.isLocked(parent.id) or not ProcessListView.processInAssignedProject(parent.id) ? 'ui-state-disabled' : ''}"
                                                 rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                                             <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                                             <f:param name="id" value="#{parent.id}"/>
                                             <f:param name="referer" value="processes"/>
+                                            <f:param name="referrerListOptions" value="#{ProcessListView.combinedListOptions}" />
                                         </h:link>
                                     </h:panelGroup>
                                 </p:column>
@@ -212,17 +216,17 @@
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalChildren}:"/>
                             <h:panelGroup>
-                                <h:outputText value="#{ProcessForm.getNumberOfChildProcesses(process.getId())} " rendered="#{ProcessForm.hasChildren(process)}"/>
+                                <h:outputText value="#{ProcessListView.getNumberOfChildProcesses(process.getId())} " rendered="#{ProcessListView.hasChildren(process)}"/>
                                 <p:commandLink value="#{msgs.show}"
                                                process="@this"
-                                               action="#{ProcessForm.changeFilter('parentprocessid:'.concat(process.getId()))}"
-                                               rendered="#{ProcessForm.hasChildren(process)}"/>
-                                <h:outputText value=" #{msgs.none}" rendered="#{not ProcessForm.hasChildren(process)}"/>
+                                               action="#{ProcessListView.changeFilter('parentprocessid:'.concat(process.getId()))}"
+                                               rendered="#{ProcessListView.hasChildren(process)}"/>
+                                <h:outputText value=" #{msgs.none}" rendered="#{not ProcessListView.hasChildren(process)}"/>
                             </h:panelGroup>
                         </p:panelGrid>
                     </p:panelGrid>
-                    <p:panel header="#{msgs.tasks}:" rendered="#{ProcessForm.hasVisibleTasks(process)}">
-                        <p:dataList value="#{ProcessForm.getCurrentTasksForUser(process)}" var="task">
+                    <p:panel header="#{msgs.tasks}:" rendered="#{ProcessListView.hasVisibleTasks(process)}">
+                        <p:dataList value="#{ProcessListView.getCurrentTasksForUser(process)}" var="task">
                             <h:outputText value="#{task.title}"/>
                                 <!-- assign task -->
                                 <p:commandLink id="take"
@@ -264,12 +268,12 @@
         <p:overlayPanel id="allSelectableOverlayPanel" widgetVar="allSelectableOverlayPanel" dismissable="true" styleClass="allSelectableOverlayPanel" >
             <ul>
                 <li><p:commandLink id="selectAllRowsOnPage" value="#{msgs.selectAllRowsOnPage}" onclick="PF('processesTable').unselectAllRows();PF('processesTable').selectAllRowsOnPage();PF('allSelectableOverlayPanel').hide();"/></li>
-                <li><p:commandLink id="selectAllRows" value="#{msgs.selectAllRows}" actionListener="#{ProcessForm.setAllSelected(true)}" onclick="PF('processesTable').selectAllRows();PF('allSelectableOverlayPanel').hide();"/></li>
+                <li><p:commandLink id="selectAllRows" value="#{msgs.selectAllRows}" actionListener="#{ProcessListView.setAllSelected(true)}" onclick="PF('processesTable').selectAllRows();PF('allSelectableOverlayPanel').hide();"/></li>
             </ul>
         </p:overlayPanel>
 
         <ul style="display: none" id="excludedProcessIds">
-            <ui:repeat value="#{ProcessForm.excludedProcessIds}" var="processId">
+            <ui:repeat value="#{ProcessListView.excludedProcessIds}" var="processId">
                 <li>#{processId}</li>
             </ui:repeat>
         </ul>
@@ -282,14 +286,14 @@
                                 rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusUp}"
                                 process="@this"
-                                action="#{ProcessForm.setTaskStatusUpForSelection}"
+                                action="#{ProcessListView.setTaskStatusUpForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-up"/>
                     <p:menuitem id="processingStatusDownSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusDown}"
                                 process="@this"
-                                action="#{ProcessForm.setTaskStatusDownForSelection}"
+                                action="#{ProcessListView.setTaskStatusDownForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-down"/>
                     <p:menuitem id="executeScriptSelection"
@@ -302,14 +306,14 @@
                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.linkHomeDirectory}"
                                 process="@this"
-                                action="#{ProcessForm.downloadToHomeForSelection}"
+                                action="#{ProcessListView.downloadToHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-download"/>
                     <p:menuitem id="uploadAll"
                                 rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.deleteLinkHomeDirectory}"
                                 process="@this"
-                                action="#{ProcessForm.uploadFromHomeForSelection}"
+                                action="#{ProcessListView.uploadFromHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-upload">
                         <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
@@ -319,18 +323,18 @@
                                 rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                                 value="#{msgs.exportDMS}"
                                 process="@this"
-                                action="#{ProcessForm.exportDMSForSelection}"
+                                action="#{ProcessListView.exportDMSForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-file-archive-o"/>
                     <p:menuitem id="createExcel"
                                 value="#{msgs.createExcel}"
-                                action="#{ProcessForm.generateResult}"
+                                action="#{ProcessListView.generateResult}"
                                 ajax="false"
                                 immediate="true"
                                 icon="fa fa-file-excel-o"/>
                     <p:menuitem id="createPdf"
                                 value="#{msgs.createPdf}"
-                                action="#{ProcessForm.generateResultAsPdf}"
+                                action="#{ProcessListView.generateResultAsPdf}"
                                 ajax="false"
                                 immediate="true"
                                 icon="fa fa-file-pdf-o"/>
@@ -338,13 +342,13 @@
                                 rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
                                 value="#{msgs['renameMediaFiles']}"
                                 process="@this"
-                                action="#{ProcessForm.renameMedia}"
+                                action="#{ProcessListView.renameMedia}"
                                 icon="fa fa-files-o"/>
                     <p:menuitem id="setImportConfiguration"
                                 rendered="#{SecurityAccessController.hasAuthorityToSetImportConfiguration()}"
                                 value="#{msgs['setImportConfiguration']}"
                                 process="@this"
-                                action="#{ProcessForm.setImportConfiguration}"
+                                action="#{ProcessListView.setImportConfiguration}"
                                 icon="fa fa-cloud-download "/>
                 </p:menu>
             <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary"
@@ -353,17 +357,17 @@
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
                             process="@this"
-                            action="#{ProcessForm.showStateOfVolume}"
+                            action="#{ProcessListView.showStateOfVolume}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="durationOfTasks"
                             value="#{msgs.durationOfTasks}"
                             process="@this"
-                            action="#{ProcessForm.showDurationOfTasks}"
+                            action="#{ProcessListView.showDurationOfTasks}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="processMetadataStatistic"
                             value="#{msgs.numberOfMetadata}"
                             process="@this"
-                            action="#{ProcessForm.showProcessMetadataStatistic}"
+                            action="#{ProcessListView.showProcessMetadataStatistic}"
                             icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
         </div>
