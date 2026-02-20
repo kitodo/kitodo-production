@@ -65,7 +65,7 @@ public class BaseForm implements Serializable {
     protected static final String EXPORT_FINISHED = "exportFinished";
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
-    protected static final String DEFAULT_LINK = "desktop.jsf";
+    protected static final String DEFAULT_LINK = "desktop";
     private static final String LIST_PAGE = TEMPLATE_ROOT + "{0}?keepPagination=true&" + REDIRECT_PARAMETER;
     protected final String usersPage = MessageFormat.format(LIST_PAGE, "users");
     protected final String processesPage = "processes?" + REDIRECT_PARAMETER;

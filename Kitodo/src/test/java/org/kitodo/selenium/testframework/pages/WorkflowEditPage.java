@@ -45,7 +45,7 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     }
 
     public WorkflowEditPage() {
-        super("pages/workflowEdit.jsf");
+        super("pages/workflowEdit");
     }
 
     public WorkflowEditPage insertWorkflowData(Workflow workflow) {

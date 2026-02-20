@@ -185,9 +185,9 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.processes}" url="processes.jsf" rendered="#{request.getHeader('referer').contains('process')}" icon="fa fa-clipboard"/>
-        <p:menuitem value="#{msgs.tasks}" url="tasks.jsf" rendered="#{request.getHeader('referer').contains('task')}" icon="fa fa-paperclip"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.processes}" url="processes" rendered="#{request.getHeader('referer').contains('process')}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.tasks}" url="tasks" rendered="#{request.getHeader('referer').contains('task')}" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.extendedSearch}" icon="fa fa-search"/>
     </ui:define>
 

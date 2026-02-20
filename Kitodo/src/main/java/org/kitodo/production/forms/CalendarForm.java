@@ -90,7 +90,7 @@ public class CalendarForm implements Serializable {
     private static final String UPLOAD_ERROR = "calendar.upload.error";
     private static final String REDIRECT_PARAMETER = "faces-redirect=true";
     private static final String DEFAULT_REFERER = "processes?" + REDIRECT_PARAMETER;
-    private static final String TASK_MANAGER_REFERER = "system.jsf?tabIndex=0&" + REDIRECT_PARAMETER;
+    private static final String TASK_MANAGER_REFERER = "system?tabIndex=0&" + REDIRECT_PARAMETER;
     private static final Integer[] MONTHS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
     /**

@@ -96,7 +96,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     private WebElement imagePreviewButton;
 
     public MetadataEditorPage() {
-        super("metadataEditor.jsf");
+        super("metadataEditor");
     }
 
     @Override

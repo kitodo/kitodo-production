@@ -56,7 +56,7 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
     private WebElement firstValidatorCheckbox;
 
     public TemplateEditPage() {
-        super("pages/templateEdit.jsf");
+        super("pages/templateEdit");
     }
 
     @Override

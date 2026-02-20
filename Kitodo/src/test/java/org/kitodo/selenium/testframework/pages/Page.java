@@ -264,7 +264,7 @@ public abstract class Page<T> {
         }
         switchToTabByIndex(tabIndex, tabView);
         Browser.getDriver()
-                .findElement(By.xpath("//a[contains(@href, '/kitodo/pages/" + objectType.toLowerCase() + "Edit.jsf') and "
+                .findElement(By.xpath("//a[contains(@href, '/kitodo/pages/" + objectType.toLowerCase() + "Edit') and "
                         + "contains(@href, 'id=" + removableID + "')]" 
                         + "/following-sibling::a[@id[contains(., 'delete" + objectType + "')]]"))
                 .click();

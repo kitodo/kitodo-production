@@ -35,7 +35,7 @@ public class RulesetEditPage extends EditPage<RulesetEditPage> {
     private WebElement errorMessage;
 
     public RulesetEditPage() {
-        super("pages/rulesetEdit.jsf");
+        super("pages/rulesetEdit");
     }
 
     @Override

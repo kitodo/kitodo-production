@@ -100,7 +100,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     private List<SelectItem> customColumns;
 
-    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate?faces-redirect=true";
     private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
     private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();

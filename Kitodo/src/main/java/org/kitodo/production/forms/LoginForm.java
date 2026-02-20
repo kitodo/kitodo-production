@@ -33,8 +33,8 @@ import org.primefaces.PrimeFaces;
 public class LoginForm implements Serializable {
     private User loggedUser;
     private boolean firstVisit = true;
-    private static final String INDEXING_PAGE = "system.jsf?tabIndex=";
-    private static final String DESKTOP_VIEW = "desktop.jsf";
+    private static final String INDEXING_PAGE = "system?tabIndex=";
+    private static final String DESKTOP_VIEW = "desktop";
     private final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     /**

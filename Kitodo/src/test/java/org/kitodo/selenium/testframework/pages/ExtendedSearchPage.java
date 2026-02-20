@@ -51,7 +51,7 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     private WebElement taskDone;
 
     public ExtendedSearchPage() {
-        super("extendedSearch.jsf");
+        super("extendedSearch");
     }
 
     @Override
