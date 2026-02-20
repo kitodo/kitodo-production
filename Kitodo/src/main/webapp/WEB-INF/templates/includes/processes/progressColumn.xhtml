@@ -16,29 +16,30 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO"-->
+    <!--@elvariable id="progressBean" type="org.kitodo.production.forms.ProcessForm"-->
     <h:panelGroup
             class="process-progress"
-            title="#{ProcessForm.getCurrentTaskTitles(process)}"
-            rendered="#{ProcessForm.hasAnyTasks(process) or ProcessForm.hasChildren(process)}"
+            title="#{progressBean.getCurrentTaskTitles(process)}"
+            rendered="#{progressBean.hasAnyTasks(process) or progressBean.hasChildren(process)}"
             style="
             background-image: linear-gradient(
                 to right,
                 var(--green),
-                var(--green) #{ProcessForm.progressClosed(process)}%,
-                var(--light-green) #{ProcessForm.progressClosed(process)}%,
+                var(--green) #{progressBean.progressClosed(process)}%,
+                var(--light-green) #{progressBean.progressClosed(process)}%,
                 var(--light-green)
-                    #{ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%,
+                    #{progressBean.progressInProcessing(process)
+                      + progressBean.progressClosed(process)}%,
                 var(--light-orange)
-                    #{ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%,
+                    #{progressBean.progressInProcessing(process)
+                      + progressBean.progressClosed(process)}%,
                 var(--light-orange)
-                    #{ProcessForm.progressOpen(process)
-                      + ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%,
+                    #{progressBean.progressOpen(process)
+                      + progressBean.progressInProcessing(process)
+                      + progressBean.progressClosed(process)}%,
                 var(--orange)
-                    #{ProcessForm.progressOpen(process)
-                      + ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%);"
+                    #{progressBean.progressOpen(process)
+                      + progressBean.progressInProcessing(process)
+                      + progressBean.progressClosed(process)}%);"
     />
 </ui:composition>
