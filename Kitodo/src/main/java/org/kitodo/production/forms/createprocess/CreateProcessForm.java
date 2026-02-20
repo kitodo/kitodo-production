@@ -696,7 +696,12 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
-        ServiceManager.getProcessService().save(getMainProcess());
+        for (TempProcess temp : processes) {
+            ServiceManager.getProcessService().save(temp.getProcess());
+        }
+        for (TempProcess temp : childProcesses) {
+            ServiceManager.getProcessService().save(temp.getProcess());
+        }
     }
 
     /**
