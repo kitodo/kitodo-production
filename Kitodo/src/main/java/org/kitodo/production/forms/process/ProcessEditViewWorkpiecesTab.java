@@ -46,11 +46,16 @@ public class ProcessEditViewWorkpiecesTab extends BaseTabEditView<Process> {
      * 
      * @param process the process currently being edited
      */
+    @Override
     public void load(Process process) {
         this.process = process;
     }
 
-
+    /**
+     * Return workpiece property.
+     * 
+     * @return the workpiece property
+     */
     public Property getWorkpieceProperty() {
         Stopwatch stopwatch = new Stopwatch(this, "getWorkpieceProperty");
         return stopwatch.stop(this.workpieceProperty);

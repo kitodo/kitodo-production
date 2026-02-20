@@ -93,6 +93,10 @@
                                              itemLabel="#{msgs.showClosedProcesses}"
                                              styleClass="switch">
                         <p:ajax onstart="PF('processesTable').getPaginator().setPage(0);"
+                                oncomplete="kitodo.updateQueryParameter(
+                                                'showClosedProcesses', 
+                                                $('#' + $.escapeSelector(this.source) + ' input').is(':checked')
+                                            );"
                                 update="processesTabView:processesForm,processCount"/>
                     </p:selectBooleanCheckbox>
                     <p:selectBooleanCheckbox id="showInactiveProjects"
@@ -100,6 +104,10 @@
                                              itemLabel="#{msgs.showInactiveProjects}"
                                              styleClass="switch">
                         <p:ajax onstart="PF('processesTable').getPaginator().setPage(0);"
+                                oncomplete="kitodo.updateQueryParameter(
+                                                'showInactiveProjects', 
+                                                $('#' + $.escapeSelector(this.source) + ' input').is(':checked')
+                                            );"
                                 update="processesTabView:processesForm,processCount"/>
                     </p:selectBooleanCheckbox>
                 </div>

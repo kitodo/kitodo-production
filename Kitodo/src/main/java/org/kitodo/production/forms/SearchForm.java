@@ -68,7 +68,9 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
-    private final ProcessListView processListView;
+    private Boolean showInactiveProjects = false;
+    private Boolean showClosedProcesses = false;
+
     private final CurrentTaskForm taskForm;
 
     /**
@@ -84,7 +86,6 @@ public class SearchForm {
         this.stepTitles = ServiceManager.getFilterService().initStepTitles();
         this.processPropertyTitles = ServiceManager.getFilterService().initProcessPropertyTitles();
         this.user.addAll(ServiceManager.getFilterService().initUserList());
-        this.processListView = processListView;
         this.taskForm = taskForm;
     }
 
@@ -209,13 +210,48 @@ public class SearchForm {
     }
 
     /**
+     * Return whether to show matching processes for inactive projects.
+     * 
+     * @return whether to show matching processes for inactive projects
+     */
+    public boolean getShowInactiveProjects() {
+        return this.showInactiveProjects;
+    }
+
+    /**
+     * Set whether to show matching processes for inactive projects.
+     * 
+     * @param showInactiveProjects whether to show matching processes for inactive projects
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
+    }
+
+    /**
+     * Return whether to show matching processes that are already closed.
+     * 
+     * @return whether to show matching processes that are already closed
+     */
+    public boolean getShowClosedProcesses() {
+        return this.showClosedProcesses;
+    }
+
+    /**
+     * Set whether to show matching processes that are already closed.
+     * 
+     * @param showClosedProcesses whether to show matching processes that are already closed
+     */
+    public void setShowClosedProcesses(boolean showClosedProcesses) {
+        this.showClosedProcesses = showClosedProcesses;
+    }
+
+    /**
      * Filter processes.
      *
      * @return filter as java.lang.String
      */
     public String filterProcesses() {
-        processListView.changeFilter(createFilter());
-        return processListView.getProcessesPage();
+        return ProcessListView.getViewPath(createFilter(), this.showInactiveProjects, this.showClosedProcesses);
     }
 
     /**

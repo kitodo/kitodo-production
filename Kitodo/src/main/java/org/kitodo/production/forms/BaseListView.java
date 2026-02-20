@@ -100,7 +100,7 @@ public class BaseListView extends BaseForm {
     }
 
     /**
-     * Return combined the list options (URL query parameters) that can be forwarded to edit view or used to reload page.
+     * Return combined list options (URL query parameters) that can be forwarded to edit view or used to reload page.
      * 
      * @return the combined list view options (URL query parameters)
      */

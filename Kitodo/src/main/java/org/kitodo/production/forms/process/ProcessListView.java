@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.process;
 
+import static java.util.Map.entry;
+
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.model.SelectItem;
@@ -138,6 +141,17 @@ public class ProcessListView extends ProcessListBaseView {
      */
     public static String getViewPath() {
         return VIEW_PATH;
+    }
+
+    /**
+     * Navigates to processes list with a given filter string.
+     * 
+     * @param filter the filter string
+     */
+    public static String getViewPath(String filter, boolean showInactiveProjects, boolean showClosedProcesses) {
+        return VIEW_PATH + "&filter=" + filter.replace("&", "%26") 
+            + "&showInactiveProjects=" + showInactiveProjects 
+            + "&showClosedProcesses=" + showClosedProcesses;
     }
 
     /**
@@ -641,13 +655,36 @@ public class ProcessListView extends ProcessListBaseView {
      * Set filter based on the URL query parameter "filter", which can be any string.
      * 
      * @param encodedFilter the filter as URL query parameter to be set as new filter
+     * @param showInactiveProjects whether to list matching processes from inactive projects
+     * @param showClosedProcesses whether to list matching processes already closed
      */
-    public void setFilterFromTemplate(String encodedFilter) {
+    public void setFilterFromTemplate(String encodedFilter, Boolean showInactiveProjects, Boolean showClosedProcesses) {
         if (Objects.nonNull(encodedFilter) && !encodedFilter.isEmpty()) {
             String decodedFilter = encodedFilter.replace("%26", "&");
             this.filterMenu.parseFilters(decodedFilter);
             this.setFilter(decodedFilter);
         }
+        if (Objects.nonNull(showInactiveProjects)) {
+            setShowInactiveProjects(showInactiveProjects);
+        }
+        if (Objects.nonNull(showClosedProcesses)) {
+            setShowClosedProcesses(showClosedProcesses);
+        }
+    }
+
+    /**
+     * Return combined list options (URL query parameters) that can be forwarded to edit view or used to reload page.
+     * 
+     * @return the combined list view options (URL query parameters)
+     */
+    @Override
+    public String getCombinedListOptions() {
+        return super.getCombinedListOptions() + "&" + Map.ofEntries(
+            entry("showInactiveProjects", isShowInactiveProjects()),
+            entry("showClosedProcesses", isShowClosedProcesses())
+        ).entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining("&"));
     }
 
     /**

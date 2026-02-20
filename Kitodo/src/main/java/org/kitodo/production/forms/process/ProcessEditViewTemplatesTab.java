@@ -40,6 +40,11 @@ public class ProcessEditViewTemplatesTab extends BaseTabEditView<Process> {
         return stopwatch.stop(this.process.getTemplates());
     }
 
+    /**
+     * Return template property.
+     * 
+     * @return the template property
+     */
     public Property getTemplateProperty() {
         Stopwatch stopwatch = new Stopwatch(this, "getTemplateProperty");
         return stopwatch.stop(this.templateProperty);
@@ -50,6 +55,7 @@ public class ProcessEditViewTemplatesTab extends BaseTabEditView<Process> {
      * 
      * @param process the process currently being edited
      */
+    @Override
     public void load(Process process) {
         this.process = process;
     }

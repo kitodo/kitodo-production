@@ -154,6 +154,7 @@ public class ProcessEditViewDetailsTab extends BaseTabEditView<Process> {
      * 
      * @param process the process currently being edited
      */
+    @Override
     public void load(Process process) {
         final Stopwatch stopwatch = new Stopwatch(this, "ProcessEditViewDetailsTab.load");
 
@@ -181,6 +182,7 @@ public class ProcessEditViewDetailsTab extends BaseTabEditView<Process> {
      *
      * @return true if saving can proceed, false if there is a problem
      */
+    @Override
     public boolean save() {
         if (Objects.isNull(newProcessTitle) || newProcessTitle.isEmpty()) {
             Helper.setErrorMessage(ERROR_INCOMPLETE_DATA, "processTitleEmpty");

@@ -1462,7 +1462,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      * @return the URL to redirect to
      */
     private String getRedirectUrl(Integer processId) {
-        String viewPath = String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+        String viewPath = String.format(METADATA_REDIRECT, processId, referringView);
         if (referringView.equals("processes")) {
             try {
                 viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), "UTF-8");;

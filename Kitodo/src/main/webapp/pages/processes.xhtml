@@ -32,7 +32,11 @@
         <f:viewAction action="#{ProcessesTabView.setSortByFromTemplate(sortField, sortOrder)}" />
         <!--@elvariable id="filter" type="java.lang.String"-->
         <f:viewParam name="filter"/>
-        <f:viewAction action="#{ProcessesTabView.setFilterFromTemplate(filter)}" />
+        <!--@elvariable id="showInactiveProjects" type="java.lang.Boolean"-->
+        <f:viewParam name="showInactiveProjects"/>
+        <!--@elvariable id="showClosedProcesses" type="java.lang.Boolean"-->
+        <f:viewParam name="showClosedProcesses"/>
+        <f:viewAction action="#{ProcessesTabView.setFilterFromTemplate(filter, showInactiveProjects, showClosedProcesses)}" />
 
         <!--@elvariable id="projecttitle" type="java.lang.String"-->
         <f:viewParam name="projecttitle"/>

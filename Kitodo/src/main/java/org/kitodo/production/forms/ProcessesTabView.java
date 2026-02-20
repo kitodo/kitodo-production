@@ -73,11 +73,13 @@ public class ProcessesTabView extends BaseTabView {
      * Sets the filter from a URL query parameter.
      * 
      * @param encodedFilter the filter value provided as encoded URL query parameter
+     * @param showInactiveProjects whether to list matching processes from inactive projects
+     * @param showClosedProcesses whether to list matching processes already closed
      */
-    public void setFilterFromTemplate(String encodedFilter) {
+    public void setFilterFromTemplate(String encodedFilter, Boolean showInactiveProjects, Boolean showClosedProcesses) {
         if (getActiveTabId().equals(PROCESS_TAB_ID)) {
             // user list view
-            processListView.setFilterFromTemplate(encodedFilter);
+            processListView.setFilterFromTemplate(encodedFilter, showInactiveProjects, showClosedProcesses);
         }
     }
 

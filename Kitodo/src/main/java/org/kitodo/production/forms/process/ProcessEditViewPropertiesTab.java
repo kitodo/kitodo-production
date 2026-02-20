@@ -60,6 +60,7 @@ public class ProcessEditViewPropertiesTab extends BaseTabEditView<Process> {
      * 
      * @param process the process currently being edited
      */
+    @Override
     public void load(Process process) {
         this.process = process;
     }
