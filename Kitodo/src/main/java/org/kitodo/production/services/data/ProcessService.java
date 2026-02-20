@@ -2315,13 +2315,35 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
+     * Finds all process IDs that have at least one child process.
+     *
+     * @param processIds process IDs to check
+     * @return IDs of processes that have children
+     */
+    public Set<Integer> findProcessIdsWithChildren(Collection<Integer> processIds) throws DAOException {
+        if (processIds == null || processIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        String hql = "SELECT DISTINCT p.parent "
+                        + "FROM Process p "
+                        + "WHERE p.parent.id IN (:ids)";
+
+        Map<String, Object> parameters = Map.of("ids", processIds);
+        List<Process> parents = getByQuery(hql, parameters);
+        return parents.stream()
+                .map(Process::getId)
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Checks and returns whether the process with the given ID 'processId' can be exported or not.
      * @param process the process
+     * @param processHasChildren whether process has children
      * @return whether process can be exported or not
      */
-    public static boolean canBeExported(Process process) throws DAOException {
+    public static boolean canBeExported(Process process, boolean processHasChildren) throws DAOException {
         // superordinate processes normally do not contain images but should always be exportable
-        if (process.hasChildren()) {
+        if (processHasChildren) {
             return true;
         }
         Folder generatorSource = process.getProject().getGeneratorSource();

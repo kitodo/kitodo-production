@@ -1055,20 +1055,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
-     * "INWORK".
-     *
-     * @param process
-     *          process for which current task titles are returned
-     * @return String containing titles of current tasks of given process
-     */
-    public String getCurrentTaskTitles(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTaskTitles");
-        return stopwatch.stop(ServiceManager.getProcessService().createProgressTooltip(process));
-
-    }
-
-    /**
      * Get all parent processes recursively for the given process.
      *
      * @return List of Processes

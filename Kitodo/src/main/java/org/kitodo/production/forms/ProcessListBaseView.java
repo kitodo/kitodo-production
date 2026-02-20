@@ -16,6 +16,7 @@ import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,9 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
@@ -63,9 +66,11 @@ public class ProcessListBaseView extends BaseForm {
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
     private final HashMap<Integer, Boolean> exportable = new HashMap<>();
+    private static final String NL = "\n";
 
     boolean allSelected = false;
     HashSet<Integer> excludedProcessIds = new HashSet<>();
+
 
     /**
      * Constructor.
@@ -162,6 +167,158 @@ public class ProcessListBaseView extends BaseForm {
         PrimeFaces.current().executeScript("PF('statisticsDialog').show();");
         PrimeFaces.current().ajax().update("statisticsDialog");
         stopwatch.stop();
+    }
+
+    private LazyProcessModel getLazyProcessModel() {
+        return (LazyProcessModel) this.lazyBeanModel;
+    }
+
+    /**
+     * Checks whether the given process has any tasks at all.
+     *
+     * @param process the process to check
+     * @return true if at least one task exists, otherwise false
+     */
+    public boolean hasAnyTasks(Process process) {
+        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
+        return counts.values().stream().mapToInt(Integer::intValue).sum() > 0;
+    }
+
+    /**
+     * Checks whether the given process has child processes.
+     *
+     * @param process the process to check
+     * @return true if the process has children, otherwise false
+     */
+    public boolean hasChildren(Process process) {
+        return getLazyProcessModel().getProcessesWithChildren().contains(process.getId());
+    }
+
+    /**
+     * Returns the titles of open and in-work tasks for the given process.
+     *
+     * <p>For parent processes, no task titles are returned.</p>
+     *
+     * @param process the process to get task titles for
+     * @return formatted task titles or an empty string if none exist
+     */
+    public String getCurrentTaskTitles(Process process) {
+        Map<TaskStatus, List<String>> titles =
+                getLazyProcessModel().getTaskTitleCache().get(process.getId());
+
+        if (hasChildren(process)) {
+            return null;
+        }
+
+        if (Objects.isNull(titles) || titles.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        appendTitles(sb, TaskStatus.OPEN, titles);
+        appendTitles(sb, TaskStatus.INWORK, titles);
+        return sb.toString();
+    }
+
+    /**
+     * Appends task titles of the given status to the provided StringBuilder.
+     *
+     * @param sb the StringBuilder to append to
+     * @param status the task status to append
+     * @param titles task titles grouped by status
+     */
+    private void appendTitles(StringBuilder sb,
+                              TaskStatus status,
+                              Map<TaskStatus, List<String>> titles) {
+        List<String> list = titles.get(status);
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return;
+        }
+        if (sb.length() > 0) {
+            sb.append(NL);
+        }
+        sb.append(Helper.getTranslation(status.getTitle())).append(":");
+        for (String t : list) {
+            sb.append(NL).append(" - ").append(Helper.getTranslation(t));
+        }
+    }
+
+    /**
+     * Returns cached task status counts for the given process.
+     *
+     * <p>If no cached data exists, a fallback database query is executed.</p>
+     *
+     * @param process the process to get task status counts for
+     * @return a map of task status to count
+     */
+    public Map<TaskStatus, Integer> getCachedTaskStatusCounts(Process process) {
+        LazyProcessModel model = getLazyProcessModel();
+        EnumMap<TaskStatus, Integer> cached = model.getTaskStatusCounts(process);
+
+        if (Objects.nonNull(cached)) {
+            return cached;
+        }
+        // fallback (should rarely happen)
+        try {
+            return new TaskDAO().countTaskStatusForProcessAndItsAncestors(process);
+        } catch (DAOException e) {
+            logger.warn("Fallback task status counting failed", e);
+            return Map.of();
+        }
+    }
+
+    /**
+     * Calculates the percentage of tasks with the given status.
+     *
+     * @param process the process to calculate progress for
+     * @param status the task status to calculate
+     * @return progress percentage for the given status
+     */
+    public double progress(Process process, TaskStatus status) {
+        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
+        int total = counts.values().stream().mapToInt(Integer::intValue).sum();
+        if (total == 0) {
+            counts.put(TaskStatus.LOCKED, 1);
+            total = 1;
+        }
+        return 100.0 * counts.getOrDefault(status, 0) / total;
+    }
+
+    /**
+     * Returns the percentage of tasks in the process that are completed. The
+     * total of tasks awaiting preconditions, startable, in progress, and
+     * completed is {@code 100.0d}.
+     *
+     * @param process the process
+     * @return percentage of tasks completed
+     */
+    public double progressClosed(Process process) {
+        return progress(process, TaskStatus.DONE);
+    }
+
+    /**
+     * Returns the percentage of tasks in the process that are currently being
+     * processed. The progress total of tasks waiting for preconditions,
+     * startable, in progress, and completed is {@code 100.0d}.
+     *
+     * @param process the process
+     * @return percentage of tasks in progress
+     */
+    public double progressInProcessing(Process process) {
+        return progress(process, TaskStatus.INWORK);
+    }
+
+    /**
+     * Returns the percentage of the process's tasks that are now ready to be
+     * processed but have not yet been started. The progress total of tasks
+     * waiting for preconditions, startable, in progress, and completed is
+     * {@code 100.0d}.
+     *
+     * @param process the process
+     * @return percentage of startable tasks
+     */
+    public double progressOpen(Process process) {
+        return progress(process, TaskStatus.OPEN);
     }
 
     /**
@@ -622,7 +779,12 @@ public class ProcessListBaseView extends BaseForm {
         Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "canBeExported");
         try {
             if (!exportable.containsKey(process.getId())) {
-                exportable.put(process.getId(), ProcessService.canBeExported(process));
+                boolean processHasChildren = hasChildren(process);
+                if (processHasChildren) {
+                    exportable.put(process.getId(), true);
+                } else {
+                    exportable.put(process.getId(), ProcessService.canBeExported(process, false));
+                }
             }
             return stopwatch.stop(exportable.get(process.getId()));
         } catch (DAOException e) {
