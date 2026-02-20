@@ -696,6 +696,10 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
+        saveAllProcesses();
+    }
+
+    private void saveAllProcesses() throws DAOException {
         for (TempProcess temp : processes) {
             ServiceManager.getProcessService().save(temp.getProcess());
         }
