@@ -83,8 +83,8 @@
              stop the build in Eclipse on Windows from using "config-local" -->
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 
-        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <mockito.version>5.21.0</mockito.version>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>4.40.0</selenium.version>
@@ -930,7 +930,7 @@ from system library in Java 11+ -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.15.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -958,7 +958,7 @@ from system library in Java 11+ -->
             <plugin>
                 <inherited>false</inherited>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.5.0</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -970,7 +970,7 @@ from system library in Java 11+ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-help-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.5.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
