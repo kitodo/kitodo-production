@@ -2324,7 +2324,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         if (Objects.isNull(processIds) || processIds.isEmpty()) {
             return Collections.emptySet();
         }
-        String hql = "SELECT DISTINCT p.parent.id "
+        String hql = "SELECT DISTINCT p.parent.id, true "
                         + "FROM Process p "
                         + "WHERE p.parent.id IN (:ids)";
 
@@ -2347,7 +2347,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             Collection<Integer> processIds,
             Collection<Integer> roleIds) throws DAOException {
         String hql =
-                "SELECT DISTINCT t.process.id "
+                "SELECT DISTINCT t.process.id, true "
                         + "FROM Task t "
                         + "JOIN t.roles r "
                         + "WHERE t.process.id IN (:processIds) "
