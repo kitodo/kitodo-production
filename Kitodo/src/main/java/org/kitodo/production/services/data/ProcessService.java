@@ -2346,6 +2346,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public Set<Integer> findProcessIdsWithVisibleTasks(
             Collection<Integer> processIds,
             Collection<Integer> roleIds) throws DAOException {
+        if (Objects.isNull(processIds) || processIds.isEmpty()
+                || Objects.isNull(roleIds) || roleIds.isEmpty()) {
+            return Collections.emptySet();
+        }
         String hql =
                 "SELECT DISTINCT t.process.id, true "
                         + "FROM Task t "
