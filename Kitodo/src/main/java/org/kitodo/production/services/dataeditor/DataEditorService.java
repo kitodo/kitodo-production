@@ -519,6 +519,7 @@ public class DataEditorService {
      */
     public static void updateMetadataWithNewValues(Workpiece workpiece, List<MetadataComparison> comparisons) {
         for (MetadataComparison comparison : comparisons) {
+            stripEmptyGroupFields(comparison.getOldValues());
             switch (comparison.getSelection()) {
                 case ADD:
                     // extend existing values with new values
@@ -532,6 +533,22 @@ public class DataEditorService {
                 default:
                     // keep existing values and discard new values
                     logger.info("Keep existing values for metadata {}", comparison.getMetadataKey());
+            }
+        }
+    }
+
+    private static void stripEmptyGroupFields(HashSet<Metadata> values) {
+        for (Metadata md : values) {
+            if (md instanceof MetadataGroup) {
+                MetadataGroup group = (MetadataGroup) md;
+                group.getMetadata().removeIf(child -> {
+                    if (child instanceof MetadataEntry) {
+                        MetadataEntry entry = (MetadataEntry) child;
+                        return Objects.nonNull(entry.getValue())
+                                && entry.getValue().isBlank();
+                    }
+                    return false;
+                });
             }
         }
     }
