@@ -357,17 +357,17 @@
                 <p:menuitem id="stateOfVolume"
                             value="#{msgs.stateOfVolume}"
                             process="@this"
-                            action="#{ProcessListView.showStateOfVolume}"
+                            action="#{ProcessListViewStatisticsDialog.showStateOfVolume(ProcessListView.selectedProcesses)}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="durationOfTasks"
                             value="#{msgs.durationOfTasks}"
                             process="@this"
-                            action="#{ProcessListView.showDurationOfTasks}"
+                            action="#{ProcessListViewStatisticsDialog.showDurationOfTasks(ProcessListView.selectedProcesses)}"
                             icon="fa fa-arrow-circle-o-up"/>
                 <p:menuitem id="processMetadataStatistic"
                             value="#{msgs.numberOfMetadata}"
                             process="@this"
-                            action="#{ProcessListView.showProcessMetadataStatistic}"
+                            action="#{ProcessListViewStatisticsDialog.showProcessMetadataStatistic(ProcessListView.selectedProcesses)}"
                             icon="fa fa-arrow-circle-o-up"/>
             </p:menu>
         </div>
