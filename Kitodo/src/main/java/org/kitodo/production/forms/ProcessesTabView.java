@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -78,8 +79,13 @@ public class ProcessesTabView extends BaseTabView {
      */
     public void setFilterFromTemplate(String encodedFilter, Boolean showInactiveProjects, Boolean showClosedProcesses) {
         if (getActiveTabId().equals(PROCESS_TAB_ID)) {
+            // JSF by default assigns an empty string to the view parameter
+            // check whether the URL filter parameter is present in the URL
+            boolean isFilter = FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap().containsKey("filter");
+
             // user list view
-            processListView.setFilterFromTemplate(encodedFilter, showInactiveProjects, showClosedProcesses);
+            processListView.setFilterFromTemplate(isFilter ? encodedFilter : null, showInactiveProjects, showClosedProcesses);
         }
     }
 

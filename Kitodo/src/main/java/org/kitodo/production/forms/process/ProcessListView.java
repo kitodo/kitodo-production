@@ -87,6 +87,9 @@ public class ProcessListView extends ProcessListBaseView {
     private boolean importConfigurationsSetSuccessfully = false;
 
     @Inject
+    private ProcessListViewSessionState processListViewSessionState;
+
+    @Inject
     private CustomListColumnInitializer initializer;
 
     /**
@@ -351,6 +354,7 @@ public class ProcessListView extends ProcessListBaseView {
         final Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
+        processListViewSessionState.setLastFilter(filter);
         String script = "kitodo.updateQueryParameter('filter', '" + filter.replace("&", "%26") +  "');";
         PrimeFaces.current().executeScript(script);
         stopwatch.stop();
@@ -600,12 +604,19 @@ public class ProcessListView extends ProcessListBaseView {
     /**
      * Set filter based on the URL query parameter "filter", which can be any string.
      * 
-     * @param encodedFilter the filter as URL query parameter to be set as new filter
+     * @param encodedFilter the filter as URL query parameter to be set as new filter (or null if not present)
      * @param showInactiveProjects whether to list matching processes from inactive projects
      * @param showClosedProcesses whether to list matching processes already closed
      */
     public void setFilterFromTemplate(String encodedFilter, Boolean showInactiveProjects, Boolean showClosedProcesses) {
-        if (Objects.nonNull(encodedFilter) && !encodedFilter.isEmpty()) {
+        if (Objects.isNull(encodedFilter)) {
+            // use last filter from session state if filter parameter is not set at all
+            String lastFilter = processListViewSessionState.getLastFilter();
+            if (Objects.nonNull(lastFilter) && !lastFilter.isEmpty()) {
+                this.filterMenu.parseFilters(lastFilter);
+                this.setFilter(lastFilter);
+            }
+        } else {
             String decodedFilter = encodedFilter.replace("%26", "&");
             this.filterMenu.parseFilters(decodedFilter);
             this.setFilter(decodedFilter);
