@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -37,7 +36,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
@@ -642,7 +640,7 @@ public class StructurePanel implements Serializable {
      *         the tree
      */
     private DefaultTreeNode<Object> buildStructureTree() {
-        DefaultTreeNode<Object> invisibleRootNode = new DefaultTreeNode<Object>();
+        DefaultTreeNode<Object> invisibleRootNode = new DefaultTreeNode<>();
         invisibleRootNode.setExpanded(true);
         invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
@@ -732,7 +730,7 @@ public class StructurePanel implements Serializable {
          * appends it to the parent as a child. That’s the logic of the JSF
          * framework. So you do not have to add the result anywhere.
          */
-        DefaultTreeNode<Object> parent = new DefaultTreeNode<Object>(STRUCTURE_NODE_TYPE, node, result);
+        DefaultTreeNode<Object> parent = new DefaultTreeNode<>(STRUCTURE_NODE_TYPE, node, result);
         if (logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
             parent.setExpanded(true);
         }
@@ -895,8 +893,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode<Object> addTreeNode(String label, boolean undefined, boolean linked, Object dataObject,
             DefaultTreeNode<Object> parent) {
-        DefaultTreeNode<Object> node = new DefaultTreeNode<Object>(new StructureTreeNode(label, null, undefined, linked, dataObject),
-                parent);
+        DefaultTreeNode<Object> node = new DefaultTreeNode<>(new StructureTreeNode(label, null, undefined, linked, dataObject), parent);
         if (dataObject instanceof PhysicalDivision && physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, node)
                 || dataObject instanceof LogicalDivision
                 && logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, node)) {
@@ -975,7 +972,7 @@ public class StructurePanel implements Serializable {
      *         added as a result of calling `addParentLinksRecursive`.
      */
     public Integer getNumberOfParentLinkRootNodesAdded() {
-        DefaultTreeNode<Object> node = new DefaultTreeNode<Object>();
+        DefaultTreeNode<Object> node = new DefaultTreeNode<>();
         addParentLinksRecursive(dataEditor.getProcess(), node);
         return node.getChildCount();
     }
@@ -988,7 +985,7 @@ public class StructurePanel implements Serializable {
      * @return the media tree
      */
     private DefaultTreeNode<Object> buildMediaTree(PhysicalDivision mediaRoot) {
-        DefaultTreeNode<Object> rootTreeNode = new DefaultTreeNode<Object>();
+        DefaultTreeNode<Object> rootTreeNode = new DefaultTreeNode<>();
         rootTreeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);

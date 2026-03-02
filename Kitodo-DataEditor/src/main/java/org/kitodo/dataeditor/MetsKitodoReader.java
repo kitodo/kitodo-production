@@ -68,8 +68,7 @@ class MetsKitodoReader {
      * @return The Mets object in mets-kitodo format.
      */
     static Mets readUriToMets(URI xmlFile) throws JAXBException, IOException {
-        FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
-                FileManagementInterface.class).loadModule();
+        FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(FileManagementInterface.class).loadModule();
         if (fileManagementModule.fileExist(xmlFile)) {
             JAXBContext jaxbMetsContext = JAXBContextCache.getJAXBContext(Mets.class);
             Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();

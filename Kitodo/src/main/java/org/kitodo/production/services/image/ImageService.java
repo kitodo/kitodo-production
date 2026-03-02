@@ -30,7 +30,7 @@ public class ImageService {
     private static volatile ImageService instance = null;
 
     private ImageService() {
-        imageManagement = new KitodoServiceLoader<ImageManagementInterface>(ImageManagementInterface.class)
+        imageManagement = new KitodoServiceLoader<>(ImageManagementInterface.class)
                 .loadModule();
     }
 

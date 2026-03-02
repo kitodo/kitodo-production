@@ -17,7 +17,6 @@ import net.bytebuddy.utility.nullability.MaybeNull;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.ProcessKeywords;
 import org.kitodo.data.database.enums.TaskStatus;
 
 /**
