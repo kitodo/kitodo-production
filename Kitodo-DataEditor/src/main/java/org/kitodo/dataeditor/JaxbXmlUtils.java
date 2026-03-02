@@ -60,8 +60,7 @@ public class JaxbXmlUtils {
      * @return The Result of the transformation as String object.
      */
     static String transformXmlByXslt(URI xmlFile, URI xslFile) throws TransformerException, IOException {
-        FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
-                FileManagementInterface.class).loadModule();
+        FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(FileManagementInterface.class).loadModule();
         TransformerFactory factory = TransformerFactory.newInstance();
         StreamSource styleSource = new StreamSource(xslFile.getPath());
         Transformer transformer = factory.newTransformer(styleSource);

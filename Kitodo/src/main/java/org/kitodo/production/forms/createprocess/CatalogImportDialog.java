@@ -119,7 +119,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             if (skipHitList(createProcessForm.getCurrentImportConfiguration(), getSelectedField())) {
                 getRecordById(getSearchTerm());
             } else {
-                Map<String, SortMeta> sortBy = new HashMap<String, SortMeta>();
+                Map<String, SortMeta> sortBy = new HashMap<>();
                 List<?> hits = hitModel.load(0, 10, sortBy, Collections.EMPTY_MAP);
                 if (hits.size() == 1) {
                     getRecordById(((SingleHit) hits.get(0)).getIdentifier());
