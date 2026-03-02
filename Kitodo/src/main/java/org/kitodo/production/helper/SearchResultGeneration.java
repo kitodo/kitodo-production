@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import com.opencsv.CSVWriter;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,9 +20,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Objects;
 
-import com.opencsv.CSVWriter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,9 +31,9 @@ import org.kitodo.production.services.ServiceManager;
 public class SearchResultGeneration {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat(BaseTemplateBean.DATE_FORMAT);
-    private String filter;
-    private boolean showClosedProcesses;
-    private boolean showInactiveProjects;
+    private final String filter;
+    private final boolean showClosedProcesses;
+    private final boolean showInactiveProjects;
 
     /**
      * Constructor.
@@ -52,6 +52,10 @@ public class SearchResultGeneration {
     }
 
 
+    /**
+     * Writes the search results to the given output stream as an Excel file.
+     * @param out the output stream to write to.
+     */
     public void writeExcel(OutputStream out) throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
@@ -76,6 +80,10 @@ public class SearchResultGeneration {
         }
     }
 
+    /**
+     * Writes the search results to the given output stream as a CSV file.
+     * @param out the output stream to write to.
+     */
     public void writeCsv(OutputStream out) throws IOException {
 
         try (BufferedWriter bufferedWriter =
@@ -88,6 +96,10 @@ public class SearchResultGeneration {
         }
     }
 
+    /**
+     * Returns the localized header for the export.
+     * @return array of header column names.
+     */
     public String[] getHeader() {
         return new String[]{
                 Helper.getTranslation("title"),
@@ -101,6 +113,11 @@ public class SearchResultGeneration {
         };
     }
 
+    /**
+     * Maps the given export DTO to a string array for export.
+     * @param data the process data to map.
+     * @return array representing one export row.
+     */
     public String[] mapRow(ProcessExportDTO data) {
         return new String[]{
                 data.getTitle(),
@@ -116,6 +133,10 @@ public class SearchResultGeneration {
         };
     }
 
+    /**
+     * Retrieves the filtered list of processes prepared for export.
+     * @return list of ProcessExportDTO objects.
+     */
     public List<ProcessExportDTO> getResultsWithFilter() {
         return ServiceManager.getProcessService().getProcessesForExport(
                 filter,

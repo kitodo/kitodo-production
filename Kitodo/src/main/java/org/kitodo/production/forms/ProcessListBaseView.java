@@ -543,6 +543,9 @@ public class ProcessListBaseView extends ValidatableForm {
         stopwatch.stop();
     }
 
+    /**
+     * Generates the current search result as an Excel file.
+     */
     public void generateExcel() {
         Stopwatch stopwatch = new Stopwatch(this, "generateExcel");
         try {
@@ -558,6 +561,9 @@ public class ProcessListBaseView extends ValidatableForm {
         stopwatch.stop();
     }
 
+    /**
+     * Generates the current search result as a CSV file.
+     */
     public void generateCsv() {
         Stopwatch stopwatch = new Stopwatch(this, "generateCsv");
         try {

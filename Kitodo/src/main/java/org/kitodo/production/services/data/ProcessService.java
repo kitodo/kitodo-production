@@ -16,7 +16,10 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -1166,17 +1169,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                         new SearchResultGeneration(filter,
                                 showClosedProcesses,
                                 showInactiveProjects);
-                List<ProcessExportDTO> results =
-                        sr.getResultsWithFilter();
                 Document document = new Document(PageSize.A3.rotate());
                 PdfWriter.getInstance(document, out);
                 document.open();
-                PdfPTable table =
-                        new PdfPTable(sr.getHeader().length);
+
+                PdfPTable table = new PdfPTable(sr.getHeader().length);
                 // Header
                 for (String column : sr.getHeader()) {
                     table.addCell(new PdfPCell(new Phrase(column)));
                 }
+                List<ProcessExportDTO> results = sr.getResultsWithFilter();
                 // Rows
                 for (ProcessExportDTO data : results) {
                     String[] row = sr.mapRow(data);
@@ -1227,6 +1229,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                     case EXCEL:
                         sr.writeExcel(out);
                         break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported export format: " + format);
                 }
                 out.flush();
                 facesContext.responseComplete();
