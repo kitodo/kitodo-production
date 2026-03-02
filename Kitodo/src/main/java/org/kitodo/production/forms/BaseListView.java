@@ -111,7 +111,7 @@ public class BaseListView extends BaseForm {
             entry("sortOrder", getSortByOrder()), 
             entry("filter", getFilter())
         ).entrySet().stream()
-            .filter(entry -> Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty())
+            .filter(entry -> Objects.nonNull(entry.getValue()))
             .map(entry -> entry.getKey() + "=" + entry.getValue().replace("&", "%26"))
             .collect(Collectors.joining("&"));
     }

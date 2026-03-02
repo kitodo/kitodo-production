@@ -1465,7 +1465,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         String viewPath = String.format(METADATA_REDIRECT, processId, referringView);
         if (referringView.equals("processes")) {
             try {
-                viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), "UTF-8");;
+                viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 logger.error("cannot urlencode referrerListOptions", e);
             }
