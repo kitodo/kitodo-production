@@ -75,12 +75,11 @@ public class SearchForm {
 
     /**
      * Constructor with inject process form.
-     *
-     * @param processListView
-     *            managed bean
+     * 
+     * @param taskForm injected reference to CurrentTaskForm instance
      */
     @Inject
-    public SearchForm(ProcessListView processListView, CurrentTaskForm taskForm) {
+    public SearchForm(CurrentTaskForm taskForm) {
         this.stepstatus.addAll(ServiceManager.getFilterService().initStepStatus());
         this.projects = ServiceManager.getFilterService().initProjects();
         this.stepTitles = ServiceManager.getFilterService().initStepTitles();
