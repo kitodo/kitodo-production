@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -537,19 +538,21 @@ public class DataEditorService {
         }
     }
 
-    private static void stripEmptyGroupFields(HashSet<Metadata> values) {
-        for (Metadata md : values) {
-            if (md instanceof MetadataGroup) {
-                MetadataGroup group = (MetadataGroup) md;
-                group.getMetadata().removeIf(child -> {
-                    if (child instanceof MetadataEntry) {
-                        MetadataEntry entry = (MetadataEntry) child;
-                        return Objects.nonNull(entry.getValue())
-                                && entry.getValue().isBlank();
-                    }
-                    return false;
-                });
+    private static void stripEmptyGroupFields(Set<Metadata> values) {
+        for (Metadata metadata : values) {
+            if (metadata instanceof MetadataGroup) {
+                MetadataGroup group = (MetadataGroup) metadata;
+                group.getMetadata().removeIf(DataEditorService::isBlankMetadataEntry);
             }
         }
+    }
+
+    private static boolean isBlankMetadataEntry(Metadata metadata) {
+        if (!(metadata instanceof MetadataEntry)) {
+            return false;
+        }
+        MetadataEntry entry = (MetadataEntry) metadata;
+        String value = entry.getValue();
+        return Objects.nonNull(value) && value.isBlank();
     }
 }
