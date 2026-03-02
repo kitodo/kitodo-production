@@ -47,6 +47,10 @@ public class TaskEditView extends BaseEditView {
 
     private String taskEditReferer = DEFAULT_LINK;
 
+    public static String getViewPath(Task task) {
+        return VIEW_PATH + "&id=" + task.getId();
+    }
+
     /**
      * Get task object.
      *

@@ -78,11 +78,11 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title", "title");
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("processForTask.id", "process.id");
-        SORT_FIELD_MAPPING.put("processForTask.title.keyword", "process.title");
+        SORT_FIELD_MAPPING.put("title", "title");
+        SORT_FIELD_MAPPING.put("process.id", "process.id");
+        SORT_FIELD_MAPPING.put("process.title", "process.title");
         SORT_FIELD_MAPPING.put("processingStatus", "processingStatus");
-        SORT_FIELD_MAPPING.put("processingUser.name.keyword", "task.processingUser.surname");
+        SORT_FIELD_MAPPING.put("processingUser.surname", "processingUser.surname");
         SORT_FIELD_MAPPING.put("processingBegin", "processingBegin");
         SORT_FIELD_MAPPING.put("processingEnd", "processingEnd");
         SORT_FIELD_MAPPING.put("correctionCommentStatus", "CASE WHEN task.process IS NOT NULL AND EXISTS ("
@@ -90,8 +90,8 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
                 + "AND comment.corrected = false) THEN 4 WHEN task.process IS NOT NULL AND EXISTS ("
                 + "SELECT 1 FROM task.process.comments AS comment WHERE comment.type = 'ERROR') THEN 3 "
                 + "WHEN task.process IS NOT NULL AND EXISTS (SELECT 1 FROM task.process.comments) THEN 2 ELSE 1 END");
-        SORT_FIELD_MAPPING.put("projectForTask.title.keyword", "process.project.title");
-        SORT_FIELD_MAPPING.put("processForTask.creationDate", "process.creationDate");
+        SORT_FIELD_MAPPING.put("process.project.title", "process.project.title");
+        SORT_FIELD_MAPPING.put("process.creationDate", "process.creationDate");
     }
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
@@ -220,16 +220,16 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      *            {@code null} or empty.<br>
      *            One of:<br>
      *            <ul>
-     *            <li>"title.keyword": Title</li>
-     *            <li>"processForTask.id": Process ID</li>
-     *            <li>"processForTask.title.keyword": Process</li>
+     *            <li>"title": Title</li>
+     *            <li>"process.id": Process ID</li>
+     *            <li>"process.title": Process</li>
      *            <li>"processingStatus": Status</li>
-     *            <li>"processingUser.name.keyword": Last editing user</li>
+     *            <li>"processingUser.surname": Last editing user</li>
      *            <li>"processingBegin": Start of work</li>
      *            <li>"processingEnd": End of work</li>
      *            <li>"correctionCommentStatus": Comments</li>
-     *            <li>"projectForTask.title.keyword": Project</li>
-     *            <li>"processForTask.creationDate": Duration (Process)
+     *            <li>"process.project.title": Project</li>
+     *            <li>"process.creationDate": Duration (Process)
      *            [sic!]</li>
      *            </ul>
      * @param sortOrder

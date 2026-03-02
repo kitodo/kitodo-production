@@ -18,8 +18,8 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <c:set var="task" value="#{CurrentTaskForm.currentTask}" scope="request"/>
-    <c:set var="process" value="#{CurrentTaskForm.currentTask.process}" scope="request"/>
+    <c:set var="task" value="#{TaskWorkView.task}" scope="request"/>
+    <c:set var="process" value="#{TaskWorkView.task.process}" scope="request"/>
 
     <h:panelGroup rendered="#{task.processingUser.id == LoginForm.loggedUser.id and task.processingStatus eq 'INWORK'}">
 
@@ -48,7 +48,7 @@
                         <!-- If blocked by yourself: you can unblocked -->
                         <h:commandLink id="releaseLock"
                                        rendered="#{(process.blockedUser != null) and (process.blockedUser.id == LoginForm.loggedUser.id)}"
-                                       action="#{CurrentTaskForm.releaseLock}"
+                                       action="#{TaskWorkView.releaseLock}"
                                        title="#{msgs.orUnlockHere}">
                             <h:outputText><i class="fa fa-lock"/> #{msgs.orUnlockHere}</h:outputText>
                         </h:commandLink>
@@ -57,14 +57,14 @@
                     <!-- Script-button -->
                     <p:commandLink id="executeScript"
                                    rendered="#{task.scriptPath != null and task.scriptPath != '' and task.process.blockedUser == null}"
-                                   action="#{CurrentTaskForm.executeScript}" title="#{task.scriptName}">
-                        <f:setPropertyActionListener target="#{CurrentTaskForm.scriptPath}" value="#{task.scriptPath}"/>
+                                   action="#{TaskWorkView.executeScript}" title="#{task.scriptName}">
+                        <f:setPropertyActionListener target="#{TaskWorkView.scriptPath}" value="#{task.scriptPath}"/>
                         <h:outputText><i class="fa fa-cogs"/> #{msgs.scriptExecute}: #{task.scriptName}</h:outputText>
                     </p:commandLink>
 
                     <!-- tiffHeaderDownload-button -->
                     <h:commandLink id="downloadTiffHeader" rendered="#{0==1 and process.blockedUser == null}"
-                                   action="#{CurrentTaskForm.downloadTiffHeader}" title="#{msgs.saveTifHeaderFile}">
+                                   action="#{TaskWorkView.downloadTiffHeader}" title="#{msgs.saveTifHeaderFile}">
                         <h:outputText><i class="fa fa-file-o"/> #{msgs.saveTifHeaderFile}</h:outputText>
                     </h:commandLink>
 
@@ -77,7 +77,7 @@
 
                     <!-- Upload-button -->
                     <h:commandLink id="exportDms" rendered="#{task.typeExportDMS and process.blockedUser == null}"
-                                   action="#{CurrentTaskForm.exportDMS}" title="#{msgs.importDms}">
+                                   action="#{TaskWorkView.exportDMS}" title="#{msgs.importDms}">
                         <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.importDms}</h:outputText>
                     </h:commandLink>
 
@@ -90,31 +90,31 @@
                         <h:outputText><i class="fa fa-list-alt"/> #{msgs.metadataEdit}</h:outputText>
                         <f:param name="id" value="#{task.process.id}"/>
                         <f:param name="referer" value="currentTasksEdit.jsf?id=#{task.id}"/>
-                        <f:param name="templateTaskId" value="#{CurrentTaskForm.getCorrespondingTemplateTaskId(task)}"/>
+                        <f:param name="templateTaskId" value="#{TaskWorkView.getCorrespondingTemplateTaskId(task)}"/>
                     </h:link>
 
                     <!-- Re-generate all images action link -->
                     <p:commandLink id="generateAllImages"
-                                   rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
-                                   action="#{CurrentTaskForm.generateAllImages}"
-                                   disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
-                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.regenerateAllImages : msgs.imageGenerationNotPossible}">
+                                   rendered="#{TaskWorkView.showingGenerationActions and process.blockedUser == null}"
+                                   action="#{TaskWorkView.generateAllImages}"
+                                   disabled="#{!TaskWorkView.isImageGenerationPossible()}"
+                                   title="#{TaskWorkView.isImageGenerationPossible() ? msgs.regenerateAllImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
                     </p:commandLink>
                     <!-- Generate missing and re-generate damaged images action link -->
                     <p:commandLink id="regenerateMissingAndDamagedImages"
-                                   rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
-                                   action="#{CurrentTaskForm.generateMissingAndDamagedImages}"
-                                   disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
-                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.regenerateMissingAndDamagedImages : msgs.imageGenerationNotPossible}">
+                                   rendered="#{TaskWorkView.showingGenerationActions and process.blockedUser == null}"
+                                   action="#{TaskWorkView.generateMissingAndDamagedImages}"
+                                   disabled="#{!TaskWorkView.isImageGenerationPossible()}"
+                                   title="#{TaskWorkView.isImageGenerationPossible() ? msgs.regenerateMissingAndDamagedImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
                     </p:commandLink>
                     <!-- Generate missing images action link -->
                     <p:commandLink id="generateMissingImages"
-                                   rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
-                                   action="#{CurrentTaskForm.generateMissingImages}"
-                                   disabled="#{!CurrentTaskForm.isImageGenerationPossible()}"
-                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs.generateMissingImages : msgs.imageGenerationNotPossible}">
+                                   rendered="#{TaskWorkView.showingGenerationActions and process.blockedUser == null}"
+                                   action="#{TaskWorkView.generateMissingImages}"
+                                   disabled="#{!TaskWorkView.isImageGenerationPossible()}"
+                                   title="#{TaskWorkView.isImageGenerationPossible() ? msgs.generateMissingImages : msgs.imageGenerationNotPossible}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
                     </p:commandLink>
 
@@ -128,16 +128,16 @@
                     </p:commandLink>
 
                     <p:commandLink id="validateImages"
-                                   rendered="#{CurrentTaskForm.showingImageValidationAction and process.blockedUser == null}"
-                                   action="#{LtpValidationReportDialog.validateTaskAndOpen(CurrentTaskForm.currentTask)}"
-                                   disabled="#{!CurrentTaskForm.isImageValidationPossible()}"
-                                   title="#{CurrentTaskForm.isImageGenerationPossible() ? msgs['currentTaskEdit.validateImages'] : msgs['currentTaskEdit.imageValidationNotPossible']}"
+                                   rendered="#{TaskWorkView.showingImageValidationAction and process.blockedUser == null}"
+                                   action="#{LtpValidationReportDialog.validateTaskAndOpen(task)}"
+                                   disabled="#{!TaskWorkView.isImageValidationPossible()}"
+                                   title="#{TaskWorkView.isImageValidationPossible() ? msgs['currentTaskEdit.validateImages'] : msgs['currentTaskEdit.imageValidationNotPossible']}"
                                    update=":ltpValidationReportDialogForm">
                         <h:outputText><i class="fa fa-cog"/> #{msgs['currentTaskEdit.validateImages']}</h:outputText>
                     </p:commandLink>
 
                     <!-- Edit Cancel-buttons -->
-                    <p:commandLink id="cancel" action="#{CurrentTaskForm.releaseTask}" title="#{msgs.releaseTask}">
+                    <p:commandLink id="cancel" action="#{TaskWorkView.releaseTask}" title="#{msgs.releaseTask}">
                         <h:outputText><i class="fa fa-ban"/> #{msgs.releaseTask}</h:outputText>
                         <p:confirm header="#{msgs.confirmRelease}" message="#{msgs.reallyReleaseTask}"
                                    icon="ui-icon-alert"/>
@@ -145,7 +145,7 @@
                     <!-- Close button -->
                     <h:panelGroup title="#{CommentForm.hasUnsolvedProblem() ? msgs['dataEditor.comment.markCorrectionCommentAsSolvedToCloseTask'] : CommentForm.getTaskCloseLinkText()}">
                         <p:commandLink id="close"
-                                       action="#{CurrentTaskForm.closeTaskByUser}"
+                                       action="#{TaskWorkView.closeTaskByUser}"
                                        disabled="#{CommentForm.hasUnsolvedProblem()}">
                             <h:outputText><i class="fa fa-check"/> #{CommentForm.getTaskCloseLinkText()}</h:outputText>
                             <p:confirm header="#{msgs.confirmClose}" message="#{CommentForm.getTaskCloseLinkText()}?" icon="ui-icon-alert"/>

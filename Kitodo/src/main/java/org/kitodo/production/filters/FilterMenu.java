@@ -24,8 +24,8 @@ import jakarta.faces.context.FacesContext;
 
 import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
-import org.kitodo.production.forms.CurrentTaskForm;
 import org.kitodo.production.forms.process.ProcessListView;
+import org.kitodo.production.forms.task.TaskListView;
 import org.kitodo.production.forms.user.UserListView;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
@@ -75,7 +75,7 @@ public class FilterMenu {
     );
 
     private ProcessListView processListView = null;
-    private CurrentTaskForm taskForm = null;
+    private TaskListView taskForm = null;
     private UserListView userListView = null;
     private List<Suggestion> suggestions;
     private final List<ParsedFilter> parsedFilters;
@@ -95,9 +95,9 @@ public class FilterMenu {
     /**
      * Constructor of filter menu for tasks.
      *
-     * @param taskForm instance of CurrentTaskForm
+     * @param taskForm instance of TaskListView
      */
-    public FilterMenu(CurrentTaskForm taskForm) {
+    public FilterMenu(TaskListView taskForm) {
         this.taskForm = taskForm;
         suggestions = createSuggestionsForTaskCategory("");
         parsedFilters = new ArrayList<>();
