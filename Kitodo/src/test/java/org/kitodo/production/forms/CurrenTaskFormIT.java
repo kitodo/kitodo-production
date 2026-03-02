@@ -72,7 +72,7 @@ public class CurrenTaskFormIT {
         ServiceManager.getProcessService().save(process);
         Task taskTypeAcceptClose = createAndSaveTask(TaskStatus.OPEN, 1, process, null, true);
         Task followingTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, null, true);
-        taskListView.takeOverTask(taskTypeAcceptClose);
+        taskListView.takeOverTask(taskTypeAcceptClose, "tasks");
         Task taskTypeAcceptCloseUpdated = taskService.getById(taskTypeAcceptClose.getId());
         Task followingTaskUpdated = taskService.getById(followingTask.getId());
 
@@ -91,7 +91,7 @@ public class CurrenTaskFormIT {
         task.setWorkflowCondition(workflowCondition);
         task.setTypeAcceptClose(typeAcceptClose);
         taskService.save(task);
-        return task;
+        return ServiceManager.getTaskService().getById(task.getId());
     }
 
 }

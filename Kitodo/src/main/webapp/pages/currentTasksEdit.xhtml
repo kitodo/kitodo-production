@@ -23,6 +23,12 @@
         <f:viewParam name="id"/>
         <f:viewAction action="#{TaskWorkView.loadTaskById(id)}"/>
         <f:viewAction action="#{CommentForm.setCurrentTaskById(id)}"/>
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{TaskWorkView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
+        <!--@elvariable id="referer" type="java.lang.String"-->
+        <f:viewParam name="referer"/>
+        <f:viewAction action="#{TaskWorkView.setReferrerFromTemplate(referer)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">

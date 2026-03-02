@@ -58,7 +58,7 @@
                 </p:commandLink>
                 <!-- assign task -->
                 <h:commandLink id="take"
-                               action="#{TaskListView.takeOverTask(task)}"
+                               action="#{TaskListView.takeOverTask(task, 'desktop')}"
                                styleClass="action"
                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.selfAssignTask}" icon="fa fa-bell-o">
@@ -66,7 +66,7 @@
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
                 <h:commandLink id="editOwnTask"
-                               action="#{TaskWorkView.getViewPath(task)}"
+                               action="#{TaskListView.workOnTask(task, 'desktop')}"
                                styleClass="action"
                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.assignedTo}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
@@ -75,7 +75,7 @@
                 </h:commandLink>
                 <!-- already assigned task (different user) -->
                 <h:commandLink id="editOtherTask"
-                               action="#{TaskWorkView.getViewPath(task)}"
+                               action="#{TaskListView.workOnTask(task, 'desktop')}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
                                title="#{msgs.assignedTo}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
@@ -84,7 +84,7 @@
 
                 <!-- take over batch -->
                 <h:commandLink id="batch"
-                               action="#{TaskListView.takeOverBatchTasks(task)}"
+                               action="#{TaskListView.takeOverBatchTasks(task, 'desktop')}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'OPEN' and task.batchStep and task.batchAvailable}"
                                title="#{msgs.selfAssignTask}">
@@ -93,7 +93,7 @@
 
                 <!-- edit batch step (this user) -->
                 <h:commandLink id="batchInWork"
-                               action="#{TaskListView.editBatchTasks(task)}"
+                               action="#{TaskListView.editBatchTasks(task, 'desktop')}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and task.batchAvailable}"
                                title="#{msgs.selfAssignTask}">
@@ -102,7 +102,7 @@
 
                 <!-- edit batch step (different user) -->
                 <h:commandLink id="batchInWorkOther"
-                               action="#{TaskListView.editBatchTasks(task)}"
+                               action="#{TaskListView.editBatchTasks(task, 'desktop')}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and task.batchStep and task.batchAvailable}"
                                title="#{msgs.assignedTo}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">

@@ -12,9 +12,14 @@
 package org.kitodo.production.forms.task;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.faces.view.ViewScoped;
@@ -56,9 +61,31 @@ public class TaskWorkView extends ValidatableForm {
     private Task task = new Task();
 
     private String scriptPath;
+    private String referrer;
 
-    public static String getViewPath(Task task) {
-        return VIEW_PATH + "&id=" + task.getId();
+    /**
+     * Return the view path to the work on task view for a specific task and navigation state.
+     * 
+     * @param task the task that is selected to be worked on
+     * @param referrer the referring view (e.g. task list or desktop page)
+     * @param referrerListOptions various list options that should be restored when navigating back to the tasks list
+     */
+    public static String getViewPath(Task task, String referrer, String referrerListOptions) {
+        try {
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("id", task.getId().toString());
+            queryParams.put("referer", referrer);
+            if (Objects.nonNull(referrer) && referrer.equals("tasks")) {
+                queryParams.put("referrerListOptions", "_" + URLEncoder.encode(referrerListOptions, "UTF-8"));
+            }
+            return VIEW_PATH + "&" + queryParams.entrySet().stream()
+                .filter(entry -> Objects.nonNull(entry.getValue()))
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&"));
+        } catch (UnsupportedEncodingException e) {
+            logger.error("error encoding view path for TaskWorkView", e);
+        }
+        return VIEW_PATH;
     }
 
     /**
@@ -123,7 +150,7 @@ public class TaskWorkView extends ValidatableForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return stopwatch.stop(this.stayOnCurrentPage);
         }
-        return stopwatch.stop(tasksPage);
+        return stopwatch.stop(getReferrerViewPath());
     }
 
     /**
@@ -313,7 +340,32 @@ public class TaskWorkView extends ValidatableForm {
             showValidationExceptionDialog(e, null);
             return stopwatch.stop(this.stayOnCurrentPage);
         }
-        return stopwatch.stop(tasksPage);
+        return stopwatch.stop(getReferrerViewPath());
+    }
+
+    /**
+     * Remember referring view such that user can be forwarded correctly once task is closed.
+     */
+    public void setReferrerFromTemplate(String referrer) {
+        logger.error("TaskWorkView.setReferrerFromTemplate(" + referrer + ")");
+        if (Objects.nonNull(referrer) && referrer.equals("desktop")) {
+            this.referrer = "desktop";
+        } else {
+            this.referrer = "tasks";
+        }
+    }
+
+    /**
+     * Return the view path to the referring view, which can be either the desktop view or task list.
+     * 
+     * @return the view path
+     */
+    private String getReferrerViewPath() {
+        logger.error("TaskWorkView.getReferrerViewPath() for referrer = " + this.referrer);
+        if (this.referrer.equals("tasks")) {
+            return TaskListView.getViewPath() + "&" + getReferrerListOptions();
+        }
+        return "desktop";
     }
 
 }

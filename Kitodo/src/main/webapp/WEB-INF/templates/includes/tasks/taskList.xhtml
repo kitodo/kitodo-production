@@ -173,6 +173,7 @@
                             title="#{msgs.taskDetails}">
                         <f:param name="referer" value="tasks"/>
                         <f:param name="id" value="#{item.id}"/>
+                        <f:param name="referrerListOptions" value="#{TaskListView.combinedListOptions}" />
                         <i class="fa fa-pencil-square-o fa-lg"/>
                     </h:link>
 
@@ -186,7 +187,7 @@
 
                     <!-- assign task -->
                     <h:commandLink id="take"
-                                   action="#{TaskListView.takeOverTask(item)}"
+                                   action="#{TaskListView.takeOverTask(item, 'tasks')}"
                                    styleClass="action"
                                    rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
                                    title="#{msgs.selfAssignTask}">
@@ -194,7 +195,7 @@
                     </h:commandLink>
                     <!-- already assigned task (this user) -->
                     <h:commandLink id="editOwnTask"
-                                   action="#{TaskListView.workOnTask(item)}"
+                                   action="#{TaskListView.workOnTask(item, 'tasks')}"
                                    styleClass="action"
                                    rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
                                    title="#{msgs.assignedTo}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
@@ -202,7 +203,7 @@
                     </h:commandLink>
                     <!-- already assigned task (different user) -->
                     <h:commandLink id="editOtherTask"
-                                   action="#{TaskListView.workOnTask(item)}"
+                                   action="#{TaskListView.workOnTask(item, 'tasks')}"
                                    styleClass="action"
                                    rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and (!item.batchStep || !item.batchAvailable)}"
                                    title="#{msgs.assignedTo}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
@@ -211,7 +212,7 @@
 
                     <!-- take over batch -->
                     <h:commandLink id="batch"
-                                   action="#{TaskListView.takeOverBatchTasks(item)}"
+                                   action="#{TaskListView.takeOverBatchTasks(item, 'tasks')}"
                                    styleClass="action"
                                    rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchAvailable}"
                                    title="#{msgs.selfAssignTask}">
@@ -220,7 +221,7 @@
 
                     <!-- edit batch step (this user) -->
                     <h:commandLink id="batchInWork"
-                                   action="#{TaskListView.editBatchTasks(item)}"
+                                   action="#{TaskListView.editBatchTasks(item, 'tasks')}"
                                    styleClass="action"
                                    rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
                                    title="#{msgs.selfAssignTask}">
@@ -229,7 +230,7 @@
 
                     <!-- edit batch step (different user) -->
                     <h:commandLink id="batchInWorkOther"
-                                   action="#{TaskListView.editBatchTasks(item)}"
+                                   action="#{TaskListView.editBatchTasks(item, 'tasks')}"
                                    styleClass="action"
                                    rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and item.batchStep and item.batchAvailable}"
                                    title="#{msgs.assignedTo}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">

@@ -14,9 +14,11 @@ package org.kitodo.production.forms.task;
 import static java.util.Map.entry;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -53,6 +56,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.utils.Stopwatch;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
@@ -82,6 +86,9 @@ public class TaskListView extends BaseListView {
 
     @Inject
     private CustomListColumnInitializer initializer;
+
+    @Inject
+    private TaskListViewSessionState sessionState;
 
     /**
      * Constructor.
@@ -129,9 +136,19 @@ public class TaskListView extends BaseListView {
     }
 
     /**
+     * Returns the URL to the task list.
+     * 
+     * @return view path to task list
+     */
+    public static String getViewPath() {
+        return VIEW_PATH; 
+    }
+
+    /**
      * Returns the URL to the task list with a given filter string.
      * 
      * @param filter the filter string
+     * @return view path to task list with specific filter
      */
     public static String getViewPath(String filter) {
         return VIEW_PATH + "&filter=" + filter.replace("&", "%26"); 
@@ -142,7 +159,7 @@ public class TaskListView extends BaseListView {
      *
      * @return page
      */
-    public String takeOverTask(Task task) {
+    public String takeOverTask(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "takeOverTask");
         if (task.getProcessingStatus() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
@@ -151,7 +168,7 @@ public class TaskListView extends BaseListView {
             try {
                 if (task.isTypeAcceptClose()) {
                     this.workflowControllerService.close(task);
-                    return stopwatch.stop(VIEW_PATH);
+                    return stopwatch.stop(reload());
                 } else {
                     this.workflowControllerService.assignTaskToUser(task);
                     ServiceManager.getTaskService().save(task);
@@ -161,7 +178,7 @@ public class TaskListView extends BaseListView {
                     e);
             }
         }
-        return stopwatch.stop(TaskWorkView.getViewPath(task));
+        return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
     }
 
     /**
@@ -169,9 +186,9 @@ public class TaskListView extends BaseListView {
      *
      * @return page
      */
-    public String workOnTask(Task task) {
+    public String workOnTask(Task task, String referrer) throws UnsupportedEncodingException {
         Stopwatch stopwatch = new Stopwatch(this, "workOnTask");
-        return stopwatch.stop(TaskWorkView.getViewPath(task));
+        return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
     }
 
     /**
@@ -180,20 +197,20 @@ public class TaskListView extends BaseListView {
      *
      * @return page for edit one task, page for edit many or stay on the same page
      */
-    public String takeOverBatchTasks(Task task) {
+    public String takeOverBatchTasks(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "takeOverBatchTasks");
         String taskTitle = task.getTitle();
         List<Batch> batches = task.getProcess().getBatches();
 
         if (batches.isEmpty()) {
-            return stopwatch.stop(takeOverTask(task));
+            return stopwatch.stop(takeOverTask(task, referrer));
         } else if (batches.size() == 1) {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);
             } else if (currentTasksOfBatch.size() == 1) {
-                return stopwatch.stop(takeOverTask(task));
+                return stopwatch.stop(takeOverTask(task, referrer));
             } else {
                 for (Task t : currentTasksOfBatch) {
                     processTask(t);
@@ -252,20 +269,20 @@ public class TaskListView extends BaseListView {
      *
      * @return page for edit one task, page for edit many or stay on the same page
      */
-    public String editBatchTasks(Task task) {
+    public String editBatchTasks(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "editBatchTasks");
         String taskTitle = task.getTitle();
         List<Batch> batches = task.getProcess().getBatches();
 
         if (batches.isEmpty()) {
-            return stopwatch.stop(TaskWorkView.getViewPath(task));
+            return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
         } else if (batches.size() == 1) {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);
             } else if (currentTasksOfBatch.size() == 1) {
-                return stopwatch.stop(TaskWorkView.getViewPath(task));
+                return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
             } else {
                 return stopwatch.stop(TaskBatchEditView.getViewPath(task));
             }
@@ -309,6 +326,8 @@ public class TaskListView extends BaseListView {
         Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusRestriction", "taskStatus", Objects.toString(
             taskStatus));
         ((LazyTaskModel)this.lazyBeanModel).setTaskStatusRestriction(taskStatus);
+        String script = "kitodo.updateQueryParameter('taskStatus', '" + encodeTaskStatusAsQueryParameter(taskStatus) +  "');";
+        PrimeFaces.current().executeScript(script);
         stopwatch.stop();
     }
 
@@ -364,6 +383,8 @@ public class TaskListView extends BaseListView {
         Stopwatch stopwatch = new Stopwatch(this, "setSelectedTaskFilters", "selectedFilters", Objects.toString(
             selectedFilters));
         this.selectedTaskFilters = selectedFilters;
+        String script = "kitodo.updateQueryParameter('taskFilter', '" + encodeTaskFilterAsQueryParameter(selectedFilters) +  "');";
+        PrimeFaces.current().executeScript(script);
         stopwatch.stop();
     }
 
@@ -519,12 +540,7 @@ public class TaskListView extends BaseListView {
         Stopwatch stopwatch = new Stopwatch(this, "changeFilter", "filter", filter);
         filterMenu.parseFilters(filter);
         setFilter(filter);
-        return stopwatch.stop(filterList());
-    }
-
-    private String filterList() {
-        this.selectedTasks.clear();
-        return tasksPage;
+        return stopwatch.stop(reload());
     }
 
     @Override
@@ -532,6 +548,9 @@ public class TaskListView extends BaseListView {
         Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
+        this.sessionState.setLastFilter(filter);
+        String script = "kitodo.updateQueryParameter('filter', '" + filter.replace("&", "%26") +  "');";
+        PrimeFaces.current().executeScript(script);
         stopwatch.stop();
     }
 
@@ -543,26 +562,84 @@ public class TaskListView extends BaseListView {
      * @param encodedTaskStatus filter options based on the task status
      */
     public void setFilterFromTemplate(String encodedFilter, String encodedTaskFilter, String encodedTaskStatus) {
-        if (Objects.isNull(encodedFilter)) {
-            // use last filter from session state if filter parameter is not set at all
-            /*String lastFilter = processListViewSessionState.getLastFilter();
-            if (Objects.nonNull(lastFilter) && !lastFilter.isEmpty()) {
-                this.filterMenu.parseFilters(lastFilter);
-                this.setFilter(lastFilter);
-            }*/
-        } else {
+        // JSF by default assigns an empty string to the view parameter even if it is not present in the URL
+        // instead, check whether the URL filter parameter is present in the HTTP request
+        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance()
+            .getExternalContext().getRequestParameterMap();
+        final boolean isFilter = requestParameterMap.containsKey("filter");            
+        if (isFilter && Objects.nonNull(encodedFilter)) {
             String decodedFilter = encodedFilter.replace("%26", "&");
             this.filterMenu.parseFilters(decodedFilter);
             this.setFilter(decodedFilter);
+        } else {
+            // use last filter from session state if filter parameter is not set at all
+            String lastFilter = sessionState.getLastFilter();
+            if (Objects.nonNull(lastFilter) && !lastFilter.isEmpty()) {
+                this.filterMenu.parseFilters(lastFilter);
+                this.setFilter(lastFilter);
+            }
         }
-        if (Objects.nonNull(encodedTaskFilter) && !encodedTaskFilter.isEmpty()) {
-            this.selectedTaskFilters = List.of(encodedTaskFilter.split(","));
+
+        final boolean isTaskFilter = requestParameterMap.containsKey("taskFilter");
+        if (isTaskFilter && Objects.nonNull(encodedTaskFilter)) {
+            this.selectedTaskFilters = parseTaskFilterFromQueryParameter(encodedTaskFilter);
             this.taskFiltersChanged();
         }
-        if (Objects.nonNull(encodedTaskStatus) && !encodedTaskStatus.isEmpty()) {
-            this.selectedTaskStatus = Stream.of(encodedTaskStatus.split(",")).map((s) -> TaskStatus.valueOf(s)).toList();
+
+        final boolean isTaskStatus = requestParameterMap.containsKey("taskStatus");
+        if (isTaskStatus && Objects.nonNull(encodedTaskStatus)) {
+            this.selectedTaskStatus = parseTaskStatusFromQueryParameter(encodedTaskStatus);
             this.taskStatusChanged();
         }
+    }
+
+    /**
+     * Encodes the filter describing which tasks of a certain task status is supposed to be shown in the task list.
+     * 
+     * @param taskStatus the list of task status
+     * @return encoded query parameter, e.g. `OPEN+INWORK`
+     */
+    private String encodeTaskStatusAsQueryParameter(List<TaskStatus> taskStatus) {
+        return taskStatus.stream().map(s -> s.toString()).collect(Collectors.joining("+"));
+    }
+
+    /**
+     * Parses the query parameter "taskStatus" to a list of TaskStatus instances. Ignores any unrelated values.
+     * 
+     * @param encodedTaskStatus the taskStatus query parameter, e.g. `OPEN+INWORK`
+     * @return the list of TaskStatus instances
+     */
+    private List<TaskStatus> parseTaskStatusFromQueryParameter(String encodedTaskStatus) {
+        Set<String> allowed = Arrays.stream(TaskStatus.values()).map(Enum::name).collect(Collectors.toSet());
+        return Stream.of(encodedTaskStatus.split("\\+"))
+            .map(String::trim)
+            .map((s) -> allowed.contains(s) ? TaskStatus.valueOf(s) : null)
+            .filter(Objects::nonNull)
+            .toList();
+    }
+
+    /**
+     * Encodes additional task-specific filter options as query parameter.
+     * 
+     * @param taskFilter the list of task-specific filter options
+     * @return encoded query parameter, e.g. `automaticTasks+correctionTasks`
+     */
+    private String encodeTaskFilterAsQueryParameter(List<String> taskFilter) {
+        return taskFilter.stream().collect(Collectors.joining("+"));
+    }
+
+    /**
+     * Parses the query parameter "taskStatus" to a list of TaskStatus instances. Ignores any unrelated values.
+     * 
+     * @param encodedTaskStatus the taskStatus query parameter, e.g. `OPEN+INWORK`
+     * @return the list of TaskStatus instances
+     */
+    private List<String> parseTaskFilterFromQueryParameter(String encodedTaskFilter) {
+        Set<String> allowed = Set.of(AUTOMATIC_TASKS_FILTER, CORRECTION_TASKS_FILTER, OTHER_USERS_TASKS_FILTER);
+        return Stream.of(encodedTaskFilter.split("\\+"))
+            .map(String::trim)
+            .filter((s) -> allowed.contains(s))
+            .toList();
     }
 
     /**
@@ -608,8 +685,8 @@ public class TaskListView extends BaseListView {
     @Override
     public String getCombinedListOptions() {
         return super.getCombinedListOptions() + "&" + Map.ofEntries(
-            entry("taskFilter", getSelectedTaskFilters().stream().collect(Collectors.joining(","))),
-            entry("taskStatus", getSelectedTaskStatus().stream().map(s -> s.toString()).collect(Collectors.joining(",")))
+            entry("taskFilter", encodeTaskFilterAsQueryParameter(getSelectedTaskFilters())),
+            entry("taskStatus", encodeTaskStatusAsQueryParameter(getSelectedTaskStatus()))
         ).entrySet().stream()
             .map(entry -> entry.getKey() + "=" + entry.getValue())
             .collect(Collectors.joining("&"));
@@ -624,6 +701,15 @@ public class TaskListView extends BaseListView {
             "title", "process.id", "process.title", "processingStatus", "processingUser.surname", 
             "processingBegin", "processingEnd", "correctionCommentStatus", "process.project.title", "process.creationDate"
         );
+    }
+
+    /**
+     * Return view path to reload page keeping current list sort and filter options.
+     * 
+     * @return the view path to reload this view
+     */
+    private String reload() {
+        return VIEW_PATH + "&" + getCombinedListOptions();
     }
 
 }
