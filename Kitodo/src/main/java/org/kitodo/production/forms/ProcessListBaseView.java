@@ -543,16 +543,32 @@ public class ProcessListBaseView extends ValidatableForm {
         stopwatch.stop();
     }
 
-    /**
-     * Generate result set.
-     */
-    public void generateResult() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateResult");
+    public void generateExcel() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateExcel");
         try {
-            ServiceManager.getProcessService().generateResult(this.filter, this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects());
+            ServiceManager.getProcessService().generateExcel(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    public void generateCsv() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateCsv");
+        try {
+            ServiceManager.getProcessService().generateCsv(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
         stopwatch.stop();
     }

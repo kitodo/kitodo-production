@@ -11,10 +11,16 @@
 
 package org.kitodo.production.helper;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
+import com.opencsv.CSVWriter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -45,72 +51,77 @@ public class SearchResultGeneration {
         this.showInactiveProjects = showInactiveProjects;
     }
 
-    /**
-     * Get result.
-     *
-     * @return HSSFWorkbook
-     */
-    public XSSFWorkbook getResult() {
-        return getWorkbook();
+
+    public void writeExcel(OutputStream out) throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+
+            Sheet sheet = workbook.createSheet("Search results");
+
+            Row title = sheet.createRow(0);
+            title.createCell(0).setCellValue(this.filter);
+            Row headerRow = sheet.createRow(1);
+            String[] header = getHeader();
+            for (int i = 0; i < header.length; i++) {
+                headerRow.createCell(i).setCellValue(header[i]);
+            }
+            int rowCounter = 2;
+            for (ProcessExportDTO data : getResultsWithFilter()) {
+                Row row = sheet.createRow(rowCounter++);
+                String[] mapped = mapRow(data);
+                for (int i = 0; i < mapped.length; i++) {
+                    row.createCell(i).setCellValue(mapped[i]);
+                }
+            }
+            workbook.write(out);
+        }
     }
 
-    private List<ProcessExportDTO> getResultsWithFilter() {
+    public void writeCsv(OutputStream out) throws IOException {
+
+        try (BufferedWriter bufferedWriter =
+                     new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+             CSVWriter writer = new CSVWriter(bufferedWriter)) {
+            writer.writeNext(getHeader());
+            for (ProcessExportDTO data : getResultsWithFilter()) {
+                writer.writeNext(mapRow(data));
+            }
+        }
+    }
+
+    public String[] getHeader() {
+        return new String[]{
+                Helper.getTranslation("title"),
+                Helper.getTranslation("ID"),
+                Helper.getTranslation("Datum"),
+                Helper.getTranslation("CountImages"),
+                Helper.getTranslation("CountStructuralElements"),
+                Helper.getTranslation("CountMetadata"),
+                Helper.getTranslation("Project"),
+                Helper.getTranslation("Status")
+        };
+    }
+
+    public String[] mapRow(ProcessExportDTO data) {
+        return new String[]{
+                data.getTitle(),
+                String.valueOf(data.getId()),
+                data.getCreationDate() != null
+                        ? dateFormatter.format(data.getCreationDate())
+                        : "",
+                String.valueOf(data.getSortHelperImages()),
+                String.valueOf(data.getSortHelperDocstructs()),
+                String.valueOf(data.getSortHelperMetadata()),
+                data.getProjectTitle(),
+                data.getStatus()
+        };
+    }
+
+    public List<ProcessExportDTO> getResultsWithFilter() {
         return ServiceManager.getProcessService().getProcessesForExport(
                 filter,
                 this.showClosedProcesses,
                 this.showInactiveProjects,
                 ServiceManager.getUserService().getSessionClientId()
         );
-    }
-
-    private XSSFWorkbook getWorkbook() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Search results");
-
-        Row title = sheet.createRow(0);
-        title.createCell(0).setCellValue(this.filter);
-        for (int i = 1; i < 8; i++) {
-            title.createCell(i).setCellValue("");
-        }
-
-        setRowHeader(sheet);
-
-        insertRowData(sheet);
-
-        return workbook;
-    }
-
-    private void insertRowData(Sheet sheet) {
-        int rowCounter = 2;
-        List<ProcessExportDTO> results = getResultsWithFilter();
-        for (ProcessExportDTO rowData : results) {
-            prepareRow(rowCounter, sheet, rowData);
-            rowCounter++;
-        }
-    }
-
-    private void setRowHeader(Sheet sheet) {
-        Row rowHeader = sheet.createRow(1);
-        rowHeader.createCell(0).setCellValue(Helper.getTranslation("title"));
-        rowHeader.createCell(1).setCellValue(Helper.getTranslation("ID"));
-        rowHeader.createCell(2).setCellValue(Helper.getTranslation("Datum"));
-        rowHeader.createCell(3).setCellValue(Helper.getTranslation("CountImages"));
-        rowHeader.createCell(4).setCellValue(Helper.getTranslation("CountStructuralElements"));
-        rowHeader.createCell(5).setCellValue(Helper.getTranslation("CountMetadata"));
-        rowHeader.createCell(6).setCellValue(Helper.getTranslation("Project"));
-        rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
-    }
-
-    private void prepareRow(int rowCounter, Sheet sheet, ProcessExportDTO data) {
-        Row row = sheet.createRow(rowCounter);
-        row.createCell(0).setCellValue(data.getTitle());
-        row.createCell(1).setCellValue(data.getId());
-        row.createCell(2).setCellValue(
-                Objects.nonNull(data.getCreationDate()) ? dateFormatter.format(data.getCreationDate()) : "");
-        row.createCell(3).setCellValue(data.getSortHelperImages());
-        row.createCell(4).setCellValue(data.getSortHelperDocstructs());
-        row.createCell(5).setCellValue(data.getSortHelperMetadata());
-        row.createCell(6).setCellValue(data.getProjectTitle());
-        row.createCell(7).setCellValue(data.getStatus());
     }
 }

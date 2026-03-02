@@ -16,11 +16,8 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -80,9 +77,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
@@ -118,6 +112,7 @@ import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessExportDTO;
+import org.kitodo.production.enums.ExportFormat;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
@@ -1167,38 +1162,48 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         if (!facesContext.getResponseComplete()) {
             ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
             try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
-                        showInactiveProjects);
-                XSSFWorkbook wb = sr.getResult();
-                List<List<Cell>> rowList = new ArrayList<>();
-                Sheet mySheet = wb.getSheetAt(0);
-                Iterator<Row> rowIter = mySheet.rowIterator();
-                while (rowIter.hasNext()) {
-                    Row myRow = (Row) rowIter.next();
-                    Iterator<Cell> cellIter = myRow.cellIterator();
-                    List<Cell> row = new ArrayList<>();
-                    while (cellIter.hasNext()) {
-                        Cell myCell = (Cell) cellIter.next();
-                        row.add(myCell);
-                    }
-                    rowList.add(row);
-                }
-                Document document = new Document();
-                Rectangle rectangle = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
+                SearchResultGeneration sr =
+                        new SearchResultGeneration(filter,
+                                showClosedProcesses,
+                                showInactiveProjects);
+                List<ProcessExportDTO> results =
+                        sr.getResultsWithFilter();
+                Document document = new Document(PageSize.A3.rotate());
                 PdfWriter.getInstance(document, out);
-                document.setPageSize(rectangle);
                 document.open();
-                if (!rowList.isEmpty()) {
-                    Paragraph paragraph = new Paragraph(rowList.get(0).get(0).toString());
-                    document.add(paragraph);
-                    document.add(getPdfTable(rowList));
+                PdfPTable table =
+                        new PdfPTable(sr.getHeader().length);
+                // Header
+                for (String column : sr.getHeader()) {
+                    table.addCell(new PdfPCell(new Phrase(column)));
                 }
-
+                // Rows
+                for (ProcessExportDTO data : results) {
+                    String[] row = sr.mapRow(data);
+                    for (String value : row) {
+                        table.addCell(new PdfPCell(new Phrase(value)));
+                    }
+                }
+                document.add(table);
                 document.close();
-                wb.close();
+
                 facesContext.responseComplete();
             }
         }
+    }
+
+    public void generateExcel(String filter,
+                              boolean showClosedProcesses,
+                              boolean showInactiveProjects)
+            throws IOException {
+        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.EXCEL);
+    }
+
+    public void generateCsv(String filter,
+                            boolean showClosedProcesses,
+                            boolean showInactiveProjects)
+            throws IOException {
+        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.CSV);
     }
 
     /**
@@ -1207,17 +1212,22 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param filter
      *            for generating search results
      */
-    public void generateResult(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
+    public void export(String filter, boolean showClosedProcesses, boolean showInactiveProjects, ExportFormat format)
             throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.xlsx");
+            ExternalContext response = prepareHeaderInformation(facesContext, format.getFilename());
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                XSSFWorkbook wb = sr.getResult();
-                wb.write(out);
-                wb.close();
+                switch (format) {
+                    case CSV:
+                        sr.writeCsv(out);
+                        break;
+                    case EXCEL:
+                        sr.writeExcel(out);
+                        break;
+                }
                 out.flush();
                 facesContext.responseComplete();
             }
