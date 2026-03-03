@@ -33,31 +33,25 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.production.dto.ProcessExportDTO;
-import org.kitodo.production.services.ServiceManager;
 
 public class SearchResultGeneration {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat(BaseTemplateBean.DATE_FORMAT);
+    private final List<ProcessExportDTO> results;
     private final String filter;
-    private final boolean showClosedProcesses;
-    private final boolean showInactiveProjects;
 
     /**
      * Constructor.
      *
+     * @param results
+     *            list of ProcessExportDTOs
      * @param filter
-     *            String
-     * @param showClosedProcesses
-     *            boolean
-     * @param showInactiveProjects
-     *            boolean
+     *            filter string used for export
      */
-    public SearchResultGeneration(String filter, boolean showClosedProcesses, boolean showInactiveProjects) {
+    public SearchResultGeneration(List<ProcessExportDTO> results, String filter) {
+        this.results = results;
         this.filter = filter;
-        this.showClosedProcesses = showClosedProcesses;
-        this.showInactiveProjects = showInactiveProjects;
     }
-
 
     /**
      * Writes the search results to the given output stream as an Excel file.
@@ -76,7 +70,7 @@ public class SearchResultGeneration {
                 headerRow.createCell(i).setCellValue(header[i]);
             }
             int rowCounter = 2;
-            for (ProcessExportDTO data : getResultsWithFilter()) {
+            for (ProcessExportDTO data : this.results) {
                 Row row = sheet.createRow(rowCounter++);
                 String[] mapped = mapRow(data);
                 for (int i = 0; i < mapped.length; i++) {
@@ -97,7 +91,7 @@ public class SearchResultGeneration {
                      new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
             CSVWriter writer = new CSVWriter(bufferedWriter)) {
             writer.writeNext(getHeader());
-            for (ProcessExportDTO data : getResultsWithFilter()) {
+            for (ProcessExportDTO data : this.results) {
                 writer.writeNext(mapRow(data));
             }
         }
@@ -115,7 +109,7 @@ public class SearchResultGeneration {
         for (String column : getHeader()) {
             table.addCell(new PdfPCell(new Phrase(column)));
         }
-        for (ProcessExportDTO data : getResultsWithFilter()) {
+        for (ProcessExportDTO data : this.results) {
             String[] row = mapRow(data);
             for (String value : row) {
                 table.addCell(new PdfPCell(new Phrase(value)));
@@ -160,18 +154,5 @@ public class SearchResultGeneration {
                 data.getProjectTitle(),
                 data.getStatus()
         };
-    }
-
-    /**
-     * Retrieves the filtered list of processes prepared for export.
-     * @return list of ProcessExportDTO objects.
-     */
-    private List<ProcessExportDTO> getResultsWithFilter() {
-        return ServiceManager.getProcessService().getProcessesForExport(
-                filter,
-                this.showClosedProcesses,
-                this.showInactiveProjects,
-                ServiceManager.getUserService().getSessionClientId()
-        );
     }
 }

@@ -1182,10 +1182,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             throws IOException, DocumentException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
+            List<ProcessExportDTO> results =
+                    getProcessesForExport(
+                            filter,
+                            showClosedProcesses,
+                            showInactiveProjects,
+                            ServiceManager.getUserService().getSessionClientId()
+                    );
             ExternalContext response = prepareHeaderInformation(facesContext, format.getFilename());
             try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
-                        showInactiveProjects);
+                SearchResultGeneration sr = new SearchResultGeneration(results, filter);
                 switch (format) {
                     case CSV -> sr.writeCsv(out);
                     case EXCEL -> sr.writeExcel(out);
