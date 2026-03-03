@@ -545,7 +545,7 @@ public class TaskListView extends BaseListView {
 
     @Override
     public void setFilter(String filter) {
-        Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
+        final Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
         this.sessionState.setLastFilter(filter);
@@ -566,7 +566,7 @@ public class TaskListView extends BaseListView {
         // instead, check whether the URL filter parameter is present in the HTTP request
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance()
             .getExternalContext().getRequestParameterMap();
-        final boolean isFilter = requestParameterMap.containsKey("filter");            
+        final boolean isFilter = requestParameterMap.containsKey("filter");
         if (isFilter && Objects.nonNull(encodedFilter)) {
             String decodedFilter = encodedFilter.replace("%26", "&");
             this.filterMenu.parseFilters(decodedFilter);
