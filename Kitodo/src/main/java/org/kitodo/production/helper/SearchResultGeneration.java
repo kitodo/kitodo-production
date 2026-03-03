@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -90,6 +91,9 @@ public class SearchResultGeneration {
         try (BufferedWriter bufferedWriter =
                      new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
             CSVWriter writer = new CSVWriter(bufferedWriter)) {
+            if (Objects.nonNull(filter) && !filter.isBlank()) {
+                writer.writeNext(new String[]{filter});
+            }
             writer.writeNext(getHeader());
             for (ProcessExportDTO data : this.results) {
                 writer.writeNext(mapRow(data));

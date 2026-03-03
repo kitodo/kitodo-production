@@ -330,12 +330,11 @@
                                 icon="fa fa-file-excel-o">
                     </p:menuitem>
                     <p:menuitem id="createCSV"
-                                value="CSV EXPORT"
+                                value="#{msgs.createCsv}"
                                 action="#{ProcessForm.generateCsv()}"
                                 ajax="false"
                                 immediate="true"
-                                icon="fa fa-file-text-o">
-                       </p:menuitem>
+                                icon="fa fa-file-text-o" />
                     <p:menuitem id="createPdf"
                                 value="#{msgs.createPdf}"
                                 action="#{ProcessForm.generateResultAsPdf}"
