@@ -554,7 +554,7 @@ public class ProcessListBaseView extends ValidatableForm {
                     this.isShowClosedProcesses(),
                     this.isShowInactiveProjects()
             );
-        } catch (IOException e) {
+        } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING,
                     new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
@@ -572,7 +572,7 @@ public class ProcessListBaseView extends ValidatableForm {
                     this.isShowClosedProcesses(),
                     this.isShowInactiveProjects()
             );
-        } catch (IOException e) {
+        } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING,
                     new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
@@ -585,7 +585,7 @@ public class ProcessListBaseView extends ValidatableForm {
     public void generateResultAsPdf() {
         Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
         try {
-            ServiceManager.getProcessService().generateResultAsPdf(this.filter, this.isShowClosedProcesses(),
+            ServiceManager.getProcessService().generatePdf(this.filter, this.isShowClosedProcesses(),
                     this.isShowInactiveProjects());
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);

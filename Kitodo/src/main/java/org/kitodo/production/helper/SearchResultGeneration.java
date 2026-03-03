@@ -12,6 +12,13 @@
 package org.kitodo.production.helper;
 
 import com.opencsv.CSVWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -88,7 +95,7 @@ public class SearchResultGeneration {
 
         try (BufferedWriter bufferedWriter =
                      new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
-             CSVWriter writer = new CSVWriter(bufferedWriter)) {
+            CSVWriter writer = new CSVWriter(bufferedWriter)) {
             writer.writeNext(getHeader());
             for (ProcessExportDTO data : getResultsWithFilter()) {
                 writer.writeNext(mapRow(data));
@@ -96,11 +103,29 @@ public class SearchResultGeneration {
         }
     }
 
+    public void writePdf(OutputStream out) throws DocumentException {
+        Document document = new Document(PageSize.A3.rotate());
+        PdfWriter.getInstance(document, out);
+        document.open();
+        PdfPTable table = new PdfPTable(getHeader().length);
+        for (String column : getHeader()) {
+            table.addCell(new PdfPCell(new Phrase(column)));
+        }
+        for (ProcessExportDTO data : getResultsWithFilter()) {
+            String[] row = mapRow(data);
+            for (String value : row) {
+                table.addCell(new PdfPCell(new Phrase(value)));
+            }
+        }
+        document.add(table);
+        document.close();
+    }
+
     /**
      * Returns the localized header for the export.
      * @return array of header column names.
      */
-    public String[] getHeader() {
+    private String[] getHeader() {
         return new String[]{
                 Helper.getTranslation("title"),
                 Helper.getTranslation("ID"),
@@ -118,7 +143,7 @@ public class SearchResultGeneration {
      * @param data the process data to map.
      * @return array representing one export row.
      */
-    public String[] mapRow(ProcessExportDTO data) {
+    private String[] mapRow(ProcessExportDTO data) {
         return new String[]{
                 data.getTitle(),
                 String.valueOf(data.getId()),
@@ -137,7 +162,7 @@ public class SearchResultGeneration {
      * Retrieves the filtered list of processes prepared for export.
      * @return list of ProcessExportDTO objects.
      */
-    public List<ProcessExportDTO> getResultsWithFilter() {
+    private List<ProcessExportDTO> getResultsWithFilter() {
         return ServiceManager.getProcessService().getProcessesForExport(
                 filter,
                 this.showClosedProcesses,

@@ -16,14 +16,6 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -68,6 +60,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.itextpdf.text.DocumentException;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 
@@ -78,8 +71,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
@@ -1159,52 +1150,24 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param filter
      *            for generating search results
      */
-    public void generateResultAsPdf(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
-            throws DocumentException, IOException {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
-            try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr =
-                        new SearchResultGeneration(filter,
-                                showClosedProcesses,
-                                showInactiveProjects);
-                Document document = new Document(PageSize.A3.rotate());
-                PdfWriter.getInstance(document, out);
-                document.open();
-
-                PdfPTable table = new PdfPTable(sr.getHeader().length);
-                // Header
-                for (String column : sr.getHeader()) {
-                    table.addCell(new PdfPCell(new Phrase(column)));
-                }
-                List<ProcessExportDTO> results = sr.getResultsWithFilter();
-                // Rows
-                for (ProcessExportDTO data : results) {
-                    String[] row = sr.mapRow(data);
-                    for (String value : row) {
-                        table.addCell(new PdfPCell(new Phrase(value)));
-                    }
-                }
-                document.add(table);
-                document.close();
-
-                facesContext.responseComplete();
-            }
-        }
+    public void generatePdf(String filter,
+                            boolean showClosedProcesses,
+                            boolean showInactiveProjects)
+            throws IOException, DocumentException {
+        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.PDF);
     }
 
     public void generateExcel(String filter,
                               boolean showClosedProcesses,
                               boolean showInactiveProjects)
-            throws IOException {
+            throws IOException, DocumentException {
         export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.EXCEL);
     }
 
     public void generateCsv(String filter,
                             boolean showClosedProcesses,
                             boolean showInactiveProjects)
-            throws IOException {
+            throws IOException, DocumentException {
         export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.CSV);
     }
 
@@ -1215,7 +1178,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *            for generating search results
      */
     public void export(String filter, boolean showClosedProcesses, boolean showInactiveProjects, ExportFormat format)
-            throws IOException {
+            throws IOException, DocumentException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             ExternalContext response = prepareHeaderInformation(facesContext, format.getFilename());
@@ -1229,6 +1192,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                     case EXCEL:
                         sr.writeExcel(out);
                         break;
+                    case PDF:
+                        sr.writePdf(out);
                     default:
                         throw new IllegalArgumentException("Unsupported export format: " + format);
                 }
@@ -1270,23 +1235,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
 
         return externalContext;
-    }
-
-    private PdfPTable getPdfTable(List<List<Cell>> rowList) throws DocumentException {
-        // create formatter for cells with default locale
-        DataFormatter formatter = new DataFormatter();
-
-        PdfPTable table = new PdfPTable(8);
-        table.setSpacingBefore(20);
-        table.setWidths(new int[] {4, 1, 2, 1, 1, 1, 2, 2 });
-        for (List<Cell> row : rowList) {
-            for (Cell hssfCell : row) {
-                String stringCellValue = formatter.formatCellValue(hssfCell);
-                table.addCell(stringCellValue);
-            }
-        }
-
-        return table;
     }
 
     private static DocketInterface initialiseDocketModule() {

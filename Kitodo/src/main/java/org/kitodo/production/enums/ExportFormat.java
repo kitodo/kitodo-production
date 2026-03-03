@@ -13,7 +13,8 @@ package org.kitodo.production.enums;
 
 public enum ExportFormat {
     CSV("search.csv"),
-    EXCEL("search.xlsx");
+    EXCEL("search.xlsx"),
+    PDF("search.pdf");
 
     private final String filename;
 
