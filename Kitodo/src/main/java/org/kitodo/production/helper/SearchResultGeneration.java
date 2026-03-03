@@ -11,7 +11,6 @@
 
 package org.kitodo.production.helper;
 
-import com.opencsv.CSVWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -19,6 +18,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.opencsv.CSVWriter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -103,6 +103,10 @@ public class SearchResultGeneration {
         }
     }
 
+    /**
+     * Writes search results to output stream as PDF.
+     * @param out output stream
+     */
     public void writePdf(OutputStream out) throws DocumentException {
         Document document = new Document(PageSize.A3.rotate());
         PdfWriter.getInstance(document, out);

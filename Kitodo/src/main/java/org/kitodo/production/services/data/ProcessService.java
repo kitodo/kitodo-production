@@ -16,6 +16,8 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
+import com.itextpdf.text.DocumentException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -60,7 +62,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.itextpdf.text.DocumentException;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 
@@ -1186,16 +1187,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
                 switch (format) {
-                    case CSV:
-                        sr.writeCsv(out);
-                        break;
-                    case EXCEL:
-                        sr.writeExcel(out);
-                        break;
-                    case PDF:
-                        sr.writePdf(out);
-                    default:
-                        throw new IllegalArgumentException("Unsupported export format: " + format);
+                    case CSV -> sr.writeCsv(out);
+                    case EXCEL -> sr.writeExcel(out);
+                    case PDF -> sr.writePdf(out);
+                    default -> throw new IllegalArgumentException("Unsupported export format: " + format);
                 }
                 out.flush();
                 facesContext.responseComplete();
