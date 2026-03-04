@@ -70,9 +70,9 @@ public enum PaginatorMode {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
             if (fictitious) {
-                return "[¿UNCOUNTED¡" + value + "½]";
+                return "[¿uncounted¡" + value + "½]";
             } else {
-                return "¿UNCOUNTED¡" + value + "½";
+                return "¿uncounted¡" + value + "½";
             }
         }
     },

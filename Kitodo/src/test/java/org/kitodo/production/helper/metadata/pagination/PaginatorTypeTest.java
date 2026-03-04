@@ -223,12 +223,12 @@ public class PaginatorTypeTest {
 
     @Test
     public void testArabicFormatFoliationWithEmptyPage() {
-        assertEquals("¿UNCOUNTED¡1½", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", false, UNUSED_STRING));
+        assertEquals("¿uncounted¡1½", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", false, UNUSED_STRING));
     }
 
     @Test
     public void testArabicFormatFoliationWithEmptyPageFictious() {
-        assertEquals("[¿UNCOUNTED¡1½]", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", true, UNUSED_STRING));
+        assertEquals("[¿uncounted¡1½]", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", true, UNUSED_STRING));
     }
 
     @Test
@@ -495,7 +495,7 @@ public class PaginatorTypeTest {
 
     @Test
     public void testRomanFormatFoliationWithEmptyPage() {
-        assertEquals("¿UNCOUNTED¡III½", PaginatorType.ROMAN.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "3", false, UNUSED_STRING));
+        assertEquals("¿uncounted¡III½", PaginatorType.ROMAN.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "3", false, UNUSED_STRING));
     }
 
     @Test
@@ -526,7 +526,7 @@ public class PaginatorTypeTest {
     @Test
     public void testAlphabeticFormatFoliationWithEmptyPage() {
         assertEquals(
-                "¿UNCOUNTED¡´x´½",
+                "¿uncounted¡´x´½",
                 PaginatorType.ALPHABETIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "x", false, UNUSED_STRING)
         );
     }
