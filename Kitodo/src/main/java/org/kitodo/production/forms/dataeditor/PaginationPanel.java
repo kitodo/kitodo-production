@@ -117,7 +117,10 @@ public class PaginationPanel {
         
         List<Pair<PhysicalDivision, LogicalDivision>> selection = selectedItems.stream()
             .map(physicalDivisions::get)
-            .map((p) -> new ImmutablePair<>(p, p.getLogicalDivisions().get(0)))
+            .map((p) -> new ImmutablePair<>(p,
+                    p.getLogicalDivisions().isEmpty()
+                            ? dataEditor.getWorkpiece().getLogicalStructure()
+                            : p.getLogicalDivisions().get(0)))
             .collect(Collectors.toList());
 
         try {
