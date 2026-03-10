@@ -74,7 +74,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement processesSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/processEdit.jsf?referer=processes&id=1']")
+    @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/processEdit.jsf') and contains(@href, 'id=1')]")
     private WebElement editProcessLink;
 
     private WebElement downloadDocketLink;

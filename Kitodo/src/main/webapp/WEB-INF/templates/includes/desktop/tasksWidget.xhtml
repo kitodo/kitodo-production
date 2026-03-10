@@ -49,7 +49,7 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="download"
-                               action="#{ProcessForm.downloadToHome(task.process.id)}"
+                               action="#{DesktopForm.downloadToHome(task.process.id)}"
                                styleClass="action"
                                title="#{msgs.linkHomeDirectory}"
                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">

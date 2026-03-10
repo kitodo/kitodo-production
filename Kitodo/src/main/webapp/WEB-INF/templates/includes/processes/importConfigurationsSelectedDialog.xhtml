@@ -29,11 +29,11 @@
             <p:panelGrid columns="1"
                          layout="grid">
                 <p:row>
-                    <h3>#{ProcessForm.importConfigurationsSetSuccessfully ? msgs['setImportConfigurationSuccessful'] : msgs['setImportConfigurationFailed']}</h3>
+                    <h3>#{ProcessListView.importConfigurationsSetSuccessfully ? msgs['setImportConfigurationSuccessful'] : msgs['setImportConfigurationFailed']}</h3>
                     <h:panelGroup layout="block"
-                                  styleClass="select-note not-scrollable dialogFieldWrapper #{ProcessForm.importConfigurationsSetSuccessfully ? 'ui-messages-info' : 'ui-messages-error'}">
+                                  styleClass="select-note not-scrollable dialogFieldWrapper #{ProcessListView.importConfigurationsSetSuccessfully ? 'ui-messages-info' : 'ui-messages-error'}">
                         <div>
-                            <h:outputText value="#{ProcessForm.settingImportConfigurationResultMessage}"/>
+                            <h:outputText value="#{ProcessListView.settingImportConfigurationResultMessage}"/>
                         </div>
                     </h:panelGroup>
 

@@ -19,8 +19,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProcessForm.loadTask(id)}" />
-        <f:viewAction action="#{ProcessForm.setTaskEditReferer(request.getParameter('referer'))}"/>
+        <f:viewAction action="#{TaskEditView.load(id)}" />
+        <f:viewAction action="#{TaskEditView.setTaskEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -28,26 +28,26 @@
         <h3 id="headerText">
             <h:outputText value="#{msgs.addTask}"
                           styleClass="shortable"
-                          rendered="#{empty ProcessForm.task.title}"/>
-            <h:outputText value="#{msgs.taskDetails} (#{ProcessForm.task.title})"
-                          styleClass="shortable" rendered="#{not empty ProcessForm.task.title}"/>
+                          rendered="#{empty TaskEditView.task.title}"/>
+            <h:outputText value="#{msgs.taskDetails} (#{TaskEditView.task.title})"
+                          styleClass="shortable" rendered="#{not empty TaskEditView.task.title}"/>
         </h3>
         <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="#{ProcessForm.taskEditReferer}"
+                  outcome="#{TaskEditView.taskEditReferer}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{ProcessForm.setSaveDisabled(false)}"
+                  actionListener="#{TaskEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton id="save" value="#{msgs.save}"
-                         action="#{ProcessForm.saveTaskAndRedirect}"
+                         action="#{TaskEditView.saveTaskAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{ProcessForm.saveDisabled}"
+                         disabled="#{TaskEditView.saveDisabled}"
                          update="notifications"/>
     </ui:define>
 
@@ -69,7 +69,7 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard"/>
-        <p:menuitem value="#{msgs.editProcess}" url="processEdit.jsf?id=#{ProcessForm.process.id}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.editProcess}" url="processEdit.jsf?id=#{TaskEditView.task.process.id}" icon="fa fa-clipboard"/>
         <p:menuitem value="#{msgs.taskDetails}" icon="fa fa-paperclip"/>
     </ui:define>
 

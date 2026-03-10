@@ -20,7 +20,7 @@
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.Task"-->
     <p:dataTable id="taskTable"
                  var="item"
-                 value="#{ProcessForm.process.tasks}"
+                 value="#{ProcessEditViewTasksTab.process.tasks}"
                  rowKey="#{item.id}">
 
         <!-- ordering -->
@@ -38,7 +38,7 @@
         <p:column headerText="#{msgs.status}" id="taskStatus">
             <p:panel id="statusColumn" styleClass="statusColumn">
                 <h:panelGroup class="task-status"
-                              title="#{ProcessForm.getTaskStatusTitle(item.processingStatus.title)}"
+                              title="#{ProcessEditViewTasksTab.getTaskStatusTitle(item.processingStatus.title)}"
                               style="background-color:
                                 #{item.processingStatus.title == 'statusDone' ? 'var(--green)' : ''}
                                 #{item.processingStatus.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
@@ -47,7 +47,7 @@
                 />
                 <p:panel rendered="#{SecurityAccessController.hasAuthorityToEditTask()}">
                     <!-- Set workflow state to previous step -->
-                    <p:commandButton action="#{ProcessForm.setTaskStatusDown}"
+                    <p:commandButton action="#{ProcessEditViewTasksTab.setTaskStatusDown(item)}"
                                      id="taskStatusDown"
                                      title="#{msgs.statusDown}"
                                      oncomplete="toggleSave()"
@@ -55,10 +55,9 @@
                                      icon="fa fa-long-arrow-left"
                                      styleClass="ui-button-small"
                                      rendered="#{item.processingStatus.title eq 'statusOpen' or item.processingStatus.title eq 'statusInProcessing'}">
-                        <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                     </p:commandButton>
                     <!-- Set workflow state to next step -->
-                    <p:commandButton action="#{ProcessForm.setTaskStatusUp}"
+                    <p:commandButton action="#{ProcessEditViewTasksTab.setTaskStatusUp(item)}"
                                      id="taskStatusUp"
                                      title="#{msgs.statusUp}"
                                      oncomplete="toggleSave()"
@@ -66,7 +65,6 @@
                                      icon="fa fa-long-arrow-right"
                                      styleClass="ui-button-small"
                                      rendered="#{item.processingStatus.title eq 'statusOpen' or item.processingStatus.title eq 'statusInProcessing'}">
-                        <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                     </p:commandButton>
                 </p:panel>
             </p:panel>
@@ -88,12 +86,11 @@
                            rendered="#{SecurityAccessController.hasAuthorityToDeleteTask()}"
                            styleClass="action"
                            title="#{msgs.delete}"
-                           action="#{ProcessForm.removeTask}"
+                           action="#{ProcessEditViewTasksTab.removeTask(item)}"
                            immediate="true"
                            oncomplete="toggleSave()"
                            update="taskTable">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                 <p:confirm header="#{msgs.deleteTask}?"
                            message="#{msgs.shouldItemBeRemoved}"
                            icon="ui-icon-alert"/>
@@ -110,13 +107,13 @@
                     <h:outputText value="#{item.correction}"/>
 
                     <h:outputText value="#{msgs.processingBegin}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{ProcessForm.getFormattedDate(item.processingBegin)}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{ProcessEditViewTasksTab.getFormattedDate(item.processingBegin)}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.lastEdited}: " rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{ProcessForm.getFormattedDate(item.processingTime)}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{ProcessEditViewTasksTab.getFormattedDate(item.processingTime)}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.processingEnd}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{ProcessForm.getFormattedDate(item.processingEnd)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{ProcessEditViewTasksTab.getFormattedDate(item.processingEnd)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.lastUpdatedBy}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
@@ -135,11 +132,11 @@
 
     <p:panelGrid columns="1">
         <p:row>
-            <ui:fragment rendered="#{ProcessForm.process.template.workflow ne null and not empty ProcessForm.process.tasks}">
-                <h4><p:outputLabel value="#{msgs.workflow}: #{ProcessForm.process.template.workflow.title}"/></h4>
-                <h:link outcome="workflowEdit.jsf?id=#{ProcessForm.process.template.workflow.id}"
-                        title="#{ProcessForm.process.template.workflow.title}">
-                    <o:graphicImage value="#{ProcessForm.tasksDiagram}"
+            <ui:fragment rendered="#{ProcessEditViewTasksTab.process.template.workflow ne null and not empty ProcessEditViewTasksTab.process.tasks}">
+                <h4><p:outputLabel value="#{msgs.workflow}: #{ProcessEditViewTasksTab.process.template.workflow.title}"/></h4>
+                <h:link outcome="workflowEdit.jsf?id=#{ProcessEditViewTasksTab.process.template.workflow.id}"
+                        title="#{ProcessEditViewTasksTab.process.template.workflow.title}">
+                    <o:graphicImage value="#{ProcessEditViewTasksTab.tasksDiagram}"
                                     dataURI="true" />
                 </h:link>
             </ui:fragment>
