@@ -38,7 +38,7 @@ import org.kitodo.production.forms.process.ProcessListView;
 import org.kitodo.production.forms.task.TaskEditView;
 import org.kitodo.production.services.ServiceManager;
 
-public class ProcessFormIT {
+public class ProcessListViewIT {
 
     private ProcessListView processListView = new ProcessListView();
 

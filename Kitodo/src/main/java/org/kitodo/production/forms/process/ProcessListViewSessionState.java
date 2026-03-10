@@ -21,7 +21,7 @@ import jakarta.enterprise.context.SessionScoped;
  * <p>This bean preserves the filter string that was last used while visiting the process list.
  * It is needed because sometimes users navigate away from the process list. Upon returning, they 
  * expect the current filter setting to be preserved. The filter is only applied if there is no
- * other filter provided as URL paramater.</p>
+ * other filter provided as URL parameter.</p>
  */
 @SessionScoped
 public class ProcessListViewSessionState implements Serializable {
@@ -45,7 +45,7 @@ public class ProcessListViewSessionState implements Serializable {
     }
 
     /**
-     * Return the filter thas was last used file visiting the process list view.
+     * Return the filter that was last used while visiting the process list view.
      * 
      * @return the filter string
      */
