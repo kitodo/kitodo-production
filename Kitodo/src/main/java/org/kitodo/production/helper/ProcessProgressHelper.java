@@ -16,10 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.enums.TaskStatus;
 
 public class ProcessProgressHelper {
 
+    private static final Logger logger = LogManager.getLogger(ProcessProgressHelper.class);
     /**
      * Returns whether any tasks exist based on the given status counts.
      *
@@ -45,6 +48,7 @@ public class ProcessProgressHelper {
      */
     public double progress(Map<TaskStatus, Integer> counts, TaskStatus status) {
         if (Objects.isNull(counts) || counts.isEmpty()) {
+            logger.warn("Missing or empty task status counts when calculating progress for status {}", status);
             return 0.0;
         }
 
