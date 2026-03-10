@@ -20,13 +20,16 @@
     <f:metadata>
         <!--@elvariable id="id" type="java.lang.Integer"-->
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProcessForm.load(id)}" />
-        <f:viewAction action="#{ProcessForm.setProcessEditReferer(request.getParameter('referer'))}"/>
+        <f:viewAction action="#{ProcessEditView.load(id)}" />
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{ProcessEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
+        <f:viewAction action="#{ProcessEditView.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{ProcessForm.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess()}"/>
+              value="#{ProcessEditView.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode" value="#{not isEditMode and SecurityAccessController.hasAuthorityToViewProcess()}"/>
 
@@ -34,28 +37,28 @@
         <h:outputScript name="js/save.js" target="body" />
         <h3 id="headerText">
             <h:outputText styleClass="shortable"
-                          value="#{ProcessForm.process.title}"/>
+                          value="#{ProcessEditView.process.title}"/>
             <h:outputText styleClass="set-apart"
-                          value="(#{msgs.id}: #{ProcessForm.process.id})"/>
+                          value="(#{msgs.id}: #{ProcessEditView.process.id})"/>
         </h3>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
-                  outcome="#{ProcessForm.processEditReferer}"
+                  outcome="#{ProcessEditView.processEditReferer}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="saveButtonToggler"
-                  actionListener="#{ProcessForm.setSaveDisabled(false)}"
+                  actionListener="#{ProcessEditView.setSaveDisabled(false)}"
                   update="save"
                   style="display:none;"/>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{ProcessForm.save}"
+                         action="#{ProcessEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         disabled="#{ProcessForm.saveDisabled}"
+                         disabled="#{ProcessEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
     </ui:define>
@@ -68,7 +71,7 @@
                     <ui:param name="isViewMode" value="#{isViewMode}" />
                 </ui:include>
             </p:tab>
-            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProcessForm.process.title}">
+            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProcessEditView.process.title}">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml">
                     <ui:param name="isEditMode" value="#{isEditMode}" />
                     <ui:param name="isViewMode" value="#{isViewMode}" />
@@ -100,15 +103,15 @@
         <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceEditPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processEdit/templateEditPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/validationErrorsDialog.xhtml">
-            <ui:param name="validatableForm" value="#{ProcessForm}"/>
+            <ui:param name="validatableForm" value="#{ProcessEditView}"/>
         </ui:include>
     </ui:define>
 
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard"/>
-        <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
-        <p:menuitem value="#{msgs.createNewProcess}" rendered="#{empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessEditView.process.title}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.createNewProcess}" rendered="#{empty ProcessEditView.process.title}" icon="fa fa-clipboard"/>
     </ui:define>
 
 </ui:composition>

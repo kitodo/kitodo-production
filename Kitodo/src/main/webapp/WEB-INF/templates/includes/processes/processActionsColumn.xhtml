@@ -30,10 +30,10 @@
             <h:panelGroup styleClass="action"
                           title="#{ProcessListView.createProcessAsChildPossible(process)? msgs.createProcessAsChild : msgs.createProcessAsChildNotConfigured}">
                 <h:link id="createChildren"
-                        outcome="#{ProcessForm.createProcessAsChild(process)}"
+                        outcome="#{ProcessListView.createProcessAsChild(process)}"
                         rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}"
-                        styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
-                        disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
+                        styleClass="#{ProcessListView.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
+                        disabled="#{not ProcessListView.createProcessAsChildPossible(process)}">
                     <h:outputText><i class="fa fa-plus-circle fa-lg"/></h:outputText>
                 </h:link>
             </h:panelGroup>
@@ -58,6 +58,7 @@
                 <i class="fa fa-eye fa-lg"/>
                 <f:param name="referer" value="#{referer}"/>
                 <f:param name="id" value="#{process.id}"/>
+                <f:param name="referrerListOptions" value="#{ProcessListView.combinedListOptions}" />
             </h:link>
 
             <h:link styleClass="action"
@@ -68,6 +69,7 @@
                 <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
                 <f:param name="referer" value="#{referer}"/>
                 <f:param name="id" value="#{process.id}"/>
+                <f:param name="referrerListOptions" value="#{ProcessListView.combinedListOptions}" />
             </h:link>
 
             <!-- Open metadata editor -->
@@ -81,6 +83,7 @@
                     <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
                     <f:param name="id" value="#{process.id}"/>
                     <f:param name="referer" value="#{referer}"/>
+                    <f:param name="referrerListOptions" value="#{ProcessListView.combinedListOptions}" />
                 </h:link>
             </h:panelGroup>
 
@@ -126,29 +129,29 @@
 
             <p:commandLink action="#{ProcessListView.exportMets(process.id)}"
                            id="exportMets"
-                           styleClass="action #{ProcessForm.canBeExported(process) ? '' : 'disabled'}"
-                           disabled="#{not ProcessForm.canBeExported(process)}"
-                           title="#{ProcessForm.canBeExported(process) ? msgs.exportMets : msgs.exportUnavailableNoImages}"
+                           styleClass="action #{ProcessListView.canBeExported(process) ? '' : 'disabled'}"
+                           disabled="#{not ProcessListView.canBeExported(process)}"
+                           title="#{ProcessListView.canBeExported(process) ? msgs.exportMets : msgs.exportUnavailableNoImages}"
                            rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                            process="@this">
                 <h:outputText><i class="fa fa-file-code-o fa-lg"/></h:outputText>
             </p:commandLink>
             <p:commandLink id="exportDms"
                            action="#{ProcessListView.exportDMS(process)}"
-                           styleClass="action #{ProcessForm.canBeExported(process) ? '' : 'disabled'}"
-                           disabled="#{not ProcessForm.canBeExported(process)}"
-                           title="#{ProcessForm.canBeExported(process) ? msgs.exportDMS : msgs.exportUnavailableNoImages} "
+                           styleClass="action #{ProcessListView.canBeExported(process) ? '' : 'disabled'}"
+                           disabled="#{not ProcessListView.canBeExported(process)}"
+                           title="#{ProcessListView.canBeExported(process) ? msgs.exportDMS : msgs.exportUnavailableNoImages} "
                            rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                            process="@this">
                 <h:outputText><i class="fa fa-file-archive-o fa-lg"/></h:outputText>
             </p:commandLink>
             <h:panelGroup styleClass="action"
-                          title="#{ProcessForm.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
+                          title="#{ProcessListView.hasChildren(process) ? msgs.processNotDeletableWithChildren : msgs.delete}">
                 <p:commandLink id="deleteProcess"
                                action="#{ProcessListView.delete(process)}"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
-                               disabled="#{ProcessForm.hasChildren(process)}"
+                               disabled="#{ProcessListView.hasChildren(process)}"
                                process="@this"
                                update="processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>

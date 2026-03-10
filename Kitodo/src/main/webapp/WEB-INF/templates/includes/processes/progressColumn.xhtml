@@ -18,27 +18,27 @@
     <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO"-->
     <h:panelGroup
             class="process-progress"
-            title="#{ProcessForm.getCurrentTaskTitles(process)}"
-            rendered="#{ProcessForm.hasAnyTasks(process) or ProcessForm.hasChildren(process)}"
+            title="#{ProcessListView.getCurrentTaskTitles(process)}"
+            rendered="#{ProcessListView.hasAnyTasks(process) or ProcessListView.hasChildren(process)}"
             style="
             background-image: linear-gradient(
                 to right,
                 var(--green),
-                var(--green) #{ProcessForm.progressClosed(process)}%,
-                var(--light-green) #{ProcessForm.progressClosed(process)}%,
+                var(--green) #{ProcessListView.progressClosed(process)}%,
+                var(--light-green) #{ProcessListView.progressClosed(process)}%,
                 var(--light-green)
-                    #{ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%,
+                    #{ProcessListView.progressInProcessing(process)
+                      + ProcessListView.progressClosed(process)}%,
                 var(--light-orange)
-                    #{ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%,
+                    #{ProcessListView.progressInProcessing(process)
+                      + ProcessListView.progressClosed(process)}%,
                 var(--light-orange)
-                    #{ProcessForm.progressOpen(process)
-                      + ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%,
+                    #{ProcessListView.progressOpen(process)
+                      + ProcessListView.progressInProcessing(process)
+                      + ProcessListView.progressClosed(process)}%,
                 var(--orange)
-                    #{ProcessForm.progressOpen(process)
-                      + ProcessForm.progressInProcessing(process)
-                      + ProcessForm.progressClosed(process)}%);"
+                    #{ProcessListView.progressOpen(process)
+                      + ProcessListView.progressInProcessing(process)
+                      + ProcessListView.progressClosed(process)}%);"
     />
 </ui:composition>

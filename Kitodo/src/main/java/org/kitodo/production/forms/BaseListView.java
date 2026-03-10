@@ -100,7 +100,7 @@ public class BaseListView extends BaseForm {
     }
 
     /**
-     * Return combined the list options (URL query parameters) that can be forwarded to edit view or used to reload page.
+     * Return combined list options (URL query parameters) that can be forwarded to edit view or used to reload page.
      * 
      * @return the combined list view options (URL query parameters)
      */
@@ -111,7 +111,7 @@ public class BaseListView extends BaseForm {
             entry("sortOrder", getSortByOrder()), 
             entry("filter", getFilter())
         ).entrySet().stream()
-            .filter(entry -> Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty())
+            .filter(entry -> Objects.nonNull(entry.getValue()))
             .map(entry -> entry.getKey() + "=" + entry.getValue().replace("&", "%26"))
             .collect(Collectors.joining("&"));
     }

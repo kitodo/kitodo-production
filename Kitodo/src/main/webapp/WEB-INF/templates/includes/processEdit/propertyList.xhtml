@@ -16,7 +16,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable var="item" id="propertyTable" value="#{ProcessForm.properties}">
+    <p:dataTable var="item" id="propertyTable" value="#{ProcessEditViewPropertiesTab.properties}">
         <p:column headerText="#{msgs.property}">
             <h:outputText value="#{item.title}"/>
         </p:column>
@@ -31,27 +31,27 @@
                            oncomplete="PF('editPropertyDialog').show()"
                            update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>
-                <f:setPropertyActionListener target="#{ProcessForm.property}" value="#{item}"/>
+                <f:setPropertyActionListener target="#{ProcessEditViewPropertiesTab.property}" value="#{item}"/>
             </p:commandLink>
             <p:commandLink id="duplicateProperty"
                            styleClass="action"
                            title="#{msgs.duplicate}"
-                           action="#{ProcessForm.duplicateProperty}">
+                           action="#{ProcessEditViewPropertiesTab.duplicateProperty}">
                 <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{ProcessForm.property}" value="#{item}"/>
+                <f:setPropertyActionListener target="#{ProcessEditViewPropertiesTab.property}" value="#{item}"/>
             </p:commandLink>
             <p:commandLink id="deleteProperty"
                            styleClass="action"
                            title="#{msgs.delete}"
                            oncomplete="toggleSave()"
                            update="propertyTable"
-                           action="#{ProcessForm.deleteProperty}">
+                           action="#{ProcessEditViewPropertiesTab.deleteProperty}">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
-                <f:setPropertyActionListener target="#{ProcessForm.property}" value="#{item}"/>
+                <f:setPropertyActionListener target="#{ProcessEditViewPropertiesTab.property}" value="#{item}"/>
             </p:commandLink>
         </p:column>
     </p:dataTable>
-    <p:commandButton actionListener="#{ProcessForm.createNewProperty()}" rendered="#{isEditMode}"
+    <p:commandButton actionListener="#{ProcessEditViewPropertiesTab.createNewProperty()}" rendered="#{isEditMode}"
                      id="createNewProperty"
                      oncomplete="PF('editPropertyDialog').show()"
                      update="@(.editDialog)"

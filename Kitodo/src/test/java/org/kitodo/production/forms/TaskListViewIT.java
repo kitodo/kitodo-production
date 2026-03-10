@@ -26,12 +26,13 @@ import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.forms.task.TaskListView;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 
-public class CurrenTaskFormIT {
+public class TaskListViewIT {
 
-    private CurrentTaskForm currentTaskForm = new CurrentTaskForm();
+    private TaskListView taskListView = new TaskListView();
     private static final TaskService taskService = ServiceManager.getTaskService();
 
     /**
@@ -71,8 +72,8 @@ public class CurrenTaskFormIT {
         ServiceManager.getProcessService().save(process);
         Task taskTypeAcceptClose = createAndSaveTask(TaskStatus.OPEN, 1, process, null, true);
         Task followingTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, null, true);
-        currentTaskForm.setTaskById(taskTypeAcceptClose.getId());
-        currentTaskForm.takeOverTask();
+        taskListView.init();
+        taskListView.takeOverTask(taskTypeAcceptClose, "tasks");
         Task taskTypeAcceptCloseUpdated = taskService.getById(taskTypeAcceptClose.getId());
         Task followingTaskUpdated = taskService.getById(followingTask.getId());
 
@@ -91,7 +92,7 @@ public class CurrenTaskFormIT {
         task.setWorkflowCondition(workflowCondition);
         task.setTypeAcceptClose(typeAcceptClose);
         taskService.save(task);
-        return task;
+        return ServiceManager.getTaskService().getById(task.getId());
     }
 
 }

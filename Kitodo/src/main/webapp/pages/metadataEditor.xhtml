@@ -27,6 +27,9 @@
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
         <f:viewAction action="#{DataEditorForm.open(id, referer, templateTaskId)}"/>
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{DataEditorForm.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
         <f:viewAction action="#{CommentForm.setProcessById(id)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
         <f:viewAction
