@@ -30,7 +30,7 @@ import org.kitodo.production.forms.task.TaskListView;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 
-public class CurrenTaskFormIT {
+public class TaskListViewIT {
 
     private TaskListView taskListView = new TaskListView();
     private static final TaskService taskService = ServiceManager.getTaskService();
@@ -72,6 +72,7 @@ public class CurrenTaskFormIT {
         ServiceManager.getProcessService().save(process);
         Task taskTypeAcceptClose = createAndSaveTask(TaskStatus.OPEN, 1, process, null, true);
         Task followingTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, null, true);
+        taskListView.init();
         taskListView.takeOverTask(taskTypeAcceptClose, "tasks");
         Task taskTypeAcceptCloseUpdated = taskService.getById(taskTypeAcceptClose.getId());
         Task followingTaskUpdated = taskService.getById(followingTask.getId());
