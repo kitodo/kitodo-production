@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.json.JsonException;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -66,6 +67,26 @@ public class DesktopForm extends BaseForm {
         super();
     }
 
+    @PostConstruct
+    public void init() {
+        loadProcesses();
+    }
+
+    /**
+     * Loads processes and initializes related caches.
+     */
+    private void loadProcesses() {
+        try {
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
+                processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
+                preloadProcessCaches();
+            }
+        } catch (DAOException | JsonException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY,
+                    new Object[]{ObjectType.PROCESS.getTranslationPlural()}, logger, e);
+        }
+    }
+
     /**
      * Get values of ObjectType enum.
      *
@@ -108,15 +129,6 @@ public class DesktopForm extends BaseForm {
      * @return process list
      */
     public List<Process> getProcesses() {
-        try {
-            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
-                processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
-                preloadProcessCaches();
-            }
-        } catch (DAOException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
-                logger, e);
-        }
         return processList;
     }
 

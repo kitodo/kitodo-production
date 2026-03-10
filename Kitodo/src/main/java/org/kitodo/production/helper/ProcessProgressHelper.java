@@ -23,6 +23,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 public class ProcessProgressHelper {
 
     private static final Logger logger = LogManager.getLogger(ProcessProgressHelper.class);
+
     /**
      * Returns whether any tasks exist based on the given status counts.
      *
