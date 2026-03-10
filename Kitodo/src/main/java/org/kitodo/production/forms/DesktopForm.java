@@ -57,7 +57,7 @@ public class DesktopForm extends BaseForm {
     private Map<Integer, EnumMap<TaskStatus, Integer>> taskStatusCache = new HashMap<>();
     private Map<Integer, Map<TaskStatus, List<String>>> taskTitleCache = new HashMap<>();
     private Set<Integer> processesWithChildren = new HashSet<>();
-    private final ProcessProgressHelper progressService = new ProcessProgressHelper();
+    private final ProcessProgressHelper progressHelper = new ProcessProgressHelper();
 
     /**
      * Default constructor.
@@ -120,6 +120,10 @@ public class DesktopForm extends BaseForm {
         return processList;
     }
 
+    /**
+     * Preloads task-related caches for the processes in the processlist
+     * (status counts, task titles, and child-process information).
+     */
     private void preloadProcessCaches() throws DAOException {
         if (processList.isEmpty()) {
             return;
@@ -290,7 +294,7 @@ public class DesktopForm extends BaseForm {
      * @return formatted task titles or empty string if none exist
      */
     public String getCurrentTaskTitles(Process process) {
-        return progressService.buildTaskTitleTooltip(
+        return progressHelper.buildTaskTitleTooltip(
                 taskTitleCache.get(process.getId())
         );
     }
@@ -303,7 +307,7 @@ public class DesktopForm extends BaseForm {
      * @return progress percentage for the given status
      */
     public double progress(Process process, TaskStatus status) {
-        return progressService.progress(
+        return progressHelper.progress(
                 getCachedTaskStatusCounts(process),
                 status
         );
@@ -316,7 +320,7 @@ public class DesktopForm extends BaseForm {
      * @return percentage of completed tasks
      */
     public double progressClosed(Process process) {
-        return progressService.progressClosed(
+        return progressHelper.progressClosed(
                 getCachedTaskStatusCounts(process)
         );
     }
@@ -328,7 +332,7 @@ public class DesktopForm extends BaseForm {
      * @return percentage of tasks in processing
      */
     public double progressInProcessing(Process process) {
-        return progressService.progressInProcessing(
+        return progressHelper.progressInProcessing(
                 getCachedTaskStatusCounts(process)
         );
     }
@@ -340,7 +344,7 @@ public class DesktopForm extends BaseForm {
      * @return percentage of startable tasks
      */
     public double progressOpen(Process process) {
-        return progressService.progressOpen(
+        return progressHelper.progressOpen(
                 getCachedTaskStatusCounts(process)
         );
     }
