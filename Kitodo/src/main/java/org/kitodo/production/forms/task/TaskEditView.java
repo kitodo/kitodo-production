@@ -47,6 +47,12 @@ public class TaskEditView extends BaseEditView {
 
     private String taskEditReferer = DEFAULT_LINK;
 
+    /**
+     * Return view path to edit a task.
+     * 
+     * @param task the task to be edited
+     * @return the view path
+     */
     public static String getViewPath(Task task) {
         return VIEW_PATH + "&id=" + task.getId();
     }

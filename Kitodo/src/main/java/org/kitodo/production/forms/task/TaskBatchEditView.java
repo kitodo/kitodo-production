@@ -36,6 +36,12 @@ public class TaskBatchEditView extends BaseForm {
     
     private transient BatchTaskHelper batchHelper;
 
+    /**
+     * Return the view path to the batch edit view.
+     * 
+     * @param task the batch task
+     * @return the view path
+     */
     public static String getViewPath(Task task) {
         return VIEW_PATH + "id=" + task.getId();
     }

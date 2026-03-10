@@ -182,9 +182,11 @@ public class TaskListView extends BaseListView {
     }
 
     /**
-     * Edit task.
+     * Returns the view path to navigate to the "work on" task view.
      *
-     * @return page
+     * @param task the task to work on
+     * @param referrer the referrer page (e.g. "desktop" or "tasks") to navigate back to in case the task is closed
+     * @return the view path
      */
     public String workOnTask(Task task, String referrer) throws UnsupportedEncodingException {
         Stopwatch stopwatch = new Stopwatch(this, "workOnTask");
@@ -543,6 +545,11 @@ public class TaskListView extends BaseListView {
         return stopwatch.stop(reload());
     }
 
+    /**
+     * Set the filter that is used in the task list view.
+     * 
+     * @param filter the new filter
+     */
     @Override
     public void setFilter(String filter) {
         final Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
@@ -629,10 +636,10 @@ public class TaskListView extends BaseListView {
     }
 
     /**
-     * Parses the query parameter "taskStatus" to a list of TaskStatus instances. Ignores any unrelated values.
+     * Parses the query parameter "taskFilter" to a list of filter options. Ignores any unrelated values.
      * 
-     * @param encodedTaskStatus the taskStatus query parameter, e.g. `OPEN+INWORK`
-     * @return the list of TaskStatus instances
+     * @param encodedTaskFilter the taskFilter query parameter, e.g. `automaticTasks+correctionTasks`
+     * @return the parsed list of filter options
      */
     private List<String> parseTaskFilterFromQueryParameter(String encodedTaskFilter) {
         Set<String> allowed = Set.of(AUTOMATIC_TASKS_FILTER, CORRECTION_TASKS_FILTER, OTHER_USERS_TASKS_FILTER);

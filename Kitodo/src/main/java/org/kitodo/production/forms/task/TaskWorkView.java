@@ -180,8 +180,8 @@ public class TaskWorkView extends ValidatableForm {
      */
     public void executeScript() throws DAOException {
         Stopwatch stopwatch = new Stopwatch(this, "executeScript");
-        Task task = ServiceManager.getTaskService().getById(this.task.getId());
-        if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
+        Task currentTask = ServiceManager.getTaskService().getById(this.task.getId());
+        if (ServiceManager.getTaskService().executeScript(currentTask, this.scriptPath, false)) {
             Helper.setMessageWithoutDescription(
                     Helper.getTranslation("scriptExecutionSuccessful", this.task.getScriptName()));
         } else {
