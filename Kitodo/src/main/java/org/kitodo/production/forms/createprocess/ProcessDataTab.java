@@ -202,7 +202,7 @@ public class ProcessDataTab {
 
     private String getDocTypeLabel(String docType) {
         for (int i = 0; i < this.allDocTypes.size(); i++) {
-            SelectItem docTypeItem = this.allDocTypes.get(0);
+            SelectItem docTypeItem = this.allDocTypes.getFirst();
             if (docTypeItem.getValue().equals(docType)) {
                 return docTypeItem.getLabel();
             }
