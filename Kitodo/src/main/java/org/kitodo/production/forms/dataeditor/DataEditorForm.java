@@ -871,7 +871,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     public boolean isSelected(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
         if (Objects.nonNull(physicalDivision) && Objects.nonNull(logicalDivision)) {
             if (physicalDivision.hasMediaPartial() && physicalDivision.getLogicalDivisions().size() == 1) {
-                return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0)));
+                return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().getFirst()));
             }
             return selectedMedia.contains(new ImmutablePair<>(physicalDivision, logicalDivision));
         }
@@ -922,10 +922,10 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         if (!getStructurePanel().isSeparateMedia() && selectedPhysicalDivisions.size() == 1 
                 && selectedLogicalDivisions.isEmpty()) {
             // show physical division in logical metadata panel in combined meta data mode
-            getMetadataPanel().showPageInLogical(selectedPhysicalDivisions.get(0).getLeft());
+            getMetadataPanel().showPageInLogical(selectedPhysicalDivisions.getFirst().getLeft());
         } else if (selectedLogicalDivisions.size() == 1 && selectedPhysicalDivisions.isEmpty()) {
             // show logical division in logical metadata panel
-            getMetadataPanel().showLogical(Optional.of(selectedLogicalDivisions.get(0)));
+            getMetadataPanel().showLogical(Optional.of(selectedLogicalDivisions.getFirst()));
         } else {
             // show nothing in logical metadata panel
             getMetadataPanel().showPageInLogical(null);
@@ -935,7 +935,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         if (getStructurePanel().isSeparateMedia()) {
             if (selectedPhysicalDivisions.size() == 1) {
                 // show physical division in physical metadata panel
-                getMetadataPanel().showPhysical(Optional.of(selectedPhysicalDivisions.get(0).getLeft()));
+                getMetadataPanel().showPhysical(Optional.of(selectedPhysicalDivisions.getFirst().getLeft()));
             } else {
                 // show nothing in physical metadata panel
                 getMetadataPanel().showPhysical(Optional.empty());

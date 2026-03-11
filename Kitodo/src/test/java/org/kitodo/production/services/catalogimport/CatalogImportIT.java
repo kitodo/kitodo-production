@@ -107,7 +107,7 @@ public class CatalogImportIT {
         List<MetadataComparison> metadataComparisons = DataEditorService.reimportCatalogMetadata(testProcess, workpiece,
                 existingMetadata, languages, "Monograph");
         assertFalse(metadataComparisons.isEmpty(), "List of metadata comparisons should not be empty");
-        MetadataComparison firstComparison = metadataComparisons.get(0);
+        MetadataComparison firstComparison = metadataComparisons.getFirst();
         assertEquals(PUBLICATION_YEAR, firstComparison.getMetadataKey(),
                 String.format("Changed metadata should be '%s'", PUBLICATION_YEAR));
         MetadataEntry publicationYearOld = new MetadataEntry();

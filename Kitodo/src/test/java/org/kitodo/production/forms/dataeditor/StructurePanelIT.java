@@ -39,6 +39,6 @@ public class StructurePanelIT {
         addParentLinksRecursive.setAccessible(true);
         addParentLinksRecursive.invoke(underTest, child, result);
 
-        assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
+        assertTrue(((StructureTreeNode) result.getChildren().getFirst().getData()).isLinked());
     }
 }

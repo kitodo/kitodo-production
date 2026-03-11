@@ -312,7 +312,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         URI metadataFileUri = fileService.getMetadataFilePath(process);
         URI anchorFileUri = fileService.createAnchorFile(metadataFileUri);
         Workpiece workpiece = metsService.loadWorkpiece(anchorFileUri);
-        LogicalDivision firstChild = workpiece.getLogicalStructure().getChildren().get(0);
+        LogicalDivision firstChild = workpiece.getLogicalStructure().getChildren().getFirst();
         firstChild.setType(null);
         LinkedMetsResource link = firstChild.getLink();
         link.setLoctype("Kitodo.Production");
@@ -332,7 +332,7 @@ public class HierarchyMigrationTask extends EmptyTask {
     private static Integer convertChildMetsFile(URI metadataFilePath) throws IOException, SAXException,
             FileStructureValidationException {
         Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
-        LogicalDivision childStructureRoot = workpiece.getLogicalStructure().getChildren().get(0);
+        LogicalDivision childStructureRoot = workpiece.getLogicalStructure().getChildren().getFirst();
         workpiece.setLogicalStructure(childStructureRoot);
         metsService.saveWorkpiece(workpiece, metadataFilePath);
         return getCurrentNoSorting(childStructureRoot);
@@ -376,7 +376,7 @@ public class HierarchyMigrationTask extends EmptyTask {
 
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
         Integer currentNo = convertChildMetsFile(metadataFilePath);
-        Process parentProcess = processService.getById(parentData.get(0));
+        Process parentProcess = processService.getById(parentData.getFirst());
         int insertionPosition = calculateInsertionPosition(parentData, currentNo);
         MetadataEditor.addLink(parentProcess, Integer.toString(insertionPosition), childProcess.getId());
         parentData.add(insertionPosition + 1, currentNo);

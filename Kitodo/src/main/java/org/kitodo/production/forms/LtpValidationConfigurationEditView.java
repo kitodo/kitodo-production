@@ -425,7 +425,7 @@ public class LtpValidationConfigurationEditView extends BaseEditView {
         LtpValidationCondition condition = findSimpleCondition(PROPERTY_FILENAME,
             LtpValidationConditionOperation.MATCHES);
         if (Objects.nonNull(condition) && Objects.nonNull(condition.getValues()) && condition.getValues().size() == 1) {
-            return condition.getValues().get(0);
+            return condition.getValues().getFirst();
         }
         return simpleFilenamePattern;
     }

@@ -75,7 +75,7 @@ public class DivisionDeclaration extends KeyDeclaration {
             List<Division> subdivisions = optionalDivision.get().getDivisions();
             if (!subdivisions.isEmpty()) {
                 Map<String, String> allowedSubdivisions = new HashMap<>(2);
-                String divisionId = subdivisions.get(0).getId();
+                String divisionId = subdivisions.getFirst().getId();
                 allowedSubdivisions.put(divisionId, filteredSubdivisions.get(divisionId));
                 return allowedSubdivisions;
             }
@@ -143,7 +143,7 @@ public class DivisionDeclaration extends KeyDeclaration {
         if (optionalDivision.isPresent()) {
             for (Division division : ruleset.getDivisions()) {
                 List<Division> divisions = division.getDivisions();
-                if (!divisions.isEmpty() && divisions.get(0).getId().equals(id)) {
+                if (!divisions.isEmpty() && divisions.getFirst().getId().equals(id)) {
                     String yearBegin = division.getYearBegin();
                     if (yearBegin != null) {
                         return MonthDay.parse(yearBegin);

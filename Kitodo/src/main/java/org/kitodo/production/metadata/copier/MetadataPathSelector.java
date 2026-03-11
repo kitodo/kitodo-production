@@ -288,7 +288,7 @@ public class MetadataPathSelector extends MetadataSelector {
                 return null;
             case 1:
                 if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
-                    return children.get(0);
+                    return children.getFirst();
                 }
                 break;
             default:
