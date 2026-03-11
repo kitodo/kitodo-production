@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.kitodo.api.validation.longtermpreservation.FileType;
@@ -168,7 +169,7 @@ public class LongTermPreservationValidationIT {
                 LtpValidationConditionSeverity.ERROR);
 
         LtpValidationResult result = validator.validate(TIF_URI, FileType.TIFF,
-            Arrays.asList(new LtpValidationCondition[] {inBetweenCondition, lowerThanCondition, largerThanCondition }));
+            Arrays.asList(inBetweenCondition, lowerThanCondition, largerThanCondition));
 
         assertEquals(LtpValidationResultState.ERROR, result.getState());
         for (int i = 0; i < result.getConditionResults().size(); i++) {
@@ -339,7 +340,7 @@ public class LongTermPreservationValidationIT {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
 
         LtpValidationCondition wrongValuesCondition = new LtpValidationCondition("imageWidth",
-                LtpValidationConditionOperation.NON_EMPTY, Arrays.asList("60"),
+                LtpValidationConditionOperation.NON_EMPTY, List.of("60"),
                 LtpValidationConditionSeverity.ERROR);
 
         LtpValidationCondition validCondition = new LtpValidationCondition("imageWidth",
@@ -348,11 +349,11 @@ public class LongTermPreservationValidationIT {
 
         assertEquals(LtpValidationResultState.ERROR,
                 validator.validate(TIF_URI, FileType.TIFF,
-                        Arrays.asList(new LtpValidationCondition[] { wrongValuesCondition })).getState());
+                        List.of(wrongValuesCondition)).getState());
 
         assertEquals(LtpValidationResultState.VALID,
                 validator.validate(TIF_URI, FileType.TIFF,
-                        Arrays.asList(new LtpValidationCondition[] { validCondition })).getState());
+                        List.of(validCondition)).getState());
     }
 
     private LtpValidationResultState simpleValidateFile(URI file, FileType fileType) {
