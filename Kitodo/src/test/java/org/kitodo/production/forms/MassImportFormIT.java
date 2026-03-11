@@ -61,7 +61,7 @@ public class MassImportFormIT {
         assertNotNull(addMetadataDialog, "'Add metadata' dialog should not be null");
         List<ProcessDetail> metadataTypes = addMetadataDialog.getAllMetadataTypes();
         assertFalse(metadataTypes.isEmpty(), "List of metadata types should not be empty");
-        ProcessDetail firstDetail = metadataTypes.get(0);
+        ProcessDetail firstDetail = metadataTypes.getFirst();
         assertEquals(TSL_ATS, firstDetail.getLabel(), String.format("First metadata type should be '%s'", TSL_ATS));
     }
 }

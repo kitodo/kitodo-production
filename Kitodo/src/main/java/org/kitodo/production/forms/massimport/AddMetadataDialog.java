@@ -99,7 +99,7 @@ public class AddMetadataDialog {
         }
         metadataTypes = ServiceManager.getMassImportService().getAddableMetadataTable(allRulesetDivisions, getPresetMetadata());
         if (!metadataTypes.isEmpty()) {
-            metadataDetail = metadataTypes.get(0);
+            metadataDetail = metadataTypes.getFirst();
         }
 
     }

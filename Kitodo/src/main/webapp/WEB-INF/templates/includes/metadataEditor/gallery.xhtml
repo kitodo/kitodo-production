@@ -132,9 +132,9 @@
                     <!-- Unstructured media-->
                     <p:outputPanel>
                         <p:outputLabel value="#{msgs['dataEditor.unstructuredMedia']}"
-                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.selected and DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"
+                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.selected and DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.getFirst().getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="0"
-                                       a:data-logicalTreeNodeId="#{DataEditorForm.galleryPanel.stripes.get(0).logicalTreeNodeId}"
+                                       a:data-logicalTreeNodeId="#{DataEditorForm.galleryPanel.stripes.getFirst().logicalTreeNodeId}"
                                        />
                         <h:panelGroup id="unstructuredMedia"
                                       layout="block">
@@ -144,7 +144,7 @@
                                 <p:dataList id="unstructuredMediaList"
                                             styleClass="pageList"
                                             itemStyleClass="media-position"
-                                            value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
+                                            value="#{DataEditorForm.galleryPanel.stripes.getFirst().medias}"
                                             binding="#{currentMedia}"
                                             emptyMessage="#{msgs['noMedia']}"
                                             var="media">
@@ -158,7 +158,7 @@
                                         </ui:include>
                                     </p:panel>
                                     <!-- add one last drop area after the last page in a stripe -->
-                                    <ui:fragment rendered="#{editImages and DataEditorForm.galleryPanel.stripes.get(0).medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.get(0).medias.size() - 1 eq currentMedia.rowIndex}">
+                                    <ui:fragment rendered="#{editImages and DataEditorForm.galleryPanel.stripes.getFirst().medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.getFirst().medias.size() - 1 eq currentMedia.rowIndex}">
                                         <p:panel id="unstructuredPageLastDropArea"
                                                  styleClass="page-drop-area"/>
                                     </ui:fragment>

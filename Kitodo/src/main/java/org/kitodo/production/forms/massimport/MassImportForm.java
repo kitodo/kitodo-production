@@ -121,7 +121,7 @@ public class MassImportForm extends BaseForm {
             List<String> csvLines = massImportService.getLines(file);
             resetValues();
             if (!csvLines.isEmpty()) {
-                importedCsvHeaderLine = csvLines.get(0);
+                importedCsvHeaderLine = csvLines.getFirst();
                 csvSeparator = ServiceManager.getMassImportService().guessCsvSeparator(csvLines);
                 updateMetadataKeys();
                 if (csvLines.size() > 1) {
@@ -160,8 +160,8 @@ public class MassImportForm extends BaseForm {
             updateMetadataKeys();
             records = massImportService.parseLines(importedCsvLines, csvSeparator.getSeparator());
             boolean success = true;
-            if (!records.isEmpty() && !records.get(0).getCsvCells().isEmpty()
-                    && records.get(0).getCsvCells().size() != metadataKeys.size()) {
+            if (!records.isEmpty() && !records.getFirst().getCsvCells().isEmpty()
+                    && records.getFirst().getCsvCells().size() != metadataKeys.size()) {
                 Helper.setErrorMessage(Helper.getTranslation("massImport.separatorCountMismatchHeader", csvSeparator.toString()));
                 records = new LinkedList<>();
                 success = false;
@@ -624,7 +624,7 @@ public class MassImportForm extends BaseForm {
             return false;
         } else {
             return ServiceManager.getImportService().isRecordIdentifierMetadata(addMetadataDialog.getRulesetManagement(),
-                    metadataKeys.iterator().next());
+                    metadataKeys.getFirst());
         }
     }
 
@@ -637,7 +637,7 @@ public class MassImportForm extends BaseForm {
             return false;
         } else {
             return ServiceManager.getImportService().isDocTypeMetadata(addMetadataDialog.getRulesetManagement(),
-                    metadataKeys.iterator().next());
+                    metadataKeys.getFirst());
         }
     }
 

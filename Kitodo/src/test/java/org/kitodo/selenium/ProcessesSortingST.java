@@ -71,19 +71,19 @@ public class ProcessesSortingST extends BaseTestSelenium {
         processesPage.goTo();
 
         // check that default sort order (descending by id) has second process as first element in the process list
-        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+        assertEquals("Second process", processesPage.getProcessTitles().getFirst());
 
         // click on column header to trigger ascending order by process title
         processesPage.clickProcessesTableHeaderForSorting(4);
 
         // check that first process is now first element in list of processes
-        assertEquals("First process", processesPage.getProcessTitles().get(0));
+        assertEquals("First process", processesPage.getProcessTitles().getFirst());
 
         // click again to trigger descending order for process title
         processesPage.clickProcessesTableHeaderForSorting(4);
 
         // check that second process is again first element in list of processes 
-        assertEquals("Second process", processesPage.getProcessTitles().get(0));   
+        assertEquals("Second process", processesPage.getProcessTitles().getFirst());
     }
 
     /**
@@ -95,25 +95,25 @@ public class ProcessesSortingST extends BaseTestSelenium {
         processesPage.goTo();
 
         // check that default sort order (descending by id) has second process as first element in the process list
-        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+        assertEquals("Second process", processesPage.getProcessTitles().getFirst());
 
         // click on column header to trigger ascending order by process title
         processesPage.clickProcessesTableHeaderForSorting(4);
 
         // check that first process is now first element in list of processes
-        assertEquals("First process", processesPage.getProcessTitles().get(0));
+        assertEquals("First process", processesPage.getProcessTitles().getFirst());
 
         // reload page
         Browser.getDriver().navigate().refresh();
 
         // check that first process is still first element in list of processes
-        assertEquals("First process", processesPage.getProcessTitles().get(0));
+        assertEquals("First process", processesPage.getProcessTitles().getFirst());
 
         // navigate to process list via main menu, which resets sort order
         processesPage.goTo();
 
         // check that default sort order is restored
-        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+        assertEquals("Second process", processesPage.getProcessTitles().getFirst());
     }
 
     /**
@@ -127,13 +127,13 @@ public class ProcessesSortingST extends BaseTestSelenium {
         processesPage.clickProcessesTableHeaderForSorting(5);
 
         // check that first process is first element in list of processes
-        assertEquals("First process", processesPage.getProcessTitles().get(0));
+        assertEquals("First process", processesPage.getProcessTitles().getFirst());
 
         // click again to trigger descending order for process state
         processesPage.clickProcessesTableHeaderForSorting(5);
 
         // check that second process is now first element in list of processes 
-        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+        assertEquals("Second process", processesPage.getProcessTitles().getFirst());
     }
 
     /**
@@ -147,12 +147,12 @@ public class ProcessesSortingST extends BaseTestSelenium {
         processesPage.clickProcessesTableHeaderForSorting(8);
 
         // check that second process is first element in list of processes
-        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+        assertEquals("Second process", processesPage.getProcessTitles().getFirst());
 
         // click again to trigger descending order for process duration
         processesPage.clickProcessesTableHeaderForSorting(8);
 
         // check that first process is now first element in list of processes 
-        assertEquals("First process", processesPage.getProcessTitles().get(0));
+        assertEquals("First process", processesPage.getProcessTitles().getFirst());
     }
 }

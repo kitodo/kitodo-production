@@ -341,7 +341,7 @@ public class BeanQuery {
                 }
             }
             if (groupFilters.size() == 1) {
-                restrictions.add(groupFilters.get(0));
+                restrictions.add(groupFilters.getFirst());
             } else if (groupFilters.size() > 1) {
                 restrictions.add("( " + String.join(" OR ", groupFilters) + " )");
             }
@@ -452,7 +452,7 @@ public class BeanQuery {
             query.append(" LEFT JOIN ").append(leftJoin);
         }
         if (restrictionAlternatives.size() == 1) {
-            restrictions.add(restrictionAlternatives.get(0));
+            restrictions.add(restrictionAlternatives.getFirst());
         } else if (restrictionAlternatives.size() > 1) {
             restrictions.add(restrictionAlternatives.stream().collect(Collectors.joining(" OR ", "(", ")")));
         }

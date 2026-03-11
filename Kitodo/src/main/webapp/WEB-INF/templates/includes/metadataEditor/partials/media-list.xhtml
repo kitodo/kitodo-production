@@ -24,7 +24,7 @@
         <c:choose>
             <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
                 <c:set var="thumbnailStyleClass"
-                       value="#{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.getFirst()) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
             </c:when>
             <c:otherwise>
                 <c:set var="thumbnailStyleClass"

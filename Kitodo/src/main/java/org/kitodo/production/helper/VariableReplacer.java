@@ -414,14 +414,14 @@ public class VariableReplacer {
         List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
         String allFirstchildValue = null;
         if (!allChildren.isEmpty()) {
-            allFirstchildValue = MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+            allFirstchildValue = MetadataEditor.getMetadataValue(allChildren.getFirst(), variableFinder.group(5));
             if (Objects.isNull(allFirstchildValue)) {
                 allFirstchildValue = determineReplacementForTopstruct(variableFinder, dollarSignIfToKeep);
             }
             if (StringUtils.isEmpty(allFirstchildValue)) {
-                List<LogicalDivision> firstChildChildren = allChildren.get(0).getChildren();
+                List<LogicalDivision> firstChildChildren = allChildren.getFirst().getChildren();
                 if (!firstChildChildren.isEmpty()) {
-                    allFirstchildValue = MetadataEditor.getMetadataValue(firstChildChildren.get(0), variableFinder.group(5));
+                    allFirstchildValue = MetadataEditor.getMetadataValue(firstChildChildren.getFirst(), variableFinder.group(5));
                 }
             }
         }
@@ -444,7 +444,7 @@ public class VariableReplacer {
                 variableFinder.group());
             return failureResult;
         }
-        String value = MetadataEditor.getMetadataValue(firstchildChildren.get(0), variableFinder.group(5));
+        String value = MetadataEditor.getMetadataValue(firstchildChildren.getFirst(), variableFinder.group(5));
         if (Objects.isNull(value)) {
             logger.warn("Cannot replace \"{}\": No such metadata entry in the first division", variableFinder.group());
             return failureResult;

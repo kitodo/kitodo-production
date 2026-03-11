@@ -55,15 +55,15 @@ public class KitodoJhoveRepInfoParser {
         if (propertyValue instanceof List<?>) {
             List<?> valueList = (List<?>) propertyValue;
             if (valueList.size() > 0) {
-                if (valueList.get(0) instanceof Property) {
+                if (valueList.getFirst() instanceof Property) {
                     for (Object p : ((List<?>) propertyValue)) {
                         stack.add(Pair.of(propertyKey, (Property) p));
                     }
-                } else if (valueList.get(0) instanceof String) {
+                } else if (valueList.getFirst() instanceof String) {
                     propertyMap.put(propertyKey, StringUtils.join(valueList, ","));
                 } else {
                     logger.debug(
-                        "JHove RepInfo contains property list with unknown item type: " + valueList.get(0).toString());
+                        "JHove RepInfo contains property list with unknown item type: " + valueList.getFirst().toString());
                 }
             }
         } else {
