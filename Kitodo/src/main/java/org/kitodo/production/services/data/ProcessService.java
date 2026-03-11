@@ -1198,8 +1198,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                     case PDF -> sr.writePdf(out);
                     default -> throw new IllegalArgumentException("Unsupported export format: " + format);
                 }
-                out.flush();
                 facesContext.responseComplete();
+                out.flush();
             }
         }
     }
