@@ -262,7 +262,7 @@ public class Subfolder {
      */
     public URI getUri(String canonical) {
         List<String> uriComponents = getUriComponents(canonical);
-        return Paths.get(ConfigCore.getKitodoDataDirectory(), uriComponents.toArray(new String[uriComponents.size()]))
+        return Paths.get(ConfigCore.getKitodoDataDirectory(), uriComponents.toArray(new String[0]))
                 .toUri();
     }
 
