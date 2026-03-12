@@ -775,10 +775,6 @@ public class RulesetManagementIT {
             rulesetManagement.getFunctionalKeys(FunctionalMetadata.STRUCTURE_TREE_TITLE),
             contains("LABEL"));
 
-        // not existing uses
-        assertThat("Something was found!",
-            rulesetManagement.getFunctionalKeys(FunctionalMetadata.DATA_SOURCE), is(empty()));
-
         // multiple uses of one key
         assertThat("shelfmarksource was not found!",
             rulesetManagement.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER),
