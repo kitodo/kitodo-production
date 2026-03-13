@@ -13,8 +13,8 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.util.Objects;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
 
 /**
  * Bean that is used in externalView.xhtml.

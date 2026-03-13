@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -65,7 +66,7 @@ abstract class EditPage<T> extends Page<T> {
 
     private void clickLinkOfTableRow(WebElement tableRow) {
 
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 5);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(5));
         wait.until(ExpectedConditions.elementToBeClickable(tableRow.findElement(By.tagName("a"))));
 
         tableRow.findElement(By.tagName("a")).click();

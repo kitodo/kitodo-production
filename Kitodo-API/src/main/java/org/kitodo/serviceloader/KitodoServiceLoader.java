@@ -37,8 +37,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
+import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -148,7 +148,7 @@ public class KitodoServiceLoader<T> {
                 try (JarFile jarFile = new JarFile(f.toString())) {
                     if (hasFrontendFiles(jarFile)) {
                         Enumeration<JarEntry> entries = jarFile.entries();
-                        URL[] urls = {new URL("jar:file:" + f + "!/") };
+                        URL[] urls = {Paths.get("jar:file:" + f + "!/").toUri().toURL() };
                         try (URLClassLoader cl = URLClassLoader.newInstance(urls)) {
                             while (entries.hasMoreElements()) {
                                 JarEntry je = entries.nextElement();

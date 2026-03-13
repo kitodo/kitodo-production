@@ -18,18 +18,16 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import org.kitodo.config.ConfigCore;
-import org.omnifaces.cdi.Eager;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 
 @Named("LegalTexts")
 @ApplicationScoped
-@Eager
 public class LegalTexts implements Serializable {
 
     public static final String TERMS_OF_USE = "termsOfUse";

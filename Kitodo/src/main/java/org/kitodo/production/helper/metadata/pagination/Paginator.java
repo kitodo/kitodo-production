@@ -69,6 +69,17 @@ public class Paginator implements Iterator<String> {
                 }
             } else if (paginatorState.equals(PaginatorState.TEXT_ESCAPE_TRANSITION)) {
                 stringBuilder.appendCodePoint(codePoint);
+            } else if (codePointClass.equals(PaginatorState.ALPHABETIC)) {
+                if (paginatorState.equals(PaginatorState.EMPTY)) {
+                    paginatorState = PaginatorState.ALPHABETIC;
+                } else {
+                    createFragment(stringBuilder, paginatorState, page);
+                    page = null;
+                    paginatorState = paginatorState.equals(PaginatorState.ALPHABETIC) ? PaginatorState.EMPTY
+                            : PaginatorState.ALPHABETIC;
+                }
+            } else if (paginatorState.equals(PaginatorState.ALPHABETIC)) {
+                stringBuilder.appendCodePoint(codePoint);
             } else if (codePointClass.equals(PaginatorState.HALF_INTEGER)
                     || codePointClass.equals(PaginatorState.FULL_INTEGER)) {
                 /*
@@ -135,12 +146,13 @@ public class Paginator implements Iterator<String> {
      *            page information
      */
     private void createFragment(StringBuilder stringBuilder, PaginatorState fragmentType, Boolean pageType) {
-        if (pageType == null && fragmentType.equals(PaginatorState.DECIMAL)) {
-            fragments.addLast(new DecimalNumeral(stringBuilder.toString()));
-        } else if (pageType == null && (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)
-                || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN))) {
+        if (fragmentType.equals(PaginatorState.DECIMAL)) {
+            fragments.addLast(new DecimalNumeral(stringBuilder.toString(), pageType));
+        } else if (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN) || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN)) {
             fragments.addLast(
-                new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)));
+                new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN), pageType));
+        } else if (fragmentType.equals(PaginatorState.ALPHABETIC)) {
+            fragments.addLast(new AlphabeticNumeral(stringBuilder.toString(), pageType));
         } else if (fragmentType.equals(PaginatorState.INCREMENT)) {
             if (fragments.isEmpty() || Objects.isNull(fragments.peekLast())) {
                 fragments.addLast(new StaticText("", pageType));
@@ -270,6 +282,8 @@ public class Paginator implements Iterator<String> {
             case 'C': case 'D': case 'I': case 'L': case 'M': case 'V':
             case 'X':
                 return PaginatorState.UPPERCASE_ROMAN;
+            case '´':
+                return PaginatorState.ALPHABETIC;
             case '`':
                 return PaginatorState.TEXT_ESCAPE_TRANSITION;
             case 'c': case 'd': case 'i': case 'l': case 'm': case 'v':

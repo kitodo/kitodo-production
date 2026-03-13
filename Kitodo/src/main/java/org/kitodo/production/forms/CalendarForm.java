@@ -31,11 +31,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 import javax.naming.ConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,6 +48,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
@@ -626,7 +628,7 @@ public class CalendarForm implements Serializable {
                     .collect(Collectors.toMap(ProcessDetail::getMetadataID, Function.identity()));
             course = new Course(xml, processDetailsByMetadataID);
             Helper.removeManagedBean("GranularityForm");
-            navigate(course.get(0));
+            navigate(course.getFirst());
         } catch (SAXException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, "errorSAXException", logger, e);
         } catch (IOException | DAOException e) {
@@ -684,7 +686,14 @@ public class CalendarForm implements Serializable {
      */
     public void setYearStart(Date date) {
         if (Objects.nonNull(date)) {
-            course.setYearStart(MonthDay.of(date.getMonth() + 1, date.getDate()));
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(date);
+            course.setYearStart(
+                MonthDay.of(
+                    gregorianCalendar.get(GregorianCalendar.MONTH) + 1,
+                    gregorianCalendar.get(GregorianCalendar.DAY_OF_MONTH)
+                )
+            );
         }
     }
 
@@ -735,7 +744,7 @@ public class CalendarForm implements Serializable {
                     Triple.of(selectedIssue.getDate(), selectedIssue.getIssue(), onlyThisIssue));
             List<ProcessDetail> metadataTypes = metadata.getAllMetadataTypes(getParentId());
             if (!metadataTypes.isEmpty()) {
-                metadata.setMetadataDetail(metadataTypes.get(0));
+                metadata.setMetadataDetail(metadataTypes.getFirst());
             }
             selectedBlock.addMetadata(metadata);
         } else {
@@ -867,9 +876,24 @@ public class CalendarForm implements Serializable {
 
     /**
      * Check if process with the same processtitle already exists.
+     *
+     * @throws ProcessGenerationException
+     *          when checking for duplicate titles fails
+     * @throws DAOException
+     *          when loading parent process fails
+     * @throws ConfigurationException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws IOException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws DoctypeMissingException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws SAXException
+     *          when initializing NewspaperProcessesGenerator fails
+     * @throws FileStructureValidationException
+     *          when initializing NewspaperProcessesGenerator fails
      */
     public void checkDuplicatedTitles() throws ProcessGenerationException, DAOException,
-            ConfigurationException, IOException, DoctypeMissingException {
+            ConfigurationException, IOException, DoctypeMissingException, SAXException, FileStructureValidationException {
         if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
             Process process = ServiceManager.getProcessService().getById(parentId);
             NewspaperProcessesGenerator newspaperProcessesGenerator = new NewspaperProcessesGenerator(process, course);

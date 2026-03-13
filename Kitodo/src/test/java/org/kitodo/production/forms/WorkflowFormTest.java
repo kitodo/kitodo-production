@@ -48,7 +48,7 @@ public class WorkflowFormTest {
 
     @Test
     public void shouldReadXMLDiagram() {
-        WorkflowForm modelerForm = new WorkflowForm();
+        WorkflowEditView modelerForm = new WorkflowEditView();
         modelerForm.setXmlDiagram(null);
         modelerForm.setWorkflow(new Workflow("test"));
         modelerForm.readXMLDiagram();
@@ -91,7 +91,7 @@ public class WorkflowFormTest {
 
         URI xmlDiagramURI = file.toURI();
 
-        WorkflowForm modelerForm = new WorkflowForm();
+        WorkflowEditView modelerForm = new WorkflowEditView();
         modelerForm.setXmlDiagram(xmlDiagram);
         modelerForm.setWorkflow(new Workflow(fileName));
         modelerForm.saveFile(xmlDiagramURI, xmlDiagram);
@@ -174,7 +174,7 @@ public class WorkflowFormTest {
 
         URI svgDiagramURI = file.toURI();
 
-        WorkflowForm modelerForm = new WorkflowForm();
+        WorkflowEditView modelerForm = new WorkflowEditView();
         modelerForm.setSvgDiagram(svgDiagram);
         modelerForm.setWorkflow(new Workflow(fileName));
         modelerForm.saveFile(svgDiagramURI, svgDiagram);

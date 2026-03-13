@@ -26,8 +26,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -44,12 +48,15 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.dto.ProcessExportDTO;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -57,6 +64,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Tests for ProcessService class.
@@ -157,7 +165,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetProcess() throws Exception {
         Process process = processService.getById(1);
-        boolean condition = process.getTitle().equals(firstProcess) && process.getWikiField().equals("field");
+        boolean condition = process.getTitle().equals(firstProcess);
         assertTrue(condition, "Process was not found in database!");
 
         assertEquals(5, process.getTasks().size(), "Process was found but tasks were not inserted!");
@@ -294,7 +302,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindLinkableParentProcesses() throws DAOException, IOException {
+    public void shouldFindLinkableParentProcesses() throws Exception {
         assertEquals(1, processService.findLinkableParentProcesses(MockDatabase.HIERARCHY_PARENT, 1).size(), "Processes were not found in index!");
     }
 
@@ -495,7 +503,7 @@ public class ProcessServiceIT {
                 .getDigitalDocument();
 
         String processTitle = process.getTitle();
-        String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
+        String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().getFirst().getValue();
         assertEquals(processTitle, processTitleFromMetadata, "It was not possible to read metadata file!");
 
         FileLoader.deleteMetadataFile();
@@ -602,7 +610,26 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testCountMetadata() throws DAOException, IOException {
+    public void shouldDetectIncompleteChildren() throws Exception {
+        Integer parentId = testProcessIds.get(MockDatabase.HIERARCHY_PARENT);
+        Process parent = processService.getById(parentId);
+        assertNotNull(parent, "Parent in hierarchy not found!");
+
+        boolean hasIncomplete = processService.hasIncompleteChildren(parent);
+        assertTrue(hasIncomplete, "Parent should report incomplete children but did not!");
+
+        for (Process child : parent.getChildren()) {
+            child.setSortHelperStatus(ProcessState.COMPLETED.getValue());
+            processService.save(child);
+        }
+
+        boolean hasIncompleteAfterUpdate = processService.hasIncompleteChildren(parent);
+        assertFalse(hasIncompleteAfterUpdate,
+                "Parent should not report incomplete children after all children were completed!");
+    }
+
+    @Test
+    public void testCountMetadata() throws DAOException, IOException, SAXException, FileStructureValidationException {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         Process process = ServiceManager.getProcessService().getById(testProcessId);
@@ -710,4 +737,70 @@ public class ProcessServiceIT {
         // cleanup
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
+
+    @Test
+    public void shouldFindProcessIdsWithChildren() throws Exception {
+        ProcessService processService = ServiceManager.getProcessService();
+        List<Process> processes = processService.getAll();
+        List<Integer> allIds = processes.stream()
+                .map(Process::getId)
+                .collect(Collectors.toList());
+        Set<Integer> expected = processes.stream()
+                .filter(p -> Objects.nonNull(p.getChildren()) && !p.getChildren().isEmpty())
+                .map(Process::getId)
+                .collect(Collectors.toSet());
+        Set<Integer> actual = processService.findProcessIdsWithChildren(allIds);
+
+        assertEquals(expected.size(), actual.size(), "Unexpected number of parent processes");
+        assertTrue(actual.containsAll(expected), "Returned parent process IDs do not match expected");
+    }
+
+    @Test
+    public void shouldFindProcessIdsWithVisibleTasksForUserOne() throws Exception {
+        ProcessService processService = ServiceManager.getProcessService();
+        UserService userService = ServiceManager.getUserService();
+
+        User user = userService.getById(1);
+        Set<Integer> userRoleIds = user.getRoles().stream()
+                .map(Role::getId)
+                .collect(Collectors.toSet());
+
+        List<Process> processes = processService.getAll();
+        List<Integer> processIds = processes.stream()
+                .map(Process::getId)
+                .collect(Collectors.toList());
+
+        Set<Integer> expected = new HashSet<>();
+
+        for (Process process : processes) {
+            if (hasVisibleTaskForUser(process, userRoleIds)) {
+                expected.add(process.getId());
+            }
+        }
+        Set<Integer> actual = processService.findProcessIdsWithVisibleTasks(
+                processIds,
+                userRoleIds
+        );
+
+        assertEquals(expected, actual, "Visible process IDs for user 1 do not match");
+    }
+
+    private boolean hasVisibleTaskForUser(Process process, Set<Integer> userRoles) {
+        if (Objects.isNull(process.getTasks())) {
+            return false;
+        }
+        for (Task task : process.getTasks()) {
+            if (!(TaskStatus.OPEN.equals(task.getProcessingStatus())
+                    || TaskStatus.INWORK.equals(task.getProcessingStatus()))) {
+                continue;
+            }
+            for (Integer roleId : task.getRoleIds()) {
+                if (userRoles.contains(roleId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

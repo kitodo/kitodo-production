@@ -42,8 +42,10 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 public class FileServiceTest {
 
@@ -161,7 +163,7 @@ public class FileServiceTest {
      * present but workpiece contains file references.</p>
      */
     @Test
-    public void testSearchForMedia() throws IOException, URISyntaxException {
+    public void testSearchForMedia() throws IOException, URISyntaxException, SAXException, FileStructureValidationException {
         Process process = mock(Process.class);
         Project project = mock(Project.class);
         Folder folder = mock(Folder.class);

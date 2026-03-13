@@ -40,6 +40,7 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
@@ -1081,7 +1082,7 @@ public class FileService {
         canonicals.forEach(mediaToAdd.keySet()::remove);
         removeMissingMediaFromWorkpiece(mediaToRemove, workpiece, subfolders.values());
         List<PhysicalDivision> children = workpiece.getPhysicalStructure().getChildren();
-        boolean orderedChildren = (!children.isEmpty() && children.get(0).getOrder() > 0);
+        boolean orderedChildren = (!children.isEmpty() && children.getFirst().getOrder() > 0);
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece, orderedChildren);
         renumberPhysicalDivisions(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
@@ -1105,7 +1106,7 @@ public class FileService {
                     .map(View::of).forEachOrdered(logicalDivision.getViews()::add);
         } else if (logicalDivision.getChildren().size() == 1) {
             automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(workpiece,
-                logicalDivision.getChildren().get(0));
+                logicalDivision.getChildren().getFirst());
         }
     }
 
@@ -1224,7 +1225,7 @@ public class FileService {
 
         LogicalDivision actualLogicalRoot = workpiece.getLogicalStructure();
         while (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() == 1) {
-            actualLogicalRoot = actualLogicalRoot.getChildren().get(0);
+            actualLogicalRoot = actualLogicalRoot.getChildren().getFirst();
         }
         // If the newspaper has multiple issues in the process, then everything stays as it was
         if (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() != 1) {
@@ -1466,7 +1467,7 @@ public class FileService {
                         // add new mapping otherwise
                         filenameMapping.put(fileUri, tmpUri);
                     }
-                    URI targetUri = new URI(StringUtils.removeStart(StringUtils.removeEnd(tmpUri.toString(),
+                    URI targetUri = new URI(Strings.CS.removeStart(Strings.CS.removeEnd(tmpUri.toString(),
                             TEMP_EXTENSION), process.getId() + SLASH));
                     page.getMediaFiles().put(variantURIEntry.getKey(), targetUri);
                     numberOfRenamedMedia++;
@@ -1480,7 +1481,7 @@ public class FileService {
             String tempFilenameString = tempFilename.toString();
             // skip filename mappings from last renaming round that have not been renamed again
             if (tempFilenameString.endsWith(TEMP_EXTENSION)) {
-                String newFilepath = StringUtils.removeEnd(tempFilename.toString(), TEMP_EXTENSION);
+                String newFilepath = Strings.CS.removeEnd(tempFilename.toString(), TEMP_EXTENSION);
                 filenameMapping.put(renamingEntry.getKey(), fileManagementModule.rename(tempFilename, newFilepath));
             }
         }
@@ -1565,7 +1566,7 @@ public class FileService {
                 }
             }
             for (URI tempUri : tempUris) {
-                fileManagementModule.rename(tempUri, StringUtils.removeEnd(tempUri.toString(), TEMP_EXTENSION));
+                fileManagementModule.rename(tempUri, Strings.CS.removeEnd(tempUri.toString(), TEMP_EXTENSION));
             }
         } catch (IOException e) {
             logger.error(e);

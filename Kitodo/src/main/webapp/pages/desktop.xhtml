@@ -55,11 +55,12 @@
                                         <p:ajax update="processTable" oncomplete="setScrollbarLayout()"/>
                                 </p:commandButton>
                             </h:form>
-                            <h:form id="allProcessesDesktopForm">
-                                <p:commandButton id="allProcesses" value="#{msgs.allProcesses}"
-                                        action="#{ProcessForm.navigateToProcessesList(true)}"
-                                        icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
-                            </h:form>
+                            <p:commandButton id="allProcesses"
+                                             value="#{msgs.allProcesses}"
+                                             action="#{ProcessForm.navigateToProcessesList(true)}"
+                                             process="@this"
+                                             icon="fa fa-search fa-lg"
+                                             iconPos="right" styleClass="secondary"/>
                         </div>
                     </div>
                     <div class="content-body">
@@ -79,7 +80,7 @@
                                 </p:commandButton>
                             </h:form>
                             <p:button id="allProjects" value="#{msgs.allProjects}"
-                                      outcome="projects?tabIndex=0"
+                                      outcome="projects?tab=projectTab"
                                       icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
                         </div>
                     </div>

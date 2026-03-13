@@ -46,126 +46,126 @@ import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
 
 public class Pages {
 
-    private static <T> T getPage(Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        T page = clazz.newInstance();
+    private static <T> T getPage(Class<T> clazz) throws ReflectiveOperationException {
+        T page = clazz.getDeclaredConstructor().newInstance();
         PageFactory.initElements(new RepeatingFieldDecorator(new DefaultElementLocatorFactory(Browser.getDriver())), page);
         return page;
     }
 
-    public static ClientEditPage getClientEditPage() throws InstantiationException, IllegalAccessException {
+    public static ClientEditPage getClientEditPage() throws ReflectiveOperationException {
         return getPage(ClientEditPage.class);
     }
 
-    public static CurrentTasksEditPage getCurrentTasksEditPage() throws InstantiationException, IllegalAccessException {
+    public static CurrentTasksEditPage getCurrentTasksEditPage() throws ReflectiveOperationException {
         return getPage(CurrentTasksEditPage.class);
     }
 
-    public static DesktopPage getDesktopPage() throws InstantiationException, IllegalAccessException {
+    public static DesktopPage getDesktopPage() throws ReflectiveOperationException {
         return getPage(DesktopPage.class);
     }
 
-    public static ExtendedSearchPage getExtendedSearchPage() throws InstantiationException, IllegalAccessException {
+    public static ExtendedSearchPage getExtendedSearchPage() throws ReflectiveOperationException {
         return getPage(ExtendedSearchPage.class);
     }
 
-    public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {
+    public static HelpPage getHelpPage() throws ReflectiveOperationException {
         return getPage(HelpPage.class);
     }
 
-    public static SystemPage getSystemPage() throws InstantiationException, IllegalAccessException {
+    public static SystemPage getSystemPage() throws ReflectiveOperationException {
         return getPage(SystemPage.class);
     }
 
-    public static LoginPage getLoginPage() throws InstantiationException, IllegalAccessException {
+    public static LoginPage getLoginPage() throws ReflectiveOperationException {
         return getPage(LoginPage.class);
     }
 
-    public static PostLoginChecksPage getPostLoginChecksPage() throws InstantiationException, IllegalAccessException {
+    public static PostLoginChecksPage getPostLoginChecksPage() throws ReflectiveOperationException {
         return getPage(PostLoginChecksPage.class);
     }
 
-    public static MetadataEditorPage getMetadataEditorPage() throws InstantiationException, IllegalAccessException {
+    public static MetadataEditorPage getMetadataEditorPage() throws ReflectiveOperationException {
         return getPage(MetadataEditorPage.class);
     }
 
-    public static ProcessesPage getProcessesPage() throws InstantiationException, IllegalAccessException {
+    public static ProcessesPage getProcessesPage() throws ReflectiveOperationException {
         return getPage(ProcessesPage.class);
     }
 
-    public static ProcessEditPage getProcessEditPage() throws InstantiationException, IllegalAccessException {
+    public static ProcessEditPage getProcessEditPage() throws ReflectiveOperationException {
         return getPage(ProcessEditPage.class);
     }
 
-    public static ProcessFromTemplatePage getProcessFromTemplatePage() throws InstantiationException, IllegalAccessException {
+    public static ProcessFromTemplatePage getProcessFromTemplatePage() throws ReflectiveOperationException {
         return getPage(ProcessFromTemplatePage.class);
     }
 
-    public static ProjectsPage getProjectsPage() throws InstantiationException, IllegalAccessException {
+    public static ProjectsPage getProjectsPage() throws ReflectiveOperationException {
         return getPage(ProjectsPage.class);
     }
 
-    public static ProjectEditPage getProjectEditPage() throws InstantiationException, IllegalAccessException {
+    public static ProjectEditPage getProjectEditPage() throws ReflectiveOperationException {
         return getPage(ProjectEditPage.class);
     }
 
-    public static TemplateEditPage getTemplateEditPage() throws InstantiationException, IllegalAccessException {
+    public static TemplateEditPage getTemplateEditPage() throws ReflectiveOperationException {
         return getPage(TemplateEditPage.class);
     }
 
-    public static WorkflowEditPage getWorkflowEditPage() throws InstantiationException, IllegalAccessException {
+    public static WorkflowEditPage getWorkflowEditPage() throws ReflectiveOperationException {
         return getPage(WorkflowEditPage.class);
     }
 
-    public static DocketEditPage getDocketEditPage() throws InstantiationException, IllegalAccessException {
+    public static DocketEditPage getDocketEditPage() throws ReflectiveOperationException {
         return getPage(DocketEditPage.class);
     }
 
-    public static RulesetEditPage getRulesetEditPage() throws InstantiationException, IllegalAccessException {
+    public static RulesetEditPage getRulesetEditPage() throws ReflectiveOperationException {
         return getPage(RulesetEditPage.class);
     }
 
-    public static ImportConfigurationEditPage getImportConfigurationEditPage() throws IllegalAccessException,
-            InstantiationException {
+    public static ImportConfigurationEditPage getImportConfigurationEditPage() throws ReflectiveOperationException {
         return getPage(ImportConfigurationEditPage.class);
     }
 
-    public static StartPage getStartPage() throws InstantiationException, IllegalAccessException {
+    public static StartPage getStartPage() throws ReflectiveOperationException {
         return getPage(StartPage.class);
     }
 
-    public static TasksPage getTasksPage() throws InstantiationException, IllegalAccessException {
+    public static TasksPage getTasksPage() throws ReflectiveOperationException {
         return getPage(TasksPage.class);
     }
 
-    public static TopNavigationPage getTopNavigation() throws InstantiationException, IllegalAccessException {
+    public static TopNavigationPage getTopNavigation() throws ReflectiveOperationException {
         return getPage(TopNavigationPage.class);
     }
 
-    public static UserEditPage getUserEditPage() throws InstantiationException, IllegalAccessException {
+    public static UserEditPage getUserEditPage() throws ReflectiveOperationException {
         return getPage(UserEditPage.class);
     }
 
-    public static RoleEditPage getRoleEditPage() throws InstantiationException, IllegalAccessException {
+    public static RoleEditPage getRoleEditPage() throws ReflectiveOperationException {
         return getPage(RoleEditPage.class);
     }
 
-    public static LdapGroupEditPage getLdapGroupEditPage() throws InstantiationException, IllegalAccessException {
+    public static LdapGroupEditPage getLdapGroupEditPage() throws ReflectiveOperationException {
         return getPage(LdapGroupEditPage.class);
     }
 
-    public static UsersPage getUsersPage() throws InstantiationException, IllegalAccessException {
+    public static UsersPage getUsersPage() throws ReflectiveOperationException {
         return getPage(UsersPage.class);
     }
 
-    public static CalendarPage getCalendarPage() throws InstantiationException, IllegalAccessException {
+    public static CalendarPage getCalendarPage() throws ReflectiveOperationException {
         return getPage(CalendarPage.class);
     }
 
-    public static MassImportPage getMassImportPage() throws IllegalAccessException, InstantiationException {
+    public static MassImportPage getMassImportPage() throws ReflectiveOperationException {
         return getPage(MassImportPage.class);
     }
 
-    public static LtpValidationConfigurationEditPage getLtpValidationConfigurationEditPage() throws IllegalAccessException, InstantiationException {
+    public static LtpValidationConfigurationEditPage getLtpValidationConfigurationEditPage()
+            throws ReflectiveOperationException {
         return getPage(LtpValidationConfigurationEditPage.class);
     }
 }

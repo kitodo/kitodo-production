@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,15 +55,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
 public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
-
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("file.keyword", "file");
-        SORT_FIELD_MAPPING.put("orderMetadataByRuleset", "orderMetadataByRuleset");
-    }
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
     private static volatile RulesetService instance = null;
@@ -112,7 +102,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
             Map<?, String> filtersNotImplemented) throws DAOException {
         BeanQuery beanQuery = new BeanQuery(Ruleset.class);
         beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        beanQuery.defineSorting(sortField, sortOrder);
         return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
@@ -179,7 +169,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
         } else {
             if (Objects.nonNull(ruleset.getId())) {
                 if (rulesets.size() == 1) {
-                    return !rulesets.get(0).getId().equals(ruleset.getId());
+                    return !rulesets.getFirst().getId().equals(ruleset.getId());
                 } else {
                     return true;
                 }
@@ -353,7 +343,7 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
             if (Objects.isNull(keySegments) || keySegments.isEmpty()) {
                 return "";
             }
-            String currentSegment = keySegments.get(0);
+            String currentSegment = keySegments.getFirst();
             for (Metadata metadataElement : ((MetadataGroup)metadata).getMetadata()) {
                 if (currentSegment.equals(metadataElement.getKey())) {
                     return getNestedMetadataValue(metadataElement, keySegments.subList(1, keySegments.size()));
@@ -426,10 +416,10 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
             String groupLabel = "";
             for (String key : keyHierarchy) {
                 if (keyHierarchy.indexOf(key) == 0) {
-                    groupLabel = ruleset.getTranslationForKey(keyHierarchy.get(0), languages).orElse(metadataKey);
+                    groupLabel = ruleset.getTranslationForKey(keyHierarchy.getFirst(), languages).orElse(metadataKey);
                 } else {
                     List<String> nestedKeys = new LinkedList<>();
-                    nestedKeys.add(keyHierarchy.get(0));
+                    nestedKeys.add(keyHierarchy.getFirst());
                     nestedKeys.add(key);
                     Optional<String> nestedKeyTranslation = ruleset.getTranslationForKey(nestedKeys, languages);
                     if (nestedKeyTranslation.isPresent()) {

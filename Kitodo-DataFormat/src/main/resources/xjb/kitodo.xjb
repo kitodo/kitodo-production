@@ -9,10 +9,10 @@
   * GPL3-License.txt file that was distributed with this source code.
   -->
 
-<jxb:bindings xmlns="http://java.sun.com/xml/ns/jaxb"
-              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+<jxb:bindings xmlns="https://jakarta.ee/xml/ns/jaxb"
+              xmlns:jxb="https://jakarta.ee/xml/ns/jaxb"
               xmlns:namespace="http://jaxb2-commons.dev.java.net/namespace-prefix"
-              version="2.1">
+              version="3.0">
     <bindings schemaLocation="../../../../target/downloaded-sources/xsd/kitodo.xsd">
         <schemaBindings>
             <package name="org.kitodo.dataformat.metskitodo"/>

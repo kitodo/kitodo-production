@@ -196,7 +196,7 @@ public class BeanQueryTest {
     public void shouldDefineSorting() {
         BeanQuery beanQuery = new BeanQuery(Process.class);
         assertThat("should construct HQL query sorting by ID", beanQuery.formQueryForAll(), containsString(
-            "ORDER BY id ASC"));
+            "ORDER BY process.id ASC"));
         beanQuery.defineSorting("title", SortOrder.DESCENDING);
         assertThat("should construct HQL query sorting by title descending", beanQuery.formQueryForAll(),
             containsString("ORDER BY process.title DESC"));
@@ -206,7 +206,7 @@ public class BeanQueryTest {
     public void shouldSetUnordered() {
         BeanQuery beanQuery = new BeanQuery(Process.class);
         assertThat("should construct HQL query sorting by ID", beanQuery.formQueryForAll(), containsString(
-            "ORDER BY id ASC"));
+            "ORDER BY process.id ASC"));
         beanQuery.setUnordered();
         assertThat("should construct HQL query without sorting", beanQuery.formQueryForAll(), not(containsString(
             "ORDER BY")));

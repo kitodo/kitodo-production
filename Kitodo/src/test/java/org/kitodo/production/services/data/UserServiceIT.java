@@ -19,7 +19,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -31,9 +34,12 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -118,7 +124,7 @@ public class UserServiceIT {
         User user = new User();
         user.setLogin("Remove");
         userService.save(user);
-        User foundUser = userService.getByQuery("FROM User WHERE login = 'Remove' ORDER BY id DESC").get(0);
+        User foundUser = userService.getByQuery("FROM User WHERE login = 'Remove' ORDER BY id DESC").getFirst();
         assertEquals("Remove", foundUser.getLogin(), "Additional user was not inserted in database!");
 
         userService.remove(foundUser);
@@ -128,7 +134,7 @@ public class UserServiceIT {
         user = new User();
         user.setLogin("remove");
         userService.save(user);
-        foundUser = userService.getByQuery("FROM User WHERE login = 'remove' ORDER BY id DESC").get(0);
+        foundUser = userService.getByQuery("FROM User WHERE login = 'remove' ORDER BY id DESC").getFirst();
         assertEquals("remove", foundUser.getLogin(), "Additional user was not inserted in database!");
 
         userService.remove(foundUser.getId());
@@ -146,9 +152,9 @@ public class UserServiceIT {
 
         User user = new User();
         user.setLogin("Cascade");
-        user.getRoles().add(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
+        user.getRoles().add(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").getFirst());
         userService.save(user);
-        User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
+        User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").getFirst();
         assertEquals("Cascade", foundUser.getLogin(), "Additional user was not inserted in database!");
 
         userService.remove(foundUser);
@@ -158,7 +164,7 @@ public class UserServiceIT {
         size = roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").size();
         assertEquals(1, size, "Role was removed from database!");
 
-        roleService.remove(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
+        roleService.remove(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").getFirst());
     }
 
     @Test
@@ -203,7 +209,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetAuthorityOfUser() throws Exception {
-        Authority authority = userService.getByLogin("kowal").getRoles().get(0).getAuthorities().get(1);
+        Authority authority = userService.getByLogin("kowal").getRoles().getFirst().getAuthorities().get(1);
         assertEquals("viewClient_globalAssignable", authority.getTitle(), "Authority title is incorrect!");
     }
 
@@ -229,9 +235,9 @@ public class UserServiceIT {
     @Test
     public void shouldGetUserTasksInProgress() throws DAOException {
         User user = userService.getByLdapLoginOrLogin("nowakLDP");
-        List<Task> tasks = userService.getTasksInProgress(user);
+        List<Task> tasks = ServiceManager.getTaskService().getTasksInProgress(user);
         assertEquals(1, tasks.size(), "Number of tasks in process is incorrect!");
-        assertEquals("Progress", tasks.get(0).getTitle(), "Title of task is incorrect!");
+        assertEquals("Progress", tasks.getFirst().getTitle(), "Title of task is incorrect!");
     }
 
     @Test
@@ -252,5 +258,110 @@ public class UserServiceIT {
     public void returnCorrectUserIndependentOfLoginOrLdapLoginByLdapLogin() {
         User user = userService.getByLdapLoginOrLogin("doraLDP");
         assertEquals("Dora, Anna", user.getFullName(), "Returned user was wrong");
+    }
+
+    @Test
+    public void shouldLoadSameRolesIndividuallyAndInBulk() throws DAOException {
+        List<User> users = ServiceManager.getUserService().getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<String>> bulkRoles =
+                ServiceManager.getUserService().loadRolesForUsers(userIds);
+        for (User user : users) {
+            List<String> expectedRoles = user.getRoles().stream()
+                    .map(Role::getTitle)
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> actualRoles = bulkRoles
+                    .getOrDefault(user.getId(), Collections.emptyList())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            assertEquals(
+                    expectedRoles,
+                    actualRoles,
+                    "Roles mismatch for user " + user.getId()
+            );
+        }
+    }
+
+    @Test
+    public void shouldLoadSameClientsIndividuallyAndInBulk() throws Exception {
+        List<User> users = userService.getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<String>> bulkClients = userService.loadClientsForUsers(userIds);
+        for (User user : users) {
+            List<String> expected = user.getClients().stream()
+                    .map(Client::getName)
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> actual = bulkClients
+                    .getOrDefault(user.getId(), Collections.emptyList())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            assertEquals(
+                    expected,
+                    actual,
+                    "Clients mismatch for user " + user.getId()
+            );
+        }
+    }
+
+    @Test
+    public void shouldLoadSameProjectsIndividuallyAndInBulk() throws Exception {
+        List<User> users = userService.getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<String>> bulkProjects =
+                userService.loadProjectsForUsers(userIds);
+        for (User user : users) {
+            List<String> expectedProjects = user.getProjects().stream()
+                    .map(Project::getTitle)
+                    .sorted()
+                    .collect(Collectors.toList());
+            List<String> actualProjects = bulkProjects
+                    .getOrDefault(user.getId(), Collections.emptyList())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            assertEquals(
+                    expectedProjects,
+                    actualProjects,
+                    "Projects mismatch for user " + user.getId()
+            );
+        }
+    }
+
+    @Test
+    public void shouldLoadSameTasksInProgressIndividuallyAndInBulk() throws Exception {
+        List<User> users = userService.getAll();
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        Map<Integer, Boolean> bulkTasksInProgress =
+                userService.loadTasksInProgressForUsers(userIds);
+        for (User user : users) {
+            boolean expected = user.getProcessingTasks().stream()
+                    .anyMatch(task ->
+                            task.getProcessingStatus() == TaskStatus.INWORK
+                                    && task.getProcess() != null
+                    );
+            boolean actual = bulkTasksInProgress
+                    .getOrDefault(user.getId(), false);
+
+            assertEquals(
+                    expected,
+                    actual,
+                    "Tasks-in-progress mismatch for user " + user.getId()
+            );
+        }
     }
 }

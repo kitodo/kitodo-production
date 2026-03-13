@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,10 +22,10 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
-import javax.xml.bind.JAXBException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +43,9 @@ import org.kitodo.production.services.ServiceManager;
 
 @Named("LtpValidationConfigurationEditView")
 @ViewScoped
-public class LtpValidationConfigurationEditView extends BaseForm {
+public class LtpValidationConfigurationEditView extends BaseEditView {
+
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "ltpValidationConfigurationEdit");
 
     private static final Logger logger = LogManager.getLogger(LtpValidationConfigurationEditView.class);
     private LtpValidationConfiguration configuration = new LtpValidationConfiguration();
@@ -111,7 +114,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
     public String save() {
         try {
             ServiceManager.getLtpValidationConfigurationService().save(configuration);
-            return projectsPage;
+            return LtpValidationConfigurationListView.VIEW_PATH +  "&" + getReferrerListOptions();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING,
                 new Object[] {ObjectType.LTP_VALIDATION_CONFIGURATION.getTranslationSingular() }, logger, e);
@@ -422,7 +425,7 @@ public class LtpValidationConfigurationEditView extends BaseForm {
         LtpValidationCondition condition = findSimpleCondition(PROPERTY_FILENAME,
             LtpValidationConditionOperation.MATCHES);
         if (Objects.nonNull(condition) && Objects.nonNull(condition.getValues()) && condition.getValues().size() == 1) {
-            return condition.getValues().get(0);
+            return condition.getValues().getFirst();
         }
         return simpleFilenamePattern;
     }

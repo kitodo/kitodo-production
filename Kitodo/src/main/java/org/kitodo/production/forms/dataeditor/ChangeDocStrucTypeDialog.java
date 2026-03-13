@@ -24,15 +24,17 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
+import org.xml.sax.SAXException;
 
 /**
  * Backing bean for the change doc struc type dialog of the metadata editor.
@@ -107,7 +109,7 @@ public class ChangeDocStrucTypeDialog {
                 docStructTypes.sort(Comparator.comparing(SelectItem::getLabel));
             }
             docStructType = selectedStructure.getType();
-        } catch (IllegalStateException | IOException e) {
+        } catch (IllegalStateException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -121,7 +123,7 @@ public class ChangeDocStrucTypeDialog {
     }
 
     private Map<String, String> findAllPossibleTypes(
-            LogicalDivision logicalDivision) throws IOException {
+            LogicalDivision logicalDivision) throws IOException, SAXException, FileStructureValidationException {
 
         Map<String, String> possibleTypes = getAllowedChildTypesFromIncludedStructuralParentElement(
             logicalDivision);
@@ -130,7 +132,7 @@ public class ChangeDocStrucTypeDialog {
     }
 
     private Map<String, String> getAllowedChildTypesFromIncludedStructuralParentElement(
-            LogicalDivision logicalDivision) throws IOException {
+            LogicalDivision logicalDivision) throws IOException, SAXException, FileStructureValidationException {
 
         LogicalDivision logicalStructure = dataEditor.getWorkpiece().getLogicalStructure();
         if (logicalStructure.equals(logicalDivision)) {
@@ -147,7 +149,8 @@ public class ChangeDocStrucTypeDialog {
         }
     }
 
-    private Map<String, String> getAllowedChildTypesFromParentalProcess() throws IOException {
+    private Map<String, String> getAllowedChildTypesFromParentalProcess() throws IOException, SAXException,
+            FileStructureValidationException {
         URI parentMetadataUri = ServiceManager.getProcessService()
                 .getMetadataFileUri(dataEditor.getProcess().getParent());
         LogicalDivision parentLogicalStructure = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
@@ -156,10 +159,10 @@ public class ChangeDocStrucTypeDialog {
                 .determineLogicalDivisionPathToChild(parentLogicalStructure,
                     dataEditor.getProcess().getId());
         if (parentHierarchyPath.isEmpty()) {
-            throw new IllegalStateException("proces is not linked in parent process");
+            throw new IllegalStateException("process is not linked in parent process");
         }
         return getAllowedSubstructuralElements(
-            ((LinkedList<LogicalDivision>) parentHierarchyPath).getLast().getType());
+            parentHierarchyPath.getLast().getType());
     }
 
     private Map<String, String> getAllowedSubstructuralElements(String parentType) {

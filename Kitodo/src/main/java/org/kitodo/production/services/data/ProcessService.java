@@ -60,8 +60,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,6 +67,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -113,9 +114,11 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.exceptions.ConfigurationException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessExportDTO;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -535,7 +538,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific docket.
      *
-     * <!-- Used in DocketForm to find out whether a docket is used in a
+     * <!-- Used in DocketListView to find out whether a docket is used in a
      * process. (Then it may not be deleted.) Is only checked for isEmpty(). -->
      *
      * @param docketId
@@ -552,7 +555,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific ruleset.
      *
-     * <!-- Used in RulesetForm to find out whether a ruleset is used in a
+     * <!-- Used in RulesetListView to find out whether a ruleset is used in a
      * process. (Then it may not be deleted.) Is only checked for isEmpty(). -->
      *
      * @param rulesetId
@@ -974,8 +977,15 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param process
      *            object
      * @return filer format
+     * @throws IOException
+     *            when retrieving metadata file type fails
+     * @throws SAXException
+     *            when schema definition for metadata file validation contains invalid XML syntax
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
-    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process) throws IOException {
+    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process) throws IOException, SAXException,
+            FileStructureValidationException {
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
 
         // check the format of the metadata - METS, XStream or RDF
@@ -985,7 +995,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         LegacyMetsModsDigitalDocumentHelper ff = determineFileFormat(type, process);
         try {
             ff.read(ServiceManager.getFileService().getFile(metadataFileUri).toString());
-        } catch (IOException e) {
+        } catch (IOException | SAXException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setErrorMessage("metadataCorrupt", logger, e);
             } else {
@@ -1003,9 +1013,15 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param prefs
      *            The Preferences
      * @return The fileFormat.
+     * @throws IOException
+     *            when retrieving metadata file type fails
+     * @throws SAXException
+     *            when schema definition for metadata file validation contains invalid XML syntax
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
     public LegacyMetsModsDigitalDocumentHelper readMetadataFile(URI metadataFile, LegacyPrefsHelper prefs)
-            throws IOException {
+            throws IOException, SAXException, FileStructureValidationException {
         String type = MetadataHelper.getMetaFileType(metadataFile);
         LegacyMetsModsDigitalDocumentHelper fileFormat = determineFileFormat(type, prefs);
         fileFormat.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
@@ -1034,8 +1050,15 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param process
      *            object
      * @return file format
+     * @throws IOException
+     *            when retrieving metadata file type fails
+     * @throws SAXException
+     *            when schema definition for metadata file validation contains invalid XML syntax
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
-    public LegacyMetsModsDigitalDocumentHelper readMetadataAsTemplateFile(Process process) throws IOException {
+    public LegacyMetsModsDigitalDocumentHelper readMetadataAsTemplateFile(Process process) throws IOException, SAXException,
+            FileStructureValidationException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
             String type = MetadataHelper.getMetaFileType(processSubTypeURI);
@@ -1166,7 +1189,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 document.setPageSize(rectangle);
                 document.open();
                 if (!rowList.isEmpty()) {
-                    Paragraph paragraph = new Paragraph(rowList.get(0).get(0).toString());
+                    Paragraph paragraph = new Paragraph(rowList.getFirst().getFirst().toString());
                     document.add(paragraph);
                     document.add(getPdfTable(rowList));
                 }
@@ -1264,8 +1287,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @throws IOException
      *             if creating the process directory or reading the meta data file
      *             fails
+     * @throws SAXException
+     *            when schema definition for metadata file validation contains invalid XML syntax
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
-    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process) throws IOException {
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process) throws IOException, SAXException,
+            FileStructureValidationException {
         return readMetadataFile(process).getDigitalDocument();
     }
 
@@ -1281,7 +1309,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         try {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
             return ServiceManager.getMetsService().getBaseType(metadataFilePath);
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException | SAXException | FileStructureValidationException e) {
             logger.info("Could not determine base type for process {}: {}", process, e.getMessage());
             return "";
         }
@@ -1784,7 +1812,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static List<Process> getAllParentProcesses(Process process) {
         List<Process> parents = new ArrayList<>();
         while (Objects.nonNull(process.getParent())) {
-            parents.add(0, process.getParent());
+            parents.addFirst(process.getParent());
             process = process.getParent();
         }
         return parents;
@@ -1800,10 +1828,53 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *             when query to database fails
      */
     public int getNumberOfChildren(int processId) throws DAOException {
-        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent.id = " + processId));
     }
 
-    public static void deleteProcess(int processID) throws DAOException, IOException {
+    /**
+     * Checks whether the given parent process has any child processes
+     * that are not in a completed state.
+     *
+     * @param parentProcess
+     *            the parent process whose child processes are being checked
+     * @return true if there is at least one incomplete child process,
+     *         false if all children are completed
+     */
+    public boolean hasIncompleteChildren(Process parentProcess) {
+        String hql = "FROM Process p WHERE p.parent = :parent "
+                + "AND (p.sortHelperStatus NOT IN (:completedStates) OR p.sortHelperStatus IS NULL)";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("parent", parentProcess);
+        parameters.put("completedStates", List.of(
+                ProcessState.COMPLETED20.getValue(),
+                ProcessState.COMPLETED.getValue()
+        ));
+        try {
+            return dao.has(hql, parameters);
+        } catch (DAOException e) {
+            logger.error(e.getMessage(), e);
+            return true;
+        }
+    }
+
+    /**
+     * Delete process by ID.
+     *
+     * @param processID
+     *          ID of process to delete
+     * @throws DAOException
+     *          when loading or deleting process fails
+     * @throws IOException
+     *          when deleting process fails
+     * @throws SAXException
+     *          when an error occurs during XML validation of potential parent processes' workpiece during during removal
+     *          of process links due to schema invalid parent process metadata files
+     * @throws FileStructureValidationException
+     *          when deleting process fails during removal of process links from potential parent process due to schema invalid
+     *          parent process metadata files
+     */
+    public static void deleteProcess(int processID) throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         Process process = ServiceManager.getProcessService().getById(processID);
         deleteProcess(process);
     }
@@ -1811,9 +1882,21 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Delete given process.
      *
-     * @param processToDelete process to delete
+     * @param processToDelete
+     *          process to delete
+     * @throws DAOException
+     *          when updating or deleting process fails
+     * @throws IOException
+     *          when removing link to potential parent process fails
+     * @throws SAXException
+     *          when an error occurs during XML validation of potential parent processes' workpiece during during removal
+     *          of process links due to schema invalid parent process metadata files
+     * @throws FileStructureValidationException
+     *          when deleting process fails during removal of process links from potential parent process due to schema invalid
+     *          parent process metadata files
      */
-    public static void deleteProcess(Process processToDelete) throws DAOException, IOException {
+    public static void deleteProcess(Process processToDelete) throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         deleteMetadataDirectory(processToDelete);
 
         processToDelete.setProject(null);
@@ -1904,8 +1987,12 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *             Thrown on index error
      * @throws IOException
      *             Thrown on I/O error
+     * @throws SAXException
+     *             When starting the export fails
+     * @throws FileStructureValidationException
+     *             when XML validation of process metadata file fails during export
      */
-    public static void exportMets(int processId) throws DAOException, IOException {
+    public static void exportMets(int processId) throws DAOException, IOException, SAXException, FileStructureValidationException {
         Process process = ServiceManager.getProcessService().getById(processId);
         ExportMets export = new ExportMets();
         export.startExport(process);
@@ -2288,15 +2375,62 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
+     * Finds all process IDs that have at least one child process.
+     *
+     * @param processIds process IDs to check
+     * @return IDs of processes that have children
+     */
+    public Set<Integer> findProcessIdsWithChildren(Collection<Integer> processIds) throws DAOException {
+        if (Objects.isNull(processIds) || processIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        String hql = "SELECT DISTINCT p.parent.id "
+                        + "FROM Process p "
+                        + "WHERE p.parent.id IN (:ids)";
+
+        Map<String, Object> parameters = Map.of("ids", processIds);
+        List<Object[]> rows = dao.getProjectionByQuery(hql, parameters);
+        return rows.stream()
+                .map(row -> (Integer) row[0])
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Finds all process IDs that have at least one visible task
+     * for the given roles.
+     *
+     * @param processIds process IDs to check
+     * @param roleIds role IDs used to determine task visibility
+     * @return IDs of processes that have visible tasks
+     */
+    public Set<Integer> findProcessIdsWithVisibleTasks(
+            Collection<Integer> processIds,
+            Collection<Integer> roleIds) throws DAOException {
+        String hql =
+                "SELECT DISTINCT t.process.id "
+                        + "FROM Task t "
+                        + "JOIN t.roles r "
+                        + "WHERE t.process.id IN (:processIds) "
+                        + "AND t.processingStatus IN (:statuses) "
+                        + "AND r.id IN (:roleIds)";
+
+        Map<String, Object> params = Map.of(
+                "processIds", processIds,
+                "roleIds", roleIds,
+                "statuses", List.of(TaskStatus.OPEN, TaskStatus.INWORK)
+        );
+        List<Object[]> rows = dao.getProjectionByQuery(hql, params);
+        return rows.stream()
+                .map(row -> (Integer) row[0])
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Checks and returns whether the process with the given ID 'processId' can be exported or not.
      * @param process the process
      * @return whether process can be exported or not
      */
     public static boolean canBeExported(Process process) throws DAOException {
-        // superordinate processes normally do not contain images but should always be exportable
-        if (process.hasChildren()) {
-            return true;
-        }
         Folder generatorSource = process.getProject().getGeneratorSource();
         // processes without a generator source should be exportable because they may contain multimedia files
         // that are not used as generator sources
@@ -2370,14 +2504,14 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         try {
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri, false);
             process.setSortHelperImages(getNumberOfImagesForIndex(workpiece));
             process.setSortHelperDocstructs(getNumberOfStructures(workpiece));
             process.setSortHelperMetadata(getNumberOfMetadata(workpiece));
             if (save) {
                 super.save(process);
             }
-        } catch (IOException e) {
+        } catch (IOException | SAXException | FileStructureValidationException e) {
             logger.debug("Could not load meta file {} for gathering meta information!", metadataFileUri.toString());
         }
     }

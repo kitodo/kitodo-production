@@ -20,12 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
+
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,6 +39,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -149,14 +151,15 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
                 createProcessForm.getProject().getId(), 
                 createProcessForm.getTemplate().getId(), 
                 1,
-                createProcessForm.getRulesetManagement().getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER)
+                createProcessForm.getRulesetManagement().getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER),
+                    false
             );
             createProcessForm.setProcesses(processes);
             showMetadataComparisonDialog();
         } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
-                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
-                     | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
-                     | NoSuchMetadataFieldException e) {
+                 | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
+                 | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
+                 | NoSuchMetadataFieldException | FileStructureValidationException e) {
             logger.error("error when selecting record in hitlist", e);
         }
     }
@@ -169,7 +172,7 @@ public class UpdateMetadataImportDialogSequence implements Serializable {
         try {
             if (!createProcessForm.getProcesses().isEmpty()) {
                 Process process = dataEditorForm.getProcess();
-                TempProcess tempProcess = createProcessForm.getProcesses().get(0);
+                TempProcess tempProcess = createProcessForm.getProcesses().getFirst();
                 
                 List<MetadataComparison> metadataComparisons = updateMetadataDialog.getMetadataComparisons();
                 metadataComparisons.clear();

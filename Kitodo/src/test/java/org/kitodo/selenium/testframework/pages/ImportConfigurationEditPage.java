@@ -122,7 +122,7 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
         assignMappingFile();
     }
 
-    public void save() throws InstantiationException, IllegalAccessException {
+    public void save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
     }
 
@@ -155,7 +155,7 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
                 .atMost(3, TimeUnit.SECONDS)
                 .until(() -> mappingFiles.isDisplayed());
         WebElement sourcePickList = Browser.getDriver().findElement(By.className("ui-picklist-source"));
-        sourcePickList.findElements(By.cssSelector("li.ui-picklist-item")).get(0).click();
+        sourcePickList.findElements(By.cssSelector("li.ui-picklist-item")).getFirst().click();
         WebElement addMappingFileButton = Browser.getDriver().findElement(By.className("ui-picklist-button-add"));
         addMappingFileButton.click();
         await().ignoreExceptions()

@@ -13,11 +13,13 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -67,14 +69,14 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
         return this;
     }
 
-    public ProjectsPage save() throws IllegalAccessException, InstantiationException {
+    public ProjectsPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 
-    public ProjectsPage saveOnce() throws IllegalAccessException, InstantiationException {
-        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
-        Browser.getDriver().findElementById(SAVE_BUTTON_ID).click();
+    public ProjectsPage saveOnce() throws ReflectiveOperationException {
+        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(60));
+        Browser.getDriver().findElement(By.id(SAVE_BUTTON_ID)).click();
         if (Browser.isAlertPresent() && Pages.getProjectsPage().getUrl().contains("login")) {
             Browser.getDriver().switchTo().alert().accept();
         }
@@ -107,7 +109,7 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     }
 
     public boolean isSaveButtonEnabled() {
-        return Browser.getDriver().findElementById(SAVE_BUTTON_ID).isEnabled();
+        return Browser.getDriver().findElement(By.id(SAVE_BUTTON_ID)).isEnabled();
     }
 
     public ProjectEditPage toggleProjectActiveCheckbox() throws InterruptedException {

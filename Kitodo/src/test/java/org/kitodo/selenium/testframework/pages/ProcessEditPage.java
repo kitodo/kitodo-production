@@ -72,7 +72,7 @@ public class ProcessEditPage extends EditPage<ProcessEditPage> {
         addTemplateProperty("Second new", "2");
     }
 
-    public ProcessesPage save() throws IllegalAccessException, InstantiationException {
+    public ProcessesPage save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }

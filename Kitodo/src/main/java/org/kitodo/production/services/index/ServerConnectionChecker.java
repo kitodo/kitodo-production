@@ -52,8 +52,8 @@ class ServerConnectionChecker implements Runnable {
         boolean clearId = false;
         try {
             if (indexingService.serverCheckThreadId == 0) {
-                indexingService.serverCheckThreadId = currentThread().getId();
-                if (indexingService.serverCheckThreadId == currentThread().getId()) {
+                indexingService.serverCheckThreadId = currentThread().threadId();
+                if (indexingService.serverCheckThreadId == currentThread().threadId()) {
                     clearId = true;
                     indexingService.serverInformation = downloadServerInformation();
                     indexingService.serverLastCheck = System.nanoTime();

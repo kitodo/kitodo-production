@@ -29,7 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -82,7 +81,7 @@ public class ImportingST extends BaseTestSelenium {
     }
 
     @AfterAll
-    public static void cleanup() throws DAOException, IOException {
+    public static void cleanup() throws Exception {
         ProcessService.deleteProcess(multiVolumeWorkId);
         server.stop();
     }
@@ -239,7 +238,7 @@ public class ImportingST extends BaseTestSelenium {
         assertEquals(1, processesPage.countListedProcesses(), "Exactly one imported parent process should be displayed");
         List<String> processIds = processesPage.getProcessIds();
         assertEquals(1, processIds.size(), "Exactly one process ID should be visible");
-        int processId = Integer.parseInt(processIds.get(0));
+        int processId = Integer.parseInt(processIds.getFirst());
         processesPage.filterByChildren();
         List<String> childProcessIds = processesPage.getProcessIds();
         assertEquals(3, childProcessIds.size(), "Wrong number of child processes");

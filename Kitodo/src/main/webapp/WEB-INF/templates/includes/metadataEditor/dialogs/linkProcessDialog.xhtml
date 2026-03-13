@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="linkProcessDialog"
+              resizable="false"
+              widgetVar="linkProcess"
+              modal="true"
+              showHeader="false"
+              dynamic="true"
+              appendTo="@(body)">
+        <h3>#{msgs['dataEditor.linkProcess']}</h3>
+        <h:form id="linkProcessForm">
+            <h:panelGroup id="linkProcessFormContent"
+                          layout="block"
+                          styleClass="not-scrollable dialogFieldWrapper">
+
+                <!-- link to existing process -->
+                <p:panelGrid>
+                    <p:row>
+                        <p:column colspan="1">
+                            <p:inputText id="processTitle"
+                                         styleClass="search-process-title input"
+                                         placeholder="#{msgs.processTitle} / #{msgs.id}"
+                                         value="#{DataEditorForm.linkProcessDialog.processNumber}"/>
+                        </p:column>
+                        <p:column styleClass="search-button-container">
+                            <p:commandButton id="searchButton"
+                                             value="#{msgs['dialogAddDocStrucType.searchButton']}"
+                                             action="#{DataEditorForm.linkProcessDialog.search}"
+                                             styleClass="primary"
+                                             icon="fa fa-search fa-lg"
+                                             iconPos="right">
+                                    <p:remoteCommand name="updateProcessSelect"
+                                                     update="processSelect"/>
+                                    <p:ajax update="processSelect"
+                                            oncomplete="updateProcessSelect()"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel for="processSelect"
+                                           value="#{msgs.processes}"/>
+                            <p:selectOneMenu id="processSelect"
+                                             disabled="#{empty DataEditorForm.linkProcessDialog.processes}"
+                                             styleClass="input"
+                                             autoWidth="false"
+                                             converter="#{processConverter}"
+                                             value="#{DataEditorForm.linkProcessDialog.selectedProcess}">
+                                <f:selectItem noSelectionOption="true"
+                                              itemValue="#{null}"
+                                              itemLabel="#{msgs.selectProcess}"/>
+                                <f:selectItems value="#{DataEditorForm.linkProcessDialog.processes}"/>
+                                <p:ajax event="change" update="addLinkButton"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <p:panelGrid id="submitButtonGroup" columns="1">
+
+                    <!-- submit buttons for linking processes -->
+                    <h:panelGroup layout="block">
+                        <p:commandButton id="addLinkButton"
+                                         value="#{msgs.apply}"
+                                         action="#{DataEditorForm.linkProcessDialog.addProcessLink}"
+                                         disabled="#{empty DataEditorForm.linkProcessDialog.selectedProcess}"
+                                         update="structureTreeForm,paginationForm:paginationWrapperPanel"
+                                         icon="fa fa-check fa-lg"
+                                         iconPos="right"
+                                         styleClass="primary right"
+                                         oncomplete="PF('linkProcess').hide();"/>
+                        <p:commandButton value="#{msgs.cancel}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="secondary"
+                                         styleClass="secondary right"
+                                         onclick="PF('linkProcess').hide();"/>
+                    </h:panelGroup>
+                </p:panelGrid>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

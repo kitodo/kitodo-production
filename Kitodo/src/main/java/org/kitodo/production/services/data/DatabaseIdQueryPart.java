@@ -65,7 +65,7 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
         List<Integer> idList = NON_DIGITS.splitAsStream(ids).filter(Predicate.not(String::isEmpty)).map(
             Integer::valueOf).collect(Collectors.toList());
         boolean multipleIDs = idList.size() > 1;
-        this.firstId = multipleIDs ? null : idList.get(0);
+        this.firstId = multipleIDs ? null : idList.getFirst();
         this.idList = multipleIDs ? idList : null;
         this.upToId = null;
     }

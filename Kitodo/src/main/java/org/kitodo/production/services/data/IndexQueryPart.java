@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.data.database.beans.ProcessKeywords;
 
 /**
  * A portion of the filter entered by the user that is resolved through the
@@ -45,7 +46,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
     IndexQueryPart(FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
-            if (value.length() >= filterField.getMinTokenLength()) {
+            if (value.length() >= ProcessKeywords.LENGTH_MIN_DEFAULT) {
                 this.lookfor.add(normalize(value));
             }
         }
@@ -105,13 +106,13 @@ class IndexQueryPart implements UserSpecifiedFilter {
             Collection<String> restrictions) {
         if (lookfor.size() == 1) {
             restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + parameterName + ')');
-            indexQueries.put(parameterName, Pair.of(filterField, lookfor.get(0)));
+            indexQueries.put(parameterName, Pair.of(filterField, lookfor.getFirst()));
         } else if (lookfor.size() >= 1) {
             int queryCount = 0;
             for (String lookingFor : lookfor) {
                 queryCount++;
                 String uniqueParameterName = parameterName + UNIQUE_PARAMETER_EXTENSION + queryCount;
-                restrictions.add(varName + (operand ? ".id IN (:" : ".id NOT IN (:") + uniqueParameterName + ')');
+                restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + uniqueParameterName + ')');
                 indexQueries.put(uniqueParameterName, Pair.of(filterField, lookingFor));
             }
         }

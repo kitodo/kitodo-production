@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 public class AdditionalField {
 
@@ -334,11 +335,11 @@ public class AdditionalField {
         }
 
         // if obligatory was specified
-        if (!this.isDocType.isEmpty() && !StringUtils.containsIgnoreCase(this.isDocType, this.docType)) {
+        if (!this.isDocType.isEmpty() && !Strings.CI.contains(this.isDocType, this.docType)) {
             return false;
         }
 
         // if only "may not" was specified
-        return !(!this.isNotDoctype.isEmpty() && StringUtils.containsIgnoreCase(this.isNotDoctype, this.docType));
+        return !(!this.isNotDoctype.isEmpty() && Strings.CI.contains(this.isNotDoctype, this.docType));
     }
 }

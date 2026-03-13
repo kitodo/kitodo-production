@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -262,7 +262,7 @@ public class Subfolder {
      */
     public URI getUri(String canonical) {
         List<String> uriComponents = getUriComponents(canonical);
-        return Paths.get(ConfigCore.getKitodoDataDirectory(), uriComponents.toArray(new String[uriComponents.size()]))
+        return Paths.get(ConfigCore.getKitodoDataDirectory(), uriComponents.toArray(new String[0]))
                 .toUri();
     }
 

@@ -30,10 +30,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
+
+import jakarta.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -54,12 +55,15 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -390,18 +394,47 @@ public class DataEditorService {
     /**
      * Re-imports catalog metadata of given process and return list of resulting metadata comparison that are displayed
      * to the user.
-     * @param process Process for which metadata update is performed
-     * @param workpiece Workpiece of given process
-     * @param oldMetadataSet Set containing old metadata
-     * @return list of metadata comparisons
+     *
+     * @param process
+     *          Process for which metadata update is performed
+     * @param workpiece
+     *          Workpiece of given process
+     * @param oldMetadataSet
+     *          Set containing old metadata
+     * @return
+     *          list of metadata comparisons
+     * @throws IOException
+     *          when opening process' ruleset fails
+     * @throws UnsupportedFormatException
+     *          when external data record of temp process contains data in unsupported format
+     * @throws XPathExpressionException
+     *          when error message XPath in ImportConfiguration has syntax errors
+     * @throws NoRecordFoundException
+     *          when no record with given ID 'recordID' could be found
+     * @throws ProcessGenerationException
+     *          when imported temp process is null
+     * @throws ParserConfigurationException
+     *          when parsing import XML document fails
+     * @throws URISyntaxException
+     *          when loading MappingFiles from ImportConfiguration fails
+     * @throws TransformerException
+     *          when when loading document in internal format fails
+     * @throws InvalidMetadataValueException
+     *          when generating atstsl fields fails
+     * @throws NoSuchMetadataFieldException
+     *          when generating atstsl fields fails
+     * @throws SAXException
+     *          when parsing import XML document fails
+     * @throws FileStructureValidationException
+     *          when XML validation of imported data record fails
      */
     public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece,
                                                                    HashSet<Metadata> oldMetadataSet,
                                                                    List<Locale.LanguageRange> languages,
                                                                    String selectedDivisionType)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
-            ProcessGenerationException, ParserConfigurationException, URISyntaxException, InvalidMetadataValueException,
-            TransformerException, NoSuchMetadataFieldException, SAXException {
+            ProcessGenerationException, ParserConfigurationException, URISyntaxException, TransformerException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException, SAXException, FileStructureValidationException {
         String recordID = getRecordIdentifierValueOfProcess(process, workpiece);
         ImportConfiguration importConfig = process.getImportConfiguration();
         if (Objects.isNull(recordID) || Objects.isNull(importConfig)) {
@@ -544,6 +577,7 @@ public class DataEditorService {
      */
     public static void updateMetadataWithNewValues(LogicalDivision logicalDivision, List<MetadataComparison> comparisons) {
         for (MetadataComparison comparison : comparisons) {
+            stripEmptyGroupFields(comparison.getOldValues());
             switch (comparison.getSelection()) {
                 case ADD:
                     // extend existing values with new values
@@ -559,5 +593,66 @@ public class DataEditorService {
                     logger.info("Keep existing values for metadata {}", comparison.getMetadataKey());
             }
         }
+    }
+
+    private static void stripEmptyGroupFields(HashSet<Metadata> values) {
+        for (Metadata md : values) {
+            if (md instanceof MetadataGroup group) {
+                group.getMetadata().removeIf(child ->
+                        child instanceof MetadataEntry entry
+                                && Objects.nonNull(entry.getValue())
+                                && entry.getValue().isBlank()
+                );
+            }
+        }
+    }
+
+    /**
+     * Return the ID of linked process represented by the given logical division. Returns null if given logical division
+     * does not represent a linked process.
+     *
+     * @param logicalDivision logical division potentially representing a linked process
+     * @return ID of linked process
+     * @throws DAOException if linked process cannot be loaded from database
+     */
+    public Integer getLinkedProcessId(LogicalDivision logicalDivision) throws DAOException {
+        LinkedMetsResource resource = logicalDivision.getLink();
+        if (Objects.nonNull(resource)) {
+            return ServiceManager.getProcessService().processIdFromUri(resource.getUri());
+        }
+        return null;
+    }
+
+    /**
+     * Checks whether conditions are met for displaying the context menu option to link another process as a
+     * subordinate process.
+     * The conditions are:
+     * - no media is selected
+     * - exactly one logical node is selected
+     * - selected logical node does not already represent a linked process
+     * - Logical structure represented by the selected node has allowed substructures that are defined as document types
+     *   in the current ruleset
+     * @param dataEditor DataEditorForm instance used to determine conditions
+     * @param treeNode TreeNode representing the selected structure
+     * @return whether the option to link a process is displayed
+     */
+    public boolean linkingProcessPossible(DataEditorForm dataEditor, TreeNode<?> treeNode) {
+        List<?> selectedMedia = dataEditor.getSelectedMedia();
+        if (Objects.nonNull(treeNode) && selectedMedia.isEmpty()) {
+            Object data = treeNode.getData();
+            if (data instanceof StructureTreeNode structureTreeNode) {
+                if (structureTreeNode.getDataObject() instanceof LogicalDivision logicalDivision) {
+                    RulesetManagementInterface ruleset = dataEditor.getRulesetManagement();
+                    List<Locale.LanguageRange> locales = dataEditor.getPriorityList();
+                    Map<String, String> documentTypes = ruleset.getStructuralElements(locales);
+                    StructuralElementViewInterface structureElement = ruleset.getStructuralElementView(logicalDivision.getType(),
+                            dataEditor.getAcquisitionStage(), locales);
+                    Map<String, String> allowedSubstructures = structureElement.getAllowedSubstructuralElements();
+                    allowedSubstructures.keySet().retainAll(documentTypes.keySet());
+                    return !structureTreeNode.isLinked() && !allowedSubstructures.isEmpty();
+                }
+            }
+        }
+        return false;
     }
 }

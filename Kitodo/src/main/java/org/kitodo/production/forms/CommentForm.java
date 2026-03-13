@@ -18,8 +18,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
@@ -36,6 +37,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 @Named("CommentForm")
 @SessionScoped
@@ -252,7 +254,7 @@ public class CommentForm extends BaseForm {
             return Collections.emptyList();
         } else {
             return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                    currentTaskOptions.get(0).getOrdering(),
+                    currentTaskOptions.getFirst().getOrdering(),
                     this.process.getId());
         }
     }
@@ -267,7 +269,7 @@ public class CommentForm extends BaseForm {
     public String solveProblem(Comment comment) {
         try {
             this.workflowControllerService.solveProblem(comment, TaskEditType.MANUAL_SINGLE);
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
         refreshProcess(comment.getCurrentTask().getProcess());
@@ -352,7 +354,7 @@ public class CommentForm extends BaseForm {
      */
     public void newComment(Boolean isCorrectionComment) {
         if (getSizeOfPreviousStepsForProblemReporting() > 0) {
-            setCorrectionTaskId(getPreviousStepsForProblemReporting().get(0).getId().toString());
+            setCorrectionTaskId(getPreviousStepsForProblemReporting().getFirst().getId().toString());
         } else {
             setCorrectionTaskId("");
         }

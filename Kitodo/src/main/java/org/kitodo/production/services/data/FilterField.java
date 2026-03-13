@@ -15,52 +15,52 @@ import java.util.Objects;
 
 import net.bytebuddy.utility.nullability.MaybeNull;
 
-import org.kitodo.data.database.beans.ProcessKeywords;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.enums.TaskStatus;
 
 /**
  * Constants for known search field names in filters.
  */
 enum FilterField {
-    SEARCH(null, null, null, null, null, null, "search", ProcessKeywords.LENGTH_MIN_REASONABLE),
-    PROCESS_ID(null, null, null, "id", "process.id", null, null, -1),
-    PARENT_PROCESS_ID(null, null, null, "parent.id", "process.parent.id", null, null, -1),
-    PROCESS_TITLE("title", "process.title", LikeSearch.NO, null, null, null, "searchTitle",
-            ProcessKeywords.LENGTH_MIN_DEFAULT),
+    SEARCH(null, null, null, null, null, null, "search"),
+    PROCESS_ID(null, null, null, "id", "process.id", null, null),
+    PARENT_PROCESS_ID(null, null, null, "parent.id", "process.parent.id", null, null),
+    PROCESS_TITLE("title", "process.title", LikeSearch.NO, null, null, null, "searchTitle"),
     PROJECT("project.title", "process.project.title", LikeSearch.ALLOWED, "project.id", "process.project.id", null,
-            null, -1),
+            null),
     PROJECT_LOOSE("project.title", "process.project.title", LikeSearch.ALWAYS_RIGHT, "project.id", "process.project.id",
-            null, null, -1),
+            null, null),
     BATCH("process.batches AS batch WITH batch.title", "process.batches AS batch WITH batch.title",
-            LikeSearch.NO, "batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, null, -1),
-    TASK("tasks AS task WITH task.title", "title", LikeSearch.NO, "tasks AS task WITH task.id", "id", null, null, -1),
+            LikeSearch.NO, "batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, null),
+    TASK("tasks AS task WITH task.title", "title", LikeSearch.NO, "tasks AS task WITH task.id", "id", null, null),
     TASK_AUTOMATIC("tasks AS task WITH task.typeAutomatic = :queryObject AND task.title",
             "~.typeAutomatic = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.typeAutomatic = :queryObject AND task.id", "typeAutomatic = :queryObject AND id",
-            Boolean.TRUE, null, -1),
+            Boolean.TRUE, null),
     TASK_UNREADY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.LOCKED, null, -1),
+            "processingStatus = :queryObject AND id", TaskStatus.LOCKED, null),
     TASK_READY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.OPEN, null, -1),
+            "processingStatus = :queryObject AND id", TaskStatus.OPEN, null),
     TASK_ONGOING("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.INWORK, null, -1),
+            "processingStatus = :queryObject AND id", TaskStatus.INWORK, null),
     TASK_FINISHED("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
             "~.processingStatus = :queryObject AND ~.title", LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
-            "processingStatus = :queryObject AND id", TaskStatus.DONE, null, -1),
+            "processingStatus = :queryObject AND id", TaskStatus.DONE, null),
     TASK_FINISHED_USER(
             "tasks AS task WITH task.processingStatus = :queryObject AND (task.processingUser.name = # OR task.processingUser.surname = # "
                     .concat("OR task.processingUser.login = # OR task.processingUser.ldapLogin = #)"),
             "~.processingStatus = :queryObject AND (~.processingUser.name = # OR ~.processingUser.surname = # "
                     .concat("OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)"), LikeSearch.NO,
             "tasks AS task WITH task.processingStatus = :queryObject AND task.processingUser.id",
-            "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, null, -1);
+            "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, null);
 
     /**
      * Here the string search field names (user input) are mapped to the
@@ -80,6 +80,7 @@ enum FilterField {
             case "parentprocessid":
                 return PARENT_PROCESS_ID;
             case "process": return PROCESS_TITLE;
+            case "search": return SEARCH;
             case "project": return PROJECT;
             case "project_loose":
                 return PROJECT_LOOSE;
@@ -91,8 +92,7 @@ enum FilterField {
             case "stepinwork": return TASK_ONGOING;
             case "stepdone": return TASK_FINISHED;
             case "stepdonetitle": return TASK_FINISHED;
-            case "stepdoneuser": return TASK_FINISHED_USER;
-
+            case "stepdoneuser": return getTaskFinishedUser();
             case "prozess": return PROCESS_TITLE;
             case "elternprozessid":
                 return PARENT_PROCESS_ID;
@@ -107,7 +107,7 @@ enum FilterField {
             case "schrittinarbeit": return TASK_ONGOING;
             case "schrittabgeschlossen": return TASK_FINISHED;
             case "abgeschlossenerschritttitel": return TASK_FINISHED;
-            case "abgeschlossenerschrittbenutzer": return TASK_FINISHED_USER;
+            case "abgeschlossenerschrittbenutzer": return getTaskFinishedUser();
             default: return null;
         }
     }
@@ -119,7 +119,6 @@ enum FilterField {
     private final String taskIdQuery;
     private final Object queryObject;
     private final String searchField;
-    private final int minTokenLength;
 
     /**
      * Creates a filter field enum constant.
@@ -138,11 +137,9 @@ enum FilterField {
      *            object {@code :queryObject}, if used in the query
      * @param searchField
      *            search field for index search
-     * @param minTokenLength
-     *            minimum length of searchable token
      */
     FilterField(String processTitleQuery, String taskTitleQuery, LikeSearch likeSearch, String processIdQuery,
-            String taskIdQuery, Object queryObject, String searchField, int minTokenLength) {
+            String taskIdQuery, Object queryObject, String searchField) {
         this.processTitleQuery = processTitleQuery;
         this.taskTitleQuery = taskTitleQuery;
         this.likeSearch = likeSearch;
@@ -150,7 +147,14 @@ enum FilterField {
         this.taskIdQuery = taskIdQuery;
         this.queryObject = queryObject;
         this.searchField = searchField;
-        this.minTokenLength = minTokenLength;
+    }
+
+    private static FilterField getTaskFinishedUser() {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
+            return TASK_FINISHED_USER;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -228,16 +232,4 @@ enum FilterField {
         return searchField;
     }
 
-    /**
-     * Minimum length for searchable tokens. Tokens that are too short are not
-     * indexed because they bloat the index and quickly lead to all candidate
-     * matches, resulting in unnecessary computing and no benefit. Therefore,
-     * they must be filtered out of the query; otherwise, searching for them
-     * will return 0 matches.
-     * 
-     * @return minimum length of searchable token
-     */
-    int getMinTokenLength() {
-        return minTokenLength;
-    }
 }

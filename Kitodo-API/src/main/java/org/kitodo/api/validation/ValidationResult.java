@@ -16,10 +16,10 @@ import java.util.Collection;
 public class ValidationResult {
 
     /** The state of the validation. */
-    private State state;
+    private final State state;
 
     /** A list of result messages. */
-    private Collection<String> resultMessages;
+    private final Collection<String> resultMessages;
 
     public ValidationResult(State state, Collection<String> resultMessages) {
         this.state = state;

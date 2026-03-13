@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
@@ -107,20 +108,20 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
                 .until(() -> userMenuButton.isDisplayed());
         RemoteWebDriver driver = Browser.getDriver();
         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("logout-form:logout")));
-        WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(60));
         webDriverWait.until(ExpectedConditions.urlContains(Pages.getLoginPage().getUrl()));
     }
 
-    public String getSessionClient() throws InterruptedException {
+    public String getSessionClient() throws InterruptedException{
         await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> userMenuButton.isDisplayed());
 
         userMenuButton.click();
-        WebElement element = Browser.getDriver().findElementById("sessionClient").findElement(By.tagName("b"));
+        WebElement element = Browser.getDriver().findElement(By.id("sessionClient")).findElement(By.tagName("b"));
         return element.getText();
     }
 
-    public void acceptClientSelection() throws IllegalAccessException, InstantiationException {
+    public void acceptClientSelection() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(acceptClientSelectionButton, Pages.getDesktopPage().getUrl());
     }
 

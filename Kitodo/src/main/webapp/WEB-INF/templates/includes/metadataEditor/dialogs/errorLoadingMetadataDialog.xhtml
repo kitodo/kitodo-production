@@ -35,7 +35,7 @@
         </h:panelGroup>
         <h:panelGroup layout="block"
                       styleClass="dialogButtonWrapper">
-            <p:button outcome="/pages/desktop.jsf"
+            <p:button outcome="#{DataEditorForm.getReferringView()}"
                       value="#{msgs['ok']}"
                       styleClass="primary right"
                       icon="fa fa-close"

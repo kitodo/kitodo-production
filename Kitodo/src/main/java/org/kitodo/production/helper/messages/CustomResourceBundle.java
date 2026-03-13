@@ -17,8 +17,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,7 +35,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
 
     private static final Logger logger = LogManager.getLogger(CustomResourceBundle.class);
     private static URLClassLoader urlClassLoader;
-    private static Map<String, Boolean> propertiesFileExistsMap = new HashMap<String, Boolean>();
+    private static Map<String, Boolean> propertiesFileExistsMap = new HashMap<>();
 
     @Override
     public Enumeration<String> getKeys() {
@@ -61,9 +59,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
             if (file.exists()) {
                 try {
                     final URL resourceURL = file.toURI().toURL();
-                    urlClassLoader = AccessController.doPrivileged(
-                        (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] { resourceURL })
-                    );
+                    urlClassLoader = new URLClassLoader(new URL[] { resourceURL });
                 } catch (MalformedURLException e) {
                     logger.info(e.getMessage(), e);
                 }

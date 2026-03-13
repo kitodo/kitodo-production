@@ -19,7 +19,7 @@
 
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.ImportConfiguration"-->
     <p:dataTable id="configurationTable"
-                 value="#{ImportConfigurationListView.importConfigurations}"
+                 value="#{ImportConfigurationListView.lazyBeanModel}"
                  var="item"
                  styleClass="default-layout"
                  first="#{ImportConfigurationListView.firstRow}"
@@ -32,6 +32,9 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
+
+        <p:ajax event="page" listener="#{ImportConfigurationListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{ImportConfigurationListView.onSortChange}"/>
 
         <p:column headerText="#{msgs.title}" 
                   sortBy="#{item.title}">
@@ -75,6 +78,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewImportConfiguration() and not SecurityAccessController.hasAuthorityToEditImportConfiguration()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{ImportConfigurationListView.combinedListOptions}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
@@ -84,6 +88,7 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditImportConfiguration()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{ImportConfigurationListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 

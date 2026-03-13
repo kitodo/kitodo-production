@@ -20,31 +20,31 @@
     <p:dataTable id="docketTable"
                  styleClass="default-layout"
                  var="item"
-                 value="#{DocketForm.lazyBeanModel}"
-                 first="#{DocketForm.firstRow}"
+                 value="#{DocketListView.lazyBeanModel}"
+                 first="#{DocketListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{DocketForm.sortBy}"
+                 sortBy="#{DocketListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page"
-                listener="#{DocketForm.onPageChange}"/>
+        <p:ajax event="page" listener="#{DocketListView.onPageChange}"/>
+        <p:ajax event="sort" listener="#{DocketListView.onSortChange}"/>
 
         <p:column headerText="#{msgs.title}"
-                  sortBy="#{item.title.keyword}"
-                  rendered="#{ProjectForm.showColumn('docket.title')}">
+                  sortBy="#{item.title}"
+                  rendered="#{DocketListView.showColumn('docket.title')}">
             <h:outputText value="#{item.title}"
                           title="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
-                  sortBy="#{item.file.keyword}"
-                  rendered="#{ProjectForm.showColumn('docket.filename')}">
+                  sortBy="#{item.file}"
+                  rendered="#{DocketListView.showColumn('docket.filename')}">
             <h:outputText value="#{item.file}"
                           title="#{item.file}"/>
         </p:column>
@@ -60,6 +60,7 @@
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewDocket() and not SecurityAccessController.hasAuthorityToEditDocket()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{DocketListView.combinedListOptions}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
@@ -69,19 +70,19 @@
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditDocket()}">
                     <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referrerListOptions" value="#{DocketListView.combinedListOptions}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
                 <p:commandLink id="deleteDocket"
-                               action="#{DocketForm.delete}"
+                               action="#{DocketListView.delete(item)}"
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteDocket()}"
                                update="docketTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{DocketForm.docketById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{DocketForm.formatString('confirmDeleteDocket', item.title)}"
+                               message="#{DocketListView.formatString('confirmDeleteDocket', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

@@ -28,10 +28,12 @@ import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ProcessorException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.xml.sax.SAXException;
 
 /**
  * This is a web service interface to modify task status.
@@ -79,13 +81,13 @@ public class TaskActionProcessor extends ActiveMQProcessor {
                 throw new ProcessorException("Task with id " + taskId + " not found.");
             }
             processAction(mapMessageObjectReader, taskAction, currentTask);
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             throw new ProcessorException(e);
         }
     }
 
     private void processAction(MapMessageObjectReader mapMessageObjectReader, TaskAction taskAction, Task currentTask)
-            throws JMSException, ProcessorException, DAOException, IOException {
+            throws JMSException, ProcessorException, DAOException, IOException, SAXException, FileStructureValidationException {
         Comment comment = null;
         if (mapMessageObjectReader.hasField(KEY_MESSAGE)) {
             comment = buildComment(currentTask, mapMessageObjectReader.getMandatoryString(KEY_MESSAGE));
@@ -166,7 +168,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     private void actionErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask, User currentUser)
-            throws JMSException, DAOException, IOException {
+            throws JMSException, DAOException, IOException, SAXException, FileStructureValidationException {
         currentTask.setProcessingStatus(TaskStatus.OPEN);
         currentTask.setEditType(TaskEditType.QUEUE);
         currentTask.setProcessingBegin(null);
@@ -182,12 +184,13 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         }
     }
 
-    private void markErrorCommentAsCorrected(Task currentTask) throws DAOException, IOException {
+    private void markErrorCommentAsCorrected(Task currentTask) throws DAOException, IOException, SAXException,
+            FileStructureValidationException {
         markErrorCommentAsCorrected(currentTask, null);
     }
 
     private void markErrorCommentAsCorrected(Task currentTask, Integer correctionTaskId)
-            throws DAOException, IOException {
+            throws DAOException, IOException, SAXException, FileStructureValidationException {
         List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(currentTask);
         Optional<Comment> optionalComment;
         optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(

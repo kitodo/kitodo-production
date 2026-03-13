@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +59,7 @@ public class ProcessDataTab {
             } else if (docTypeExistsInRuleset(docType)) {
                 this.docType = docType;
             } else {
-                this.docType = (String) allDocTypes.get(0).getValue();
+                this.docType = (String) allDocTypes.getFirst().getValue();
                 Helper.setErrorMessage("docTypeNotFound", new Object[] {docType });
             }
         }
@@ -157,7 +157,7 @@ public class ProcessDataTab {
         if (allDocTypes.isEmpty()) {
             setDocType("");
         } else {
-            setDocType((String) allDocTypes.get(0).getValue());
+            setDocType((String) allDocTypes.getFirst().getValue());
         }
     }
 
@@ -202,7 +202,7 @@ public class ProcessDataTab {
 
     private String getDocTypeLabel(String docType) {
         for (int i = 0; i < this.allDocTypes.size(); i++) {
-            SelectItem docTypeItem = this.allDocTypes.get(0);
+            SelectItem docTypeItem = this.allDocTypes.getFirst();
             if (docTypeItem.getValue().equals(docType)) {
                 return docTypeItem.getLabel();
             }

@@ -73,7 +73,7 @@ public class ConfigConversionST extends BaseTestSelenium {
                 .atMost(5, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(Browser.getDriver()
-                        .findElementById("importResultsForm:successfulImports").isDisplayed()));
+                        .findElement(By.id("importResultsForm:successfulImports")).isDisplayed()));
 
         // assert successful opac config imports
         assertTrue(importConfigurationsTab.allCatalogsImportedSuccessfully(Arrays.asList(GBV, KALLIOPE, K10PLUS)));
@@ -109,7 +109,7 @@ public class ConfigConversionST extends BaseTestSelenium {
 
         // mapping files
         assertEquals(1, gbvConfiguration.getMappingFiles().size());
-        assertEquals(MODS_2_KITODO, gbvConfiguration.getMappingFiles().get(0).getFile());
+        assertEquals(MODS_2_KITODO, gbvConfiguration.getMappingFiles().getFirst().getFile());
     }
 
     private void checkKalliopeConfiguration() throws DAOException {
@@ -133,7 +133,7 @@ public class ConfigConversionST extends BaseTestSelenium {
 
         // mapping files
         assertEquals(1, kalliopeConfiguration.getMappingFiles().size());
-        assertEquals(MODS_2_KITODO, kalliopeConfiguration.getMappingFiles().get(0).getFile());
+        assertEquals(MODS_2_KITODO, kalliopeConfiguration.getMappingFiles().getFirst().getFile());
 
         // parent mapping file
         assertEquals(MODS_2_KITODO, kalliopeConfiguration.getParentMappingFile().getFile());

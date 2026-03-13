@@ -28,6 +28,28 @@ public enum PaginatorType {
         }
     },
 
+    ALPHABETIC(4) {
+        @Override
+        public String format(PaginatorMode mode, String valueString, boolean fictitious, String separator) {
+            int value;
+            try {
+                value = AlphabeticNumeral.parseInt(valueString);
+            } catch (NumberFormatException b) {
+                try {
+                    value = Integer.parseInt(valueString);
+                } catch (NumberFormatException unused) {
+                    throw b;
+                }
+            }
+            return mode.format(
+                    '´' + AlphabeticNumeral.format(new HalfInteger(value, false), null) + '´',
+                    '´' + AlphabeticNumeral.format(new HalfInteger(value + 1, false), null) + '´',
+                    fictitious,
+                    separator
+            );
+        }
+    },
+
     /**
      * Arabic numbers (1, 2, 3, …).
      */
@@ -74,8 +96,12 @@ public enum PaginatorType {
                     throw b;
                 }
             }
-            return mode.format(RomanNumeral.format(value, true), RomanNumeral.format(value + 1, true), fictitious,
-                separator);
+            return mode.format(
+                    RomanNumeral.format(new HalfInteger(value, false), true, null),
+                    RomanNumeral.format(new HalfInteger(value + 1, false), true, null),
+                    fictitious,
+                    separator
+            );
         }
     },
 

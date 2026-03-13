@@ -17,25 +17,31 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:p="http://primefaces.org/ui">
-    <p:remoteCommand name="removeFilter"
-                     action="#{CurrentTaskForm.filterMenu.removeFilter}"
-                     oncomplete="setFilterInputPadding()"
-                     update="tasksTabView:tasksForm:taskTable parsedFiltersForm:parsedFilters"/>
-    <p:remoteCommand name="removeFilterForEdit"
-                     action="#{CurrentTaskForm.filterMenu.removeFilter}"
-                     oncomplete="setFilterInputPadding()"
-                     update="parsedFiltersForm:parsedFilters"/>
-    <p:remoteCommand name="updateSuggestions"
-                     action="#{CurrentTaskForm.filterMenu.updateSuggestions}"
-                     update="filterOptionsForm:suggestions"/>
-    <p:remoteCommand name="submitFilters"
-                     action="#{CurrentTaskForm.filterMenu.submitFilters}"
-                     onstart="PF('taskTable').getPaginator().setPage(0);"
-                     oncomplete="setFilterInputPadding();"
-                     update="tasksTabView:tasksForm:taskTable
-                             filterInputForm:filterfield
-                             parsedFiltersForm:parsedFilters
-                             filterOptionsForm:suggestions"/>
+    <h:form id="filterCommands">
+        <p:remoteCommand name="removeFilter"
+                         id="removeFilterCommand"
+                         action="#{CurrentTaskForm.filterMenu.removeFilter}"
+                         oncomplete="setFilterInputPadding()"
+                         update="tasksTabView:tasksForm:taskTable parsedFiltersForm:parsedFilters"/>
+        <p:remoteCommand name="removeFilterForEdit"
+                         id="removeFilterForEditCommand"
+                         action="#{CurrentTaskForm.filterMenu.removeFilter}"
+                         oncomplete="setFilterInputPadding()"
+                         update="parsedFiltersForm:parsedFilters"/>
+        <p:remoteCommand name="updateSuggestions"
+                         id="updateSuggestionsCommand"
+                         action="#{CurrentTaskForm.filterMenu.updateSuggestions}"
+                         update="filterOptionsForm:suggestions"/>
+        <p:remoteCommand name="submitFilters"
+                         id="submitFiltersCommand"
+                         action="#{CurrentTaskForm.filterMenu.submitFilters}"
+                         onstart="PF('taskTable').getPaginator().setPage(0);"
+                         oncomplete="setFilterInputPadding();"
+                         update="tasksTabView:tasksForm:taskTable
+                                 filterInputForm:filterfield
+                                 parsedFiltersForm:parsedFilters
+                                 filterOptionsForm:suggestions"/>
+    </h:form>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">

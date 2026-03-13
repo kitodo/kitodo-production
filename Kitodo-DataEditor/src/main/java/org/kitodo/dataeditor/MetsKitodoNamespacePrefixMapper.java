@@ -13,7 +13,7 @@ package org.kitodo.dataeditor;
 
 import static org.kitodo.constants.StringConstants.KITODO;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 
 /**
  * Extension of NamespacePrefixMapper which holds the used namespaces and

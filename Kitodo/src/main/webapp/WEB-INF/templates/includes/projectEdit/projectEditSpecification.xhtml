@@ -21,13 +21,13 @@
         <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportPath}" />
-                <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportPath}" styleClass="input-with-button" value="#{ProjectForm.project.dmsImportRootPath}"
-                             disabled="#{ProjectForm.locked}">
+                <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportPath}" styleClass="input-with-button" value="#{ProjectEditView.project.dmsImportRootPath}"
+                             disabled="#{ProjectEditView.locked}">
                     <p:ajax event="keyup"
                             delay="300"
                             update="editForm:projectTabView:copyDmsExportImageDirButton"/>
                 </p:inputText>
-                <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.project.dmsImportRootPath}"/>
+                <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectEditView.project.dmsImportRootPath}"/>
             </div>
         </p:panel>
     </p:panelGrid>

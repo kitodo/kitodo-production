@@ -38,16 +38,6 @@ import org.primefaces.model.SortOrder;
 
 public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
 
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title", "title");
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("metsRightsOwner.keyword", "metsRightsOwner");
-        SORT_FIELD_MAPPING.put("active", "active");
-    }
-
     private static volatile ProjectService instance = null;
 
     private final UserService userService = ServiceManager.getUserService();
@@ -116,7 +106,7 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
             sortOrder = SortOrder.ASCENDING;
         }
         BeanQuery query = getProjectsQuery();
-        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        query.defineSorting(sortField, sortOrder);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
 
@@ -162,14 +152,14 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         if (user.getProjects().isEmpty()) {
-            return getByQuery("FROM Project WHERE client_id = :sessionClientId", parameters);
+            return getByQuery("FROM Project WHERE client.id = :sessionClientId", parameters);
         } else {
             List<Integer> assignedProjectIds = user.getProjects()
                     .stream()
                     .map(Project::getId)
                     .collect(Collectors.toList());
             parameters.put("assignedProjects", assignedProjectIds);
-            return getByQuery("FROM Project WHERE client_id = :sessionClientId AND id NOT IN :assignedProjects",
+            return getByQuery("FROM Project WHERE client.id = :sessionClientId AND id NOT IN :assignedProjects",
                 parameters);
         }
     }
@@ -306,6 +296,20 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
             return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
                     .collect(Collectors.joining(COMMA_DELIMITER));
         }
+    }
+
+    /**
+     * Checks whether the given project has any processes assigned to it.
+     *
+     * @param projectId
+     *            the ID of the project to check
+     * @return return true if at least one process belongs to the project,
+     *            false otherwise
+     */
+    public boolean hasProcesses(int projectId) throws DAOException {
+        return dao.has("FROM Process AS process WHERE process.project.id = :project_id",
+                Collections.singletonMap("project_id", projectId)
+        );
     }
 
     /**

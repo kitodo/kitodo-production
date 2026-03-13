@@ -18,23 +18,24 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <!--@elvariable id="tabIndex" type="java.lang.String"-->
-        <f:viewParam name="tabIndex"/>
-        <f:viewAction action="#{ProjectForm.setActiveTabIndexFromTemplate(tabIndex)}" />
-        <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
-        <f:viewParam name="keepPagination"/>
-        <f:viewAction action="#{ProjectForm.resetPaginator(keepPagination)}"/>
-        <f:viewAction action="#{TemplateForm.resetPaginator(keepPagination)}"/>
-        <f:viewAction action="#{WorkflowForm.resetPaginator(keepPagination)}"/>
-        <f:viewAction action="#{DocketForm.resetPaginator(keepPagination)}"/>
-        <f:viewAction action="#{RulesetForm.resetPaginator(keepPagination)}"/>
+        <!--@elvariable id="tab" type="java.lang.String"-->
+        <f:viewParam name="tab"/>
+        <f:viewAction action="#{ProjectsTabView.setActiveTabIdFromTemplate(tab)}" />
+        <!--@elvariable id="firstRow" type="java.lang.Integer"-->
+        <f:viewParam name="firstRow"/>
+        <f:viewAction action="#{ProjectsTabView.setFirstRowFromTemplate(firstRow)}" />
+        <!--@elvariable id="sortField" type="java.lang.String"-->
+        <f:viewParam name="sortField"/>
+        <!--@elvariable id="sortOrder" type="java.lang.String"-->
+        <f:viewParam name="sortOrder"/>
+        <f:viewAction action="#{ProjectsTabView.setSortByFromTemplate(sortField, sortOrder)}" />
     </f:metadata>
 
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
         <h:panelGroup id="convertButtonWrapper">
             <h:form id="convertMenu"
-                    rendered="#{ProjectForm.activeTabIndex eq 5}">
+                    rendered="#{ProjectsTabView.activeTabId eq 'importConfigurationsTab'}">
                 <p:commandButton value="#{msgs['importConfig.migration.importCatalogConfigurations']}"
                                  id="convertCatalogConfigurations"
                                  styleClass="secondary"
@@ -43,34 +44,84 @@
             </h:form>
         </h:panelGroup>
         <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  label=""
-                                  showHeader="false"
-                                  converter="#{listColumnConverter}"
-                                  title="#{msgs.configureColumns}"
-                                  value="#{ProjectForm.selectedColumns}">
-                <f:selectItems value="#{ProjectForm.columns}" />
-                <p:ajax listener="#{ProjectForm.saveSelectedColumns()}"
-                        update="projectsTabView"/>
-            </p:selectCheckboxMenu>
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'projectTab'}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{ProjectListView.selectedColumns}">
+                    <f:selectItems value="#{ProjectListView.columns}" />
+                    <p:ajax listener="#{ProjectListView.saveSelectedColumns()}"
+                            update="projectsTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'templateTab'}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{TemplateListView.selectedColumns}">
+                    <f:selectItems value="#{TemplateListView.columns}" />
+                    <p:ajax listener="#{TemplateListView.saveSelectedColumns()}"
+                            update="projectsTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'workflowTab'}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{WorkflowListView.selectedColumns}">
+                    <f:selectItems value="#{WorkflowListView.columns}" />
+                    <p:ajax listener="#{WorkflowListView.saveSelectedColumns()}"
+                            update="projectsTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'docketTab'}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{DocketListView.selectedColumns}">
+                    <f:selectItems value="#{DocketListView.columns}" />
+                    <p:ajax listener="#{DocketListView.saveSelectedColumns()}"
+                            update="projectsTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
+            <p:outputPanel rendered="#{ProjectsTabView.activeTabId eq 'rulesetTab'}">
+                <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                    label=""
+                                    showHeader="false"
+                                    converter="#{listColumnConverter}"
+                                    title="#{msgs.configureColumns}"
+                                    value="#{RulesetListView.selectedColumns}">
+                    <f:selectItems value="#{RulesetListView.columns}" />
+                    <p:ajax listener="#{RulesetListView.saveSelectedColumns()}"
+                            update="projectsTabView"/>
+                </p:selectCheckboxMenu>
+            </p:outputPanel>
         </h:form>
-        <h:form id="projectForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnProjectPage()}">
+        <h:form id="newElementForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnProjectPage()}">
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus"
                           iconPos="right" styleClass="callto" menuStyleClass="new-element-menu">
-                <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="fa fa-plus"
+                <p:menuitem value="#{msgs.newProject}" action="#{ProjectListView.newProject}" icon="fa fa-plus"
                             id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"/>
-                <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
+                <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateListView.newTemplate}"
                             id="newTemplateButton" immediate="true" icon="fa fa-plus"
                             rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}"/>
-                <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
+                <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowListView.newWorkflow}"
                             immediate="true" icon="fa fa-plus"
                             rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
-                <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
+                <p:menuitem value="#{msgs.newDocket}" action="#{DocketListView.newDocket}"
                             id="newDocketButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddDocket()}"
                             icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
+                <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetListView.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs['importConfig.new']}" action="#{ImportConfigurationListView.newImportConfiguration()}" immediate="true"
@@ -87,11 +138,11 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" prependId="false"
+        <p:tabView activeIndex="#{ProjectsTabView.derivedActiveTabIndex}" prependId="false"
                    id="projectsTabView" widgetVar="projectsTabView" dynamic="true">
             <p:ajax event="tabChange"
-                    listener="#{ProjectForm.onTabChange}"
-                    update="convertButtonWrapper"/>
+                    listener="#{ProjectsTabView.onTabChange}"
+                    update="convertButtonWrapper configureColumnsForm"/>
             <p:tab title="#{msgs.projects}" id="projectTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
@@ -137,6 +188,12 @@
         <ui:include src="/WEB-INF/templates/includes/projects/importCatalogConfigurationsPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/projects/importCatalogConfigurationsResult.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/projects/selectMappingFileFormats.xhtml"/>
+    </ui:define>
+
+    <ui:define name="page-scripts">
+        <h:outputScript name="js/defaultScript.js" target="body"/>
+        <h:outputScript name="js/queryParams.js" target="body"/>
+        <h:outputScript name="js/tabView.js" target="body"/>
     </ui:define>
 
 </ui:composition>

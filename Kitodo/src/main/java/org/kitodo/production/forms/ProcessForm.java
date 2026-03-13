@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.model.SelectItem;
+import jakarta.faces.model.SelectItemGroup;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,6 +50,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
@@ -60,7 +61,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
-import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -72,6 +72,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -478,8 +479,17 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Task status up.
+     *
+     * @throws DAOException
+     *          when setting up task status via WorkflowControllerService fails
+     * @throws IOException
+     *          when setting up task status via WorkflowControllerService fails
+     * @throws SAXException
+     *          when setting up task status via WorkflowControllerService fails
+     * @throws FileStructureValidationException
+     *          when setting up task status via WorkflowControllerService fails
      */
-    public void setTaskStatusUp() throws DAOException, IOException {
+    public void setTaskStatusUp() throws DAOException, IOException, SAXException, FileStructureValidationException {
         final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusUp");
         workflowControllerService.setTaskStatusUp(this.task);
         processService.refresh(this.process);
@@ -612,7 +622,7 @@ public class ProcessForm extends TemplateBaseForm {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DAOException | IOException | InvalidImagesException e) {
+        } catch (DAOException | IOException | InvalidImagesException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
@@ -1059,20 +1069,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
-     * "INWORK".
-     *
-     * @param process
-     *          process for which current task titles are returned
-     * @return String containing titles of current tasks of given process
-     */
-    public String getCurrentTaskTitles(Process process) {
-        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "getCurrentTaskTitles");
-        return stopwatch.stop(ServiceManager.getProcessService().createProgressTooltip(process));
-
-    }
-
-    /**
      * Get all parent processes recursively for the given process.
      *
      * @return List of Processes
@@ -1134,14 +1130,8 @@ public class ProcessForm extends TemplateBaseForm {
      * 
      * @return amount of processes
      */
-    public String getAmount() throws DAOException {
-        Stopwatch stopwatch = new Stopwatch(this, "getAmount");
-        HashMap<String, String> filterMap = new HashMap<>();
-        if (!StringUtils.isBlank(this.filter)) {
-            filterMap.put(FilterService.FILTER_STRING, this.filter);
-        }
-        return stopwatch.stop(ServiceManager.getProcessService().countResults(filterMap,
-                isShowClosedProcesses(), isShowInactiveProjects()).toString());
+    public Integer getAmount() {
+        return Objects.isNull(lazyBeanModel) ? 0 : lazyBeanModel.getRowCount();
     }
 
     /**

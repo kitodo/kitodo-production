@@ -19,7 +19,7 @@
 
     <p:dataTable id="templateTable"
                  var="template"
-                 value="#{ProjectForm.project.activeTemplates}">
+                 value="#{ProjectEditView.project.activeTemplates}">
         <p:column headerText="#{msgs.template}" id="taskTitle">
             <h:outputText value="#{template.title}"/>
         </p:column>
@@ -38,8 +38,8 @@
 
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteTemplate"
-                           disabled="#{ProjectForm.locked}"
-                           action="#{ProjectForm.deleteTemplate}"
+                           disabled="#{ProjectEditView.locked}"
+                           action="#{ProjectEditView.deleteTemplate}"
                            styleClass="action"
                            title="#{msgs.deleteTemplate}"
                            immediate="true"
@@ -53,7 +53,7 @@
 
     <p:commandButton onclick="PF('addTemplateDialog').show()"
                      id="addTemplateButton"
-                     disabled="#{ProjectForm.locked}"
+                     disabled="#{ProjectEditView.locked}"
                      value="#{msgs.addTemplate}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"

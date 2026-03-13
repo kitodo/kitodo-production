@@ -29,25 +29,25 @@
             <div>
                 <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
                 <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
-                             value="#{WorkflowForm.workflow.title}" required="#{not empty param['editForm:save']}" disabled="#{isViewMode}"/>
+                             value="#{WorkflowEditView.workflow.title}" required="#{not empty param['editForm:save']}" disabled="#{isViewMode}"/>
             </div>
             <div class="workflow-editor-hidden">
-                <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
-                <h:inputHidden value="#{WorkflowForm.language}" id="editor_language"/>
-                <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}">
-                    <f:selectItems value="#{WorkflowForm.roles}"/>
+                <h:inputHidden value="#{WorkflowEditView.xmlDiagram}" id="xmlDiagram"/>
+                <h:inputHidden value="#{WorkflowEditView.language}" id="editor_language"/>
+                <p:selectOneMenu id="roleId" value="#{WorkflowEditView.roleId}">
+                    <f:selectItems value="#{WorkflowEditView.roles}"/>
                 </p:selectOneMenu>
                 <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
-                                 action="#{WorkflowForm.readXMLDiagram}"
-                                 rendered="#{WorkflowForm.workflow.title ne null}" immediate="true"/>
+                                 action="#{WorkflowEditView.readXMLDiagram}"
+                                 rendered="#{WorkflowEditView.workflow.title ne null}" immediate="true"/>
             </div>
         </p:panel>
         <p:panel styleClass="column-wrapper">
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
-                <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input" disabled="#{isViewMode}">
+                <p:selectOneMenu id="status" value="#{WorkflowEditView.workflowStatus}" class="input" disabled="#{isViewMode}">
                     <p:ajax event="change" update="@this" />
-                    <f:selectItems value="#{WorkflowForm.workflowStatuses}"
+                    <f:selectItems value="#{WorkflowEditView.workflowStatuses}"
                                    var="status"
                                    itemValue="#{status}"
                                    itemLabel="#{msgs[status]}"/>
@@ -61,7 +61,7 @@
                                          disabled="#{isViewMode}"
                                          styleClass="switch input"
                                          title="#{msgs.separateStructureCheckboxTooltip}"
-                                         value="#{WorkflowForm.workflow.separateStructure}">
+                                         value="#{WorkflowEditView.workflow.separateStructure}">
                 </p:selectBooleanCheckbox>
             </div>
         </p:panel>

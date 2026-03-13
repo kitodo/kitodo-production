@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
@@ -62,7 +63,7 @@ public class BeanQuery {
     private final Collection<String> restrictions = new ArrayList<>();
     private final List<String> restrictionAlternatives = new ArrayList<>();
     private boolean indexFiltersAsAlternatives = false;
-    private Pair<String, String> sorting = Pair.of("id", "ASC");
+    private Pair<String, String> sorting;
     private final Map<String, Pair<FilterField, String>> indexQueries = new HashMap<>();
     private final Map<String, Object> parameters = new HashMap<>();
 
@@ -76,6 +77,7 @@ public class BeanQuery {
         this.beanClass = beanClass;
         className = beanClass.getSimpleName();
         varName = className.toLowerCase();
+        sorting = Pair.of(varName + ".id", "ASC");
     }
 
     /**
@@ -321,7 +323,8 @@ public class BeanQuery {
      */
     public void restrictWithUserFilterString(String filterString) {
         int userFilterCount = 0;
-        for (var groupFilter : filterService.parse(filterString, beanClass.isAssignableFrom(Process.class))
+        boolean indexed = beanClass.isAssignableFrom(Process.class) || beanClass.isAssignableFrom(Task.class);
+        for (var groupFilter : filterService.parse(filterString, indexed)
                 .entrySet()) {
             List<String> groupFilters = new ArrayList<>();
             for (UserSpecifiedFilter searchFilter : groupFilter.getValue()) {
@@ -346,7 +349,7 @@ public class BeanQuery {
                 }
             }
             if (groupFilters.size() == 1) {
-                restrictions.add(groupFilters.get(0));
+                restrictions.add(groupFilters.getFirst());
             } else if (groupFilters.size() > 1) {
                 restrictions.add("( " + String.join(" OR ", groupFilters) + " )");
             }
@@ -457,7 +460,7 @@ public class BeanQuery {
             query.append(" LEFT JOIN ").append(leftJoin);
         }
         if (restrictionAlternatives.size() == 1) {
-            restrictions.add(restrictionAlternatives.get(0));
+            restrictions.add(restrictionAlternatives.getFirst());
         } else if (restrictionAlternatives.size() > 1) {
             restrictions.add(restrictionAlternatives.stream().collect(Collectors.joining(" OR ", "(", ")")));
         }

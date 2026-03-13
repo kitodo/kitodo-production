@@ -14,17 +14,17 @@ package org.kitodo.data.database.beans;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionInterface;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionOperation;
@@ -40,7 +40,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     @Column(name = "property")
     private String property;
 
-    @Column(name = "operation")
+    @Column(name = "operation", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private LtpValidationConditionOperation operation;
 
@@ -50,7 +50,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     @Column(name = "value")
     private List<String> values;
 
-    @Column(name = "severity")
+    @Column(name = "severity", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private LtpValidationConditionSeverity severity;
 

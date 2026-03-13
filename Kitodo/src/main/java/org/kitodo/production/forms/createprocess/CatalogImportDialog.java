@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
+
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -54,7 +56,6 @@ import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
 public class CatalogImportDialog  extends MetadataImportDialog implements Serializable {
@@ -118,10 +119,10 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             if (skipHitList(createProcessForm.getCurrentImportConfiguration(), getSelectedField())) {
                 getRecordById(getSearchTerm());
             } else {
-                Map<String, SortMeta> sortBy = new HashMap<String, SortMeta>();
+                Map<String, SortMeta> sortBy = new HashMap<>();
                 List<?> hits = hitModel.load(0, 10, sortBy, Collections.EMPTY_MAP);
                 if (hits.size() == 1) {
-                    getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+                    getRecordById(((SingleHit) hits.getFirst()).getIdentifier());
                 } else {
                     try {
                         ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
@@ -156,7 +157,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         // if more than one exemplar record was found, display a selection dialog to the user
         LinkedList<ExemplarRecord> exemplarRecords = ServiceManager.getImportService().getExemplarRecords();
         if (exemplarRecords.size() == 1) {
-            this.setSelectedExemplarRecord(exemplarRecords.get(0));
+            this.setSelectedExemplarRecord(exemplarRecords.getFirst());
         } else if (exemplarRecords.size() > 1) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
         }
@@ -184,56 +185,72 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             Helper.setErrorMessage("No record selected!");
         } else {
             try {
-                createProcessForm.setChildProcesses(new LinkedList<>());
-                int projectId = this.createProcessForm.getProject().getId();
-                int templateId = this.createProcessForm.getTemplate().getId();
-                ImportConfiguration importConfiguration = createProcessForm.getCurrentImportConfiguration();
-
-                LinkedList<TempProcess> processes;
-                if (MetadataFormat.EAD.name().equals(importConfiguration.getMetadataFormat())) {
-                    processes = createEadProcesses(importConfiguration);
-                } else {
-                    // import current and ancestors
-                    processes = ServiceManager.getImportService().importProcessHierarchy(currentRecordId,
-                            importConfiguration, projectId, templateId, getImportDepth(),
-                            createProcessForm.getRulesetManagement().getFunctionalKeys(
-                                    FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
-                    // import children
-                    if (this.importChildren) {
-                        importChildren(projectId, templateId, importConfiguration, processes);
-                    }
-                }
-
-                if (!createProcessForm.getProcesses().isEmpty() && additionalImport) {
-                    extendsMetadataTableOfMetadataTab(processes);
-                } else {
-                    for (TempProcess tempProcess : createProcessForm.getChildProcesses()) {
-                        createProcessForm.fillCreateProcessForm(tempProcess);
-                    }
-                    createProcessForm.setProcesses(processes);
-                    for (int i = processes.size() - 1; i >= 0; i--) {
-                        TempProcess currentTempProcess = processes.get(i);
-                        createProcessForm.fillCreateProcessForm(currentTempProcess); // fill out 'doctype' field before attaching parent
-                        if (i == 0) {
-                            attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
-                        }
-                    }
-                    showMessageAndRecord(importConfiguration, processes);
-                }
-
-            } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
-                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
-                     | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
-                     | NoSuchMetadataFieldException | XMLStreamException e) {
-                throw new CatalogException(e.getLocalizedMessage());
+                performImport(true);
+            } catch (FileStructureValidationException e) {
+                createProcessForm.handleImportRecordSchemaValidationException(e);
             }
+        }
+    }
+
+    /**
+     * Performs the import operation based on the given configuration and record hierarchy.
+     * Depending on the metadata format, processes can be created and imported.
+     * The function supports validating against schemata if specified and handles additional imports,
+     * attaching to existing parents, and importing children when configured.
+     *
+     * @param validateAgainstSchemata a boolean flag indicating whether the imported data should be validated against defined schemata
+     * @throws FileStructureValidationException if there are validation issues with the imported file structure
+     */
+    public void performImport(boolean validateAgainstSchemata) throws FileStructureValidationException {
+        try {
+            createProcessForm.setChildProcesses(new LinkedList<>());
+            int projectId = this.createProcessForm.getProject().getId();
+            int templateId = this.createProcessForm.getTemplate().getId();
+            ImportConfiguration importConfiguration = createProcessForm.getCurrentImportConfiguration();
+
+            LinkedList<TempProcess> processes;
+            if (MetadataFormat.EAD.name().equals(importConfiguration.getMetadataFormat())) {
+                processes = createEadProcesses(importConfiguration);
+            } else {
+                // import current and ancestors
+                processes = ServiceManager.getImportService().importProcessHierarchy(currentRecordId,
+                        importConfiguration, projectId, templateId, getImportDepth(),
+                        createProcessForm.getRulesetManagement().getFunctionalKeys(
+                                FunctionalMetadata.HIGHERLEVEL_IDENTIFIER), validateAgainstSchemata);
+                // import children
+                if (this.importChildren) {
+                    importChildren(projectId, templateId, importConfiguration, processes);
+                }
+            }
+
+            if (!createProcessForm.getProcesses().isEmpty() && additionalImport) {
+                extendsMetadataTableOfMetadataTab(processes);
+            } else {
+                for (TempProcess tempProcess : createProcessForm.getChildProcesses()) {
+                    createProcessForm.fillCreateProcessForm(tempProcess);
+                }
+                createProcessForm.setProcesses(processes);
+                for (int i = processes.size() - 1; i >= 0; i--) {
+                    TempProcess currentTempProcess = processes.get(i);
+                    createProcessForm.fillCreateProcessForm(currentTempProcess); // fill out 'doctype' field before attaching parent
+                    if (i == 0) {
+                        attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
+                    }
+                }
+                showMessageAndRecord(importConfiguration, processes);
+            }
+        } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
+                 | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
+                 | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
+                 | NoSuchMetadataFieldException | XMLStreamException e) {
+            throw new CatalogException(e.getLocalizedMessage());
         }
     }
 
     private LinkedList<TempProcess> createEadProcesses(ImportConfiguration importConfiguration) throws NoRecordFoundException,
             XPathExpressionException, IOException, ParserConfigurationException, SAXException, XMLStreamException,
             UnsupportedFormatException, ProcessGenerationException, URISyntaxException, InvalidMetadataValueException,
-            TransformerException, NoSuchMetadataFieldException {
+            TransformerException, NoSuchMetadataFieldException, FileStructureValidationException {
         LinkedList<TempProcess> processes = new LinkedList<>();
         DataRecord externalRecord = ServiceManager.getImportService()
                 .importExternalDataRecord(importConfiguration, this.currentRecordId, false);
@@ -246,9 +263,9 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             LinkedList<TempProcess> eadProcesses = ServiceManager.getImportService()
                     .parseImportedEADCollection(externalRecord, importConfiguration,
                             createProcessForm.getProject().getId(), createProcessForm.getTemplate().getId(),
-                            createProcessForm.getSelectedEadLevel(), createProcessForm.getSelectedParentEadLevel());
+                            createProcessForm.getSelectedEadLevel(), createProcessForm.getSelectedParentEadLevel(), false);
             createProcessForm.setChildProcesses(new LinkedList<>(eadProcesses.subList(1, eadProcesses.size() - 1)));
-            processes = new LinkedList<>(Collections.singletonList(eadProcesses.get(0)));
+            processes = new LinkedList<>(Collections.singletonList(eadProcesses.getFirst()));
         }
         return processes;
     }

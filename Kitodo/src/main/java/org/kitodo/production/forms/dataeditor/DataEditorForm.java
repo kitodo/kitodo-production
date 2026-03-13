@@ -35,11 +35,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.annotation.PreDestroy;
-import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PreDestroy;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.model.SelectItem;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
@@ -63,11 +63,13 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.ValidatableForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LocaleHelper;
@@ -80,10 +82,11 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
+import org.xml.sax.SAXException;
 
 @Named("DataEditorForm")
 @ViewScoped
-public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
+public class DataEditorForm extends ValidatableForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
 
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
@@ -106,6 +109,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * Backing bean for the change doc struc type dialog.
      */
     private final ChangeDocStrucTypeDialog changeDocStrucTypeDialog;
+
+    private final LinkProcessDialog linkProcessDialog;
 
     /**
      * Backing bean for the edit pages dialog.
@@ -210,6 +215,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private int numberOfScans = 0;
     private String errorMessage;
+    private String errorTitle = Helper.getTranslation("metadataLocked");
+    private String blockingUserName;
+    private static final String METADATA_REDIRECT = "metadataEditor.jsf?id=%d&referer=%s&faces-redirect=true";
 
     @Inject
     private MediaProvider mediaProvider;
@@ -227,6 +235,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private boolean globalLayoutLoaded = false;
     private boolean taskLayoutLoaded = false;
+    private Integer linkedProcessId = null;
+    private boolean linkedProcessClicked = false;
 
     /**
      * Public constructor.
@@ -242,6 +252,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
         this.uploadFileDialog = new UploadFileDialog(this);
+        this.linkProcessDialog = new LinkProcessDialog(this);
     }
 
     /**
@@ -282,12 +293,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             this.checkProjectFolderConfiguration();
             this.loadTemplateTask(taskId);
             this.loadDataEditorSettings();
-            errorMessage = "";
-
-            User blockedUser = MetadataLock.getLockUser(process.getId());
-            if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
-                errorMessage = Helper.getTranslation("blocked");
-            }
+            this.checkProcessMetadataAccessConditions(process, false);
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
@@ -310,8 +316,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
-        } catch (FileNotFoundException e) {
-            metadataFileLoadingError = e.getLocalizedMessage();
+        } catch (FileNotFoundException | SAXException e) {
+            metadataFileLoadingError = e.getMessage();
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
+            showValidationExceptionDialog(e, this.referringView);
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -397,7 +406,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private boolean openMetsFile() throws IOException, InvalidImagesException, MediaNotFoundException {
+    private boolean openMetsFile() throws IOException, InvalidImagesException, MediaNotFoundException, SAXException,
+            FileStructureValidationException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
@@ -690,6 +700,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         return changeDocStrucTypeDialog;
     }
 
+    public LinkProcessDialog getLinkProcessDialog() {
+        return linkProcessDialog;
+    }
+
     /**
      * Returns the backing bean for the edit pages dialog. This function is used
      * by PrimeFaces to access the elements of the edit pages dialog.
@@ -857,7 +871,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public boolean isSelected(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
         if (Objects.nonNull(physicalDivision) && Objects.nonNull(logicalDivision)) {
             if (physicalDivision.hasMediaPartial() && physicalDivision.getLogicalDivisions().size() == 1) {
-                return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0)));
+                return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().getFirst()));
             }
             return selectedMedia.contains(new ImmutablePair<>(physicalDivision, logicalDivision));
         }
@@ -908,10 +922,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         if (!getStructurePanel().isSeparateMedia() && selectedPhysicalDivisions.size() == 1 
                 && selectedLogicalDivisions.isEmpty()) {
             // show physical division in logical metadata panel in combined meta data mode
-            getMetadataPanel().showPageInLogical(selectedPhysicalDivisions.get(0).getLeft());
+            getMetadataPanel().showPageInLogical(selectedPhysicalDivisions.getFirst().getLeft());
         } else if (selectedLogicalDivisions.size() == 1 && selectedPhysicalDivisions.isEmpty()) {
             // show logical division in logical metadata panel
-            getMetadataPanel().showLogical(Optional.of(selectedLogicalDivisions.get(0)));
+            getMetadataPanel().showLogical(Optional.of(selectedLogicalDivisions.getFirst()));
         } else {
             // show nothing in logical metadata panel
             getMetadataPanel().showPageInLogical(null);
@@ -921,7 +935,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         if (getStructurePanel().isSeparateMedia()) {
             if (selectedPhysicalDivisions.size() == 1) {
                 // show physical division in physical metadata panel
-                getMetadataPanel().showPhysical(Optional.of(selectedPhysicalDivisions.get(0).getLeft()));
+                getMetadataPanel().showPhysical(Optional.of(selectedPhysicalDivisions.getFirst().getLeft()));
             } else {
                 // show nothing in physical metadata panel
                 getMetadataPanel().showPhysical(Optional.empty());
@@ -935,7 +949,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         );
     
         // update pagination panel
-        getPaginationPanel().preparePaginationSelectionSelectedItems();
+        getPaginationPanel().prepareSelectedItemsForPagination();
     }
 
 
@@ -1340,6 +1354,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
     }
 
+
     /**
      * Get value of 'globalLayoutLoaded'.
      *
@@ -1356,5 +1371,154 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public boolean isTaskLayoutLoaded() {
         return taskLayoutLoaded;
+    }
+
+    /**
+     * Check whether access conditions to metadata of given process are fulfilled.
+     * @param process process to check access conditions for
+     * @param linkedProcess flag indicating whether the process is a linked process or not
+     */
+    private void checkProcessMetadataAccessConditions(Process process, boolean linkedProcess) {
+        linkedProcessId = null;
+        errorMessage = null;
+        errorTitle = null;
+        blockingUserName = null;
+        User blockingUser = MetadataLock.getLockUser(process.getId());
+        if (!ServiceManager.getUserService().getCurrentUser().getProjects().contains(process.getProject())) {
+            errorMessage = Helper.getTranslation("metadataUnassignedProjectMessage");
+            errorTitle = Helper.getTranslation("metadataUnassignedProjectTitle");
+        } else if (Objects.nonNull(blockingUser) && !blockingUser.equals(this.user)) {
+            errorMessage = Helper.getTranslation("blocked");
+            errorTitle = Helper.getTranslation("metadataLocked");
+            blockingUserName = blockingUser.getFullName();
+        } else if (linkedProcess) {
+            linkedProcessId = process.getId();
+        }
+    }
+
+    /**
+     * Checks whether
+     * - the currently selected structure tree node represents a linked process
+     * - the linked process belongs to a project assigned to the current user
+     * - the linked process is currently opened in the metadata editor by another user
+     * Sets properties containing error message and error title used in the corresponding popup dialog accordingly.
+     */
+    public void checkConditionsForOpeningLinkedProcessInMetadataEditor() {
+        linkedProcessClicked = true;
+        try {
+            Optional<LogicalDivision> divisionOptional = structurePanel.getSelectedStructure();
+            if (divisionOptional.isPresent()) {
+                Integer processId = ServiceManager.getDataEditorService().getLinkedProcessId(divisionOptional.get());
+                if (Objects.nonNull(processId)) {
+                    Process process = ServiceManager.getProcessService().getById(processId);
+                    checkProcessMetadataAccessConditions(process, true);
+                }
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Checks and returns whether
+     * - the currently selected structure tree node represents a linked process
+     * - the linked process belongs to a project assigned to the current user
+     * - the linked process is currently opened in the metadata editor by another user.
+     */
+    public boolean canLinkedProcessBeOpenedInMetadataEditor() {
+        Optional<LogicalDivision> divisionOptional = structurePanel.getSelectedStructure();
+        try {
+            Integer processId = null;
+            if (divisionOptional.isPresent()) {
+                // for linked child processes: retrieve ID of linked process from corresponding logical division
+                processId = ServiceManager.getDataEditorService().getLinkedProcessId(divisionOptional.get());
+            } else if (Objects.nonNull(linkedProcessId)) {
+                // for linked parent processes: use previously retrieved ID of linked process
+                processId = linkedProcessId;
+            }
+            if (Objects.nonNull(processId)) {
+                Process linkedProcess = ServiceManager.getProcessService().getById(processId);
+                User blockingUser = MetadataLock.getLockUser(linkedProcess.getId());
+                return (ServiceManager.getUserService().getCurrentUser().getProjects().contains(linkedProcess.getProject())
+                        && (Objects.isNull(blockingUser) || blockingUser.equals(this.user)));
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return false;
+    }
+
+    /**
+     * Open linked process of currently selected logical structure in metadata editor.
+     */
+    public void openLinkedProcess() {
+        if (Objects.nonNull(errorMessage)) {
+            PrimeFaces.current().ajax().update("metadataLockedDialog");
+            PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            String linkedProcessUrl = String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+            try {
+                context.getExternalContext().redirect(linkedProcessUrl);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
+    /**
+     * Get value of 'linkedProcessClicked'.
+     *
+     * @param id of linked process
+     */
+    public void setLinkedProcessId(Integer id) {
+        linkedProcessId = id;
+    }
+
+    /**
+     * Check whether user has access to linked process and whether it is currently locked and then return the link to
+     * the linked process in the metadata editor.
+     *
+     * @return link to linked process in metadata editor
+     */
+    public String getUrlOfLinkedProcess() {
+        checkConditionsForOpeningLinkedProcessInMetadataEditor();
+        return String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+    }
+
+    /**
+     * Method called when dialog informing user about blocked process is closed. If the dialog was shown when opening
+     * a linked process the dialog is closed. When the dialog was shown when trying to directly open a blocked process,
+     * for example by manually entering its URL, closing the dialog sends the user to the desktop page.
+     */
+    public void confirmMetadataLocked() {
+        if (linkedProcessClicked) {
+            linkedProcessClicked = false;
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            try {
+                context.getExternalContext().redirect("desktop.jsf");
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
+    /**
+     * Get error title.
+     *
+     * @return error title
+     */
+    public String getErrorTitle() {
+        return errorTitle;
+    }
+
+    /**
+     * Get name of blocking user.
+     *
+     * @return name of blocking user
+     */
+    public String getBlockingUser() {
+        return blockingUserName;
     }
 }

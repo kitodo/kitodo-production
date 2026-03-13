@@ -62,8 +62,10 @@ public class MetsXmlElementAccessIT {
      */
     @Test
     public void testRead() throws Exception {
-        Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta.xml")));
+        Workpiece workpiece;
+        try (FileInputStream fileInputStream = new FileInputStream("src/test/resources/meta.xml")) {
+            workpiece = new MetsXmlElementAccess().read(fileInputStream);
+        }
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getPhysicalStructure().getChildren().size());
@@ -79,7 +81,7 @@ public class MetsXmlElementAccessIT {
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getPhysicalStructure().getChildren().get(0).getMediaFiles().entrySet().iterator().next().getValue());
+            workpiece.getPhysicalStructure().getChildren().getFirst().getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(
@@ -147,7 +149,7 @@ public class MetsXmlElementAccessIT {
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
-        view.setPhysicalDivision(pages.get(0));
+        view.setPhysicalDivision(pages.getFirst());
         frontCover.getViews().add(view);
         view.getPhysicalDivision().getLogicalDivisions().add(frontCover);
         workpiece.getLogicalStructure().getChildren().add(frontCover);
@@ -230,12 +232,15 @@ public class MetsXmlElementAccessIT {
         workpiece.getEditHistory().add(note);
 
         // write file
-        try (OutputStream out = new FileOutputStream(new File("src/test/resources/out.xml"))) {
+        try (OutputStream out = new FileOutputStream("src/test/resources/out.xml")) {
             new MetsXmlElementAccess().save(workpiece, out);
         }
 
         // read the file and see if everything is in it
-        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
+        Workpiece reread;
+        try (FileInputStream fileInputStream = new FileInputStream("src/test/resources/out.xml")) {
+            reread = new MetsXmlElementAccess().read(fileInputStream);
+        }
 
         assertEquals(1, reread.getEditHistory().size());
         List<PhysicalDivision> physicalDivisions = reread.getPhysicalStructure().getChildren();

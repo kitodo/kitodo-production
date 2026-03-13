@@ -36,8 +36,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
+import jakarta.faces.application.Application;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -448,15 +449,24 @@ public class Helper {
     private static void loadMessages() {
         commonMessages = new HashMap<>();
         errorMessages = new HashMap<>();
-        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+
+        Application application = null;
+        try {
+            application = FacesContext.getCurrentInstance().getApplication();
+        } catch (NullPointerException e) {
+            // do not log this exception, which often happens during CI
+            // ignore otherwise
+        }
+        
+        if (Objects.nonNull(application)) {
+            Iterator<Locale> polyglot = application.getSupportedLocales();
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, Message.getResourceBundle("messages.messages", "messages", language));
                 errorMessages.put(language, Error.getResourceBundle("messages.errors", "errors", language));
             }
         } else {
-            Locale defaultLocale = new Locale("EN");
+            Locale defaultLocale = Locale.of("EN");
             commonMessages.put(defaultLocale, Message.getResourceBundle("messages.messages", "messages", defaultLocale));
             errorMessages.put(defaultLocale, Error.getResourceBundle("messages.errors", "errors", defaultLocale));
         }

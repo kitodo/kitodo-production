@@ -55,7 +55,7 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     }
 
     @Override
-    public ExtendedSearchPage goTo() throws IllegalAccessException, InstantiationException {
+    public ExtendedSearchPage goTo() throws ReflectiveOperationException {
         Pages.getTopNavigation().gotoProcesses();
         Pages.getProcessesPage().navigateToExtendedSearch();
         return Pages.getExtendedSearchPage();
@@ -64,16 +64,15 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     /**
      * Search process by ID.
      * @param processId process ID
-     * @throws IllegalAccessException if process page cannot be instantiated
-     * @throws InstantiationException if process page cannot be instantiated
+     * @throws ReflectiveOperationException if process page cannot be instantiated
      */
-    public void searchById(String processId) throws IllegalAccessException, InstantiationException {
+    public void searchById(String processId) throws ReflectiveOperationException {
         processIdInput.clear();
         processIdInput.sendKeys(processId);
         triggerSearch();
     }
 
-    public ProcessesPage seachByTaskStatus() throws InstantiationException, IllegalAccessException {
+    public ProcessesPage seachByTaskStatus() throws ReflectiveOperationException {
         clickElement(taskNameDropDown.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(taskNameDropDown.getAttribute("id") + "_1")));
         clickElement(taskStatusDropDown.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
@@ -82,7 +81,7 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
         return triggerSearch();
     }
 
-    private ProcessesPage triggerSearch() throws IllegalAccessException, InstantiationException {
+    private ProcessesPage triggerSearch() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(submitButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }

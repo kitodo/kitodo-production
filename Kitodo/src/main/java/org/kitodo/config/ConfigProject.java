@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
@@ -32,7 +32,7 @@ import org.apache.commons.configuration2.builder.ReloadingFileBasedConfiguration
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -104,7 +104,7 @@ public class ConfigProject {
      */
     public String getDocType() throws DoctypeMissingException {
         try {
-            return getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().get(0).getTitle());
+            return getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().getFirst().getTitle());
         } catch (IndexOutOfBoundsException e) {
             throw new DoctypeMissingException("No doctypes configured in kitodo_opac.xml");
         }
@@ -323,22 +323,22 @@ public class ConfigProject {
      * <dl>
      * <dt>{@code isDocType.equals("") && isNotDocType.equals("")}</dt>
      * <dd>nothing was specified</dd>
-     * <dt>{@code isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)}</dt>
+     * <dt>{@code isNotDocType.equals("") && Strings.CI.contains(isDocType, docType)}</dt>
      * <dd>only duty was specified</dd>
-     * <dt>{@code isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dt>{@code isDocType.equals("") && !Strings.CI.contains(isNotDocType, docType)}</dt>
      * <dd>only may not was specified</dd>
-     * <dt>{@code !isDocType.equals("") && !isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
-     *                 && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dt>{@code !isDocType.equals("") && !isNotDocType.equals("") && Strings.CI.contains(isDocType, docType)
+     *                 && !Strings.CI.contains(isNotDocType, docType)}</dt>
      * <dd>both were specified</dd>
      * </dl>
      */
     private String findTitleDefinition(String title, String docType, String isDocType, String isNotDocType) {
         if ((isDocType.isEmpty()
-                && (isNotDocType.isEmpty() || !StringUtils.containsIgnoreCase(isNotDocType, docType)))
+                && (isNotDocType.isEmpty() || !Strings.CI.contains(isNotDocType, docType)))
                 || (!isDocType.isEmpty() && !isNotDocType.isEmpty()
-                        && StringUtils.containsIgnoreCase(isDocType, docType)
-                        && !StringUtils.containsIgnoreCase(isNotDocType, docType))
-                || (isNotDocType.isEmpty() && StringUtils.containsIgnoreCase(isDocType, docType))) {
+                        && Strings.CI.contains(isDocType, docType)
+                        && !Strings.CI.contains(isNotDocType, docType))
+                || (isNotDocType.isEmpty() && Strings.CI.contains(isDocType, docType))) {
             return title;
         }
         return "";

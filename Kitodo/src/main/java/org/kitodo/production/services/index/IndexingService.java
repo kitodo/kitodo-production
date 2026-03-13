@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.exception.DataException;
 import org.hibernate.search.engine.search.projection.SearchProjection;
 import org.hibernate.search.mapper.orm.Search;
@@ -115,18 +116,20 @@ public class IndexingService {
      *         ends (including to exceptions)
      */
     public CompletionStage<?> startIndexing(Class<? extends BaseBean> type, MassIndexingMonitor monitor) {
-        MassIndexer massIndexer = Search.session(HibernateUtil.getSession()).massIndexer(type);
-        massIndexer.dropAndCreateSchemaOnStart(true);
-        if (Objects.nonNull(monitor)) {
-            massIndexer.monitor(monitor);
+        try (Session ormSession = HibernateUtil.getSession()) {
+            MassIndexer massIndexer = Search.session(ormSession).massIndexer(type);
+            massIndexer.dropAndCreateSchemaOnStart(true);
+            if (Objects.nonNull(monitor)) {
+                massIndexer.monitor(monitor);
+            }
+            massIndexer.idFetchSize(Integer.MIN_VALUE).batchSizeToLoadObjects(1000);
+            return massIndexer.start();
         }
-        massIndexer.idFetchSize(Integer.MIN_VALUE).batchSizeToLoadObjects(1000);
-        return massIndexer.start();
     }
 
     /**
      * Searches for entities matching all given field/value terms and returns their IDs.
-     * 
+     *
      * @param beanClass
      *            class of beans to search for
      * @param terms
@@ -184,8 +187,10 @@ public class IndexingService {
      * @return long number of all currently indexed objects
      */
     public long getAllIndexed() {
-        SearchSession searchSession = Search.session(HibernateUtil.getSession());
-        long allIndexed = searchSession.search(Process.class).where(f -> f.matchAll()).fetchTotalHitCount();
-        return allIndexed;
+        try (Session ormSession = HibernateUtil.getSession()) {
+            SearchSession searchSession = Search.session(ormSession);
+            long allIndexed = searchSession.search(Process.class).where(f -> f.matchAll()).fetchTotalHitCount();
+            return allIndexed;
+        }
     }
 }

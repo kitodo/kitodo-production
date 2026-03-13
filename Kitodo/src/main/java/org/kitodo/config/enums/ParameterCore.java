@@ -316,6 +316,12 @@ public enum ParameterCore implements ParameterInterface {
     METS_EDITOR_MAX_UPLOADED_MEDIA(new Parameter<UndefinedParameter>("metsEditor.maxUploadedMedia")),
 
     /**
+     * Link to documentation of advanced pagination.
+     */
+    METS_EDITOR_ADVANCED_PAGINATION_DOCUMENTATION(new Parameter<>("metsEditor.advancedPaginationDocumentation",
+            "https://github.com/kitodo/kitodo-production/wiki/Paginierung#paginierung-f%C3%BCr-fortgeschrittene")),
+
+    /**
      * Comma-separated list of Strings which may be enclosed in double quotes.
      * Separators available for double page pagination modes.
      */
@@ -409,11 +415,11 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Turn on or off whether each assignment of processes to or removal from
-     * batches shall result in rewriting each processes' wiki field in order to
+     * batches shall result in rewriting each processes comments in order to
      * leave a note there. Enabling this function may slow down operations in the
      * batches dialogue. Boolean, defaults to {@code false}.
      */
-    BATCHES_LOG_CHANGES(new Parameter<>("batches.logChangesToWikiField", false)),
+    BATCHES_LOG_CHANGES(new Parameter<>("batches.logChangesToComments", false)),
 
     /*
      * Task manager

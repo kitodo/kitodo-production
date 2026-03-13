@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResult;
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
@@ -127,7 +127,7 @@ public class LtpValidationReportDialog implements Serializable {
             return 0;
         }
         return resultsByFolder.values().stream().reduce(0,
-            (sum, resultsByFile) -> sum + (int) resultsByFile.values().stream().count(), Integer::sum);
+            (sum, resultsByFile) -> sum + resultsByFile.size(), Integer::sum);
     }
 
     /**

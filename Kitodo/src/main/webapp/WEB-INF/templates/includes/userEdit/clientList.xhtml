@@ -20,14 +20,14 @@
     <!--@elvariable id="client" type="org.kitodo.data.database.beans.Client"-->
     <p:dataTable id="clientDatatable"
                  var="client"
-                 sortBy="#{UserForm.clientListSortBy}"
-                 value="#{UserForm.userObject.clients}">
+                 sortBy="#{UserEditViewClientsTab.sortBy}"
+                 value="#{UserEditViewClientsTab.userObject.clients}">
         <p:column headerText="#{msgs.clientList}" sortBy="#{client.name}">
             <h:outputText value="#{client.name}"/>
         </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromClient"
-                           action="#{UserForm.deleteFromClient}"
+                           action="#{UserEditViewClientsTab.deleteFromClient}"
                            styleClass="action"
                            title="#{msgs.clientDeleteFrom}"
                            rendered="#{isEditMode || isCreateMode}"

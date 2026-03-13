@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class ErrorTest {
 
-    private final Locale locale = new Locale("EN");
+    private final Locale locale = Locale.of("EN");
     private final String customBundle = "test_errors";
     private final String defaultBundle = "messages.errors";
 

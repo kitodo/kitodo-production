@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import org.kitodo.data.database.persistence.UserDAO;
 
@@ -114,8 +114,14 @@ public class User extends BaseBean {
     @Column(name = "paginate_from_first_page_by_default")
     private boolean paginateFromFirstPageByDefault;
 
+    @Column(name = "show_logical_page_number_below_thumbnail")
+    private boolean showLogicalPageNumberBelowThumbnail;
+
     @Column(name = "show_physical_page_number_below_thumbnail")
     private boolean showPhysicalPageNumberBelowThumbnail;
+
+    @Column(name = "default_pagination_type")
+    private String defaultPaginationType;
 
     @ManyToOne
     @JoinColumn(name = "default_client_id", foreignKey = @ForeignKey(name = "FK_user_default_client_id"))
@@ -158,7 +164,9 @@ public class User extends BaseBean {
         this.showPaginationByDefault = user.showPaginationByDefault;
         this.paginateFromFirstPageByDefault = user.paginateFromFirstPageByDefault;
         this.defaultGalleryViewMode = user.defaultGalleryViewMode;
+        this.showLogicalPageNumberBelowThumbnail = user.showLogicalPageNumberBelowThumbnail;
         this.showPhysicalPageNumberBelowThumbnail = user.showPhysicalPageNumberBelowThumbnail;
+        this.defaultPaginationType = user.defaultPaginationType;
 
         this.roles = Objects.isNull(user.roles) ? new ArrayList<>() : user.roles;
         this.projects = Objects.isNull(user.projects) ? new ArrayList<>() : user.projects;
@@ -600,12 +608,51 @@ public class User extends BaseBean {
     }
 
     /**
+     * Get showLogicalPageNumberBelowThumbnail.
+     * 
+     * @return value of showLogicalPageNumberBelowThumbnail
+     */
+    public boolean isShowLogicalPageNumberBelowThumbnail() {
+        return this.showLogicalPageNumberBelowThumbnail;
+    }
+
+    /**
+     * Set showLogicalPageNumberBelowThumbnail.
+     * 
+     * @param showLogicalPageNumberBelowThumbnail as boolean
+     */
+    public void setShowLogicalPageNumberBelowThumbnail(boolean showLogicalPageNumberBelowThumbnail) {
+        this.showLogicalPageNumberBelowThumbnail = showLogicalPageNumberBelowThumbnail;
+    }
+
+    /**
      * Get showPhysicalPageNumberBelowThumbnail.
      * 
      * @return value of showPhysicalPageNumberBelowThumbnail
      */
     public boolean isShowPhysicalPageNumberBelowThumbnail() {
         return showPhysicalPageNumberBelowThumbnail;
+    }
+
+    /**
+     * Get the default pagination type.
+     *
+     * @return the default pagination type as a string, or an empty string if it is null
+     */
+    public String getDefaultPaginationType() {
+        if (Objects.isNull(this.defaultPaginationType)) {
+            return "";
+        }
+        return this.defaultPaginationType;
+    }
+
+    /**
+     * Set the default pagination type.
+     *
+     * @param defaultPaginationType default pagination type as string
+     */
+    public void setDefaultPaginationType(String defaultPaginationType) {
+        this.defaultPaginationType = defaultPaginationType;
     }
 
     /**
@@ -643,7 +690,7 @@ public class User extends BaseBean {
      * <p>
      * To allow recreation of an account with the same login the login is cleaned -
      * otherwise it would be blocked eternally by the login existence test performed
-     * in the UserForm.save() function. In addition, all personally identifiable
+     * in the UserEditView.save() function. In addition, all personally identifiable
      * information is removed from the database as well.
      */
     public void selfDestruct() {

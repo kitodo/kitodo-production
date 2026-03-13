@@ -21,25 +21,23 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.PostUpdate;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PostUpdate;
+import jakarta.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.data.database.persistence.ProjectDAO;
@@ -103,8 +101,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Process> processes;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Template> templates;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -148,7 +145,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Field to define mode of hover in preview.
      */
-    @Column(name = "preview_hover_mode")
+    @Column(name = "preview_hover_mode", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private PreviewHoverMode previewHoverMode = PreviewHoverMode.OVERLAY;
 
@@ -750,7 +747,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      * @return value of defaultChildProcessImportConfiguration
      */
     public ImportConfiguration getDefaultChildProcessImportConfiguration() {
-        initialize(new ProjectDAO(), defaultImportConfiguration);
+        initialize(new ProjectDAO(), defaultChildProcessImportConfiguration);
         return defaultChildProcessImportConfiguration;
     }
 

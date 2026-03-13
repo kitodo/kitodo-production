@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -175,7 +175,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
      * @return identifier of selected element
      */
     public String getSelectedItem() {
-        return selectedItems.isEmpty() ? "" : selectedItems.get(0);
+        return selectedItems.isEmpty() ? "" : selectedItems.getFirst();
     }
 
     /**

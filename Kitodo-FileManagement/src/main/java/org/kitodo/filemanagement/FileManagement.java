@@ -47,7 +47,7 @@ public class FileManagement implements FileManagementInterface {
 
     private static final String IMAGES_DIRECTORY_NAME = "images";
 
-    private final CommandInterface commandService = new KitodoServiceLoader<CommandInterface>(CommandInterface.class)
+    private final CommandInterface commandService = new KitodoServiceLoader<>(CommandInterface.class)
             .loadModule();
 
     @Override
@@ -497,7 +497,7 @@ public class FileManagement implements FileManagementInterface {
                     createDirectory(dir, processTitle + suffix);
                 }
             } else {
-                sourceFolder = dir.resolve("/" + directories.get(0));
+                sourceFolder = dir.resolve("/" + directories.getFirst());
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

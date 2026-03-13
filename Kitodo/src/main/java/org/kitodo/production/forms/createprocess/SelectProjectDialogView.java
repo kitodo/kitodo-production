@@ -18,9 +18,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,7 +103,7 @@ public class SelectProjectDialogView implements Serializable {
      */
     public void createProcessFromTemplate() {
         if (this.template.getProjects().size() == 1) {
-            this.selectedProjectId = this.template.getProjects().get(0).getId();
+            this.selectedProjectId = this.template.getProjects().getFirst().getId();
         }
         if (this.selectedProjectId > 0) {
             try {

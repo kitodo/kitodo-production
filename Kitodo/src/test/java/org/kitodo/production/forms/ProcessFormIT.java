@@ -61,7 +61,6 @@ public class ProcessFormIT {
         forthProcess.setTitle("Forth process");
         LocalDate localDate = LocalDate.of(2020, 3, 20);
         forthProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-        forthProcess.setWikiField("SelectionTest");
         forthProcess.setDocket(ServiceManager.getDocketService().getById(1));
         forthProcess.setProject(projectOne);
         forthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
@@ -72,7 +71,6 @@ public class ProcessFormIT {
         fifthProcess.setTitle("Fifth process");
         localDate = LocalDate.of(2020, 4, 20);
         fifthProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-        fifthProcess.setWikiField("SelectionTest");
         fifthProcess.setDocket(ServiceManager.getDocketService().getById(1));
         fifthProcess.setProject(projectOne);
         fifthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));

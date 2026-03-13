@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -233,7 +233,7 @@ public class BatchForm extends BaseForm {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() == 1) {
             try {
-                ServiceManager.getProcessService().downloadDocket(selectedBatches.get(0).getProcesses());
+                ServiceManager.getProcessService().downloadDocket(selectedBatches.getFirst().getProcesses());
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
@@ -342,7 +342,7 @@ public class BatchForm extends BaseForm {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         } else {
             try {
-                Batch selectedBatch = selectedBatches.get(0);
+                Batch selectedBatch = selectedBatches.getFirst();
                 for (Batch batch : currentBatches) {
                     if (selectedBatch.getId().equals(batch.getId())) {
                         batch.setTitle(Objects.isNull(batchTitle) || batchTitle.trim().isEmpty() ? null : batchTitle);
@@ -451,7 +451,7 @@ public class BatchForm extends BaseForm {
     public void changeSelectedBatch(ValueChangeEvent vcEvent) {
         this.selectedBatches = (List<Batch>) vcEvent.getNewValue();
         if (this.selectedBatches.size() == 1) {
-            this.selectedBatchId = this.selectedBatches.get(0).getId();
+            this.selectedBatchId = this.selectedBatches.getFirst().getId();
         } else {
             this.selectedBatchId = 0;
         }

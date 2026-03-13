@@ -40,15 +40,6 @@ import org.primefaces.model.SortOrder;
 
 public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
 
-    private static final Map<String, String> SORT_FIELD_MAPPING;
-
-    static {
-        SORT_FIELD_MAPPING = new HashMap<>();
-        SORT_FIELD_MAPPING.put("title.keyword", "title");
-        SORT_FIELD_MAPPING.put("ruleset.title.keyword", "ruleset.id");
-        SORT_FIELD_MAPPING.put("active", "active");
-    }
-
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private static volatile TemplateService instance = null;
     private boolean showInactiveTemplates = false;
@@ -123,7 +114,7 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
         if (!this.showInactiveTemplates) {
             beanQuery.addBooleanRestriction("active", Boolean.TRUE);
         }
-        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        beanQuery.defineSorting(sortField, sortOrder);
         return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
@@ -161,7 +152,7 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
     public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        List<Template> templates = getByQuery("FROM Template WHERE client_id = :sessionClientId AND active = true",
+        List<Template> templates = getByQuery("FROM Template WHERE client.id = :sessionClientId AND active = true",
             parameters);
         if (Objects.nonNull(projectId)) {
             List<Template> assigned = ServiceManager.getProjectService().getById(projectId).getTemplates();
@@ -222,7 +213,7 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
      */
     public Collection<?> findByDocket(int docketId) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("docketId", docketId);
-        return getByQuery("FROM Template WHERE docket_id = :docketId", parameters, 1);
+        return getByQuery("FROM Template WHERE docket.id = :docketId", parameters, 1);
     }
 
     /**
@@ -234,12 +225,12 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
      *         list
      */
     /*
-     * Used in RulesetForm to find out whether a ruleset is used in a process
+     * Used in RulesetListView to find out whether a ruleset is used in a process
      * template. (Then it may not be deleted.) Is only checked for isEmpty().
      */
     public Collection<?> findByRuleset(int rulesetId) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("rulesetId", rulesetId);
-        return getByQuery("FROM Template WHERE ruleset_id = :rulesetId", parameters, 1);
+        return getByQuery("FROM Template WHERE ruleset.id = :rulesetId", parameters, 1);
     }
 
     /**

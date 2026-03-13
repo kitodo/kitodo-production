@@ -64,7 +64,7 @@ public class MassImportTest {
         // test parsing CSV lines with correct delimiter
         List<CsvRecord> csvRecords = service.parseLines(CSV_LINES, SeparatorCharacter.COMMA.getSeparator());
         assertEquals(3, csvRecords.size(), "Wrong number of CSV records");
-        List<CsvCell> cells = csvRecords.get(0).getCsvCells();
+        List<CsvCell> cells = csvRecords.getFirst().getCsvCells();
         assertEquals(3, cells.size(), "Wrong number of cells in first CSV record");
         assertEquals("123", cells.get(0).getValue(), "Wrong value in first cell of first CSV record");
         assertEquals("Band 1", cells.get(1).getValue(), "Wrong value in second cell of first CSV record");
@@ -97,14 +97,14 @@ public class MassImportTest {
         MassImportService service = ServiceManager.getMassImportService();
         // test parsing CSV lines with correct delimiter
         List<CsvRecord> csvRecords = service.parseLines(CSV_LINES_WITH_COMMA, SeparatorCharacter.COMMA.getSeparator());
-        List<CsvCell> cells = csvRecords.get(0).getCsvCells();
+        List<CsvCell> cells = csvRecords.getFirst().getCsvCells();
         assertEquals(3, csvRecords.size(), "Wrong number of CSV records");
         assertEquals(3, cells.size(), "Wrong number of cells in first CSV record");
         assertEquals("123", cells.get(0).getValue(), "Wrong value in first cell of first CSV record");
         assertEquals("Band 1,2", cells.get(1).getValue(), "Wrong value in second cell of first CSV record");
         assertEquals("Hamburg", cells.get(2).getValue(), "Wrong value in third cell of first CSV record");
         csvRecords = service.parseLines(CSV_LINES, SeparatorCharacter.SEMICOLON.getSeparator());
-        cells = csvRecords.get(0).getCsvCells();
+        cells = csvRecords.getFirst().getCsvCells();
         assertEquals(1, cells.size(), "Wrong number of cells in first CSV record");
     }
 
@@ -140,17 +140,17 @@ public class MassImportTest {
         List<CsvRecord> csvRecords = service.parseLines(CSV_LINES, SeparatorCharacter.COMMA.getSeparator());
         LinkedList<LinkedHashMap<String, List<String>>> metadata = service.prepareMetadata(METADATA_KEYS, csvRecords);
         assertEquals(3, metadata.size(), "Wrong number of metadata sets prepared");
-        Map<String, List<String>> metadataSet = metadata.get(0);
+        Map<String, List<String>> metadataSet = metadata.getFirst();
         assertNotNull(metadataSet, "Metadata for record is null");
         assertEquals(3, metadataSet.size(), "Wrong number of metadata sets prepared");
-        assertEquals("Band 1", metadataSet.get(TITLE).get(0), "Metadata for record with ID 123 contains wrong title");
+        assertEquals("Band 1", metadataSet.get(TITLE).getFirst(), "Metadata for record with ID 123 contains wrong title");
         assertEquals(1, metadataSet.get(PLACE).size(), "Metadata for record with ID 123 has wrong size of place list");
-        assertEquals("Hamburg", metadataSet.get(PLACE).get(0), "Metadata for record with ID 123 contains wrong place");
+        assertEquals("Hamburg", metadataSet.get(PLACE).getFirst(), "Metadata for record with ID 123 contains wrong place");
 
         List<CsvRecord> csvRecordsMultipleValues = service.parseLines(CSV_LINES_MULTIPLE_VALUES,
                 SeparatorCharacter.COMMA.getSeparator());
         LinkedList<LinkedHashMap<String, List<String>>> metadataMultipleValues = service.prepareMetadata(METADATA_KEYS_MUTLIPLE_VALUES, csvRecordsMultipleValues);
-        Map<String, List<String>> metadataSetMultipleValues = metadataMultipleValues.get(0);
+        Map<String, List<String>> metadataSetMultipleValues = metadataMultipleValues.getFirst();
         assertNotNull(metadataSetMultipleValues, "Metadata for record is null");
         assertEquals(3, metadataSetMultipleValues.size(), "Wrong number of metadata sets prepared");
         assertTrue(metadataSetMultipleValues.containsKey(PLACE), "Metadata for record with ID 321 does not contain place metadata");
@@ -163,7 +163,7 @@ public class MassImportTest {
         LinkedList<LinkedHashMap<String, List<String>>> metadataMultipleValuesWithComma =
                 service.prepareMetadata(METADATA_KEYS_MUTLIPLE_VALUES, csvRecordsMultipleValuesWithComma);
 
-        Map<String, List<String>> metadataSetMultipleValuesWithComma = metadataMultipleValuesWithComma.get(0);
+        Map<String, List<String>> metadataSetMultipleValuesWithComma = metadataMultipleValuesWithComma.getFirst();
         assertNotNull(metadataSetMultipleValuesWithComma, "Metadata for record is null");
         assertEquals(3, metadataSetMultipleValuesWithComma.size(), "Wrong number of metadata sets prepared");
         assertTrue(metadataSetMultipleValuesWithComma.containsKey(PLACE),

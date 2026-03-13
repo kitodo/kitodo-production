@@ -83,6 +83,7 @@ import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -200,7 +201,7 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcessForMassImportWithAdditionalMetadata() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImportWithAdditionalMetadata() throws Exception {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
@@ -228,7 +229,8 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcessForMassImportWithAdditionalMetadataWithLabelAndOrderlabel() throws DAOException, ImportException, IOException {
+    public void testImportProcessForMassImportWithAdditionalMetadataWithLabelAndOrderlabel()
+            throws DAOException, ImportException, IOException, SAXException, FileStructureValidationException {
         Map<String, List<String>> presetMetadata = new HashMap<>();
         presetMetadata.put(TITLE, List.of("Band 1"));
         presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
@@ -410,14 +412,14 @@ public class ImportServiceIT {
     @Test
     public void shouldConvertDataRecordToInternal() throws DAOException, UnsupportedFormatException,
             XPathExpressionException, ProcessGenerationException, URISyntaxException, IOException,
-            ParserConfigurationException, SAXException {
+            ParserConfigurationException, SAXException, FileStructureValidationException {
         DataRecord dataRecord = new DataRecord();
         dataRecord.setFileFormat(FileFormat.XML);
         dataRecord.setMetadataFormat(MetadataFormat.MODS);
         try (InputStream inputStream = Files.newInputStream(Paths.get(MODS_TEST_RECORD_PATH))) {
             dataRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
             Document internalDocument = ServiceManager.getImportService().convertDataRecordToInternal(dataRecord,
-                    MockDatabase.getKalliopeImportConfiguration(), false);
+                    MockDatabase.getKalliopeImportConfiguration(), false, false, "N/A");
             assertEquals(1, internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO).getLength(), "Converted data should contain one 'kitodo' root node");
             assertEquals(3, internalDocument.getElementsByTagNameNS(KITODO_NAMESPACE, METADATA).getLength(), "Converted data should contain three 'metadata' nodes");
         }
@@ -463,7 +465,8 @@ public class ImportServiceIT {
     public void shouldGetProcessDetailValue() throws Exception {
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_KITODO_METADATA_FILE_PATH);
         assertFalse(processDetails.isEmpty(), "List of process details should not be empty");
-        assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(processDetails.get(0)), "Value of first process details should not be empty");
+        assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(processDetails.getFirst()),
+                "Value of first process details should not be empty");
     }
 
     /**
@@ -476,7 +479,7 @@ public class ImportServiceIT {
         String newProcessTitle = "New process title";
         List<ProcessDetail> processDetails = loadProcessDetailsFromTestProcess(TEST_KITODO_METADATA_FILE_PATH);
         assertFalse(processDetails.isEmpty(), "Process detail list should not be empty");
-        ProcessDetail title = processDetails.get(0);
+        ProcessDetail title = processDetails.getFirst();
         assertEquals(TEST_PROCESS_TITLE, ImportService.getProcessDetailValue(title), "Wrong title process detail before setting it");
         ImportService.setProcessDetailValue(title, newProcessTitle);
         assertEquals(newProcessTitle, ImportService.getProcessDetailValue(title), "Wrong title process detail after setting it");
@@ -526,7 +529,7 @@ public class ImportServiceIT {
      * @throws IOException when loading workpiece fails
      */
     @Test
-    public void shouldEnsureNonEmptyTitles() throws DAOException, IOException {
+    public void shouldEnsureNonEmptyTitles() throws DAOException, IOException, SAXException, FileStructureValidationException {
         int parentProcessId = MockDatabase.insertTestProcess("", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         try {
             ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_KITODO_METADATA_FILE);
@@ -581,7 +584,7 @@ public class ImportServiceIT {
         User user = ServiceManager.getUserService().getById(1);
         Client client = ServiceManager.getClientService().getById(1);
         Project eadProject = MockDatabase.insertProjectForEadImport(user, client);
-        Template eadTemplate = eadProject.getTemplates().get(0);
+        Template eadTemplate = eadProject.getTemplates().getFirst();
         CreateProcessForm createProcessForm = new CreateProcessForm();
         createProcessForm.setProject(eadProject);
         createProcessForm.setTemplate(eadTemplate);
@@ -743,7 +746,7 @@ public class ImportServiceIT {
         if (recordIdentifierMetadata.isEmpty()) {
             throw new ImportException("Functional metadata 'recordIdentifier' is not defined in ruleset");
         }
-        String recordIdMetadataKey = recordIdentifierMetadata.get(0);
+        String recordIdMetadataKey = recordIdentifierMetadata.getFirst();
         List<String> ids = Collections.singletonList(recordId);
         Process importedProcess = importService.importProcessForMassImport(PROJECT_ID, TEMPLATE_ID, importConfiguration,
                 Collections.singletonMap(recordIdMetadataKey, ids));

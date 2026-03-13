@@ -34,11 +34,13 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.migration.TaskComparer;
 import org.kitodo.production.migration.TemplateComparer;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.xml.sax.SAXException;
 
 public class MigrationService {
 
@@ -82,7 +84,7 @@ public class MigrationService {
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
             workpiece.setId(process.getId().toString());
             ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFilePath);
-        } catch (IOException e) {
+        } catch (IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }

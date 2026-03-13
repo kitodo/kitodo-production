@@ -23,9 +23,11 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
+import org.xml.sax.SAXException;
 
 /**
  * Connects a legacy METS MODS and digital document to a workpiece. This is a
@@ -158,9 +160,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
      *            full path to file which should be read
      * @throws IOException
      *             may be thrown if reading fails
+     * @throws SAXException
+     *            when loading schema definition for metadata file validation fails
+     * @throws FileStructureValidationException
+     *            when validating the metadata file fails
      */
     @Deprecated
-    public void read(String path) throws IOException {
+    public void read(String path) throws IOException, SAXException, FileStructureValidationException {
         URI uri = new File(path).toURI();
         workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
     }

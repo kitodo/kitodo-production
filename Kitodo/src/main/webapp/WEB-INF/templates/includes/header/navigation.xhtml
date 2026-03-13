@@ -52,7 +52,7 @@
 
                             <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProjectPage()}">
                                 <li class="nav-pic-text">
-                                    <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects?tabIndex=0">
+                                    <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects?tab=projectTab">
                                         <i class="fa fa-archive fa-lg"/>
                                     </h:link>
                                 </li>
@@ -60,7 +60,7 @@
 
                             <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewUserPage()}">
                                 <li class="nav-pic-text">
-                                    <h:link value="#{msgs.users}" id="linkUsers" outcome="users?tabIndex=0">
+                                    <h:link value="#{msgs.users}" id="linkUsers" outcome="users?tab=usersTab">
                                         <i class="fa fa-user fa-lg"/>
                                     </h:link>
                                 </li>

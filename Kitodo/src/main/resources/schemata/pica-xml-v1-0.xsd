@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  PICA XML 1.0 - XML Schema for XML representation of PICA data
+  Author: Jakob Voss <jakob.voss@gbv.de>
+  Date: 2009-07-06
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  targetNamespace="info:srw/schema/5/picaXML-v1.0" 
+  xmlns="info:srw/schema/5/picaXML-v1.0">
+  
+  <xs:element name="collection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="record"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="record" >
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="datafield"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="datafield">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="subfield"/>
+      </xs:sequence>
+      <xs:attribute name="tag" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9][0-9][0-9][A-Z@]"/>
+          </xs:restriction>
+        </xs:simpleType>    
+      </xs:attribute>
+      <xs:attribute name="occurrence" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9][0-9]"/>
+          </xs:restriction>
+        </xs:simpleType>    
+      </xs:attribute>      
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="subfield">
+    <xs:complexType mixed="true">
+      <xs:attribute name="code" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9A-Za-z]"/>
+          </xs:restriction>
+        </xs:simpleType>    
+      </xs:attribute>      
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
