@@ -137,35 +137,37 @@ public class IndexingService {
      * @return ids of the found beans
      */
     public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, List<Pair<String, String>> terms) {
-        SearchSession searchSession = Search.session(HibernateUtil.getSession());
-        SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
-                .toProjection();
-        var query = searchSession.search(beanClass)
-                .select(idField)
-                .where(f -> {
-                    var bool = f.bool();
-                    for (var term : terms) {
-                        bool.must(
-                                f.match()
-                                        .field(term.getLeft())
-                                        .matching(term.getRight())
-                        );
-                    }
-                    return bool;
-                });
-        List<Integer> ids = query.fetchAll().hits();
+        try (Session ormSession = HibernateUtil.getSession()) {
+            SearchSession searchSession = Search.session(ormSession);
+            SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
+                    .toProjection();
+            var query = searchSession.search(beanClass)
+                    .select(idField)
+                    .where(f -> {
+                        var bool = f.bool();
+                        for (var term : terms) {
+                            bool.must(
+                                    f.match()
+                                            .field(term.getLeft())
+                                            .matching(term.getRight())
+                            );
+                        }
+                        return bool;
+                    });
+            List<Integer> ids = query.fetchAll().hits();
 
-        String termSummary = terms.stream()
-                .distinct()
-                .map(t -> t.getLeft() + "=\"***\"")
-                .collect(Collectors.joining(", "));
-        logger.debug(
-                "Searching {} IDs with terms {}: {} hits",
-                beanClass.getSimpleName(),
-                termSummary,
-                ids.size()
-        );
-        return ids;
+            String termSummary = terms.stream()
+                    .distinct()
+                    .map(t -> t.getLeft() + "=\"***\"")
+                    .collect(Collectors.joining(", "));
+            logger.debug(
+                    "Searching {} IDs with terms {}: {} hits",
+                    beanClass.getSimpleName(),
+                    termSummary,
+                    ids.size()
+            );
+            return ids;
+        }
     }
 
     /**
