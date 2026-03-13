@@ -274,7 +274,7 @@ public class PaginatorTypeTest {
     }
 
     @Test
-    public void testFreetextFormatPagesFictitious) {
+    public void testFreetextFormatPagesFictitious() {
         assertEquals("[`Hello world!`]",
             PaginatorType.FREETEXT.format(PaginatorMode.PAGES, HELLO_WORLD_STRING, true, UNUSED_STRING));
     }
