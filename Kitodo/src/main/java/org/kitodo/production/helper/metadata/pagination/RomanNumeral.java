@@ -66,7 +66,7 @@ public class RomanNumeral implements Fragment {
         value %= 100;
         result.append(TENS[value / 10]);
         result.append(ONES[value % 10]);
-        if (page == null || page == inputValue.isHalf()) {
+      if (Objects.isNull(page) || page == inputValue.isHalf()) {
             return uppercase ? result.toString().toUpperCase() : result.toString();
         } else {
             return "";

@@ -108,7 +108,7 @@ public class AlphabeticNumeral implements Fragment {
             result.insert(0, letter);
             number = number / ALPHABET_SIZE;
         }
-        if (page == null || page == value.isHalf()) {
+        if (Objects.isNull(page) || page == value.isHalf()) {
             return result.toString();
         } else {
             return "";

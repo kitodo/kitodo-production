@@ -56,7 +56,7 @@ public class DecimalNumeral implements Fragment {
      */
     @Override
     public String format(HalfInteger value) {
-        if (page == null || page == value.isHalf()) {
+        if (Objects.isNull(page) || page == value.isHalf()) {
             return String.format(digits, value.intValue());
         } else {
             return "";
