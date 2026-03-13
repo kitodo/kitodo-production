@@ -180,7 +180,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         Collection<Integer> queryIds = query.performIndexSearches();
         if (!queryIds.isEmpty()) {
-            query.addInCollectionRestriction("id", queryIds);
+            query.addInCollectionRestriction("process.id", queryIds);
         }
         return count(query.formCountQuery(), query.getQueryParameters());
     }
@@ -264,7 +264,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
         Collection<Integer> queryIds = query.performIndexSearches();
         if (!queryIds.isEmpty()) {
-            query.addInCollectionRestriction("id", queryIds);
+            query.addInCollectionRestriction("process.id", queryIds);
         }
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
