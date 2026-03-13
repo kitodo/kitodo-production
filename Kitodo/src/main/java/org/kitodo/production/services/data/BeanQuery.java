@@ -225,22 +225,19 @@ public class BeanQuery {
     /**
      * Searches the index and inserts the IDs into the HQL query parameters.
      */
-    public void performIndexSearches() {
-        List<Pair<String, String>> terms = new ArrayList<>();
-        for (var iterator = indexQueries.entrySet().iterator(); iterator.hasNext();) {
-            Entry<String, Pair<FilterField, String>> entry = iterator.next();
-            String field = entry.getValue().getLeft().getSearchField();
-            String token = entry.getValue().getRight();
+    public Collection<Integer> performIndexSearches() {
+        if (indexQueries.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Pair<String,String>> terms = new ArrayList<>();
+        for (var entry : indexQueries.values()) {
+            String field = entry.getLeft().getSearchField();
+            String token = entry.getRight();
             terms.add(Pair.of(field, token));
         }
+        indexQueries.clear();
         Collection<Integer> ids = indexingService.searchIds(Process.class, terms);
-        Collection<Integer> finalIds = ids.isEmpty() ? NO_HIT : ids;
-
-        for (var iterator = indexQueries.entrySet().iterator(); iterator.hasNext();) {
-            Entry<String, Pair<FilterField, String>> entry = iterator.next();
-            parameters.put(entry.getKey(), finalIds);
-            iterator.remove();
-        }
+        return ids.isEmpty() ? NO_HIT : ids;
     }
 
     /**
@@ -343,9 +340,7 @@ public class BeanQuery {
                     }
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
-                    indexQueryPart.putQueryParameters(varName, parameterName, (className.equals("Process") ? "id"
-                            : "process.id"), indexQueries, indexFiltersAsAlternatives ? restrictionAlternatives
-                                    : restrictions);
+                    indexQueryPart.putQueryParameters(varName, indexQueries);
                 }
             }
             if (groupFilters.size() == 1) {

@@ -178,7 +178,10 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
-        query.performIndexSearches();
+        Collection<Integer> queryIds = query.performIndexSearches();
+        if (!queryIds.isEmpty()) {
+            query.addInCollectionRestriction("id", queryIds);
+        }
         return count(query.formCountQuery(), query.getQueryParameters());
     }
 
@@ -259,7 +262,10 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        query.performIndexSearches();
+        Collection<Integer> queryIds = query.performIndexSearches();
+        if (!queryIds.isEmpty()) {
+            query.addInCollectionRestriction("id", queryIds);
+        }
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
