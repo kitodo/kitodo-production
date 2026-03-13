@@ -88,7 +88,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
     }
 
     /**
-     * Inserts the search parameters into the database query logic.
+     * Adds the prepared index search terms for this filter to the given query map.
      * 
      * @param parameterName
      *            name of the search parameter for the results
