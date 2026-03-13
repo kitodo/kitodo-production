@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -156,10 +155,11 @@ public class IndexingService {
                     });
             List<Integer> ids = query.fetchAll().hits();
 
-            String termSummary = terms.stream()
-                    .distinct()
-                    .map(t -> t.getLeft() + "=\"***\"")
-                    .collect(Collectors.joining(", "));
+            String termSummary = String.join(", ",
+                    terms.stream()
+                            .distinct()
+                            .map(t -> t.getLeft() + "=\"***\"")
+                            .toList());
             logger.debug(
                     "Searching {} IDs with terms {}: {} hits",
                     beanClass.getSimpleName(),
