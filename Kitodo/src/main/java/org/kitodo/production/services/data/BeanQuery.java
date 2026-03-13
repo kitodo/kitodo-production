@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +63,7 @@ public class BeanQuery {
     private final List<String> restrictionAlternatives = new ArrayList<>();
     private boolean indexFiltersAsAlternatives = false;
     private Pair<String, String> sorting;
-    private final Map<String, Pair<FilterField, String>> indexQueries = new HashMap<>();
+    private final List<Pair<FilterField, String>> indexQueries = new ArrayList<>();
     private final Map<String, Object> parameters = new HashMap<>();
 
     /**
@@ -230,7 +229,7 @@ public class BeanQuery {
             return Collections.emptyList();
         }
         List<Pair<String,String>> terms = new ArrayList<>();
-        for (var entry : indexQueries.values()) {
+        for (var entry : indexQueries) {
             String field = entry.getLeft().getSearchField();
             String token = entry.getRight();
             terms.add(Pair.of(field, token));
@@ -340,7 +339,7 @@ public class BeanQuery {
                     }
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
-                    indexQueryPart.putQueryParameters(varName, indexQueries);
+                    indexQueryPart.putQueryParameters(indexQueries);
                 }
             }
             if (groupFilters.size() == 1) {
