@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -126,25 +127,45 @@ public class IndexingService {
     }
 
     /**
-     * Searches for a search term in a search field and returns the hit IDs.
-     * 
+     * Searches for entities matching all given field/value terms and returns their IDs.
+     *
      * @param beanClass
      *            class of beans to search for
-     * @param searchField
-     *            search field to search on
-     * @param value
-     *            value to be found in the search field
+     * @param terms
+     *            list of field/value pairs to match (AND-combined)
      * @return ids of the found beans
      */
-    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, String searchField, String value) {
+    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, List<Pair<String, String>> terms) {
         try (Session ormSession = HibernateUtil.getSession()) {
             SearchSession searchSession = Search.session(ormSession);
             SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
                     .toProjection();
-            List<Integer> ids = searchSession.search(beanClass).select(idField).where(function -> function.match().field(
-                    searchField).matching(value)).fetchAll().hits();
-            logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
-                    value, ids.size());
+            var query = searchSession.search(beanClass)
+                    .select(idField)
+                    .where(f -> {
+                        var bool = f.bool();
+                        for (var term : terms) {
+                            bool.must(
+                                    f.match()
+                                            .field(term.getLeft())
+                                            .matching(term.getRight())
+                            );
+                        }
+                        return bool;
+                    });
+            List<Integer> ids = query.fetchAll().hits();
+
+            String termSummary = String.join(", ",
+                    terms.stream()
+                            .distinct()
+                            .map(t -> t.getLeft() + "=\"***\"")
+                            .toList());
+            logger.debug(
+                    "Searching {} IDs with terms {}: {} hits",
+                    beanClass.getSimpleName(),
+                    termSummary,
+                    ids.size()
+            );
             return ids;
         }
     }
