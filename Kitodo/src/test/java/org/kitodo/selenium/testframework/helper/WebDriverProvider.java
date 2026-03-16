@@ -75,14 +75,16 @@ public class WebDriverProvider {
         if (SystemUtils.IS_OS_WINDOWS) {
             geckoDriverFileName = "geckodriver.exe";
             File geckoDriverZipFile = new File(downloadFolder + "geckodriver.zip");
-            FileUtils.copyURLToFile(new URI(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-win64.zip").toURL(),
-                    geckoDriverZipFile);
+            URL geckoUrl = new URI(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-win64.zip").toURL();
+            logger.info("Downloading GeckoDriver for Windows from {}", geckoUrl);
+            FileUtils.copyURLToFile(geckoUrl, geckoDriverZipFile);
             extractZipFileToFolder(geckoDriverZipFile, new File(extractFolder));
         } else if (SystemUtils.IS_OS_MAC_OSX) {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
-            FileUtils.copyURLToFile(new URI(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-macos.tar.gz").toURL(),
-                    geckoDriverTarFile);
+            URL geckoUrl = new URI(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-macos.tar.gz").toURL();
+            logger.info("Downloading GeckoDriver for MACOS from {}", geckoUrl);
+            FileUtils.copyURLToFile(geckoUrl, geckoDriverTarFile);
             File theDir = new File(extractFolder);
             if (!theDir.mkdir()) {
                 logger.error("Unable to create directory '" + theDir.getPath() + "'!");
@@ -91,8 +93,9 @@ public class WebDriverProvider {
         } else {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
-            FileUtils.copyURLToFile(new URI(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-linux64.tar.gz").toURL(),
-                    geckoDriverTarFile);
+            URL geckoUrl = new URI(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-linux64.tar.gz").toURL();
+            logger.info("Downloading GeckoDriver for Linux from {}", geckoUrl);
+            FileUtils.copyURLToFile(geckoUrl, geckoDriverTarFile);
             extractTarFileToFolder(geckoDriverTarFile, new File(extractFolder));
         }
         File geckoDriverFile = new File(extractFolder, geckoDriverFileName);

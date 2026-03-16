@@ -138,7 +138,7 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
     public DataEditorSetting loadDataEditorSetting(int userId, Integer taskId) {
         List<DataEditorSetting> results = getByUserAndTask(userId, taskId);
         if (Objects.nonNull(results) && !results.isEmpty()) {
-            return results.get(0);
+            return results.getFirst();
         }
         return null;
     }

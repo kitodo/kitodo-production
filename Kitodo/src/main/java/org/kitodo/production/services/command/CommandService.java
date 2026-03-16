@@ -33,7 +33,7 @@ public class CommandService {
      * Initialize Command Service.
      */
     public CommandService() {
-        commandModule = new KitodoServiceLoader<CommandInterface>(CommandInterface.class).loadModule();
+        commandModule = new KitodoServiceLoader<>(CommandInterface.class).loadModule();
     }
 
     /**

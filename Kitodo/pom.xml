@@ -252,7 +252,7 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>${spotbugs-maven-plugin.version}</version>
+            <version>${spotbugs-annotations.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -261,7 +261,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opensearch</groupId>

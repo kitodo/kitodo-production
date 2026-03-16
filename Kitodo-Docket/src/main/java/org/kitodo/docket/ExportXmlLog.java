@@ -114,7 +114,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
      */
     void startExport(OutputStream os) throws IOException {
         try {
-            Document doc = createDocument(docketData.get(0), true);
+            Document doc = createDocument(docketData.getFirst(), true);
 
             XMLOutputter outp = new XMLOutputter();
             outp.setFormat(Format.getPrettyFormat());

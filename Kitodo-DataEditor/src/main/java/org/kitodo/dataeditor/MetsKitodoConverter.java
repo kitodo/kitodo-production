@@ -36,8 +36,7 @@ import org.kitodo.utils.JAXBContextCache;
 public class MetsKitodoConverter {
 
     private static final Logger logger = LogManager.getLogger(MetsKitodoConverter.class);
-    private static FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
-            FileManagementInterface.class).loadModule();
+    private static FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(FileManagementInterface.class).loadModule();
 
     /**
      * Private constructor to hide the implicit public one.

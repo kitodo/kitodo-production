@@ -105,7 +105,7 @@ public class ProcessKeywords {
         this.taskKeywords = filterMinLength(initTaskKeywords(process.getTasksUnmodified()));
 
         // more keywords for default search only
-        this.defaultKeywords = new HashSet<String>();
+        this.defaultKeywords = new HashSet<>();
         if (Objects.nonNull(process.getId())) {
             defaultKeywords.add(process.getId().toString());
         }
