@@ -82,7 +82,7 @@ public class MigrationST extends BaseTestSelenium {
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         Workflow workflow = workflowService.getById(4);
         final long numberOfTemplates = workflow.getTemplates().size();
-        final long workflowTemplateId = workflow.getTemplates().get(0).getId();
+        final long workflowTemplateId = workflow.getTemplates().getFirst().getId();
         String processTemplateTitle = ServiceManager.getProcessService().getById(1).getTemplate().getTitle();
 
         assertEquals(1, numberOfTemplates, "only one template should be assigned");

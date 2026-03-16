@@ -52,7 +52,6 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
-import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -393,7 +392,7 @@ public class StructurePanel implements Serializable {
      */
     public void setSelectedLogicalNodes(List<TreeNode<Object>> selected) {
         if (Objects.nonNull(selected)) {
-            this.setSelectedLogicalNodesAsArray(selected.toArray(new TreeNode[selected.size()]));
+            this.setSelectedLogicalNodesAsArray(selected.toArray(new TreeNode[0]));
         }
     }
 
@@ -406,7 +405,7 @@ public class StructurePanel implements Serializable {
     public TreeNode<Object> getSelectedPhysicalNodeIfSingle() {
         List<TreeNode<Object>> nodes = getSelectedPhysicalNodes();
         if (Objects.nonNull(nodes) && nodes.size() == 1) {
-            return nodes.get(0);
+            return nodes.getFirst();
         }
         return null;
     }
@@ -455,7 +454,7 @@ public class StructurePanel implements Serializable {
      */
     public void setSelectedPhysicalNodes(List<TreeNode<Object>> selected) {
         if (Objects.nonNull(selected)) {
-            this.setSelectedPhysicalNodesAsArray(selected.toArray(new TreeNode[selected.size()]));
+            this.setSelectedPhysicalNodesAsArray(selected.toArray(new TreeNode[0]));
         }
     }
 
@@ -548,7 +547,7 @@ public class StructurePanel implements Serializable {
 
     private void preservePhysical() {
         if (!physicalTree.getChildren().isEmpty()) {
-            preservePhysicalRecursive(physicalTree.getChildren().get(0));
+            preservePhysicalRecursive(physicalTree.getChildren().getFirst());
             dataEditor.checkForChanges();
         }
     }
@@ -1050,11 +1049,8 @@ public class StructurePanel implements Serializable {
 
     /**
      * Callback function triggered when a node is selected in the logical structure tree.
-     *
-     * @param event
-     *            NodeSelectEvent triggered by logical node being selected
      */
-    public void treeLogicalSelect(NodeSelectEvent event) {
+    public void treeLogicalSelect() {
         /*
          * The newly selected element has already been set in 'selectedLogicalNodes' by
          * JSF at this point.
@@ -1085,11 +1081,8 @@ public class StructurePanel implements Serializable {
 
     /**
      * Callback function triggered when a node is selected in the physical structure tree.
-     *
-     * @param event
-     *            NodeSelectEvent triggered by logical node being selected
      */
-    public void treePhysicalSelect(NodeSelectEvent event) {
+    public void treePhysicalSelect() {
         /*
          * The newly selected element has already been set in 'selectedPhysicalNode' by
          * JSF at this point.
@@ -1769,7 +1762,7 @@ public class StructurePanel implements Serializable {
 
     private HashMap<LogicalDivision, Boolean> getLogicalTreeNodeExpansionStates(DefaultTreeNode<Object> tree) {
         if (Objects.nonNull(tree) && tree.getChildCount() == 1) {
-            TreeNode<Object> treeRoot = tree.getChildren().get(0);
+            TreeNode<Object> treeRoot = tree.getChildren().getFirst();
             LogicalDivision structuralElement = getTreeNodeStructuralElement(treeRoot);
             if (Objects.nonNull(structuralElement)) {
                 return getLogicalTreeNodeExpansionStatesRecursively(treeRoot, new HashMap<>());
@@ -1794,7 +1787,7 @@ public class StructurePanel implements Serializable {
 
     private HashMap<PhysicalDivision, Boolean> getPhysicalTreeNodeExpansionStates(DefaultTreeNode<Object> tree) {
         if (Objects.nonNull(tree) && tree.getChildCount() == 1) {
-            TreeNode<Object> treeRoot = tree.getChildren().get(0);
+            TreeNode<Object> treeRoot = tree.getChildren().getFirst();
             PhysicalDivision physicalDivision = getTreeNodePhysicalDivision(treeRoot);
             if (Objects.nonNull(physicalDivision)) {
                 return getPhysicalTreeNodeExpansionStatesRecursively(treeRoot, new HashMap<>());
@@ -2017,7 +2010,7 @@ public class StructurePanel implements Serializable {
 
                 // check sibling has children (with first child being another logical node)
                 while (!nextLogical.getChildren().isEmpty()) {
-                    TreeNode<Object> firstChild = nextLogical.getChildren().get(0);
+                    TreeNode<Object> firstChild = nextLogical.getChildren().getFirst();
                     if (Objects.isNull(getTreeNodeStructuralElement(firstChild))) {
                         // first child is not a logical node
                         return nextLogical;
@@ -2062,7 +2055,7 @@ public class StructurePanel implements Serializable {
         if (Objects.nonNull(nextLogical)) {
             // check whether first child is already view of current node (to avoid adding views multiple times)
             if (!nextLogical.getChildren().isEmpty()) {
-                TreeNode<Object> childNode = nextLogical.getChildren().get(0);
+                TreeNode<Object> childNode = nextLogical.getChildren().getFirst();
                 View childNodeView = getTreeNodeView(childNode);
                 View selectedView = getTreeNodeView(treeNode);
                 if (Objects.nonNull(childNodeView) && Objects.nonNull(selectedView)) {

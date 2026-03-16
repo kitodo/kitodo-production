@@ -417,7 +417,7 @@ public class KitodoScriptService {
                     process.getTitle(), sourceFolder.getRelativeDirectoryPath());
                 continue;
             }
-            boolean all = folders.size() == 1 && folders.get(0).equalsIgnoreCase("all");
+            boolean all = folders.size() == 1 && folders.getFirst().equalsIgnoreCase("all");
             List<String> ungeneratableFolders = all ? new ArrayList<>() : new ArrayList<>(folders);
             List<Subfolder> outputFolders = new ArrayList<>();
             for (Folder folder : process.getProject().getFolders()) {
@@ -546,7 +546,7 @@ public class KitodoScriptService {
                 Helper.setErrorMessage("Could not find ruleset: ", RULESET);
                 return;
             }
-            Ruleset ruleset = rulesets.get(0);
+            Ruleset ruleset = rulesets.getFirst();
 
             for (Process process : processes) {
                 process.setRuleset(ruleset);
@@ -714,7 +714,7 @@ public class KitodoScriptService {
         List<Role> foundRoles = ServiceManager.getRoleService().getByQuery(query.formQueryForAll(), query
                 .getQueryParameters());
         if (!foundRoles.isEmpty()) {
-            role = foundRoles.get(0);
+            role = foundRoles.getFirst();
         } else {
             Helper.setErrorMessage("Unknown role: ", this.parameters.get(ROLE));
             return;

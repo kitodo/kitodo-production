@@ -120,7 +120,7 @@ public class MediaPartialFormTest {
         assertEquals(2, logicalDivision.getChildren().size());
         assertEquals("Lorem", logicalDivision.getChildren().get(1).getLabel());
         LogicalDivision mediaPartialLogicalDivision = logicalDivision.getChildren().get(1);
-        MediaPartial mediaPartial = mediaPartialLogicalDivision.getViews().get(0).getPhysicalDivision()
+        MediaPartial mediaPartial = mediaPartialLogicalDivision.getViews().getFirst().getPhysicalDivision()
                 .getMediaPartial();
         assertEquals("00:00:45.000", mediaPartial.getBegin());
         assertEquals("00:00:15.000", mediaPartial.getExtent());
@@ -135,9 +135,9 @@ public class MediaPartialFormTest {
 
         assertEquals(2, logicalDivision.getChildren().size());
         // 'media partial' is now designated as the first child in the sorting order.
-        assertEquals("Lorem ipsum", logicalDivision.getChildren().get(0).getLabel());
-        mediaPartialLogicalDivision = logicalDivision.getChildren().get(0);
-        mediaPartial = mediaPartialLogicalDivision.getViews().get(0).getPhysicalDivision()
+        assertEquals("Lorem ipsum", logicalDivision.getChildren().getFirst().getLabel());
+        mediaPartialLogicalDivision = logicalDivision.getChildren().getFirst();
+        mediaPartial = mediaPartialLogicalDivision.getViews().getFirst().getPhysicalDivision()
                 .getMediaPartial();
         assertEquals("00:00:10.000", mediaPartial.getBegin());
         assertEquals("00:00:20.000",

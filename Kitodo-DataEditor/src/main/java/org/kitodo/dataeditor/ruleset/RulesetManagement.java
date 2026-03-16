@@ -221,7 +221,7 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     @Override
     public Optional<String> getTranslationForKey(List<String> keys, List<LanguageRange> priorityList) {
-        Optional<Key> optionalKey = ruleset.getKey(keys.get(0));
+        Optional<Key> optionalKey = ruleset.getKey(keys.getFirst());
         if (optionalKey.isPresent()) {
             KeyDeclaration keyDeclaration = new KeyDeclaration(ruleset, optionalKey.get());
             for (int i = 1; i < keys.size(); i++) {

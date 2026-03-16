@@ -234,7 +234,7 @@ public class ProjectEditView extends BaseEditView {
                 return false;
             } else if (count == 1) {
                 Integer projectId = this.project.getId();
-                if (Objects.nonNull(projectId) && projects.get(0).getId().equals(projectId)) {
+                if (Objects.nonNull(projectId) && projects.getFirst().getId().equals(projectId)) {
                     return true;
                 }
                 Helper.setErrorMessage(ERROR_OCCURRED, TITLE_USED);

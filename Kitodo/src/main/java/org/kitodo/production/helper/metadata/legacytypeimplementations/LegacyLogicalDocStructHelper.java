@@ -231,7 +231,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 inStruct.addMetadata(md);
                 return md;
             } else {
-                return all.get(0);
+                return all.getFirst();
             }
         }
         return null;
