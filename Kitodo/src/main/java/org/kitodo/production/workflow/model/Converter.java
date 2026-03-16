@@ -122,6 +122,7 @@ public class Converter {
             task.setWorkflowCondition(new WorkflowCondition(kitodoTask.getConditionType(), kitodoTask.getConditionValue()));
         }
 
+        String taskLabel = Objects.nonNull(task.getTitle()) ? task.getTitle() : kitodoTask.getWorkflowId();
         try {
             String[] userRoleIds = kitodoTask.getUserRoles().split(",");
             for (String userRoleString : userRoleIds) {
@@ -130,12 +131,12 @@ public class Converter {
                     task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
                 } catch (DAOException e) {
                     throw new WorkflowException(Helper.getTranslation("workflowExceptionRoleNotFound",
-                        task.getTitle()));
+                        taskLabel));
                 }
             }
         } catch (NullPointerException e) {
             throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
-                task.getTitle()));
+                taskLabel));
         }
 
         if (workflowTask instanceof ScriptTask) {
