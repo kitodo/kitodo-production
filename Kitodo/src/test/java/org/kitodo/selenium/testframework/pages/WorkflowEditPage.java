@@ -55,9 +55,11 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         Actions builder = new Actions(Browser.getDriver());
         builder.click(taskBox).build().perform();
 
-        WebElement roleTab = Browser.getDriver().findElement(By.cssSelector(
+        WebElement permissionsHeader = Browser.getDriver().findElement(By.cssSelector(
             "[data-group-id='group-kitodo-permissions'] .bio-properties-panel-group-header"));
-        builder.click(roleTab).build().perform();
+        if (!permissionsHeader.getAttribute("class").contains("open")) {
+            builder.click(permissionsHeader).build().perform();
+        }
 
         WebElement firstRole = Browser.getDriver().findElement(By.cssSelector("#permittedUserRole_1"));
         builder.click(firstRole).build().perform();
