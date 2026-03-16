@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.exception.DataException;
 import org.hibernate.search.engine.search.projection.SearchProjection;
+import org.hibernate.search.engine.search.query.SearchQuery;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -142,16 +143,16 @@ public class IndexingService {
                     .toProjection();
             var query = searchSession.search(beanClass)
                     .select(idField)
-                    .where(f -> {
-                        var bool = f.bool();
-                        for (var term : terms) {
-                            bool.must(
-                                    f.match()
+                    .where(searchPredicateFactory -> {
+                        var booleanPredicate = searchPredicateFactory.bool();
+                        for (Pair<String, String> term : terms) {
+                            booleanPredicate.filter(
+                                    searchPredicateFactory.match()
                                             .field(term.getLeft())
                                             .matching(term.getRight())
                             );
                         }
-                        return bool;
+                        return booleanPredicate;
                     });
             List<Integer> ids = query.fetchAll().hits();
 
