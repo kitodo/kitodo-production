@@ -159,7 +159,7 @@ public class IndexingService {
             String termSummary = String.join(", ",
                     terms.stream()
                             .distinct()
-                            .map(t -> t.getLeft() + "=\"***\"")
+                            .map(t -> t.getLeft() + "=\"" + t.getRight() + "\"")
                             .toList());
             logger.debug(
                     "Searching {} IDs with terms {}: {} hits",
