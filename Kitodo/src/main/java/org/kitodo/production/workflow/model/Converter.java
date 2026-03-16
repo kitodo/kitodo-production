@@ -123,6 +123,19 @@ public class Converter {
         }
 
         String taskLabel = Objects.nonNull(task.getTitle()) ? task.getTitle() : kitodoTask.getWorkflowId();
+        addRoles(task, kitodoTask, taskLabel);
+
+        if (workflowTask instanceof ScriptTask) {
+            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask);
+            task.setScriptName(kitodoScriptTask.getScriptName());
+            task.setScriptPath(kitodoScriptTask.getScriptPath());
+        }
+
+        return task;
+    }
+
+    private void addRoles(org.kitodo.data.database.beans.Task task, KitodoTask kitodoTask, String taskLabel)
+            throws WorkflowException {
         try {
             String[] userRoleIds = kitodoTask.getUserRoles().split(",");
             for (String userRoleString : userRoleIds) {
@@ -138,13 +151,5 @@ public class Converter {
             throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
                 taskLabel));
         }
-
-        if (workflowTask instanceof ScriptTask) {
-            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask);
-            task.setScriptName(kitodoScriptTask.getScriptName());
-            task.setScriptPath(kitodoScriptTask.getScriptPath());
-        }
-
-        return task;
     }
 }
