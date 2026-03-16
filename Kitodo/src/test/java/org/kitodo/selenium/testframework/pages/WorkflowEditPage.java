@@ -51,15 +51,15 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     public WorkflowEditPage insertWorkflowData(Workflow workflow) {
         fileInput.sendKeys(workflow.getTitle());
         WebElement taskBox = Browser.getDriver()
-                .findElement(By.cssSelector("#js-canvas > div > div > svg > g > g.layer-base > g:nth-child(3) > g > g"));
+                .findElement(By.cssSelector("#js-canvas [data-element-id='Task_0i1d0ke']"));
         Actions builder = new Actions(Browser.getDriver());
         builder.click(taskBox).build().perform();
 
         WebElement roleTab = Browser.getDriver().findElement(By.cssSelector(
-            "#js-properties-panel > div > div > div.bpp-properties-tab-bar > ul > li:nth-child(2)"));
+            "[data-group-id='group-kitodo-permissions'] .bio-properties-panel-group-header"));
         builder.click(roleTab).build().perform();
 
-        WebElement firstRole = Browser.getDriver().findElement(By.cssSelector("#camunda-permittedUserRole_1"));
+        WebElement firstRole = Browser.getDriver().findElement(By.cssSelector("#permittedUserRole_1"));
         builder.click(firstRole).build().perform();
 
         return this;
