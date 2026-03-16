@@ -106,7 +106,7 @@ public abstract class Page<T> {
             return false;
         } else {
             if (recordTitles.size() == 1) {
-                return !recordTitles.get(0).equals("No records found.");
+                return !recordTitles.getFirst().equals("No records found.");
             } else {
                 return true;
             }

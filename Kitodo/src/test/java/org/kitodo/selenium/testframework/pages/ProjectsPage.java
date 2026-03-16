@@ -713,7 +713,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
         // click "mass import" icon
         List<WebElement> massImportLinks = Browser.getDriver().findElements(By.cssSelector(MASS_IMPORT_LINK));
         assert(!massImportLinks.isEmpty());
-        WebElement massImportLink = massImportLinks.get(0);
+        WebElement massImportLink = massImportLinks.getFirst();
         massImportLink.click();
 
         // open template selection menu

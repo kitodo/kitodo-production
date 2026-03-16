@@ -222,7 +222,7 @@ public class MetsKitodoWrapper {
     public KitodoType getFirstKitodoTypeOfLogicalDiv(DivType div) {
         List<Object> objects = div.getDMDID();
         if (!objects.isEmpty()) {
-            MdSecType mdSecType = (MdSecType) div.getDMDID().get(0);
+            MdSecType mdSecType = (MdSecType) div.getDMDID().getFirst();
             return JaxbXmlUtils.getKitodoTypeOfDmdSecElement(mdSecType);
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
