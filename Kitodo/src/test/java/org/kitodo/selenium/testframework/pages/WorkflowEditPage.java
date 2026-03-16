@@ -11,6 +11,8 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import java.time.Duration;
+
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -18,6 +20,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
@@ -61,7 +65,9 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
             builder.click(permissionsHeader).build().perform();
         }
 
-        WebElement firstRole = Browser.getDriver().findElement(By.cssSelector("#permittedUserRole_1"));
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(10));
+        WebElement firstRole = wait.until(ExpectedConditions.elementToBeClickable(
+            By.cssSelector("[data-group-id='group-kitodo-permissions'] .bio-properties-panel-group-entries input[type='checkbox']")));
         builder.click(firstRole).build().perform();
 
         return this;
