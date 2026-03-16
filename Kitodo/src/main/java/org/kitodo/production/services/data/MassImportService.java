@@ -191,7 +191,7 @@ public class MassImportService {
      * @throws RuntimeException if any index in skipIndices is greater than the number of columns in the first record
      */
     public List<CsvRecord> discardEmptyColumns(List<CsvRecord> csvRecords, List<Integer> skipIndices) {
-        if (!csvRecords.isEmpty() && Collections.max(skipIndices) > csvRecords.get(0).getCsvCells().size()) {
+        if (!csvRecords.isEmpty() && Collections.max(skipIndices) > csvRecords.getFirst().getCsvCells().size()) {
             throw new RuntimeException(Helper.getTranslation("massImport.csvCellMismatch"));
         }
         // iterate over "skipIndices" in reverse order to preserve column indices in "metadataKeys" list

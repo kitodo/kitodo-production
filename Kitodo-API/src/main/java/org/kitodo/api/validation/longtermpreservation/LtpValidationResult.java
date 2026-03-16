@@ -133,11 +133,11 @@ public class LtpValidationResult {
         String joinedConditionResults = StringUtils
                 .join(conditionResults.stream().map((r) -> r.toString()).collect(Collectors.toList()), ", ");
         String joinedMessages = StringUtils.join(additionalMessages, ", ");
-        builder.append("LtpValidationResult " + super.toString() + "\n");
-        builder.append("- state: " + state.name() + "\n");
-        builder.append("- errors: " + joinedErrors + "\n");
-        builder.append("- conditionResults: " + joinedConditionResults + "\n");
-        builder.append("- addtionalMessages: " + joinedMessages + "\n");
+        builder.append("LtpValidationResult ").append(super.toString()).append("\n");
+        builder.append("- state: ").append(state.name()).append("\n");
+        builder.append("- errors: ").append(joinedErrors).append("\n");
+        builder.append("- conditionResults: ").append(joinedConditionResults).append("\n");
+        builder.append("- addtionalMessages: ").append(joinedMessages).append("\n");
         return builder.toString();
     }
 

@@ -116,7 +116,7 @@ public class NewspaperMigrationTaskIT {
         LogicalDivision logicalStructure = workpiece.getLogicalStructure();
         assertEquals("NewspaperMonth", logicalStructure.getType(), "should have modified METS file");
         assertEquals("1850-03", logicalStructure.getOrderlabel(), "should have added date for month");
-        assertEquals("1850-03-12", logicalStructure.getChildren().get(0).getOrderlabel(), "should have added date for day");
+        assertEquals("1850-03-12", logicalStructure.getChildren().getFirst().getOrderlabel(), "should have added date for day");
 
         Process newspaperProcess = processService.getById(4);
         processService.save(newspaperProcess);

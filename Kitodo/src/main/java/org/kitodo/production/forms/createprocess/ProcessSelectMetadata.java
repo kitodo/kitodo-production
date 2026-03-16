@@ -175,7 +175,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
      * @return identifier of selected element
      */
     public String getSelectedItem() {
-        return selectedItems.isEmpty() ? "" : selectedItems.get(0);
+        return selectedItems.isEmpty() ? "" : selectedItems.getFirst();
     }
 
     /**

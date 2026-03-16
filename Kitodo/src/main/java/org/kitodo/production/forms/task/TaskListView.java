@@ -207,7 +207,7 @@ public class TaskListView extends BaseListView {
         if (batches.isEmpty()) {
             return stopwatch.stop(takeOverTask(task, referrer));
         } else if (batches.size() == 1) {
-            Integer batchId = batches.get(0).getId();
+            Integer batchId = batches.getFirst().getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);
@@ -279,7 +279,7 @@ public class TaskListView extends BaseListView {
         if (batches.isEmpty()) {
             return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
         } else if (batches.size() == 1) {
-            Integer batchId = batches.get(0).getId();
+            Integer batchId = batches.getFirst().getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);

@@ -178,7 +178,7 @@ public class MigrationForm extends BaseForm {
         List<Task> processTasks = process.getTasks();
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));
         for (String tasks : aggregatedProcesses.keySet()) {
-            List<Task> aggregatedTasks = aggregatedProcesses.get(tasks).get(0).getTasks();
+            List<Task> aggregatedTasks = aggregatedProcesses.get(tasks).getFirst().getTasks();
             aggregatedTasks.sort(Comparator.comparingInt(Task::getOrdering));
             if (checkForTitle(tasks, processTasks) && migrationService
                     .tasksAreEqual(aggregatedTasks, processTasks)) {
@@ -319,7 +319,7 @@ public class MigrationForm extends BaseForm {
      */
     public String createNewWorkflow() {
 
-        Process blueprintProcess = aggregatedProcesses.get(currentTasks).get(0);
+        Process blueprintProcess = aggregatedProcesses.get(currentTasks).getFirst();
         TasksToWorkflowConverter templateConverter = new TasksToWorkflowConverter();
         List<Task> processTasks = blueprintProcess.getTasks();
         processTasks.sort(Comparator.comparingInt(Task::getOrdering));

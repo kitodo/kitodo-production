@@ -142,7 +142,7 @@ public class CommandServiceTest {
 
         assertNotNull(result);
         assertEquals(-1, result.getExitCode());
-        assertTrue(result.getStdErrMessages().get(0).contains("IOException"));
+        assertTrue(result.getStdErrMessages().getFirst().contains("IOException"));
         assertFalse(result.isSuccessful());
     }
 
@@ -178,7 +178,7 @@ public class CommandServiceTest {
         Thread.sleep(2000); // wait for async thread to finish;
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
         assertNotNull(result, "There were no results!");
-        assertTrue(result.getMessages().get(0).contains("IOException"), "result message should contain IOException");
+        assertTrue(result.getMessages().getFirst().contains("IOException"), "result message should contain IOException");
     }
 
     @Test
@@ -253,6 +253,6 @@ public class CommandServiceTest {
         if (commandResults.isEmpty()) {
             return null;
         }
-        return commandResults.get(commandResults.size() - 1);
+        return commandResults.getLast();
     }
 }

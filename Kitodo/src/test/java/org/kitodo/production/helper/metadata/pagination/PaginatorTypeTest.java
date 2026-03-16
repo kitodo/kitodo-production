@@ -159,18 +159,18 @@ public class PaginatorTypeTest {
     }
 
     @Test
-    public void testArabicFormatRectoversoFoliationFictiousFromArabic() {
-        assertEquals("[4°]¡r¿v½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "4", true, UNUSED_STRING));
+    public void testArabicFormatRectoversoFoliationFictitiousFromArabic() {
+        assertEquals("[4°]¡r¿`v`½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "4", true, UNUSED_STRING));
     }
 
     @Test
-    public void testArabicFormatRectoversoFoliationFictiousFromLowercaseRoman() {
-        assertEquals("[4°]¡r¿v½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "iv", true, UNUSED_STRING));
+    public void testArabicFormatRectoversoFoliationFictitiousFromLowercaseRoman() {
+        assertEquals("[4°]¡r¿`v`½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "iv", true, UNUSED_STRING));
     }
 
     @Test
-    public void testArabicFormatRectoversoFoliationFictiousFromUppercaseRoman() {
-        assertEquals("[4°]¡r¿v½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "IV", true, UNUSED_STRING));
+    public void testArabicFormatRectoversoFoliationFictitiousFromUppercaseRoman() {
+        assertEquals("[4°]¡r¿`v`½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "IV", true, UNUSED_STRING));
     }
 
     @Test
@@ -208,17 +208,27 @@ public class PaginatorTypeTest {
 
     @Test
     public void testArabicFormatRectoversoFoliationFromArabic() {
-        assertEquals("1°¡r¿v½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "1", false, UNUSED_STRING));
+        assertEquals("1°¡r¿`v`½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "1", false, UNUSED_STRING));
     }
 
     @Test
     public void testArabicFormatRectoversoFoliationFromLowercaseRoman() {
-        assertEquals("1°¡r¿v½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "i", false, UNUSED_STRING));
+        assertEquals("1°¡r¿`v`½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "i", false, UNUSED_STRING));
     }
 
     @Test
     public void testArabicFormatRectoversoFoliationFromUppercaseRoman() {
-        assertEquals("1°¡r¿v½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "I", false, UNUSED_STRING));
+        assertEquals("1°¡r¿`v`½", PaginatorType.ARABIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "I", false, UNUSED_STRING));
+    }
+
+    @Test
+    public void testArabicFormatFoliationWithEmptyPage() {
+        assertEquals("¿uncounted¡1½", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", false, UNUSED_STRING));
+    }
+
+    @Test
+    public void testArabicFormatFoliationWithEmptyPageFictitious() {
+        assertEquals("[¿uncounted¡1½]", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "1", true, UNUSED_STRING));
     }
 
     @Test
@@ -252,7 +262,7 @@ public class PaginatorTypeTest {
     }
 
     @Test
-    public void testFreetextFormatFoliationFictious() {
+    public void testFreetextFormatFoliationFictitious() {
         assertEquals("[`Hello world!`½]",
             PaginatorType.FREETEXT.format(PaginatorMode.FOLIATION, HELLO_WORLD_STRING, true, UNUSED_STRING));
     }
@@ -264,20 +274,20 @@ public class PaginatorTypeTest {
     }
 
     @Test
-    public void testFreetextFormatPagesFictious() {
+    public void testFreetextFormatPagesFictitious() {
         assertEquals("[`Hello world!`]",
             PaginatorType.FREETEXT.format(PaginatorMode.PAGES, HELLO_WORLD_STRING, true, UNUSED_STRING));
     }
 
     @Test
     public void testFreetextFormatRectoversoFoliation() {
-        assertEquals("`Hello world!`°¡r¿v½",
+        assertEquals("`Hello world!`°¡r¿`v`½",
             PaginatorType.FREETEXT.format(PaginatorMode.RECTOVERSO_FOLIATION, HELLO_WORLD_STRING, false, UNUSED_STRING));
     }
 
     @Test
-    public void testFreetextFormatRectoversoFoliationFictious() {
-        assertEquals("[`Hello world!`°]¡r¿v½",
+    public void testFreetextFormatRectoversoFoliationFictitious() {
+        assertEquals("[`Hello world!`°]¡r¿`v`½",
             PaginatorType.FREETEXT.format(PaginatorMode.RECTOVERSO_FOLIATION, HELLO_WORLD_STRING, true, UNUSED_STRING));
     }
 
@@ -421,18 +431,18 @@ public class PaginatorTypeTest {
     }
 
     @Test
-    public void testRomanFormatRectoversoFoliationFictiousFromArabic() {
-        assertEquals("[VIII°]¡r¿v½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "8", true, UNUSED_STRING));
+    public void testRomanFormatRectoversoFoliationFictitiousFromArabic() {
+        assertEquals("[VIII°]¡r¿`v`½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "8", true, UNUSED_STRING));
     }
 
     @Test
-    public void testRomanFormatRectoversoFoliationFictiousFromLowercaseRoman() {
-        assertEquals("[VIII°]¡r¿v½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "viii", true, UNUSED_STRING));
+    public void testRomanFormatRectoversoFoliationFictitiousFromLowercaseRoman() {
+        assertEquals("[VIII°]¡r¿`v`½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "viii", true, UNUSED_STRING));
     }
 
     @Test
-    public void testRomanFormatRectoversoFoliationFictiousFromUppercaseRoman() {
-        assertEquals("[VIII°]¡r¿v½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "VIII", true, UNUSED_STRING));
+    public void testRomanFormatRectoversoFoliationFictitiousFromUppercaseRoman() {
+        assertEquals("[VIII°]¡r¿`v`½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "VIII", true, UNUSED_STRING));
     }
 
     @Test
@@ -470,17 +480,22 @@ public class PaginatorTypeTest {
 
     @Test
     public void testRomanFormatRectoversoFoliationFromArabic() {
-        assertEquals("VI°¡r¿v½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "6", false, UNUSED_STRING));
+        assertEquals("VI°¡r¿`v`½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "6", false, UNUSED_STRING));
     }
 
     @Test
     public void testRomanFormatRectoversoFoliationFromLowercaseRoman() {
-        assertEquals("VI°¡r¿v½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "vi", false, UNUSED_STRING));
+        assertEquals("VI°¡r¿`v`½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "vi", false, UNUSED_STRING));
     }
 
     @Test
     public void testRomanFormatRectoversoFoliationFromUppercaseRoman() {
-        assertEquals("VI°¡r¿v½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "VI", false, UNUSED_STRING));
+        assertEquals("VI°¡r¿`v`½", PaginatorType.ROMAN.format(PaginatorMode.RECTOVERSO_FOLIATION, "VI", false, UNUSED_STRING));
+    }
+
+    @Test
+    public void testRomanFormatFoliationWithEmptyPage() {
+        assertEquals("¿uncounted¡III½", PaginatorType.ROMAN.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "3", false, UNUSED_STRING));
     }
 
     @Test
@@ -505,10 +520,16 @@ public class PaginatorTypeTest {
 
     @Test
     public void testAlphabeticFormatRectoversoFoliation() {
-        assertEquals("´m´°¡r¿v½", PaginatorType.ALPHABETIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "m", false, UNUSED_STRING));
+        assertEquals("´m´°¡r¿`v`½", PaginatorType.ALPHABETIC.format(PaginatorMode.RECTOVERSO_FOLIATION, "m", false, UNUSED_STRING));
     }
 
-
+    @Test
+    public void testAlphabeticFormatFoliationWithEmptyPage() {
+        assertEquals(
+                "¿uncounted¡´x´½",
+                PaginatorType.ALPHABETIC.format(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "x", false, UNUSED_STRING)
+        );
+    }
 
     @Test
     public void testUncountedFormatColumns() {
@@ -560,13 +581,13 @@ public class PaginatorTypeTest {
 
     @Test
     public void testUncountedFormatRectoversoFoliation() {
-        assertEquals("`uncounted`°¡r¿v½",
+        assertEquals("`uncounted`°¡r¿`v`½",
             PaginatorType.UNCOUNTED.format(PaginatorMode.RECTOVERSO_FOLIATION, UNUSED_STRING, false, UNUSED_STRING));
     }
 
     @Test
-    public void testUncountedFormatRectoversoFoliationFictious() {
-        assertEquals("[`uncounted`°]¡r¿v½",
+    public void testUncountedFormatRectoversoFoliationFictitious() {
+        assertEquals("[`uncounted`°]¡r¿`v`½",
             PaginatorType.UNCOUNTED.format(PaginatorMode.RECTOVERSO_FOLIATION, UNUSED_STRING, true, UNUSED_STRING));
     }
 

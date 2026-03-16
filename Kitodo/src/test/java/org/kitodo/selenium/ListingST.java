@@ -109,7 +109,7 @@ public class ListingST extends BaseTestSelenium {
         List<String> statistics = desktopPage.getStatistics();
 
         long countInDatabase = ServiceManager.getTaskService().count();
-        long countDisplayed = Long.parseLong(statistics.get(0));
+        long countDisplayed = Long.parseLong(statistics.getFirst());
         assertEquals(countInDatabase, countDisplayed, "Displayed wrong count for task statistics");
 
         countInDatabase = ServiceManager.getUserService().count();
@@ -188,7 +188,7 @@ public class ListingST extends BaseTestSelenium {
 
         List<String> detailsProject = projectsPage.getProjectDetails();
         assertEquals(1, detailsProject.size(), "Displayed wrong number of project's details");
-        assertEquals("Test Owner", detailsProject.get(0), "Displayed wrong project's METS owner");
+        assertEquals("Test Owner", detailsProject.getFirst(), "Displayed wrong project's METS owner");
 
         List<String> templatesProject = projectsPage.getProjectTemplates();
         assertEquals(2, templatesProject.size(), "Displayed wrong number of project's templates");

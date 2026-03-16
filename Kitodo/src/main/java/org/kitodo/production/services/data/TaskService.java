@@ -868,7 +868,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             if (concurrentTasks.isEmpty()) {
                 Helper.setErrorMessage("Invalid process state: no 'inwork' or 'open' task found!");
                 return "";
-            } else if (concurrentTasks.get(0).getOrdering() == 1) {
+            } else if (concurrentTasks.getFirst().getOrdering() == 1) {
                 return Helper.getTranslation("dataEditor.comment.firstTaskInWorkflow");
             } else {
                 List<Task> tasksInWorkByOtherUsers = TaskService.getTasksInWorkByOtherUsers(concurrentTasks);
@@ -876,8 +876,8 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
                     return "";
                 } else {
                     return MessageFormat.format(Helper.getTranslation("dataEditor.comment.parallelTaskInWorkText"),
-                            tasksInWorkByOtherUsers.get(0).getTitle(),
-                            tasksInWorkByOtherUsers.get(0).getProcessingUser().getFullName());
+                            tasksInWorkByOtherUsers.getFirst().getTitle(),
+                            tasksInWorkByOtherUsers.getFirst().getProcessingUser().getFullName());
                 }
             }
         }
@@ -905,7 +905,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
                 .filter(t -> t.getTitle().equals(task.getTitle()))
                 .collect(Collectors.toList());
         if (templateTasks.size() == 1) {
-            return templateTasks.get(0).getId();
+            return templateTasks.getFirst().getId();
         }
         return -1;
     }

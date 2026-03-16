@@ -253,10 +253,10 @@ public class EditPagesDialog {
 
         // refresh selections
         if (Objects.isNull(selectFirstPageSelectedItem) && !selectPageItems.isEmpty()) {
-            selectFirstPageSelectedItem = (Integer) selectPageItems.get(0).getValue();
+            selectFirstPageSelectedItem = (Integer) selectPageItems.getFirst().getValue();
         }
         if (Objects.isNull(selectFirstPageSelectedItem) && !selectPageItems.isEmpty()) {
-            selectFirstPageSelectedItem = (Integer) selectPageItems.get(selectPageItems.size() - 1).getValue();
+            selectFirstPageSelectedItem = (Integer) selectPageItems.getLast().getValue();
         }
         paginationSubSelectionSelectedItems.retainAll(assigneds);
         paginationSelectionSelectedItems.retainAll(unassigneds);

@@ -265,6 +265,8 @@ public class PaginationPanel {
                 "paginierung_spalte.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "sheetCounting",
                 "paginierung_blatt.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION_WITH_EMPTY_PAGE, "sheetCountingWithEmptyPage",
+                "paginierung_blatt_leerseite.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "sheetCountingRectoVerso",
                 "paginierung_blatt_rectoverso.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.VERSORECTO_FOLIATION, "sheetCountingVersoRecto",
@@ -298,12 +300,12 @@ public class PaginationPanel {
         List<Separator> pageSeparators = Separator.factory(ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS));
         try {
             String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
-                paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());
+                paginationStartValue, fictitiousCheckboxChecked, pageSeparators.getFirst().getSeparatorString());
             Paginator paginator = new Paginator(initializer);
             List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
                     .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
             if (selectPaginationScopeSelectedItem) {
-                for (int i = itemsForPagination.get(0); i < physicalDivisions.size(); i++) {
+                for (int i = itemsForPagination.getFirst(); i < physicalDivisions.size(); i++) {
                     physicalDivisions.get(i).setOrderlabel(paginator.next());
                 }
             } else {
@@ -325,7 +327,7 @@ public class PaginationPanel {
      */
     public void show() {
         paginationTypeSelectSelectedItem = resolveDefaultPaginationType();
-        selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
+        selectPaginationModeSelectedItem = selectPaginationModeItems.getFirst();
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;

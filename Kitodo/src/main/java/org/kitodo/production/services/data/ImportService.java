@@ -264,7 +264,7 @@ public class ImportService {
         } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
         } else if (!importConfiguration.getSearchFields().isEmpty()) {
-            return importConfiguration.getSearchFields().get(0).getLabel();
+            return importConfiguration.getSearchFields().getFirst().getLabel();
         }
         return "";
     }
@@ -362,7 +362,7 @@ public class ImportService {
             throw new UnsupportedFormatException("No SchemaConverter found that supports '"
                     + record.getMetadataFormat() + "' and '" + record.getFileFormat() + "'!");
         }
-        return converterModules.get(0);
+        return converterModules.getFirst();
     }
 
     /**
@@ -758,7 +758,7 @@ public class ImportService {
         List<DataRecord> childRecords = searchChildRecords(importConfiguration, elementID, rows);
         LinkedList<TempProcess> childProcesses = new LinkedList<>();
         if (!childRecords.isEmpty()) {
-            SchemaConverterInterface converter = getSchemaConverter(childRecords.get(0));
+            SchemaConverterInterface converter = getSchemaConverter(childRecords.getFirst());
             List<File> mappingFiles = getMappingFiles(importConfiguration);
             for (DataRecord childRecord : childRecords) {
                 DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
@@ -858,7 +858,7 @@ public class ImportService {
         }
 
         // create temp processes for parent (e.g. "collection") and children (e.g. "files")
-        TempProcess collectionProcess = createTempProcessFromElement(parentElements.get(0), importConfiguration,
+        TempProcess collectionProcess = createTempProcessFromElement(parentElements.getFirst(), importConfiguration,
                 projectId, templateId, true, validate);
         eadCollectionProcesses.add(collectionProcess);
 
@@ -1510,7 +1510,7 @@ public class ImportService {
             if (metadata.containsKey(recordIdMetadataKey)) {
                 List<String> ids = metadata.get(recordIdMetadataKey);
                 if (ids.size() == 1) {
-                    return ids.iterator().next();
+                    return ids.getFirst();
                 }
             }
         }
@@ -1543,7 +1543,7 @@ public class ImportService {
             if (metadata.containsKey(docTypeMetadataKey)) {
                 List<String> types = metadata.get(docTypeMetadataKey);
                 if (types.size() == 1) {
-                    return types.iterator().next();
+                    return types.getFirst();
                 }
             }
         }
@@ -1569,13 +1569,13 @@ public class ImportService {
             List<String> higherLevelIdentifiers = new ArrayList<>(
                     RulesetService.getHigherLevelIdentifierMetadata(template.getRuleset()));
             if (!higherLevelIdentifiers.isEmpty()) {
-                parentMetadataKey = higherLevelIdentifiers.get(0);
+                parentMetadataKey = higherLevelIdentifiers.getFirst();
             }
             String id = getRecordId(presetMetadata, templateId, true);
             final String parentId = importProcessAndReturnParentID(id, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey, true);
             setParentProcess(parentId, projectId, template);
-            tempProcess = processList.get(0);
+            tempProcess = processList.getFirst();
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
@@ -1727,12 +1727,12 @@ public class ImportService {
         List<String> labelList = presetMetadata.get(ProcessFieldedMetadata.METADATA_KEY_LABEL);
         List<String> orderLabelList = presetMetadata.get(ProcessFieldedMetadata.METADATA_KEY_ORDERLABEL);
 
-        if (Objects.nonNull(labelList) && !labelList.isEmpty() && !labelList.get(0).isBlank()) {
-            tempProcess.getWorkpiece().getLogicalStructure().setLabel(labelList.get(0));
+        if (Objects.nonNull(labelList) && !labelList.isEmpty() && !labelList.getFirst().isBlank()) {
+            tempProcess.getWorkpiece().getLogicalStructure().setLabel(labelList.getFirst());
         }
 
-        if (Objects.nonNull(orderLabelList) && !orderLabelList.isEmpty() && !orderLabelList.get(0).isBlank()) {
-            tempProcess.getWorkpiece().getLogicalStructure().setOrderlabel(orderLabelList.get(0));
+        if (Objects.nonNull(orderLabelList) && !orderLabelList.isEmpty() && !orderLabelList.getFirst().isBlank()) {
+            tempProcess.getWorkpiece().getLogicalStructure().setOrderlabel(orderLabelList.getFirst());
         }
     }
 
@@ -1947,7 +1947,7 @@ public class ImportService {
                     createProcessForm.getProject().getId(), createProcessForm.getTemplate().getId(),
                     createProcessForm.getSelectedEadLevel(), createProcessForm.getSelectedParentEadLevel(), true);
             createProcessForm.setChildProcesses(new LinkedList<>(eadProcesses.subList(1, eadProcesses.size())));
-            processes = new LinkedList<>(Collections.singletonList(eadProcesses.get(0)));
+            processes = new LinkedList<>(Collections.singletonList(eadProcesses.getFirst()));
         } else {
             Document internalDocument = convertDataRecordToInternal(externalRecord, importConfiguration, false, false, "N/A");
             TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, internalDocument,

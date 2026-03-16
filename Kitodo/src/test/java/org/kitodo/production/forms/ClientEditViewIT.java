@@ -53,7 +53,7 @@ public class ClientEditViewIT {
     public void testRoleAdding() throws DAOException {
         clientEditView.load(1);
         int numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
-        final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
+        final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).getFirst().getAuthorities()
                 .size();
 
         assertEquals(9, numberOfRolesForFirstClient, "Number of roles is incorrect");
@@ -64,7 +64,7 @@ public class ClientEditViewIT {
         clientEditView.save();
 
         numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
-        int numberOfOldAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(2).get(0).getAuthorities()
+        int numberOfOldAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(2).getFirst().getAuthorities()
                 .size();
         int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(9).getAuthorities()
                 .size();
