@@ -693,7 +693,8 @@ body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label-container {
 
 body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label-container .ui-selectcheckboxmenu-label,
 body .ui-selectonemenu .ui-selectonemenu-label,
-body .ui-selectonemenu .ui-selectonemenu-trigger {
+body .ui-selectonemenu .ui-selectonemenu-trigger,
+body .ui-selectoneradio {
     padding: .5em var(--input-padding);
 }
 
@@ -789,6 +790,7 @@ body .ui-chkbox:not(.switch) .ui-chkbox-box {
     border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);
     height: var(--default-full-size);
+    min-width: var(--default-full-size);
     width: var(--default-full-size);
 }
 
