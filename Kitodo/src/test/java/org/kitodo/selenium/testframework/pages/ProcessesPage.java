@@ -51,7 +51,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
     private static final String MULTI_VOLUME_WORK_PROCESS_TITLE = "Multi volume work test process";
     private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
-    private static final String CALENDER_ACTION_XPATH = "//a[@href='/kitodo/pages/calendarEdit.jsf?id=%s']";
+    private static final String CALENDER_ACTION_XPATH = "//a[@href='/kitodo/pages/calendarEdit?id=%s']";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -74,7 +74,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement processesSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/processEdit.jsf?referer=processes&id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/processEdit?referer=processes&id=1']")
     private WebElement editProcessLink;
 
     private WebElement downloadDocketLink;
@@ -167,7 +167,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement headerText;
 
     public ProcessesPage() {
-        super("pages/processes.jsf");
+        super("pages/processes");
     }
 
     /**

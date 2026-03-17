@@ -166,7 +166,7 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getTopNavigation().logout();
         login("verylast");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
-        assertTrue(Browser.getCurrentUrl().contains("metadataEditor.jsf"), "Unable to open metadata editor that was not closed by 'close' button");
+        assertTrue(Browser.getCurrentUrl().contains("metadataEditor"), "Unable to open metadata editor that was not closed by 'close' button");
     }
 
     /**
