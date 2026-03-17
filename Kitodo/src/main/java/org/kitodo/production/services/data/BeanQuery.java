@@ -222,12 +222,28 @@ public class BeanQuery {
     }
 
     /**
+     * Applies a restriction based on index search results to the given field.
+     *
+     * <p>If index queries were defined, this performs a search in the index and
+     * restricts the query to the resulting IDs. If the index search yields no hits,
+     * a non-matching ID set is applied to ensure the query returns no results.</p>
+     *
+     * <p>If no index queries were defined, no restriction is added.</p>
+     *
+     * @param field the entity field to restrict (e.g. "id" or "process.id")
+     */
+    public void applyIndexRestriction(String field) {
+        if (indexQueries.isEmpty()) {
+            return;
+        }
+        Collection<Integer> ids = performIndexSearches();
+        addInCollectionRestriction(field, ids);
+    }
+
+    /**
      * Searches the index and inserts the IDs into the HQL query parameters.
      */
-    public Collection<Integer> performIndexSearches() {
-        if (indexQueries.isEmpty()) {
-            return Collections.emptyList();
-        }
+    private Collection<Integer> performIndexSearches() {
         List<Pair<String,String>> terms = new ArrayList<>();
         for (var entry : indexQueries) {
             String field = entry.getLeft().getSearchField();
