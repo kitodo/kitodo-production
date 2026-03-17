@@ -1395,6 +1395,8 @@ body .statusColumn .ui-button {
 #configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-label::after {
     font-family: 'FontAwesome';
     content: '\f0db';
+    display: inline;
+    visibility: visible;
 }
 
 #configureColumnsForm.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header,
@@ -3602,6 +3604,11 @@ button.settings-loaded-task::after {
     display: block;
 }
 
+#metadataAccordion\:logicalMetadataHeader .ui-panelgrid-content .ui-panelgrid-cell {
+    padding: 0;
+    width: auto;
+}
+
 #metadataAccordion.separateStructure > .ui-accordion-content {
     height: calc(100% - 2 * var(--input-height));
 }
@@ -4869,6 +4876,14 @@ body .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon::before {
 #editForm\:importConfigurationTabView\:detailsTab .cell-dummy {
     height: 54px;
     padding: 0;
+}
+
+#editForm\:searchTabView\:processSearch-grid .ui-g > .ui-panelgrid-cell:first-child {
+    width: 200px;
+}
+
+#editForm\:searchTabView\:processSearch-grid .ui-g > .ui-panelgrid-cell:not(:first-child) {
+    width: auto;
 }
 
 .help-button {
