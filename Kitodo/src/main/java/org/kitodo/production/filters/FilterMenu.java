@@ -75,7 +75,7 @@ public class FilterMenu {
     );
 
     private ProcessListView processListView = null;
-    private TaskListView taskForm = null;
+    private TaskListView taskListView = null;
     private UserListView userListView = null;
     private List<Suggestion> suggestions;
     private final List<ParsedFilter> parsedFilters;
@@ -95,10 +95,10 @@ public class FilterMenu {
     /**
      * Constructor of filter menu for tasks.
      *
-     * @param taskForm instance of TaskListView
+     * @param taskListView instance of TaskListView
      */
-    public FilterMenu(TaskListView taskForm) {
-        this.taskForm = taskForm;
+    public FilterMenu(TaskListView taskListView) {
+        this.taskListView = taskListView;
         suggestions = createSuggestionsForTaskCategory("");
         parsedFilters = new ArrayList<>();
     }
@@ -146,7 +146,7 @@ public class FilterMenu {
             // category should be suggested
             if (Objects.nonNull(processListView)) {
                 suggestions = createSuggestionsForProcessCategory(input);
-            } else if (Objects.nonNull(taskForm)) {
+            } else if (Objects.nonNull(taskListView)) {
                 suggestions = createSuggestionsForTaskCategory(input);
             } else if (Objects.nonNull(userListView)) {
                 suggestions = createSuggestionsForUserCategory(input);
@@ -167,7 +167,7 @@ public class FilterMenu {
                     String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
                     suggestions = createSuggestionsForProcessValue(checkFilterCategory(category, processCategories), lastPart);
                 }
-            } else if (Objects.nonNull(taskForm)) {
+            } else if (Objects.nonNull(taskListView)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
                     suggestions = createSuggestionsForTaskCategory(matcherNextCategory.group());
@@ -397,8 +397,8 @@ public class FilterMenu {
         }
         if (Objects.nonNull(processListView)) {
             processListView.setFilter(newFilter.toString());
-        } else if (Objects.nonNull(taskForm)) {
-            taskForm.setFilter(newFilter.toString());
+        } else if (Objects.nonNull(taskListView)) {
+            taskListView.setFilter(newFilter.toString());
         } else if (Objects.nonNull(userListView)) {
             userListView.setFilter(newFilter.toString());
         }
