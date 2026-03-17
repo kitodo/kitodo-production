@@ -460,14 +460,17 @@ public class ProcessHelper {
     public static void addAllowedMetadataRecursive(Division<?> division, Collection<String> keys, String value,
                                                    RulesetManagementInterface rulesetManagement, String acquisitionStage,
                                                    List<Locale.LanguageRange> priorityList) {
-        StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(division.getType(),
-                acquisitionStage, priorityList);
-        for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {
-            if (metadataView instanceof SimpleMetadataViewInterface && keys.contains(metadataView.getId())
-                    && division.getMetadata().parallelStream()
-                    .filter(metadata -> metadataView.getId().equals(metadata.getKey()))
-                    .count() < metadataView.getMaxOccurs()) {
-                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) metadataView, value);
+        String type = division.getType();
+        if (Objects.nonNull(type) && !type.isEmpty()) {
+            StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(type,
+                    acquisitionStage, priorityList);
+            for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {
+                if (metadataView instanceof SimpleMetadataViewInterface && keys.contains(metadataView.getId())
+                        && division.getMetadata().parallelStream()
+                        .filter(metadata -> metadataView.getId().equals(metadata.getKey()))
+                        .count() < metadataView.getMaxOccurs()) {
+                    MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) metadataView, value);
+                }
             }
         }
         for (Division<?> child : division.getChildren()) {
@@ -509,8 +512,6 @@ public class ProcessHelper {
         Collection<String> processTitleKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
         if (!processTitleKeys.isEmpty()) {
             ProcessHelper.addAllowedMetadataRecursive(workpiece.getLogicalStructure(), processTitleKeys, processTitle,
-                    rulesetManagement, acquisitionStage, priorityList);
-            ProcessHelper.addAllowedMetadataRecursive(workpiece.getPhysicalStructure(), processTitleKeys, processTitle,
                     rulesetManagement, acquisitionStage, priorityList);
         }
     }
