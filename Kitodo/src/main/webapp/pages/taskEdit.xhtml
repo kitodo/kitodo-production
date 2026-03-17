@@ -18,9 +18,13 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
+        <!--@elvariable id="id" type="int"-->
         <f:viewParam name="id"/>
         <f:viewAction action="#{TaskEditView.load(id)}" />
-        <f:viewAction action="#{TaskEditView.setTaskEditReferer(request.getParameter('referer'))}"/>
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{TaskEditView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
+        <f:viewAction action="#{TaskEditView.setReferrerFromTemplate(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -33,7 +37,7 @@
                           styleClass="shortable" rendered="#{not empty TaskEditView.task.title}"/>
         </h3>
         <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="#{TaskEditView.taskEditReferer}"
+                  outcome="#{TaskEditView.referrerViewPath}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"

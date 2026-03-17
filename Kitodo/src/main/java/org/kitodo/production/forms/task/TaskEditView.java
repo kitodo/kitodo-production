@@ -45,7 +45,7 @@ public class TaskEditView extends BaseEditView {
     
     private Task task;
 
-    private String taskEditReferer = DEFAULT_LINK;
+    private String referrer = DEFAULT_LINK;
 
     /**
      * Return view path to edit a task.
@@ -65,15 +65,6 @@ public class TaskEditView extends BaseEditView {
     public Task getTask() {
         Stopwatch stopwatch = new Stopwatch(this, "getTask");
         return stopwatch.stop(this.task);
-    }
-
-    /**
-     * Get task edit page referring view.
-     *
-     * @return task eit page referring view
-     */
-    public String getTaskEditReferer() {
-        return this.taskEditReferer;
     }
 
     /**
@@ -125,7 +116,7 @@ public class TaskEditView extends BaseEditView {
         try {
             Process process = ServiceManager.getProcessService().getById(this.task.getProcess().getId());
             ServiceManager.getProcessService().save(process);
-            return stopwatch.stop(ProcessEditView.VIEW_PATH + "&id=" + (Objects.isNull(process.getId()) ? 0 : process.getId()));
+            return stopwatch.stop(getReferrerViewPath());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
                     logger, e);
@@ -187,17 +178,31 @@ public class TaskEditView extends BaseEditView {
      * Set referring view which will be returned when the user clicks "save" or
      * "cancel" on the task edit page.
      *
-     * @param referer
+     * @param referrer
      *            the referring view
      */
-    public void setTaskEditReferer(String referer) {
-        Stopwatch stopwatch = new Stopwatch(this, "setTaskEditReferer", "referer", referer);
-        if (referer.equals("tasks") || referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
-            this.taskEditReferer = referer;
+    public void setReferrerFromTemplate(String referrer) {
+        Stopwatch stopwatch = new Stopwatch(this, "setReferrerFromTemplate", "referer", referrer);
+        if (referrer.equals("tasks") || referrer.equals("processEdit")) {
+            this.referrer = referrer;
         } else {
-            this.taskEditReferer = DEFAULT_LINK;
+            this.referrer = DEFAULT_LINK;
         }
         stopwatch.stop();
+    }
+
+    /**
+     * Return the view path to the referring view, which can be either the desktop view, task list or process edit page.
+     * 
+     * @return the view path
+     */
+    public String getReferrerViewPath() {
+        if (this.referrer.equals("tasks")) {
+            return TaskListView.getViewPath() + "&" + getReferrerListOptions();
+        } else if (this.referrer.equals("processEdit")) {
+            return ProcessEditView.VIEW_PATH + "&id=" + this.task.getProcess().getId();
+        }
+        return "desktop";
     }
 
     /** 
