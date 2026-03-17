@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -519,6 +520,7 @@ public class DataEditorService {
      */
     public static void updateMetadataWithNewValues(Workpiece workpiece, List<MetadataComparison> comparisons) {
         for (MetadataComparison comparison : comparisons) {
+            stripEmptyGroupFields(comparison.getOldValues());
             switch (comparison.getSelection()) {
                 case ADD:
                     // extend existing values with new values
@@ -534,5 +536,23 @@ public class DataEditorService {
                     logger.info("Keep existing values for metadata {}", comparison.getMetadataKey());
             }
         }
+    }
+
+    private static void stripEmptyGroupFields(Set<Metadata> values) {
+        for (Metadata metadata : values) {
+            if (metadata instanceof MetadataGroup) {
+                MetadataGroup group = (MetadataGroup) metadata;
+                group.getMetadata().removeIf(DataEditorService::isBlankMetadataEntry);
+            }
+        }
+    }
+
+    private static boolean isBlankMetadataEntry(Metadata metadata) {
+        if (!(metadata instanceof MetadataEntry)) {
+            return false;
+        }
+        MetadataEntry entry = (MetadataEntry) metadata;
+        String value = entry.getValue();
+        return Objects.nonNull(value) && value.isBlank();
     }
 }
