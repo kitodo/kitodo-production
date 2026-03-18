@@ -241,7 +241,9 @@ public class BeanQuery {
     }
 
     /**
-     * Searches the index and inserts the IDs into the HQL query parameters.
+     * Executes all collected index query terms as a single combined index search
+     * and returns the matching process IDs. If no hits are found, a non-matching
+     * ID collection is returned by the caller.
      */
     private Collection<Integer> performIndexSearches() {
         List<Pair<String,String>> terms = new ArrayList<>();
