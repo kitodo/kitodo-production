@@ -120,7 +120,7 @@ public class LanguageForm implements Serializable {
                 translation.put("displayLanguageTranslated",
                     supportedLocale.getDisplayLanguage(currentDisplayLanguage));
                 translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
-                translation.put("flag", "jakarta.faces.resource/images/" + supportedLocale + ".svg.jsf");
+                translation.put("flag", "jakarta.faces.resource/images/" + supportedLocale + ".svg");
                 supportedLocales.add(translation);
             }
         }

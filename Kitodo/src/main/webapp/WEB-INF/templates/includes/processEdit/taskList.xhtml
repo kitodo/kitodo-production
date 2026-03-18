@@ -134,7 +134,7 @@
         <p:row>
             <ui:fragment rendered="#{ProcessEditViewTasksTab.process.template.workflow ne null and not empty ProcessEditViewTasksTab.process.tasks}">
                 <h4><p:outputLabel value="#{msgs.workflow}: #{ProcessEditViewTasksTab.process.template.workflow.title}"/></h4>
-                <h:link outcome="workflowEdit.jsf?id=#{ProcessEditViewTasksTab.process.template.workflow.id}"
+                <h:link outcome="workflowEdit?id=#{ProcessEditViewTasksTab.process.template.workflow.id}"
                         title="#{ProcessEditViewTasksTab.process.template.workflow.title}">
                     <o:graphicImage value="#{ProcessEditViewTasksTab.tasksDiagram}"
                                     dataURI="true" />

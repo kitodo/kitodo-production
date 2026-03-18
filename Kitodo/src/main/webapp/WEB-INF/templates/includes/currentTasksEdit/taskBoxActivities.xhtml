@@ -89,7 +89,7 @@
                             outcome="metadataEditor">
                         <h:outputText><i class="fa fa-list-alt"/> #{msgs.metadataEdit}</h:outputText>
                         <f:param name="id" value="#{task.process.id}"/>
-                        <f:param name="referer" value="currentTasksEdit.jsf?id=#{task.id}"/>
+                        <f:param name="referer" value="currentTasksEdit?id=#{task.id}"/>
                         <f:param name="templateTaskId" value="#{CurrentTaskForm.getCorrespondingTemplateTaskId(task)}"/>
                     </h:link>
 
