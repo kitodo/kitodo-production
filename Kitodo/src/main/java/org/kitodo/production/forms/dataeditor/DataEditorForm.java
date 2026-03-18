@@ -207,7 +207,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
 
     private DataEditorSetting dataEditorSetting;
 
-    private static final String DESKTOP_LINK = "/pages/desktop.jsf";
+    private static final String DESKTOP_LINK = "/pages/desktop";
 
     private List<PhysicalDivision> unsavedDeletedMedia = new ArrayList<>();
 
@@ -219,7 +219,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     private String errorMessage;
     private String errorTitle = Helper.getTranslation("metadataLocked");
     private String blockingUserName;
-    private static final String METADATA_REDIRECT = "metadataEditor.jsf?id=%d&referer=%s";
+    private static final String METADATA_REDIRECT = "metadataEditor?id=%d&referer=%s";
 
     @Inject
     private MediaProvider mediaProvider;
@@ -1522,7 +1522,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             try {
-                context.getExternalContext().redirect("desktop.jsf");
+                context.getExternalContext().redirect("desktop");
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }

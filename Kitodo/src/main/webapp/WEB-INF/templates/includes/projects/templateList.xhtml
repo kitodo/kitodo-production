@@ -59,6 +59,20 @@
                           title="#{item.ruleset.title}"/>
         </p:column>
 
+        <p:column headerText="#{msgs.docket}"
+                  sortBy="#{item.docket.title}"
+                  rendered="#{TemplateListView.showColumn('template.docket')}">
+            <h:outputText value="#{item.docket.title}"
+                          title="#{item.docket.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.workflow}"
+                  sortBy="#{item.workflow.title}"
+                  rendered="#{TemplateListView.showColumn('template.workflow')}">
+            <h:outputText value="#{item.workflow.title}"
+                          title="#{item.workflow.title}"/>
+        </p:column>
+
         <p:column headerText="#{msgs.active}"
                   styleClass="checkboxColumn"
                   sortBy="#{item.active}">
@@ -148,10 +162,6 @@
                                  styleClass="expansion-column"
                                  columns="2"
                                  columnClasses="label, value">
-                        <h:outputText value="#{msgs.workflow}:"/>
-                        <h:outputText title="#{item.workflow.title}"
-                                      value="#{item.workflow.title}"/>
-
                         <h:outputText value="#{msgs.docket}:"/>
                         <h:outputText title="#{item.docket.title}"
                                       value="#{item.docket.title}"/>
@@ -159,6 +169,10 @@
                         <h:outputText value="#{msgs.ruleset}:"/>
                         <h:outputText title="#{item.ruleset.title}"
                                       value="#{item.ruleset.title}"/>
+
+                        <h:outputText value="#{msgs.workflow}:"/>
+                        <h:outputText title="#{item.workflow.title}"
+                                      value="#{item.workflow.title}"/>
                     </p:panelGrid>
 
                     <p:panelGrid id="templateProjectsTable"

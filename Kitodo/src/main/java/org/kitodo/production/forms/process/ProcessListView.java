@@ -68,7 +68,7 @@ public class ProcessListView extends ProcessListBaseView {
 
     private static final Logger logger = LogManager.getLogger(ProcessListView.class);
 
-    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "processes.jsf") + "&tab=processTab";
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "processes") + "&tab=processTab";
 
     private Process process = new Process();
             
@@ -80,7 +80,7 @@ public class ProcessListView extends ProcessListBaseView {
 
     private List<SelectItem> customColumns;
 
-    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate?faces-redirect=true";
 
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
     private String settingImportConfigurationResultMessage;
