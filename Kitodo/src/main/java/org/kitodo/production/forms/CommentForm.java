@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +40,7 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.xml.sax.SAXException;
 
 @Named("CommentForm")
-@SessionScoped
+@ViewScoped
 public class CommentForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CommentForm.class);
     private boolean correctionComment = false;
@@ -206,7 +206,6 @@ public class CommentForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }
-        refreshProcess(this.currentTask.getProcess());
     }
 
     /**
@@ -272,7 +271,6 @@ public class CommentForm extends BaseForm {
         } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
-        refreshProcess(comment.getCurrentTask().getProcess());
         return MessageFormat.format(REDIRECT_PATH, "tasks");
     }
 
@@ -309,18 +307,6 @@ public class CommentForm extends BaseForm {
             return false;
         }
         return processCommentCorrectionTask.getTitle().equals(commentCorrectionTask.getTitle());
-    }
-
-    /**
-     * refresh the process in the session.
-     *
-     * @param process Object process to refresh
-     */
-    private void refreshProcess(Process process) {
-        if (!Objects.equals(process.getId(), 0) && Objects.nonNull(this.currentTask)) {
-            ServiceManager.getProcessService().refresh(process);
-            this.currentTask.setProcess(process);
-        }
     }
 
     /**
