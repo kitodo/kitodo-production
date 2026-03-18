@@ -31,6 +31,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.enums.ProcessState;
+import org.kitodo.production.enums.SearchFetchMode;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
 import org.primefaces.model.SortOrder;
@@ -40,7 +41,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
-    private static final Collection<Integer> NO_HIT = Collections.singletonList(0);
+    public static final Collection<Integer> NO_HIT = Collections.singletonList(0);
     private static final String JOIN_LAST_TASK = "process.tasks lastTask WITH "
             + "(lastTask.processingBegin IS NOT NULL OR lastTask.processingEnd IS NOT NULL) "
             + "AND (CASE WHEN lastTask.processingBegin IS NOT NULL AND lastTask.processingEnd IS NOT NULL "
@@ -232,18 +233,19 @@ public class BeanQuery {
      *
      * @param field the entity field to restrict (e.g. "id" or "process.id")
      */
-    public void applyIndexRestriction(String field) {
+    public void applyIndexRestriction(String field, SearchFetchMode searchMode) {
         if (indexQueries.isEmpty()) {
             return;
         }
-        Collection<Integer> ids = performIndexSearches();
+        Collection<Integer> ids = performIndexSearches(searchMode);
         addInCollectionRestriction(field, ids);
     }
 
-    /**
-     * Searches the index and inserts the IDs into the HQL query parameters.
+    /** Executes all collected index query terms as a single combined index search
+     * and returns the matching process IDs. If no hits are found, a non-matching
+     * ID collection is returned by the caller.
      */
-    private Collection<Integer> performIndexSearches() {
+    public Collection<Integer> performIndexSearches(SearchFetchMode searchMode) {
         List<Pair<String,String>> terms = new ArrayList<>();
         for (var entry : indexQueries) {
             String field = entry.getLeft().getSearchField();
@@ -251,7 +253,7 @@ public class BeanQuery {
             terms.add(Pair.of(field, token));
         }
         indexQueries.clear();
-        Collection<Integer> ids = indexingService.searchIds(Process.class, terms);
+        Collection<Integer> ids = indexingService.searchIds(Process.class, terms, searchMode);
         return ids.isEmpty() ? NO_HIT : ids;
     }
 
@@ -482,6 +484,10 @@ public class BeanQuery {
                 first = false;
             }
         }
+    }
+
+    public List<Pair<FilterField, String>> getIndexQueries() {
+        return indexQueries;
     }
 
     /**

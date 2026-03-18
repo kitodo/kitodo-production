@@ -51,6 +51,7 @@ import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.GenerationMode;
+import org.kitodo.production.enums.SearchFetchMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -178,7 +179,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
-        query.applyIndexRestriction("process.id");
+        query.applyIndexRestriction("process.id", SearchFetchMode.FETCH_ALL);
         return count(query.formCountQuery(), query.getQueryParameters());
     }
 
@@ -259,7 +260,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        query.applyIndexRestriction("process.id");
+        query.applyIndexRestriction("process.id", SearchFetchMode.FETCH_ALL);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
