@@ -699,6 +699,13 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
         saveAllProcesses();
     }
 
+    /**
+     * Saves all processes in the current hierarchy explicitly.
+     * Note: Parent and ancestor processes are only automatically persisted
+     * when they do not yet exist in the database. If they already have a
+     * database entry, they are NOT updated automatically when saving the
+     * main process. Therefore, we must explicitly save all processes here.
+     */
     private void saveAllProcesses() throws DAOException {
         for (TempProcess temp : processes) {
             ServiceManager.getProcessService().save(temp.getProcess());
