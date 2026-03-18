@@ -82,6 +82,11 @@
         <param-value>5242880</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>jakarta.faces.AUTOMATIC_EXTENSIONLESS_MAPPING</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- Jakarta EE -->
     <resource-env-ref>
         <resource-env-ref-name>BeanManager</resource-env-ref-name>
@@ -102,7 +107,7 @@
     <!-- extension mapping -->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>*.jsf</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
@@ -124,25 +129,25 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>
-        <welcome-file>index.jsf</welcome-file>
+        <welcome-file>index</welcome-file>
     </welcome-file-list>
 
     <!-- Error pages -->
     <error-page>
         <error-code>500</error-code>
-        <location>/pages/error.jsf</location>
+        <location>/pages/error</location>
     </error-page>
     <error-page>
         <error-code>403</error-code>
-        <location>/pages/desktop.jsf</location>
+        <location>/pages/desktop</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/pages/pageNotFound.jsf</location>
+        <location>/pages/pageNotFound</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/pages/error.jsf</location>
+        <location>/pages/error</location>
     </error-page>
 
     <!-- log4j2 for servlet 3.0 based web applications -->

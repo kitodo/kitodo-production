@@ -105,8 +105,8 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.processes}" url="processes" icon="fa fa-clipboard"/>
         <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
         <p:menuitem value="#{msgs.createNewProcess}" rendered="#{empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
     </ui:define>

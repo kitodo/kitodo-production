@@ -451,9 +451,6 @@
 
                 'childCount' will set the (1-based) child number, when creating child documents.
 
-                'dataSource' Internal identifier of the data source in order to be able to update the imported
-                    metadata entries from the data source later.
-
                 'displaySummary' will be displayed as summary on the Title Record Link tab when creating a new process.
 
                 'docType' During import, the type of the logical root of the document is set from this metadata value.
@@ -466,7 +463,7 @@
                 'recordIdentifier' Identifier of the data record fetched from an external data source, so that the
                     imported metadata entries from the data source can be updated later.
 
-                'structureTreeTitle' will be displayed as node titles of the structure tree of the metadata editor 
+                'structureTreeTitle' will be displayed as node titles of the structure tree of the metadata editor
                     if title is selected as the preferred display option.
 
                 'title' This field is used as the title to form the author-title key.
@@ -482,7 +479,6 @@
                         <xs:restriction base="xs:token">
                             <xs:enumeration value="authorLastName"/>
                             <xs:enumeration value="childCount"/>
-                            <xs:enumeration value="dataSource"/>
                             <xs:enumeration value="displaySummary"/>
                             <xs:enumeration value="docType"/>
                             <xs:enumeration value="higherlevelIdentifier"/>

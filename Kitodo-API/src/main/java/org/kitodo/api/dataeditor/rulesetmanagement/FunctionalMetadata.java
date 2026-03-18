@@ -38,12 +38,6 @@ public enum FunctionalMetadata {
     CHILD_COUNT("childCount"),
 
     /**
-     * The name of the data source from which the record was imported. This is
-     * saved for later comparison of the data records.
-     */
-    DATA_SOURCE("dataSource"),
-
-    /**
      * Display metadata as summary on Title Record Link tab when creating a new
      * process.
      */

@@ -295,9 +295,9 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard" rendered="#{request.getHeader('referer').contains('process')}" />
-        <p:menuitem value="#{msgs.tasks}" url="tasks.jsf" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.processes}" url="processes" icon="fa fa-clipboard" rendered="#{request.getHeader('referer').contains('process')}" />
+        <p:menuitem value="#{msgs.tasks}" url="tasks" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.taskDetails}" url="#{DataEditorForm.referringView}" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.metadataEdit}" icon="fa fa-list-alt"/>
     </ui:define>
