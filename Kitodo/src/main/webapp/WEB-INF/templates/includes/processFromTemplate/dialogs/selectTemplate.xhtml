@@ -44,7 +44,8 @@
                         <p:ajax update="selectTemplateForm:setTemplateButton"/>
                     </p:selectOneMenu>
                 </p>
-                <p:panelGrid>
+                <p:panelGrid layout="tabular"
+                             columns="0">
                     <p:row>
                         <p:commandButton id="setTemplateButton"
                                          action="#{SelectTemplateDialogView.checkForTemplates()}"

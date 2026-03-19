@@ -42,7 +42,8 @@
                                        itemLabel="#{client.name}"/>
                     </p:selectOneMenu>
                 </p>
-                <p:panelGrid>
+                <p:panelGrid layout="tabular"
+                             columns="0">
                     <p:row>
                         <p:commandButton id="setSessionClientButton"
                                          actionListener="#{SessionClientController.setSelectedClientAsSessionClient}"
