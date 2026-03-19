@@ -45,11 +45,14 @@
                 <br/>
 
                 <!-- add new structure element -->
-                <p:panelGrid columns="2" id="docStrucTypeGrid">
+                <p:panelGrid id="docStrucTypeGrid"
+                             layout="tabular"
+                             columns="2">
 
                     <h:panelGroup>
                         <!-- select type and position of new doc struct element -->
-                        <p:panelGrid columns="2">
+                        <p:panelGrid layout="tabular"
+                                     columns="2">
                             <p:row>
                                 <p:column rendered="#{not viewsSelected}">
                                     <p:outputLabel value="#{msgs.position}:"
@@ -90,7 +93,8 @@
                     </h:panelGroup>
 
                     <h:panelGroup>
-                        <p:panelGrid columns="2">
+                        <p:panelGrid layout="tabular"
+                                     columns="2">
                             <!-- option to select pages if doc struct was created without preselected media -->
                             <p:row rendered="#{not viewsSelected}">
                                 <p:outputLabel for="selectFirstPageOnAddNode"
@@ -154,7 +158,8 @@
 
                     <!-- option to add multiple doc structs of same type -->
                     <h:panelGroup rendered="#{not viewsSelected}">
-                        <p:panelGrid columns="1">
+                        <p:panelGrid layout="tabular"
+                                     columns="1">
                             <p:row>
                                 <p:column rowspan="2">
                                     <p:outputLabel value="#{msgs.count} #{msgs.docstructs}:"
@@ -180,7 +185,8 @@
 
                     <!-- add metadata with value to new doc struct -->
                     <h:panelGroup id="addMetadata">
-                        <p:panelGrid columns="2"
+                        <p:panelGrid layout="tabular"
+                                     columns="2"
                                      rendered="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}">
                             <p:row>
                                 <p:outputLabel value="#{msgs.metadata}:"

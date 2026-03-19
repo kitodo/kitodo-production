@@ -159,9 +159,11 @@
             <p:rowExpansion styleClass="expansion-class">
                 <div class="row-expansion-wrapper">
                     <p:panelGrid id="processRowExpansionTable"
+                                 layout="tabular"
                                  columns="2">
                         <p:panelGrid id="processParentTable"
                                      styleClass="expansion-column"
+                                     layout="tabular"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalParents}:"/>
@@ -215,6 +217,7 @@
                         </p:panelGrid>
                         <p:panelGrid id="processChildrenTable"
                                      styleClass="expansion-column"
+                                     layout="tabular"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalChildren}:"/>

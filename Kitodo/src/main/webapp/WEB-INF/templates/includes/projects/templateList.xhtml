@@ -160,6 +160,7 @@
                              columns="2">
                     <p:panelGrid id="templateDetailTable"
                                  styleClass="expansion-column"
+                                 layout="tabular"
                                  columns="2"
                                  columnClasses="label, value">
                         <h:outputText value="#{msgs.docket}:"/>
@@ -177,11 +178,13 @@
 
                     <p:panelGrid id="templateProjectsTable"
                                  styleClass="expansion-column"
+                                 layout="tabular"
                                  columns="2"
                                  columnClasses="label, value">
                         <h:outputText value="#{msgs.projects}:"/>
                         <h:form id="createProcessForm">
                             <p:panelGrid id="templateActionDetailTable"
+                                         layout="tabular"
                                          columns="2"
                                          columnClasses="label, actionsColumn">
                                 <ui:repeat id="projects"
