@@ -233,7 +233,7 @@ public class GalleryPanel {
         
         dataEditor.getSelectedMedia().clear();
         GalleryStripe toStripe = stripes.get(toStripeIndex);
-        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
+        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).toList();
         for (GalleryMediaContent toStripeMedia : toStripe.getMedias()) {
             if (movedViews.contains(toStripeMedia.getView())) {
                 select(toStripeMedia, toStripe, "multi");

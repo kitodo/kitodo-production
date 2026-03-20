@@ -150,7 +150,7 @@ public class CatalogConfigurationImporter {
         // set MetadataFormat to "OTHER" if configuration contains a value different from the options in the
         // "MetadataFormat.java" enum!
         String metadataFormat = OPACConfig.getMetadataFormat(opacTitle).toUpperCase();
-        if (Arrays.stream(MetadataFormat.values()).map(MetadataFormat::name).collect(Collectors.toList())
+        if (Arrays.stream(MetadataFormat.values()).map(MetadataFormat::name).toList()
                 .contains(metadataFormat)) {
             importConfiguration.setMetadataFormat(metadataFormat);
         } else {

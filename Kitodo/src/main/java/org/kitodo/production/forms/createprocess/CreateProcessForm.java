@@ -836,7 +836,7 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
             return addMetadataDialog.getAddableMetadata()
                     .stream()
                     .map(SelectItem::getValue)
-                    .collect(Collectors.toList())
+                    .toList()
                     .contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
         return false;

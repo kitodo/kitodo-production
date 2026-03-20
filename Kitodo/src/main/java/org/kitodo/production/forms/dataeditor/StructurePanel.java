@@ -201,8 +201,7 @@ public class StructurePanel implements Serializable {
         Collection<View> subViews = new ArrayList<>();
         getAllSubViews(selectedStructure, subViews);
 
-        List<View> multipleViews = subViews.stream().filter(v -> v.getPhysicalDivision().getLogicalDivisions().size() > 1)
-                .collect(Collectors.toList());
+        List<View> multipleViews = subViews.stream().filter(v -> v.getPhysicalDivision().getLogicalDivisions().size() > 1).toList();
         for (View view : multipleViews) {
             dataEditor.unassignView(selectedStructure, view, selectedStructure.getViews().getLast().equals(view));
             if (view.getPhysicalDivision().getLogicalDivisions().size() <= 1) {
@@ -1466,8 +1465,7 @@ public class StructurePanel implements Serializable {
                            int insertionIndex) {
         int physicalInsertionIndex;
         List<PhysicalDivision> physicalDivisionsToBeMoved = elementsToBeMoved.stream()
-                .map(e -> e.getLeft().getPhysicalDivision())
-                .collect(Collectors.toList());
+                .map(e -> e.getLeft().getPhysicalDivision()).toList();
 
         if (insertionIndex > toElement.getViews().size()) {
             Helper.setErrorMessage("Unsupported drag'n'drop operation: Insertion index exceeds list.");
@@ -1605,7 +1603,7 @@ public class StructurePanel implements Serializable {
         List<View> views = elementsToBeMoved.stream()
                 .map(Pair::getKey)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
         if (insertionIndex < 0 || insertionIndex == toElement.getViews().size()) {
             toElement.getViews().addAll(views);
         } else {

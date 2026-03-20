@@ -20,7 +20,6 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -125,7 +124,7 @@ public class CountableMetadataIT {
     public void shouldGetValue() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
-                .collect(Collectors.toList()).getFirst();
+                .toList().getFirst();
         countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> issuePair = new ImmutablePair<>(DEFINE_DATE.plusWeeks(1), issue);
@@ -137,7 +136,7 @@ public class CountableMetadataIT {
     public void shouldMatch() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
-                .collect(Collectors.toList()).getFirst();
+                .toList().getFirst();
         countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> deletePair = new ImmutablePair<>(DELETE_DATE, issue);
@@ -149,7 +148,7 @@ public class CountableMetadataIT {
     public void shouldGetAllMetadataTypes() throws DAOException {
         List<ProcessDetail> allMetadataTypes = getMetadataTypes();
         assertEquals(EXPECTED_NUMBER_OF_METADATA_TYPES, allMetadataTypes.size());
-        List<String> labels = allMetadataTypes.stream().map(ProcessDetail::getLabel).collect(Collectors.toList());
+        List<String> labels = allMetadataTypes.stream().map(ProcessDetail::getLabel).toList();
         assertTrue(labels.contains(TestConstants.TITLE_MAIN));
         assertTrue(labels.contains(TestConstants.METS_LABEL));
     }

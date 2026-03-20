@@ -256,7 +256,7 @@ public class MassImportService {
             List<MetadataViewInterface> metadataView =
                     divisions.get(i).getAddableMetadata(enteredMetadata, Collections.emptyList())
                             .stream().sorted(Comparator.comparing(MetadataViewInterface::getLabel))
-                            .collect(Collectors.toList());
+                            .toList();
             if (i == 0) {
                 commonMetadata = new ArrayList<>(List.copyOf(metadataView));
             } else {

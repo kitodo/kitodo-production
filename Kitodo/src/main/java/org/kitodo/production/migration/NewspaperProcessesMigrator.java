@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
 
@@ -678,7 +677,7 @@ public class NewspaperProcessesMigrator {
         final Collection<String> processTitleKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
         newspaperView.getAllowedMetadata().parallelStream().filter(SimpleMetadataViewInterface.class::isInstance)
                 .map(SimpleMetadataViewInterface.class::cast)
-                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).collect(Collectors.toList())
+                .filter(metadataView -> processTitleKeys.contains(metadataView.getId())).toList()
                 .forEach(yearView -> MetadataEditor.writeMetadataEntry(yearWorkpiece.getLogicalStructure(), yearView, yearTitle));
         metsService.saveWorkpiece(yearWorkpiece, fileService.getMetadataFilePath(yearProcess, false, false));
     }

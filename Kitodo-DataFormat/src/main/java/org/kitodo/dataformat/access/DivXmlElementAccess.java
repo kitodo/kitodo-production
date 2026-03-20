@@ -26,7 +26,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.xml.namespace.QName;
@@ -263,7 +262,7 @@ public class DivXmlElementAccess extends LogicalDivision {
                     .sorted(Comparator.comparing(PhysicalDivision::getOrder)).map(physicalDivisionIDs::get)
                     .filter(Objects::nonNull)
                     .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId))
-                    .collect(Collectors.toList()));
+                    .toList());
         }
 
         Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);

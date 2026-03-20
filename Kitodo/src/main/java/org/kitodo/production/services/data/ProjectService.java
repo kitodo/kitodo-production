@@ -292,7 +292,7 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
             return projects.stream().map(Project::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
         } else {
             List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(Project::getId)
-                    .collect(Collectors.toList());
+                    .toList();
             return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
                     .collect(Collectors.joining(COMMA_DELIMITER));
         }
