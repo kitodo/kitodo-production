@@ -246,16 +246,16 @@ public class Block {
         if (!isMatch(date)) {
             return Collections.emptyList();
         }
-        ArrayList<IndividualIssue> result = new ArrayList<>(issues.size());
+        ArrayList<IndividualIssue> result = new ArrayList<>(this.issues.size());
 
-        List<Issue> issues = new ArrayList<>();
+        List<Issue> individualIssues = new ArrayList<>();
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
-                issues.add(issue);
+                individualIssues.add(issue);
             }
         }
-        Integer sorting = issues.size() > 1 ? 1 : null;
-        for (Issue issue : issues) {
+        Integer sorting = individualIssues.size() > 1 ? 1 : null;
+        for (Issue issue : individualIssues) {
             result.add(new IndividualIssue(this, issue, date, Objects.isNull(sorting) ? null : sorting++));
         }
         return result;
