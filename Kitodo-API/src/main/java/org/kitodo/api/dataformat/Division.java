@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.kitodo.api.Metadata;
 
@@ -119,7 +118,7 @@ public abstract class Division<T extends Division<T>> {
      * @return the children
      */
     public List<T> getAllChildren() {
-        return children.stream().flatMap(Workpiece::treeStream).collect(Collectors.toUnmodifiableList());
+        return children.stream().flatMap(Workpiece::treeStream).toList();
     }
 
     /**
