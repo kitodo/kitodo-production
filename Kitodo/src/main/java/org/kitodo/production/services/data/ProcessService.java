@@ -307,7 +307,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
             project -> showInactiveProjects || project.isActive()).map(Project::getId).collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.performIndexSearches();
+        query.applyIndexRestriction("id");
         return query;
     }
 
@@ -482,7 +482,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
-        query.performIndexSearches();
+        query.applyIndexRestriction("id");
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -513,7 +513,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
-        query.performIndexSearches();
+        query.applyIndexRestriction("id");
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -678,7 +678,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.performIndexSearches();
+        query.applyIndexRestriction("id");
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -2545,7 +2545,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
         query.restrictToClient(sessionClientId);
-        query.performIndexSearches();
+        query.applyIndexRestriction("id");
 
         query.addInnerJoin("project proj");
         query.defineSorting("id", SortOrder.ASCENDING);
