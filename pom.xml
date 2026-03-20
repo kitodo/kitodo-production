@@ -69,7 +69,7 @@
         <jhove.modules.tiff.hul.version>1.9.5</jhove.modules.tiff.hul.version>
         <myfaces.version>4.1.1</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
-        <pdfbox.version>3.0.3</pdfbox.version>
+        <pdfbox.version>3.0.7</pdfbox.version>
         <poi.version>5.4.0</poi.version>
         <primefaces.version>12.0.0</primefaces.version>
         <primefaces.extensions.version>12.0.11</primefaces.extensions.version>
