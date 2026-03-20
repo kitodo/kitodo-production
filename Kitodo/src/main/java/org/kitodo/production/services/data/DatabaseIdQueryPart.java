@@ -62,11 +62,11 @@ class DatabaseIdQueryPart extends DatabaseQueryPart {
      */
     DatabaseIdQueryPart(FilterField filterField, String ids, boolean operand) {
         super(filterField, operand);
-        List<Integer> idList = NON_DIGITS.splitAsStream(ids).filter(Predicate.not(String::isEmpty)).map(
+        List<Integer> identifierList = NON_DIGITS.splitAsStream(ids).filter(Predicate.not(String::isEmpty)).map(
             Integer::valueOf).collect(Collectors.toList());
-        boolean multipleIDs = idList.size() > 1;
-        this.firstId = multipleIDs ? null : idList.getFirst();
-        this.idList = multipleIDs ? idList : null;
+        boolean multipleIDs = identifierList.size() > 1;
+        this.firstId = multipleIDs ? null : identifierList.getFirst();
+        this.idList = multipleIDs ? identifierList : null;
         this.upToId = null;
     }
 

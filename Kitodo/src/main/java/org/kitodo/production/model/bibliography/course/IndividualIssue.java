@@ -298,8 +298,8 @@ public class IndividualIssue {
      */
     public List<String> getIssuesBefore() {
         List<String> result = new ArrayList<>();
-        for (Issue issue : block.getIssues()) {
-            String heading = issue.getHeading();
+        for (Issue currentIssue : block.getIssues()) {
+            String heading = currentIssue.getHeading();
             if (heading.equals(this.issue.getHeading())) {
                 break;
             }
