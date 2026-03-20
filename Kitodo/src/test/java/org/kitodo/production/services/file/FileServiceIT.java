@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -166,7 +165,7 @@ public class FileServiceIT {
         ServiceManager.getFileService().delete(lastImagePath.toUri());
         // 2. determine filenames before failed media renaming attempt
         List<URI> scanURIsBeforeRenaming = ServiceManager.getFileService().getSubUris(ImageHelper.dataFilter,
-                processScansDir.toUri()).stream().sorted().collect(Collectors.toList());
+                processScansDir.toUri()).stream().sorted().toList();
         // 3. perform failing media renaming
         Process process = ServiceManager.getProcessService().getById(revertMediaRenamingProcessId);
         RenameMediaThread renameMediaThread = new RenameMediaThread(Collections.singletonList(process));
@@ -174,7 +173,7 @@ public class FileServiceIT {
         renameMediaThread.join(3000);
         // 4. determine filenames after failed media renaming attempt
         List<URI> scanURIsAfterRenaming = ServiceManager.getFileService().getSubUris(ImageHelper.dataFilter,
-                processScansDir.toUri()).stream().sorted().collect(Collectors.toList());
+                processScansDir.toUri()).stream().sorted().toList();
         // 5. assert that filenames have been successfully reverted to originals after failed media renaming attempt
         assertEquals(scanURIsBeforeRenaming.size(), scanURIsAfterRenaming.size());
         for (int i = 0; i < scanURIsBeforeRenaming.size(); i++) {
