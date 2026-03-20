@@ -25,7 +25,7 @@ import jakarta.faces.context.FacesContext;
 import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.forms.CurrentTaskForm;
-import org.kitodo.production.forms.ProcessForm;
+import org.kitodo.production.forms.process.ProcessListView;
 import org.kitodo.production.forms.user.UserListView;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
@@ -74,7 +74,7 @@ public class FilterMenu {
             "language:"
     );
 
-    private ProcessForm processForm = null;
+    private ProcessListView processListView = null;
     private CurrentTaskForm taskForm = null;
     private UserListView userListView = null;
     private List<Suggestion> suggestions;
@@ -84,10 +84,10 @@ public class FilterMenu {
     /**
      * Constructor of filter menu for processes.
      *
-     * @param processForm instance of ProcessForm
+     * @param processListView instance of ProcessListView
      */
-    public FilterMenu(ProcessForm processForm) {
-        this.processForm = processForm;
+    public FilterMenu(ProcessListView processListView) {
+        this.processListView = processListView;
         suggestions = createSuggestionsForProcessCategory("");
         parsedFilters = new ArrayList<>();
     }
@@ -144,7 +144,7 @@ public class FilterMenu {
         int lastColonIndex = strippedInput.lastIndexOf(":");
         if (lastColonIndex == -1) {
             // category should be suggested
-            if (Objects.nonNull(processForm)) {
+            if (Objects.nonNull(processListView)) {
                 suggestions = createSuggestionsForProcessCategory(input);
             } else if (Objects.nonNull(taskForm)) {
                 suggestions = createSuggestionsForTaskCategory(input);
@@ -156,7 +156,7 @@ public class FilterMenu {
             String lastPart = input.substring(lastColonIndex + 1);
             Pattern patternNextCategory = Pattern.compile("(?<= \\| )\\w?$");
             Matcher matcherNextCategory = patternNextCategory.matcher(lastPart);
-            if (Objects.nonNull(processForm)) {
+            if (Objects.nonNull(processListView)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
                     suggestions = createSuggestionsForProcessCategory(matcherNextCategory.group());
@@ -395,8 +395,8 @@ public class FilterMenu {
             }
             newFilter.append(parsedFilter.getPlainFilter());
         }
-        if (Objects.nonNull(processForm)) {
-            processForm.setFilter(newFilter.toString());
+        if (Objects.nonNull(processListView)) {
+            processListView.setFilter(newFilter.toString());
         } else if (Objects.nonNull(taskForm)) {
             taskForm.setFilter(newFilter.toString());
         } else if (Objects.nonNull(userListView)) {
