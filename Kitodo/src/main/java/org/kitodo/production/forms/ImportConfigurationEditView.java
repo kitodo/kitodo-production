@@ -202,7 +202,7 @@ public class ImportConfigurationEditView extends BaseEditView {
      * @param searchField SearchField
      */
     public void addSearchField(SearchField searchField) {
-        if (importConfiguration.getSearchFields().stream().map(SearchField::getLabel).collect(Collectors.toList())
+        if (importConfiguration.getSearchFields().stream().map(SearchField::getLabel).toList()
                 .contains(searchField.getLabel())) {
             Helper.setErrorMessage("SearchField labels must be unique ('" + searchField.getLabel()
                     + "' already exists!)");
@@ -240,7 +240,7 @@ public class ImportConfigurationEditView extends BaseEditView {
      */
     public void addUrlParameter(UrlParameter urlParameter) {
         if (importConfiguration.getUrlParameters().stream().map(UrlParameter::getParameterKey)
-                .collect(Collectors.toList()).contains(urlParameter.getParameterKey())) {
+                .toList().contains(urlParameter.getParameterKey())) {
             Helper.setErrorMessage(URL_PARAMETER_UNIQUE, new Object[]{urlParameter.getParameterKey()});
         } else {
             urlParameter.setImportConfiguration(importConfiguration);

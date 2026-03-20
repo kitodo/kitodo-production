@@ -593,8 +593,7 @@ public class ImportServiceIT {
         createProcessForm.setCurrentImportConfiguration(eadProject.getDefaultImportConfiguration());
         createProcessForm.updateRulesetAndDocType(eadTemplate.getRuleset());
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        List<Integer> allIds = ServiceManager.getProcessService().getAll().stream().map(BaseBean::getId).collect(
-            Collectors.toList());
+        List<Integer> allIds = ServiceManager.getProcessService().getAll().stream().map(BaseBean::getId).toList();
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }

@@ -135,7 +135,7 @@ public class DataEditorService {
                     .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataKey))
                     .filter(MetadataGroup.class::isInstance).map(MetadataGroup.class::cast)
                     .flatMap(metadataGroup -> metadataGroup.getMetadata().stream())
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return metadata.stream()
                 .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
@@ -555,7 +555,7 @@ public class DataEditorService {
         } else if (metadata instanceof MetadataGroup) {
             StringBuilder groupString = new StringBuilder();
             for (Metadata groupMetadata : ((MetadataGroup) metadata).getMetadata().stream()
-                    .sorted(Comparator.comparing(Metadata::getKey)).collect(Collectors.toList())) {
+                    .sorted(Comparator.comparing(Metadata::getKey)).toList()) {
                 if (groupMetadata instanceof MetadataEntry) {
                     groupString.append(((MetadataEntry) groupMetadata).getValue());
                 } else {
