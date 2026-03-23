@@ -135,19 +135,19 @@
     <!-- Error pages -->
     <error-page>
         <error-code>500</error-code>
-        <location>/pages/error</location>
+        <location>/pages/error.xhtml</location>
     </error-page>
     <error-page>
         <error-code>403</error-code>
-        <location>/pages/desktop</location>
+        <location>/pages/desktop.xhtml</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/pages/pageNotFound</location>
+        <location>/pages/pageNotFound.xhtml</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/pages/error</location>
+        <location>/pages/error.xhtml</location>
     </error-page>
 
     <!-- log4j2 for servlet 3.0 based web applications -->
