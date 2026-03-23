@@ -47,9 +47,10 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ProjectDeletionException;
-import org.kitodo.forms.FolderGenerator;
+import org.kitodo.production.forms.helper.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.dto.FolderDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
@@ -74,24 +75,14 @@ public class ProjectEditView extends BaseEditView {
      * An encapsulation of the content generator properties of the folder in a
      * way suitable to the JSF design.
      */
-    private FolderGenerator generator = new FolderGenerator(this.myFolder);
+    private FolderGenerator generator;
 
     /**
-     * The folder currently under edit in the pop-up dialog.
+     *  Folder data used for editing in the project UI (new or existing).
      */
-    /*
-     * This is a hack. The clean solution would be to have an inner class bean
-     * for the data table row a dialog, but this approach was introduced
-     * decades ago and has been maintained until today.
-     */
-    private Folder myFolder;
+    private List<FolderDTO> folders = new ArrayList<>();
+    private FolderDTO editingFolder;
     private Project baseProject;
-
-    // lists accepting the preliminary actions of adding and deleting folders
-    // it needs the execution of commit folders to make these changes
-    // permanent
-    private List<Integer> newFolders = new ArrayList<>();
-    private List<Integer> deletedFolders = new ArrayList<>();
 
     private boolean copyTemplates;
 
@@ -110,50 +101,6 @@ public class ProjectEditView extends BaseEditView {
     public ProjectEditView() {
         super();
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getProjectService()));
-    }
-
-    /**
-     * This method deletes folders by their IDs in the list.
-     *
-     * @param folderIds
-     *            IDs of folders to delete
-     */
-    private void removeFoldersFromProject(List<Integer> folderIds) {
-        if (Objects.nonNull(project)) {
-            for (Integer id : folderIds) {
-                for (Folder f : project.getFolders()) {
-                    if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
-                        project.getFolders().remove(f);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * this method flushes the newFolders list, thus makes them permanent and
-     * deletes those marked for deleting, making the removal permanent.
-     */
-    private void commitFolders() throws DAOException {
-        // resetting the list of new folders
-        newFolders = new ArrayList<>();
-        // deleting the folders marked for deletion
-        removeFoldersFromProject(deletedFolders);
-        // resetting the list of folders marked for deletion
-        deletedFolders = new ArrayList<>();
-    }
-
-    /**
-     * This needs to be executed in order to rollback adding of folders.
-     */
-    public void cancel() {
-        // flushing new folders
-        removeFoldersFromProject(newFolders);
-        // resetting the list of new folders
-        newFolders = new ArrayList<>();
-        // resetting the List of folders marked for deletion
-        deletedFolders = new ArrayList<>();
     }
 
 
@@ -189,8 +136,7 @@ public class ProjectEditView extends BaseEditView {
                 addFirstUserToNewProject();
 
                 commitTemplates();
-                commitFolders();
-
+                applyFoldersFromDTO();
                 ServiceManager.getProjectService().save(project);
 
                 return getProjectEditReferrerViewPath();
@@ -203,6 +149,53 @@ public class ProjectEditView extends BaseEditView {
             return this.stayOnCurrentPage;
         }
     }
+
+    private void applyFoldersFromDTO() throws DAOException {
+
+        List<Folder> existingFolders = project.getFolders(); // managed collection
+        Map<Integer, Folder> existingById = existingFolders.stream()
+                .filter(folder -> Objects.nonNull(folder.getId()))
+                .collect(Collectors.toMap(
+                        Folder::getId,
+                        folder -> folder
+                ));
+
+        List<Folder> updated = new ArrayList<>();
+        for (FolderDTO dto : folders) {
+            Folder folder;
+            if (Objects.nonNull(dto.getId()) && existingById.containsKey(dto.getId())) {
+                folder = existingById.get(dto.getId());
+            } else {
+                folder = new Folder();
+                folder.setProject(project);
+            }
+            folder.setFileGroup(dto.getFileGroup());
+            folder.setMimeType(dto.getMimeType());
+            folder.setPath(dto.getPath());
+            folder.setUrlStructure(dto.getUrlStructure());
+            folder.setLinkingMode(dto.getLinkingMode());
+            folder.setImageSize(dto.getImageSize());
+            folder.setDpi(dto.getDpi());
+            folder.setDerivative(dto.getDerivative());
+            folder.setCopyFolder(dto.isCopyFolder());
+            folder.setCreateFolder(dto.isCreateFolder());
+            folder.setValidateFolder(dto.isValidateFolder());
+
+            if (Objects.nonNull(dto.getLtpValidationConfigurationId())) {
+                LtpValidationConfiguration config =
+                        ServiceManager.getLtpValidationConfigurationService()
+                                .getById(dto.getLtpValidationConfigurationId());
+                folder.setLtpValidationConfiguration(config);
+            } else {
+                folder.setLtpValidationConfiguration(null);
+            }
+            updated.add(folder);
+        }
+        existingFolders.clear();
+        existingFolders.addAll(updated);
+    }
+
+
 
     private void commitTemplates() throws DAOException {
         if (copyTemplates) {
@@ -270,16 +263,23 @@ public class ProjectEditView extends BaseEditView {
         }
     }
 
+    public List<String> getAvailableFileGroups() {
+        return folders.stream()
+                .map(FolderDTO::getFileGroup)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+
     /**
      * Add folder.
      *
      * @return String
      */
     public String addFolder() {
-        this.myFolder = new Folder();
-        this.myFolder.setProject(this.project);
-        this.generator = new FolderGenerator(myFolder);
-        this.newFolders.add(this.myFolder.getId());
+        this.editingFolder = new FolderDTO();
+        this.generator = new FolderGenerator(editingFolder);
         return this.stayOnCurrentPage;
     }
 
@@ -287,35 +287,39 @@ public class ProjectEditView extends BaseEditView {
      * Save folder.
      */
     public void saveFolder() {
-        if (!this.project.getFolders().contains(this.myFolder)) {
-            this.project.getFolders().add(this.myFolder);
-            try {
-                ServiceManager.getProjectService().save(this.project);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
-                        logger, e);
-            }
-        } else {
-            List<Folder> folders = this.project.getFolders();
-            for (Folder folder : folders) {
-                if (this.myFolder.getFileGroup().equals(folder.getFileGroup()) && folder != myFolder) {
-                    Helper.setErrorMessage("errorDuplicateFilegroup",
-                        new Object[] {ObjectType.FOLDER.getTranslationPlural() });
-                }
-            }
+        if (this.editingFolder == null) {
+            return;
         }
-    }
+        // duplicate check
+        boolean duplicate = folders.stream()
+                .anyMatch(f ->
+                        f != editingFolder &&
+                                Objects.equals(f.getFileGroup(), editingFolder.getFileGroup())
+                );
+        if (duplicate) {
+            Helper.setErrorMessage("errorDuplicateFilegroup",
+                    new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            return;
+        }
+        // new folder
+        if (this.editingFolder.getId() == null) {
+            folders.add(this.editingFolder);
+        }
 
+        // existing → already updated via binding
+    }
     /**
      * Delete folder.
      *
      */
     public void deleteFolder() {
-        if (Objects.isNull(myFolder.getId())) {
-            project.getFolders().remove(myFolder);
-        } else {
-            deletedFolders.add(this.myFolder.getId());
+        if (this.editingFolder == null) {
+            return;
         }
+        folders.removeIf(f ->
+                Objects.equals(f.getId(), editingFolder.getId()) ||
+                        f == editingFolder
+        );
     }
 
     /**
@@ -438,8 +442,8 @@ public class ProjectEditView extends BaseEditView {
      */
     public void setProject(Project project) {
         // has to be called if a page back move was done
-        cancel();
         this.project = project;
+        initFolderDTOs();
         try {
             hasProcesses = ServiceManager.getProjectService().hasProcesses(project.getId());
         } catch (DAOException e) {
@@ -451,6 +455,32 @@ public class ProjectEditView extends BaseEditView {
             );
             hasProcesses = false; // fallback to safe default
         }
+    }
+
+    private void initFolderDTOs() {
+        this.folders = project.getFolders().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private FolderDTO mapToDTO(Folder folder) {
+        FolderDTO dto = new FolderDTO();
+        dto.setId(folder.getId());
+        dto.setFileGroup(folder.getFileGroup());
+        dto.setMimeType(folder.getMimeType());
+        dto.setPath(folder.getPath());
+        dto.setUrlStructure(folder.getUrlStructure());
+        dto.setLinkingMode(folder.getLinkingMode());
+        dto.setImageSize(folder.getImageSize().orElse(null));
+        dto.setDpi(folder.getDpi().orElse(null));
+        dto.setDerivative(folder.getDerivative().orElse(null));
+        dto.setCopyFolder(folder.isCopyFolder());
+        dto.setCreateFolder(folder.isCreateFolder());
+        dto.setValidateFolder(folder.isValidateFolder());
+        if (folder.getLtpValidationConfiguration() != null) {
+            dto.setLtpValidationConfigurationId(folder.getLtpValidationConfiguration().getId());
+        }
+        return dto;
     }
 
     /**
@@ -478,18 +508,8 @@ public class ProjectEditView extends BaseEditView {
      *
      * @return modified ArrayList
      */
-    public List<Folder> getFolderList() {
-        List<Folder> filteredFolderList = new ArrayList<>(this.project.getFolders());
-
-        for (Integer id : this.deletedFolders) {
-            for (Folder f : this.project.getFolders()) {
-                if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
-                    filteredFolderList.remove(f);
-                    break;
-                }
-            }
-        }
-        return filteredFolderList;
+    public List<FolderDTO> getFolderList() {
+        return folders;
     }
 
     /**
@@ -499,7 +519,11 @@ public class ProjectEditView extends BaseEditView {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+        return folders.stream()
+                .map(folder -> new SelectItem(
+                        folder.getFileGroup(),
+                        folder.getPath() + (folder.getFileGroup() == null ? "" : ", " + folder.getFileGroup())
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -509,7 +533,8 @@ public class ProjectEditView extends BaseEditView {
      * @return true if folder list contains audio folder
      */
     public boolean hasAudioFolder() {
-        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith(MIMETYPE_PREFIX_AUDIO));
+        return folders.stream()
+                .anyMatch(f -> f.getMimeType() != null && f.getMimeType().startsWith(MIMETYPE_PREFIX_AUDIO));
     }
 
     /**
@@ -517,12 +542,15 @@ public class ProjectEditView extends BaseEditView {
      *
      * @return true if folder list contains video folder
      */
+
     public boolean hasVideoFolder() {
-        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith(MIMETYPE_PREFIX_VIDEO));
+        return folders.stream()
+                .anyMatch(f -> f.getMimeType() != null && f.getMimeType().startsWith(MIMETYPE_PREFIX_VIDEO));
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return project.getFolders().stream()
+                .collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
     }
 
     /**
@@ -530,19 +558,19 @@ public class ProjectEditView extends BaseEditView {
      *
      * @return the folder currently under edit
      */
-    public Folder getMyFolder() {
-        return this.myFolder;
+    public FolderDTO getEditingFolder() {
+        return this.editingFolder;
     }
 
     /**
      * Sets the folder currently under edit in the pop-up dialog.
      *
-     * @param myFolder
+     * @param editingFolder
      *            folder to set to be under edit now
      */
-    public void setMyFolder(Folder myFolder) {
-        this.myFolder = myFolder;
-        this.generator = new FolderGenerator(myFolder);
+    public void setEditingFolder(FolderDTO editingFolder) {
+        this.editingFolder = editingFolder;
+        this.generator = new FolderGenerator(editingFolder);
     }
 
     /**
@@ -857,10 +885,10 @@ public class ProjectEditView extends BaseEditView {
      * @return the list of possible validation configurations that can be assigned to a folder
      */
     public List<LtpValidationConfiguration> getPossibleLtpValidationConfigurations() {
-        if (Objects.isNull(myFolder)) {
+        if (Objects.isNull(editingFolder)) {
             return Collections.emptyList();
         }
-        return ServiceManager.getLtpValidationConfigurationService().listByMimeType(myFolder.getMimeType());
+        return ServiceManager.getLtpValidationConfigurationService().listByMimeType(editingFolder.getMimeType());
     }
 
 }

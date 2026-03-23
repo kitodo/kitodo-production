@@ -9,11 +9,13 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.forms;
+package org.kitodo.production.forms.helper;
+
+import org.kitodo.production.forms.dto.FolderDTO;
 
 import java.util.Objects;
 
-import org.kitodo.data.database.beans.Folder;
+;
 
 /**
  * An encapsulation to access the generator properties of the folder.
@@ -22,12 +24,12 @@ public class FolderGenerator {
     /**
      * Generator method that changes the DPI of an image.
      */
-    private static final String CHANGE_DPI = "changeDpi";
+    public static final String CHANGE_DPI = "changeDpi";
 
     /**
      * Generator method that creates a derivative for an image.
      */
-    private static final String CREATE_DERIVATIVE = "createDerivative";
+    public static final String CREATE_DERIVATIVE = "createDerivative";
 
     /**
      * Generator method that changes the size (in pixel) of the image.
@@ -52,7 +54,7 @@ public class FolderGenerator {
     /**
      * {@code Folder.this}.
      */
-    private final Folder folder;
+    private final FolderDTO folder;
 
     /**
      * Image width in pixels.
@@ -65,12 +67,16 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    public FolderGenerator(Folder folder) {
+    public FolderGenerator(FolderDTO folder){
         this.folder = folder;
-        if (Objects.nonNull(folder)) {
-            this.width = folder.getImageSize().orElse(width);
-            this.factor = folder.getDerivative().orElse(factor);
-            this.dpi = folder.getDpi().orElse(dpi);
+        if (Objects.nonNull(folder.getImageSize())) {
+            this.width = folder.getImageSize();
+        }
+        if (Objects.nonNull(folder.getDerivative())) {
+            this.factor = folder.getDerivative();
+        }
+        if (Objects.nonNull(folder.getDpi())) {
+            this.dpi = folder.getDpi();
         }
     }
 
@@ -98,11 +104,11 @@ public class FolderGenerator {
      * @return the generator methodd
      */
     public String getMethod() {
-        if (folder.getDerivative().isPresent()) {
+        if (folder.getDerivative() != null) {
             return CREATE_DERIVATIVE;
-        } else if (folder.getDpi().isPresent()) {
+        } else if (folder.getDpi() != null) {
             return CHANGE_DPI;
-        } else if (folder.getImageSize().isPresent()) {
+        } else if (folder.getImageSize() != null) {
             return GET_SIZED_WEB_IMAGE;
         } else {
             return "";
