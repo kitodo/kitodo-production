@@ -149,8 +149,8 @@ public class EditingST extends BaseTestSelenium {
     public void editRulesetTest() throws Exception {
         RulesetEditPage rulesetEditPage = projectsPage.editRuleset();
         List<WebElement> functionalMetadataLists = Browser.getDriver().findElements(By.className("functional-metadata-list"));
-        assertEquals(11, functionalMetadataLists.size(), "Wrong number of functional metadata lists");
-        assertEquals("HauptTitel",  functionalMetadataLists.get(7)
+        assertEquals(10, functionalMetadataLists.size(), "Wrong number of functional metadata lists");
+        assertEquals("HauptTitel",  functionalMetadataLists.get(6)
                 .findElement(By.tagName("tbody"))
                 .findElement(By.tagName("tr"))
                 .findElement(By.tagName("td"))

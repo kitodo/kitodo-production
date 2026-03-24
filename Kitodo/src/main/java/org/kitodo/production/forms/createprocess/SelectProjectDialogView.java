@@ -40,7 +40,7 @@ public class SelectProjectDialogView implements Serializable {
     private int selectedProjectId = 0;
     private Template template;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate?faces-redirect=true";
 
     /**
      * Get template.

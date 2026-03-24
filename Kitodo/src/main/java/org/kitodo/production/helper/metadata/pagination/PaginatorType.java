@@ -41,8 +41,12 @@ public enum PaginatorType {
                     throw b;
                 }
             }
-            return mode.format('´' + AlphabeticNumeral.format(value) + '´', '´' + AlphabeticNumeral.format(value + 1) + '´', fictitious,
-                    separator);
+            return mode.format(
+                    '´' + AlphabeticNumeral.format(new HalfInteger(value, false), null) + '´',
+                    '´' + AlphabeticNumeral.format(new HalfInteger(value + 1, false), null) + '´',
+                    fictitious,
+                    separator
+            );
         }
     },
 
@@ -92,8 +96,12 @@ public enum PaginatorType {
                     throw b;
                 }
             }
-            return mode.format(RomanNumeral.format(value, true), RomanNumeral.format(value + 1, true), fictitious,
-                separator);
+            return mode.format(
+                    RomanNumeral.format(new HalfInteger(value, false), true, null),
+                    RomanNumeral.format(new HalfInteger(value + 1, false), true, null),
+                    fictitious,
+                    separator
+            );
         }
     },
 

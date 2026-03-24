@@ -38,6 +38,7 @@ import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessProgressHelper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.model.LazyProcessModel;
 import org.kitodo.production.process.ProcessMetadataStatistic;
@@ -71,6 +72,7 @@ public class ProcessListBaseView extends ValidatableForm {
 
     boolean allSelected = false;
     HashSet<Integer> excludedProcessIds = new HashSet<>();
+    private final ProcessProgressHelper progressService = new ProcessProgressHelper();
 
     /**
      * Constructor.
@@ -180,8 +182,7 @@ public class ProcessListBaseView extends ValidatableForm {
      * @return true if at least one task exists, otherwise false
      */
     public boolean hasAnyTasks(Process process) {
-        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
-        return counts.values().stream().mapToInt(Integer::intValue).sum() > 0;
+        return progressService.hasAnyTasks(getCachedTaskStatusCounts(process));
     }
 
     /**
@@ -213,41 +214,9 @@ public class ProcessListBaseView extends ValidatableForm {
      * @return formatted task titles or an empty string if none exist
      */
     public String getCurrentTaskTitles(Process process) {
-        Map<TaskStatus, List<String>> titles =
-                getLazyProcessModel().getTaskTitleCache().get(process.getId());
-
-        if (Objects.isNull(titles) || titles.isEmpty()) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        appendTitles(sb, TaskStatus.OPEN, titles);
-        appendTitles(sb, TaskStatus.INWORK, titles);
-        return sb.toString();
-    }
-
-    /**
-     * Appends task titles of the given status to the provided StringBuilder.
-     *
-     * @param sb the StringBuilder to append to
-     * @param status the task status to append
-     * @param titles task titles grouped by status
-     */
-    private void appendTitles(StringBuilder sb,
-                              TaskStatus status,
-                              Map<TaskStatus, List<String>> titles) {
-        List<String> list = titles.get(status);
-        String newLine = "\n";
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return;
-        }
-        if (!sb.isEmpty()) {
-            sb.append(newLine);
-        }
-        sb.append(Helper.getTranslation(status.getTitle())).append(":");
-        for (String t : list) {
-            sb.append(newLine).append(" - ").append(Helper.getTranslation(t));
-        }
+        return progressService.buildTaskTitleTooltip(
+                getLazyProcessModel().getTaskTitleCache().get(process.getId())
+        );
     }
 
     /**
@@ -282,13 +251,10 @@ public class ProcessListBaseView extends ValidatableForm {
      * @return progress percentage for the given status
      */
     public double progress(Process process, TaskStatus status) {
-        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
-        int total = counts.values().stream().mapToInt(Integer::intValue).sum();
-        if (total == 0) {
-            counts.put(TaskStatus.LOCKED, 1);
-            total = 1;
-        }
-        return 100.0 * counts.getOrDefault(status, 0) / total;
+        return progressService.progress(
+                getCachedTaskStatusCounts(process),
+                status
+        );
     }
 
     /**
@@ -300,7 +266,7 @@ public class ProcessListBaseView extends ValidatableForm {
      * @return percentage of tasks completed
      */
     public double progressClosed(Process process) {
-        return progress(process, TaskStatus.DONE);
+        return progressService.progressClosed(getCachedTaskStatusCounts(process));
     }
 
     /**
@@ -312,7 +278,9 @@ public class ProcessListBaseView extends ValidatableForm {
      * @return percentage of tasks in progress
      */
     public double progressInProcessing(Process process) {
-        return progress(process, TaskStatus.INWORK);
+        return progressService.progressInProcessing(
+                getCachedTaskStatusCounts(process)
+        );
     }
 
     /**
@@ -325,7 +293,9 @@ public class ProcessListBaseView extends ValidatableForm {
      * @return percentage of startable tasks
      */
     public double progressOpen(Process process) {
-        return progress(process, TaskStatus.OPEN);
+        return progressService.progressOpen(
+                getCachedTaskStatusCounts(process)
+        );
     }
 
     /**

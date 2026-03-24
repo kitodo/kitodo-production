@@ -12,7 +12,6 @@
 package org.kitodo.production.metadata.copier;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -73,13 +72,11 @@ public class CopierData {
     /**
      * Creates a new CopierData bean.
      *
-     * @param fileformat
+     * @param fileFormat
      *            the document to modify
-     * @param template
-     *            the related Production process
      */
-    public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
-        this.fileformat = fileformat;
+    public CopierData(LegacyMetsModsDigitalDocumentHelper fileFormat) {
+        this.fileformat = fileFormat;
         this.destination = null;
         this.process = new Process();
     }
