@@ -13,7 +13,6 @@ package org.kitodo.production.forms;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.production.forms.dto.FolderDTO;
 import org.kitodo.production.forms.helper.FolderGenerator;
 

@@ -11,11 +11,9 @@
 
 package org.kitodo.production.forms.helper;
 
-import org.kitodo.production.forms.dto.FolderDTO;
-
 import java.util.Objects;
 
-;
+import org.kitodo.production.forms.dto.FolderDTO;
 
 /**
  * An encapsulation to access the generator properties of the folder.
@@ -24,12 +22,12 @@ public class FolderGenerator {
     /**
      * Generator method that changes the DPI of an image.
      */
-    public static final String CHANGE_DPI = "changeDpi";
+    private static final String CHANGE_DPI = "changeDpi";
 
     /**
      * Generator method that creates a derivative for an image.
      */
-    public static final String CREATE_DERIVATIVE = "createDerivative";
+    private static final String CREATE_DERIVATIVE = "createDerivative";
 
     /**
      * Generator method that changes the size (in pixel) of the image.
@@ -67,7 +65,7 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    public FolderGenerator(FolderDTO folder){
+    public FolderGenerator(FolderDTO folder) {
         this.folder = folder;
         if (Objects.nonNull(folder.getImageSize())) {
             this.width = folder.getImageSize();
@@ -104,11 +102,11 @@ public class FolderGenerator {
      * @return the generator methodd
      */
     public String getMethod() {
-        if (folder.getDerivative() != null) {
+        if (Objects.nonNull(folder.getDerivative())) {
             return CREATE_DERIVATIVE;
-        } else if (folder.getDpi() != null) {
+        } else if (Objects.nonNull(folder.getDpi())) {
             return CHANGE_DPI;
-        } else if (folder.getImageSize() != null) {
+        } else if (Objects.nonNull(folder.getImageSize())) {
             return GET_SIZED_WEB_IMAGE;
         } else {
             return "";

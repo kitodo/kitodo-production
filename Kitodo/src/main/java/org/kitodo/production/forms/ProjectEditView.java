@@ -47,10 +47,10 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ProjectDeletionException;
-import org.kitodo.production.forms.helper.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.dto.FolderDTO;
+import org.kitodo.production.forms.helper.FolderGenerator;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
@@ -263,6 +263,9 @@ public class ProjectEditView extends BaseEditView {
         }
     }
 
+    /**
+     * Returns the distinct non-null file groups of all folders.
+     */
     public List<String> getAvailableFileGroups() {
         return folders.stream()
                 .map(FolderDTO::getFileGroup)
@@ -287,38 +290,35 @@ public class ProjectEditView extends BaseEditView {
      * Save folder.
      */
     public void saveFolder() {
-        if (this.editingFolder == null) {
+        if (Objects.isNull(this.editingFolder)) {
             return;
         }
-        // duplicate check
         boolean duplicate = folders.stream()
-                .anyMatch(f ->
-                        f != editingFolder &&
-                                Objects.equals(f.getFileGroup(), editingFolder.getFileGroup())
+                .anyMatch(folder ->
+                        folder != editingFolder
+                                && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup())
                 );
         if (duplicate) {
             Helper.setErrorMessage("errorDuplicateFilegroup",
                     new Object[] {ObjectType.FOLDER.getTranslationPlural()});
             return;
         }
-        // new folder
         if (this.editingFolder.getId() == null) {
             folders.add(this.editingFolder);
         }
-
-        // existing → already updated via binding
     }
+
     /**
      * Delete folder.
      *
      */
     public void deleteFolder() {
-        if (this.editingFolder == null) {
+        if (Objects.isNull(this.editingFolder)) {
             return;
         }
-        folders.removeIf(f ->
-                Objects.equals(f.getId(), editingFolder.getId()) ||
-                        f == editingFolder
+        folders.removeIf(folder ->
+                Objects.equals(folder.getId(), editingFolder.getId())
+                        || folder == editingFolder
         );
     }
 
