@@ -124,7 +124,8 @@ public class CountableMetadataIT {
     public void shouldGetValue() throws DAOException, InvalidMetadataValueException {
         List<ProcessDetail> metadataTypes = getMetadataTypes();
         ProcessDetail firstMetadataType = metadataTypes.stream().filter(ProcessTextMetadata.class::isInstance)
-                .toList().getFirst();
+    .findFirst()
+    .orElseThrow();
         countableMetadata.setMetadataDetail(firstMetadataType);
         countableMetadata.setStartValue(METADATA_START_VALUE);
         Pair<LocalDate, Issue> issuePair = new ImmutablePair<>(DEFINE_DATE.plusWeeks(1), issue);

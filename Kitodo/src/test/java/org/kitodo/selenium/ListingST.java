@@ -193,8 +193,9 @@ public class ListingST extends BaseTestSelenium {
         assertEquals(2, templatesProject.size(), "Displayed wrong number of project's templates");
         assertEquals("Fourth template", templatesProject.get(1), "Displayed wrong project's template");
 
-        int templatesInDatabase = ((Long) ServiceManager.getTemplateService().getAll().stream()
-                .filter(template -> template.getClient().getId() == 1).count()).intValue();
+        int templatesInDatabase = (int) ServiceManager.getTemplateService().getAll().stream()
+                .filter(template -> template.getClient().getId() == 1)
+                .count();
         int templatesDisplayed = projectsPage.countListedTemplates();
 
         List<String> detailsTemplate =  projectsPage.getTemplateDetails();
@@ -205,8 +206,9 @@ public class ListingST extends BaseTestSelenium {
         //assertEquals("Displayed wrong template's docket", "second", detailsTemplate.get(2));
         //assertEquals("Displayed wrong template's project", "First project", detailsTemplate.get(2));
 
-        int workflowsInDatabase = ((Long) ServiceManager.getWorkflowService().getAll().stream()
-                .filter(workflow -> workflow.getClient().getId() == 1).count()).intValue();
+    int workflowsInDatabase = (int) ServiceManager.getWorkflowService().getAll().stream()
+        .filter(workflow -> workflow.getClient().getId() == 1)
+        .count();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals(workflowsInDatabase, workflowsDisplayed, "Displayed wrong number of workflows");
 

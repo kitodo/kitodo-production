@@ -131,7 +131,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
         workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1))
-                .toList().getFirst());
+      .findFirst()
+      .orElseThrow()
+);
     }
 
     private Map<String, FileXmlElementAccess> getReferenceDivIdsToPhysicalDivisions(Mets mets) {
