@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -174,7 +175,7 @@ public class Workpiece {
      * @return all logical divisions as an unmodifiable list
      */
     public List<LogicalDivision> getAllLogicalDivisions() {
-        return treeStream(logicalStructure).toList();
+        return treeStream(logicalStructure).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -202,7 +203,7 @@ public class Workpiece {
         return physicalStructure.getChildren().stream()
                 .flatMap(Workpiece::treeStream)
                 .filter(physicalDivisionToCheck -> types.contains(physicalDivisionToCheck.getType()))
-                .sorted(Comparator.comparing(PhysicalDivision::getOrder)).toList();
+                .sorted(Comparator.comparing(PhysicalDivision::getOrder)).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -226,7 +227,7 @@ public class Workpiece {
      * @return all physical divisions as an unmodifiable list
      */
     public List<PhysicalDivision> getAllPhysicalDivisions() {
-        return treeStream(physicalStructure).toList();
+        return treeStream(physicalStructure).collect(Collectors.toUnmodifiableList());
     }
 
     /**
