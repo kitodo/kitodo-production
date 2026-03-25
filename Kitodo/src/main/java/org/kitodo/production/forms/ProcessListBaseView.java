@@ -514,15 +514,37 @@ public class ProcessListBaseView extends ValidatableForm {
     }
 
     /**
-     * Generate result set.
+     * Generates the current search result as an Excel file.
      */
-    public void generateResult() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateResult");
+    public void generateExcel() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateExcel");
         try {
-            ServiceManager.getProcessService().generateResult(this.filter, this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects());
-        } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
+            ServiceManager.getProcessService().generateExcel(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Generates the current search result as a CSV file.
+     */
+    public void generateCsv() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateCsv");
+        try {
+            ServiceManager.getProcessService().generateCsv(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
         stopwatch.stop();
     }
@@ -533,7 +555,7 @@ public class ProcessListBaseView extends ValidatableForm {
     public void generateResultAsPdf() {
         Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
         try {
-            ServiceManager.getProcessService().generateResultAsPdf(this.filter, this.isShowClosedProcesses(),
+            ServiceManager.getProcessService().generatePdf(this.filter, this.isShowClosedProcesses(),
                     this.isShowInactiveProjects());
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
