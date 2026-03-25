@@ -765,15 +765,23 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
         }
     }
 
-    private void saveProcessHierarchyMetadata() {
-        // save ancestor processes meta.xml files
+
+    /**
+     * Saves the metadata files of the main process, all anchestors and children.
+     * We update all anchestors in the database and index as well.
+     * If they already have a database entry, they are NOT updated automatically when saving the
+     * main process.
+     */
+    private void saveProcessHierarchyMetadata() throws DAOException {
         for (TempProcess tempProcess : this.processes) {
             if (this.processes.indexOf(tempProcess) == 0) {
                 tempProcess.getProcessMetadata().preserve();
             }
             ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
+            if (this.processes.indexOf(tempProcess) > 0) {
+                ServiceManager.getProcessService().save(tempProcess.getProcess());
+            }
         }
-        // save child processes meta.xml files
         for (TempProcess tempProcess : this.childProcesses) {
             ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
         }
