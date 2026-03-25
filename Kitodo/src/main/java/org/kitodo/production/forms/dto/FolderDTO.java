@@ -34,15 +34,10 @@ public class FolderDTO {
     private Integer ltpValidationConfigurationId;
 
     /**
-     * Initializes the folder configuration with default values.
+     * Constructor.
      */
     public FolderDTO() {
-        this.mimeType = "image/jpeg";
-        this.path = "";
-        this.linkingMode = LinkingMode.ALL;
-        this.copyFolder = true;
-        this.createFolder = true;
-        this.validateFolder = true;
+
     }
 
     /**

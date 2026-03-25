@@ -89,7 +89,4 @@ public class ProjectEditViewIT {
         assertTrue(updated.getFolders().stream()
                 .anyMatch(f -> "newFolder".equals(f.getPath())));
     }
-
-
 }
-

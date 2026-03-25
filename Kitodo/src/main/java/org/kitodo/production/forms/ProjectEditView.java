@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,6 +46,7 @@ import org.kitodo.data.database.beans.LtpValidationConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -51,6 +54,7 @@ import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.dto.FolderDTO;
 import org.kitodo.production.forms.helper.FolderGenerator;
+import org.kitodo.production.forms.helper.FolderMapper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
@@ -151,48 +155,50 @@ public class ProjectEditView extends BaseEditView {
     }
 
     private void applyFoldersFromDTO() throws DAOException {
+        List<Folder> existingFolders = project.getFolders();
 
-        List<Folder> existingFolders = project.getFolders(); // managed collection
-        Map<Integer, Folder> existingById = existingFolders.stream()
-                .filter(folder -> Objects.nonNull(folder.getId()))
-                .collect(Collectors.toMap(
-                        Folder::getId,
-                        folder -> folder
-                ));
+        Set<Integer> incomingIds = folders.stream()
+                .map(FolderDTO::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
-        List<Folder> updated = new ArrayList<>();
+        existingFolders.removeIf(folder -> Objects.nonNull(folder.getId())
+                && !incomingIds.contains(folder.getId()));
+
         for (FolderDTO dto : folders) {
             Folder folder;
-            if (Objects.nonNull(dto.getId()) && existingById.containsKey(dto.getId())) {
-                folder = existingById.get(dto.getId());
+            if (dto.getId() != null) {
+                // Find the existing managed object
+                folder = existingFolders.stream()
+                        .filter(f -> dto.getId().equals(f.getId()))
+                        .findFirst()
+                        .orElseGet(() -> {
+                            // Fallback: if not in list, create and add
+                            Folder newFolder = new Folder();
+                            existingFolders.add(newFolder);
+                            return newFolder;
+                        });
             } else {
+                // Brand new folder from the UI
                 folder = new Folder();
                 folder.setProject(project);
+                existingFolders.add(folder);
             }
-            folder.setFileGroup(dto.getFileGroup());
-            folder.setMimeType(dto.getMimeType());
-            folder.setPath(dto.getPath());
-            folder.setUrlStructure(dto.getUrlStructure());
-            folder.setLinkingMode(dto.getLinkingMode());
-            folder.setImageSize(dto.getImageSize());
-            folder.setDpi(dto.getDpi());
-            folder.setDerivative(dto.getDerivative());
-            folder.setCopyFolder(dto.isCopyFolder());
-            folder.setCreateFolder(dto.isCreateFolder());
-            folder.setValidateFolder(dto.isValidateFolder());
 
-            if (Objects.nonNull(dto.getLtpValidationConfigurationId())) {
-                LtpValidationConfiguration config =
-                        ServiceManager.getLtpValidationConfigurationService()
-                                .getById(dto.getLtpValidationConfigurationId());
-                folder.setLtpValidationConfiguration(config);
-            } else {
-                folder.setLtpValidationConfiguration(null);
-            }
-            updated.add(folder);
+            FolderMapper.updateEntityFromDto(dto, folder);
+            updateLtpConfig(dto, folder);
         }
-        existingFolders.clear();
-        existingFolders.addAll(updated);
+    }
+
+    private void updateLtpConfig(FolderDTO dto, Folder folder) throws DAOException {
+        if (Objects.nonNull(dto.getLtpValidationConfigurationId())) {
+            folder.setLtpValidationConfiguration(
+                    ServiceManager.getLtpValidationConfigurationService()
+                            .getById(dto.getLtpValidationConfigurationId())
+            );
+        } else {
+            folder.setLtpValidationConfiguration(null);
+        }
     }
 
 
@@ -266,12 +272,8 @@ public class ProjectEditView extends BaseEditView {
     /**
      * Returns the distinct non-null file groups of all folders.
      */
-    public List<String> getAvailableFileGroups() {
-        return folders.stream()
-                .map(FolderDTO::getFileGroup)
-                .filter(Objects::nonNull)
-                .distinct()
-                .collect(Collectors.toList());
+    public Collection<String> getAvailableFileGroups() {
+        return Folder.getFileGroups();
     }
 
 
@@ -281,9 +283,20 @@ public class ProjectEditView extends BaseEditView {
      * @return String
      */
     public String addFolder() {
-        this.editingFolder = new FolderDTO();
+        this.editingFolder = createDefaultFolderDTO();
         this.generator = new FolderGenerator(editingFolder);
         return this.stayOnCurrentPage;
+    }
+
+    private FolderDTO createDefaultFolderDTO() {
+        FolderDTO dto = new FolderDTO();
+        dto.setMimeType("image/jpeg");
+        dto.setPath("");
+        dto.setLinkingMode(LinkingMode.ALL);
+        dto.setCopyFolder(true);
+        dto.setCreateFolder(true);
+        dto.setValidateFolder(true);
+        return dto;
     }
 
     /**
@@ -295,17 +308,17 @@ public class ProjectEditView extends BaseEditView {
         }
         boolean duplicate = folders.stream()
                 .anyMatch(folder ->
-                        folder != editingFolder
-                                && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup())
+                        folder != editingFolder && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup())
                 );
         if (duplicate) {
             Helper.setErrorMessage("errorDuplicateFilegroup",
                     new Object[] {ObjectType.FOLDER.getTranslationPlural()});
             return;
         }
-        if (this.editingFolder.getId() == null) {
+        if (!folders.contains(this.editingFolder)) {
             folders.add(this.editingFolder);
         }
+        this.editingFolder = new FolderDTO();
     }
 
     /**
@@ -459,28 +472,8 @@ public class ProjectEditView extends BaseEditView {
 
     private void initFolderDTOs() {
         this.folders = project.getFolders().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
-
-    private FolderDTO mapToDTO(Folder folder) {
-        FolderDTO dto = new FolderDTO();
-        dto.setId(folder.getId());
-        dto.setFileGroup(folder.getFileGroup());
-        dto.setMimeType(folder.getMimeType());
-        dto.setPath(folder.getPath());
-        dto.setUrlStructure(folder.getUrlStructure());
-        dto.setLinkingMode(folder.getLinkingMode());
-        dto.setImageSize(folder.getImageSize().orElse(null));
-        dto.setDpi(folder.getDpi().orElse(null));
-        dto.setDerivative(folder.getDerivative().orElse(null));
-        dto.setCopyFolder(folder.isCopyFolder());
-        dto.setCreateFolder(folder.isCreateFolder());
-        dto.setValidateFolder(folder.isValidateFolder());
-        if (folder.getLtpValidationConfiguration() != null) {
-            dto.setLtpValidationConfigurationId(folder.getLtpValidationConfiguration().getId());
-        }
-        return dto;
+                .map(FolderMapper::toDto)
+                .collect(Collectors.toCollection(ArrayList::new)); // Back to mutable!
     }
 
     /**
