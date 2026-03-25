@@ -228,6 +228,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
 
     private String renamingError = "";
     private String metadataFileLoadingError = "";
+    private final Collection<String> metadataFileValidationErrors = new ArrayList<>();
 
     static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
@@ -236,6 +237,8 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     private boolean taskLayoutLoaded = false;
     private Integer linkedProcessId = null;
     private boolean linkedProcessClicked = false;
+    @Inject
+    private UpdateMetadataDialog updateMetadataDialog;
 
     /**
      * Public constructor.
@@ -252,6 +255,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         this.editPagesDialog = new EditPagesDialog(this);
         this.uploadFileDialog = new UploadFileDialog(this);
         this.linkProcessDialog = new LinkProcessDialog(this);
+        this.validationErrorUpdateComponents = "@none";
     }
 
     /**
@@ -318,6 +322,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         } catch (FileNotFoundException | SAXException e) {
             metadataFileLoadingError = e.getMessage();
         } catch (FileStructureValidationException e) {
+            this.metadataFileValidationErrors.addAll(e.getValidationResult().getResultMessages());
             setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
             showValidationExceptionDialog(e, this.referringView);
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
@@ -1298,6 +1303,15 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     }
 
     /**
+     * Get potential metadata schema validation errors from validating metadata xml file.
+     *
+     * @return list of schema validation errors
+     */
+    public Collection<String> getMetadataFileValidationErrors() {
+        return metadataFileValidationErrors;
+    }
+
+    /**
      * Retrieve and return value of metadata configured as functional metadata 'recordIdentifier'.
      *
      * @return the 'recordIdentifier' metadata value of the current process
@@ -1519,5 +1533,10 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public String getBlockingUser() {
         return blockingUserName;
+    }
+
+    @Override
+    public void proceed() {
+        updateMetadataDialog.updateCatalogMetadata(false);
     }
 }

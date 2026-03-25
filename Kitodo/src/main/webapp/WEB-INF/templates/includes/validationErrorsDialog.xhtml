@@ -63,7 +63,7 @@
                                          process="@this"
                                          onclick='PF("validationErrorsDialog").hide();'
                                          rendered="#{validatableForm.isSchemaValidationSkippable()}"
-                                         update="editForm"
+                                         update="#{validatableForm.getValidationErrorUpdateComponents()}"
                                          value="#{msgs['validation.proceedAnyway']}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancelButton"
