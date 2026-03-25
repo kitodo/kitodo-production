@@ -451,7 +451,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                 List<MetadataViewInterface> filteredViews = allowedMetadata
                         .stream()
                         .filter(v -> v.getId().equals(additionalField.getMetadata()))
-                        .collect(Collectors.toList());
+                        .toList();
                 if (!filteredViews.isEmpty()) {
                     MetadataEntry metadataEntry = new MetadataEntry();
                     metadataEntry.setValue(value);

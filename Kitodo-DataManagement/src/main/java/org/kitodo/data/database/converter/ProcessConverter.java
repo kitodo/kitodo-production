@@ -228,8 +228,8 @@ public class ProcessConverter {
             return CorrectionComments.NO_CORRECTION_COMMENTS;
         }
         List<Comment> correctionComments = process.getComments()
-                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        if (correctionComments.size() < 1) {
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).toList();
+        if (correctionComments.isEmpty()) {
             return CorrectionComments.NO_CORRECTION_COMMENTS;
         } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
             return CorrectionComments.OPEN_CORRECTION_COMMENTS;

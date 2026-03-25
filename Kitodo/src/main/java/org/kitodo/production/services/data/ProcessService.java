@@ -2026,8 +2026,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static CorrectionComments hasCorrectionComment(int processID) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processID);
         List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
-                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        if (correctionComments.size() < 1) {
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).toList();
+        if (correctionComments.isEmpty()) {
             return NO_CORRECTION_COMMENTS;
         } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
             return OPEN_CORRECTION_COMMENTS;
