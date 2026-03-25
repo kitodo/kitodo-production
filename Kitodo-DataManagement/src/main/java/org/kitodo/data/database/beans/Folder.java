@@ -205,12 +205,8 @@ public class Folder extends BaseBean {
      *
      * @return the pre-defined entries for the combo box
      */
-    public Collection<String> getFileGroups() {
-        Collection<String> fileGroups = new TreeSet<>(DFG_VIEWER_FILEGRPS);
-        if (Objects.nonNull(fileGroup)) {
-            fileGroups.add(this.fileGroup);
-        }
-        return fileGroups;
+    public static Collection<String> getFileGroups() {
+        return new TreeSet<>(DFG_VIEWER_FILEGRPS);
     }
 
     /**

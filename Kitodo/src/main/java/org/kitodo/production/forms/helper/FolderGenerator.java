@@ -9,11 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.forms;
+package org.kitodo.production.forms.helper;
 
 import java.util.Objects;
 
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.production.forms.dto.FolderDTO;
 
 /**
  * An encapsulation to access the generator properties of the folder.
@@ -52,7 +52,7 @@ public class FolderGenerator {
     /**
      * {@code Folder.this}.
      */
-    private final Folder folder;
+    private final FolderDTO folder;
 
     /**
      * Image width in pixels.
@@ -65,12 +65,16 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    public FolderGenerator(Folder folder) {
+    public FolderGenerator(FolderDTO folder) {
         this.folder = folder;
-        if (Objects.nonNull(folder)) {
-            this.width = folder.getImageSize().orElse(width);
-            this.factor = folder.getDerivative().orElse(factor);
-            this.dpi = folder.getDpi().orElse(dpi);
+        if (Objects.nonNull(folder.getImageSize())) {
+            this.width = folder.getImageSize();
+        }
+        if (Objects.nonNull(folder.getDerivative())) {
+            this.factor = folder.getDerivative();
+        }
+        if (Objects.nonNull(folder.getDpi())) {
+            this.dpi = folder.getDpi();
         }
     }
 
@@ -98,11 +102,11 @@ public class FolderGenerator {
      * @return the generator methodd
      */
     public String getMethod() {
-        if (folder.getDerivative().isPresent()) {
+        if (Objects.nonNull(folder.getDerivative())) {
             return CREATE_DERIVATIVE;
-        } else if (folder.getDpi().isPresent()) {
+        } else if (Objects.nonNull(folder.getDpi())) {
             return CHANGE_DPI;
-        } else if (folder.getImageSize().isPresent()) {
+        } else if (Objects.nonNull(folder.getImageSize())) {
             return GET_SIZED_WEB_IMAGE;
         } else {
             return "";
