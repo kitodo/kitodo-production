@@ -12,15 +12,21 @@
 package org.kitodo.production.services.index;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.exception.DataException;
 import org.hibernate.search.engine.search.projection.SearchProjection;
+import org.hibernate.search.engine.search.query.SearchQuery;
+import org.hibernate.search.engine.search.query.SearchScroll;
+import org.hibernate.search.engine.search.query.SearchScrollResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -29,6 +35,7 @@ import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
+import org.kitodo.production.enums.SearchFetchMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
@@ -126,27 +133,81 @@ public class IndexingService {
     }
 
     /**
-     * Searches for a search term in a search field and returns the hit IDs.
-     * 
+     * Searches for entities matching all given field/value terms and returns their IDs.
+     *
      * @param beanClass
      *            class of beans to search for
-     * @param searchField
-     *            search field to search on
-     * @param value
-     *            value to be found in the search field
+     * @param terms
+     *            list of field/value pairs to match (AND-combined)
      * @return ids of the found beans
      */
-    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, String searchField, String value) {
+    public Collection<Integer> searchIds(
+            Class<? extends BaseBean> beanClass,
+            List<Pair<String, String>> terms,
+            SearchFetchMode mode) {
         try (Session ormSession = HibernateUtil.getSession()) {
             SearchSession searchSession = Search.session(ormSession);
-            SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
-                    .toProjection();
-            List<Integer> ids = searchSession.search(beanClass).select(idField).where(function -> function.match().field(
-                    searchField).matching(value)).fetchAll().hits();
-            logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
-                    value, ids.size());
+            SearchQuery<Integer> query = buildIdQuery(searchSession, beanClass, terms);
+            Collection<Integer> ids = switch (mode) {
+                case FETCH_ALL -> query.fetchAll().hits();
+                case SCROLL -> collectWithScroll(query);
+            };
+            logResult(beanClass, terms, ids.size());
             return ids;
         }
+    }
+
+    private Set<Integer> collectWithScroll(SearchQuery<Integer> query) {
+        Set<Integer> ids = new HashSet<>();
+        try (SearchScroll<Integer> scroll = query.scroll(5_000)) {
+            while (true) {
+                SearchScrollResult<Integer> chunk = scroll.next();
+                if (!chunk.hasHits()) {
+                    break;
+                }
+                ids.addAll(chunk.hits());
+            }
+        }
+        return ids;
+    }
+
+    private SearchQuery<Integer> buildIdQuery(
+            SearchSession searchSession,
+            Class<? extends BaseBean> beanClass,
+            List<Pair<String, String>> terms) {
+
+        SearchProjection<Integer> idField = searchSession.scope(beanClass)
+                .projection()
+                .field("id", Integer.class)
+                .toProjection();
+        return searchSession.search(beanClass)
+                .select(idField)
+                .where(searchPredicateFactory -> {
+                    var bool = searchPredicateFactory.bool();
+                    for (Pair<String, String> term : terms) {
+                        bool.filter(
+                                searchPredicateFactory.match()
+                                        .field(term.getLeft())
+                                        .matching(term.getRight())
+                        );
+                    }
+                    return bool;
+                })
+                .toQuery();
+    }
+
+    private void logResult(Class<?> beanClass, List<Pair<String, String>> terms, int size) {
+        String termSummary = String.join(", ",
+                terms.stream()
+                        .distinct()
+                        .map(t -> t.getLeft() + "=\"" + t.getRight() + "\"")
+                        .toList());
+        logger.debug(
+                "Searching {} IDs with terms {}: {} hits",
+                beanClass.getSimpleName(),
+                termSummary,
+                size
+        );
     }
 
     /**

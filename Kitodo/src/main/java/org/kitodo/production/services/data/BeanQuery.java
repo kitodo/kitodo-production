@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +31,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.enums.ProcessState;
+import org.kitodo.production.enums.SearchFetchMode;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
 import org.primefaces.model.SortOrder;
@@ -41,7 +41,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
-    private static final Collection<Integer> NO_HIT = Collections.singletonList(0);
+    public static final Collection<Integer> NO_HIT = Collections.singletonList(0);
     private static final String JOIN_LAST_TASK = "process.tasks lastTask WITH "
             + "(lastTask.processingBegin IS NOT NULL OR lastTask.processingEnd IS NOT NULL) "
             + "AND (CASE WHEN lastTask.processingBegin IS NOT NULL AND lastTask.processingEnd IS NOT NULL "
@@ -64,7 +64,7 @@ public class BeanQuery {
     private final List<String> restrictionAlternatives = new ArrayList<>();
     private boolean indexFiltersAsAlternatives = false;
     private Pair<String, String> sorting;
-    private final Map<String, Pair<FilterField, String>> indexQueries = new HashMap<>();
+    private final List<Pair<FilterField, String>> indexQueries = new ArrayList<>();
     private final Map<String, Object> parameters = new HashMap<>();
 
     /**
@@ -223,16 +223,38 @@ public class BeanQuery {
     }
 
     /**
-     * Searches the index and inserts the IDs into the HQL query parameters.
+     * Applies a restriction based on index search results to the given field.
+     *
+     * <p>If index queries were defined, this performs a search in the index and
+     * restricts the query to the resulting IDs. If the index search yields no hits,
+     * a non-matching ID set is applied to ensure the query returns no results.</p>
+     *
+     * <p>If no index queries were defined, no restriction is added.</p>
+     *
+     * @param field the entity field to restrict (e.g. "id" or "process.id")
      */
-    public void performIndexSearches() {
-        for (var iterator = indexQueries.entrySet().iterator(); iterator.hasNext();) {
-            Entry<String, Pair<FilterField, String>> entry = iterator.next();
-            Collection<Integer> ids = indexingService.searchIds(Process.class, entry.getValue().getLeft()
-                    .getSearchField(), entry.getValue().getRight());
-            parameters.put(entry.getKey(), ids.isEmpty() ? NO_HIT : ids);
-            iterator.remove();
+    public void applyIndexRestriction(String field, SearchFetchMode searchMode) {
+        if (indexQueries.isEmpty()) {
+            return;
         }
+        Collection<Integer> ids = performIndexSearches(searchMode);
+        addInCollectionRestriction(field, ids);
+    }
+
+    /** Executes all collected index query terms as a single combined index search
+     * and returns the matching process IDs. If no hits are found, a non-matching
+     * ID collection is returned by the caller.
+     */
+    public Collection<Integer> performIndexSearches(SearchFetchMode searchMode) {
+        List<Pair<String,String>> terms = new ArrayList<>();
+        for (var entry : indexQueries) {
+            String field = entry.getLeft().getSearchField();
+            String token = entry.getRight();
+            terms.add(Pair.of(field, token));
+        }
+        indexQueries.clear();
+        Collection<Integer> ids = indexingService.searchIds(Process.class, terms, searchMode);
+        return ids.isEmpty() ? NO_HIT : ids;
     }
 
     /**
@@ -335,9 +357,7 @@ public class BeanQuery {
                     }
                 } else {
                     IndexQueryPart indexQueryPart = (IndexQueryPart) searchFilter;
-                    indexQueryPart.putQueryParameters(varName, parameterName, (className.equals("Process") ? "id"
-                            : "process.id"), indexQueries, indexFiltersAsAlternatives ? restrictionAlternatives
-                                    : restrictions);
+                    indexQueryPart.putQueryParameters(indexQueries);
                 }
             }
             if (groupFilters.size() == 1) {
@@ -464,6 +484,10 @@ public class BeanQuery {
                 first = false;
             }
         }
+    }
+
+    public List<Pair<FilterField, String>> getIndexQueries() {
+        return indexQueries;
     }
 
     /**
