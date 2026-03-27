@@ -101,16 +101,16 @@
                       styleClass="numeric"
                       sortBy="#{item.processingBegin}"
                       rendered="#{CurrentTaskForm.showColumn('task.processingBegin')}">
-                <h:outputText value="#{ProcessForm.getFormattedDate(item.processingBegin)}"
-                              title="#{ProcessForm.getFormattedDate(item.processingBegin)}"/>
+                <h:outputText value="#{TaskListView.getFormattedDate(item.processingBegin)}"
+                              title="#{TaskListView.getFormattedDate(item.processingBegin)}"/>
             </p:column>
             <p:column id="processingEndColumn"
                       headerText="#{msgs.processingEnd}"
                       styleClass="numeric"
                       sortBy="#{item.processingEnd}"
                       rendered="#{CurrentTaskForm.showColumn('task.processingEnd')}">
-                <h:outputText value="#{ProcessForm.getFormattedDate(item.processingEnd)}"
-                              title="#{ProcessForm.getFormattedDate(item.processingEnd)}"/>
+                <h:outputText value="#{TaskListView.getFormattedDate(item.processingEnd)}"
+                              title="#{TaskListView.getFormattedDate(item.processingEnd)}"/>
             </p:column>
 
             <p:column styleClass="comment-column genericSortIcon"
@@ -255,16 +255,16 @@
                                           value="#{item.correction}"/>
 
                             <h:outputText value="#{msgs.processingBegin}:"/>
-                            <h:outputText title="#{ProcessForm.getFormattedDate(item.processingBegin)}"
-                                          value="#{ProcessForm.getFormattedDate(item.processingBegin)}"/>
+                            <h:outputText title="#{TaskListView.getFormattedDate(item.processingBegin)}"
+                                          value="#{TaskListView.getFormattedDate(item.processingBegin)}"/>
                         </p:panelGrid>
                         <p:panelGrid id="taskDetailTableSecond"
                                      styleClass="expansion-column"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.lastEdited}:"/>
-                            <h:outputText title="#{ProcessForm.getFormattedDate(item.processingTime)}"
-                                          value="#{ProcessForm.getFormattedDate(item.processingTime)}"/>
+                            <h:outputText title="#{TaskListView.getFormattedDate(item.processingTime)}"
+                                          value="#{TaskListView.getFormattedDate(item.processingTime)}"/>
 
                             <h:outputText value="#{msgs.lastUpdatedBy}:"/>
                             <h:outputText title="#{item.processingUser.fullName}"
