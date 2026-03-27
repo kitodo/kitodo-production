@@ -189,11 +189,7 @@ public class ProcessEditViewDetailsTab extends BaseTabEditView<Process> {
             return false;
         }
 
-        if (!process.getTitle().equals(newProcessTitle) && !renameAfterProcessTitleChanged()) {
-            return false;
-        }
-
-        return true;
+        return process.getTitle().equals(newProcessTitle) || renameAfterProcessTitleChanged();
     }
 
     /**

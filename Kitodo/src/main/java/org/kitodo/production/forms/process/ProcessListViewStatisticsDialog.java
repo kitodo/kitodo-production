@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import jakarta.faces.view.ViewScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +41,7 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.xml.sax.SAXException;
 
 @Named("ProcessListViewStatisticsDialog")
-@ViewScoped
+@RequestScoped
 public class ProcessListViewStatisticsDialog extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ProcessListViewStatisticsDialog.class);
