@@ -17,10 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.faces.context.FacesContext;
@@ -1049,7 +1048,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         }
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
             return addMetadataDialog.getAddableMetadata().stream()
-                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
+                    .map(SelectItem::getValue).toList().contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
         return false;
     }
@@ -1464,11 +1463,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     private String getRedirectUrl(Integer processId) {
         String viewPath = String.format(METADATA_REDIRECT, processId, referringView);
         if (referringView.equals("processes")) {
-            try {
-                viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                logger.error("cannot urlencode referrerListOptions", e);
-            }
+            viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), StandardCharsets.UTF_8);
         }
         return viewPath;
     }

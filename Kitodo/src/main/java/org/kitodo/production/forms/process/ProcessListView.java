@@ -13,11 +13,8 @@ package org.kitodo.production.forms.process;
 
 import static java.util.Map.entry;
 
-import java.io.IOException;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,11 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
@@ -52,7 +45,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.utils.Stopwatch;
 import org.omnifaces.util.Ajax;
@@ -69,11 +61,8 @@ public class ProcessListView extends ProcessListBaseView {
     private static final Logger logger = LogManager.getLogger(ProcessListView.class);
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "processes") + "&tab=processTab";
-
-    private Process process = new Process();
-            
+           
     private final FilterMenu filterMenu = new FilterMenu(this);
-    private final transient FileService fileService = ServiceManager.getFileService();
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
 
     private String errorMessage = "";
@@ -191,26 +180,6 @@ public class ProcessListView extends ProcessListBaseView {
     }
 
     /**
-     * Save process and redirect to list view.
-     *
-     * @return url to list view
-     */
-    public String save() {
-        Stopwatch stopwatch = new Stopwatch(this, "save");
-
-        try {
-            ServiceManager.getProcessService().save(this.process);
-
-            return ProcessListView.getViewPath();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                logger, e);
-        }
-
-        return stopwatch.stop(this.stayOnCurrentPage);
-    }
-
-    /**
      * Create Child for given Process.
      * @param process the process to create a child for.
      * @return path to createProcessForm
@@ -222,31 +191,6 @@ public class ProcessListView extends ProcessListBaseView {
                     + process.getProject().getId() + "&parentId=" + process.getId());
         }
         return stopwatch.stop("processes");
-    }
-
-    /**
-     * Remove content.
-     *
-     * @return String
-     */
-    public String deleteContent() {
-        Stopwatch stopwatch = new Stopwatch(this, "deleteContent");
-        try {
-            URI ocr = fileService.getOcrDirectory(this.process);
-            if (fileService.fileExist(ocr)) {
-                fileService.delete(ocr);
-            }
-            URI images = fileService.getImagesDirectory(this.process);
-            if (fileService.fileExist(images)) {
-                fileService.delete(images);
-            }
-        } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("errorDirectoryDeleting", new Object[] {Helper.getTranslation("metadata") }, logger,
-                e);
-        }
-
-        Helper.setMessage("Content deleted");
-        return stopwatch.stop(this.stayOnCurrentPage);
     }
 
     /**
@@ -265,73 +209,6 @@ public class ProcessListView extends ProcessListBaseView {
         Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDownForSelection");
         workflowControllerService.setTaskStatusDownForProcesses(getSelectedProcesses());
         stopwatch.stop();
-    }
-
-    /**
-     * Get process object.
-     *
-     * @return process object
-     */
-    public Process getProcess() {
-        Stopwatch stopwatch = new Stopwatch(this, "getProcess");
-        return stopwatch.stop(this.process);
-    }
-
-    /**
-     * Set process.
-     *
-     * @param process
-     *            Process object
-     */
-    public void setProcess(Process process) {
-        final Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "setProcess");
-        this.process = process;
-        stopwatch.stop();
-    }
-
-    /**
-     * Get dockets for select list.
-     *
-     * @return list of dockets
-     */
-    public List<Docket> getDockets() {
-        Stopwatch stopwatch = new Stopwatch(this, "getDockets");
-        return stopwatch.stop(ServiceManager.getDocketService().getAllForSelectedClient());
-    }
-
-    /**
-     * Get list of projects.
-     *
-     * @return list of projects
-     */
-    public List<Project> getProjects() {
-        Stopwatch stopwatch = new Stopwatch(this, "getProjects");
-        return stopwatch.stop(ServiceManager.getProjectService().getAllForSelectedClient());
-    }
-
-    /**
-     * Get rulesets for select list.
-     *
-     * @return list of rulesets
-     */
-    public List<Ruleset> getRulesets() {
-        Stopwatch stopwatch = new Stopwatch(this, "getRulesets");
-        return stopwatch.stop(ServiceManager.getRulesetService().getAllForSelectedClient());
-    }
-
-    /**
-     * Get list of all import configurations.
-     *
-     * @return list of all import configurations.
-     */
-    public List<ImportConfiguration> getImportConfigurations() {
-        Stopwatch stopwatch = new Stopwatch(this, "getImportConfigurations");
-        try {
-            return stopwatch.stop(ServiceManager.getImportConfigurationService().getAll());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return stopwatch.stop(Collections.emptyList());
-        }
     }
 
     /**
@@ -385,15 +262,6 @@ public class ProcessListView extends ProcessListBaseView {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processId }, logger, e);
             return stopwatch.stop(0);
         }
-    }
-
-    /**
-     * Return path to processes page.
-     * @return path to processes page
-     */
-    public String getProcessesPage() {
-        Stopwatch stopwatch = new Stopwatch(this, "getProcessesPage");
-        return stopwatch.stop(this.processesPage);
     }
 
     /**

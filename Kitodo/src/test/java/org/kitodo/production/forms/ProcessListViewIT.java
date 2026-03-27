@@ -40,7 +40,7 @@ import org.kitodo.production.services.ServiceManager;
 
 public class ProcessListViewIT {
 
-    private ProcessListView processListView = new ProcessListView();
+    private final ProcessListView processListView = new ProcessListView();
 
     /**
      * Setup Database and start elasticsearch.

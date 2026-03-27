@@ -339,7 +339,7 @@ public class MetadataEditor {
                     // new structure ORDER must be set to same min ORDER value of contained physical divisions
                     newStructure.setOrder(structureOrder);
                     List<Integer> siblingOrderValues = Stream.concat(logicalDivision.getChildren().stream()
-                            .map(Division::getOrder), Stream.of(structureOrder)).sorted().collect(Collectors.toList());
+                            .map(Division::getOrder), Stream.of(structureOrder)).sorted().toList();
 
                     // new order must be set at correct location between existing siblings
                     logicalDivision.getChildren().add(siblingOrderValues.lastIndexOf(structureOrder), newStructure);
@@ -431,7 +431,7 @@ public class MetadataEditor {
         viewsToAdd.removeAll(assignedViews);
         List<View> sortedViews = Stream.concat(assignedViews.stream(), viewsToAdd.stream())
                 .sorted(Comparator.comparing(view -> view.getPhysicalDivision().getOrder()))
-                .collect(Collectors.toList());
+                .toList();
         assignedViews.clear();
         assignedViews.addAll(sortedViews);
     }

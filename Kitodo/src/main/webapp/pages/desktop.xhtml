@@ -55,12 +55,14 @@
                                         <p:ajax update="processTable" oncomplete="setScrollbarLayout()"/>
                                 </p:commandButton>
                             </h:form>
-                            <p:commandButton id="allProcesses"
-                                             value="#{msgs.allProcesses}"
-                                             action="#{ProcessListView.getViewPath()}"
-                                             process="@this"
-                                             icon="fa fa-search fa-lg"
-                                             iconPos="right" styleClass="secondary"/>
+                            <h:form id="allProcessesForm">
+                                <p:commandButton id="allProcesses"
+                                                 value="#{msgs.allProcesses}"
+                                                 action="#{ProcessListView.getViewPath()}"
+                                                 process="@this"
+                                                 icon="fa fa-search fa-lg"
+                                                 iconPos="right" styleClass="secondary"/>
+                            </h:form>
                         </div>
                     </div>
                     <div class="content-body">

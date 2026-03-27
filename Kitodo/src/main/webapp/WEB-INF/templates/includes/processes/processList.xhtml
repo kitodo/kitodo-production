@@ -80,7 +80,9 @@
                       headerText="#{msgs.status}"
                       sortBy="#{process.progressCombined}"
                       rendered="#{ProcessListView.showColumn('process.state')}">
-                <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml">
+                    <ui:param name="progressBean" value="#{ProcessListView}" />
+                </ui:include>
             </p:column>
 
             <p:column id="lastTaskHandledByColumn"
@@ -325,10 +327,17 @@
                                 icon="fa fa-file-archive-o"/>
                     <p:menuitem id="createExcel"
                                 value="#{msgs.createExcel}"
-                                action="#{ProcessListView.generateResult}"
+                                action="#{ProcessListView.generateExcel}"
                                 ajax="false"
                                 immediate="true"
-                                icon="fa fa-file-excel-o"/>
+                                icon="fa fa-file-excel-o">
+                    </p:menuitem>
+                    <p:menuitem id="createCSV"
+                                value="#{msgs.createCsv}"
+                                action="#{ProcessForm.generateCsv}"
+                                ajax="false"
+                                immediate="true"
+                                icon="fa fa-file-text-o" />
                     <p:menuitem id="createPdf"
                                 value="#{msgs.createPdf}"
                                 action="#{ProcessListView.generateResultAsPdf}"

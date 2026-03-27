@@ -16,13 +16,7 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,11 +72,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
@@ -118,6 +107,7 @@ import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessExportDTO;
+import org.kitodo.production.enums.ExportFormat;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
@@ -1161,44 +1151,25 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param filter
      *            for generating search results
      */
-    public void generateResultAsPdf(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
-            throws DocumentException, IOException {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
-            try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
-                        showInactiveProjects);
-                XSSFWorkbook wb = sr.getResult();
-                List<List<Cell>> rowList = new ArrayList<>();
-                Sheet mySheet = wb.getSheetAt(0);
-                Iterator<Row> rowIter = mySheet.rowIterator();
-                while (rowIter.hasNext()) {
-                    Row myRow = (Row) rowIter.next();
-                    Iterator<Cell> cellIter = myRow.cellIterator();
-                    List<Cell> row = new ArrayList<>();
-                    while (cellIter.hasNext()) {
-                        Cell myCell = (Cell) cellIter.next();
-                        row.add(myCell);
-                    }
-                    rowList.add(row);
-                }
-                Document document = new Document();
-                Rectangle rectangle = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
-                PdfWriter.getInstance(document, out);
-                document.setPageSize(rectangle);
-                document.open();
-                if (!rowList.isEmpty()) {
-                    Paragraph paragraph = new Paragraph(rowList.getFirst().getFirst().toString());
-                    document.add(paragraph);
-                    document.add(getPdfTable(rowList));
-                }
+    public void generatePdf(String filter,
+                            boolean showClosedProcesses,
+                            boolean showInactiveProjects)
+            throws IOException, DocumentException {
+        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.PDF);
+    }
 
-                document.close();
-                wb.close();
-                facesContext.responseComplete();
-            }
-        }
+    public void generateExcel(String filter,
+                              boolean showClosedProcesses,
+                              boolean showInactiveProjects)
+            throws IOException, DocumentException {
+        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.EXCEL);
+    }
+
+    public void generateCsv(String filter,
+                            boolean showClosedProcesses,
+                            boolean showInactiveProjects)
+            throws IOException, DocumentException {
+        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.CSV);
     }
 
     /**
@@ -1207,19 +1178,28 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param filter
      *            for generating search results
      */
-    public void generateResult(String filter, boolean showClosedProcesses, boolean showInactiveProjects)
-            throws IOException {
+    public void export(String filter, boolean showClosedProcesses, boolean showInactiveProjects, ExportFormat format)
+            throws IOException, DocumentException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.xlsx");
+            List<ProcessExportDTO> results =
+                    getProcessesForExport(
+                            filter,
+                            showClosedProcesses,
+                            showInactiveProjects,
+                            ServiceManager.getUserService().getSessionClientId()
+                    );
+            ExternalContext response = prepareHeaderInformation(facesContext, format.getFilename());
             try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
-                        showInactiveProjects);
-                XSSFWorkbook wb = sr.getResult();
-                wb.write(out);
-                wb.close();
-                out.flush();
+                SearchResultGeneration sr = new SearchResultGeneration(results, filter);
+                switch (format) {
+                    case CSV -> sr.writeCsv(out);
+                    case EXCEL -> sr.writeExcel(out);
+                    case PDF -> sr.writePdf(out);
+                    default -> throw new IllegalArgumentException("Unsupported export format: " + format);
+                }
                 facesContext.responseComplete();
+                out.flush();
             }
         }
     }
@@ -1256,23 +1236,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
 
         return externalContext;
-    }
-
-    private PdfPTable getPdfTable(List<List<Cell>> rowList) throws DocumentException {
-        // create formatter for cells with default locale
-        DataFormatter formatter = new DataFormatter();
-
-        PdfPTable table = new PdfPTable(8);
-        table.setSpacingBefore(20);
-        table.setWidths(new int[] {4, 1, 2, 1, 1, 1, 2, 2 });
-        for (List<Cell> row : rowList) {
-            for (Cell hssfCell : row) {
-                String stringCellValue = formatter.formatCellValue(hssfCell);
-                table.addCell(stringCellValue);
-            }
-        }
-
-        return table;
     }
 
     private static DocketInterface initialiseDocketModule() {
@@ -2063,8 +2026,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public static CorrectionComments hasCorrectionComment(int processID) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processID);
         List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
-                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        if (correctionComments.size() < 1) {
+                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).toList();
+        if (correctionComments.isEmpty()) {
             return NO_CORRECTION_COMMENTS;
         } else if (correctionComments.stream().anyMatch(c -> !c.isCorrected())) {
             return OPEN_CORRECTION_COMMENTS;

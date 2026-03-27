@@ -903,7 +903,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
         List<Task> templateTasks = task.getProcess().getTemplate().getTasks().stream()
                 .filter(t -> t.getOrdering().equals(task.getOrdering()))
                 .filter(t -> t.getTitle().equals(task.getTitle()))
-                .collect(Collectors.toList());
+                .toList();
         if (templateTasks.size() == 1) {
             return templateTasks.getFirst().getId();
         }

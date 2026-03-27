@@ -16,7 +16,7 @@ import java.io.Serializable;
 import jakarta.enterprise.context.SessionScoped;
 
 /**
- * Process list state that should presist over multiple views.
+ * Process list state that should persist over multiple views.
  * 
  * <p>This bean preserves the filter string that was last used while visiting the process list.
  * It is needed because sometimes users navigate away from the process list. Upon returning, they 

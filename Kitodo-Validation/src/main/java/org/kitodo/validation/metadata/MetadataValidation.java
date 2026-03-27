@@ -234,7 +234,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         KeySetView<PhysicalDivision, ?> unassignedPhysicalDivisions = ConcurrentHashMap.newKeySet();
         unassignedPhysicalDivisions.addAll(Workpiece.treeStream(workpiece.getPhysicalStructure())
-                .filter(physicalDivision -> !physicalDivision.getMediaFiles().isEmpty()).collect(Collectors.toList()));
+                .filter(physicalDivision -> !physicalDivision.getMediaFiles().isEmpty()).toList());
         Workpiece.treeStream(workpiece.getLogicalStructure()).flatMap(structure -> structure.getViews().stream())
                 .map(View::getPhysicalDivision)
                 .forEach(unassignedPhysicalDivisions::remove);

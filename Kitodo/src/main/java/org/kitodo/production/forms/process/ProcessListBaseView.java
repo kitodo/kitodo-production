@@ -37,6 +37,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseListView;
 import org.kitodo.production.forms.DeleteProcessDialog;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessProgressHelper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.model.LazyProcessModel;
 import org.kitodo.production.services.ServiceManager;
@@ -56,8 +57,9 @@ public class ProcessListBaseView extends BaseListView {
 
     private final HashMap<Integer, Boolean> exportable = new HashMap<>();
 
-    protected boolean allSelected = false;
-    protected HashSet<Integer> excludedProcessIds = new HashSet<>();
+    boolean allSelected = false;
+    HashSet<Integer> excludedProcessIds = new HashSet<>();
+    private final ProcessProgressHelper progressService = new ProcessProgressHelper();
 
     /**
      * Constructor.
@@ -145,8 +147,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return true if at least one task exists, otherwise false
      */
     public boolean hasAnyTasks(Process process) {
-        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
-        return counts.values().stream().mapToInt(Integer::intValue).sum() > 0;
+        return progressService.hasAnyTasks(getCachedTaskStatusCounts(process));
     }
 
     /**
@@ -178,41 +179,9 @@ public class ProcessListBaseView extends BaseListView {
      * @return formatted task titles or an empty string if none exist
      */
     public String getCurrentTaskTitles(Process process) {
-        Map<TaskStatus, List<String>> titles =
-                getLazyProcessModel().getTaskTitleCache().get(process.getId());
-
-        if (Objects.isNull(titles) || titles.isEmpty()) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        appendTitles(sb, TaskStatus.OPEN, titles);
-        appendTitles(sb, TaskStatus.INWORK, titles);
-        return sb.toString();
-    }
-
-    /**
-     * Appends task titles of the given status to the provided StringBuilder.
-     *
-     * @param sb the StringBuilder to append to
-     * @param status the task status to append
-     * @param titles task titles grouped by status
-     */
-    private void appendTitles(StringBuilder sb,
-                              TaskStatus status,
-                              Map<TaskStatus, List<String>> titles) {
-        List<String> list = titles.get(status);
-        String newLine = "\n";
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return;
-        }
-        if (!sb.isEmpty()) {
-            sb.append(newLine);
-        }
-        sb.append(Helper.getTranslation(status.getTitle())).append(":");
-        for (String t : list) {
-            sb.append(newLine).append(" - ").append(Helper.getTranslation(t));
-        }
+        return progressService.buildTaskTitleTooltip(
+                getLazyProcessModel().getTaskTitleCache().get(process.getId())
+        );
     }
 
     /**
@@ -247,13 +216,10 @@ public class ProcessListBaseView extends BaseListView {
      * @return progress percentage for the given status
      */
     public double progress(Process process, TaskStatus status) {
-        Map<TaskStatus, Integer> counts = getCachedTaskStatusCounts(process);
-        int total = counts.values().stream().mapToInt(Integer::intValue).sum();
-        if (total == 0) {
-            counts.put(TaskStatus.LOCKED, 1);
-            total = 1;
-        }
-        return 100.0 * counts.getOrDefault(status, 0) / total;
+        return progressService.progress(
+                getCachedTaskStatusCounts(process),
+                status
+        );
     }
 
     /**
@@ -265,7 +231,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return percentage of tasks completed
      */
     public double progressClosed(Process process) {
-        return progress(process, TaskStatus.DONE);
+        return progressService.progressClosed(getCachedTaskStatusCounts(process));
     }
 
     /**
@@ -277,7 +243,9 @@ public class ProcessListBaseView extends BaseListView {
      * @return percentage of tasks in progress
      */
     public double progressInProcessing(Process process) {
-        return progress(process, TaskStatus.INWORK);
+        return progressService.progressInProcessing(
+                getCachedTaskStatusCounts(process)
+        );
     }
 
     /**
@@ -290,7 +258,9 @@ public class ProcessListBaseView extends BaseListView {
      * @return percentage of startable tasks
      */
     public double progressOpen(Process process) {
-        return progress(process, TaskStatus.OPEN);
+        return progressService.progressOpen(
+                getCachedTaskStatusCounts(process)
+        );
     }
 
     /**
@@ -353,15 +323,37 @@ public class ProcessListBaseView extends BaseListView {
     }
 
     /**
-     * Generate result set.
+     * Generates the current search result as an Excel file.
      */
-    public void generateResult() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateResult");
+    public void generateExcel() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateExcel");
         try {
-            ServiceManager.getProcessService().generateResult(this.filter, this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects());
-        } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
+            ServiceManager.getProcessService().generateExcel(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Generates the current search result as a CSV file.
+     */
+    public void generateCsv() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateCsv");
+        try {
+            ServiceManager.getProcessService().generateCsv(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
         stopwatch.stop();
     }
@@ -372,7 +364,7 @@ public class ProcessListBaseView extends BaseListView {
     public void generateResultAsPdf() {
         Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
         try {
-            ServiceManager.getProcessService().generateResultAsPdf(this.filter, this.isShowClosedProcesses(),
+            ServiceManager.getProcessService().generatePdf(this.filter, this.isShowClosedProcesses(),
                     this.isShowInactiveProjects());
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
