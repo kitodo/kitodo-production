@@ -16,7 +16,7 @@ import java.io.Serializable;
 import jakarta.enterprise.context.SessionScoped;
 
 /**
- * Task list state that should presist over multiple views.
+ * Task list state that should persist over multiple views.
  * 
  * <p>This bean preserves the filter string that was last used while visiting the task list.
  * It is needed because sometimes users navigate away from the task list. Upon returning, they 
