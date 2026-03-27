@@ -9,20 +9,27 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.task;
+
+import static java.util.Map.entry;
 
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -31,57 +38,40 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FileStructureValidationException;
-import org.kitodo.export.ExportDms;
-import org.kitodo.export.TiffHeader;
-import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
+import org.kitodo.production.forms.BaseListView;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
-import org.kitodo.production.helper.batch.BatchTaskHelper;
-import org.kitodo.production.helper.tasks.TaskManager;
-import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.model.LazyTaskModel;
-import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.data.TaskService;
-import org.kitodo.production.services.file.SubfolderFactoryService;
-import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
-import org.kitodo.production.thread.TaskImageGeneratorThread;
 import org.kitodo.utils.Stopwatch;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.xml.sax.SAXException;
 
-@Named("CurrentTaskForm")
-@SessionScoped
-public class CurrentTaskForm extends ValidatableForm {
-    private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
-    private Process myProcess = new Process();
-    private Task currentTask = new Task();
+@Named("TaskListView")
+@ViewScoped
+public class TaskListView extends BaseListView {
+
+    private static final Logger logger = LogManager.getLogger(TaskListView.class);
+    private static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "tasks");
+    
+    private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
+
     private List<Task> selectedTasks = new ArrayList<>();
     private final WebDav myDav = new WebDav();
-    private String scriptPath;
-    private transient BatchTaskHelper batchHelper;
-    private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
-    private List<Property> properties;
-    private Property property;
-    private final String tasksPath = MessageFormat.format(REDIRECT_PATH, "tasks");
-    private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
-    private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
-
+    
     private List<String> taskFilters;
     private List<String> selectedTaskFilters;
     private FilterMenu filterMenu = new FilterMenu(this);
@@ -96,12 +86,15 @@ public class CurrentTaskForm extends ValidatableForm {
     @Inject
     private CustomListColumnInitializer initializer;
 
+    @Inject
+    private TaskListViewSessionState sessionState;
+
     /**
      * Constructor.
      */
-    public CurrentTaskForm() {
+    public TaskListView() {
         super();
-        Stopwatch stopwatch = new Stopwatch(this, "CurrentTaskForm");
+        Stopwatch stopwatch = new Stopwatch(this, "TaskListView");
         super.setLazyBeanModel(new LazyTaskModel(ServiceManager.getTaskService()));
         stopwatch.stop();
     }
@@ -137,8 +130,27 @@ public class CurrentTaskForm extends ValidatableForm {
         selectedTaskStatus.add(TaskStatus.OPEN);
         selectedTaskStatus.add(TaskStatus.INWORK);
 
-        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
+        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
         stopwatch.stop();
+    }
+
+    /**
+     * Returns the URL to the task list.
+     * 
+     * @return view path to task list
+     */
+    public static String getViewPath() {
+        return VIEW_PATH; 
+    }
+
+    /**
+     * Returns the URL to the task list with a given filter string.
+     * 
+     * @param filter the filter string
+     * @return view path to task list with specific filter
+     */
+    public static String getViewPath(String filter) {
+        return VIEW_PATH + "&filter=" + filter.replace("&", "%26"); 
     }
 
     /**
@@ -146,36 +158,38 @@ public class CurrentTaskForm extends ValidatableForm {
      *
      * @return page
      */
-    public String takeOverTask() {
+    public String takeOverTask(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "takeOverTask");
-        if (this.currentTask.getProcessingStatus() != TaskStatus.OPEN) {
+        if (task.getProcessingStatus() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return stopwatch.stop(this.stayOnCurrentPage);
         } else {
             try {
-                if (this.currentTask.isTypeAcceptClose()) {
-                    this.workflowControllerService.close(this.currentTask);
-                    return stopwatch.stop(tasksPath);
+                if (task.isTypeAcceptClose()) {
+                    this.workflowControllerService.close(task);
+                    return stopwatch.stop(reload());
                 } else {
-                    this.workflowControllerService.assignTaskToUser(this.currentTask);
-                    ServiceManager.getTaskService().save(this.currentTask);
+                    this.workflowControllerService.assignTaskToUser(task);
+                    ServiceManager.getTaskService().save(task);
                 }
             } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
         }
-        return stopwatch.stop(taskEditPath + "&id=" + getTaskIdForPath());
+        return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
     }
 
     /**
-     * Edit task.
+     * Returns the view path to navigate to the "work on" task view.
      *
-     * @return page
+     * @param task the task to work on
+     * @param referrer the referrer page (e.g. "desktop" or "tasks") to navigate back to in case the task is closed
+     * @return the view path
      */
-    public String editTask() {
-        Stopwatch stopwatch = new Stopwatch(this, "editTask");
-        return stopwatch.stop(taskEditPath + "&id=" + getTaskIdForPath());
+    public String workOnTask(Task task, String referrer) {
+        Stopwatch stopwatch = new Stopwatch(this, "workOnTask");
+        return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
     }
 
     /**
@@ -184,27 +198,26 @@ public class CurrentTaskForm extends ValidatableForm {
      *
      * @return page for edit one task, page for edit many or stay on the same page
      */
-    public String takeOverBatchTasks() {
+    public String takeOverBatchTasks(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "takeOverBatchTasks");
-        String taskTitle = this.currentTask.getTitle();
-        List<Batch> batches = this.currentTask.getProcess().getBatches();
+        String taskTitle = task.getTitle();
+        List<Batch> batches = task.getProcess().getBatches();
 
         if (batches.isEmpty()) {
-            return stopwatch.stop(takeOverTask());
+            return stopwatch.stop(takeOverTask(task, referrer));
         } else if (batches.size() == 1) {
             Integer batchId = batches.getFirst().getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);
             } else if (currentTasksOfBatch.size() == 1) {
-                return stopwatch.stop(takeOverTask());
+                return stopwatch.stop(takeOverTask(task, referrer));
             } else {
-                for (Task task : currentTasksOfBatch) {
-                    processTask(task);
+                for (Task t : currentTasksOfBatch) {
+                    processTask(t);
                 }
 
-                this.setBatchHelper(new BatchTaskHelper(currentTasksOfBatch));
-                return stopwatch.stop(taskBatchEditPath);
+                return stopwatch.stop(TaskBatchEditView.getViewPath(task));
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
@@ -257,203 +270,27 @@ public class CurrentTaskForm extends ValidatableForm {
      *
      * @return page for edit one task, page for edit many or stay on the same page
      */
-    public String editBatchTasks() {
+    public String editBatchTasks(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "editBatchTasks");
-        String taskTitle = this.currentTask.getTitle();
-        List<Batch> batches = this.currentTask.getProcess().getBatches();
+        String taskTitle = task.getTitle();
+        List<Batch> batches = task.getProcess().getBatches();
 
         if (batches.isEmpty()) {
-            return stopwatch.stop(taskEditPath + "&id=" + getTaskIdForPath());
+            return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
         } else if (batches.size() == 1) {
             Integer batchId = batches.getFirst().getId();
             List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return stopwatch.stop(this.stayOnCurrentPage);
             } else if (currentTasksOfBatch.size() == 1) {
-                return stopwatch.stop(taskEditPath + "&id=" + getTaskIdForPath());
+                return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
             } else {
-                this.setBatchHelper(new BatchTaskHelper(currentTasksOfBatch));
-                return stopwatch.stop(taskBatchEditPath);
+                return stopwatch.stop(TaskBatchEditView.getViewPath(task));
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
             return stopwatch.stop(this.stayOnCurrentPage);
         }
-    }
-
-    /**
-     * Release task - set up task status to open and make available for other users
-     * to take over.
-     *
-     * @return page
-     */
-    public String releaseTask() {
-        Stopwatch stopwatch = new Stopwatch(this, "releaseTask");
-        try {
-            this.workflowControllerService.unassignTaskFromUser(this.currentTask);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
-            return stopwatch.stop(this.stayOnCurrentPage);
-        }
-        return stopwatch.stop(tasksPage);
-    }
-
-    /**
-     * Close method task called by user action.
-     *
-     * @return page
-     */
-    public String closeTaskByUser() {
-        Stopwatch stopwatch = new Stopwatch(this, "closeTaskByUser");
-        try {
-            this.workflowControllerService.closeTaskByUser(this.currentTask);
-        } catch (DAOException | IOException | SAXException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
-            return stopwatch.stop(this.stayOnCurrentPage);
-        } catch (FileStructureValidationException e) {
-            setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
-            showValidationExceptionDialog(e, null);
-            return stopwatch.stop(this.stayOnCurrentPage);
-        }
-        return stopwatch.stop(tasksPage);
-    }
-
-    /**
-     * Unlock the current task's process.
-     *
-     * @return stay on the current page
-     */
-    public String releaseLock() {
-        Stopwatch stopwatch = new Stopwatch(this, "releaseLock");
-        MetadataLock.setFree(this.currentTask.getProcess().getId());
-        return stopwatch.stop(this.stayOnCurrentPage);
-    }
-
-    /**
-     * Generate all images.
-     */
-    public void generateAllImages() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateAllImages");
-        generateImages(GenerationMode.ALL, "regenerateAllImagesStarted");
-        stopwatch.stop();
-    }
-
-    /**
-     * Generate missing and damaged images.
-     */
-    public void generateMissingAndDamagedImages() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateMissingAndDamagedImages");
-        generateImages(GenerationMode.MISSING_OR_DAMAGED, "regenerateMissingAndDamagedImagesStarted");
-        stopwatch.stop();
-    }
-
-    /**
-     * Generate missing images.
-     */
-    public void generateMissingImages() {
-        Stopwatch stopwatch = new Stopwatch(this, "generateMissingImages");
-        generateImages(GenerationMode.MISSING, "regenerateMissingImagesStarted");
-        stopwatch.stop();
-    }
-
-    /**
-     * Action that creates images.
-     *
-     * @param mode
-     *            which function should be executed
-     * @param messageKey
-     *            message displayed to the user (key for resourcebundle)
-     */
-    private void generateImages(GenerationMode mode, String messageKey) {
-        Folder generatorSource = myProcess.getProject().getGeneratorSource();
-        List<Folder> contentFolders = currentTask.getContentFolders();
-        if (Objects.isNull(generatorSource)) {
-            Helper.setErrorMessage("noSourceFolderConfiguredInProject");
-            return;
-        }
-        if (Objects.isNull(contentFolders)) {
-            Helper.setErrorMessage("noImageFolderConfiguredInProject");
-            return;
-        }
-        Subfolder sourceFolder = new Subfolder(myProcess, generatorSource);
-        if (sourceFolder.listContents().isEmpty()) {
-            Helper.setErrorMessage("emptySourceFolder");
-        } else {
-            List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, contentFolders);
-            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
-            TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
-            Helper.setMessage(messageKey);
-        }
-    }
-
-    public String getScriptPath() {
-        Stopwatch stopwatch = new Stopwatch(this, "getScriptPath");
-        return stopwatch.stop(this.scriptPath);
-    }
-
-    /**
-     * Sets the script path.
-     *
-     * @param scriptPath
-     *            script path to set
-     */
-    public void setScriptPath(String scriptPath) {
-        Stopwatch stopwatch = new Stopwatch(this, "setScriptPath", "scriptPath", scriptPath);
-        this.scriptPath = scriptPath;
-        stopwatch.stop();
-    }
-
-    /**
-     * Execute script.
-     */
-    public void executeScript() throws DAOException {
-        Stopwatch stopwatch = new Stopwatch(this, "executeScript");
-        Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
-        if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
-            Helper.setMessageWithoutDescription(
-                    Helper.getTranslation("scriptExecutionSuccessful", this.currentTask.getScriptName()));
-        } else {
-            Helper.setErrorMessagesWithoutDescription(
-                    Helper.getTranslation("scriptExecutionError", this.currentTask.getScriptName()));
-        }
-        stopwatch.stop();
-    }
-
-    /**
-     * Get current task.
-     *
-     * @return task
-     */
-    public Task getCurrentTask() {
-        Stopwatch stopwatch = new Stopwatch(this, "getCurrentTask");
-        return stopwatch.stop(this.currentTask);
-    }
-
-    /**
-     * Set current task with edit mode set to empty String.
-     *
-     * @param task
-     *            Object
-     */
-    public void setCurrentTask(Task task) {
-        final Stopwatch stopwatch = new Stopwatch(this.getClass(), task, "setCurrentTask");
-        this.currentTask = task;
-        this.currentTask.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
-        this.myProcess = this.currentTask.getProcess();
-        loadProcessProperties();
-        stopwatch.stop();
-    }
-
-    /**
-     * Set task for given id.
-     *
-     * @param id
-     *            passed as int
-     */
-    public void setTaskById(int id) {
-        Stopwatch stopwatch = new Stopwatch(this, "setTaskById", "id", Integer.toString(id));
-        loadTaskById(id);
-        stopwatch.stop();
     }
 
     /**
@@ -479,30 +316,6 @@ public class CurrentTaskForm extends ValidatableForm {
     }
 
     /**
-     * Downloads.
-     */
-    public void downloadTiffHeader() throws IOException {
-        Stopwatch stopwatch = new Stopwatch(this, "downloadTiffHeader");
-        TiffHeader tiff = new TiffHeader(this.currentTask.getProcess());
-        tiff.exportStart();
-        stopwatch.stop();
-    }
-
-    /**
-     * Export DMS.
-     */
-    public void exportDMS() {
-        Stopwatch stopwatch = new Stopwatch(this, "exportDMS");
-        ExportDms export = new ExportDms();
-        try {
-            export.startExport(this.currentTask.getProcess());
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle() }, logger, e);
-        }
-        stopwatch.stop();
-    }
-
-    /**
      * Sets the task status constraint.
      * 
      * @param taskStatus
@@ -514,6 +327,8 @@ public class CurrentTaskForm extends ValidatableForm {
         Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusRestriction", "taskStatus", Objects.toString(
             taskStatus));
         ((LazyTaskModel)this.lazyBeanModel).setTaskStatusRestriction(taskStatus);
+        String script = "kitodo.updateQueryParameter('taskStatus', '" + encodeTaskStatusAsQueryParameter(taskStatus) +  "');";
+        PrimeFaces.current().executeScript(script);
         stopwatch.stop();
     }
 
@@ -569,6 +384,8 @@ public class CurrentTaskForm extends ValidatableForm {
         Stopwatch stopwatch = new Stopwatch(this, "setSelectedTaskFilters", "selectedFilters", Objects.toString(
             selectedFilters));
         this.selectedTaskFilters = selectedFilters;
+        String script = "kitodo.updateQueryParameter('taskFilter', '" + encodeTaskFilterAsQueryParameter(selectedFilters) +  "');";
+        PrimeFaces.current().executeScript(script);
         stopwatch.stop();
     }
 
@@ -636,45 +453,6 @@ public class CurrentTaskForm extends ValidatableForm {
     }
 
     /**
-     * Checks if the task type is "generateImages" and thus the generate images links are shown.
-     *
-     * @return whether action links should be displayed
-     */
-    public boolean isShowingGenerationActions() {
-        Stopwatch stopwatch = new Stopwatch(this, "isShowingGenerationActions");
-        return stopwatch.stop(currentTask.isTypeGenerateImages());
-    }
-
-    /**
-     * Checks if folders for generation are configured in the project.
-     * @return whether the folders are configured.
-     */
-    public boolean isImageGenerationPossible() {
-        Stopwatch stopwatch = new Stopwatch(this, "isImageGenerationPossible");
-        return stopwatch.stop(TaskService.generatableFoldersFromProjects(Stream.of(currentTask.getProcess()
-                .getProject())).findAny().isPresent());
-    }
-
-    /**
-     * Checks if the task type is "validateImages" and thus the task action link is shown.
-     *
-     * @return whether action link for validating images should be displayed
-     */
-    public boolean isShowingImageValidationAction() {
-        return currentTask.isTypeValidateImages();
-    }
-
-    /**
-     * Checks if any folders are configured to contain images that need to be validated.
-     * 
-     * @return whether there are folders with images that are supposed to validated.
-     */
-    public boolean isImageValidationPossible() {
-        return !currentTask.getValidationFolders().isEmpty();
-    }
-
-
-    /**
      * Set show automatic tasks.
      *
      * @param showAutomaticTasks
@@ -710,130 +488,6 @@ public class CurrentTaskForm extends ValidatableForm {
     }
 
     /**
-     * Get property for process.
-     *
-     * @return property for process
-     */
-    public Property getProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "getProperty");
-        return stopwatch.stop(this.property);
-    }
-
-    /**
-     * Set property for process.
-     *
-     * @param property
-     *            for process as Property object
-     */
-    public void setProperty(Property property) {
-        Stopwatch stopwatch = new Stopwatch(this, "setProperty", "property", Objects.toString(property));
-        this.property = property;
-        stopwatch.stop();
-    }
-
-    /**
-     * Get list of process properties.
-     *
-     * @return list of process properties
-     */
-    public List<Property> getProperties() {
-        Stopwatch stopwatch = new Stopwatch(this, "getProperties");
-        return stopwatch.stop(this.properties);
-    }
-
-    /**
-     * Set list of process properties.
-     *
-     * @param properties
-     *            for process as Property objects
-     */
-    public void setProperties(List<Property> properties) {
-        Stopwatch stopwatch = new Stopwatch(this, "setProperties", "properties", Objects.toString(properties));
-        this.properties = properties;
-        stopwatch.stop();
-    }
-
-    private void loadProcessProperties() {
-        setProperties(this.myProcess.getProperties());
-    }
-
-    /**
-     * Save current property.
-     */
-    public void saveCurrentProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "saveCurrentProperty");
-        try {
-            ServiceManager.getPropertyService().save(this.property);
-            if (!this.myProcess.getProperties().contains(this.property)) {
-                this.myProcess.getProperties().add(this.property);
-            }
-            ServiceManager.getProcessService().save(this.myProcess);
-            Helper.setMessage("propertiesSaved");
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
-        }
-        loadProcessProperties();
-        stopwatch.stop();
-    }
-
-    /**
-     * Duplicate property.
-     */
-    public void duplicateProperty() {
-        Stopwatch stopwatch = new Stopwatch(this, "duplicateProperty");
-        Property newProperty = ServiceManager.getPropertyService().transfer(this.property);
-        try {
-            newProperty.getProcesses().add(this.myProcess);
-            this.myProcess.getProperties().add(newProperty);
-            ServiceManager.getPropertyService().save(newProperty);
-            Helper.setMessage("propertySaved");
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
-        }
-        loadProcessProperties();
-        stopwatch.stop();
-    }
-
-    /**
-     * Get batch helper.
-     *
-     * @return batch helper as BatchHelper object
-     */
-    public BatchTaskHelper getBatchHelper() {
-        Stopwatch stopwatch = new Stopwatch(this, "getBatchHelper");
-        return stopwatch.stop(this.batchHelper);
-    }
-
-    /**
-     * Set batch helper.
-     *
-     * @param batchHelper
-     *            as BatchHelper object
-     */
-    public void setBatchHelper(BatchTaskHelper batchHelper) {
-        Stopwatch stopwatch = new Stopwatch(this, "setBatchHelper", "batchHelper", Objects.toString(batchHelper));
-        this.batchHelper = batchHelper;
-        stopwatch.stop();
-    }
-
-    /**
-     * Method being used as viewAction for CurrentTaskForm.
-     *
-     * @param id
-     *            ID of the task to load
-     */
-    public void loadTaskById(int id) {
-        Stopwatch stopwatch = new Stopwatch(this, "loadTaskById", "id", Integer.toString(id));
-        try {
-            setCurrentTask(ServiceManager.getTaskService().getById(id));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
-                logger, e);
-        }
-        stopwatch.stop();
-    }
-
-    /**
      * Get taskListPath.
      *
      * @return value of taskListPath
@@ -841,10 +495,6 @@ public class CurrentTaskForm extends ValidatableForm {
     public String getTaskListPath() {
         Stopwatch stopwatch = new Stopwatch(this, "getTaskListPath");
         return stopwatch.stop(tasksPage);
-    }
-
-    private int getTaskIdForPath() {
-        return Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId();
     }
 
     /**
@@ -864,20 +514,9 @@ public class CurrentTaskForm extends ValidatableForm {
      * @return property value if process has property with name 'propertyName', empty String otherwise
      */
     public static String getTaskProcessPropertyValue(Task task, String propertyName) {
-        Stopwatch stopwatch = new Stopwatch(CurrentTaskForm.class, task, "getTaskProcessPropertyValue", "propertyName",
+        Stopwatch stopwatch = new Stopwatch(TaskListView.class, task, "getTaskProcessPropertyValue", "propertyName",
                 propertyName);
         return stopwatch.stop(ProcessService.getPropertyValue(task.getProcess(), propertyName));
-    }
-
-    /**
-     * Get the id of the template task corresponding to the given task.
-     * The corresponding template task was the blueprint when creating the given task.
-     * @param task task to find the corresponding template task for
-     * @return id of the template task or -1 if no matching task could be found
-     */
-    public static int getCorrespondingTemplateTaskId(Task task) {
-        Stopwatch stopwatch = new Stopwatch(CurrentTaskForm.class, task, "getCorrespondingTemplateTaskId");
-        return stopwatch.stop(TaskService.getCorrespondingTemplateTaskId(task));
     }
 
     /**
@@ -892,7 +531,7 @@ public class CurrentTaskForm extends ValidatableForm {
     }
 
     /**
-     * Changes the filter of the CurrentTaskForm and reloads it.
+     * Changes the filter of the TaskListView and reloads it.
      *
      * @param filter
      *            the filter to apply
@@ -902,20 +541,111 @@ public class CurrentTaskForm extends ValidatableForm {
         Stopwatch stopwatch = new Stopwatch(this, "changeFilter", "filter", filter);
         filterMenu.parseFilters(filter);
         setFilter(filter);
-        return stopwatch.stop(filterList());
+        return stopwatch.stop(reload());
     }
 
-    private String filterList() {
-        this.selectedTasks.clear();
-        return tasksPage;
-    }
-
+    /**
+     * Set the filter that is used in the task list view.
+     * 
+     * @param filter the new filter
+     */
     @Override
     public void setFilter(String filter) {
-        Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
+        final Stopwatch stopwatch = new Stopwatch(this, "setFilter", "filter", filter);
         super.filter = filter;
         this.lazyBeanModel.setFilterString(filter);
+        this.sessionState.setLastFilter(filter);
+        String script = "kitodo.updateQueryParameter('filter', '" + filter.replace("&", "%26") +  "');";
+        PrimeFaces.current().executeScript(script);
         stopwatch.stop();
+    }
+
+    /**
+     * Sets the current filter based on URL query parameters.
+     * 
+     * @param encodedFilter the filter input value
+     * @param encodedTaskFilter additional task-specific filter options
+     * @param encodedTaskStatus filter options based on the task status
+     */
+    public void setFilterFromTemplate(String encodedFilter, String encodedTaskFilter, String encodedTaskStatus) {
+        // JSF by default assigns an empty string to the view parameter even if it is not present in the URL
+        // instead, check whether the URL filter parameter is present in the HTTP request
+        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance()
+            .getExternalContext().getRequestParameterMap();
+        final boolean isFilter = requestParameterMap.containsKey("filter");
+        if (isFilter && Objects.nonNull(encodedFilter)) {
+            String decodedFilter = encodedFilter.replace("%26", "&");
+            this.filterMenu.parseFilters(decodedFilter);
+            this.setFilter(decodedFilter);
+        } else {
+            // use last filter from session state if filter parameter is not set at all
+            String lastFilter = sessionState.getLastFilter();
+            if (Objects.nonNull(lastFilter) && !lastFilter.isEmpty()) {
+                this.filterMenu.parseFilters(lastFilter);
+                this.setFilter(lastFilter);
+            }
+        }
+
+        final boolean isTaskFilter = requestParameterMap.containsKey("taskFilter");
+        if (isTaskFilter && Objects.nonNull(encodedTaskFilter)) {
+            this.selectedTaskFilters = parseTaskFilterFromQueryParameter(encodedTaskFilter);
+            this.taskFiltersChanged();
+        }
+
+        final boolean isTaskStatus = requestParameterMap.containsKey("taskStatus");
+        if (isTaskStatus && Objects.nonNull(encodedTaskStatus)) {
+            this.selectedTaskStatus = parseTaskStatusFromQueryParameter(encodedTaskStatus);
+            this.taskStatusChanged();
+        }
+    }
+
+    /**
+     * Encodes the filter describing which tasks of a certain task status is supposed to be shown in the task list.
+     * 
+     * @param taskStatus the list of task status
+     * @return encoded query parameter, e.g. `OPEN+INWORK`
+     */
+    private String encodeTaskStatusAsQueryParameter(List<TaskStatus> taskStatus) {
+        return taskStatus.stream().map(s -> s.toString()).collect(Collectors.joining("+"));
+    }
+
+    /**
+     * Parses the query parameter "taskStatus" to a list of TaskStatus instances. Ignores any unrelated values.
+     * 
+     * @param encodedTaskStatus the taskStatus query parameter, e.g. `OPEN+INWORK`
+     * @return the list of TaskStatus instances
+     */
+    private List<TaskStatus> parseTaskStatusFromQueryParameter(String encodedTaskStatus) {
+        Set<String> allowed = Arrays.stream(TaskStatus.values()).map(Enum::name).collect(Collectors.toSet());
+        return Stream.of(encodedTaskStatus.split("\\+"))
+            .map(String::trim)
+            .map((s) -> allowed.contains(s) ? TaskStatus.valueOf(s) : null)
+            .filter(Objects::nonNull)
+            .toList();
+    }
+
+    /**
+     * Encodes additional task-specific filter options as query parameter.
+     * 
+     * @param taskFilter the list of task-specific filter options
+     * @return encoded query parameter, e.g. `automaticTasks+correctionTasks`
+     */
+    private String encodeTaskFilterAsQueryParameter(List<String> taskFilter) {
+        return taskFilter.stream().collect(Collectors.joining("+"));
+    }
+
+    /**
+     * Parses the query parameter "taskFilter" to a list of filter options. Ignores any unrelated values.
+     * 
+     * @param encodedTaskFilter the taskFilter query parameter, e.g. `automaticTasks+correctionTasks`
+     * @return the parsed list of filter options
+     */
+    private List<String> parseTaskFilterFromQueryParameter(String encodedTaskFilter) {
+        Set<String> allowed = Set.of(AUTOMATIC_TASKS_FILTER, CORRECTION_TASKS_FILTER, OTHER_USERS_TASKS_FILTER);
+        return Stream.of(encodedTaskFilter.split("\\+"))
+            .map(String::trim)
+            .filter((s) -> allowed.contains(s))
+            .toList();
     }
 
     /**
@@ -951,6 +681,41 @@ public class CurrentTaskForm extends ValidatableForm {
     public boolean showLastComment() {
         Stopwatch stopwatch = new Stopwatch(this, "showLastComment");
         return stopwatch.stop(ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT));
+    }
+
+    /**
+     * Return combined list options (URL query parameters) that can be forwarded to edit view or used to reload page.
+     * 
+     * @return the combined list view options (URL query parameters)
+     */
+    @Override
+    public String getCombinedListOptions() {
+        return super.getCombinedListOptions() + "&" + Map.ofEntries(
+            entry("taskFilter", encodeTaskFilterAsQueryParameter(getSelectedTaskFilters())),
+            entry("taskStatus", encodeTaskStatusAsQueryParameter(getSelectedTaskStatus()))
+        ).entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining("&"));
+    }
+
+    /**
+     * Declare the allowed sort fields for sanitizing the query parameter "sortField".
+     */
+    @Override
+    protected Set<String> getAllowedSortFields() {
+        return Set.of(
+            "title", "process.id", "process.title", "processingStatus", "processingUser.surname", 
+            "processingBegin", "processingEnd", "correctionCommentStatus", "process.project.title", "process.creationDate"
+        );
+    }
+
+    /**
+     * Return view path to reload page keeping current list sort and filter options.
+     * 
+     * @return the view path to reload this view
+     */
+    private String reload() {
+        return VIEW_PATH + "&" + getCombinedListOptions();
     }
 
 }

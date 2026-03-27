@@ -42,7 +42,7 @@
                             <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
                                 <li class="nav-pic-text">
                                     <h:form id="linkProcessesNavigationForm">
-                                        <h:commandLink id="linkProcesses" action="#{ProcessForm.navigateToProcessesList(true)}">
+                                        <h:commandLink id="linkProcesses" action="#{ProcessListView.getViewPath()}">
                                             <i class="fa fa-clipboard fa-lg"/>
                                             <h:outputText value="#{msgs.processes}" />
                                         </h:commandLink>

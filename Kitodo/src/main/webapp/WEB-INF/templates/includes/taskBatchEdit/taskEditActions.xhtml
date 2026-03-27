@@ -18,9 +18,9 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 >
-    <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.loggedUser.id}">
+    <h:panelGroup rendered="#{TaskBatchEditView.batchHelper.currentStep.processingUser.id == LoginForm.loggedUser.id}">
 
-        <f:viewAction action="#{CommentForm.setBatchHelper(CurrentTaskForm.batchHelper)}"/>
+        <f:viewAction action="#{CommentForm.setBatchHelper(TaskBatchEditView.batchHelper)}"/>
         <h:form id="actionForm">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -32,11 +32,11 @@
                     <td class="eingabeBoxen_row2">
                         <h:panelGrid columns="1">
 
-                            <p:dataList var="script" value="#{CurrentTaskForm.batchHelper.script}"
+                            <p:dataList var="script" value="#{TaskBatchEditView.batchHelper.script}"
                                         layout="unorderedList">
-                                <h:commandLink id="action3" action="#{CurrentTaskForm.batchHelper.executeScript}"
+                                <h:commandLink id="action3" action="#{TaskBatchEditView.batchHelper.executeScript}"
                                                title="#{script}">
-                                    <f:setPropertyActionListener target="#{CurrentTaskForm.batchHelper.script}"
+                                    <f:setPropertyActionListener target="#{TaskBatchEditView.batchHelper.script}"
                                                                  value="#{script}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute action"
                                                     style="margin-right:3px;vertical-align:middle"/>
@@ -44,12 +44,12 @@
                                 </h:commandLink>
                             </p:dataList>
 
-                            <h:outputText rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS}"
+                            <h:outputText rendered="#{TaskBatchEditView.batchHelper.currentStep.typeExportDMS}"
                                           value="#{msgs.timeoutWarningDMS}"/>
 
                             <h:commandLink id="action9"
-                                           rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS}"
-                                           action="#{CurrentTaskForm.batchHelper.exportDMS}" title="#{msgs.importDms}">
+                                           rendered="#{TaskBatchEditView.batchHelper.currentStep.typeExportDMS}"
+                                           action="#{TaskBatchEditView.batchHelper.exportDMS}" title="#{msgs.importDms}">
                                 <h:graphicImage value="/pages/images/buttons/dms.png" alt="export to dms"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.importDms}"/>
@@ -103,7 +103,7 @@
                             </h:panelGroup>
 
                             <!-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke -->
-                            <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.correction}">
+                            <h:panelGroup rendered="#{TaskBatchEditView.batchHelper.currentStep.correction}">
 
                                 <span class="toggle" data-for="toggle-2">
 
@@ -151,7 +151,7 @@
                             </h:panelGroup>
 
                             <!-- Bearbeitung abbrechen-Schaltknopf -->
-                            <p:commandLink id="cancel" action="#{CurrentTaskForm.batchHelper.openBatchTasksByUser}"
+                            <p:commandLink id="cancel" action="#{TaskBatchEditView.batchHelper.openBatchTasksByUser}"
                                            title="#{msgs.releaseTask}">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
                                                 style="margin-right:3px;vertical-align:middle;"/>
@@ -160,7 +160,7 @@
                                            icon="ui-icon-alert"/>
                             </p:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
-                            <p:commandLink id="close" action="#{CurrentTaskForm.batchHelper.closeBatchTasksByUser}"
+                            <p:commandLink id="close" action="#{TaskBatchEditView.batchHelper.closeBatchTasksByUser}"
                                            title="#{msgs.closeTask}">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                                 style="margin-right:3px;vertical-align:middle;"/>
