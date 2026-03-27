@@ -11,8 +11,8 @@
 
 package org.kitodo.production.forms;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,11 +49,7 @@ public class BaseEditView extends BaseForm {
         if (Objects.nonNull(referrerListOptions) && referrerListOptions.startsWith("_")) {
             // referrerListOptions were URL encoded twice due to JSF's auto encoding of view paths
             // manually decode them again
-            try {
-                this.referrerListOptions = URLDecoder.decode(referrerListOptions.substring(1), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                logger.error("error while decoding referrer list options", e);
-            }
+            this.referrerListOptions = URLDecoder.decode(referrerListOptions.substring(1), StandardCharsets.UTF_8);
         } else {
             this.referrerListOptions = referrerListOptions;
         }

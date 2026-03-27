@@ -14,7 +14,6 @@ package org.kitodo.production.forms.task;
 import static java.util.Map.entry;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -188,7 +187,7 @@ public class TaskListView extends BaseListView {
      * @param referrer the referrer page (e.g. "desktop" or "tasks") to navigate back to in case the task is closed
      * @return the view path
      */
-    public String workOnTask(Task task, String referrer) throws UnsupportedEncodingException {
+    public String workOnTask(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "workOnTask");
         return stopwatch.stop(TaskWorkView.getViewPath(task, referrer, getCombinedListOptions()));
     }

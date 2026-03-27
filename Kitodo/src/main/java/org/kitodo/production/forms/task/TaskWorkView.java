@@ -12,8 +12,8 @@
 package org.kitodo.production.forms.task;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -71,21 +71,16 @@ public class TaskWorkView extends ValidatableForm {
      * @param referrerListOptions various list options that should be restored when navigating back to the tasks list
      */
     public static String getViewPath(Task task, String referrer, String referrerListOptions) {
-        try {
-            Map<String, String> queryParams = new HashMap<>();
-            queryParams.put("id", task.getId().toString());
-            queryParams.put("referer", referrer);
-            if (Objects.nonNull(referrer) && referrer.equals("tasks")) {
-                queryParams.put("referrerListOptions", "_" + URLEncoder.encode(referrerListOptions, "UTF-8"));
-            }
-            return VIEW_PATH + "&" + queryParams.entrySet().stream()
-                .filter(entry -> Objects.nonNull(entry.getValue()))
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining("&"));
-        } catch (UnsupportedEncodingException e) {
-            logger.error("error encoding view path for TaskWorkView", e);
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("id", task.getId().toString());
+        queryParams.put("referer", referrer);
+        if (Objects.nonNull(referrer) && referrer.equals("tasks")) {
+            queryParams.put("referrerListOptions", "_" + URLEncoder.encode(referrerListOptions, StandardCharsets.UTF_8));
         }
-        return VIEW_PATH;
+        return VIEW_PATH + "&" + queryParams.entrySet().stream()
+            .filter(entry -> Objects.nonNull(entry.getValue()))
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining("&"));
     }
 
     /**
