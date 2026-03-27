@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -53,8 +52,7 @@ public class DivisionTest {
         childTwoTwo.setLabel("Child 2.2");
         childTwo.getChildren().add(childTwoTwo);
 
-        List<String> allChildren = parent.getAllChildren().stream().map(LogicalDivision::getLabel)
-                .collect(Collectors.toList());
+        List<String> allChildren = parent.getAllChildren().stream().map(LogicalDivision::getLabel).toList();
 
         assertFalse(allChildren.contains("Parent"));
         assertTrue(allChildren.contains("Child 1"));

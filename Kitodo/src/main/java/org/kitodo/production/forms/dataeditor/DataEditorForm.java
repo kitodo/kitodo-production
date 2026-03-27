@@ -35,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.faces.context.FacesContext;
@@ -1049,7 +1048,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         }
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
             return addMetadataDialog.getAddableMetadata().stream()
-                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
+                    .map(SelectItem::getValue).toList().contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
         return false;
     }

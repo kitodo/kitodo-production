@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
@@ -115,7 +114,7 @@ public class CustomListColumnInitializer {
 
         List<String> availableColumnNames = ServiceManager.getListColumnService().getAllCustomListColumns().stream()
                 .map(ListColumn::getTitle)
-                .collect(Collectors.toList());
+                .toList();
         logger.info("Loading custom column names from configuration file...");
         for (String ccn : customColumnList) {
             if (!ccn.trim().isEmpty()) {

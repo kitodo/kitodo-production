@@ -229,7 +229,7 @@ public class AddDocStrucTypeDialog extends AddNodeDialog {
     public InsertionPosition getSelectedDocStructPosition() {
         if (!docStructPositionSelectionItems.stream()
                 .map(SelectItem::getValue)
-                .collect(Collectors.toList())
+                .toList()
                 .contains(selectedDocStructPosition)) {
             setSelectedDocStructPosition(LAST_CHILD_OF_CURRENT_ELEMENT);
         }

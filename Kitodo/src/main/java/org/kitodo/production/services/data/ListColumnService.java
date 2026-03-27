@@ -180,7 +180,7 @@ public class ListColumnService extends BaseBeanService<ListColumn, ListColumnDAO
         // don't remove columns whose titles are in the given excludeList
         List<ListColumn> customColumns = dao.getAllCustom().stream()
                 .filter(column -> !excludeList.contains(column.getTitle()))
-                .collect(Collectors.toList());
+                .toList();
 
         // remove remaining custom columns from clients
         for (Client client : ServiceManager.getClientService().getAll()) {
@@ -193,7 +193,7 @@ public class ListColumnService extends BaseBeanService<ListColumn, ListColumnDAO
         // remove custom columns themselves
         List<Integer> columnIds = customColumns.stream()
                 .map(ListColumn::getId)
-                .collect(Collectors.toList());
+                .toList();
         for (int id : columnIds) {
             remove(id);
         }
