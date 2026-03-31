@@ -77,10 +77,11 @@ public class Browser {
             ChromeOptions options = getChromeOptions();
 
             // Required for CI (GitHub Actions)
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
+            if (Objects.nonNull(System.getenv("CI"))) {
+                options.addArguments("--headless=new");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+            }
 
             webDriver = new ChromeDriver(options);
         }
