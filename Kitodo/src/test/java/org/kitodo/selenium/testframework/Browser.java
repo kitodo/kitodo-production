@@ -104,7 +104,7 @@ public class Browser {
         return options;
     }
 
-      private static void provideGeckoDriver() throws IOException, URISyntaxException {
+    private static void provideGeckoDriver() throws IOException, URISyntaxException {
         String driverFileName = "geckodriver";
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFileName = driverFileName.concat(".exe");
