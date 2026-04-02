@@ -13,6 +13,7 @@
 -->
 
 <Context>
+    <Resources cachingAllowed="true" cacheMaxSize="30720" />
     <Resource name="BeanManager"
               auth="Container"
               type="jakarta.enterprise.inject.spi.BeanManager"
