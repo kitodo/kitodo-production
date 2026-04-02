@@ -41,7 +41,7 @@ public class ProjectEditViewIT {
     public void shouldDeleteFolderInSandbox() throws Exception {
         ProjectEditView view = new ProjectEditView();
         Project project = ServiceManager.getProjectService().getProjectWithFolders(1).orElseThrow();
-        view.loadProject(1, false);
+        view.loadProject(project.getId(), false);
         int initialSize = project.getFolders().size();
         assertTrue(initialSize > 0);
         Folder toDelete = view.getFolderList().getFirst();
@@ -58,7 +58,7 @@ public class ProjectEditViewIT {
     public void shouldAddFolderInSandbox() throws Exception {
         ProjectEditView view = new ProjectEditView();
         Project project = ServiceManager.getProjectService().getProjectWithFolders(1).orElseThrow();
-        view.loadProject(1, false);
+        view.loadProject(project.getId(), false);
         int initialSize = project.getFolders().size();
 
         view.addFolder();
@@ -81,7 +81,7 @@ public class ProjectEditViewIT {
     public void shouldRollbackOnCancel() throws Exception {
         ProjectEditView view = new ProjectEditView();
         Project project = ServiceManager.getProjectService().getProjectWithFolders(1).orElseThrow();
-        view.loadProject(1, false);
+        view.loadProject(project.getId(), false);
         int initialSize = project.getFolders().size();
 
         view.addFolder();
