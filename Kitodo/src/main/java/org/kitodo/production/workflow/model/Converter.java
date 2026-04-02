@@ -122,21 +122,8 @@ public class Converter {
             task.setWorkflowCondition(new WorkflowCondition(kitodoTask.getConditionType(), kitodoTask.getConditionValue()));
         }
 
-        try {
-            String[] userRoleIds = kitodoTask.getUserRoles().split(",");
-            for (String userRoleString : userRoleIds) {
-                int userRoleId = Integer.parseInt(userRoleString.trim());
-                try {
-                    task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
-                } catch (DAOException e) {
-                    throw new WorkflowException(Helper.getTranslation("workflowExceptionRoleNotFound",
-                        task.getTitle()));
-                }
-            }
-        } catch (NullPointerException e) {
-            throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
-                task.getTitle()));
-        }
+        String taskLabel = Objects.nonNull(task.getTitle()) ? task.getTitle() : kitodoTask.getWorkflowId();
+        addRoles(task, kitodoTask, taskLabel);
 
         if (workflowTask instanceof ScriptTask) {
             KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask);
@@ -145,5 +132,24 @@ public class Converter {
         }
 
         return task;
+    }
+
+    private void addRoles(org.kitodo.data.database.beans.Task task, KitodoTask kitodoTask, String taskLabel)
+            throws WorkflowException {
+        try {
+            String[] userRoleIds = kitodoTask.getUserRoles().split(",");
+            for (String userRoleString : userRoleIds) {
+                int userRoleId = Integer.parseInt(userRoleString.trim());
+                try {
+                    task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
+                } catch (DAOException e) {
+                    throw new WorkflowException(Helper.getTranslation("workflowExceptionRoleNotFound",
+                        taskLabel));
+                }
+            }
+        } catch (NullPointerException e) {
+            throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRoleAssignment",
+                taskLabel));
+        }
     }
 }

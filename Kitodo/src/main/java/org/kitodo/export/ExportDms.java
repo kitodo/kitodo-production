@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -446,8 +445,7 @@ public class ExportDms extends ExportMets {
      */
     private void directoryDownload(Process process, URI destination) throws IOException, InterruptedException, URISyntaxException {
         Collection<Subfolder> processDirs = process.getProject().getFolders().parallelStream()
-                .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder))
-                .collect(Collectors.toList());
+                .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder)).toList();
         VariableReplacer variableReplacer = new VariableReplacer(null, process, null);
 
         String uriToDestination = destination.toString();

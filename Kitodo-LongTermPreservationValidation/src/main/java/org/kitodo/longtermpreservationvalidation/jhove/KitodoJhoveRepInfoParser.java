@@ -88,7 +88,7 @@ public class KitodoJhoveRepInfoParser {
         if (propertyValue instanceof Property[]) {
             Property[] propertyArray = (Property[]) propertyValue;
             stack.addAll(IntStream.range(0, propertyArray.length)
-                    .mapToObj((i) -> Pair.of(propertyKey, propertyArray[i])).collect(Collectors.toList()));
+                    .mapToObj((i) -> Pair.of(propertyKey, propertyArray[i])).toList());
         } else if (propertyValue instanceof String[]) {
             propertyMap.put(propertyKey, Arrays.toString((String[]) propertyValue));
         } else if (propertyValue instanceof int[]) {

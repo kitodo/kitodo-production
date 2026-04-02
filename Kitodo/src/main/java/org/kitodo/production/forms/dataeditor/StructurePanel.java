@@ -201,8 +201,7 @@ public class StructurePanel implements Serializable {
         Collection<View> subViews = new ArrayList<>();
         getAllSubViews(selectedStructure, subViews);
 
-        List<View> multipleViews = subViews.stream().filter(v -> v.getPhysicalDivision().getLogicalDivisions().size() > 1)
-                .collect(Collectors.toList());
+        List<View> multipleViews = subViews.stream().filter(v -> v.getPhysicalDivision().getLogicalDivisions().size() > 1).toList();
         for (View view : multipleViews) {
             dataEditor.unassignView(selectedStructure, view, selectedStructure.getViews().getLast().equals(view));
             if (view.getPhysicalDivision().getLogicalDivisions().size() <= 1) {
@@ -275,14 +274,18 @@ public class StructurePanel implements Serializable {
      * Delete all currently selected physical divisons.
      */
     public void deleteSelectedPhysicalDivisions() {
-        if (Objects.isNull(selectedPhysicalNodes)) {
-            // there is nothing to do
-            return;
+        if (Objects.nonNull(selectedPhysicalNodes)) {
+            // iterate over selected tree nodes in physical tree
+            for (TreeNode selectedPhysicalNode : selectedPhysicalNodes) {
+                deleteSelectedPhysicalDivision(selectedPhysicalNode);
+            }
         }
-        for (TreeNode selectedPhysicalNode : selectedPhysicalNodes) {
-            deleteSelectedPhysicalDivision(selectedPhysicalNode);
+        if (Objects.nonNull(selectedLogicalNodes)) {
+            // iterate over selected tree nodes in logical tree
+            for (TreeNode selectedLogicalNode : selectedLogicalNodes) {
+                deleteSelectedPhysicalDivision(selectedLogicalNode);
+            }
         }
-
         int i = 1;
         for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             physicalDivision.setOrder(i);
@@ -1466,8 +1469,7 @@ public class StructurePanel implements Serializable {
                            int insertionIndex) {
         int physicalInsertionIndex;
         List<PhysicalDivision> physicalDivisionsToBeMoved = elementsToBeMoved.stream()
-                .map(e -> e.getLeft().getPhysicalDivision())
-                .collect(Collectors.toList());
+                .map(e -> e.getLeft().getPhysicalDivision()).toList();
 
         if (insertionIndex > toElement.getViews().size()) {
             Helper.setErrorMessage("Unsupported drag'n'drop operation: Insertion index exceeds list.");
@@ -1605,7 +1607,7 @@ public class StructurePanel implements Serializable {
         List<View> views = elementsToBeMoved.stream()
                 .map(Pair::getKey)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
         if (insertionIndex < 0 || insertionIndex == toElement.getViews().size()) {
             toElement.getViews().addAll(views);
         } else {

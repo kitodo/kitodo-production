@@ -141,8 +141,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
      */
     public HashMap<String, Object> getSQLFilterMap(Map<?, ?> filters, Class<?> baseClass) throws NoSuchFieldException {
         HashMap<String, Object> filterMap = new HashMap<>();
-        List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName)
-                .collect(Collectors.toList());
+        List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName).toList();
         for (String filter : splitFilters(parseFilterString(filters))) {
             String[] filterComponents = filter.split(":");
             if (filterComponents.length == 2) {

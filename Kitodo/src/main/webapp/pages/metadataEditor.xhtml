@@ -27,6 +27,9 @@
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
         <f:viewAction action="#{DataEditorForm.open(id, referer, templateTaskId)}"/>
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{DataEditorForm.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
         <f:viewAction action="#{CommentForm.setProcessById(id)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
         <f:viewAction
@@ -53,7 +56,7 @@
         <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
 
         <p:panel id="metadataEditorContainer"
-                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getValidationErrors()}"
+                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getMetadataFileValidationErrors()}"
                  style="margin: auto 16px; padding: 0;">
 
             <p:panel id="metadataEditor">

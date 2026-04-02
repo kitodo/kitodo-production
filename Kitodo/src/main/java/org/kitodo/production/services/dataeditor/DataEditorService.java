@@ -135,7 +135,7 @@ public class DataEditorService {
                     .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataKey))
                     .filter(MetadataGroup.class::isInstance).map(MetadataGroup.class::cast)
                     .flatMap(metadataGroup -> metadataGroup.getMetadata().stream())
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return metadata.stream()
                 .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
@@ -401,6 +401,8 @@ public class DataEditorService {
      *          Workpiece of given process
      * @param oldMetadataSet
      *          Set containing old metadata
+     * @param validateXml
+     *          whether to validate XML or not
      * @return
      *          list of metadata comparisons
      * @throws IOException
@@ -431,7 +433,7 @@ public class DataEditorService {
     public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece,
                                                                    HashSet<Metadata> oldMetadataSet,
                                                                    List<Locale.LanguageRange> languages,
-                                                                   String selectedDivisionType)
+                                                                   String selectedDivisionType, boolean validateXml)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
             ProcessGenerationException, ParserConfigurationException, URISyntaxException, TransformerException,
             InvalidMetadataValueException, NoSuchMetadataFieldException, SAXException, FileStructureValidationException {
@@ -443,7 +445,7 @@ public class DataEditorService {
             throw new MetadataException(errorMessage, null);
         }
         TempProcess updatedProcess = ServiceManager.getImportService().importTempProcess(importConfig, recordID,
-                process.getTemplate().getId(), process.getProject().getId());
+                process.getTemplate().getId(), process.getProject().getId(), validateXml);
         if (Objects.isNull(updatedProcess)) {
             throw new ProcessGenerationException("Unable to re-import data record for metadata update");
         } else {
@@ -555,7 +557,7 @@ public class DataEditorService {
         } else if (metadata instanceof MetadataGroup) {
             StringBuilder groupString = new StringBuilder();
             for (Metadata groupMetadata : ((MetadataGroup) metadata).getMetadata().stream()
-                    .sorted(Comparator.comparing(Metadata::getKey)).collect(Collectors.toList())) {
+                    .sorted(Comparator.comparing(Metadata::getKey)).toList()) {
                 if (groupMetadata instanceof MetadataEntry) {
                     groupString.append(((MetadataEntry) groupMetadata).getValue());
                 } else {
