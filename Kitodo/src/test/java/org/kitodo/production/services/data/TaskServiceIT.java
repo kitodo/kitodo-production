@@ -21,7 +21,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -292,7 +291,7 @@ public class TaskServiceIT {
                 .filter(t -> user.equals(t.getProcessingUser()))
                 .filter(t -> t.getProcessingStatus() == TaskStatus.INWORK)
                 .filter(t -> Objects.nonNull(t.getProcess()))
-                .collect(Collectors.toList());
+                .toList();
 
         List<Task> actual = taskService.getTasksInProgress(user);
 
@@ -330,7 +329,7 @@ public class TaskServiceIT {
 
         List<Integer> rootIds = processes.stream()
                 .map(Process::getId)
-                .collect(Collectors.toList());
+                .toList();
 
         Map<Integer, EnumMap<TaskStatus, Integer>> actual =
                 dao.loadTaskStatusCountsForProcesses(rootIds);

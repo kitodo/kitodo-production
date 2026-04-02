@@ -105,7 +105,7 @@ public class CatalogImportIT {
         testProcess.setImportConfiguration(configuration);
         HashSet<Metadata> existingMetadata = workpiece.getLogicalStructure().getMetadata();
         List<MetadataComparison> metadataComparisons = DataEditorService.reimportCatalogMetadata(testProcess, workpiece,
-                existingMetadata, languages, "Monograph");
+                existingMetadata, languages, "Monograph", true);
         assertFalse(metadataComparisons.isEmpty(), "List of metadata comparisons should not be empty");
         MetadataComparison firstComparison = metadataComparisons.getFirst();
         assertEquals(PUBLICATION_YEAR, firstComparison.getMetadataKey(),

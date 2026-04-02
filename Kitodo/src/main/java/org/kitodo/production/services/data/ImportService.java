@@ -491,6 +491,7 @@ public class ImportService {
      * @param recordId catalog identifier of data record to import
      * @param templateID ID of template to use when importing data record to TempProcess
      * @param projectID ID of project to which imported data record is assigned
+     * @param validateAgainstXmlSchema whether to validate imported XML against XML Schema
      * @return TempProcess containing imported data record
      * @throws UnsupportedFormatException when external data record contains data in unsupported format
      * @throws NoRecordFoundException when no record with given ID 'recordId' could be found
@@ -503,12 +504,12 @@ public class ImportService {
      * @throws TransformerException when loading internal format document fails
      */
     public TempProcess importTempProcess(ImportConfiguration importConfiguration, String recordId, int templateID,
-                                         int projectID)
+                                         int projectID, boolean validateAgainstXmlSchema)
             throws UnsupportedFormatException, NoRecordFoundException, XPathExpressionException,
             ProcessGenerationException, URISyntaxException, IOException, ParserConfigurationException, SAXException,
             TransformerException, FileStructureValidationException {
         DataRecord dataRecord = importExternalDataRecord(importConfiguration, recordId, false);
-        Document internalDocument = convertDataRecordToInternal(dataRecord, importConfiguration, false, true, recordId);
+        Document internalDocument = convertDataRecordToInternal(dataRecord, importConfiguration, false, validateAgainstXmlSchema, recordId);
         return createTempProcessFromDocument(importConfiguration, internalDocument, templateID, projectID);
     }
 

@@ -649,7 +649,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
         final List<String> leadingMetadataKeys = leadingMetadataFields.get(lastIndex).entrySet().parallelStream()
                 .filter(entry -> Boolean.TRUE.equals(entry.getValue())).map(entry -> entry.getKey().getKey())
-                .collect(Collectors.toList());
+                .toList();
         treeNode.getChildren().parallelStream().map(TreeNode::getData).map(ProcessDetail.class::cast)
                 .filter(processDetail -> leadingMetadataKeys.contains(processDetail.getMetadataID()))
                 .forEach(ProcessDetail::setLeading);

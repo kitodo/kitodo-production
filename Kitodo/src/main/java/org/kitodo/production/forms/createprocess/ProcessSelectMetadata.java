@@ -229,7 +229,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
 
     @Override
     public void setValue(String value) throws InvalidMetadataValueException {
-        if (!items.parallelStream().anyMatch(selectItem -> Objects.equals(value, selectItem.getValue()))) {
+        if (items.parallelStream().noneMatch(selectItem -> Objects.equals(value, selectItem.getValue()))) {
             throw new InvalidMetadataValueException(super.label, value);
         }
         setSelectedItem(value);

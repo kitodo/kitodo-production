@@ -27,6 +27,9 @@
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
         <f:viewAction action="#{DataEditorForm.open(id, referer, templateTaskId)}"/>
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{DataEditorForm.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
         <f:viewAction action="#{CommentForm.setProcessById(id)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
         <f:viewAction
@@ -53,7 +56,7 @@
         <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
 
         <p:panel id="metadataEditorContainer"
-                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getValidationErrors()}"
+                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError() and empty DataEditorForm.getMetadataFileValidationErrors()}"
                  style="margin: auto 16px; padding: 0;">
 
             <p:panel id="metadataEditor">
@@ -295,9 +298,9 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard" rendered="#{request.getHeader('referer').contains('process')}" />
-        <p:menuitem value="#{msgs.tasks}" url="tasks.jsf" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.processes}" url="processes" icon="fa fa-clipboard" rendered="#{request.getHeader('referer').contains('process')}" />
+        <p:menuitem value="#{msgs.tasks}" url="tasks" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.taskDetails}" url="#{DataEditorForm.referringView}" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.metadataEdit}" icon="fa fa-list-alt"/>
     </ui:define>

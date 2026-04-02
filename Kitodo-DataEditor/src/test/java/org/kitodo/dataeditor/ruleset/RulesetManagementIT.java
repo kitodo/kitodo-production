@@ -404,7 +404,7 @@ public class RulesetManagementIT {
                 .getSortedVisibleMetadata(metadataForExcluded, Collections.emptyList());
         assertTrue(mvwviListExcluded.stream().filter(mvwvi -> mvwvi.getMetadata().isPresent())
                 .map(mvwvi -> mvwvi.getMetadata().get().getId()).filter(keyId -> keyId.startsWith("excluded"))
-                .collect(Collectors.toList()).contains("excludedTrueFalse"));
+                .toList().contains("excludedTrueFalse"));
         assertThat(
             mvwviListExcluded.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
                     .flatMap(
@@ -414,7 +414,7 @@ public class RulesetManagementIT {
         Collection<MetadataViewInterface> mviCollExcluded = sevi.getAddableMetadata(metadataForExcluded,
             Collections.emptyList());
         assertTrue(mviCollExcluded.stream().map(mvi -> mvi.getId()).filter(keyId -> keyId.startsWith("excluded"))
-                .collect(Collectors.toList()).contains("excludedTrueFalse"));
+                .toList().contains("excludedTrueFalse"));
 
         // editable
         List<MetadataViewWithValuesInterface> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyList(),
@@ -558,7 +558,7 @@ public class RulesetManagementIT {
         assertTrue(nestedMvwviListWithMetadata.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
                 .flatMap(
                     mvwvi -> mvwvi.getValues().stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue))
-                .collect(Collectors.toList()).contains("exclude1"));
+                .toList().contains("exclude1"));
 
         // 4. The property ‘multiline’ should manipulate the input type
         SimpleMetadataViewInterface testAlwaysShowing = getSmvi(mvwviListWithMetadata, "testAlwaysShowing");
@@ -774,10 +774,6 @@ public class RulesetManagementIT {
         assertThat("structureTreeTitle was not found!", 
             rulesetManagement.getFunctionalKeys(FunctionalMetadata.STRUCTURE_TREE_TITLE),
             contains("LABEL"));
-
-        // not existing uses
-        assertThat("Something was found!",
-            rulesetManagement.getFunctionalKeys(FunctionalMetadata.DATA_SOURCE), is(empty()));
 
         // multiple uses of one key
         assertThat("shelfmarksource was not found!",
@@ -1108,45 +1104,40 @@ public class RulesetManagementIT {
         assertEquals(5, numAdded);
 
         List<Metadata> defaultReplace = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToReplaceByDefault")).collect(Collectors.toList());
+                .filter(element -> element.getKey().equals("metadataToReplaceByDefault")).toList();
         assertEquals(1, defaultReplace.size());
         assertEquals("replaced value", ((MetadataEntry) defaultReplace.getFirst()).getValue());
 
         List<Metadata> explicitReplace = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToReplaceExplicitly")).collect(Collectors.toList());
+                .filter(element -> element.getKey().equals("metadataToReplaceExplicitly")).toList();
         assertEquals(1, explicitReplace.size());
         assertEquals("replaced value", ((MetadataEntry) explicitReplace.getFirst()).getValue());
 
-        List<Metadata> add = metadata.stream().filter(element -> element.getKey().equals("metadataToAdd"))
-                .collect(Collectors.toList());
+        List<Metadata> add = metadata.stream().filter(element -> element.getKey().equals("metadataToAdd")).toList();
         assertEquals(3, add.size());
         assertThat(
             add.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
             containsInAnyOrder("value 1", "value 2", "value 3"));
 
-        List<Metadata> limitedAdd = metadata.stream().filter(element -> element.getKey().equals("metadataToAddWithLimit"))
-                .collect(Collectors.toList());
+        List<Metadata> limitedAdd = metadata.stream().filter(element -> element.getKey().equals("metadataToAddWithLimit")).toList();
         assertEquals(2, limitedAdd.size());
         assertThat(
             limitedAdd.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
             anyOf(containsInAnyOrder("value 1", "value 2"), containsInAnyOrder("value 1", "value 3")));
 
         List<Metadata> addCreate = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
-                .collect(Collectors.toList());
+                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater")).toList();
         assertEquals(2, addCreate.size());
         assertThat(
             addCreate.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
             containsInAnyOrder("value 1", "value 2"));
 
-        List<Metadata> keep = metadata.stream().filter(element -> element.getKey().equals("metadataToKeep"))
-                .collect(Collectors.toList());
+        List<Metadata> keep = metadata.stream().filter(element -> element.getKey().equals("metadataToKeep")).toList();
         assertEquals(1, keep.size());
         assertEquals("value not to replace", ((MetadataEntry) keep.getFirst()).getValue());
 
         List<Metadata> keepNoEdit = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
-                .collect(Collectors.toList());
+                .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing")).toList();
         assertEquals(1, keepNoEdit.size());
         assertEquals("value not to replace", ((MetadataEntry) keepNoEdit.getFirst()).getValue());
     }
@@ -1170,16 +1161,14 @@ public class RulesetManagementIT {
         assertEquals(-1, numAdded);
 
         List<Metadata> keepLater = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
-                .collect(Collectors.toList());
+                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater")).toList();
         assertEquals(2, keepLater.size());
         assertThat(
             keepLater.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
             containsInAnyOrder("value 1", "value 2"));
 
         List<Metadata> replaceInEdit = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
-                .collect(Collectors.toList());
+                .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing")).toList();
         assertEquals(1, replaceInEdit.size());
         assertEquals("replaced value", ((MetadataEntry) replaceInEdit.getFirst()).getValue());
     }

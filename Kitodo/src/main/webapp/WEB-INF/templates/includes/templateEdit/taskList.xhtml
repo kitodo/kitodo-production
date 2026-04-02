@@ -69,7 +69,7 @@
         <p:row>
             <ui:fragment rendered="#{TemplateEditView.template.workflow ne null and not empty TemplateEditView.template.tasks}">
                 <h3><p:outputLabel value="#{msgs.workflow}: #{TemplateEditView.template.workflow.title}"/></h3>
-                <h:link outcome="workflowEdit.jsf?id=#{TemplateEditView.template.workflow.id}"
+                <h:link outcome="workflowEdit?id=#{TemplateEditView.template.workflow.id}"
                         title="#{TemplateEditView.template.workflow.title}">
                     <o:graphicImage value="#{TemplateEditView.tasksDiagram}"
                                     dataURI="true" />
