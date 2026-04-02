@@ -27,7 +27,7 @@
         <h:form id="workpiecePropertyForm">
             <p:panelGrid columns="1" layout="grid">
 
-                    <h3>#{empty ProcessForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.editProperty}</h3>
+                    <h3>#{empty ProcessEditViewWorkpiecesTab.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.editProperty}</h3>
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
                         <div>
@@ -35,7 +35,7 @@
                             <p:outputLabel for="workpiecePropertyTitle"
                                            value="#{msgs.title}" />
                             <p:inputText id="workpiecePropertyTitle"
-                                         value="#{ProcessForm.workpieceProperty.title}"
+                                         value="#{ProcessEditViewWorkpiecesTab.workpieceProperty.title}"
                                          placeholder="#{msgs.title}"
                                          required="#{not empty param['workpiecePropertyForm:save']}"
                                          styleClass="input editDialog"/>
@@ -43,13 +43,13 @@
                         <div>
                             <!-- value: text -->
                             <p:outputLabel for="workpiecePropertyValue" value="#{msgs.value}" />
-                            <p:inputText id="workpiecePropertyValue" value="#{ProcessForm.workpieceProperty.value}"
+                            <p:inputText id="workpiecePropertyValue" value="#{ProcessEditViewWorkpiecesTab.workpieceProperty.value}"
                                          styleClass="input editDialog"/>
                         </div>
                     </h:panelGroup>
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
-                        <p:commandButton action="#{ProcessForm.saveWorkpieceProperty}"
+                        <p:commandButton action="#{ProcessEditViewWorkpiecesTab.saveWorkpieceProperty}"
                                          id="save"
                                          update="editForm"
                                          oncomplete="PF('editWorkpieceDialog').hide();toggleSave()"

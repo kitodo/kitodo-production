@@ -19,6 +19,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -216,7 +218,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     private String errorMessage;
     private String errorTitle = Helper.getTranslation("metadataLocked");
     private String blockingUserName;
-    private static final String METADATA_REDIRECT = "metadataEditor?id=%d&referer=%s&faces-redirect=true";
+    private static final String METADATA_REDIRECT = "metadataEditor?id=%d&referer=%s";
 
     @Inject
     private MediaProvider mediaProvider;
@@ -447,10 +449,14 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      * @return the referring view, to return there
      */
     public String closeAndReturn() {
-        if (referringView.contains("?")) {
-            return referringView + "&faces-redirect=true";
+        String viewPath = referringView;
+        if (viewPath.equals("processes")) {
+            viewPath += "?" + getReferrerListOptions();
+        }
+        if (viewPath.contains("?")) {
+            return viewPath + "&faces-redirect=true";
         } else {
-            return referringView + "?faces-redirect=true";
+            return viewPath + "?faces-redirect=true";
         }
     }
 
@@ -1448,6 +1454,21 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     }
 
     /**
+     * Return the URL of a redirect to a different process preserving additional 
+     * url parameters if they were provided to the current metadata editor.
+     * 
+     * @param processId the id of the process to redirect to
+     * @return the URL to redirect to
+     */
+    private String getRedirectUrl(Integer processId) {
+        String viewPath = String.format(METADATA_REDIRECT, processId, referringView);
+        if (referringView.equals("processes")) {
+            viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), StandardCharsets.UTF_8);
+        }
+        return viewPath;
+    }
+
+    /**
      * Open linked process of currently selected logical structure in metadata editor.
      */
     public void openLinkedProcess() {
@@ -1456,7 +1477,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
             PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            String linkedProcessUrl = String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+            String linkedProcessUrl = getRedirectUrl(linkedProcessId);
             try {
                 context.getExternalContext().redirect(linkedProcessUrl);
             } catch (IOException e) {
@@ -1482,7 +1503,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public String getUrlOfLinkedProcess() {
         checkConditionsForOpeningLinkedProcessInMetadataEditor();
-        return String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+        return getRedirectUrl(linkedProcessId);
     }
 
     /**
