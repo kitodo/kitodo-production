@@ -40,6 +40,7 @@ import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.ExportDmsTask;
 import org.kitodo.production.helper.tasks.TaskManager;
@@ -53,13 +54,15 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.xml.sax.SAXException;
 
-public class ExportDms extends ExportMets {
+public class ExportDms {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
 
     private final FileService fileService = ServiceManager.getFileService();
     private final ProcessService processService = ServiceManager.getProcessService();
+    private EmptyTask exportDmsTask = null;
+    private final ExportMets exportMets = new ExportMets();
 
     private boolean exportWithImages = true;
     private boolean optimisticExportFlagSet = false;
@@ -100,7 +103,6 @@ public class ExportDms extends ExportMets {
      * @param process
      *            Process object
      */
-    @Override
     public boolean startExport(Process process) throws DAOException {
         if (!exportCompletedChildren(process.getChildren())) {
             return false;
@@ -132,7 +134,6 @@ public class ExportDms extends ExportMets {
      * @param unused
      *            user home directory
      */
-    @Override
     public boolean startExport(Process process, URI unused) {
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
             TaskManager.addTask(new ExportDmsTask(this, process));
@@ -184,9 +185,9 @@ public class ExportDms extends ExportMets {
     private boolean startExport(Process process, LegacyMetsModsDigitalDocumentHelper newFile)
             throws IOException, DAOException, SAXException, FileStructureValidationException {
 
-        this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
 
-        LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(process, newFile);
+        LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(process, newFile, prefs);
         if (Objects.isNull(gdzfile)) {
             return false;
         }
@@ -200,7 +201,7 @@ public class ExportDms extends ExportMets {
 
         // validate metadata
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
-                && !ServiceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs)) {
+                && !ServiceManager.getMetadataValidationService().validate(gdzfile, prefs)) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(new MetadataException("metadata validation failed", null));
             }
@@ -298,10 +299,11 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private LegacyMetsModsDigitalDocumentHelper readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile) {
+    private LegacyMetsModsDigitalDocumentHelper readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile,
+                                                             LegacyPrefsHelper prefs) {
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
-            gdzfile = new LegacyMetsModsDigitalDocumentHelper(this.myPrefs.getRuleset());
+            gdzfile = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
             gdzfile.setDigitalDocument(newFile);
             return gdzfile;
         } catch (RuntimeException e) {
@@ -322,7 +324,7 @@ public class ExportDms extends ExportMets {
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
-        boolean metsFileWrittenSuccesful = writeMetsFile(process, fileService.createResource(userHome,
+        boolean metsFileWrittenSuccesful = exportMets.writeMetsFile(process, fileService.createResource(userHome,
                 File.separator + atsPpnBand + ".xml"), gdzfile);
 
         if (Objects.nonNull(exportDmsTask)) {
