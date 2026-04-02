@@ -297,7 +297,7 @@ public class ProjectEditView extends BaseEditView {
      *
      */
     public void deleteFolder() {
-        workingFolders.remove(editingFolder);
+        workingFolders.removeIf(folder -> folder == editingFolder);
     }
 
     /**
