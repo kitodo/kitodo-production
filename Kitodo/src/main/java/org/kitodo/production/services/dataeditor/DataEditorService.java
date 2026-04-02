@@ -401,6 +401,8 @@ public class DataEditorService {
      *          Workpiece of given process
      * @param oldMetadataSet
      *          Set containing old metadata
+     * @param validateXml
+     *          whether to validate XML or not
      * @return
      *          list of metadata comparisons
      * @throws IOException
@@ -431,7 +433,7 @@ public class DataEditorService {
     public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece,
                                                                    HashSet<Metadata> oldMetadataSet,
                                                                    List<Locale.LanguageRange> languages,
-                                                                   String selectedDivisionType)
+                                                                   String selectedDivisionType, boolean validateXml)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
             ProcessGenerationException, ParserConfigurationException, URISyntaxException, TransformerException,
             InvalidMetadataValueException, NoSuchMetadataFieldException, SAXException, FileStructureValidationException {
@@ -443,7 +445,7 @@ public class DataEditorService {
             throw new MetadataException(errorMessage, null);
         }
         TempProcess updatedProcess = ServiceManager.getImportService().importTempProcess(importConfig, recordID,
-                process.getTemplate().getId(), process.getProject().getId());
+                process.getTemplate().getId(), process.getProject().getId(), validateXml);
         if (Objects.isNull(updatedProcess)) {
             throw new ProcessGenerationException("Unable to re-import data record for metadata update");
         } else {

@@ -28,6 +28,7 @@ public class ValidatableForm extends BaseEditView {
     protected Collection<String> validationErrors = new ArrayList<>();
     protected String redirectionPath;
     protected String rulesetValidationError;
+    protected String validationErrorUpdateComponents = "editForm";
     protected boolean schemaValidationSkippable = false;
 
     /**
@@ -203,5 +204,14 @@ public class ValidatableForm extends BaseEditView {
         setSchemaValidationSkippable(exception.isExternalDataValidation());
         PrimeFaces.current().ajax().update("validationErrorsDialog");
         PrimeFaces.current().executeScript("PF('validationErrorsDialog').show();");
+    }
+
+    /**
+     * Get value of validationErrorUpdateComponents.
+     *
+     * @return value of validationErrorUpdateComponents
+     */
+    public String getValidationErrorUpdateComponents() {
+        return validationErrorUpdateComponents;
     }
 }

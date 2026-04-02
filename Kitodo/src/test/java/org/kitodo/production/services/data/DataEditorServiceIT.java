@@ -187,7 +187,7 @@ public class DataEditorServiceIT {
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
         MetadataException thrown = assertThrows(MetadataException.class, () -> DataEditorService.
-                reimportCatalogMetadata(testProcess, workpiece, null, languages, "Manuscript"));
+                reimportCatalogMetadata(testProcess, workpiece, null, languages, "Manuscript", true));
         assertEquals(thrown.getMessage(), String.format(EXPECTED_EXCEPTION_MESSAGE, testProcessId));
     }
 
