@@ -45,175 +45,158 @@
                 <br/>
 
                 <!-- add new structure element -->
-                <p:panelGrid id="docStrucTypeGrid"
-                             layout="tabular"
-                             columns="2">
+                <p:panelGrid id="docStrucTypeGrid">
 
-                    <h:panelGroup>
-                        <!-- select type and position of new doc struct element -->
-                        <p:panelGrid layout="tabular"
-                                     columns="2">
-                            <p:row>
-                                <p:column rendered="#{not viewsSelected}">
-                                    <p:outputLabel value="#{msgs.position}:"
-                                                   for="docStructPositionSelection"/>
-                                    <p:selectOneMenu id="docStructPositionSelection"
-                                                     autoWidth="false"
-                                                     class="input"
-                                                     value="#{DataEditorForm.addDocStrucTypeDialog.selectedDocStructPosition}">
-                                        <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
-                                                       var="positionSelection"
-                                                       itemValue="#{positionSelection}"
-                                                       itemLabel="#{HelperForm.getTranslated(positionSelection.label)}"/>
-                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
-                                                update="docStructAddTypeSelection
-                                                    addDocStruc
-                                                    addAndEditStruc"/>
-                                    </p:selectOneMenu>
-                                </p:column>
-                                <p:column>
-                                    <p:outputLabel value="#{msgs.typ}:"
-                                                   for="docStructAddTypeSelection"/>
-                                    <p:selectOneMenu id="docStructAddTypeSelection"
-                                                     class="input"
-                                                     autoWidth="false"
-                                                     value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
-                                                     required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}">
-                                        <f:selectItem itemValue="#{null}"
-                                                      itemLabel="#{msgs.notSelected}"
-                                                      itemDisabled="true"
-                                                      noSelectionOption="true"/>
-                                        <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
-                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
-                                                update="dialogAddDocStrucTypeForm"/>
-                                    </p:selectOneMenu>
-                                </p:column>
-                            </p:row>
-                        </p:panelGrid>
-                    </h:panelGroup>
+                    <!-- first column: select type and position of new doc struct element -->
+                    <p:column styleClass="ui-md-6">
+                        <p:row rendered="#{not viewsSelected}">
+                            <p:outputLabel value="#{msgs.position}:"
+                                           for="docStructPositionSelection"/>
+                            <p:selectOneMenu id="docStructPositionSelection"
+                                             autoWidth="false"
+                                             class="input"
+                                             value="#{DataEditorForm.addDocStrucTypeDialog.selectedDocStructPosition}">
+                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
+                                               var="positionSelection"
+                                               itemValue="#{positionSelection}"
+                                               itemLabel="#{HelperForm.getTranslated(positionSelection.label)}"/>
+                                <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareDocStructTypes}"
+                                        update="docStructAddTypeSelection
+                                            addDocStruc
+                                            addAndEditStruc"/>
+                            </p:selectOneMenu>
+                        </p:row>
+                        <p:row>
+                            <p:outputLabel value="#{msgs.typ}:"
+                                           for="docStructAddTypeSelection"/>
+                            <p:selectOneMenu id="docStructAddTypeSelection"
+                                             class="input"
+                                             autoWidth="false"
+                                             value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
+                                             required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}">
+                                <f:selectItem itemValue="#{null}"
+                                              itemLabel="#{msgs.notSelected}"
+                                              itemDisabled="true"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
+                                <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
+                                        update="dialogAddDocStrucTypeForm"/>
+                            </p:selectOneMenu>
+                        </p:row>
+                    </p:column>
 
-                    <h:panelGroup>
-                        <p:panelGrid layout="tabular"
-                                     columns="2">
-                            <!-- option to select pages if doc struct was created without preselected media -->
-                            <p:row rendered="#{not viewsSelected}">
-                                <p:outputLabel for="selectFirstPageOnAddNode"
-                                               value="#{msgs.firstPage}:"/>
-                                <p:selectOneMenu id="selectFirstPageOnAddNode"
-                                                 title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
-                                                 disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
-                                                 class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode}"
-                                                 autoWidth="false"
-                                                 filter="true"
-                                                 filterMatchMode="contains">
-                                    <f:selectItem itemLabel="#{msgs.firstPage}"
-                                                  noSelectionOption="true"
-                                                  itemValue="" />
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
-                                    <p:ajax update="elementsToAddSpinner"/>
-                                </p:selectOneMenu>
+                    <!-- second column: option to select pages if doc struct was created without preselected media -->
+                    <p:column rendered="#{not viewsSelected}"
+                              styleClass="ui-md-6">
+                        <p:outputLabel for="selectFirstPageOnAddNode"
+                                       value="#{msgs.firstPage}:"/>
+                        <p:selectOneMenu id="selectFirstPageOnAddNode"
+                                         title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
+                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
+                                         class="input"
+                                         value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode}"
+                                         autoWidth="false"
+                                         filter="true"
+                                         filterMatchMode="contains">
+                            <f:selectItem itemLabel="#{msgs.firstPage}"
+                                          noSelectionOption="true"
+                                          itemValue="" />
+                            <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
+                            <p:ajax update="elementsToAddSpinner"/>
+                        </p:selectOneMenu>
 
-                                <p:outputLabel for="selectLastPageOnAddNode"
-                                                value="#{msgs.lastPage}:"/>
-                                <p:selectOneMenu id="selectLastPageOnAddNode"
-                                                 title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
-                                                 disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
-                                                 class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode}"
-                                                 autoWidth="false"
-                                                 filter="true"
-                                                 filterMatchMode="contains">
-                                    <f:selectItem itemLabel="#{msgs.lastPage}"
-                                                  noSelectionOption="true"
-                                                  itemValue="" />
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
-                                    <p:ajax update="elementsToAddSpinner"/>
-                                </p:selectOneMenu>
-                            </p:row>
+                        <p:outputLabel for="selectLastPageOnAddNode"
+                                        value="#{msgs.lastPage}:"/>
+                        <p:selectOneMenu id="selectLastPageOnAddNode"
+                                         title="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1 ? msgs['dataEditor.addElement.assignPagesToSingleDocStruc'] : ''}"
+                                         disabled="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}"
+                                         class="input"
+                                         value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode}"
+                                         autoWidth="false"
+                                         filter="true"
+                                         filterMatchMode="contains">
+                            <f:selectItem itemLabel="#{msgs.lastPage}"
+                                          noSelectionOption="true"
+                                          itemValue="" />
+                            <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
+                            <p:ajax update="elementsToAddSpinner"/>
+                        </p:selectOneMenu>
+                    </p:column>
 
-                            <!-- show order of first and last preselected media if present -->
-                            <p:row rendered="#{viewsSelected}">
-                                <c:set var="firstView"
-                                       value="#{selectedViews[0]}"/>
-                                <c:set var="lastView"
-                                       value="#{selectedViews[selectedViews.size() - 1]}"/>
-                                <p:row>
-                                    <p:outputLabel for="firstMedia"
-                                                   value="#{msgs.firstPage}: "/>
-                                    <p:inputText id="firstMedia"
-                                                 disabled="#{true}"
-                                                 class="input"
-                                                 value="#{DataEditorForm.structurePanel.buildViewLabel(firstView)}"/>
-                                    <p:outputLabel for="lastMedia"
-                                                   value="#{msgs.lastPage}: "/>
-                                    <p:inputText id="lastMedia"
-                                                 disabled="#{true}"
-                                                 class="input"
-                                                 value="#{DataEditorForm.structurePanel.buildViewLabel(lastView)}"/>
-                                </p:row>
-                            </p:row>
-                        </p:panelGrid>
-                    </h:panelGroup>
-
-                    <!-- option to add multiple doc structs of same type -->
-                    <h:panelGroup rendered="#{not viewsSelected}">
-                        <p:panelGrid layout="tabular"
-                                     columns="1">
-                            <p:row>
-                                <p:column rowspan="2">
-                                    <p:outputLabel value="#{msgs.count} #{msgs.docstructs}:"
-                                                   for="elementsToAddSpinner"/>
-                                    <p:spinner value="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue}"
-                                               title="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode ? msgs['dataEditor.addElement.createMultipleDocStrucWithoutPages'] : ''}"
-                                               disabled="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode}"
-                                               id="elementsToAddSpinner"
-                                               class="input"
-                                               size="5"
-                                               min="1">
-                                        <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
-                                                update="addMetadata
-                                                        selectFirstPageOnAddNode
-                                                        selectLastPageOnAddNode"/>
-                                    </p:spinner>
-                                </p:column>
-                            </p:row>
-                        </p:panelGrid>
-                    </h:panelGroup>
-
-                    <br/>
-
-                    <!-- add metadata with value to new doc struct -->
-                    <h:panelGroup id="addMetadata">
-                        <p:panelGrid layout="tabular"
-                                     columns="2"
-                                     rendered="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}">
-                            <p:row>
-                                <p:outputLabel value="#{msgs.metadata}:"
-                                               for="selectAddableMetadataTypes" />
-                                <p:selectOneMenu id="selectAddableMetadataTypes"
-                                                 disabled="#{empty DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
-                                                 class="input"
-                                                 autoWidth="false"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}">
-                                    <f:selectItem itemValue=""
-                                        itemLabel="#{msgs.notSelected}"
-                                        itemDisabled="false"/>
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.addableMetadata}" />
-                                    <p:ajax event="change" update="addMetadata"/>
-                                </p:selectOneMenu>
-                                <h:panelGroup id="inputMetadataValueGroup" rendered="#{not empty DataEditorForm.addDocStrucTypeDialog.selectedMetadata and not DataEditorForm.addDocStrucTypeDialog.isSelectedMetadataComplex()}">
-                                    <p:outputLabel value="#{msgs.value}:"
-                                                   for="inputMetaDataValue"/>
-                                    <p:inputText 
-                                                 id="inputMetaDataValue"
-                                                 class="input"
-                                                 value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValue}"/>
-                                </h:panelGroup>
-                            </p:row>
-                        </p:panelGrid>
-                    </h:panelGroup>
+                    <!-- second column: show order of first and last preselected media if present -->
+                    <p:column rendered="#{viewsSelected}"
+                              styleClass="ui-md-6">
+                        <c:set var="firstView"
+                               value="#{selectedViews[0]}"/>
+                        <c:set var="lastView"
+                               value="#{selectedViews[selectedViews.size() - 1]}"/>
+                        <p:row>
+                            <p:outputLabel for="firstMedia"
+                                           value="#{msgs.firstPage}: "/>
+                            <p:inputText id="firstMedia"
+                                         disabled="#{true}"
+                                         class="input"
+                                         value="#{DataEditorForm.structurePanel.buildViewLabel(firstView)}"/>
+                            <p:outputLabel for="lastMedia"
+                                           value="#{msgs.lastPage}: "/>
+                            <p:inputText id="lastMedia"
+                                         disabled="#{true}"
+                                         class="input"
+                                         value="#{DataEditorForm.structurePanel.buildViewLabel(lastView)}"/>
+                        </p:row>
+                    </p:column>
                 </p:panelGrid>
+
+                <!-- option to add multiple doc structs of same type -->
+                <p:panelGrid rendered="#{not viewsSelected}">
+                    <p:column styleClass="ui-md-12">
+                        <p:outputLabel value="#{msgs.count} #{msgs.docstructs}:"
+                                       for="elementsToAddSpinner"/>
+                        <p:spinner value="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue}"
+                                   title="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode ? msgs['dataEditor.addElement.createMultipleDocStrucWithoutPages'] : ''}"
+                                   disabled="#{not empty DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNode or not empty DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNode}"
+                                   id="elementsToAddSpinner"
+                                   class="input"
+                                   size="5"
+                                   min="1">
+                            <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
+                                    update="addMetadata
+                                            selectFirstPageOnAddNode
+                                            selectLastPageOnAddNode"/>
+                        </p:spinner>
+                    </p:column>
+                </p:panelGrid>
+
+                <!-- add metadata with value to new doc struct -->
+                <h:panelGroup id="addMetadata">
+                    <p:panelGrid rendered="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue gt 1}">
+                        <p:column styleClass="ui-md-6">
+                            <p:outputLabel value="#{msgs.metadata}:"
+                                           for="selectAddableMetadataTypes" />
+                            <p:selectOneMenu id="selectAddableMetadataTypes"
+                                             disabled="#{empty DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
+                                             class="input"
+                                             autoWidth="false"
+                                             value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}">
+                                <f:selectItem itemValue=""
+                                    itemLabel="#{msgs.notSelected}"
+                                    itemDisabled="false"/>
+                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.addableMetadata}" />
+                                <p:ajax event="change" update="addMetadata"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column styleClass="ui-md-6">
+                            <h:panelGroup id="inputMetadataValueGroup" rendered="#{not empty DataEditorForm.addDocStrucTypeDialog.selectedMetadata and not DataEditorForm.addDocStrucTypeDialog.isSelectedMetadataComplex()}">
+                                <p:outputLabel value="#{msgs.value}:"
+                                               for="inputMetaDataValue"/>
+                                <p:inputText
+                                             id="inputMetaDataValue"
+                                             class="input"
+                                             value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValue}"/>
+                            </h:panelGroup>
+                        </p:column>
+                    </p:panelGrid>
+                </h:panelGroup>
 
                 <!-- submit buttons for new structure element(s) -->
                 <h:panelGroup layout="block">
