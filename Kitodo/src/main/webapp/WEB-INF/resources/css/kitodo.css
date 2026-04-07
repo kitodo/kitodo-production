@@ -2696,6 +2696,17 @@ form#metadata div label,
     overflow-y: scroll;
 }
 
+#dialogAddDocStrucTypeForm .ui-inputtext,
+#dialogAddDocStrucTypeForm .ui-selectonemenu,
+#dialogAddDocStrucTypeForm .ui-spinner {
+    width: calc(100% - var(--default-full-size));
+}
+
+#dialogAddDocStrucTypeForm\:elementsToAddSpinner {
+    margin-bottom: var(--default-full-size);
+}
+
+
 #ltpValidationReportDialog {
     top: 50px;
 }

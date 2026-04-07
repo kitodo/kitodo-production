@@ -1585,27 +1585,6 @@ body .ui-dialog .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
     overflow-y: hidden;
 }
 
-#dialogAddDocStrucTypeForm\:dialogAddDocStrucTypeFormContent {
-    overflow-y: hidden;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-panelgrid-cell {
-    vertical-align: top;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content > .ui-panelgrid-cell {
-    width: 50%;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-selectonemenu,
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content:first-child > .ui-panelgrid-cell > table {
-    width: 90%;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid tr.ui-widget-content:not(:first-child) {
-    border: 0;
-}
-
 .ui-dialog.legal-dialog button.secondary.right {
     position: absolute;
     bottom: var(--default-double-size);
