@@ -31,46 +31,42 @@
                           styleClass="not-scrollable dialogFieldWrapper">
 
                 <!-- link to existing process -->
-                <p:panelGrid>
-                    <p:row>
-                        <p:column colspan="1">
-                            <p:inputText id="processTitle"
-                                         styleClass="search-process-title input"
-                                         placeholder="#{msgs.processTitle} / #{msgs.id}"
-                                         value="#{DataEditorForm.linkProcessDialog.processNumber}"/>
-                        </p:column>
-                        <p:column styleClass="search-button-container">
-                            <p:commandButton id="searchButton"
-                                             value="#{msgs['dialogAddDocStrucType.searchButton']}"
-                                             action="#{DataEditorForm.linkProcessDialog.search}"
-                                             styleClass="primary"
-                                             icon="fa fa-search fa-lg"
-                                             iconPos="right">
-                                    <p:remoteCommand name="updateProcessSelect"
-                                                     update="processSelect"/>
-                                    <p:ajax update="processSelect"
-                                            oncomplete="updateProcessSelect()"/>
-                            </p:commandButton>
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column colspan="2">
-                            <p:outputLabel for="processSelect"
-                                           value="#{msgs.processes}"/>
-                            <p:selectOneMenu id="processSelect"
-                                             disabled="#{empty DataEditorForm.linkProcessDialog.processes}"
-                                             styleClass="input"
-                                             autoWidth="false"
-                                             converter="#{processConverter}"
-                                             value="#{DataEditorForm.linkProcessDialog.selectedProcess}">
-                                <f:selectItem noSelectionOption="true"
-                                              itemValue="#{null}"
-                                              itemLabel="#{msgs.selectProcess}"/>
-                                <f:selectItems value="#{DataEditorForm.linkProcessDialog.processes}"/>
-                                <p:ajax event="change" update="addLinkButton"/>
-                            </p:selectOneMenu>
-                        </p:column>
-                    </p:row>
+                <p:panelGrid columns="2">
+                    <p:column colspan="1" styleClass="ui-md-8">
+                        <p:inputText id="processTitle"
+                                     styleClass="search-process-title input"
+                                     placeholder="#{msgs.processTitle} / #{msgs.id}"
+                                     value="#{DataEditorForm.linkProcessDialog.processNumber}"/>
+                    </p:column>
+                    <p:column styleClass="search-button-container ui-md-3">
+                        <p:commandButton id="searchButton"
+                                         value="#{msgs['dialogAddDocStrucType.searchButton']}"
+                                         action="#{DataEditorForm.linkProcessDialog.search}"
+                                         styleClass="primary"
+                                         icon="fa fa-search fa-lg"
+                                         iconPos="right">
+                                <p:remoteCommand name="updateProcessSelect"
+                                                 update="processSelect"/>
+                                <p:ajax update="processSelect"
+                                        oncomplete="updateProcessSelect()"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column colspan="2" styleClass="ui-md-12">
+                        <p:outputLabel for="processSelect"
+                                       value="#{msgs.processes}"/>
+                        <p:selectOneMenu id="processSelect"
+                                         disabled="#{empty DataEditorForm.linkProcessDialog.processes}"
+                                         styleClass="input"
+                                         autoWidth="false"
+                                         converter="#{processConverter}"
+                                         value="#{DataEditorForm.linkProcessDialog.selectedProcess}">
+                            <f:selectItem noSelectionOption="true"
+                                          itemValue="#{null}"
+                                          itemLabel="#{msgs.selectProcess}"/>
+                            <f:selectItems value="#{DataEditorForm.linkProcessDialog.processes}"/>
+                            <p:ajax event="change" update="addLinkButton"/>
+                        </p:selectOneMenu>
+                    </p:column>
                 </p:panelGrid>
 
                 <p:panelGrid id="submitButtonGroup" columns="1">
