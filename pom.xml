@@ -289,7 +289,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
-                <version>5.19.0</version>
+                <version>5.19.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
