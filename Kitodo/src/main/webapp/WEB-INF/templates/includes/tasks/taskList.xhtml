@@ -244,7 +244,6 @@
                     <p:panelGrid id="taskRowExpansionTable"
                                  columns="2">
                         <p:panelGrid id="taskDetailTableFirst"
-                                     styleClass="expansion-column"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.correction}:"/>
@@ -256,7 +255,6 @@
                                           value="#{TaskListView.getFormattedDate(item.processingBegin)}"/>
                         </p:panelGrid>
                         <p:panelGrid id="taskDetailTableSecond"
-                                     styleClass="expansion-column"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.lastEdited}:"/>

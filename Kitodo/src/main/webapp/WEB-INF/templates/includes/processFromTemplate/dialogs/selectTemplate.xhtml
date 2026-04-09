@@ -44,9 +44,8 @@
                         <p:ajax update="selectTemplateForm:setTemplateButton"/>
                     </p:selectOneMenu>
                 </p>
-                <p:panelGrid layout="tabular"
-                             columns="0">
-                    <p:row>
+                <p:panelGrid columns="1">
+                    <p:column>
                         <p:commandButton id="setTemplateButton"
                                          action="#{SelectTemplateDialogView.checkForTemplates()}"
                                          styleClass="primary right"
@@ -61,7 +60,7 @@
                                          styleClass="secondary right"
                                          icon="fa fa-close"
                                          iconPos="right"/>
-                    </p:row>
+                    </p:column>
                 </p:panelGrid>
             </h:panelGroup>
         </h:form>
