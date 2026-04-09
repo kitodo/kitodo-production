@@ -158,8 +158,10 @@
                                    id="elementsToAddSpinner"
                                    class="input"
                                    size="5"
+                                   max="99"
                                    min="1">
                             <p:ajax listener="#{DataEditorForm.addDocStrucTypeDialog.prepareAddableMetadataForStructure(false)}"
+                                    process="@this"
                                     update="addMetadata
                                             selectFirstPageOnAddNode
                                             selectLastPageOnAddNode"/>
@@ -231,6 +233,7 @@
                     <p:commandButton value="#{msgs.cancel}"
                                      icon="fa fa-times fa-lg"
                                      action="#{DataEditorForm.addDocStrucTypeDialog.resetValues}"
+                                     process="@this"
                                      iconPos="secondary"
                                      styleClass="secondary right"
                                      oncomplete="PF('dialogAddDocStrucType').hide();"/>

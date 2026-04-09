@@ -3750,10 +3750,6 @@ button.settings-loaded-task::after {
     margin-left: var(--default-half-size);
 }
 
-#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
-    display: inline-table;
-}
-
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio td {
     padding: var(--input-padding-none) var(--input-padding);
 }
