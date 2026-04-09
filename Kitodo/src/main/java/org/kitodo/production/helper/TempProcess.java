@@ -273,10 +273,12 @@ public class TempProcess {
             if (catalogId.isEmpty() && Objects.nonNull(metadataNodes) && metadataNodes.getLength() > 0) {
                 for (int i = 0; i < metadataNodes.getLength(); i++) {
                     Node item = metadataNodes.item(i);
-                    Node name = item.getAttributes().getNamedItem("name");
-                    if (Objects.nonNull(name) && name.getTextContent().equals(identifierMetadata)) {
-                        catalogId = item.getTextContent();
-                        break;
+                    if (item.getNodeType() == Node.ELEMENT_NODE && Objects.nonNull(item.getAttributes())) {
+                        Node name = item.getAttributes().getNamedItem("name");
+                        if (Objects.nonNull(name) && name.getTextContent().equals(identifierMetadata)) {
+                            catalogId = item.getTextContent();
+                            break;
+                        }
                     }
                 }
             }
