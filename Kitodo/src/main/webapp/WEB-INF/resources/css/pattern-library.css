@@ -591,6 +591,11 @@ body .ui-widget-content .ui-inputfield {
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+body .ui-selectoneradio div[role="radio"] {
+    display: block;
+    padding: var(--group-margin) 0;
+}
+
 body .ui-picklist-list-wrapper {
     padding: var(--input-padding);
 }
@@ -739,15 +744,20 @@ body .ui-inputfield.ui-selectonelistbox,
 body .ui-inputfield.ui-selectmanymenu {
     display: inline-block;
     height: auto;
-    padding-top: .5em;
-    padding-bottom: .5em;
 }
 
 body .ui-selectonelistbox .ui-selectlistbox-listcontainer .ui-selectlistbox-list .ui-selectlistbox-item,
 body .ui-selectmanymenu .ui-selectlistbox-listcontainer .ui-selectlistbox-list .ui-selectlistbox-item {
     margin: 0;
     border: 0 none;
-    padding: 0;
+    padding: var(--group-margin) 0;
+}
+
+body .ui-selectoneradio,
+body .ui-selectmanycheckbox {
+    display: inline-block;
+    height: auto;
+    border-radius: 4px;
 }
 
 .ui-selectoneradio td > .ui-radiobutton,
@@ -840,7 +850,6 @@ body .ui-chkbox.switch .ui-chkbox-box .ui-chkbox-icon::before {
     display: none;
 }
 
-body .ui-chkbox.switch .ui-chkbox-box,
 body .ui-chkbox.switch .ui-chkbox-box,
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover,
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover {
@@ -1429,12 +1438,13 @@ body .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-r
     padding: 0;
 }
 
-.ui-dialog .ui-panelgrid-cell div,
+.ui-dialog .dialogFieldWrapper > div,
 .ui-dialog .ui-panelgrid-cell > input {
     margin-bottom: var(--default-full-size);
 }
 
-body .ui-dialog .ui-dialog-content {
+body .ui-dialog .ui-dialog-content,
+body .ui-dialog.ui-confirm-dialog .ui-dialog-content {
     padding: var(--default-double-size) 0;
 }
 

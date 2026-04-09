@@ -28,8 +28,6 @@
                                    value="#{msgs['newProcess.fileUpload.eadLevelParent']}"/>
                     <p:selectOneRadio id="eadLevelParentProcess"
                                       styleClass="ui-corner-all"
-                                      layout="grid"
-                                      columns="1"
                                       value="#{CreateProcessForm.selectedParentEadLevel}">
                         <f:selectItems value="#{CreateProcessForm.eadParentLevels}"
                                        var="eadLevel"
@@ -46,8 +44,6 @@
                                    value="#{msgs['newProcess.fileUpload.eadLevelChildren']}"/>
                     <p:selectOneRadio id="eadLevelChildProcesses"
                                       styleClass="ui-corner-all"
-                                      layout="grid"
-                                      columns="1"
                                       value="#{CreateProcessForm.selectedEadLevel}">
                         <f:selectItems value="#{CreateProcessForm.eadLevels}"
                                        var="eadLevel"
