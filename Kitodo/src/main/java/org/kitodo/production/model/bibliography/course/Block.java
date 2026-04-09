@@ -248,14 +248,14 @@ public class Block {
         }
         ArrayList<IndividualIssue> result = new ArrayList<>(this.issues.size());
 
-        List<Issue> individualIssues = new ArrayList<>();
+        List<Issue> issueList = new ArrayList<>();
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
-                individualIssues.add(issue);
+                issueList.add(issue);
             }
         }
-        Integer sorting = individualIssues.size() > 1 ? 1 : null;
-        for (Issue issue : individualIssues) {
+        Integer sorting = issueList.size() > 1 ? 1 : null;
+        for (Issue issue : issueList) {
             result.add(new IndividualIssue(this, issue, date, Objects.isNull(sorting) ? null : sorting++));
         }
         return result;
