@@ -266,8 +266,6 @@ public class ProjectEditView extends BaseEditView {
     public String addFolder() {
         this.editingFolder = new Folder();
         this.editingFolder.setProject(this.project);
-        // Default values
-        this.editingFolder.setMimeType("image/jpeg");
         this.generator = new FolderGenerator(editingFolder);
         return this.stayOnCurrentPage;
     }
@@ -816,7 +814,7 @@ public class ProjectEditView extends BaseEditView {
      * @return the list of possible validation configurations that can be assigned to a folder
      */
     public List<LtpValidationConfiguration> getPossibleLtpValidationConfigurations() {
-        if (Objects.isNull(editingFolder)) { // Changed from myFolder
+        if (Objects.isNull(editingFolder)) {
             return Collections.emptyList();
         }
         return ServiceManager.getLtpValidationConfigurationService().listByMimeType(editingFolder.getMimeType());
