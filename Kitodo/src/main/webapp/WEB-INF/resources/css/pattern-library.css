@@ -846,13 +846,14 @@ body .ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon::b
     display: none;
 }
 
-body .ui-chkbox.switch .ui-chkbox-box .ui-chkbox-icon::before {
+body .switch .ui-chkbox-box .ui-chkbox-icon::before {
     display: none;
 }
 
 body .ui-chkbox.switch .ui-chkbox-box,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box,
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover,
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover {
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-hover {
     width: var(--input-height);
     height: var(--input-height);
     border: none;
@@ -861,7 +862,8 @@ body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover {
     cursor: pointer;
 }
 
-body .ui-chkbox.switch .ui-chkbox-icon {
+body .ui-chkbox.switch .ui-chkbox-icon,
+body .ui-selectmanycheckbox.switch .ui-chkbox-icon {
     border: solid 2px var(--pure-white);
     border-radius: 25px;
     box-sizing: border-box;
@@ -875,7 +877,8 @@ body .ui-chkbox.switch .ui-chkbox-icon {
     width: 70%;
 }
 
-body .ui-chkbox.switch .ui-chkbox-icon:after {
+body .ui-chkbox.switch .ui-chkbox-icon:after,
+body .ui-selectmanycheckbox.switch .ui-chkbox-icon:after {
     background: var(--orange);
     border: solid 2px var(--pure-white);
     border-radius: 50%;
@@ -892,28 +895,35 @@ body .ui-chkbox.switch .ui-chkbox-icon:after {
 }
 
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-active,
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-active.ui-state-hover {
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active,
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-active.ui-state-hover,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active.ui-state-hover {
     background: var(--green);
 }
 
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
     background: var(--pure-white);
 }
 
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
     background: var(--green);
     left: calc(100% - 14px + 2px);
 }
 
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled,
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-disabled,
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
     background: var(--cloudy-gray);
     border-color: var(--medium-gray);
     cursor: default;
     opacity: initial;
 }
 
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
     background: transparent;
     border-color: var(--medium-gray);
 }

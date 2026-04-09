@@ -959,7 +959,8 @@ body #filterInputForm\:filterfield {
     padding-bottom: var(--input-padding);
 }
 
-body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon {
+body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon,
+body #filterOptionsFormWrapper .ui-selectmanycheckbox.switch .ui-chkbox-icon {
     transform: translate(-55%, -105%);
 }
 
