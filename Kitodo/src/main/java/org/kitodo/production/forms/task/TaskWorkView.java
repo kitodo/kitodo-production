@@ -342,7 +342,7 @@ public class TaskWorkView extends ValidatableForm {
      * Remember referring view such that user can be forwarded correctly once task is closed.
      */
     public void setReferrerFromTemplate(String referrer) {
-        if (Objects.nonNull(referrer) && referrer.equals("desktop")) {
+        if ("desktop".equals(referrer)) {
             this.referrer = "desktop";
         } else {
             this.referrer = "tasks";

@@ -78,7 +78,6 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title", "title");
-        SORT_FIELD_MAPPING.put("title", "title");
         SORT_FIELD_MAPPING.put("process.id", "process.id");
         SORT_FIELD_MAPPING.put("process.title", "process.title");
         SORT_FIELD_MAPPING.put("processingStatus", "processingStatus");

@@ -15,9 +15,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Base class for an edit view.
  * 
@@ -26,8 +23,6 @@ import org.apache.logging.log4j.Logger;
  * <p>(BaseForm methods specific to edit views should be moved here in the future)</p>
  */
 public class BaseEditView extends BaseForm {
-
-    private static final Logger logger = LogManager.getLogger(BaseEditView.class);
 
     protected String referrerListOptions;
 

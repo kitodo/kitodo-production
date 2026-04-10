@@ -16,6 +16,9 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
@@ -28,9 +31,11 @@ import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.utils.Stopwatch;
 
+@Named("TaskBatchEditView")
+@ViewScoped
 public class TaskBatchEditView extends BaseForm {
 
-    private static final Logger logger = LogManager.getLogger(TaskEditView.class);
+    private static final Logger logger = LogManager.getLogger(TaskBatchEditView.class);
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
     

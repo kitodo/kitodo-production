@@ -32,7 +32,7 @@ import org.kitodo.production.services.data.TaskService;
 
 public class TaskListViewIT {
 
-    private TaskListView taskListView = new TaskListView();
+    private final TaskListView taskListView = new TaskListView();
     private static final TaskService taskService = ServiceManager.getTaskService();
 
     /**

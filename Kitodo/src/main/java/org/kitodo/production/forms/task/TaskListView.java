@@ -74,7 +74,7 @@ public class TaskListView extends BaseListView {
     
     private List<String> taskFilters;
     private List<String> selectedTaskFilters;
-    private FilterMenu filterMenu = new FilterMenu(this);
+    private final FilterMenu filterMenu = new FilterMenu(this);
 
     private List<TaskStatus> taskStatus;
     private List<TaskStatus> selectedTaskStatus;
@@ -606,7 +606,7 @@ public class TaskListView extends BaseListView {
      * @return encoded query parameter, e.g. `OPEN+INWORK`
      */
     private String encodeTaskStatusAsQueryParameter(List<TaskStatus> taskStatus) {
-        return taskStatus.stream().map(s -> s.toString()).collect(Collectors.joining("+"));
+        return taskStatus.stream().map(Enum::toString).collect(Collectors.joining("+"));
     }
 
     /**
@@ -631,7 +631,7 @@ public class TaskListView extends BaseListView {
      * @return encoded query parameter, e.g. `automaticTasks+correctionTasks`
      */
     private String encodeTaskFilterAsQueryParameter(List<String> taskFilter) {
-        return taskFilter.stream().collect(Collectors.joining("+"));
+        return String.join("+", taskFilter);
     }
 
     /**
@@ -644,7 +644,7 @@ public class TaskListView extends BaseListView {
         Set<String> allowed = Set.of(AUTOMATIC_TASKS_FILTER, CORRECTION_TASKS_FILTER, OTHER_USERS_TASKS_FILTER);
         return Stream.of(encodedTaskFilter.split("\\+"))
             .map(String::trim)
-            .filter((s) -> allowed.contains(s))
+            .filter(allowed::contains)
             .toList();
     }
 
