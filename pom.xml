@@ -482,26 +482,8 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.10.0</version>
+                <version>4.11.0</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-io</artifactId>
-                        <groupId>commons-io</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-container-default</artifactId>
-                <version>1.7.1</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>plexus-utils</artifactId>
-                        <groupId>org.codehaus.plexus</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <!-- hibernate caching dependency -->
