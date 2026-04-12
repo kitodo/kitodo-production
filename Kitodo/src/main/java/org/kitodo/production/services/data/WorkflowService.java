@@ -127,6 +127,16 @@ public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
     }
 
     /**
+     * Returns whether a workflow with the given title already exists.
+     *
+     * @param title the title to check
+     * @return true if a workflow with this title exists
+     */
+    public boolean workflowTitleExists(String title) {
+        return !getByTitle(title).isEmpty();
+    }
+
+    /**
      * Save given workflow if it is an existing workflow (e.g. if it does have an ID)
      * or if it is a new workflow and no workflow with the same name exists.
      *

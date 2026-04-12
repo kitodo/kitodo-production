@@ -141,6 +141,14 @@ public class WorkflowEditView extends BaseEditView {
             return this.stayOnCurrentPage;
         }
         try {
+            if (workflow.getId() == null
+                    && ServiceManager.getWorkflowService()
+                    .workflowTitleExists(workflow.getTitle())) {
+                Helper.setErrorMessage(
+                        Helper.getTranslation("duplicateWorkflowTitle", workflow.getTitle())
+                );
+                return this.stayOnCurrentPage;
+            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
@@ -283,14 +291,19 @@ public class WorkflowEditView extends BaseEditView {
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+            if (Objects.isNull(xmlDiagram) || StringUtils.isBlank(xmlDiagram)) {
+                Helper.setErrorMessage("Workflow diagram is missing.");
+                return false;
+            }
 
             Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             reader.validateWorkflowTasks();
 
             Converter converter = new Converter(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             converter.validateWorkflowTaskList();
-
-            saveFile(svgDiagramURI, svgDiagram);
+            if (StringUtils.isNotBlank(svgDiagram)) {
+                saveFile(svgDiagramURI, svgDiagram);
+            }
             saveFile(xmlDiagramURI, xmlDiagram);
         }
 
