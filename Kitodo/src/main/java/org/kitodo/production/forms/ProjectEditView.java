@@ -328,7 +328,7 @@ public class ProjectEditView extends BaseEditView {
      */
     public List<Template> getTemplates() {
         try {
-            return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
+            return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TEMPLATE.getTranslationPlural() },
                 logger, e);

@@ -32,7 +32,6 @@
                 <p:dataTable var="item"
                              id="selectTemplateTable"
                              value="#{ProjectEditView.templates}"
-                             lazy="true"
                              paginator="true"
                              rows="#{LoginForm.loggedUser.tableSize}"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
@@ -48,7 +47,7 @@
                                        action="#{ProjectEditView.addTemplate}"
                                        styleClass="action"
                                        title="#{msgs.addTemplate}"
-                                       update="editForm:projectTabView:templateTable"
+                                       update="editForm:projectTabView:templateTable templateForm:selectTemplateTable"
                                        oncomplete="toggleSave()">
                             <i class="fa fa-plus fa-lg"/>
                             <f:param name="ID" value="#{item.id}"/>
