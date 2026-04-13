@@ -104,6 +104,9 @@ public class UserEditViewRolesTab extends BaseTabEditView<User> {
                 for (Role role : this.userObject.getRoles()) {
                     if (role.getId().equals(roleId)) {
                         this.userObject.getRoles().remove(role);
+                        if (Objects.nonNull(this.availableRoles) && !this.availableRoles.contains(role)) {
+                            this.availableRoles.add(role);
+                        }
                         break;
                     }
                 }
@@ -131,6 +134,9 @@ public class UserEditViewRolesTab extends BaseTabEditView<User> {
 
                 if (!this.userObject.getRoles().contains(role)) {
                     this.userObject.getRoles().add(role);
+                    if (Objects.nonNull(this.availableRoles)) {
+                        this.availableRoles.remove(role);
+                    }
                 }
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_DATABASE_READING,
