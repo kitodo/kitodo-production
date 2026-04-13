@@ -312,15 +312,17 @@ public class WorkflowEditView extends BaseEditView {
      * @return true if save, false if not
      */
     private boolean saveFiles() throws IOException, WorkflowException {
-        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
-                .getRequestParameterMap();
-
+        FacesContext context = FacesContext.getCurrentInstance();
         Map<String, URI> diagramsUris = getDiagramUris();
 
         URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
         URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
-        xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
+        if (Objects.nonNull(context)) {
+            xmlDiagram = context.getExternalContext()
+                    .getRequestParameterMap()
+                    .get("editForm:workflowTabView:xmlDiagram");
+        }
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
