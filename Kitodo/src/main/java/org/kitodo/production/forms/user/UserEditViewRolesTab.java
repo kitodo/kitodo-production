@@ -23,6 +23,7 @@ import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -106,6 +107,7 @@ public class UserEditViewRolesTab extends BaseTabEditView<User> {
                         this.userObject.getRoles().remove(role);
                         if (Objects.nonNull(this.availableRoles) && !this.availableRoles.contains(role)) {
                             this.availableRoles.add(role);
+                            this.availableRoles.sort(Comparator.comparing(Role::getTitle, String.CASE_INSENSITIVE_ORDER));
                         }
                         break;
                     }

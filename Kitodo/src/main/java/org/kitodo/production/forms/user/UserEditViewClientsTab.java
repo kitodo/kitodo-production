@@ -109,6 +109,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
                         this.userObject.getClients().remove(client);
                         if (Objects.nonNull(this.clients) && !this.clients.contains(client)) {
                             this.clients.add(client);
+                            this.clients.sort(Comparator.comparing(Client::getName, String.CASE_INSENSITIVE_ORDER));
                         }
                         if (client.equals(this.userObject.getDefaultClient())) {
                             this.userObject.setDefaultClient(null);
