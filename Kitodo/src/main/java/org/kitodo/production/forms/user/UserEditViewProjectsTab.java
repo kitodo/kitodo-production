@@ -105,6 +105,9 @@ public class UserEditViewProjectsTab extends BaseTabEditView<User> {
                 for (Project project : this.userObject.getProjects()) {
                     if (project.getId().equals(projectId)) {
                         this.userObject.getProjects().remove(project);
+                        if (Objects.nonNull(this.projects) && !this.projects.contains(project)) {
+                            this.projects.add(project);
+                        }
                         break;
                     }
                 }
@@ -132,6 +135,9 @@ public class UserEditViewProjectsTab extends BaseTabEditView<User> {
 
                 if (!this.userObject.getProjects().contains(project)) {
                     this.userObject.getProjects().add(project);
+                    if (Objects.nonNull(this.projects)) {
+                        this.projects.remove(project);
+                    }
                 }
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_DATABASE_READING,
