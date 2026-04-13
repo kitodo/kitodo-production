@@ -178,11 +178,8 @@ public class WorkflowFormIT {
                 new File(diagramDir + "one_step_workflow.bpmn20.xml").toPath(),
                 StandardCharsets.UTF_8
         );
-        boolean svgCreated = oldSvg.createNewFile();
-        boolean xmlCreated = oldXml.createNewFile();
-
-        assertTrue(svgCreated || oldSvg.exists(), "Old SVG should exist");
-        assertTrue(xmlCreated || oldXml.exists(), "Old XML should exist");
+        assertTrue(oldSvg.createNewFile() || oldSvg.exists(), "Could not prepare SVG file");
+        assertTrue(oldXml.createNewFile() || oldXml.exists(), "Could not prepare XML file");
 
         Files.writeString(oldXml.toPath(), validXmlWorkflow, StandardCharsets.UTF_8);
         currentWorkflowForm.setWorkflow(workflow);
