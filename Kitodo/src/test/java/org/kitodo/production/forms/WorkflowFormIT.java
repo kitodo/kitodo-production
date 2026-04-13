@@ -178,11 +178,13 @@ public class WorkflowFormIT {
                 new File(diagramDir + "one_step_workflow.bpmn20.xml").toPath(),
                 StandardCharsets.UTF_8
         );
-        oldSvg.createNewFile();
-        oldXml.createNewFile();
-        assertTrue(oldSvg.exists(), "Old SVG should exist");
-        assertTrue(oldXml.exists(), "Old XML should exist");
+        boolean svgCreated = oldSvg.createNewFile();
+        boolean xmlCreated = oldXml.createNewFile();
 
+        assertTrue(svgCreated || oldSvg.exists(), "Old SVG should exist");
+        assertTrue(xmlCreated || oldXml.exists(), "Old XML should exist");
+
+        Files.writeString(oldXml.toPath(), validXmlWorkflow, StandardCharsets.UTF_8);
         currentWorkflowForm.setWorkflow(workflow);
         currentWorkflowForm.getWorkflow().setTitle(newTitle);
         currentWorkflowForm.setXmlDiagram(validXmlWorkflow + "kitodo-diagram-separator");
