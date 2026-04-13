@@ -93,7 +93,7 @@
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
+        <mariadb-java-client.version>3.5.8</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
