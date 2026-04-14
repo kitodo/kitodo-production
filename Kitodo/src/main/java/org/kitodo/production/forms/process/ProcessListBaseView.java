@@ -33,6 +33,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.enums.ExportFormat;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseListView;
 import org.kitodo.production.forms.DeleteProcessDialog;
@@ -340,7 +341,7 @@ public class ProcessListBaseView extends BaseListView {
                     this.filter,
                     this.isShowClosedProcesses(),
                     this.isShowInactiveProjects(),
-                    org.kitodo.production.enums.ExportFormat.EXCEL,
+                    ExportFormat.EXCEL,
                     this.allSelected,
                     getSelectedProcessIds(),
                     this.excludedProcessIds
@@ -363,7 +364,7 @@ public class ProcessListBaseView extends BaseListView {
                     this.filter,
                     this.isShowClosedProcesses(),
                     this.isShowInactiveProjects(),
-                    org.kitodo.production.enums.ExportFormat.CSV,
+                    ExportFormat.CSV,
                     this.allSelected,
                     getSelectedProcessIds(),
                     this.excludedProcessIds
@@ -386,7 +387,7 @@ public class ProcessListBaseView extends BaseListView {
                     this.filter,
                     this.isShowClosedProcesses(),
                     this.isShowInactiveProjects(),
-                    org.kitodo.production.enums.ExportFormat.PDF,
+                    ExportFormat.PDF,
                     this.allSelected,
                     getSelectedProcessIds(),
                     this.excludedProcessIds
