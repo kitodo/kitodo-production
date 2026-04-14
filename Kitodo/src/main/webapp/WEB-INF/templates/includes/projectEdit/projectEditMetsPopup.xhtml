@@ -28,7 +28,7 @@
                   showHeader="false"
                   styleClass="editDialog">
             <h:form>
-                <h3>#{empty ProjectForm.myFolder.path ? msgs['editFolderDialog.caption.add'] : msgs['editFolderDialog.caption.edit']}</h3>
+                <h3>#{empty ProjectForm.editingFolder.path ? msgs['editFolderDialog.caption.add'] : msgs['editFolderDialog.caption.edit']}</h3>
                 <h:panelGroup layout="block"
                               styleClass="dialogFieldWrapper">
                     <p:panelGrid styleClass="full-width">
@@ -36,8 +36,8 @@
                             <p:column colspan="2">
                                 <p:outputLabel for="path" value="#{msgs['editFolderDialog.path']}"/>
                                 <p:inputText id="path"
-                                             disabled="#{ProjectForm.hasProcesses() and not empty ProjectForm.myFolder.path}"
-                                             value="#{ProjectForm.myFolder.path}"
+                                             disabled="#{ProjectForm.hasProcesses() and not empty ProjectForm.editingFolder.path}"
+                                             value="#{ProjectForm.editingFolder.path}"
                                              title="#{ProjectForm.hasProcesses() ? msgs['editFolderDialog.path.disabled'] : ''}"
                                              styleClass="input editDialog"/>
                             </p:column>
@@ -46,8 +46,8 @@
                             <p:column colspan="2">
                                 <p:outputLabel for="mimeType" value="#{msgs['editFolderDialog.mimeType']}"/>
                                 <p:selectOneMenu id="mimeType"
-                                                 disabled="#{ProjectForm.hasProcesses() and not empty ProjectForm.myFolder.path}"
-                                                 value="#{ProjectForm.myFolder.mimeType}"
+                                                 disabled="#{ProjectForm.hasProcesses() and not empty ProjectForm.editingFolder.path}"
+                                                 value="#{ProjectForm.editingFolder.mimeType}"
                                                  title="#{ProjectForm.hasProcesses() ? msgs['editFolderDialog.mimeType.disabled'] : ''}"
                                                  styleClass="input editDialog">
                                     <f:selectItems value="#{ProjectForm.mimeTypes}"/>
@@ -58,7 +58,7 @@
                             <p:column colspan="2">
                                 <p:outputLabel for="createFolder" value="#{msgs['editFolderDialog.createFolder']}"/>
                                 <p:selectBooleanCheckbox id="createFolder" styleClass="switch input"
-                                                         value="#{ProjectForm.myFolder.createFolder}">
+                                                         value="#{ProjectForm.editingFolder.createFolder}">
                                 </p:selectBooleanCheckbox>
                             </p:column>
                         </p:row>
@@ -104,7 +104,7 @@
                         <p:row>
                             <p:column style="width:50%">
                                 <p:outputLabel for="linkingMode" value="#{msgs['editFolderDialog.linkingMode']}"/>
-                                <p:selectOneMenu id="linkingMode" value="#{ProjectForm.myFolder.linkingMode}">
+                                <p:selectOneMenu id="linkingMode" value="#{ProjectForm.editingFolder.linkingMode}">
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.ALL']}" itemValue="ALL"/>
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.EXISTING']}"
                                                   itemValue="EXISTING"/>
@@ -113,16 +113,16 @@
                             </p:column>
                             <p:column style="width:50%">
                                 <p:outputLabel for="fileGroup" value="#{msgs['editFolderDialog.fileGroup']}"/>
-                                <p:selectOneMenu id="fileGroup" value="#{ProjectForm.myFolder.fileGroup}" effect="fold"
-                                                 editable="#{ProjectForm.myFolder.id == null}">
-                                    <f:selectItems value="#{ProjectForm.myFolder.fileGroups}"/>
+                                <p:selectOneMenu id="fileGroup" value="#{ProjectForm.editingFolder.fileGroup}" effect="fold"
+                                                 editable="#{ProjectForm.editingFolder.id == null}">
+                                    <f:selectItems value="#{ProjectForm.availableFileGroups}"/>
                                 </p:selectOneMenu>
                             </p:column>
                         </p:row>
                         <p:row>
                             <p:column colspan="2">
                                 <p:outputLabel for="urlStructure" value="#{msgs['editFolderDialog.urlStructure']}"/>
-                                <p:inputText id="urlStructure" value="#{ProjectForm.myFolder.urlStructure}"
+                                <p:inputText id="urlStructure" value="#{ProjectForm.editingFolder.urlStructure}"
                                              styleClass="input editDialog"/>
                             </p:column>
                         </p:row>
@@ -130,14 +130,14 @@
                             <p:column>
                                 <p:outputLabel for="validateFolder" value="#{msgs['editFolderDialog.validateFolder']}"/>
                                 <p:selectBooleanCheckbox id="validateFolder" styleClass="switch input"
-                                                         value="#{ProjectForm.myFolder.validateFolder}">
+                                                         value="#{ProjectForm.editingFolder.validateFolder}">
                                 </p:selectBooleanCheckbox>
                             </p:column>
                             <p:column>
                                 <p:outputLabel for="ltpValidationConfiguration" value="#{msgs['ltpValidation.folder.label']}"/>
                                 <p:selectOneMenu id="ltpValidationConfiguration" 
                                                  converter="#{ltpValidationConfigurationConverter}"
-                                                 value="#{ProjectForm.myFolder.ltpValidationConfiguration}">
+                                                 value="#{ProjectForm.editingFolder.ltpValidationConfiguration}">
                                     <f:selectItem itemLabel="-- #{msgs.notSelected} --" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{ProjectForm.possibleLtpValidationConfigurations}" 
                                                    var="ltpValidationConfiguration"
@@ -150,7 +150,7 @@
                             <p:column>
                                 <p:outputLabel for="copyFolder" value="#{msgs['editFolderDialog.copyFolder']}"/>
                                 <p:selectBooleanCheckbox id="copyFolder" styleClass="switch input"
-                                                         value="#{ProjectForm.myFolder.copyFolder}">
+                                                         value="#{ProjectForm.editingFolder.copyFolder}">
                                 </p:selectBooleanCheckbox>
                             </p:column>
                         </p:row>
