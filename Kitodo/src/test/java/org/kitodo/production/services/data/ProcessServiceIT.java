@@ -674,7 +674,10 @@ public class ProcessServiceIT {
                 null,   // no filter
                 true,   // include closed
                 true,   // include inactive projects
-                process.getProject().getClient().getId()
+                process.getProject().getClient().getId(),
+                true,   // allSelected
+                List.of(), // selectedProcessIds
+                List.of()  // excludedProcessIds
         );
 
         ProcessExportDTO dto = result.stream()
@@ -718,7 +721,10 @@ public class ProcessServiceIT {
                 null,   // no filter
                 true,   // include closed
                 true,   // include inactive projects
-                process.getProject().getClient().getId()
+                process.getProject().getClient().getId(),
+                true,   // allSelected
+                List.of(), // selectedProcessIds
+                List.of()  // excludedProcessIds
         );
         ProcessExportDTO dto = result.stream()
                 .filter(d -> d.getId().equals(testProcessId))
