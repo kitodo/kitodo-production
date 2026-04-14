@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,28 +71,13 @@ public class ProjectEditView extends BaseEditView {
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
 
-    /**
-     * An encapsulation of the content generator properties of the folder in a
-     * way suitable to the JSF design.
-     */
-    private FolderGenerator generator = new FolderGenerator(this.myFolder);
-
+    private Project baseProject;
     /**
      * The folder currently under edit in the pop-up dialog.
      */
-    /*
-     * This is a hack. The clean solution would be to have an inner class bean
-     * for the data table row a dialog, but this approach was introduced
-     * decades ago and has been maintained until today.
-     */
-    private Folder myFolder;
-    private Project baseProject;
-
-    // lists accepting the preliminary actions of adding and deleting folders
-    // it needs the execution of commit folders to make these changes
-    // permanent
-    private List<Integer> newFolders = new ArrayList<>();
-    private List<Integer> deletedFolders = new ArrayList<>();
+    private List<Folder> workingFolders = new ArrayList<>();
+    private Folder editingFolder;
+    private FolderGenerator generator = new FolderGenerator(new Folder());
 
     private boolean copyTemplates;
 
@@ -112,50 +98,44 @@ public class ProjectEditView extends BaseEditView {
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getProjectService()));
     }
 
-    /**
-     * This method deletes folders by their IDs in the list.
-     *
-     * @param folderIds
-     *            IDs of folders to delete
-     */
-    private void removeFoldersFromProject(List<Integer> folderIds) {
-        if (Objects.nonNull(project)) {
-            for (Integer id : folderIds) {
-                for (Folder f : project.getFolders()) {
-                    if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
-                        project.getFolders().remove(f);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * this method flushes the newFolders list, thus makes them permanent and
-     * deletes those marked for deleting, making the removal permanent.
-     */
-    private void commitFolders() throws DAOException {
-        // resetting the list of new folders
-        newFolders = new ArrayList<>();
-        // deleting the folders marked for deletion
-        removeFoldersFromProject(deletedFolders);
-        // resetting the list of folders marked for deletion
-        deletedFolders = new ArrayList<>();
-    }
 
     /**
      * This needs to be executed in order to rollback adding of folders.
      */
     public void cancel() {
-        // flushing new folders
-        removeFoldersFromProject(newFolders);
-        // resetting the list of new folders
-        newFolders = new ArrayList<>();
-        // resetting the List of folders marked for deletion
-        deletedFolders = new ArrayList<>();
+        if (Objects.nonNull(this.project)) {
+            this.workingFolders = new ArrayList<>(this.project.getFolders());
+        } else {
+            this.workingFolders = new ArrayList<>();
+        }
+        this.editingFolder = null;
     }
 
+    /**
+     * Gets the folder currently being modified within the edit dialog.
+     */
+    public Folder getEditingFolder() {
+        return this.editingFolder;
+    }
+
+    /**
+     * Sets the folder to be edited and initializes its associated content generator.
+     */
+    public void setEditingFolder(Folder folder) {
+        this.editingFolder = folder;
+        this.generator = new FolderGenerator(folder);
+    }
+
+    /**
+     * Returns the standard DFG file groups augmented with the current folder's group name.
+     */
+    public Collection<String> getAvailableFileGroups() {
+        Collection<String> fileGroups = Folder.getDefaultFileGroups();
+        if (Objects.nonNull(editingFolder) && StringUtils.isNotBlank(editingFolder.getFileGroup())) {
+            fileGroups.add(editingFolder.getFileGroup());
+        }
+        return fileGroups;
+    }
 
     /**
      * Duplicate the selected project.
@@ -189,8 +169,7 @@ public class ProjectEditView extends BaseEditView {
                 addFirstUserToNewProject();
 
                 commitTemplates();
-                commitFolders();
-
+                syncFoldersToProject();
                 ServiceManager.getProjectService().save(project);
 
                 return getProjectEditReferrerViewPath();
@@ -201,6 +180,15 @@ public class ProjectEditView extends BaseEditView {
             }
         } else {
             return this.stayOnCurrentPage;
+        }
+    }
+
+    private void syncFoldersToProject() {
+        project.getFolders().removeIf(folder -> !workingFolders.contains(folder));
+        for (Folder workingFolder : workingFolders) {
+            if (!project.getFolders().contains(workingFolder)) {
+                project.getFolders().add(workingFolder);
+            }
         }
     }
 
@@ -276,10 +264,9 @@ public class ProjectEditView extends BaseEditView {
      * @return String
      */
     public String addFolder() {
-        this.myFolder = new Folder();
-        this.myFolder.setProject(this.project);
-        this.generator = new FolderGenerator(myFolder);
-        this.newFolders.add(this.myFolder.getId());
+        this.editingFolder = new Folder();
+        this.editingFolder.setProject(this.project);
+        this.generator = new FolderGenerator(editingFolder);
         return this.stayOnCurrentPage;
     }
 
@@ -287,22 +274,19 @@ public class ProjectEditView extends BaseEditView {
      * Save folder.
      */
     public void saveFolder() {
-        if (!this.project.getFolders().contains(this.myFolder)) {
-            this.project.getFolders().add(this.myFolder);
-            try {
-                ServiceManager.getProjectService().save(this.project);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
-                        logger, e);
-            }
-        } else {
-            List<Folder> folders = this.project.getFolders();
-            for (Folder folder : folders) {
-                if (this.myFolder.getFileGroup().equals(folder.getFileGroup()) && folder != myFolder) {
-                    Helper.setErrorMessage("errorDuplicateFilegroup",
-                        new Object[] {ObjectType.FOLDER.getTranslationPlural() });
-                }
-            }
+        if (Objects.isNull(editingFolder)) {
+            return;
+        }
+        boolean duplicate = workingFolders.stream()
+                .anyMatch(folder -> folder != editingFolder
+                        && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
+        if (duplicate) {
+            Helper.setErrorMessage("errorDuplicateFilegroup", new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            return;
+        }
+
+        if (!workingFolders.contains(editingFolder)) {
+            workingFolders.add(editingFolder);
         }
     }
 
@@ -311,11 +295,8 @@ public class ProjectEditView extends BaseEditView {
      *
      */
     public void deleteFolder() {
-        if (Objects.isNull(myFolder.getId())) {
-            project.getFolders().remove(myFolder);
-        } else {
-            deletedFolders.add(this.myFolder.getId());
-        }
+        // Identity comparison is intentional: remove the exact folder instance being edited.
+        workingFolders.removeIf(folder -> folder == editingFolder);
     }
 
     /**
@@ -440,6 +421,7 @@ public class ProjectEditView extends BaseEditView {
         // has to be called if a page back move was done
         cancel();
         this.project = project;
+        this.editingFolder = null;
         try {
             hasProcesses = ServiceManager.getProjectService().hasProcesses(project.getId());
         } catch (DAOException e) {
@@ -479,17 +461,7 @@ public class ProjectEditView extends BaseEditView {
      * @return modified ArrayList
      */
     public List<Folder> getFolderList() {
-        List<Folder> filteredFolderList = new ArrayList<>(this.project.getFolders());
-
-        for (Integer id : this.deletedFolders) {
-            for (Folder f : this.project.getFolders()) {
-                if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
-                    filteredFolderList.remove(f);
-                    break;
-                }
-            }
-        }
-        return filteredFolderList;
+        return workingFolders;
     }
 
     /**
@@ -525,25 +497,7 @@ public class ProjectEditView extends BaseEditView {
         return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
     }
 
-    /**
-     * Returns the folder currently under edit in the pop-up dialog.
-     *
-     * @return the folder currently under edit
-     */
-    public Folder getMyFolder() {
-        return this.myFolder;
-    }
 
-    /**
-     * Sets the folder currently under edit in the pop-up dialog.
-     *
-     * @param myFolder
-     *            folder to set to be under edit now
-     */
-    public void setMyFolder(Folder myFolder) {
-        this.myFolder = myFolder;
-        this.generator = new FolderGenerator(myFolder);
-    }
 
     /**
      * Returns an encapsulation to access the generator properties of the folder
@@ -762,15 +716,18 @@ public class ProjectEditView extends BaseEditView {
      * @param duplicate whether to duplicate the project
      */
     public void loadProject(Integer id, Boolean duplicate) {
-        SecurityAccessController securityAccessController = new SecurityAccessController();
-        try {
-            if (Objects.nonNull(id) && !securityAccessController.hasAuthorityToEditProject(id)) {
-                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                context.redirect(DEFAULT_LINK);
+
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+            SecurityAccessController securityAccessController = new SecurityAccessController();
+            try {
+                if (Objects.nonNull(id) && !securityAccessController.hasAuthorityToEditProject(id)) {
+                    ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                    context.redirect(DEFAULT_LINK);
+                }
+            } catch (IOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[]{ObjectType.PROJECT.getTranslationSingular(), id},
+                        logger, e);
             }
-        } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
-                    logger, e);
         }
         if (Objects.nonNull(duplicate) && duplicate) {
             // load existing project as duplicate
@@ -781,6 +738,7 @@ public class ProjectEditView extends BaseEditView {
                 Optional<Project> projectWithFolderOpt = ServiceManager.getProjectService().getProjectWithFolders(id);
                 projectWithFolderOpt.ifPresent(project -> {
                     setProject(project);
+                    workingFolders = new ArrayList<>(project.getFolders());
                     this.locked = true;
                 });
                 setSaveDisabled(true);
@@ -857,10 +815,10 @@ public class ProjectEditView extends BaseEditView {
      * @return the list of possible validation configurations that can be assigned to a folder
      */
     public List<LtpValidationConfiguration> getPossibleLtpValidationConfigurations() {
-        if (Objects.isNull(myFolder)) {
+        if (Objects.isNull(editingFolder)) {
             return Collections.emptyList();
         }
-        return ServiceManager.getLtpValidationConfigurationService().listByMimeType(myFolder.getMimeType());
+        return ServiceManager.getLtpValidationConfigurationService().listByMimeType(editingFolder.getMimeType());
     }
 
 }

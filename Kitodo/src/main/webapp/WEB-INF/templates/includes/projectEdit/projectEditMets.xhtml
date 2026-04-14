@@ -129,7 +129,7 @@
                                disabled="#{ProjectEditView.locked}"
                                immediate="true">
                     <i class="fa fa-pencil-square-o fa-lg"/>
-                    <f:setPropertyActionListener target="#{ProjectEditView.myFolder}" value="#{folder}"/>
+                    <f:setPropertyActionListener target="#{ProjectEditView.editingFolder}" value="#{folder}"/>
                 </p:commandLink>
                 <!-- delete button -->
                 <p:commandLink action="#{ProjectEditView.deleteFolder()}"
@@ -140,7 +140,7 @@
                                disabled="#{ProjectEditView.locked}"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
-                    <f:setPropertyActionListener target="#{ProjectEditView.myFolder}" value="#{folder}"/>
+                    <f:setPropertyActionListener target="#{ProjectEditView.editingFolder}" value="#{folder}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.shouldItemBeRemoved}"/>
                 </p:commandLink>
