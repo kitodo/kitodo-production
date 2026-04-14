@@ -295,6 +295,7 @@ public class ProjectEditView extends BaseEditView {
      *
      */
     public void deleteFolder() {
+        // Identity comparison is intentional: remove the exact folder instance being edited.
         workingFolders.removeIf(folder -> folder == editingFolder);
     }
 
