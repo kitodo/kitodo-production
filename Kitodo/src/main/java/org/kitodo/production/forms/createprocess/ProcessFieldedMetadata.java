@@ -674,7 +674,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
             if (isDivisionUntyped()) {
-                logger.warn("Skipping metadata preservation for untyped division.");
                 return;
             }
             if (Objects.nonNull(division)) {
