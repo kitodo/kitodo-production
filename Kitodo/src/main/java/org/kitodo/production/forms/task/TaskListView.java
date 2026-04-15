@@ -69,7 +69,6 @@ public class TaskListView extends BaseListView {
     
     private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
 
-    private List<Task> selectedTasks = new ArrayList<>();
     private final WebDav myDav = new WebDav();
     
     private List<String> taskFilters;
@@ -247,7 +246,7 @@ public class TaskListView extends BaseListView {
                     URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(false,
                         task.getProcess());
                     if (!ServiceManager.getFileService().fileExist(imagesOrigDirectory)) {
-                        Helper.setErrorMessage("errorDirectoryNotFound", new Object[] {imagesOrigDirectory });
+                        Helper.setErrorMessage("errorDirectoryNotFound", imagesOrigDirectory);
                     }
                 } catch (Exception e) {
                     Helper.setErrorMessage("errorDirectoryRetrieve", new Object[] {"image" }, logger, e);
@@ -291,28 +290,6 @@ public class TaskListView extends BaseListView {
             Helper.setErrorMessage("multipleBatchesAssigned");
             return stopwatch.stop(this.stayOnCurrentPage);
         }
-    }
-
-    /**
-     * Get list of selected Tasks.
-     *
-     * @return List of selected Tasks
-     */
-    public List<Task> getSelectedTasks() {
-        Stopwatch stopwatch = new Stopwatch(this, "getSelectedTasks");
-        return stopwatch.stop(this.selectedTasks);
-    }
-
-    /**
-     * Set selected tasks: Set tasks in old list to false and set new list to true.
-     *
-     * @param selectedTasks
-     *            provided by data table
-     */
-    public void setSelectedTasks(List<Task> selectedTasks) {
-        Stopwatch stopwatch = new Stopwatch(this, "setSelectedTasks", "selectedTasks", Objects.toString(selectedTasks));
-        this.selectedTasks = selectedTasks;
-        stopwatch.stop();
     }
 
     /**
@@ -465,16 +442,6 @@ public class TaskListView extends BaseListView {
     }
 
     /**
-     * Check if it should hide correction tasks.
-     *
-     * @return boolean
-     */
-    public boolean isHideCorrectionTasks() {
-        Stopwatch stopwatch = new Stopwatch(this, "isHideCorrectionTasks");
-        return stopwatch.stop(((LazyTaskModel) this.lazyBeanModel).isHideCorrectionTasks());
-    }
-
-    /**
      * Set hide correction tasks.
      *
      * @param hideCorrectionTasks
@@ -485,16 +452,6 @@ public class TaskListView extends BaseListView {
             hideCorrectionTasks));
         ((LazyTaskModel)this.lazyBeanModel).setHideCorrectionTasks(hideCorrectionTasks);
         stopwatch.stop();
-    }
-
-    /**
-     * Get taskListPath.
-     *
-     * @return value of taskListPath
-     */
-    public String getTaskListPath() {
-        Stopwatch stopwatch = new Stopwatch(this, "getTaskListPath");
-        return stopwatch.stop(tasksPage);
     }
 
     /**

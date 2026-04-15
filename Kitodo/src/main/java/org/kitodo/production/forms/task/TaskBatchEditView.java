@@ -62,7 +62,7 @@ public class TaskBatchEditView extends BaseForm {
                 Task batchTask = ServiceManager.getTaskService().getById(id);
                 List<Batch> batches = batchTask.getProcess().getBatches();
                 if (batches.size() == 1) {
-                    Integer batchId = batches.get(0).getId();
+                    Integer batchId = batches.getFirst().getId();
                     List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(batchTask.getTitle(), batchId);
                     if (currentTasksOfBatch.size() > 1) {
                         this.batchHelper = new BatchTaskHelper(currentTasksOfBatch);
