@@ -30,7 +30,7 @@
                                   value="#{MassImportForm.file}"
                                   listener="#{MassImportForm.handleFileUpload}"
                                   allowTypes="/(\.|\/)(csv)$/"
-                                  sizeLimit="100000"
+                                  sizeLimit="1000000"
                                   skinSimple="true"
                                   update="recordsForm fileUploadForm"
                                   styleClass="input"
@@ -129,6 +129,8 @@
                                          styleClass="secondary remove-metadata-column"
                                          action="#{MassImportForm.removeMetadata(columnIndex)}"
                                          title="#{msgs.delete}"
+                                         process="@this"
+                                         partialSubmit="true"
                                          icon="fa fa-trash-o"
                                          update="recordsForm:recordsTableWrapper"/>
                     </f:facet>
@@ -150,6 +152,8 @@
                                          title="#{msgs['dataEditor.addMetadata.newMetadata']}"
                                          disabled="#{MassImportForm.records.size() eq 0}"
                                          style="margin: 3px"
+                                         process="@this"
+                                         partialSubmit="true"
                                          icon="fa fa-plus"
                                          styleClass="secondary"
                                          action="#{MassImportForm.addMetadataDialog.prepareMetadataTypes()}"
@@ -167,6 +171,8 @@
             <div>
                 <p:commandButton id="addCsvRecord"
                                  action="#{MassImportForm.addRecord}"
+                                 process="@this"
+                                 partialSubmit="true"
                                  title="#{msgs['massImport.addRow']}"
                                  value="#{msgs['massImport.addRow']}"
                                  icon="fa fa-plus"
@@ -191,7 +197,9 @@
                                        var="configuration"
                                        itemLabel="#{configuration.title}"
                                        itemValue="#{configuration}"/>
-                        <p:ajax update="recordsForm"/>
+                        <p:ajax process="@this"
+                                partialSubmit="true"
+                                update="recordsForm"/>
                     </p:selectOneMenu>
                     <!-- FIXME: this tooltip doesn't work! -->
                     <p:tooltip for="catalogueSelect"
