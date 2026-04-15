@@ -45,6 +45,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.services.dataeditor.DataEditorService;
@@ -672,6 +673,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     @Override
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
+            if (isDivisionUntyped()) {
+                logger.warn("Skipping metadata preservation for untyped division.");
+                return;
+            }
             if (Objects.nonNull(division)) {
                 division.getContentIds().clear();
                 division.setOrderlabel(null);
@@ -715,6 +720,18 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             container.metadata.add(metadataGroup);
             copy = false;
         }
+    }
+
+    private boolean isDivisionUntyped() {
+        if (division instanceof LogicalDivision logicalDivision) {
+            if (Objects.isNull(logicalDivision.getType()) || logicalDivision.getType().isBlank()) {
+                logicalDivision.getContentIds().clear();
+                logicalDivision.setOrderlabel(null);
+                logicalDivision.setLabel(null);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateDivisionFromProcessDetail(String key, ProcessSimpleMetadata processDetail) throws InvalidMetadataValueException {
