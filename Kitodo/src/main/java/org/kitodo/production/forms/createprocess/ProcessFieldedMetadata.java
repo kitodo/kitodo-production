@@ -673,9 +673,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     @Override
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
-            if (isDivisionUntyped()) {
-                return;
-            }
+            boolean untyped = isDivisionUntyped();
+
             if (Objects.nonNull(division)) {
                 division.getContentIds().clear();
                 division.setOrderlabel(null);
@@ -688,9 +687,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 if (row instanceof ProcessSimpleMetadata && specialFields.contains(id)
                         && ((ProcessSimpleMetadata) row).getSettings()
                         .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-                    updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
+                    if (!untyped || METADATA_KEY_LABEL.equals(id) || METADATA_KEY_ORDERLABEL.equals(id)) {
+                        updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
+                    }
                 } else {
-                    metadata.addAll(row.getMetadataWithFilledValues());
+                    if (!untyped) {
+                        metadata.addAll(row.getMetadataWithFilledValues());
+                    }
                 }
             }
             if (Objects.nonNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
@@ -721,14 +724,23 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
     }
 
+    public void filterToStructuralFields() {
+        treeNode.getChildren().removeIf(child -> {
+            ProcessDetail row = (ProcessDetail) child.getData();
+            String key = row.getMetadataID();
+
+            return !isStructuralKey(key);
+        });
+    }
+
+    private boolean isStructuralKey(String key) {
+        return METADATA_KEY_LABEL.equals(key)
+                || METADATA_KEY_ORDERLABEL.equals(key);
+    }
+
     private boolean isDivisionUntyped() {
         if (division instanceof LogicalDivision logicalDivision) {
-            if (Objects.isNull(logicalDivision.getType()) || logicalDivision.getType().isBlank()) {
-                logicalDivision.getContentIds().clear();
-                logicalDivision.setOrderlabel(null);
-                logicalDivision.setLabel(null);
-                return true;
-            }
+            return Objects.isNull(logicalDivision.getType()) || logicalDivision.getType().isBlank();
         }
         return false;
     }
