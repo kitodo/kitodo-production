@@ -152,7 +152,7 @@ public class MetadataPanel implements Serializable {
             logicalMetadataTable = createProcessFieldedMetadata(optionalStructure.get());
 
             if (isDivisionUntyped(optionalStructure.get())) {
-                logicalMetadataTable.filterToStructuralFields(); // 👈 NEW
+                logicalMetadataTable.filterToStructuralFields();
             }
 
             dataEditorForm.getAddMetadataDialog().prepareAddableMetadataForStructure(

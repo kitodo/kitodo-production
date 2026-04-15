@@ -674,12 +674,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
             boolean untyped = isDivisionUntyped();
-
-            if (Objects.nonNull(division)) {
-                division.getContentIds().clear();
-                division.setOrderlabel(null);
-                division.setLabel(null);
-            }
+            resetDivision();
             metadata.clear();
             for (TreeNode<Object> child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
@@ -724,6 +719,17 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
     }
 
+    private void resetDivision() {
+        if (Objects.nonNull(division)) {
+            division.getContentIds().clear();
+            division.setOrderlabel(null);
+            division.setLabel(null);
+        }
+    }
+
+    /**
+     * Restricts the visible metadata fields of this element to structural metadata only.
+     */
     public void filterToStructuralFields() {
         treeNode.getChildren().removeIf(child -> {
             ProcessDetail row = (ProcessDetail) child.getData();
