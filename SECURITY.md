@@ -2,7 +2,7 @@
 
 ## 1. Purpose and scope
 
-This policy defines how **KITODO e.V.** (GitHub orgnanisation: [https://github.com/kitodo](https://github.com/kitodo)) fulfils its obligations as an open‑source software steward under the EU **Cyber Resilience Act (CRA)** for all open‑source projects we systematically support on GitHub.
+This policy defines how **KITODO e.V.** (GitHub organization: [https://github.com/kitodo](https://github.com/kitodo)) fulfils its obligations as an open‑source software steward under the EU **Cyber Resilience Act (CRA)** for all open‑source projects that we systematically support on GitHub.
 
 It applies to:
 
@@ -12,7 +12,7 @@ It applies to:
 - All maintainers, core contributors, and staff acting on behalf of **KITODO e.V.**
 - All infrastructure we provide for development (e.g. GitHub repos, GitHub Actions)
 
-Hint: The other repositories under [KITODO](https://github.com/kitodo) are not subject to this regulation, as they are community driven, i.e. not actively maintainted by **KITODO e.V.**.
+Note: The other repositories under [KITODO](https://github.com/kitodo) are not subject to this regulation, as they are community-driven and not actively maintained by **KITODO e.V.**.
 
 ---
 
@@ -20,7 +20,7 @@ Hint: The other repositories under [KITODO](https://github.com/kitodo) are not s
 
 - **CRA Steward Lead**  
     - Overall owner of this policy; ensures CRA compliance.
-    - Fulfilled by @kitodo/kitodo-board.
+    - Held by @kitodo/kitodo-board.
 
 - **Security Contact**  
     - Handles vulnerability intake, coordination, and disclosure.  
@@ -62,7 +62,7 @@ For all in‑scope repositories:
 - **Dependency and artifact management**
     - Use Dependabot for dependency update PRs.
     - For container images or packages, store build configs in repo and, where possible, use reproducible builds.
-    - Document supported versions and end‑of‑support dates in dedicated `SUPPORTED_VERSIONS.md`.
+    - Document supported versions and end‑of‑support dates in dedicated `SUPPORTED_VERSIONS.md` file.
 
 ---
 
@@ -79,7 +79,7 @@ We provide and maintain:
 
     Link to `SECURITY.md` (= this [Security Policy](https://github.com/kitodo/kitodo-production/security/policy)) from the repository root.
 
-    Each in‑scope repo must contain a `SECURITY.md` (= this [Security Policy](https://github.com/kitodo/kitodo-production/security/policy) ) including:
+    Each in‑scope repo must contain a `SECURITY.md` file (= this [Security Policy](https://github.com/kitodo/kitodo-production/security/policy) ) including:
 
     - How to report vulnerabilities.
     - Expected acknowledgement time.
@@ -139,7 +139,7 @@ A security incident in the CRA sense may involve:
 
 General measures:
 
-- Maintainers must have 2nd factor enabled.
+- Maintainers must have two-factor authentication enabled.
 
 ### 5.1 Detection
 
@@ -150,7 +150,7 @@ General measures:
 
 ### 5.2 Initial response
 
-Try to react as fast as resonable possible:
+Try to react as fast as reasonable possible:
 
 - **Contain:**
     - Temporarily restrict repository access if needed.
@@ -162,7 +162,7 @@ Try to react as fast as resonable possible:
     - Capture timeline, affected components, suspected cause, and current status.
 
 - **Coordinate:**
-    - Incident management is led by @kitodo/kitodo-release-management in resposibility of @kitodo/kitodo-board.
+    - Incident management is led by @kitodo/kitodo-release-management in responsibility of @kitodo/kitodo-board.
 
 ---
 

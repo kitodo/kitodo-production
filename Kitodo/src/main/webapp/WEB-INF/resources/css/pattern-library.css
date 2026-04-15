@@ -961,6 +961,7 @@ body .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items {
 .ui-inputfield.ui-state-disabled::placeholder,
 .ui-selectonemenu.ui-state-disabled {
     opacity: initial;
+    pointer-events: auto;
 }
 
 body .ui-inputfield.ui-state-disabled,
