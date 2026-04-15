@@ -674,22 +674,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
             boolean untyped = isDivisionUntyped();
-
-            if (Objects.nonNull(division)) {
-                division.getContentIds().clear();
-                division.setOrderlabel(null);
-                division.setLabel(null);
-            }
+            resetDivision();
             metadata.clear();
             for (TreeNode<Object> child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
                 String id = row.getMetadataID();
                 if (row instanceof ProcessSimpleMetadata && specialFields.contains(id)
                         && ((ProcessSimpleMetadata) row).getSettings()
-                        .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-                    if (!untyped || METADATA_KEY_LABEL.equals(id) || METADATA_KEY_ORDERLABEL.equals(id)) {
-                        updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
-                    }
+                        .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV) && !untyped) {
+                    updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
                 } else {
                     if (!untyped) {
                         metadata.addAll(row.getMetadataWithFilledValues());
@@ -724,6 +717,17 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
     }
 
+    private void resetDivision() {
+        if (Objects.nonNull(division)) {
+            division.getContentIds().clear();
+            division.setOrderlabel(null);
+            division.setLabel(null);
+        }
+    }
+
+    /**
+     * Restricts the visible metadata fields of this element to structural metadata only.
+     */
     public void filterToStructuralFields() {
         treeNode.getChildren().removeIf(child -> {
             ProcessDetail row = (ProcessDetail) child.getData();
