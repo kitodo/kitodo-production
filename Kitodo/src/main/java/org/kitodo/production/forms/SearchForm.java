@@ -17,7 +17,6 @@ import java.util.Objects;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.model.SelectItem;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +28,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.forms.process.ProcessListView;
+import org.kitodo.production.forms.task.TaskListView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -71,21 +71,15 @@ public class SearchForm {
     private Boolean showInactiveProjects = false;
     private Boolean showClosedProcesses = false;
 
-    private final CurrentTaskForm taskForm;
-
     /**
-     * Constructor with inject process form.
-     * 
-     * @param taskForm injected reference to CurrentTaskForm instance
+     * Initializes SearchForm.
      */
-    @Inject
-    public SearchForm(CurrentTaskForm taskForm) {
+    public SearchForm() {
         this.stepstatus.addAll(ServiceManager.getFilterService().initStepStatus());
         this.projects = ServiceManager.getFilterService().initProjects();
         this.stepTitles = ServiceManager.getFilterService().initStepTitles();
         this.processPropertyTitles = ServiceManager.getFilterService().initProcessPropertyTitles();
         this.user.addAll(ServiceManager.getFilterService().initUserList());
-        this.taskForm = taskForm;
     }
 
     public List<String> getProjects() {
@@ -259,8 +253,7 @@ public class SearchForm {
      * @return filter as java.lang.String
      */
     public String filterTasks() {
-        taskForm.changeFilter(createFilter());
-        return taskForm.getTaskListPath();
+        return TaskListView.getViewPath(createFilter());
     }
 
     private String createFilter() {

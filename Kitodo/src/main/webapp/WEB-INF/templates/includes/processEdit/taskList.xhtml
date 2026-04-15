@@ -79,7 +79,7 @@
                     rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                     title="#{msgs.taskDetails}">
                 <f:param name="id" value="#{item.id}"/>
-                <f:param name="referer" value="processEdit?id=#{item.process.id}"/>
+                <f:param name="referer" value="processEdit"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
