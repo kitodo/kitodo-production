@@ -109,6 +109,7 @@ import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessExportDTO;
 import org.kitodo.production.enums.ExportFormat;
 import org.kitodo.production.enums.ProcessState;
+import org.kitodo.production.enums.SearchFetchMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -297,7 +298,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
             project -> showInactiveProjects || project.isActive()).map(Project::getId).collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.performIndexSearches();
+        query.applyIndexRestriction("id", SearchFetchMode.FETCH_ALL);
         return query;
     }
 
@@ -472,7 +473,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
-        query.performIndexSearches();
+        query.applyIndexRestriction("id", SearchFetchMode.FETCH_ALL);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -503,7 +504,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
-        query.performIndexSearches();
+        query.applyIndexRestriction("id", SearchFetchMode.FETCH_ALL);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -668,7 +669,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.performIndexSearches();
+        query.applyIndexRestriction("id", SearchFetchMode.FETCH_ALL);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -2508,20 +2509,25 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
         query.restrictToClient(sessionClientId);
-        query.performIndexSearches();
-
         query.addInnerJoin("project proj");
         query.defineSorting("id", SortOrder.ASCENDING);
-
+        Pair<Collection<Integer>, Boolean> indexFilter = applyIndexFiltering(query);
+        Collection<Integer> queryIds = indexFilter.getLeft();
+        if (queryIds == BeanQuery.NO_HIT) {
+            return Collections.emptyList();
+        }
+        boolean applyIndexFilterInJava = indexFilter.getRight();
         String hql = "SELECT process.id, process.title, process.creationDate, "
                 + "process.sortHelperImages, process.sortHelperDocstructs, process.sortHelperMetadata, "
                 + "proj.title, process.sortHelperStatus "
                 + query.formQueryWithoutSelect();
-
         List<Object[]> rows = dao.getProjectionByQuery(hql, query.getQueryParameters());
-
         List<ProcessExportDTO> result = new ArrayList<>(rows.size());
         for (Object[] row : rows) {
+            Integer processId = (Integer) row[0];
+            if (applyIndexFilterInJava && !queryIds.contains(processId)) {
+                continue;
+            }
             result.add(new ProcessExportDTO(
                     (Integer) row[0],        // id
                     (String) row[1],         // title
@@ -2535,4 +2541,21 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         }
         return result;
     }
+
+    private Pair<Collection<Integer>, Boolean> applyIndexFiltering(BeanQuery query) {
+        Collection<Integer> queryIds = null;
+        boolean applyIndexFilterInJava = false;
+        if (!query.getIndexQueries().isEmpty()) {
+            queryIds = query.performIndexSearches(SearchFetchMode.SCROLL);
+        }
+        if (Objects.nonNull(queryIds) && queryIds != BeanQuery.NO_HIT) {
+            if (queryIds.size() <= 10_000) {
+                query.addInCollectionRestriction("id", queryIds);
+            } else {
+                applyIndexFilterInJava = true;
+            }
+        }
+        return Pair.of(queryIds, applyIndexFilterInJava);
+    }
+
 }
