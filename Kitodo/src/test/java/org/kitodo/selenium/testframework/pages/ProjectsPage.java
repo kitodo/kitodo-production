@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kitodo.selenium.testframework.Browser.getCellsOfRow;
+import static org.kitodo.selenium.testframework.Browser.getGridData;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
@@ -330,7 +331,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
         await("Wait for project table row to be expanded").atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(elementId)).isDisplayed()));
         WebElement detailsTable = Browser.getDriver().findElement(By.id(elementId));
-        return getTableDataByColumn(detailsTable, 1);
+        return getGridData(detailsTable);
     }
 
     public List<String> getProjectTemplates() {
@@ -345,9 +346,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
         int index = triggerRowToggle(templatesTable, "Fourth template");
         WebElement detailsTable = Browser.getDriver()
                 .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateRowExpansionTable"));
-        List<String> details = getTableDataByColumn(detailsTable, 1);
-        details.addAll(getTableDataByColumn(detailsTable, 3));
-        return details;
+        return getGridData(detailsTable);
     }
 
     /**
