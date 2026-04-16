@@ -312,6 +312,15 @@ class KitodoDetailMap {
         const projection = this.createProjection(extent);
         // triggering cleanup code via "this.#map.setTarget(null)" does not seem necessary anymore and indeed
         // causes an error with PrimeFaces 13 when selecting a new image.
+        if (this.#map) {
+            // make last OpenLayers map forget canvas target
+            // (triggers OpenLayers cleanup code and allows garbage collection)
+            try {
+                this.#map.setTarget(null);
+            } catch (e) {
+                // no explicit error handling required
+            }
+        }
 
         // initialize new OpenLayers map
         this.#map = new ol.Map({
