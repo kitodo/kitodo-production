@@ -33,6 +33,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.enums.ExportFormat;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseListView;
 import org.kitodo.production.forms.DeleteProcessDialog;
@@ -134,6 +135,13 @@ public class ProcessListBaseView extends BaseListView {
             }
         }
         return stopwatch.stop(selectedProcesses);
+    }
+
+    private List<Integer> getSelectedProcessIds() {
+        return selectedProcesses.stream()
+                .map(Process::getId)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private LazyProcessModel getLazyProcessModel() {
@@ -323,15 +331,20 @@ public class ProcessListBaseView extends BaseListView {
     }
 
     /**
-     * Generates the current search result as an Excel file.
+     * Generates and downloads the current search result as an Excel file using the active filter,
+     * visibility flags (closed/inactive), and selection state (all selected, selected IDs, excluded IDs).
      */
     public void generateExcel() {
         Stopwatch stopwatch = new Stopwatch(this, "generateExcel");
         try {
-            ServiceManager.getProcessService().generateExcel(
+            ServiceManager.getProcessService().export(
                     this.filter,
                     this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects()
+                    this.isShowInactiveProjects(),
+                    ExportFormat.EXCEL,
+                    this.allSelected,
+                    getSelectedProcessIds(),
+                    this.excludedProcessIds
             );
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING,
@@ -341,15 +354,20 @@ public class ProcessListBaseView extends BaseListView {
     }
 
     /**
-     * Generates the current search result as a CSV file.
+     * Generates and downloads the current search result as a CSV file using the active filter,
+     * visibility flags (closed/inactive), and selection state (all selected, selected IDs, excluded IDs).
      */
     public void generateCsv() {
         Stopwatch stopwatch = new Stopwatch(this, "generateCsv");
         try {
-            ServiceManager.getProcessService().generateCsv(
+            ServiceManager.getProcessService().export(
                     this.filter,
                     this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects()
+                    this.isShowInactiveProjects(),
+                    ExportFormat.CSV,
+                    this.allSelected,
+                    getSelectedProcessIds(),
+                    this.excludedProcessIds
             );
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING,
@@ -359,15 +377,24 @@ public class ProcessListBaseView extends BaseListView {
     }
 
     /**
-     * Generate result as PDF.
+     * Generates and downloads the current search result as a PDF file using the active filter,
+     * visibility flags (closed/inactive), and selection state (all selected, selected IDs, excluded IDs).
      */
     public void generateResultAsPdf() {
         Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
         try {
-            ServiceManager.getProcessService().generatePdf(this.filter, this.isShowClosedProcesses(),
-                    this.isShowInactiveProjects());
+            ServiceManager.getProcessService().export(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects(),
+                    ExportFormat.PDF,
+                    this.allSelected,
+                    getSelectedProcessIds(),
+                    this.excludedProcessIds
+            );
         } catch (IOException | DocumentException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
         }
         stopwatch.stop();
     }

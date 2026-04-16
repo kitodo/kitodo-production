@@ -1146,39 +1146,13 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Generate result as PDF.
-     *
-     * @param filter
-     *            for generating search results
-     */
-    public void generatePdf(String filter,
-                            boolean showClosedProcesses,
-                            boolean showInactiveProjects)
-            throws IOException, DocumentException {
-        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.PDF);
-    }
-
-    public void generateExcel(String filter,
-                              boolean showClosedProcesses,
-                              boolean showInactiveProjects)
-            throws IOException, DocumentException {
-        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.EXCEL);
-    }
-
-    public void generateCsv(String filter,
-                            boolean showClosedProcesses,
-                            boolean showInactiveProjects)
-            throws IOException, DocumentException {
-        export(filter, showClosedProcesses, showInactiveProjects, ExportFormat.CSV);
-    }
-
-    /**
      * Generate result set.
      *
      * @param filter
      *            for generating search results
      */
-    public void export(String filter, boolean showClosedProcesses, boolean showInactiveProjects, ExportFormat format)
+    public void export(String filter, boolean showClosedProcesses, boolean showInactiveProjects, ExportFormat format,
+                       boolean allSelected, Collection<Integer> selectedProcessIds, Collection<Integer> excludedProcessIds)
             throws IOException, DocumentException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
@@ -1187,7 +1161,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                             filter,
                             showClosedProcesses,
                             showInactiveProjects,
-                            ServiceManager.getUserService().getSessionClientId()
+                            ServiceManager.getUserService().getSessionClientId(),
+                            allSelected,
+                            selectedProcessIds,
+                            excludedProcessIds
                     );
             ExternalContext response = prepareHeaderInformation(facesContext, format.getFilename());
             try (OutputStream out = response.getResponseOutputStream()) {
@@ -2488,30 +2465,33 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param includeClosed         whether to include closed processes
      * @param includeInactiveProjects whether to include inactive projects
      * @param sessionClientId       client ID to restrict the query
+     * @param allSelected whether all matching processes are selected
+     * @param selectedProcessIds IDs of explicitly selected processes if not all are selected
+     * @param excludedProcessIds IDs of explicitly excluded processes if all are selected
      * @return list of processes as export-ready DTOs
      */
     public List<ProcessExportDTO> getProcessesForExport(
             String filter,
             boolean includeClosed,
             boolean includeInactiveProjects,
-            int sessionClientId) {
+            int sessionClientId,
+            boolean allSelected,
+            Collection<Integer> selectedProcessIds,
+            Collection<Integer> excludedProcessIds) {
 
-        BeanQuery query = new BeanQuery(Process.class);
+        if (!allSelected && (Objects.isNull(selectedProcessIds) || selectedProcessIds.isEmpty())) {
+            return Collections.emptyList();
+        }
 
-        if (StringUtils.isNotBlank(filter)) {
-            query.restrictWithUserFilterString(filter);
-        }
-        if (!includeClosed) {
-            query.restrictToNotCompletedProcesses();
-        }
-        if (!includeInactiveProjects) {
-            query.addBooleanRestriction("project.active", Boolean.TRUE);
-        }
-        query.restrictToClient(sessionClientId);
-        query.performIndexSearches();
-
-        query.addInnerJoin("project proj");
-        query.defineSorting("id", SortOrder.ASCENDING);
+        BeanQuery query = createExportQuery(
+                filter,
+                includeClosed,
+                includeInactiveProjects,
+                sessionClientId,
+                allSelected,
+                selectedProcessIds,
+                excludedProcessIds
+        );
 
         String hql = "SELECT process.id, process.title, process.creationDate, "
                 + "process.sortHelperImages, process.sortHelperDocstructs, process.sortHelperMetadata, "
@@ -2534,5 +2514,42 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             ));
         }
         return result;
+    }
+
+    private BeanQuery createExportQuery(
+            String filter,
+            boolean includeClosed,
+            boolean includeInactiveProjects,
+            int sessionClientId,
+            boolean allSelected,
+            Collection<Integer> selectedProcessIds,
+            Collection<Integer> excludedProcessIds) {
+
+        BeanQuery query = new BeanQuery(Process.class);
+
+        if (StringUtils.isNotBlank(filter)) {
+            query.restrictWithUserFilterString(filter);
+        }
+        if (!includeClosed) {
+            query.restrictToNotCompletedProcesses();
+        }
+        if (!includeInactiveProjects) {
+            query.addBooleanRestriction("project.active", Boolean.TRUE);
+        }
+
+        if (allSelected) {
+            if (Objects.nonNull(excludedProcessIds) && !excludedProcessIds.isEmpty()) {
+                query.addNotInCollectionRestriction("id", excludedProcessIds);
+            }
+        } else {
+            query.addInCollectionRestriction("id", selectedProcessIds);
+        }
+
+        query.restrictToClient(sessionClientId);
+        query.performIndexSearches();
+        query.addInnerJoin("project proj");
+        query.defineSorting("id", SortOrder.ASCENDING);
+
+        return query;
     }
 }
