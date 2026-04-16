@@ -151,7 +151,7 @@ public class ProjectForm extends BaseForm {
      */
     public void setEditingFolder(Folder folder) {
         this.editingFolder = folder;
-        this.originalFileGroup = folder != null ? folder.getFileGroup() : null;
+        this.originalFileGroup = Objects.nonNull(folder) ? folder.getFileGroup() : null;
         this.generator = new FolderGenerator(folder);
     }
 
@@ -539,7 +539,13 @@ public class ProjectForm extends BaseForm {
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return getFolderList().stream()
+                .filter(folder -> StringUtils.isNotBlank(folder.getFileGroup()))
+                .collect(Collectors.toMap(
+                        Folder::getFileGroup,
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
     }
 
     /**
