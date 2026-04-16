@@ -68,7 +68,7 @@ public class ProjectForm extends BaseForm {
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
-
+    private String originalFileGroup;
     private Project baseProject;
 
     /**
@@ -151,6 +151,7 @@ public class ProjectForm extends BaseForm {
      */
     public void setEditingFolder(Folder folder) {
         this.editingFolder = folder;
+        this.originalFileGroup = folder != null ? folder.getFileGroup() : null;
         this.generator = new FolderGenerator(folder);
     }
 
@@ -325,6 +326,7 @@ public class ProjectForm extends BaseForm {
                         && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
         if (duplicate) {
             Helper.setErrorMessage("errorDuplicateFilegroup", new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            editingFolder.setFileGroup(originalFileGroup);
             return;
         }
 
