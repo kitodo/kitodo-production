@@ -273,14 +273,18 @@ public class StructurePanel implements Serializable {
      * Delete all currently selected physical divisons.
      */
     public void deleteSelectedPhysicalDivisions() {
-        if (Objects.isNull(selectedPhysicalNodes)) {
-            // there is nothing to do
-            return;
+        if (Objects.nonNull(selectedPhysicalNodes)) {
+            // iterate over selected tree nodes in physical tree
+            for (TreeNode selectedPhysicalNode : selectedPhysicalNodes) {
+                deleteSelectedPhysicalDivision(selectedPhysicalNode);
+            }
         }
-        for (TreeNode selectedPhysicalNode : selectedPhysicalNodes) {
-            deleteSelectedPhysicalDivision(selectedPhysicalNode);
+        if (Objects.nonNull(selectedLogicalNodes)) {
+            // iterate over selected tree nodes in logical tree
+            for (TreeNode selectedLogicalNode : selectedLogicalNodes) {
+                deleteSelectedPhysicalDivision(selectedLogicalNode);
+            }
         }
-
         int i = 1;
         for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             physicalDivision.setOrder(i);

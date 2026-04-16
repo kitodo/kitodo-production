@@ -898,6 +898,43 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verify that a media element can be deleted via the context menu option "delete media".
+     */
+    @Test
+    public void mediaCanBeRemovedTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until logical structure tree is available
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // page order is 2-1-3
+
+        // check first media node is page 2
+        assertEquals("2 : -", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0_0 .ui-treenode-label")).getText());
+
+        // select page 2 media element
+        metaDataEditor.selectStructureTreeNode("0_0", false, false);
+
+        // open context menu
+        metaDataEditor.openContextMenuForStructureTreeNode("0_0");
+
+        // click on menu entry "delete media"
+        metaDataEditor.clickStructureTreeContextMenuEntry("removeSelectedMedia");
+
+        // check that first media has changed to page 1
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(
+                By.cssSelector("#logicalTree\\:0_0 .ui-treenode-label")
+            ).getText().equals("1 : -"));
+    }
+
+    /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */
