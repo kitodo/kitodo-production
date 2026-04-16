@@ -1922,15 +1922,59 @@ body .functional-metadata-wrapper .help-button .ui-button-text {
     float: unset;
 }
 
-#fileUploadForm .ui-fileupload .ui-fileupload-content,
-#fileUploadForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files {
+#fileUploadForm\:uploadWrapper {
+    margin: 0;
+}
+
+#fileUploadForm\:uploadWrapper_content {
+    padding: 0;
+}
+
+#fileUploadForm .ui-fileupload .ui-fileupload-content {
     border: none;
+}
+
+#fileUploadForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row {
+    border: 0 1px solid var(--focused-blue);
+}
+
+#fileUploadForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row:first-child {
+    border-top: 1px solid var(--focused-blue);
+    border-top-radius: var(--default-border-radius);
+}
+
+#fileUploadForm .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-row:last-child {
+    border-bottom: 1px solid var(--focused-blue);
+    border-bottom-radius: var(--default-border-radius);
 }
 
 
 /*----------------------------------------------------------------------
 Mass import
 ----------------------------------------------------------------------*/
+
+#massImportTab,
+#recordsForm\:recordsTableWrapper {
+    height: 100%;
+}
+
+#massImportTab #fileUploadForm {
+    height: 160px;
+    overflow-y: auto;
+}
+
+#massImportTab #recordsForm {
+    height: calc(100% - 160px);
+    overflow-y: hidden;
+}
+
+#massImportTab #recordsForm\:recordsTable {
+    height: calc(100% - 80px);
+}
+
+#massImportTab .ui-datatable-scrollable-body {
+    height: calc(100% - 50px);
+}
 
 #fileUploadForm\:fileUploadButtonWrapper {
     padding: 0;
@@ -2036,7 +2080,6 @@ Mass import
 #fileUploadForm\:separatorCharacterWrapper .separator-selection {
     display: inline-block;
     margin-right: var(--default-double-size);
-    width: 45%;
 }
 
 #fileUploadForm\:skipEmptyColumnsWrapper {
@@ -2094,8 +2137,12 @@ Mass import
     padding-right: var(--default-half-size);
 }
 
-#fileUploadForm, #searchEditForm {
+#searchEditForm {
     padding: 0 var(--default-double-size);
+}
+
+#fileUploadForm\:csvParserOptions_content {
+    padding: 0;
 }
 
 #catalogSearchForm div.ui-panelgrid-cell {

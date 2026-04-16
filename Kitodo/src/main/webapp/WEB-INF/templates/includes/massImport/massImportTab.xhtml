@@ -22,7 +22,7 @@
         <p:panelGrid layout="grid"
                      id="fileUploadButtonWrapper"
                      columns="2">
-            <p:panel>
+            <p:panel id="uploadWrapper">
                 <h:panelGroup style="display: inline-block;">
                     <p:outputLabel for="csvFileUpload"
                                    value="#{msgs['massImport.csvFileUpload']}"/>
@@ -40,23 +40,10 @@
                                   chooseIcon="fa fa-plus fa-lg"
                                   uploadIcon="fa fa-upload fa-lg"
                                   cancelIcon="fa fa-times fa-lg"/>
-
-                </h:panelGroup>
-                <h:panelGroup id="skipEmptyColumnsWrapper">
-                    <p:outputLabel for="skipEmptyColumns"
-                                   value="#{msgs['massImport.skipEmptyColumns']}"/>
-                    <p:selectBooleanCheckbox id="skipEmptyColumns"
-                                             disabled="#{empty MassImportForm.records}"
-                                             value="#{MassImportForm.skipEmptyColumns}"
-                                             styleClass="switch input">
-                        <p:ajax event="change"
-                                listener="#{MassImportForm.parseCsvLines()}"
-                                update="recordsForm:recordsTableWrapper"/>
-                    </p:selectBooleanCheckbox>
                 </h:panelGroup>
             </p:panel>
 
-            <p:panel>
+            <p:panel id="csvParserOptions">
                 <!-- separator option to parse metadata groups inside individual CSV cells;
                      IMPORTANT: does not support nested groups, yet! -->
                 <h:panelGroup id="separatorCharacterWrapper"
@@ -72,8 +59,22 @@
                             <f:selectItems value="#{MassImportForm.csvSeparatorCharacters}"/>
                             <p:ajax event="change"
                                     listener="#{MassImportForm.parseCsvLines()}"
-                                    update="recordsForm:recordsTableWrapper recordsForm:catalogSelectionWrapper fileUploadForm:groupEntrySeparator"/>
+                                    update="recordsForm:recordsTableWrapper recordsForm:catalogSelectionWrapper fileUploadForm:groupEntrySeparator massImportButtonForm"/>
                         </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="skipEmptyColumnsWrapper"
+                                  styleClass="separator-selection">
+                        <p:outputLabel for="skipEmptyColumns"
+                                       value="#{msgs['massImport.skipEmptyColumns']}"/>
+                        <p:selectBooleanCheckbox id="skipEmptyColumns"
+                                                 disabled="#{empty MassImportForm.records}"
+                                                 value="#{MassImportForm.skipEmptyColumns}"
+                                                 styleClass="switch input">
+                            <p:ajax event="change"
+                                    listener="#{MassImportForm.parseCsvLines()}"
+                                    update="recordsForm:recordsTableWrapper"/>
+                        </p:selectBooleanCheckbox>
                     </h:panelGroup>
 
                     <h:panelGroup styleClass="separator-selection">
@@ -90,7 +91,7 @@
                                           itemDescription="Please select a separator character to parse CSV cell contents into Kitodo metadata groups"/>
                             <f:selectItems value="#{MassImportForm.metadataGroupEntrySeparators}"/>
                             <p:ajax event="change"
-                                    update="recordsForm:recordsTableWrapper recordsForm:catalogSelectionWrapper"/>
+                                    update="recordsForm:recordsTableWrapper recordsForm:catalogSelectionWrapper massImportButtonForm"/>
                         </p:selectOneMenu>
                     </h:panelGroup>
                 </h:panelGroup>
@@ -109,14 +110,14 @@
             <p:dataTable id="recordsTable"
                          scrollable="true"
                          resizableColumns="false"
-                         scrollHeight="480"
+                         scrollHeight="calc(100% - 80px)"
                          editable="true"
                          editMode="cell"
                          emptyMessage="#{msgs['noRecordsFound']}"
                          value="#{MassImportForm.records}"
                          var="record">
                 <p:ajax event="cellEdit"
-                        update="recordsForm:recordsTable"/>
+                        update="recordsForm:recordsTable massImportButtonForm"/>
                 <!--@elvariable id="columnIndex" type="java.lang.Integer"-->
                 <p:columns var="metadataKey"
                            columnIndexVar="columnIndex"
@@ -141,7 +142,7 @@
                         </f:facet>
                         <f:facet name="input">
                             <p:inputText value="#{record.csvCells.get(columnIndex).value}">
-                                <p:ajax update="recordsForm:recordsTable"/>
+                                <p:ajax update="recordsForm:recordsTable massImportButtonForm"/>
                             </p:inputText>
                         </f:facet>
                     </p:cellEditor>
@@ -165,7 +166,9 @@
                                      styleClass="secondary"
                                      title="#{msgs.delete}"
                                      icon="fa fa-trash-o"
-                                     update="recordsForm:recordsTableWrapper massImportButtonForm:importButton  fileUploadForm:skipEmptyColumns"/>
+                                     process="@this"
+                                     partialSubmit="true"
+                                     update="recordsForm:recordsTableWrapper massImportButtonForm:importButton fileUploadForm:skipEmptyColumns"/>
                 </p:column>
             </p:dataTable>
             <div>
@@ -199,7 +202,7 @@
                                        itemValue="#{configuration}"/>
                         <p:ajax process="@this"
                                 partialSubmit="true"
-                                update="recordsForm"/>
+                                update="recordsForm massImportButtonForm"/>
                     </p:selectOneMenu>
                     <!-- FIXME: this tooltip doesn't work! -->
                     <p:tooltip for="catalogueSelect"
