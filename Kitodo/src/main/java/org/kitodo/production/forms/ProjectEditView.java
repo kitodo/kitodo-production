@@ -70,7 +70,7 @@ public class ProjectEditView extends BaseEditView {
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
-
+    private String originalFileGroup;
     private Project baseProject;
     /**
      * The folder currently under edit in the pop-up dialog.
@@ -123,6 +123,7 @@ public class ProjectEditView extends BaseEditView {
      */
     public void setEditingFolder(Folder folder) {
         this.editingFolder = folder;
+        this.originalFileGroup = Objects.nonNull(folder) ? folder.getFileGroup() : null;
         this.generator = new FolderGenerator(folder);
     }
 
@@ -282,6 +283,7 @@ public class ProjectEditView extends BaseEditView {
                         && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
         if (duplicate) {
             Helper.setErrorMessage("errorDuplicateFilegroup", new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            editingFolder.setFileGroup(originalFileGroup);
             return;
         }
 
@@ -494,7 +496,13 @@ public class ProjectEditView extends BaseEditView {
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return getFolderList().stream()
+                .filter(folder -> StringUtils.isNotBlank(folder.getFileGroup()))
+                .collect(Collectors.toMap(
+                        Folder::getFileGroup,
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
     }
 
 
