@@ -89,7 +89,7 @@
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>4.40.0</selenium.version>
         <spring.security.version>6.5.9</spring.security.version>
-        <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
+        <flyway-maven-plugin.version>12.3.0</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
         <pitest.version>1.4.10</pitest.version>
