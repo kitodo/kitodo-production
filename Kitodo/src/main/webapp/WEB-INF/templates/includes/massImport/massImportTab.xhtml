@@ -106,12 +106,12 @@
                       layout="block">
             <p:outputLabel for="recordsTable"
                            value="#{MassImportForm.getDataRecordLabel()}"/>
-            <!-- FIXME: our custom CSS seems to break 'frozenColumns="1"' and 'scrollWidth="800"' -->
+            <!-- FIXME: cell editing currently does not work after CSV upload and thus has to be deactivated in that case -->
             <p:dataTable id="recordsTable"
                          scrollable="true"
                          resizableColumns="false"
                          scrollHeight="calc(100% - 80px)"
-                         editable="true"
+                         editable="#{MassImportForm.getFile() eq null}"
                          editMode="cell"
                          emptyMessage="#{msgs['noRecordsFound']}"
                          value="#{MassImportForm.records}"
@@ -145,7 +145,7 @@
                             <p:inputText value="#{record.csvCells.get(columnIndex).value}">
                                 <p:ajax partialSubmit="true"
                                         process="@this"
-                                        update="massImportButtonForm"/>
+                                        update="recordsForm:recordsTable"/>
                             </p:inputText>
                         </f:facet>
                     </p:cellEditor>
