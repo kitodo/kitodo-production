@@ -85,14 +85,16 @@
         <div class="select-selector">
             <p:panelGrid>
                 <p:row>
-                    <p:button id="goToProcesses"
-                              value="#{msgs['processes']}"
-                              styleClass="primary right"
-                              outcome="/pages/processes?tabId=processTab&amp;faces-redirect=true"/>
-                    <p:commandButton id="close"
-                                     value="#{msgs.close}"
-                                     styleClass="secondary right"
-                                     onclick="PF('massImportResultDialog').hide();"/>
+                    <h:form id="massImportResultDialogButtonForm">
+                        <p:button id="goToProcesses"
+                                  value="#{msgs['processes']}"
+                                  styleClass="primary right"
+                                  outcome="/pages/processes?tabId=processTab&amp;faces-redirect=true"/>
+                        <p:commandButton id="close"
+                                         value="#{msgs.close}"
+                                         styleClass="secondary right"
+                                         onclick="PF('massImportResultDialog').hide();"/>
+                    </h:form>
                 </p:row>
             </p:panelGrid>
         </div>
