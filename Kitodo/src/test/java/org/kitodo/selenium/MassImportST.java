@@ -13,6 +13,8 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,6 +36,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.MassImportPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 public class MassImportST extends BaseTestSelenium {
@@ -134,6 +137,30 @@ public class MassImportST extends BaseTestSelenium {
         csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
                 .findElements(By.tagName("tr"));
         assertEquals(2, csvRows.size(), "Row not removed correctly");
+    }
+
+    /**
+     * Tests whether editing cell content in the mass import table works correctly.
+     * @throws InterruptedException when thread is interrupted during sleep
+     */
+    @Test
+    public void changeMetadataValue() throws InterruptedException {
+        massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
+        Thread.sleep(Browser.getDelayAfterLogout());
+        WebElement cell = Browser.getDriver().findElement(By.className("ui-editable-column"));
+        assertNotNull(cell, "No editable cell found before editing");
+        assertEquals("123", cell.getText(), "Incorrect cell value before editing");
+        cell.click();
+        WebElement input = Browser.getDriver().findElement(By.cssSelector(".ui-cell-editor-input > input"));
+        assertTrue(input.isDisplayed(), "Cell editor not displayed");
+        input.clear();
+        input.sendKeys("456");
+        Thread.sleep(Browser.getDelayAfterLogout());
+        input.sendKeys(Keys.TAB);
+        Thread.sleep(Browser.getDelayAfterLogout());
+        cell = Browser.getDriver().findElement(By.className("ui-editable-column"));
+        assertNotNull(cell, "No editable cell found after editing");
+        assertEquals("456", cell.getText(), "Incorrect cell value after editing");
     }
 
     private static File createCsvFile() throws IOException {
