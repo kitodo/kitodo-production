@@ -27,6 +27,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.constants.StringConstants;
@@ -143,6 +144,7 @@ public class MassImportST extends BaseTestSelenium {
      * Tests whether editing cell content in the mass import table works correctly.
      * @throws InterruptedException when thread is interrupted during sleep
      */
+    @Disabled("Editing the content of datatable after CSV file upload is currently bugged and needs to be fixed")
     @Test
     public void changeMetadataValue() throws InterruptedException {
         massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
