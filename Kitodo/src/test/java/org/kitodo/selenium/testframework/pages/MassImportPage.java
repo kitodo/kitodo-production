@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 
 public class MassImportPage extends Page<MassImportPage> {
-    private static final String CATALOG_SELECTION = "editForm:catalogueSelect";
+    private static final String CATALOG_SELECTION = "recordsForm:catalogueSelect";
     private static final String SELECT_FILE_BUTTON_BAR = ".ui-fileupload-buttonbar .ui-button";
-    private static final String UPLOAD_FILE_INPUT = "editForm:csvFileUpload_input";
+    private static final String UPLOAD_FILE_INPUT = "fileUploadForm:csvFileUpload_input";
     private static final String GBV = "GBV";
     private static final String OK_BUTTON_ID = "buttonForm:okButton";
 

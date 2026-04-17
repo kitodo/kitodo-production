@@ -13,6 +13,8 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.constants.StringConstants;
@@ -34,6 +37,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.MassImportPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 public class MassImportST extends BaseTestSelenium {
@@ -46,9 +50,9 @@ public class MassImportST extends BaseTestSelenium {
     private static MassImportPage massImportPage;
     private static final String CSV_UPLOAD_FILENAME = "test_import";
     private static final String CSV_UPLOAD_FILE_EXTENSION = ".csv";
-    private static final String CSV_CELL_SELECTOR = "#editForm\\:recordsTable_data tr .ui-cell-editor-output";
-    private static final String RECORDS_TABLE = "editForm:recordsTable";
-    private static final String CSV_SEPARATOR = "editForm:csvSeparator";
+    private static final String CSV_CELL_SELECTOR = "#recordsForm\\:recordsTable_data tr .ui-cell-editor-output";
+    private static final String RECORDS_TABLE = "recordsForm:recordsTable";
+    private static final String CSV_SEPARATOR = "fileUploadForm:csvSeparator";
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -88,7 +92,7 @@ public class MassImportST extends BaseTestSelenium {
         Thread.sleep(Browser.getDelayAfterLogout());
         massImportPage.selectCatalogueGbv();
         Thread.sleep(Browser.getDelayAfterLogout());
-        List<WebElement> csvRows = Browser.getDriver().findElement(By.id("editForm:recordsTable_data"))
+        List<WebElement> csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
                 .findElements(By.tagName("tr"));
         assertEquals(3, csvRows.size(), "CSV file not parsed correctly");
         List<WebElement> updatedCsvCells = Browser.getDriver().findElements(By.cssSelector(CSV_CELL_SELECTOR));
@@ -98,6 +102,67 @@ public class MassImportST extends BaseTestSelenium {
         List<WebElement> csvCells = Browser.getDriver().findElements(By.cssSelector(CSV_CELL_SELECTOR));
         assertEquals(3, csvCells.size(), "CSV lines should not be segmented correctly into multiple cells when using wrong CSV "
                 + "separator");
+    }
+
+    /**
+     * Tests whether adding a new record to the table correctly increases the number of rows.
+     * @throws InterruptedException when thread is interrupted during sleep
+     */
+    @Test
+    public void addRowTest() throws InterruptedException {
+       massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
+       Thread.sleep(Browser.getDelayAfterLogout());
+       List<WebElement> csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+                .findElements(By.tagName("tr"));
+       assertEquals(3, csvRows.size(), "Incorrect number of rows");
+       Browser.getDriver().findElement(By.id("recordsForm:addCsvRecord")).click();
+       Thread.sleep(Browser.getDelayAfterLogout());
+       csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+               .findElements(By.tagName("tr"));
+       assertEquals(4, csvRows.size(), "Row not added correctly");
+    }
+
+    /**
+     * Tests whether removing a record from the table correctly decreases the number of rows.
+     * @throws InterruptedException when thread is interrupted during sleep
+     */
+    @Test
+    public void removeRowTest() throws InterruptedException {
+        massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
+        Thread.sleep(Browser.getDelayAfterLogout());
+        List<WebElement> csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+                .findElements(By.tagName("tr"));
+        assertEquals(3, csvRows.size(), "Incorrect number of rows");
+        Browser.getDriver().findElement(By.cssSelector("td.remove-column button.ui-button")).click();
+        Thread.sleep(Browser.getDelayAfterLogout());
+        csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+                .findElements(By.tagName("tr"));
+        assertEquals(2, csvRows.size(), "Row not removed correctly");
+    }
+
+    /**
+     * Tests whether editing cell content in the mass import table works correctly.
+     * @throws InterruptedException when thread is interrupted during sleep
+     */
+    @Disabled("Editing the content of datatable after CSV file upload is currently bugged and needs to be fixed")
+    @Test
+    public void changeMetadataValue() throws InterruptedException {
+        massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
+        Thread.sleep(Browser.getDelayAfterLogout());
+        WebElement cell = Browser.getDriver().findElement(By.className("ui-editable-column"));
+        assertNotNull(cell, "No editable cell found before editing");
+        assertEquals("123", cell.getText(), "Incorrect cell value before editing");
+        cell.click();
+        WebElement input = Browser.getDriver().findElement(By.cssSelector(".ui-cell-editor-input > input"));
+        assertTrue(input.isDisplayed(), "Cell editor not displayed");
+        input.clear();
+        input.sendKeys("456");
+        Thread.sleep(Browser.getDelayAfterLogout());
+        input.sendKeys(Keys.TAB);
+        Thread.sleep(Browser.getDelayAfterLogout());
+        cell = Browser.getDriver().findElement(By.className("ui-editable-column"));
+        assertNotNull(cell, "No editable cell found after editing");
+        assertEquals("456", cell.getText(), "Incorrect cell value after editing");
     }
 
     private static File createCsvFile() throws IOException {
