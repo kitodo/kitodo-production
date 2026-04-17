@@ -40,14 +40,17 @@ PrimeFaces.widget.DataTable.prototype.updateData = (function () {
     };
 })();
 
-$(document).on("click", ".allSelectable .ui-chkbox-all .ui-chkbox-box", function () {
-    let tableId = $(this).closest(".allSelectable").attr('id').split(":").at(-1);
-    let table = new PF(tableId);
-    if ($(this).hasClass("ui-state-active")) {
-        new PF('allSelectableOverlayPanel').show();
+function handleToggleSelect() {
+    let table = PF('processesTable');
+    const tableElement = table.jq;
+    const checkbox = tableElement.find("#processesTabView\\:processesForm\\:processesTable_head_checkbox");
+    if ($(checkbox).hasClass("ui-state-active")){
+        table.unselectAllRows();
+        PF('allSelectableOverlayPanel').show(checkbox);
+    } else {
+        table.unselectAllRows();
     }
-    table.unselectAllRows();
-});
+}
 
 $(window).on("load", function () {
     $.ready.then(function () {

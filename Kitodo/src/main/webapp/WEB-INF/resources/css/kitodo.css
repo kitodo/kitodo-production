@@ -959,7 +959,8 @@ body #filterInputForm\:filterfield {
     padding-bottom: var(--input-padding);
 }
 
-body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon {
+body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon,
+body #filterOptionsFormWrapper .ui-selectmanycheckbox.switch .ui-chkbox-icon {
     transform: translate(-55%, -105%);
 }
 
@@ -1395,6 +1396,8 @@ body .statusColumn .ui-button {
 #configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-label::after {
     font-family: 'FontAwesome';
     content: '\f0db';
+    display: inline;
+    visibility: visible;
 }
 
 #configureColumnsForm.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header,
@@ -2694,6 +2697,17 @@ form#metadata div label,
     overflow-y: scroll;
 }
 
+#dialogAddDocStrucTypeForm .ui-inputtext,
+#dialogAddDocStrucTypeForm .ui-selectonemenu,
+#dialogAddDocStrucTypeForm .ui-spinner {
+    width: calc(100% - var(--default-full-size));
+}
+
+#dialogAddDocStrucTypeForm\:elementsToAddSpinner {
+    margin-bottom: var(--default-full-size);
+}
+
+
 #ltpValidationReportDialog {
     top: 50px;
 }
@@ -2808,6 +2822,10 @@ form#metadata div label,
 
 #editFolderDialog .dialogFieldWrapper td {
     vertical-align: top;
+}
+
+#editFolderDialog .ui-panelgrid-cell {
+    width: 100%;
 }
 
 #uploadFileDialog {
@@ -3598,6 +3616,11 @@ button.settings-loaded-task::after {
     display: block;
 }
 
+#metadataAccordion\:logicalMetadataHeader .ui-panelgrid-content .ui-panelgrid-cell {
+    padding: 0;
+    width: auto;
+}
+
 #metadataAccordion.separateStructure > .ui-accordion-content {
     height: calc(100% - 2 * var(--input-height));
 }
@@ -3726,10 +3749,6 @@ button.settings-loaded-task::after {
 #editForm\:validateWrapper .ui-outputlabel {
     display: inline-block;
     margin-left: var(--default-half-size);
-}
-
-#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
-    display: inline-table;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio td {
@@ -4865,6 +4884,14 @@ body .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon::before {
 #editForm\:importConfigurationTabView\:detailsTab .cell-dummy {
     height: 54px;
     padding: 0;
+}
+
+#editForm\:searchTabView\:processSearch-grid .ui-g > .ui-panelgrid-cell:first-child {
+    width: 200px;
+}
+
+#editForm\:searchTabView\:processSearch-grid .ui-g > .ui-panelgrid-cell:not(:first-child) {
+    width: auto;
 }
 
 .help-button {

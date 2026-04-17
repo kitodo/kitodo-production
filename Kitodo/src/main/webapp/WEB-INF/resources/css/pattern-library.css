@@ -591,6 +591,11 @@ body .ui-widget-content .ui-inputfield {
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+body .ui-selectoneradio div[role="radio"] {
+    display: block;
+    padding: var(--group-margin) 0;
+}
+
 body .ui-picklist-list-wrapper {
     padding: var(--input-padding);
 }
@@ -693,7 +698,8 @@ body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label-container {
 
 body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label-container .ui-selectcheckboxmenu-label,
 body .ui-selectonemenu .ui-selectonemenu-label,
-body .ui-selectonemenu .ui-selectonemenu-trigger {
+body .ui-selectonemenu .ui-selectonemenu-trigger,
+body .ui-selectoneradio {
     padding: .5em var(--input-padding);
 }
 
@@ -738,15 +744,20 @@ body .ui-inputfield.ui-selectonelistbox,
 body .ui-inputfield.ui-selectmanymenu {
     display: inline-block;
     height: auto;
-    padding-top: .5em;
-    padding-bottom: .5em;
 }
 
 body .ui-selectonelistbox .ui-selectlistbox-listcontainer .ui-selectlistbox-list .ui-selectlistbox-item,
 body .ui-selectmanymenu .ui-selectlistbox-listcontainer .ui-selectlistbox-list .ui-selectlistbox-item {
     margin: 0;
     border: 0 none;
-    padding: 0;
+    padding: var(--group-margin) 0;
+}
+
+body .ui-selectoneradio,
+body .ui-selectmanycheckbox {
+    display: inline-block;
+    height: auto;
+    border-radius: 4px;
 }
 
 .ui-selectoneradio td > .ui-radiobutton,
@@ -789,6 +800,7 @@ body .ui-chkbox:not(.switch) .ui-chkbox-box {
     border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);
     height: var(--default-full-size);
+    min-width: var(--default-full-size);
     width: var(--default-full-size);
 }
 
@@ -834,14 +846,14 @@ body .ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon::b
     display: none;
 }
 
-body .ui-chkbox.switch .ui-chkbox-box .ui-chkbox-icon::before {
+body .switch .ui-chkbox-box .ui-chkbox-icon::before {
     display: none;
 }
 
 body .ui-chkbox.switch .ui-chkbox-box,
-body .ui-chkbox.switch .ui-chkbox-box,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box,
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover,
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover {
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-hover {
     width: var(--input-height);
     height: var(--input-height);
     border: none;
@@ -850,7 +862,8 @@ body .ui-chkbox.switch .ui-chkbox-box.ui-state-hover {
     cursor: pointer;
 }
 
-body .ui-chkbox.switch .ui-chkbox-icon {
+body .ui-chkbox.switch .ui-chkbox-icon,
+body .ui-selectmanycheckbox.switch .ui-chkbox-icon {
     border: solid 2px var(--pure-white);
     border-radius: 25px;
     box-sizing: border-box;
@@ -864,7 +877,8 @@ body .ui-chkbox.switch .ui-chkbox-icon {
     width: 70%;
 }
 
-body .ui-chkbox.switch .ui-chkbox-icon:after {
+body .ui-chkbox.switch .ui-chkbox-icon:after,
+body .ui-selectmanycheckbox.switch .ui-chkbox-icon:after {
     background: var(--orange);
     border: solid 2px var(--pure-white);
     border-radius: 50%;
@@ -881,28 +895,35 @@ body .ui-chkbox.switch .ui-chkbox-icon:after {
 }
 
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-active,
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-active.ui-state-hover {
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active,
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-active.ui-state-hover,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active.ui-state-hover {
     background: var(--green);
 }
 
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
     background: var(--pure-white);
 }
 
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
     background: var(--green);
     left: calc(100% - 14px + 2px);
 }
 
 body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled,
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-disabled,
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
     background: var(--cloudy-gray);
     border-color: var(--medium-gray);
     cursor: default;
     opacity: initial;
 }
 
-body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
+body .ui-chkbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon,
+body .ui-selectmanycheckbox.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
     background: transparent;
     border-color: var(--medium-gray);
 }
@@ -1235,45 +1256,13 @@ body .ui-paginator .ui-paginator-current {
 .row-expansion-wrapper {
     animation-name: row-expansion-animation;
     animation-duration: 0.5s;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.row-expansion-wrapper tr.ui-widget-content,
-.row-expansion-wrapper tr.ui-widget-content .ui-panelgrid-cell {
-    background: transparent none !important;
-}
-
-.row-expansion-wrapper tr.ui-widget-content td.label {
-    display: inline-block;
-    padding-left: 0 !important;
+body .row-expansion-wrapper .ui-panelgrid-cell {
+    background: transparent;
     vertical-align: top;
-}
-
-.row-expansion-wrapper .ui-panelgrid-cell {
-    vertical-align: top;
-}
-
-.row-expansion-wrapper > table > tbody,
-.row-expansion-wrapper > table > tbody > tr {
-    display: inline-block;
-    width: 100%;
-}
-
-.row-expansion-wrapper > table > tbody > tr {
-}
-
-.row-expansion-wrapper > table > tbody > tr > td {
-    display: inline-block;
-    width: 50%;
-}
-
-.row-expansion-wrapper > table table table {
-    table-layout: fixed;
-    width: 100%;
-}
-
-.row-expansion-wrapper > table table table tbody,
-.row-expansion-wrapper > table table table tr {
-    width: 100%;
 }
 
 .row-expansion-wrapper td.actionsColumn {
@@ -1282,13 +1271,10 @@ body .ui-paginator .ui-paginator-current {
     float: none;
 }
 
-.row-expansion-wrapper {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.expansion-column > tbody > tr > td.label {
+.ui-expanded-row-content .row-expansion-wrapper .ui-panelgrid-cell.label {
     font-weight: bold;
+    max-width: 220px;
+    padding-left: 0;
 }
 
 .ui-panelgrid-cell .project-template-action {
@@ -1427,12 +1413,13 @@ body .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-r
     padding: 0;
 }
 
-.ui-dialog .ui-panelgrid-cell div,
+.ui-dialog .dialogFieldWrapper > div,
 .ui-dialog .ui-panelgrid-cell > input {
     margin-bottom: var(--default-full-size);
 }
 
-body .ui-dialog .ui-dialog-content {
+body .ui-dialog .ui-dialog-content,
+body .ui-dialog.ui-confirm-dialog .ui-dialog-content {
     padding: var(--default-double-size) 0;
 }
 
@@ -1519,6 +1506,10 @@ body .ui-dialog .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
     margin-right: var(--default-full-size);
 }
 
+.column-width-auto {
+    width: auto;
+}
+
 .ui-datatable .ui-column-resizer {
     margin-left: 4px;
     margin-right: 4px;
@@ -1581,27 +1572,6 @@ body .ui-dialog .ui-datatable tbody.ui-datatable-data tr td.actionsColumn {
 .ui-dialog div.not-scrollable.dialogFieldWrapper {
     max-height: initial;
     overflow-y: hidden;
-}
-
-#dialogAddDocStrucTypeForm\:dialogAddDocStrucTypeFormContent {
-    overflow-y: hidden;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-panelgrid-cell {
-    vertical-align: top;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content > .ui-panelgrid-cell {
-    width: 50%;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid .ui-selectonemenu,
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid > tbody > .ui-widget-content:first-child > .ui-panelgrid-cell > table {
-    width: 90%;
-}
-
-#dialogAddDocStrucTypeForm\:docStrucTypeGrid tr.ui-widget-content:not(:first-child) {
-    border: 0;
 }
 
 .ui-dialog.legal-dialog button.secondary.right {

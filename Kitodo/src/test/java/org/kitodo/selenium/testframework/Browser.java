@@ -242,6 +242,15 @@ public class Browser {
         return cells.get(columnIndex).getText();
     }
 
+    public static List<String> getGridData(WebElement grid) {
+        List<WebElement> items = grid.findElements(By.cssSelector(".ui-panelgrid-cell.value"));
+        List<String> data = new ArrayList<>();
+        for (WebElement item : items) {
+            data.add(item.getText());
+        }
+        return data;
+    }
+
     public static void closeDialog(WebElement dialog) {
         dialog.findElement(By.className("close")).click();
     }
