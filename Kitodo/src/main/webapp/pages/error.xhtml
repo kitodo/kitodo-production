@@ -16,7 +16,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:of="http://omnifaces.org/functions">
+        xmlns:o="omnifaces">
 
     <ui:define name="content">
 
@@ -31,7 +31,7 @@
 
             <h:panelGroup layout="block">
                 <ul id="errorDetails">
-                    <li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
+                    <li>Date/time: #{o:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
                     <li>User agent: #{header['user-agent']}</li>
                     <li>User IP: #{request.remoteAddr}</li>
                     <li>Request URI: #{requestScope['jakarta.servlet.error.request_uri']}</li>
@@ -41,7 +41,7 @@
                     <li>Exception message: #{requestScope['jakarta.servlet.error.message']}</li>
                     <li>Exception UUID: #{requestScope['org.omnifaces.exception_uuid']}</li>
                     <li>Stack trace:
-                        <pre>#{of:printStackTrace(requestScope['jakarta.servlet.error.exception'])}</pre>
+                        <pre>#{o:printStackTrace(requestScope['jakarta.servlet.error.exception'])}</pre>
                     </li>
                 </ul>
             </h:panelGroup>
