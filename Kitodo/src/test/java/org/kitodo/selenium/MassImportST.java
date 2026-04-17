@@ -100,6 +100,42 @@ public class MassImportST extends BaseTestSelenium {
                 + "separator");
     }
 
+    /**
+     * Tests whether adding a new record to the table correctly increases the number of rows.
+     * @throws InterruptedException when thread is interrupted during sleep
+     */
+    @Test
+    public void addRowTest() throws InterruptedException {
+       massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
+       Thread.sleep(Browser.getDelayAfterLogout());
+       List<WebElement> csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+                .findElements(By.tagName("tr"));
+       assertEquals(3, csvRows.size(), "Incorrect number of rows");
+       Browser.getDriver().findElement(By.id("recordsForm:addCsvRecord")).click();
+       Thread.sleep(Browser.getDelayAfterLogout());
+       csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+               .findElements(By.tagName("tr"));
+       assertEquals(4, csvRows.size(), "Row not added correctly");
+    }
+
+    /**
+     * Tests whether removing a record from the table correctly decreases the number of rows.
+     * @throws InterruptedException when thread is interrupted during sleep
+     */
+    @Test
+    public void removeRowTest() throws InterruptedException {
+        massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
+        Thread.sleep(Browser.getDelayAfterLogout());
+        List<WebElement> csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+                .findElements(By.tagName("tr"));
+        assertEquals(3, csvRows.size(), "Incorrect number of rows");
+        Browser.getDriver().findElement(By.cssSelector("td.remove-column button.ui-button")).click();
+        Thread.sleep(Browser.getDelayAfterLogout());
+        csvRows = Browser.getDriver().findElement(By.id("recordsForm:recordsTable_data"))
+                .findElements(By.tagName("tr"));
+        assertEquals(2, csvRows.size(), "Row not removed correctly");
+    }
+
     private static File createCsvFile() throws IOException {
         File csvFile = File.createTempFile(CSV_UPLOAD_FILENAME, CSV_UPLOAD_FILE_EXTENSION);
         try (FileWriter writer = new FileWriter(csvFile)) {
