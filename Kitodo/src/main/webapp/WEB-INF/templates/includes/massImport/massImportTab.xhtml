@@ -117,7 +117,8 @@
                          value="#{MassImportForm.records}"
                          var="record">
                 <p:ajax event="cellEdit"
-                        update="recordsForm:recordsTable massImportButtonForm"/>
+                        partialSubmit="true"
+                        process="@this"/>
                 <!--@elvariable id="columnIndex" type="java.lang.Integer"-->
                 <p:columns var="metadataKey"
                            columnIndexVar="columnIndex"
@@ -142,7 +143,9 @@
                         </f:facet>
                         <f:facet name="input">
                             <p:inputText value="#{record.csvCells.get(columnIndex).value}">
-                                <p:ajax update="recordsForm:recordsTable massImportButtonForm"/>
+                                <p:ajax partialSubmit="true"
+                                        process="@this"
+                                        update="massImportButtonForm"/>
                             </p:inputText>
                         </f:facet>
                     </p:cellEditor>
