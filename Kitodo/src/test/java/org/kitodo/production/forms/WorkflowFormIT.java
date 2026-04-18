@@ -15,13 +15,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -36,6 +42,7 @@ import org.kitodo.production.services.data.TaskService;
 public class WorkflowFormIT {
 
     private final WorkflowEditView currentWorkflowForm = new WorkflowEditView();
+    private final List<String> workflowTitlesToClean = new ArrayList<>();
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
 
@@ -62,6 +69,18 @@ public class WorkflowFormIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+    }
+
+    @AfterEach
+    public void cleanupWorkflowDiagramFiles() throws Exception {
+        String diagramDir = ConfigCore.getKitodoDiagramDirectory();
+        for (String workflowTitle : workflowTitlesToClean) {
+            File svgFile = new File(diagramDir + workflowTitle + ".svg");
+            File xmlFile = new File(diagramDir + workflowTitle + ".bpmn20.xml");
+            ServiceManager.getFileService().delete(svgFile.toURI());
+            ServiceManager.getFileService().delete(xmlFile.toURI());
+        }
+        workflowTitlesToClean.clear();
     }
 
     /**
@@ -139,4 +158,73 @@ public class WorkflowFormIT {
         dataEditorSettingService.save(dataEditorSetting);
     }
 
+    @Test
+    public void shouldMoveFilesOnWorkflowTitleChange() throws Exception {
+        String oldTitle = "to_be_renamed_workflow";
+        String newTitle = "newTitle";
+
+        workflowTitlesToClean.add(oldTitle);
+        workflowTitlesToClean.add(newTitle);
+
+        Workflow workflow = new Workflow(oldTitle);
+        ServiceManager.getWorkflowService().save(workflow);
+
+        currentWorkflowForm.load(workflow.getId(), false);
+
+        String diagramDir = ConfigCore.getKitodoDiagramDirectory();
+        File oldSvg = new File(diagramDir + oldTitle + ".svg");
+        File oldXml = new File(diagramDir + oldTitle + ".bpmn20.xml");
+        String validXmlWorkflow = Files.readString(
+                new File(diagramDir + "one_step_workflow.bpmn20.xml").toPath(),
+                StandardCharsets.UTF_8
+        );
+        assertTrue(oldSvg.createNewFile() || oldSvg.exists(), "Could not prepare SVG file");
+        assertTrue(oldXml.createNewFile() || oldXml.exists(), "Could not prepare XML file");
+
+        Files.writeString(oldXml.toPath(), validXmlWorkflow, StandardCharsets.UTF_8);
+        currentWorkflowForm.setWorkflow(workflow);
+        currentWorkflowForm.getWorkflow().setTitle(newTitle);
+        currentWorkflowForm.setXmlDiagram(validXmlWorkflow + "kitodo-diagram-separator");
+        currentWorkflowForm.saveAndRedirect();
+
+        File newSvg = new File(diagramDir + newTitle + ".svg");
+        File newXML = new File(diagramDir + newTitle + ".bpmn20.xml");
+        assertFalse(oldSvg.exists(), "Old SVG should be moved");
+        assertTrue(newSvg.exists(), "New SVG should exist");
+        assertFalse(oldXml.exists(), "Old XML should be moved");
+        assertTrue(newXML.exists(), "New XML should exist");
+    }
+
+    @Test
+    public void shouldKeepExistingSvgWhenNoSvgIsSubmitted() throws Exception {
+        String workflowTitle = "to_be_changed_workflow";
+        workflowTitlesToClean.add(workflowTitle);
+
+        Workflow workflow = new Workflow(workflowTitle);
+        ServiceManager.getWorkflowService().save(workflow);
+        currentWorkflowForm.load(workflow.getId(), false);
+
+        String diagramDir = ConfigCore.getKitodoDiagramDirectory();
+        File workflowSvg = new File(diagramDir + workflowTitle + ".svg");
+        File workflowXml = new File(diagramDir + workflowTitle + ".bpmn20.xml");
+
+        String validXmlWorkflow = Files.readString(
+                new File(diagramDir + "one_step_workflow.bpmn20.xml").toPath(),
+                StandardCharsets.UTF_8
+        );
+        String existingSvgContent = Files.readString(
+                new File(diagramDir + "one_step_workflow.svg").toPath(),
+                StandardCharsets.UTF_8
+        );
+
+        Files.writeString(workflowXml.toPath(), validXmlWorkflow, StandardCharsets.UTF_8);
+        Files.writeString(workflowSvg.toPath(), existingSvgContent, StandardCharsets.UTF_8);
+
+        currentWorkflowForm.setWorkflow(workflow);
+        currentWorkflowForm.setXmlDiagram(validXmlWorkflow + "kitodo-diagram-separator");
+        currentWorkflowForm.saveAndRedirect();
+
+        String resultingSvgContent = Files.readString(workflowSvg.toPath(), StandardCharsets.UTF_8);
+        assertEquals(existingSvgContent, resultingSvgContent, "Existing SVG should remain unchanged");
+    }
 }

@@ -72,6 +72,7 @@ public class WorkflowEditView extends BaseEditView {
     private String svgDiagram;
     private boolean dataEditorSettingsDefined = false;
     private String xmlDiagram;
+    private String originalTitle;
     private WorkflowStatus workflowStatus;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     public static final String SVG_EXTENSION = ".svg";
@@ -141,6 +142,14 @@ public class WorkflowEditView extends BaseEditView {
             return this.stayOnCurrentPage;
         }
         try {
+            if (workflow.getId() == null
+                    && ServiceManager.getWorkflowService()
+                    .workflowTitleExists(workflow.getTitle())) {
+                Helper.setErrorMessage(
+                        Helper.getTranslation("duplicateWorkflowTitle", workflow.getTitle())
+                );
+                return this.stayOnCurrentPage;
+            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
@@ -150,6 +159,9 @@ public class WorkflowEditView extends BaseEditView {
                 if (migration) {
                     migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
+                }
+                if (Objects.nonNull(originalTitle) && !originalTitle.equals(workflow.getTitle())) {
+                    handleDiagramFilesAfterTitleChange();
                 }
                 return WorkflowListView.VIEW_PATH + "&" + getReferrerListOptions();
             } else {
@@ -162,6 +174,35 @@ public class WorkflowEditView extends BaseEditView {
             Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
                 e);
             return this.stayOnCurrentPage;
+        }
+    }
+
+    private void handleDiagramFilesAfterTitleChange() {
+        if (Objects.isNull(originalTitle) || originalTitle.equals(workflow.getTitle())) {
+            return;
+        }
+        try {
+            Map<String, URI> oldUris = getDiagramUris(originalTitle);
+            Map<String, URI> newUris = getDiagramUris(workflow.getTitle());
+            URI oldXml = oldUris.get(XML_DIAGRAM_URI);
+            URI oldSvg = oldUris.get(SVG_DIAGRAM_URI);
+            URI newXml = newUris.get(XML_DIAGRAM_URI);
+            URI newSvg = newUris.get(SVG_DIAGRAM_URI);
+            // XML: delete only if new one exists
+            if (fileService.fileExist(oldXml) && fileService.fileExist(newXml)) {
+                fileService.delete(oldXml);
+            }
+            // SVG: move or delete depending on edit
+            if (fileService.fileExist(oldSvg)) {
+                if (StringUtils.isBlank(svgDiagram)) {
+                    fileService.moveFile(oldSvg, newSvg);
+                } else if (fileService.fileExist(newSvg)) {
+                    fileService.delete(oldSvg);
+                }
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("errorHandlingWorkflowFiles",
+                    new Object[] { originalTitle }, logger, e);
         }
     }
 
@@ -271,30 +312,37 @@ public class WorkflowEditView extends BaseEditView {
      * @return true if save, false if not
      */
     private boolean saveFiles() throws IOException, WorkflowException {
-        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
-                .getRequestParameterMap();
-
+        FacesContext context = FacesContext.getCurrentInstance();
         Map<String, URI> diagramsUris = getDiagramUris();
 
         URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
         URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
-        xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
+        if (Objects.nonNull(context)) {
+            xmlDiagram = context.getExternalContext()
+                    .getRequestParameterMap()
+                    .get("editForm:workflowTabView:xmlDiagram");
+        }
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+            if (Objects.isNull(xmlDiagram) || StringUtils.isBlank(xmlDiagram)) {
+                Helper.setErrorMessage("Workflow diagram is missing.");
+                return false;
+            }
 
             Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             reader.validateWorkflowTasks();
 
             Converter converter = new Converter(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             converter.validateWorkflowTaskList();
-
-            saveFile(svgDiagramURI, svgDiagram);
+            if (StringUtils.isNotBlank(svgDiagram)) {
+                saveFile(svgDiagramURI, svgDiagram);
+            }
             saveFile(xmlDiagramURI, xmlDiagram);
         }
 
-        return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
+        return fileService.fileExist(xmlDiagramURI);
     }
 
     private Map<String, URI> getDiagramUris() {
@@ -416,6 +464,7 @@ public class WorkflowEditView extends BaseEditView {
                 try {
                     Workflow workflow = ServiceManager.getWorkflowService().getById(id);
                     setWorkflow(workflow);
+                    this.originalTitle = workflow.getTitle();
                     setWorkflowStatus(workflow.getStatus());
                     readXMLDiagram();
                     this.dataEditorSettingsDefined = this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow);
