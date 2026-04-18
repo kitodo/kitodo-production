@@ -45,6 +45,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.services.dataeditor.DataEditorService;
@@ -672,11 +673,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     @Override
     public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         try {
-            if (Objects.nonNull(division)) {
-                division.getContentIds().clear();
-                division.setOrderlabel(null);
-                division.setLabel(null);
-            }
+            boolean untyped = isDivisionUntyped();
+            resetDivision();
             metadata.clear();
             for (TreeNode<Object> child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
@@ -684,9 +682,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 if (row instanceof ProcessSimpleMetadata && specialFields.contains(id)
                         && ((ProcessSimpleMetadata) row).getSettings()
                         .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-                    updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
+                    if (!untyped || METADATA_KEY_LABEL.equals(id) || METADATA_KEY_ORDERLABEL.equals(id)) {
+                        updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
+                    }
                 } else {
-                    metadata.addAll(row.getMetadataWithFilledValues());
+                    if (!untyped) {
+                        metadata.addAll(row.getMetadataWithFilledValues());
+                    }
                 }
             }
             if (Objects.nonNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
@@ -715,6 +717,38 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             container.metadata.add(metadataGroup);
             copy = false;
         }
+    }
+
+    private void resetDivision() {
+        if (Objects.nonNull(division)) {
+            division.getContentIds().clear();
+            division.setOrderlabel(null);
+            division.setLabel(null);
+        }
+    }
+
+    /**
+     * Restricts the visible metadata fields of this element to structural metadata only.
+     */
+    public void filterToStructuralFields() {
+        treeNode.getChildren().removeIf(child -> {
+            ProcessDetail row = (ProcessDetail) child.getData();
+            String key = row.getMetadataID();
+
+            return !isStructuralKey(key);
+        });
+    }
+
+    private boolean isStructuralKey(String key) {
+        return METADATA_KEY_LABEL.equals(key)
+                || METADATA_KEY_ORDERLABEL.equals(key);
+    }
+
+    private boolean isDivisionUntyped() {
+        if (division instanceof LogicalDivision logicalDivision) {
+            return Objects.isNull(logicalDivision.getType()) || logicalDivision.getType().isBlank();
+        }
+        return false;
     }
 
     private void updateDivisionFromProcessDetail(String key, ProcessSimpleMetadata processDetail) throws InvalidMetadataValueException {
