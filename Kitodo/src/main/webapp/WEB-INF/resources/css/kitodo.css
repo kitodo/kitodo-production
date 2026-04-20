@@ -940,7 +940,7 @@ body #filterInputForm\:filterfield {
 
 #filterOptionsForm\:suggestions  {
     border-bottom: solid var(--contrast-border-width) var(--medium-gray);
-    margin-bottom: var(--default-full-size);
+    margin-bottom: var(--default-half-size);
     max-height: calc(100vh - 350px);
     overflow-x: auto;
 }
@@ -949,14 +949,14 @@ body #filterInputForm\:filterfield {
     background: var(--cloudy-gray);
 }
 
-#filterOptionsFormWrapper .ui-chkbox,
-#filterOptionsForm\:suggestions li {
-    line-height: var(--input-height);
-    padding: 0 var(--default-half-size) 0 var(--default-double-size);
+#filterOptionsForm\:suggestions_content {
+    padding: 0;
 }
 
-#filterOptionsFormWrapper .ui-chkbox {
-    padding-bottom: var(--input-padding);
+#filterOptionsFormWrapper .ui-chkbox,
+#filterOptionsForm\:suggestions li {
+    line-height: var(--default-double-size);
+    padding: 0 var(--default-half-size) 0 var(--default-double-size);
 }
 
 body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon,
@@ -967,6 +967,7 @@ body #filterOptionsFormWrapper .ui-selectmanycheckbox.switch .ui-chkbox-icon {
 #filterOptionsForm\:taskFilters,
 #filterOptionsForm\:taskStatus {
     border: none;
+    display: table;
     padding: 0;
     width: 100%;
 }
