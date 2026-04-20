@@ -30,7 +30,6 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -64,8 +63,6 @@ public class ProcessListView extends ProcessListBaseView {
            
     private final FilterMenu filterMenu = new FilterMenu(this);
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
-
-    private String errorMessage = "";
 
     private List<SelectItem> customColumns;
 
@@ -342,22 +339,6 @@ public class ProcessListView extends ProcessListBaseView {
     }
 
     /**
-     * Rename media files of all selected processes.
-     */
-    public void renameMedia() {
-        Stopwatch stopwatch = new Stopwatch(this, "renameMedia");
-        List<Process> processes = getSelectedProcesses();
-        errorMessage = ServiceManager.getFileService().tooManyProcessesSelectedForMediaRenaming(processes.size());
-        if (StringUtils.isBlank(errorMessage)) {
-            PrimeFaces.current().executeScript("PF('renameMediaConfirmDialog').show();");
-        } else {
-            Ajax.update("errorDialog");
-            PrimeFaces.current().executeScript("PF('errorDialog').show();");
-        }
-        stopwatch.stop();
-    }
-
-    /**
      * Start renaming media files of selected processes.
      */
     public void startRenaming() {
@@ -378,15 +359,6 @@ public class ProcessListView extends ProcessListBaseView {
         Stopwatch stopwatch = new Stopwatch(this, "getMediaRenamingConfirmMessage");
         return stopwatch.stop(Helper.getTranslation("renameMediaForProcessesConfirmMessage", String.valueOf(
             getSelectedProcesses().size())));
-    }
-
-    /**
-     * Get error message.
-     * @return error message
-     */
-    public String getErrorMessage() {
-        Stopwatch stopwatch = new Stopwatch(this, "getErrorMessage");
-        return stopwatch.stop(errorMessage);
     }
 
     /**

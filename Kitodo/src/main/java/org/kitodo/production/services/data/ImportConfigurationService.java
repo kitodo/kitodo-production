@@ -117,6 +117,18 @@ public class ImportConfigurationService extends BaseBeanService<ImportConfigurat
     }
 
     /**
+     * Load and return all ImportConfiguration of type PROCESS_TEMPLATE that are configured with the given process.
+     * @param processId of the process to check
+     * @return List of ImportConfiguration  configured with the given process
+     * @throws DAOException when ImportConfigurations could not be loaded
+     */
+    public List<ImportConfiguration> getProcessTemplateConfigurationByProcessId(int processId) throws DAOException {
+        return getAllImportConfigurations(ImportConfigurationType.PROCESS_TEMPLATE).stream()
+                .filter(importConfiguration -> importConfiguration.getDefaultTemplateProcess().getId() == processId)
+                .toList();
+    }
+
+    /**
      * Load and return all ImportConfigurations sorted by title.
      * @return list of all ImportConfigurations sorted by title
      * @throws DAOException when ImportConfigurations could not be loaded
