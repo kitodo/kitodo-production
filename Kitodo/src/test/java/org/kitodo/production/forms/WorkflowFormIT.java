@@ -189,9 +189,9 @@ public class WorkflowFormIT {
 
         File newSvg = new File(diagramDir + newTitle + ".svg");
         File newXML = new File(diagramDir + newTitle + ".bpmn20.xml");
-        assertFalse(oldSvg.exists(), "Old SVG should be moved");
+        assertFalse(oldSvg.exists(), "Old SVG should have been removed");
         assertTrue(newSvg.exists(), "New SVG should exist");
-        assertFalse(oldXml.exists(), "Old XML should be moved");
+        assertFalse(oldXml.exists(), "Old XML should have been removed");
         assertTrue(newXML.exists(), "New XML should exist");
     }
 

@@ -142,7 +142,7 @@ public class WorkflowEditView extends BaseEditView {
             return this.stayOnCurrentPage;
         }
         try {
-            if (workflow.getId() == null
+            if (!workflow.getTitle().equals(originalTitle)
                     && ServiceManager.getWorkflowService()
                     .workflowTitleExists(workflow.getTitle())) {
                 Helper.setErrorMessage(
@@ -160,9 +160,7 @@ public class WorkflowEditView extends BaseEditView {
                     migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
                 }
-                if (Objects.nonNull(originalTitle) && !originalTitle.equals(workflow.getTitle())) {
-                    handleDiagramFilesAfterTitleChange();
-                }
+                handleDiagramFilesAfterTitleChange();
                 return WorkflowListView.VIEW_PATH + "&" + getReferrerListOptions();
             } else {
                 return this.stayOnCurrentPage;
@@ -188,7 +186,6 @@ public class WorkflowEditView extends BaseEditView {
             URI oldSvg = oldUris.get(SVG_DIAGRAM_URI);
             URI newXml = newUris.get(XML_DIAGRAM_URI);
             URI newSvg = newUris.get(SVG_DIAGRAM_URI);
-            // XML: delete only if new one exists
             if (fileService.fileExist(oldXml) && fileService.fileExist(newXml)) {
                 fileService.delete(oldXml);
             }
@@ -326,8 +323,10 @@ public class WorkflowEditView extends BaseEditView {
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
-            if (Objects.isNull(xmlDiagram) || StringUtils.isBlank(xmlDiagram)) {
-                Helper.setErrorMessage("Workflow diagram is missing.");
+            if (StringUtils.isBlank(xmlDiagram)) {
+                Helper.setErrorMessage(
+                        Helper.getTranslation("errorWorkflowDiagramMissing")
+                );
                 return false;
             }
 
