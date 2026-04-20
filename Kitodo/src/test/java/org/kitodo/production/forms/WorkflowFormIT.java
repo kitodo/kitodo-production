@@ -227,4 +227,59 @@ public class WorkflowFormIT {
         String resultingSvgContent = Files.readString(workflowSvg.toPath(), StandardCharsets.UTF_8);
         assertEquals(existingSvgContent, resultingSvgContent, "Existing SVG should remain unchanged");
     }
+
+    @Test
+    public void shouldNotModifyFilesWhenWorkflowTitleIsDuplicate() throws Exception {
+        String titleA = "workflowA";
+        String titleB = "workflowB";
+
+        workflowTitlesToClean.add(titleA);
+        workflowTitlesToClean.add(titleB);
+
+        // Create two workflows
+        Workflow workflowA = new Workflow(titleA);
+        Workflow workflowB = new Workflow(titleB);
+        ServiceManager.getWorkflowService().save(workflowA);
+        ServiceManager.getWorkflowService().save(workflowB);
+
+        currentWorkflowForm.load(workflowA.getId(), false);
+
+        String diagramDir = ConfigCore.getKitodoDiagramDirectory();
+
+        File xmlA = new File(diagramDir + titleA + ".bpmn20.xml");
+        File svgA = new File(diagramDir + titleA + ".svg");
+
+        String validXmlWorkflow = Files.readString(
+                new File(diagramDir + "one_step_workflow.bpmn20.xml").toPath(),
+                StandardCharsets.UTF_8
+        );
+
+        // Prepare original files
+        Files.writeString(xmlA.toPath(), validXmlWorkflow, StandardCharsets.UTF_8);
+        assertTrue(svgA.createNewFile() || svgA.exists(), "Could not prepare SVG file");
+
+        String originalXmlContent = Files.readString(xmlA.toPath(), StandardCharsets.UTF_8);
+
+        // Attempt rename to duplicate title
+        currentWorkflowForm.setWorkflow(workflowA);
+        currentWorkflowForm.getWorkflow().setTitle(titleB); // duplicate!
+        currentWorkflowForm.setXmlDiagram(validXmlWorkflow + "kitodo-diagram-separator");
+
+        currentWorkflowForm.saveAndRedirect();
+
+        // Assert: original files unchanged
+        assertTrue(xmlA.exists(), "Original XML should still exist");
+        assertTrue(svgA.exists(), "Original SVG should still exist");
+
+        String resultingXmlContent = Files.readString(xmlA.toPath(), StandardCharsets.UTF_8);
+        assertEquals(originalXmlContent, resultingXmlContent,
+                "XML content should not have changed");
+
+        // Assert: no new files created for duplicate title
+        File xmlB = new File(diagramDir + titleB + ".bpmn20.xml");
+        File svgB = new File(diagramDir + titleB + ".svg");
+
+        assertFalse(xmlB.exists(), "No XML should be created for duplicate title");
+        assertFalse(svgB.exists(), "No SVG should be created for duplicate title");
+    }
 }
