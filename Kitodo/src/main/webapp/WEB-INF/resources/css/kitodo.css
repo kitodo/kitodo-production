@@ -924,6 +924,7 @@ body #filterInputForm\:filterfield {
 #filterOptionsFormWrapper {
     box-shadow: var(--second-level-shadow);
     display: none;
+    padding-bottom: var(--default-half-size);
     position: absolute;
     top: 100%;
     z-index: 1;
