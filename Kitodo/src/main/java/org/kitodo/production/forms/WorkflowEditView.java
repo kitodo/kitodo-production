@@ -175,6 +175,20 @@ public class WorkflowEditView extends BaseEditView {
         }
     }
 
+    /**
+     * Handles renaming of diagram files when the workflow title changes.
+     *
+     * <p>XML files are treated as authoritative and will be replaced if a new version exists.</p>
+     *
+     * <p>SVG handling depends on whether a new (non empty) SVG-diagram was submitted:
+     * <ul>
+     *   <li>If no SVG was submitted (e.g. editor did not modify it), the existing SVG is moved to the new filename.</li>
+     *   <li>If a new SVG was submitted and successfully written, the old SVG is deleted.</li>
+     * </ul>
+     *
+     * <p>This logic avoids unnecessary data loss and ensures that existing diagrams are preserved
+     * when no changes were made in the editor.</p>
+     */
     private void handleDiagramFilesAfterTitleChange() {
         if (Objects.isNull(originalTitle) || originalTitle.equals(workflow.getTitle())) {
             return;
@@ -189,7 +203,6 @@ public class WorkflowEditView extends BaseEditView {
             if (fileService.fileExist(oldXml) && fileService.fileExist(newXml)) {
                 fileService.delete(oldXml);
             }
-            // SVG: move or delete depending on edit
             if (fileService.fileExist(oldSvg)) {
                 if (StringUtils.isBlank(svgDiagram)) {
                     fileService.moveFile(oldSvg, newSvg);
