@@ -39,6 +39,37 @@ body.first-visit {
     animation-name: slidein;
 }
 
+/* Hide header + footer */
+body.fullscreen-mode #portal-header,
+body.fullscreen-mode footer {
+    display: none !important;
+}
+
+/* Remove layout constraints */
+body.fullscreen-mode .flex-container {
+    height: 100vh;
+}
+
+/* Make main take full space */
+body.fullscreen-mode main.flex-item {
+    height: 100vh;
+    width: 100vw;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Expand editor to full screen */
+body.fullscreen-mode #metadataEditorContainer {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100%;
+}
+
+/* Remove wrapper spacing */
+body.fullscreen-mode #metadataEditorWrapper {
+    height: 100%;
+}
+
 .flex-container {
     height: 100%;
     overflow: auto;
