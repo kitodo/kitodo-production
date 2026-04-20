@@ -92,6 +92,10 @@
                              rendered="#{mayWrite}"
                              onclick="deactivateButtons();setUnsavedChanges(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                              update="notifications"/>
+            <p:commandButton type="button"
+                             icon="pi pi-window-maximize"
+                             styleClass="fullscreen-btn"
+                             onclick="metadataEditor.global.toggleFullscreenMode()" />
         </h:form>
     </p:panel>
 </ui:composition>
