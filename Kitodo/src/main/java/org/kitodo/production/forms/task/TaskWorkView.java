@@ -353,16 +353,21 @@ public class TaskWorkView extends ValidatableForm {
     }
 
     /**
-     * Return the view path to the referring view, which can be either the desktop view or task list.
+     * Return the view path to the referring view, which can be the desktop view, the process list or task list.
      * 
      * @return the view path
      */
     private String getReferrerViewPath() {
-        return switch (this.referrer) {
-            case "tasks" -> TaskListView.getViewPath() + "&" + getReferrerListOptions();
-            case "processes" -> ProcessListView.getViewPath() + "&" + getReferrerListOptions();
+        String base = switch (this.referrer) {
+            case "tasks" -> TaskListView.getViewPath();
+            case "processes" -> ProcessListView.getViewPath();
             default -> "desktop";
         };
+        String options = getReferrerListOptions();
+        if (Objects.isNull(options) || options.isBlank()) {
+            return base;
+        }
+        return base + "&" + options;
     }
 
 }
