@@ -36,6 +36,7 @@ import org.kitodo.export.TiffHeader;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.ValidatableForm;
+import org.kitodo.production.forms.process.ProcessListView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
@@ -344,6 +345,8 @@ public class TaskWorkView extends ValidatableForm {
     public void setReferrerFromTemplate(String referrer) {
         if ("desktop".equals(referrer)) {
             this.referrer = "desktop";
+        } else if ("processes".equals(referrer)) {
+            this.referrer = "processes";
         } else {
             this.referrer = "tasks";
         }
@@ -355,10 +358,11 @@ public class TaskWorkView extends ValidatableForm {
      * @return the view path
      */
     private String getReferrerViewPath() {
-        if (this.referrer.equals("tasks")) {
-            return TaskListView.getViewPath() + "&" + getReferrerListOptions();
-        }
-        return "desktop";
+        return switch (this.referrer) {
+            case "tasks" -> TaskListView.getViewPath();
+            case "processes" -> ProcessListView.getViewPath();
+            default -> "desktop";
+        };
     }
 
 }
