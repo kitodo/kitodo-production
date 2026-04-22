@@ -361,7 +361,7 @@ public class TaskWorkView extends ValidatableForm {
         String base = switch (this.referrer) {
             case "tasks" -> TaskListView.getViewPath();
             case "processes" -> ProcessListView.getViewPath();
-            default -> "desktop";
+            default -> "desktop?faces-redirect=true";
         };
         String options = getReferrerListOptions();
         if (Objects.isNull(options) || options.isBlank()) {
