@@ -44,7 +44,7 @@
                            title="#{msgs.deleteTemplate}"
                            immediate="true"
                            oncomplete="toggleSave()"
-                           update="@form">
+                           update="@form :templateForm:selectTemplateTable">
                 <i class="fa fa-trash-o fa-lg"/>
                 <f:param name="ID" value="#{template.id}"/>
             </p:commandLink>

@@ -337,7 +337,7 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Taken from CurrentTaskForm.
+     * Assigns a task to a user.
      *
      * @param task
      *            object

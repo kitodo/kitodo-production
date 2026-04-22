@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,14 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileStructureValidationTest {
 
-    private static final String TEST_RESOURCES_DIR = "src/test/resources/";
-    private static final String TEST_XSD_DIR = TEST_RESOURCES_DIR + "xmlschemadefinitions/";
-    private static final String MODS_3_4_XSD = TEST_XSD_DIR + "mods-3-4.xsd";
-    private static final String TEST_FILES_DIR = TEST_RESOURCES_DIR + "xmltestfiles/";
+    private static final Path repositoryRoot = Paths.get("").toAbsolutePath().getParent();
+    private static final String MODS_3_4_XSD = "/Kitodo/src/main/resources/schemata/mods-3-4.xsd";
+    private static final String TEST_FILES_DIR = "src/test/resources/xmltestfiles/";
     private static final String MALFORMED_MODS_FILE = TEST_FILES_DIR + "mods-3-4-malformed.xml";
     private static final String INVALID_MODS_FILE = TEST_FILES_DIR + "mods-3-4-invalid.xml";
     private static final String VALID_MODS_FILE = TEST_FILES_DIR + "mods-3-4-valid.xml";
-    private static final URI modsSchema = Paths.get(MODS_3_4_XSD).toUri();
+    private static final URI modsSchema = Paths.get(repositoryRoot + MODS_3_4_XSD).toUri();
     private final FileStructureValidation xmlValidation = new FileStructureValidation();
 
     @Test

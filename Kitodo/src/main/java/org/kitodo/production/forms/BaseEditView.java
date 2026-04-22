@@ -11,6 +11,10 @@
 
 package org.kitodo.production.forms;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 /**
  * Base class for an edit view.
  * 
@@ -37,8 +41,13 @@ public class BaseEditView extends BaseForm {
      * @param referrerListOptions the referrer list options (URL query parameters)
      */
     public void setReferrerListOptionsFromTemplate(String referrerListOptions) {
-        this.referrerListOptions = referrerListOptions;
+        if (Objects.nonNull(referrerListOptions) && referrerListOptions.startsWith("_")) {
+            // referrerListOptions were URL encoded twice due to JSF's auto encoding of view paths
+            // manually decode them again
+            this.referrerListOptions = URLDecoder.decode(referrerListOptions.substring(1), StandardCharsets.UTF_8);
+        } else {
+            this.referrerListOptions = referrerListOptions;
+        }
     }
-
     
 }

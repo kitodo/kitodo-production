@@ -107,6 +107,10 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
                 for (Client client : this.userObject.getClients()) {
                     if (client.getId().equals(clientId)) {
                         this.userObject.getClients().remove(client);
+                        if (Objects.nonNull(this.clients) && !this.clients.contains(client)) {
+                            this.clients.add(client);
+                            this.clients.sort(Comparator.comparing(Client::getName, String.CASE_INSENSITIVE_ORDER));
+                        }
                         if (client.equals(this.userObject.getDefaultClient())) {
                             this.userObject.setDefaultClient(null);
                         }
@@ -137,6 +141,9 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
 
                 if (!this.userObject.getClients().contains(client)) {
                     this.userObject.getClients().add(client);
+                    if (Objects.nonNull(this.clients)) {
+                        this.clients.remove(client);
+                    }
                 }
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_DATABASE_READING,
