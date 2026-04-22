@@ -227,12 +227,23 @@ public class ProjectForm extends BaseForm {
         }
     }
 
+    /**
+     * Sync project folders with workingFolders using fileGroup as key.
+     * Removes folders deleted in UI and replaces existing ones with same fileGroup.
+     * Ensures exactly one folder per fileGroup is persisted.
+     */
     private void syncFoldersToProject() {
-        project.getFolders().removeIf(folder -> !workingFolders.contains(folder));
+        // remove folders whose fileGroup is no longer present
+        project.getFolders().removeIf(projectFolder ->
+                workingFolders.stream()
+                        .noneMatch(wf -> Objects.equals(wf.getFileGroup(), projectFolder.getFileGroup()))
+        );
+        // add or replace by fileGroup
         for (Folder workingFolder : workingFolders) {
-            if (!project.getFolders().contains(workingFolder)) {
-                project.getFolders().add(workingFolder);
-            }
+            project.getFolders().removeIf(pf ->
+                    Objects.equals(pf.getFileGroup(), workingFolder.getFileGroup())
+            );
+            project.getFolders().add(workingFolder);
         }
     }
 
@@ -547,7 +558,8 @@ public class ProjectForm extends BaseForm {
                 .collect(Collectors.toMap(
                         Folder::getFileGroup,
                         Function.identity(),
-                        (existing, replacement) -> existing
+                        (existing, replacement) ->
+                                Objects.nonNull(existing.getId()) ? existing : replacement
                 ));
     }
 
