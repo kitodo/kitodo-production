@@ -184,6 +184,11 @@ public class ProjectEditView extends BaseEditView {
         }
     }
 
+    /**
+     * Sync project folders with workingFolders using fileGroup as key.
+     * Removes folders deleted in UI and replaces existing ones with same fileGroup.
+     * Ensures exactly one folder per fileGroup is persisted.
+     */
     private void syncFoldersToProject() {
         // remove folders whose fileGroup is no longer present
         project.getFolders().removeIf(projectFolder ->
@@ -512,7 +517,7 @@ public class ProjectEditView extends BaseEditView {
                         Folder::getFileGroup,
                         Function.identity(),
                         (existing, replacement) ->
-                                existing.getId() != null ? existing : replacement
+                                Objects.nonNull(existing.getId()) ? existing : replacement
                 ));
     }
 
