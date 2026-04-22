@@ -784,7 +784,8 @@ public class ProcessListBaseView extends BaseForm {
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[]{ObjectType.IMPORT_CONFIGURATION.getTranslationSingular()}, logger, e);
-        } stopwatch.stop();
+        }
+        stopwatch.stop();
     }
 
     /**
