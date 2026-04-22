@@ -476,7 +476,9 @@ public class ProjectEditView extends BaseEditView {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+        return getFolderList().stream()
+                .filter(folder -> Objects.nonNull(folder.getId()))   // exclude transient
+                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
                 .collect(Collectors.toList());
     }
 
@@ -501,6 +503,7 @@ public class ProjectEditView extends BaseEditView {
     private Map<String, Folder> getFolderMap() {
         return getFolderList().stream()
                 .filter(folder -> StringUtils.isNotBlank(folder.getFileGroup()))
+                .filter(folder -> Objects.nonNull(folder.getId())) //do not include transient folders
                 .collect(Collectors.toMap(
                         Folder::getFileGroup,
                         Function.identity(),
