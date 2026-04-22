@@ -185,11 +185,17 @@ public class ProjectEditView extends BaseEditView {
     }
 
     private void syncFoldersToProject() {
-        project.getFolders().removeIf(folder -> !workingFolders.contains(folder));
+        // remove folders whose fileGroup is no longer present
+        project.getFolders().removeIf(projectFolder ->
+                workingFolders.stream()
+                        .noneMatch(wf -> Objects.equals(wf.getFileGroup(), projectFolder.getFileGroup()))
+        );
+        // add or replace by fileGroup
         for (Folder workingFolder : workingFolders) {
-            if (!project.getFolders().contains(workingFolder)) {
-                project.getFolders().add(workingFolder);
-            }
+            project.getFolders().removeIf(pf ->
+                    Objects.equals(pf.getFileGroup(), workingFolder.getFileGroup())
+            );
+            project.getFolders().add(workingFolder);
         }
     }
 
@@ -477,7 +483,6 @@ public class ProjectEditView extends BaseEditView {
      */
     public List<SelectItem> getSelectableFolders() {
         return getFolderList().stream()
-                .filter(folder -> Objects.nonNull(folder.getId()))   // exclude transient
                 .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
                 .collect(Collectors.toList());
     }
@@ -503,11 +508,11 @@ public class ProjectEditView extends BaseEditView {
     private Map<String, Folder> getFolderMap() {
         return getFolderList().stream()
                 .filter(folder -> StringUtils.isNotBlank(folder.getFileGroup()))
-                .filter(folder -> Objects.nonNull(folder.getId())) //do not include transient folders
                 .collect(Collectors.toMap(
                         Folder::getFileGroup,
                         Function.identity(),
-                        (existing, replacement) -> existing
+                        (existing, replacement) ->
+                                existing.getId() != null ? existing : replacement
                 ));
     }
 
