@@ -75,7 +75,7 @@ public class TaskWorkView extends ValidatableForm {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("id", task.getId().toString());
         queryParams.put("referer", referrer);
-        if (Objects.nonNull(referrer) && referrer.equals("tasks")) {
+        if (Objects.nonNull(referrer) && (referrer.equals("tasks") || referrer.equals("processes"))) {
             queryParams.put("referrerListOptions", "_" + URLEncoder.encode(referrerListOptions, StandardCharsets.UTF_8));
         }
         return VIEW_PATH + "&" + queryParams.entrySet().stream()

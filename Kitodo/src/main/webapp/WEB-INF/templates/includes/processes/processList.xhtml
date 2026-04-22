@@ -232,7 +232,7 @@
                             <h:outputText value="#{task.title}"/>
                                 <!-- assign task -->
                                 <p:commandLink id="take"
-                                               action="#{TaskListView.takeOverTask(task, 'processes')}"
+                                               action="#{ProcessListView.takeOverTask(task)}"
                                                styleClass="action"
                                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
                                                process="@this"
@@ -241,7 +241,7 @@
                                 </p:commandLink>
                                 <!-- already assigned task (this user) -->
                                 <p:commandLink id="editOwnTask"
-                                               action="#{TaskListView.workOnTask(task, 'processes')}"
+                                               action="#{ProcessListView.workOnTask(task)}"
                                                styleClass="action"
                                                process="@this"
                                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
@@ -250,7 +250,7 @@
                                 </p:commandLink>
                                 <!-- already assigned task (different user) -->
                                 <p:commandLink id="editOtherTask"
-                                               action="#{TaskListView.workOnTask(task, 'processes')}"
+                                               action="#{ProcessListView.workOnTask(task)}"
                                                styleClass="action"
                                                process="@this"
                                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
