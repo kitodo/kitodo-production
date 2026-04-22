@@ -563,6 +563,6 @@ public class ProcessListView extends ProcessListBaseView {
      * @return the view path
      */
     public String workOnTask(Task task) {
-          return TaskWorkView.getViewPath(task, "processes", getCombinedListOptions());
+        return TaskWorkView.getViewPath(task, "processes", getCombinedListOptions());
     }
 }
