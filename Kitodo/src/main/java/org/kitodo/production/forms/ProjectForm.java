@@ -325,7 +325,10 @@ public class ProjectForm extends BaseForm {
                 .anyMatch(folder -> folder != editingFolder
                         && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
         if (duplicate) {
-            Helper.setErrorMessage("errorDuplicateFilegroup", new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            Helper.setErrorMessage(
+                    "errorDuplicateFilegroup",
+                    new Object[] { editingFolder.getFileGroup() }
+            );
             editingFolder.setFileGroup(originalFileGroup);
             return;
         }
