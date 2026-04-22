@@ -20,28 +20,27 @@
               widgetVar="statisticsDialog"
               resizable="false">
 
-        <!--@elvariable id="StatisticView" type="org.kitodo.production.forms.ProcessListBaseView"-->
         <h3 id="headerText">
             <h:outputText value="#{msgs.stateOfVolume}"
                           styleClass="shortable"
-                          rendered="#{StatisticView.showPieModel()}"/>
+                          rendered="#{ProcessListViewStatisticsDialog.showPieModel()}"/>
             <h:outputText value="#{msgs.durationOfTasks}"
                           styleClass="shortable"
-                          rendered="#{StatisticView.showBarModel()}"/>
+                          rendered="#{ProcessListViewStatisticsDialog.showBarModel()}"/>
             <h:outputText value="#{msgs.numberOfMetadata}"
                           styleClass="shortable"
-                          rendered="#{StatisticView.showProcessMetadataStatisticTable()}"/>
+                          rendered="#{ProcessListViewStatisticsDialog.showProcessMetadataStatisticTable()}"/>
         </h3>
 
         <h:panelGroup id="statisticPanel"
                       layout="block">
             <h:panelGroup id="pieChartWrapper">
-                <p:pieChart rendered="#{StatisticView.showPieModel()}"
-                            model="#{StatisticView.pieModel}"/>
+                <p:pieChart rendered="#{ProcessListViewStatisticsDialog.showPieModel()}"
+                            model="#{ProcessListViewStatisticsDialog.pieModel}"/>
             </h:panelGroup>
             <p:dataTable  id="statisticResult"
-                          rendered="#{StatisticView.showPieModel()}"
-                          value="#{StatisticView.statisticResult}"
+                          rendered="#{ProcessListViewStatisticsDialog.showPieModel()}"
+                          value="#{ProcessListViewStatisticsDialog.statisticResult}"
                           scrollable="true"
                           var="result">
                 <p:column headerText="#{msgs.task}"
@@ -56,54 +55,54 @@
                 </p:column>
             </p:dataTable>
 
-            <p:barChart rendered="#{StatisticView.showBarModel()}"
-                        model="#{StatisticView.stackedBarModel}"
+            <p:barChart rendered="#{ProcessListViewStatisticsDialog.showBarModel()}"
+                        model="#{ProcessListViewStatisticsDialog.stackedBarModel}"
                         style="width: 100%;"/>
 
             <p:dataTable id="processMetadataTable"
                          scrollable="true"
                          scrollHeight="350"
                          styleClass="default-layout"
-                         rendered="#{StatisticView.showProcessMetadataStatisticTable()}"
-                         value="#{StatisticView.processMetadataStatistics}"
+                         rendered="#{ProcessListViewStatisticsDialog.showProcessMetadataStatisticTable()}"
+                         value="#{ProcessListViewStatisticsDialog.processMetadataStatistics}"
                          var="processStatistic">
                 <p:column headerText="#{msgs.processTitle}"
-                          footerText="#{StatisticView.numberOfGlobalProcessMetadataStatistics} #{msgs.processes}"
+                          footerText="#{ProcessListViewStatisticsDialog.numberOfGlobalProcessMetadataStatistics} #{msgs.processes}"
                           width="25">
                     <h:outputText title="#{processStatistic.processTitle}"
                                   value="#{processStatistic.processTitle}"/>
                 </p:column>
                 <p:column headerText="#{msgs.images}"
-                          footerText="#{StatisticView.numberOfGlobalImages}"
+                          footerText="#{ProcessListViewStatisticsDialog.numberOfGlobalImages}"
                           width="10">
                     <h:outputText title="#{processStatistic.numberOfImages}"
                                   value="#{processStatistic.numberOfImages}"/>
                 </p:column>
                 <p:column headerText="#{msgs.relativeAmount}"
                           width="10">
-                    <p:progressBar value="#{StatisticView.getRelativeImageAmount(processStatistic.numberOfImages)}"
+                    <p:progressBar value="#{ProcessListViewStatisticsDialog.getRelativeImageAmount(processStatistic.numberOfImages)}"
                                    displayOnly="true"/>
                 </p:column>
                 <p:column headerText="#{msgs.structuralElement}"
-                          footerText="#{StatisticView.numberOfGlobalStructuralElements}"
+                          footerText="#{ProcessListViewStatisticsDialog.numberOfGlobalStructuralElements}"
                           width="10">
                     <h:outputText title="#{processStatistic.numberOfStructuralElements}"
                                   value="#{processStatistic.numberOfStructuralElements}"/>
                 </p:column>
                 <p:column headerText="#{msgs.relativeAmount}"
                           width="10">
-                    <p:progressBar value="#{StatisticView.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}"
+                    <p:progressBar value="#{ProcessListViewStatisticsDialog.getRelativeStructuralElementAmount(processStatistic.numberOfStructuralElements)}"
                                    displayOnly="true"/>
                 </p:column>
                 <p:column headerText="#{msgs.metadata}"
-                          footerText="#{StatisticView.numberOfGlobalMetadata}"
+                          footerText="#{ProcessListViewStatisticsDialog.numberOfGlobalMetadata}"
                           width="10">
                     <h:outputText title="#{processStatistic.numberOfMetadata}"
                                   value="#{processStatistic.numberOfMetadata}"/>
                 </p:column>
                 <p:column headerText="#{msgs.relativeAmount}"
                           width="10">
-                    <p:progressBar value="#{StatisticView.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}"
+                    <p:progressBar value="#{ProcessListViewStatisticsDialog.getRelativeMetadataAmount(processStatistic.numberOfMetadata)}"
                                    displayOnly="true"/>
                 </p:column>
             </p:dataTable>

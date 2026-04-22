@@ -13,8 +13,10 @@
 -->
 
 <Context>
+    <Resources cachingAllowed="true" cacheMaxSize="30720" />
     <Resource name="BeanManager"
               auth="Container"
               type="jakarta.enterprise.inject.spi.BeanManager"
               factory="org.jboss.weld.resources.ManagerObjectFactory" />
+    <Valve className="org.apache.catalina.valves.rewrite.RewriteValve" />
 </Context>

@@ -144,19 +144,20 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
      * {@code null}, returns all active process templates for the current
      * client.
      * 
-     * @param projectId
-     *            ID of project which is going to be edited. May be
+     * @param project
+     *            The project which is going to be edited. May be
      *            {@code null}.
      * @return process templates that can be assigned
      */
-    public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DAOException {
+    public List<Template> findAllAvailableForAssignToProject(Project project) throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        List<Template> templates = getByQuery("FROM Template WHERE client.id = :sessionClientId AND active = true",
-            parameters);
-        if (Objects.nonNull(projectId)) {
-            List<Template> assigned = ServiceManager.getProjectService().getById(projectId).getTemplates();
-            templates.removeAll(assigned);
+        List<Template> templates = getByQuery(
+                "FROM Template WHERE client.id = :sessionClientId AND active = true",
+                parameters
+        );
+        if (Objects.nonNull(project)) {
+            templates.removeAll(project.getTemplates()); //
         }
         return templates;
     }

@@ -21,8 +21,14 @@
     <f:metadata>
         <!--@elvariable id="id" type="int"-->
         <f:viewParam name="id"/>
-        <f:viewAction action="#{CurrentTaskForm.loadTaskById(id)}"/>
+        <f:viewAction action="#{TaskWorkView.loadTaskById(id)}"/>
         <f:viewAction action="#{CommentForm.setCurrentTaskById(id)}"/>
+        <!--@elvariable id="referrerListOptions" type="java.lang.String"-->
+        <f:viewParam name="referrerListOptions"/>
+        <f:viewAction action="#{TaskWorkView.setReferrerListOptionsFromTemplate(referrerListOptions)}"/>
+        <!--@elvariable id="referer" type="java.lang.String"-->
+        <f:viewParam name="referer"/>
+        <f:viewAction action="#{TaskWorkView.setReferrerFromTemplate(referer)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -43,7 +49,7 @@
                     <h:outputText styleClass="tab-title"
                                   value="#{msgs.comments}"/>
                     <h:panelGroup id="commentsNumberWrapper">
-                        <h:outputText styleClass="counter-badge #{CommentForm.hasCorrectionComment(CurrentTaskForm.currentTask.process.id) eq 2 ? 'new' : ''}"
+                        <h:outputText styleClass="counter-badge #{CommentForm.hasCorrectionComment(TaskWorkView.task.process.id) eq 2 ? 'new' : ''}"
                                       value="#{commentsNumber}"
                                       rendered="#{commentsNumber gt 0}"/>
                     </h:panelGroup>
@@ -57,12 +63,12 @@
         <ui:include src="/WEB-INF/templates/includes/comments/editCommentDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/currentTasksEdit/ltpValidationReportDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/validationErrorsDialog.xhtml">
-            <ui:param name="validatableForm" value="#{CurrentTaskForm}"/>
+            <ui:param name="validatableForm" value="#{TaskWorkView}"/>
         </ui:include>
     </ui:define>
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.tasks}" url="tasks.jsf" icon="fa fa-paperclip"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.tasks}" url="tasks" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.taskDetails}" icon="fa fa-paperclip"/>
     </ui:define>
 

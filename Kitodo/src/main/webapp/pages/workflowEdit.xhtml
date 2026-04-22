@@ -107,8 +107,8 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects" icon="fa fa-archive"/>
         <p:menuitem value="#{msgs.editWorkflow}" rendered="#{isEditMode}" icon="fa fa-retweet"/>
         <p:menuitem value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}" icon="fa fa-retweet"/>
         <p:menuitem value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}" icon="fa fa-retweet"/>

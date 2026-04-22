@@ -24,6 +24,7 @@ import jakarta.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
@@ -105,6 +106,10 @@ public class UserEditViewProjectsTab extends BaseTabEditView<User> {
                 for (Project project : this.userObject.getProjects()) {
                     if (project.getId().equals(projectId)) {
                         this.userObject.getProjects().remove(project);
+                        if (Objects.nonNull(this.projects) && !this.projects.contains(project)) {
+                            this.projects.add(project);
+                            this.projects.sort(Comparator.comparing(Project::getTitle, String.CASE_INSENSITIVE_ORDER));
+                        }
                         break;
                     }
                 }
@@ -132,6 +137,9 @@ public class UserEditViewProjectsTab extends BaseTabEditView<User> {
 
                 if (!this.userObject.getProjects().contains(project)) {
                     this.userObject.getProjects().add(project);
+                    if (Objects.nonNull(this.projects)) {
+                        this.projects.remove(project);
+                    }
                 }
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_DATABASE_READING,

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-import WaveSurfer from './../libs/wavesurfer/wavesurfer.esm.js.jsf';
+import WaveSurfer from './../libs/wavesurfer/wavesurfer.esm.js';
 
 class AudioWaveform {
     #audioElement;

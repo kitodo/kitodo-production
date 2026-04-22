@@ -253,20 +253,6 @@
                         update="uploadFileDialog"
                         disabled="#{readOnly}"
                         process="@this"/>
-            <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type ne StructurePanel.VIEW_NODE_TYPE and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type ne StructurePanel.MEDIA_PARTIAL_NODE_TYPE}"
-                        icon="fa fa-trash fa-sm"
-                        styleClass="plain unlink-process"
-                        disabled="#{readOnly}"
-                        onclick="$('#loadingScreen').show()"
-                        oncomplete="$('#loadingScreen').hide()"
-                        action="#{DataEditorForm.deleteStructure()}"
-                        process="@this"
-                        update="logicalTree
-                                paginationForm:paginationWrapperPanel
-                                metadataAccordion:logicalMetadataHeader
-                                metadataAccordion:logicalMetadataWrapperPanel
-                                galleryWrapperPanel"/>
             <p:menuitem value="#{msgs['metadataEdit']}"
                         rendered="#{DataEditorForm.structurePanel.isMetadataEditingPossible()}"
                         disabled="#{!DataEditorForm.canLinkedProcessBeOpenedInMetadataEditor()}"
@@ -288,7 +274,7 @@
             <p:menuitem value="#{msgs.deleteMedia}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
-                        styleClass="plain"
+                        styleClass="plain removeSelectedMedia"
                         disabled="#{readOnly}"
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
@@ -311,6 +297,20 @@
                         process="@this"
                         update="numberOfScans
                                 logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataHeader
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
+            <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type ne StructurePanel.VIEW_NODE_TYPE and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type ne StructurePanel.MEDIA_PARTIAL_NODE_TYPE}"
+                        icon="fa fa-trash fa-sm"
+                        styleClass="plain unlink-process"
+                        disabled="#{readOnly}"
+                        onclick="$('#loadingScreen').show()"
+                        oncomplete="$('#loadingScreen').hide()"
+                        action="#{DataEditorForm.deleteStructure()}"
+                        process="@this"
+                        update="logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataHeader
                                 metadataAccordion:logicalMetadataWrapperPanel

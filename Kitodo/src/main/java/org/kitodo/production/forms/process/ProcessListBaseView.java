@@ -1,0 +1,639 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+package org.kitodo.production.forms.process;
+
+import com.itextpdf.text.DocumentException;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.exceptions.FileStructureValidationException;
+import org.kitodo.export.ExportDms;
+import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.BaseListView;
+import org.kitodo.production.forms.DeleteProcessDialog;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessProgressHelper;
+import org.kitodo.production.helper.WebDav;
+import org.kitodo.production.model.LazyProcessModel;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.utils.Stopwatch;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.data.PageEvent;
+import org.xml.sax.SAXException;
+
+public class ProcessListBaseView extends BaseListView {
+
+    private static final Logger logger = LogManager.getLogger(ProcessListBaseView.class);
+    
+    protected List<Process> selectedProcesses = new ArrayList<>();
+    private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
+    private DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
+
+    private final HashMap<Integer, Boolean> exportable = new HashMap<>();
+
+    boolean allSelected = false;
+    HashSet<Integer> excludedProcessIds = new HashSet<>();
+    private final ProcessProgressHelper progressService = new ProcessProgressHelper();
+
+    /**
+     * Constructor.
+     */
+    public ProcessListBaseView() {
+        super();
+        Stopwatch stopwatch = new Stopwatch(this, "ProcessListBaseView");
+        super.setLazyBeanModel(new LazyProcessModel(ServiceManager.getProcessService()));
+        stopwatch.stop();
+    }
+
+    /**
+     * Gets excludedProcessIds.
+     *
+     * @return value of excludedProcessIds
+     */
+    public HashSet<Integer> getExcludedProcessIds() {
+        Stopwatch stopwatch = new Stopwatch(this, "getExcludedProcessIds");
+        return stopwatch.stop(excludedProcessIds);
+    }
+
+    /**
+     * Sets excludedProcessIds.
+     *
+     * @param excludedProcessIds value of excludedProcessIds
+     */
+    public void setExcludedProcessIds(HashSet<Integer> excludedProcessIds) {
+        Stopwatch stopwatch = new Stopwatch(this, "setExcludedProcessIds", "excludedProcessIds", Objects.toString(
+            excludedProcessIds));
+        this.excludedProcessIds = excludedProcessIds;
+        stopwatch.stop();
+    }
+
+    /**
+     * Gets allSelected.
+     *
+     * @return value of allSelected
+     */
+    public boolean isAllSelected() {
+        Stopwatch stopwatch = new Stopwatch(this, "isAllSelected");
+        return stopwatch.stop(allSelected);
+    }
+
+    /**
+     * Sets allSelected.
+     *
+     * @param allSelected value of allSelected
+     */
+    public void setAllSelected(boolean allSelected) {
+        Stopwatch stopwatch = new Stopwatch(this, "setAllSelected", "allSelected", Boolean.toString(allSelected));
+        this.allSelected = allSelected;
+        excludedProcessIds.clear();
+        stopwatch.stop();
+    }
+
+    /**
+     * Returns the list of the processes currently selected in the user interface.
+     * Converts Process instances to Process instances in case of displaying search results.
+     *
+     * @return value of selectedProcesses
+     */
+    public List<Process> getSelectedProcesses() {
+        Stopwatch stopwatch = new Stopwatch(this, "getSelectedProcesses");
+        ProcessService processService = ServiceManager.getProcessService();
+        if (allSelected) {
+            try {
+                this.selectedProcesses = processService.findSelectedProcesses(
+                    this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter(),
+                    new ArrayList<>(excludedProcessIds));
+            } catch (DAOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+        return stopwatch.stop(selectedProcesses);
+    }
+
+    private LazyProcessModel getLazyProcessModel() {
+        return (LazyProcessModel) this.lazyBeanModel;
+    }
+
+    /**
+     * Checks whether the given process has any tasks at all.
+     *
+     * @param process the process to check
+     * @return true if at least one task exists, otherwise false
+     */
+    public boolean hasAnyTasks(Process process) {
+        return progressService.hasAnyTasks(getCachedTaskStatusCounts(process));
+    }
+
+    /**
+     * Checks whether the given process has child processes.
+     *
+     * @param process the process to check
+     * @return true if the process has children, otherwise false
+     */
+    public boolean hasChildren(Process process) {
+        return getLazyProcessModel().getProcessesWithChildren().contains(process.getId());
+    }
+
+    /**
+     * Checks whether the given process has visible tasks.
+     *
+     * @param process the process to check
+     * @return true if the process has visible tasks, otherwise false
+     */
+    public boolean hasVisibleTasks(Process process) {
+        return getLazyProcessModel().hasVisibleTasks(process);
+    }
+
+    /**
+     * Returns the titles of open and in-work tasks for the given process.
+     *
+     * <p>For parent processes, no task titles are returned.</p>
+     *
+     * @param process the process to get task titles for
+     * @return formatted task titles or an empty string if none exist
+     */
+    public String getCurrentTaskTitles(Process process) {
+        return progressService.buildTaskTitleTooltip(
+                getLazyProcessModel().getTaskTitleCache().get(process.getId())
+        );
+    }
+
+    /**
+     * Returns cached task status counts for the given process.
+     *
+     * <p>If no cached data exists, a fallback database query is executed.</p>
+     *
+     * @param process the process to get task status counts for
+     * @return a map of task status to count
+     */
+    public Map<TaskStatus, Integer> getCachedTaskStatusCounts(Process process) {
+        LazyProcessModel model = getLazyProcessModel();
+        EnumMap<TaskStatus, Integer> cached = model.getTaskStatusCounts(process);
+
+        if (Objects.nonNull(cached)) {
+            return cached;
+        }
+        // fallback (should rarely happen)
+        try {
+            return new TaskDAO().countTaskStatusForProcessAndItsAncestors(process);
+        } catch (DAOException e) {
+            logger.warn("Fallback task status counting failed", e);
+            return Map.of();
+        }
+    }
+
+    /**
+     * Calculates the percentage of tasks with the given status.
+     *
+     * @param process the process to calculate progress for
+     * @param status the task status to calculate
+     * @return progress percentage for the given status
+     */
+    public double progress(Process process, TaskStatus status) {
+        return progressService.progress(
+                getCachedTaskStatusCounts(process),
+                status
+        );
+    }
+
+    /**
+     * Returns the percentage of tasks in the process that are completed. The
+     * total of tasks awaiting preconditions, startable, in progress, and
+     * completed is {@code 100.0d}.
+     *
+     * @param process the process
+     * @return percentage of tasks completed
+     */
+    public double progressClosed(Process process) {
+        return progressService.progressClosed(getCachedTaskStatusCounts(process));
+    }
+
+    /**
+     * Returns the percentage of tasks in the process that are currently being
+     * processed. The progress total of tasks waiting for preconditions,
+     * startable, in progress, and completed is {@code 100.0d}.
+     *
+     * @param process the process
+     * @return percentage of tasks in progress
+     */
+    public double progressInProcessing(Process process) {
+        return progressService.progressInProcessing(
+                getCachedTaskStatusCounts(process)
+        );
+    }
+
+    /**
+     * Returns the percentage of the process's tasks that are now ready to be
+     * processed but have not yet been started. The progress total of tasks
+     * waiting for preconditions, startable, in progress, and completed is
+     * {@code 100.0d}.
+     *
+     * @param process the process
+     * @return percentage of startable tasks
+     */
+    public double progressOpen(Process process) {
+        return progressService.progressOpen(
+                getCachedTaskStatusCounts(process)
+        );
+    }
+
+    /**
+     * Return whether closed processes should be displayed or not.
+     *
+     * @return parameter controlling whether closed processes should be displayed or
+     *         not
+     */
+    public boolean isShowClosedProcesses() {
+        Stopwatch stopwatch = new Stopwatch(this, "isShowClosedProcesses");
+        return stopwatch.stop(((LazyProcessModel) this.lazyBeanModel).isShowClosedProcesses());
+    }
+
+    /**
+     * Set whether closed processes should be displayed or not.
+     *
+     * @param showClosedProcesses
+     *            boolean flag signaling whether closed processes should be
+     *            displayed or not
+     */
+    public void setShowClosedProcesses(boolean showClosedProcesses) {
+        Stopwatch stopwatch = new Stopwatch(this, "setShowClosedProcesses", "showClosedProcesses", Boolean.toString(
+            showClosedProcesses));
+        ((LazyProcessModel)this.lazyBeanModel).setShowClosedProcesses(showClosedProcesses);
+        stopwatch.stop();
+    }
+
+    /**
+     * Set whether inactive projects should be displayed or not.
+     *
+     * @param showInactiveProjects
+     *            boolean flag signaling whether inactive projects should be
+     *            displayed or not
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        Stopwatch stopwatch = new Stopwatch(this, "setShowInactiveProjects", "showInactiveProjects", Boolean.toString(
+            showInactiveProjects));
+        ((LazyProcessModel)this.lazyBeanModel).setShowInactiveProjects(showInactiveProjects);
+        stopwatch.stop();
+    }
+
+    /**
+     * Return whether inactive projects should be displayed or not.
+     *
+     * @return parameter controlling whether inactive projects should be displayed
+     *         or not
+     */
+    public boolean isShowInactiveProjects() {
+        Stopwatch stopwatch = new Stopwatch(this, "isShowInactiveProjects");
+        return stopwatch.stop(((LazyProcessModel) this.lazyBeanModel).isShowInactiveProjects());
+    }
+
+    /**
+     * Export DMS for selected processes.
+     */
+    public void exportDMSForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "exportDMSForSelection");
+        exportDMSForProcesses(getSelectedProcesses());
+        stopwatch.stop();
+    }
+
+    /**
+     * Generates the current search result as an Excel file.
+     */
+    public void generateExcel() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateExcel");
+        try {
+            ServiceManager.getProcessService().generateExcel(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Generates the current search result as a CSV file.
+     */
+    public void generateCsv() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateCsv");
+        try {
+            ServiceManager.getProcessService().generateCsv(
+                    this.filter,
+                    this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects()
+            );
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING,
+                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Generate result as PDF.
+     */
+    public void generateResultAsPdf() {
+        Stopwatch stopwatch = new Stopwatch(this, "generateResultAsPdf");
+        try {
+            ServiceManager.getProcessService().generatePdf(this.filter, this.isShowClosedProcesses(),
+                    this.isShowInactiveProjects());
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Download to home for selected processes.
+     */
+    public void downloadToHomeForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "downloadToHomeForSelection");
+        try {
+            ProcessService.downloadToHome(this.getSelectedProcesses());
+            Helper.setMessage("createdInUserHomeAll");
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading processes to home directory!");
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Upload selected processes from home.
+     */
+    public void uploadFromHomeForSelection() {
+        Stopwatch stopwatch = new Stopwatch(this, "uploadFromHomeForSelection");
+        ProcessService.uploadFromHome(this.getSelectedProcesses());
+        Helper.setMessage("directoryRemovedSelected");
+        stopwatch.stop();
+    }
+
+    /**
+     * Upload all processes from home.
+     */
+    public void uploadFromHomeForAll() {
+        Stopwatch stopwatch = new Stopwatch(this, "uploadFromHomeForAll");
+        WebDav myDav = new WebDav();
+        List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
+        myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
+        Helper.setMessage("directoryRemovedAll", doneDirectoryName);
+        stopwatch.stop();
+    }
+
+
+
+    private void exportDMSForProcesses(List<Process> processes) {
+        ExportDms export = new ExportDms();
+        for (Process processToExport : processes) {
+            try {
+
+                export.startExport(processToExport);
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_EXPORTING,
+                        new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
+            }
+        }
+    }
+
+    /**
+     * If processes are generated with calendar.
+     *
+     * @param process
+     *            the process dto to check.
+     * @return true if processes are created with calendar, false otherwise
+     */
+    public boolean createProcessesWithCalendar(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createProcessesWithCalendar");
+        try {
+            return stopwatch.stop(ProcessService.canCreateProcessWithCalendar(process));
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+        return stopwatch.stop(false);
+    }
+
+    /**
+     * If a process can be created as child.
+     *
+     * @param process
+     *            the process dto to check.
+     * @return true if processes can be created as child, false otherwise
+     */
+    public boolean createProcessAsChildPossible(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createProcessAsChildPossible");
+        try {
+            return stopwatch.stop(ProcessService.canCreateChildProcess(process));
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+        }
+        return stopwatch.stop(false);
+    }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     */
+    public void downloadToHome(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "downloadToHome");
+        try {
+            ProcessService.downloadToHome(new WebDav(), processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Starts generation of xml logfile for current process.
+     */
+    public void createXML(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "createXML");
+        try {
+            ProcessService.createXML(process, getUser());
+        } catch (IOException e) {
+            Helper.setErrorMessage("Error creating log file in home directory", logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Export METS.
+     */
+    public void exportMets(int processId) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "exportMets");
+        try {
+            ProcessService.exportMets(processId);
+        } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
+            Helper.setErrorMessage("An error occurred while trying to export METS file for process "
+                    + processId, logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Export DMS.
+     */
+    public void exportDMS(Process process) {
+        ExportDms export = new ExportDms();
+        try {
+            export.startExport(process);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_EXPORTING,
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process }, logger, e);
+        }
+    }
+
+    /**
+     * Downloads a docket for process.
+     */
+    public void downloadDocket(int id) {
+        Stopwatch stopwatch = new Stopwatch(this, "downloadDocket", "id", Integer.toString(id));
+        try {
+            ServiceManager.getProcessService().downloadDocket(ServiceManager.getProcessService().getById(id));
+        } catch (IOException | DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Upload from home for single process.
+     */
+    public void uploadFromHome(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "uploadFromHome");
+        WebDav myDav = new WebDav();
+        myDav.uploadFromHome(process);
+        Helper.setMessage("directoryRemoved", process.getTitle());
+        stopwatch.stop();
+    }
+
+    /**
+     * Delete Process.
+     *
+     * @param process
+     *            process to delete.
+     */
+    public void delete(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "delete");
+        if (process.getChildren().isEmpty()) {
+            try {
+                ProcessService.deleteProcess(process.getId());
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
+            }
+        } else {
+            this.deleteProcessDialog = new DeleteProcessDialog();
+            this.deleteProcessDialog.setProcess(process);
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+        }
+        stopwatch.stop();
+    }
+
+    /**
+     * Return delete process dialog.
+     *
+     * @return delete process dialog
+     */
+    public DeleteProcessDialog getDeleteProcessDialog() {
+        Stopwatch stopwatch = new Stopwatch(this, "getDeleteProcessDialog");
+        return stopwatch.stop(this.deleteProcessDialog);
+    }
+
+    /**
+     * Check and return whether process with given ID can be exported or not.
+     *
+     * @param process the process
+     * @return whether process with given ID can be exported or not
+     */
+    public boolean canBeExported(Process process) {
+        Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "canBeExported");
+        try {
+            if (!exportable.containsKey(process.getId())) {
+                boolean processHasChildren = hasChildren(process);
+                if (processHasChildren) {
+                    // superordinate processes normally do not contain images but should always be exportable
+                    exportable.put(process.getId(), true);
+                } else {
+                    exportable.put(process.getId(), ProcessService.canBeExported(process));
+                }
+            }
+            return stopwatch.stop(exportable.get(process.getId()));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return stopwatch.stop(false);
+        }
+    }
+
+    /**
+     * Specifies the selected processes.
+     * 
+     * @param selectedProcesses
+     *            the selected processes
+     */
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
+        Stopwatch stopwatch = new Stopwatch(this, "setSelectedProcesses", "selectedProcesses", Objects.toString(
+            selectedProcesses));
+        this.selectedProcesses = selectedProcesses;
+        stopwatch.stop();
+    }
+
+    /**
+     * Clears list of selected processes.
+     */
+    public void clearSelectedProcesses() {
+        this.selectedProcesses.clear();
+    }
+
+    /**
+     * Update selection and first row to show in datatable on PageEvent.
+     * @param pageEvent PageEvent triggered by data tables paginator
+     */
+    @Override
+    public void onPageChange(PageEvent pageEvent) {
+        Stopwatch stopwatch = new Stopwatch(this, "onPageChange");
+        super.onPageChange(pageEvent);
+        if (allSelected) {
+            PrimeFaces.current()
+                    .executeScript("PF('processesTable').selectAllRows();");
+            excludedProcessIds.forEach(processId -> PrimeFaces.current()
+                    .executeScript("PF('processesTable').unselectRow($('tr[data-rk=\"" + processId + "\"]'), true);"));
+        }
+        stopwatch.stop();
+    }
+
+    
+}

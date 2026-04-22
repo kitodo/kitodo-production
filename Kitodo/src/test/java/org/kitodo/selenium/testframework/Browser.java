@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -36,10 +34,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.SessionNotCreatedException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -76,70 +72,27 @@ public class Browser {
      */
     public static void Initialize() throws IOException, URISyntaxException {
         if (BROWSER_TYPE.equals(BrowserType.CHROME)) {
-            provideChromeDriver();
-        }
-        if (BROWSER_TYPE.equals(BrowserType.FIREFOX)) {
-            provideGeckoDriver();
+            ChromeOptions options = getChromeOptions();
+
+            // Required for CI (GitHub Actions)
+            if (Objects.nonNull(System.getenv("CI"))) {
+                options.addArguments("--headless=new");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+            }
+
+            webDriver = new ChromeDriver(options);
         }
 
+        if (BROWSER_TYPE.equals(BrowserType.FIREFOX)) {
+            provideGeckoDriver(); // can remain for now
+        }
         actions = new Actions(webDriver);
         webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         goTo("");
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
     }
 
-    private static void provideChromeDriver() throws IOException, URISyntaxException {
-        File driverFile = getDriverFile();
-
-        if (!driverFile.exists()) {
-            logger.debug("{} does not exist, providing chrome driver now", driverFile.getAbsolutePath());
-            WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR, null);
-        }
-
-        ChromeDriverService service = getChromeDriverService(driverFile);
-        ChromeOptions options = getChromeOptions();
-
-        try {
-            webDriver = new ChromeDriver(service, options);
-        } catch (SessionNotCreatedException e) {
-            logger.error("SessionNotCreatedException encountered: Chrome driver could not be started " +
-                    "-> trying to determine version of installed Chrome browser to download corresponding Chrome driver version instead");
-            String exceptionMessage = e.getMessage();
-            if (Objects.nonNull(exceptionMessage) && exceptionMessage.contains("Current browser version is")) {
-                Pattern pattern = Pattern.compile(".*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*");
-                Matcher matcher = pattern.matcher(exceptionMessage);
-                if (matcher.find()) {
-                    String version = matcher.group(1);
-                    logger.error("Trying to download Chrome driver for installed Chrome version: {}", version);
-                    WebDriverProvider.provideChromeDriver(DOWNLOAD_DIR, DRIVER_DIR, version);
-                    service = getChromeDriverService(driverFile);
-                    options = getChromeOptions();
-                    try {
-                        webDriver = new ChromeDriver(service, options);
-                    } catch (SessionNotCreatedException sessionNotCreatedException) {
-                        escalateSessionNotCreatedException("SessionNotCreatedException encountered: Chrome driver could not be started: "
-                                + sessionNotCreatedException.getMessage());
-                    }
-                } else {
-                    escalateSessionNotCreatedException("Unable to extract Chrome version from exception message!");
-                }
-            } else {
-                escalateSessionNotCreatedException("Exception message does not contain information about current Chrome version!");
-            }
-        }
-    }
-
-    private static void escalateSessionNotCreatedException(String exceptionMessage) {
-        logger.error(exceptionMessage);
-        throw new RuntimeException(exceptionMessage);
-    }
-
-    private static ChromeDriverService getChromeDriverService(File driverFile) {
-        return new ChromeDriverService.Builder()
-                .usingDriverExecutable(driverFile)
-                .usingAnyFreePort()
-                .build();
-    }
 
     private static ChromeOptions getChromeOptions() {
         Map<String, Object> chromePrefs = new HashMap<>();
@@ -148,18 +101,6 @@ public class Browser {
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("prefs", chromePrefs);
         return options;
-    }
-
-    private static File getDriverFile() {
-        String driver = WebDriverProvider.CHROME_DRIVER;
-        if (SystemUtils.IS_OS_WINDOWS) {
-            driver = WebDriverProvider.CHROME_DRIVER_WIN_SUBDIR + "/" + driver.concat(WebDriverProvider.EXE);
-        } else if (SystemUtils.IS_OS_MAC_OSX) {
-            driver = WebDriverProvider.CHROME_DRIVER_MAC_SUBDIR + "/" + driver;
-        } else {
-            driver = WebDriverProvider.CHROME_DRIVER_LINUX_SUBDIR + "/" + driver;
-        }
-        return new File(DRIVER_DIR + driver);
     }
 
     private static void provideGeckoDriver() throws IOException, URISyntaxException {

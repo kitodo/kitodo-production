@@ -17,7 +17,6 @@ import java.util.Objects;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.model.SelectItem;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +27,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.enums.FilterString;
+import org.kitodo.production.forms.process.ProcessListView;
+import org.kitodo.production.forms.task.TaskListView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -67,24 +68,18 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
-    private final ProcessForm processForm;
-    private final CurrentTaskForm taskForm;
+    private Boolean showInactiveProjects = false;
+    private Boolean showClosedProcesses = false;
 
     /**
-     * Constructor with inject process form.
-     *
-     * @param processForm
-     *            managed bean
+     * Initializes SearchForm.
      */
-    @Inject
-    public SearchForm(ProcessForm processForm, CurrentTaskForm taskForm) {
+    public SearchForm() {
         this.stepstatus.addAll(ServiceManager.getFilterService().initStepStatus());
         this.projects = ServiceManager.getFilterService().initProjects();
         this.stepTitles = ServiceManager.getFilterService().initStepTitles();
         this.processPropertyTitles = ServiceManager.getFilterService().initProcessPropertyTitles();
         this.user.addAll(ServiceManager.getFilterService().initUserList());
-        this.processForm = processForm;
-        this.taskForm = taskForm;
     }
 
     public List<String> getProjects() {
@@ -208,13 +203,48 @@ public class SearchForm {
     }
 
     /**
+     * Return whether to show matching processes for inactive projects.
+     * 
+     * @return whether to show matching processes for inactive projects
+     */
+    public boolean getShowInactiveProjects() {
+        return this.showInactiveProjects;
+    }
+
+    /**
+     * Set whether to show matching processes for inactive projects.
+     * 
+     * @param showInactiveProjects whether to show matching processes for inactive projects
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
+    }
+
+    /**
+     * Return whether to show matching processes that are already closed.
+     * 
+     * @return whether to show matching processes that are already closed
+     */
+    public boolean getShowClosedProcesses() {
+        return this.showClosedProcesses;
+    }
+
+    /**
+     * Set whether to show matching processes that are already closed.
+     * 
+     * @param showClosedProcesses whether to show matching processes that are already closed
+     */
+    public void setShowClosedProcesses(boolean showClosedProcesses) {
+        this.showClosedProcesses = showClosedProcesses;
+    }
+
+    /**
      * Filter processes.
      *
      * @return filter as java.lang.String
      */
     public String filterProcesses() {
-        processForm.changeFilter(createFilter());
-        return processForm.getProcessesPage();
+        return ProcessListView.getViewPath(createFilter(), this.showInactiveProjects, this.showClosedProcesses);
     }
 
     /**
@@ -223,8 +253,7 @@ public class SearchForm {
      * @return filter as java.lang.String
      */
     public String filterTasks() {
-        taskForm.changeFilter(createFilter());
-        return taskForm.getTaskListPath();
+        return TaskListView.getViewPath(createFilter());
     }
 
     private String createFilter() {

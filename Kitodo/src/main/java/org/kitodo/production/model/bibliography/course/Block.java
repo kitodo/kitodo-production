@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.production.helper.Helper;
@@ -247,16 +246,16 @@ public class Block {
         if (!isMatch(date)) {
             return Collections.emptyList();
         }
-        ArrayList<IndividualIssue> result = new ArrayList<>(issues.size());
+        ArrayList<IndividualIssue> result = new ArrayList<>(this.issues.size());
 
-        List<Issue> issues = new ArrayList<>();
+        List<Issue> issueList = new ArrayList<>();
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
-                issues.add(issue);
+                issueList.add(issue);
             }
         }
-        Integer sorting = issues.size() > 1 ? 1 : null;
-        for (Issue issue : issues) {
+        Integer sorting = issueList.size() > 1 ? 1 : null;
+        for (Issue issue : issueList) {
             result.add(new IndividualIssue(this, issue, date, Objects.isNull(sorting) ? null : sorting++));
         }
         return result;
@@ -460,7 +459,7 @@ public class Block {
      * @return 'true' if duplicates are found anf 'false' if not.
      */
     public boolean checkIssuesWithSameHeading() {
-        List<String> issuesTitles = issues.stream().map(Issue::getHeading).collect(Collectors.toList());
+        List<String> issuesTitles = issues.stream().map(Issue::getHeading).toList();
         List<String> titles = new ArrayList<>();
         for (String title : issuesTitles) {
             if (titles.contains(title)) {

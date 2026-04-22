@@ -55,7 +55,7 @@ public class ProcessEditPage extends EditPage<ProcessEditPage> {
     private WebElement confirmRemoveButton;
 
     public ProcessEditPage() {
-        super("pages/processEdit.jsf");
+        super("pages/processEdit");
     }
 
     @Override

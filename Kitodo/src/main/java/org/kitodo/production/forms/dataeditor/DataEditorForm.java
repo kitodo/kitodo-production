@@ -19,6 +19,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.faces.context.FacesContext;
@@ -205,7 +206,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
 
     private DataEditorSetting dataEditorSetting;
 
-    private static final String DESKTOP_LINK = "/pages/desktop.jsf";
+    private static final String DESKTOP_LINK = "/pages/desktop";
 
     private List<PhysicalDivision> unsavedDeletedMedia = new ArrayList<>();
 
@@ -217,7 +218,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     private String errorMessage;
     private String errorTitle = Helper.getTranslation("metadataLocked");
     private String blockingUserName;
-    private static final String METADATA_REDIRECT = "metadataEditor.jsf?id=%d&referer=%s&faces-redirect=true";
+    private static final String METADATA_REDIRECT = "metadataEditor?id=%d&referer=%s";
 
     @Inject
     private MediaProvider mediaProvider;
@@ -229,6 +230,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
 
     private String renamingError = "";
     private String metadataFileLoadingError = "";
+    private final Collection<String> metadataFileValidationErrors = new ArrayList<>();
 
     static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
@@ -237,6 +239,8 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     private boolean taskLayoutLoaded = false;
     private Integer linkedProcessId = null;
     private boolean linkedProcessClicked = false;
+    @Inject
+    private UpdateMetadataDialog updateMetadataDialog;
 
     /**
      * Public constructor.
@@ -253,6 +257,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         this.editPagesDialog = new EditPagesDialog(this);
         this.uploadFileDialog = new UploadFileDialog(this);
         this.linkProcessDialog = new LinkProcessDialog(this);
+        this.validationErrorUpdateComponents = "@none";
     }
 
     /**
@@ -319,6 +324,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         } catch (FileNotFoundException | SAXException e) {
             metadataFileLoadingError = e.getMessage();
         } catch (FileStructureValidationException e) {
+            this.metadataFileValidationErrors.addAll(e.getValidationResult().getResultMessages());
             setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
             showValidationExceptionDialog(e, this.referringView);
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
@@ -448,10 +454,14 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      * @return the referring view, to return there
      */
     public String closeAndReturn() {
-        if (referringView.contains("?")) {
-            return referringView + "&faces-redirect=true";
+        String viewPath = referringView;
+        if (viewPath.equals("processes")) {
+            viewPath += "?" + getReferrerListOptions();
+        }
+        if (viewPath.contains("?")) {
+            return viewPath + "&faces-redirect=true";
         } else {
-            return referringView + "?faces-redirect=true";
+            return viewPath + "?faces-redirect=true";
         }
     }
 
@@ -1043,7 +1053,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         }
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
             return addMetadataDialog.getAddableMetadata().stream()
-                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
+                    .map(SelectItem::getValue).toList().contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
         return false;
     }
@@ -1299,6 +1309,15 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     }
 
     /**
+     * Get potential metadata schema validation errors from validating metadata xml file.
+     *
+     * @return list of schema validation errors
+     */
+    public Collection<String> getMetadataFileValidationErrors() {
+        return metadataFileValidationErrors;
+    }
+
+    /**
      * Retrieve and return value of metadata configured as functional metadata 'recordIdentifier'.
      *
      * @return the 'recordIdentifier' metadata value of the current process
@@ -1449,6 +1468,21 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
     }
 
     /**
+     * Return the URL of a redirect to a different process preserving additional 
+     * url parameters if they were provided to the current metadata editor.
+     * 
+     * @param processId the id of the process to redirect to
+     * @return the URL to redirect to
+     */
+    private String getRedirectUrl(Integer processId) {
+        String viewPath = String.format(METADATA_REDIRECT, processId, referringView);
+        if (referringView.equals("processes")) {
+            viewPath += "&referrerListOptions=" + URLEncoder.encode(getReferrerListOptions(), StandardCharsets.UTF_8);
+        }
+        return viewPath;
+    }
+
+    /**
      * Open linked process of currently selected logical structure in metadata editor.
      */
     public void openLinkedProcess() {
@@ -1457,7 +1491,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
             PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            String linkedProcessUrl = String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+            String linkedProcessUrl = getRedirectUrl(linkedProcessId);
             try {
                 context.getExternalContext().redirect(linkedProcessUrl);
             } catch (IOException e) {
@@ -1483,7 +1517,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public String getUrlOfLinkedProcess() {
         checkConditionsForOpeningLinkedProcessInMetadataEditor();
-        return String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+        return getRedirectUrl(linkedProcessId);
     }
 
     /**
@@ -1497,7 +1531,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             try {
-                context.getExternalContext().redirect("desktop.jsf");
+                context.getExternalContext().redirect("desktop");
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
@@ -1520,5 +1554,10 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public String getBlockingUser() {
         return blockingUserName;
+    }
+
+    @Override
+    public void proceed() {
+        updateMetadataDialog.updateCatalogMetadata(false);
     }
 }

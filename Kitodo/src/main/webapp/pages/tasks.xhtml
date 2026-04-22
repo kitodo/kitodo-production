@@ -19,12 +19,24 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:o="http://omnifaces.org/ui">
     <f:metadata>
-        <!--@elvariable id="keepPagination" type="java.lang.Boolean"-->
-        <f:viewParam name="keepPagination"/>
-        <f:viewAction action="#{CurrentTaskForm.resetPaginator(keepPagination)}"/>
+        <!--@elvariable id="firstRow" type="java.lang.Integer"-->
+        <f:viewParam name="firstRow"/>
+        <f:viewAction action="#{TaskListView.setFirstRowFromTemplate(firstRow)}" />
+        <!--@elvariable id="sortField" type="java.lang.String"-->
+        <f:viewParam name="sortField"/>
+        <!--@elvariable id="sortOrder" type="java.lang.String"-->
+        <f:viewParam name="sortOrder"/>
+        <f:viewAction action="#{TaskListView.setSortByFromTemplate(sortField, sortOrder)}" />
+        <!--@elvariable id="filter" type="java.lang.String"-->
+        <f:viewParam name="filter"/>
+        <!--@elvariable id="taskFilter" type="java.lang.String"-->
+        <f:viewParam name="taskFilter"/>
+        <!--@elvariable id="taskStatus" type="java.lang.String"-->
+        <f:viewParam name="taskStatus"/>
+        <f:viewAction action="#{TaskListView.setFilterFromTemplate(filter, taskFilter, taskStatus)}" />
         <!--@elvariable id="projecttitle" type="java.lang.String"-->
         <f:viewParam name="projecttitle"/>
-        <o:viewAction action="#{CurrentTaskForm.changeFilter('project:' += projecttitle)}"
+        <o:viewAction action="#{TaskListView.changeFilter('project:' += projecttitle)}"
                       if="#{not empty projecttitle}"
                       update="parsedFiltersForm:parsedFilters"/>
     </f:metadata>
@@ -49,9 +61,9 @@
                                   converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
                                   style="float: right; margin-right: 0;"
-                                  value="#{CurrentTaskForm.selectedColumns}">
-                <f:selectItems value="#{CurrentTaskForm.columns}" />
-                <p:ajax listener="#{CurrentTaskForm.saveSelectedColumns()}"
+                                  value="#{TaskListView.selectedColumns}">
+                <f:selectItems value="#{TaskListView.columns}" />
+                <p:ajax listener="#{TaskListView.saveSelectedColumns()}"
                         update="tasksTabView"/>
             </p:selectCheckboxMenu>
         </h:form>      
@@ -68,8 +80,13 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.desktop}" url="desktop" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.tasks}" icon="fa fa-paperclip"/>
+    </ui:define>
+
+    <ui:define name="page-scripts">
+        <h:outputScript name="js/defaultScript.js" target="body"/>
+        <h:outputScript name="js/queryParams.js" target="body"/>
     </ui:define>
 
 </ui:composition>

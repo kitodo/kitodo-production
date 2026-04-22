@@ -40,7 +40,7 @@ public class SelectProjectDialogView implements Serializable {
     private int selectedProjectId = 0;
     private Template template;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate?faces-redirect=true";
 
     /**
      * Get template.
@@ -85,8 +85,8 @@ public class SelectProjectDialogView implements Serializable {
      */
     public List<Project> getTemplateProjects() {
         try {
-            Template template = ServiceManager.getTemplateService().getById(this.template.getId());
-            return template.getProjects().stream().sorted(Comparator.comparing(Project::getTitle))
+            Template currentTemplate = ServiceManager.getTemplateService().getById(this.template.getId());
+            return currentTemplate.getProjects().stream().sorted(Comparator.comparing(Project::getTitle))
                     .filter(Project::isActive).collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(),

@@ -765,15 +765,23 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
         }
     }
 
-    private void saveProcessHierarchyMetadata() {
-        // save ancestor processes meta.xml files
+
+    /**
+     * Saves the metadata files of the main process, all anchestors and children.
+     * We update all anchestors in the database and index as well.
+     * If they already have a database entry, they are NOT updated automatically when saving the
+     * main process.
+     */
+    private void saveProcessHierarchyMetadata() throws DAOException {
         for (TempProcess tempProcess : this.processes) {
             if (this.processes.indexOf(tempProcess) == 0) {
                 tempProcess.getProcessMetadata().preserve();
             }
             ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
+            if (this.processes.indexOf(tempProcess) > 0) {
+                ServiceManager.getProcessService().save(tempProcess.getProcess());
+            }
         }
-        // save child processes meta.xml files
         for (TempProcess tempProcess : this.childProcesses) {
             ProcessHelper.saveTempProcessMetadata(tempProcess, rulesetManagement, CREATE, priorityList);
         }
@@ -836,7 +844,7 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
             return addMetadataDialog.getAddableMetadata()
                     .stream()
                     .map(SelectItem::getValue)
-                    .collect(Collectors.toList())
+                    .toList()
                     .contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
         return false;
@@ -1116,9 +1124,9 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
         Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
         TaskManager.addTask(new ImportEadProcessesThread(this, user, client));
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskManagerPage()) {
-            return "system.jsf?tabIndex=0&faces-redirect=true";
+            return "system?tabIndex=0&faces-redirect=true";
         } else {
-            return "desktop.jsf?faces-redirect=true";
+            return "desktop?faces-redirect=true";
         }
     }
 

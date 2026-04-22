@@ -50,7 +50,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-net.version>3.9.0</commons-net.version>
         <font-awesome.version>4.7.0</font-awesome.version>
-        <omnifaces.version>4.7.1</omnifaces.version>
+        <omnifaces.version>4.7.5</omnifaces.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <org.ehcache.version>3.10.9</org.ehcache.version>
@@ -69,13 +69,13 @@
         <jhove.modules.tiff.hul.version>1.9.5</jhove.modules.tiff.hul.version>
         <myfaces.version>4.1.1</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
-        <pdfbox.version>3.0.3</pdfbox.version>
+        <pdfbox.version>3.0.7</pdfbox.version>
         <poi.version>5.4.0</poi.version>
         <primefaces.version>12.0.0</primefaces.version>
         <primefaces.extensions.version>12.0.11</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
-        <log4j.version>2.25.3</log4j.version>
-        <junit.version>5.13.4</junit.version>
+        <log4j.version>2.25.4</log4j.version>
+        <junit.version>6.0.3</junit.version>
         <opensearch.version>2.15.0</opensearch.version>
         <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
 
@@ -88,12 +88,12 @@
         <mockito.version>5.21.0</mockito.version>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>4.40.0</selenium.version>
-        <spring.security.version>6.2.8</spring.security.version>
-        <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
+        <spring.security.version>6.5.9</spring.security.version>
+        <flyway-maven-plugin.version>12.3.0</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
+        <mariadb-java-client.version>3.5.8</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
@@ -289,7 +289,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
-                <version>5.19.0</version>
+                <version>5.19.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -462,7 +462,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
-                <version>1.78.1</version>
+                <version>1.84</version>
             </dependency>
             <dependency>
                 <groupId>org.camunda.bpm.model</groupId>
@@ -482,26 +482,8 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.10.0</version>
+                <version>4.11.0</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-io</artifactId>
-                        <groupId>commons-io</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-container-default</artifactId>
-                <version>1.7.1</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>plexus-utils</artifactId>
-                        <groupId>org.codehaus.plexus</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <!-- hibernate caching dependency -->
@@ -850,7 +832,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>6.2.14</version>
+                <version>6.2.17</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars</groupId>
