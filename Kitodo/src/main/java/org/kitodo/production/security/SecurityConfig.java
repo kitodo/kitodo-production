@@ -22,7 +22,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
@@ -124,7 +124,7 @@ public class SecurityConfig {
         // more general rules should be at end
         authorizeGeneralPages(http);
 
-        http.addFilterAfter(new SecurityObjectAccessFilter(), FilterSecurityInterceptor.class);
+        http.addFilterAfter(new SecurityObjectAccessFilter(), AuthorizationFilter.class);
 
         handleFormLogin(http);
 
@@ -164,7 +164,7 @@ public class SecurityConfig {
     private void authorizeGeneralPages(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/images/**").permitAll()
-            .requestMatchers("/jakarta.faces.resource/**", "**/resources/**").permitAll()
+            .requestMatchers("/jakarta.faces.resource/**").permitAll()
             .requestMatchers("/js/modeler.js").permitAll()
             .requestMatchers("/js/toggle.js").permitAll()
             .anyRequest().authenticated()

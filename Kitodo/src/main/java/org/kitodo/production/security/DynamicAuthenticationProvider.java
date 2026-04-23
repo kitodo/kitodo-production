@@ -146,8 +146,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     private void activateDatabaseAuthentication() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(ServiceManager.getUserService());
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(ServiceManager.getUserService());
         daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
         this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
