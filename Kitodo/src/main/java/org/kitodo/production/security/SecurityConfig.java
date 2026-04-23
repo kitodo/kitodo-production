@@ -23,7 +23,6 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
@@ -164,8 +163,8 @@ public class SecurityConfig {
 
     private void authorizeGeneralPages(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-            .requestMatchers(PathPatternRequestMatcher.pathPattern("/pages/images/**")).permitAll()
-            .requestMatchers(PathPatternRequestMatcher.pathPattern("/jakarta.faces.resource/**")).permitAll()
+            .requestMatchers("/pages/images/**").permitAll()
+            .requestMatchers("/jakarta.faces.resource/**").permitAll()
             .requestMatchers("/js/modeler.js").permitAll()
             .requestMatchers("/js/toggle.js").permitAll()
             .anyRequest().authenticated()
