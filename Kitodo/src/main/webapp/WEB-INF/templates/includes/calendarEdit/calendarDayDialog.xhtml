@@ -206,9 +206,7 @@
                                     </h:panelGroup>
                                     <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneRadio'}">
                                         <p:selectOneRadio id="selectOneRadio"
-                                                          value="#{metadata.metadataDetail.selectedItem}"
-                                                          layout="grid"
-                                                          columns="1">
+                                                          value="#{metadata.metadataDetail.selectedItem}">
                                             <f:selectItems value="#{metadata.metadataDetail.items}"/>
                                             <p:ajax update="calendarDayForm"/>
                                         </p:selectOneRadio>
@@ -221,24 +219,27 @@
                                         </p:selectBooleanCheckbox>
                                     </h:panelGroup>
 
-                                    <!-- last issue -->
-                                    <p:commandButton id="metadataLastIssue"
-                                                     action="#{CalendarForm.setLastIssue(metadata, date, issue)}"
-                                                     value="#{msgs['calendar.metadata.setLastIssue']}"
-                                                     title="#{msgs['calendar.metadata.setLastIssue']}"
-                                                     icon="fa fa-step-forward"
-                                                     iconPos="right"
-                                                     styleClass="button-metadata-last-issue secondary"
-                                                     update="calendarDayForm"/>
-                                    <!-- delete metadata -->
-                                    <p:commandButton id="removeMetadata"
-                                                     action="#{CalendarForm.selectedBlock.deleteMetadata(metadata)}"
-                                                     value="#{msgs.delete}"
-                                                     title="#{msgs.delete}"
-                                                     icon="fa fa-trash-o"
-                                                     iconPos="right"
-                                                     styleClass="secondary"
-                                                     update="calendarDayForm"/>
+                                    <h:panelGroup id="buttonWrapper"
+                                                  layout="block">
+                                        <!-- last issue -->
+                                        <p:commandButton id="metadataLastIssue"
+                                                         action="#{CalendarForm.setLastIssue(metadata, date, issue)}"
+                                                         value="#{msgs['calendar.metadata.setLastIssue']}"
+                                                         title="#{msgs['calendar.metadata.setLastIssue']}"
+                                                         icon="fa fa-step-forward"
+                                                         iconPos="right"
+                                                         styleClass="button-metadata-last-issue secondary"
+                                                         update="calendarDayForm"/>
+                                        <!-- delete metadata -->
+                                        <p:commandButton id="removeMetadata"
+                                                         action="#{CalendarForm.selectedBlock.deleteMetadata(metadata)}"
+                                                         value="#{msgs.delete}"
+                                                         title="#{msgs.delete}"
+                                                         icon="fa fa-trash-o"
+                                                         iconPos="right"
+                                                         styleClass="secondary"
+                                                         update="calendarDayForm"/>
+                                    </h:panelGroup>
 
                                 </p:dataViewListItem>
                             </p:dataView>

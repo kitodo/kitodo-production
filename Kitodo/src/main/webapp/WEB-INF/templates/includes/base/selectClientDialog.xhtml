@@ -43,7 +43,7 @@
                     </p:selectOneMenu>
                 </p>
                 <p:panelGrid>
-                    <p:row>
+                    <p:column styleClass="ui-md-12">
                         <p:commandButton id="setSessionClientButton"
                                          actionListener="#{SessionClientController.setSelectedClientAsSessionClient}"
                                          action="#{LoginForm.performPostLoginChecks()}"
@@ -62,7 +62,7 @@
                                   styleClass="secondary right"
                                   icon="fa fa-close"
                                   iconPos="right"/>
-                    </p:row>
+                    </p:column>
                 </p:panelGrid>
             </div>
         </h:form>

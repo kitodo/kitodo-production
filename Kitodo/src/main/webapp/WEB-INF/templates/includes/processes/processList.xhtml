@@ -30,7 +30,7 @@
                      lazy="true"
                      paginator="true"
                      resizableColumns="true"
-                     rowSelectMode="none"
+                     selectionRowMode="none"
                      liveResize="true"
                      sortBy="#{ProcessListView.sortBy}"
                      rows="#{LoginForm.loggedUser.tableSize}"
@@ -50,7 +50,8 @@
             <p:ajax event="rowUnselectCheckbox"
                     listener="#{ProcessListView.onRowUnselect}"/>
             <p:ajax event="toggleSelect"
-                    listener="#{ProcessListView.selectAll}"/>
+                    listener="#{ProcessListView.selectAll}"
+                    onstart="handleToggleSelect()"/>
 
             <p:column id="selectionColumn" styleClass="checkboxListColumn" selectionMode="multiple" resizable="false"/>
 
@@ -160,7 +161,6 @@
                     <p:panelGrid id="processRowExpansionTable"
                                  columns="2">
                         <p:panelGrid id="processParentTable"
-                                     styleClass="expansion-column"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalParents}:"/>
@@ -213,7 +213,6 @@
                             <h:outputText value="#{msgs.none}" rendered="#{process.getParentID() eq 0}"/>
                         </p:panelGrid>
                         <p:panelGrid id="processChildrenTable"
-                                     styleClass="expansion-column"
                                      columns="2"
                                      columnClasses="label, value">
                             <h:outputText value="#{msgs.hierarchicalChildren}:"/>
@@ -266,7 +265,7 @@
 
         <p:overlayPanel id="allSelectableOverlayPanel" widgetVar="allSelectableOverlayPanel" dismissable="true" styleClass="allSelectableOverlayPanel" >
             <ul>
-                <li><p:commandLink id="selectAllRowsOnPage" value="#{msgs.selectAllRowsOnPage}" onclick="PF('processesTable').unselectAllRows();PF('processesTable').selectAllRowsOnPage();PF('allSelectableOverlayPanel').hide();"/></li>
+                <li><p:commandLink id="selectAllRowsOnPage" value="#{msgs.selectAllRowsOnPage}" onclick="PF('processesTable').selectAllRowsOnPage();PF('allSelectableOverlayPanel').hide();"/></li>
                 <li><p:commandLink id="selectAllRows" value="#{msgs.selectAllRows}" actionListener="#{ProcessListView.setAllSelected(true)}" onclick="PF('processesTable').selectAllRows();PF('allSelectableOverlayPanel').hide();"/></li>
             </ul>
         </p:overlayPanel>

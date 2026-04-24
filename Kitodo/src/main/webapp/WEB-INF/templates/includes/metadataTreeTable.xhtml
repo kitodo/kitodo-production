@@ -176,9 +176,7 @@
                                       value="#{item.selectedItem}"
                                       readonly="#{not item.editable}"
                                       disabled="#{not item.editable or readOnly}"
-                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
-                                      layout="grid"
-                                      columns="1">
+                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:selectOneRadio>

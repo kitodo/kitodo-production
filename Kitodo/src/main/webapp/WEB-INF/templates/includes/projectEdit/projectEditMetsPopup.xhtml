@@ -63,7 +63,7 @@
                             </p:column>
                         </p:row>
                         <p:row>
-                            <p:column>
+                            <p:column styleClass="half-width">
                                 <p:outputLabel for="generator" value="#{msgs['editFolderDialog.generator']}"/>
                                 <p:selectOneMenu id="generator" value="#{ProjectEditView.generator.method}">
                                     <f:selectItem itemLabel="#{msgs.notSelected}" itemValue=""/>
@@ -76,7 +76,7 @@
                                     <p:ajax process="@form" update="@form"/>
                                 </p:selectOneMenu>
                             </p:column>
-                            <p:column>
+                            <p:column styleClass="half-width">
                                 <p:outputLabel for="dpi" value="#{msgs['editFolderDialog.dpi']}"
                                                rendered="#{ProjectEditView.generator.method == 'changeDpi'}"/>
                                 <p:outputLabel for="factor" value="#{msgs['editFolderDialog.derivative']}"
@@ -102,7 +102,7 @@
                             </p:column>
                         </p:row>
                         <p:row>
-                            <p:column style="width:50%">
+                            <p:column styleClass="half-width">
                                 <p:outputLabel for="linkingMode" value="#{msgs['editFolderDialog.linkingMode']}"/>
                                 <p:selectOneMenu id="linkingMode" value="#{ProjectEditView.editingFolder.linkingMode}">
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.ALL']}" itemValue="ALL"/>
@@ -111,7 +111,7 @@
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.NO']}" itemValue="NO"/>
                                 </p:selectOneMenu>
                             </p:column>
-                            <p:column style="width:50%">
+                            <p:column styleClass="half-width">
                                 <p:outputLabel for="fileGroup" value="#{msgs['editFolderDialog.fileGroup']}"/>
                                 <p:selectOneMenu id="fileGroup" value="#{ProjectEditView.editingFolder.fileGroup}" effect="fold"
                                                  editable="#{ProjectEditView.editingFolder.id == null}">
@@ -127,13 +127,13 @@
                             </p:column>
                         </p:row>
                         <p:row>
-                            <p:column>
+                            <p:column styleClass="half-width">
                                 <p:outputLabel for="validateFolder" value="#{msgs['editFolderDialog.validateFolder']}"/>
                                 <p:selectBooleanCheckbox id="validateFolder" styleClass="switch input"
                                                          value="#{ProjectEditView.editingFolder.validateFolder}">
                                 </p:selectBooleanCheckbox>
                             </p:column>
-                            <p:column>
+                            <p:column styleClass="half-width">
                                 <p:outputLabel for="ltpValidationConfiguration" value="#{msgs['ltpValidation.folder.label']}"/>
                                 <p:selectOneMenu id="ltpValidationConfiguration" 
                                                  converter="#{ltpValidationConfigurationConverter}"

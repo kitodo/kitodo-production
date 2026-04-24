@@ -924,6 +924,7 @@ body #filterInputForm\:filterfield {
 #filterOptionsFormWrapper {
     box-shadow: var(--second-level-shadow);
     display: none;
+    padding-bottom: var(--default-half-size);
     position: absolute;
     top: 100%;
     z-index: 1;
@@ -940,7 +941,7 @@ body #filterInputForm\:filterfield {
 
 #filterOptionsForm\:suggestions  {
     border-bottom: solid var(--contrast-border-width) var(--medium-gray);
-    margin-bottom: var(--default-full-size);
+    margin-bottom: var(--default-half-size);
     max-height: calc(100vh - 350px);
     overflow-x: auto;
 }
@@ -949,23 +950,25 @@ body #filterInputForm\:filterfield {
     background: var(--cloudy-gray);
 }
 
+#filterOptionsForm\:suggestions_content {
+    padding: 0;
+}
+
 #filterOptionsFormWrapper .ui-chkbox,
 #filterOptionsForm\:suggestions li {
-    line-height: var(--input-height);
+    line-height: var(--default-double-size);
     padding: 0 var(--default-half-size) 0 var(--default-double-size);
 }
 
-#filterOptionsFormWrapper .ui-chkbox {
-    padding-bottom: var(--input-padding);
-}
-
-body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon {
+body #filterOptionsFormWrapper .ui-chkbox.switch .ui-chkbox-icon,
+body #filterOptionsFormWrapper .ui-selectmanycheckbox.switch .ui-chkbox-icon {
     transform: translate(-55%, -105%);
 }
 
 #filterOptionsForm\:taskFilters,
 #filterOptionsForm\:taskStatus {
     border: none;
+    display: table;
     padding: 0;
     width: 100%;
 }
@@ -1395,6 +1398,8 @@ body .statusColumn .ui-button {
 #configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-label::after {
     font-family: 'FontAwesome';
     content: '\f0db';
+    display: inline;
+    visibility: visible;
 }
 
 #configureColumnsForm.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header,
@@ -2694,6 +2699,17 @@ form#metadata div label,
     overflow-y: scroll;
 }
 
+#dialogAddDocStrucTypeForm .ui-inputtext,
+#dialogAddDocStrucTypeForm .ui-selectonemenu,
+#dialogAddDocStrucTypeForm .ui-spinner {
+    width: calc(100% - var(--default-full-size));
+}
+
+#dialogAddDocStrucTypeForm\:elementsToAddSpinner {
+    margin-bottom: var(--default-full-size);
+}
+
+
 #ltpValidationReportDialog {
     top: 50px;
 }
@@ -2808,6 +2824,10 @@ form#metadata div label,
 
 #editFolderDialog .dialogFieldWrapper td {
     vertical-align: top;
+}
+
+#editFolderDialog .ui-panelgrid-cell:not(.half-width) {
+    width: 100%;
 }
 
 #uploadFileDialog {
@@ -3598,6 +3618,11 @@ button.settings-loaded-task::after {
     display: block;
 }
 
+#metadataAccordion\:logicalMetadataHeader .ui-panelgrid-content .ui-panelgrid-cell {
+    padding: 0;
+    width: auto;
+}
+
 #metadataAccordion.separateStructure > .ui-accordion-content {
     height: calc(100% - 2 * var(--input-height));
 }
@@ -3728,10 +3753,6 @@ button.settings-loaded-task::after {
     margin-left: var(--default-half-size);
 }
 
-#metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
-    display: inline-table;
-}
-
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio td {
     padding: var(--input-padding-none) var(--input-padding);
 }
@@ -3796,6 +3817,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 
 #imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
     background: transparent;
+    display: contents;
     padding: 0;
 }
 
@@ -4865,6 +4887,14 @@ body .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon::before {
 #editForm\:importConfigurationTabView\:detailsTab .cell-dummy {
     height: 54px;
     padding: 0;
+}
+
+#editForm\:searchTabView\:processSearch-grid .ui-g > .ui-panelgrid-cell:first-child {
+    width: 200px;
+}
+
+#editForm\:searchTabView\:processSearch-grid .ui-g > .ui-panelgrid-cell:not(:first-child) {
+    width: auto;
 }
 
 .help-button {
