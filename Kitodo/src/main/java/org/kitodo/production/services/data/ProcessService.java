@@ -1180,6 +1180,9 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                             selectedProcessIds,
                             excludedProcessIds
                     );
+            if (results.isEmpty()) {
+                return;
+            }
             ExternalContext response = prepareHeaderInformation(facesContext, format.getFilename());
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(results, filter);
