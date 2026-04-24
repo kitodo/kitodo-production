@@ -352,8 +352,7 @@ public class ProcessListBaseView extends BaseListView {
                     this.excludedProcessIds
             );
         } catch (IOException | DocumentException e) {
-            Helper.setErrorMessage(ERROR_CREATING,
-                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
         stopwatch.stop();
     }
@@ -375,8 +374,7 @@ public class ProcessListBaseView extends BaseListView {
                     this.excludedProcessIds
             );
         } catch (IOException | DocumentException e) {
-            Helper.setErrorMessage(ERROR_CREATING,
-                    new Object[] {Helper.getTranslation("resultSet")}, logger, e);
+            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet")}, logger, e);
         }
         stopwatch.stop();
     }
@@ -398,8 +396,7 @@ public class ProcessListBaseView extends BaseListView {
                     this.excludedProcessIds
             );
         } catch (IOException | DocumentException e) {
-            Helper.setErrorMessage(ERROR_CREATING,
-                    new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
+            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
         }
         stopwatch.stop();
     }

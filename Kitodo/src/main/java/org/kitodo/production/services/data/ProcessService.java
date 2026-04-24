@@ -1146,10 +1146,24 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Generate result set.
-     *
+     * Exports selected processes matching the given filter to the specified format
+     * (CSV, Excel, or PDF) and writes the result to the HTTP response.
+     * Selection is controlled via allSelected, selectedProcessIds, and excludedProcessIds.
      * @param filter
-     *            for generating search results
+     *            optional user-defined filter string used to restrict processes
+     * @param showClosedProcesses
+     *            whether completed processes should be included in the export
+     * @param showInactiveProjects
+     *            whether processes from inactive projects should be included
+     * @param format
+     *            export format (CSV, Excel, or PDF)
+     * @param allSelected
+     *            true if all matching processes are selected,
+     *            false if only explicitly selected processes are exported
+     * @param selectedProcessIds
+     *            IDs of processes explicitly selected
+     * @param excludedProcessIds
+     *            IDs of processes explicitly excluded
      */
     public void export(String filter, boolean showClosedProcesses, boolean showInactiveProjects, ExportFormat format,
                        boolean allSelected, Collection<Integer> selectedProcessIds, Collection<Integer> excludedProcessIds)
