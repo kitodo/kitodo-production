@@ -674,7 +674,10 @@ public class ProcessServiceIT {
                 null,   // no filter
                 true,   // include closed
                 true,   // include inactive projects
-                process.getProject().getClient().getId()
+                process.getProject().getClient().getId(),
+                true,   // allSelected
+                List.of(), // selectedProcessIds
+                List.of()  // excludedProcessIds
         );
 
         ProcessExportDTO dto = result.stream()
@@ -718,7 +721,10 @@ public class ProcessServiceIT {
                 null,   // no filter
                 true,   // include closed
                 true,   // include inactive projects
-                process.getProject().getClient().getId()
+                process.getProject().getClient().getId(),
+                true,   // allSelected
+                List.of(), // selectedProcessIds
+                List.of()  // excludedProcessIds
         );
         ProcessExportDTO dto = result.stream()
                 .filter(d -> d.getId().equals(testProcessId))
@@ -736,6 +742,51 @@ public class ProcessServiceIT {
 
         // cleanup
         ProcessTestUtils.removeTestProcess(testProcessId);
+    }
+
+    @Test
+    public void shouldReturnOnlyExplicitlySelectedProcessesForExport() throws Exception {
+        int selectedProcessId1 = processService.getById(1).getId();
+        int selectedProcessId2 = processService.getById(2).getId();
+        int notSelectedProcessId = processService.getById(3).getId();
+
+        Process selectedProcess1 = processService.getById(selectedProcessId1);
+        int clientId = selectedProcess1.getProject().getClient().getId();
+
+        List<ProcessExportDTO> result = processService.getProcessesForExport(
+                null,
+                true,
+                true,
+                clientId,
+                false, // allSelected
+                List.of(selectedProcessId1, selectedProcessId2),
+                List.of()
+        );
+
+        List<Integer> resultIds = result.stream()
+                .map(ProcessExportDTO::getId)
+                .toList();
+
+        assertEquals(List.of(selectedProcessId1, selectedProcessId2), resultIds,
+                "Export should contain exactly the explicitly selected processes in ID order");
+        assertFalse(resultIds.contains(notSelectedProcessId), "Unselected process should not be exported");
+    }
+
+    @Test
+    public void shouldReturnEmptyExportResultWhenNoProcessesAreSelected() throws Exception {
+        Process process = processService.getById(1);
+
+        List<ProcessExportDTO> result = processService.getProcessesForExport(
+                null,
+                true,
+                true,
+                process.getProject().getClient().getId(),
+                false, // allSelected
+                List.of(),
+                List.of()
+        );
+
+        assertTrue(result.isEmpty(), "Export should be empty when no processes are selected");
     }
 
     @Test
