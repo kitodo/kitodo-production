@@ -2826,7 +2826,7 @@ form#metadata div label,
     vertical-align: top;
 }
 
-#editFolderDialog .ui-panelgrid-cell {
+#editFolderDialog .ui-panelgrid-cell:not(.half-width) {
     width: 100%;
 }
 
@@ -3817,6 +3817,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 
 #imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
     background: transparent;
+    display: contents;
     padding: 0;
 }
 

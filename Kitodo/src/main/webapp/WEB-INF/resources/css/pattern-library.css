@@ -1414,7 +1414,8 @@ body .ui-fileupload .ui-fileupload-content .ui-fileupload-files .ui-fileupload-r
 }
 
 .ui-dialog .dialogFieldWrapper > div,
-.ui-dialog .ui-panelgrid-cell > input {
+.ui-dialog .ui-panelgrid-cell > input,
+.ui-dialog .ui-panelgrid-cell div.ui-selectonemenu {
     margin-bottom: var(--default-full-size);
 }
 
@@ -1985,4 +1986,8 @@ body .ui-messages-error .ui-widget-content {
 
 .bold {
     font-weight: bold;
+}
+
+.half-width {
+    width: 50%;
 }
