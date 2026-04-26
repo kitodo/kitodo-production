@@ -13,6 +13,7 @@ package org.kitodo.production.forms.process;
 
 import static java.util.Map.entry;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,9 +37,12 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
+import org.kitodo.production.forms.task.TaskWorkView;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -52,6 +56,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.xml.sax.SAXException;
 
 @Named("ProcessListView")
 @ViewScoped
@@ -493,5 +498,43 @@ public class ProcessListView extends ProcessListBaseView {
             "id", "title", "progressCombined", "lastEditingUser", "processingBeginLastTask", 
             "processingEndLastTask", "correctionCommentStatus", "project.title", "creationDate"
         );
+    }
+
+    /**
+     * Take over task by user which calls this method.
+     *
+     * @param task the task that is supposed to be taken over
+     * @return the view path
+     */
+    public String takeOverTask(Task task) {
+        Stopwatch stopwatch = new Stopwatch(this, "takeOverTask");
+        if (task.getProcessingStatus() != TaskStatus.OPEN) {
+            Helper.setErrorMessage("stepInWorkError");
+            return stopwatch.stop(this.stayOnCurrentPage);
+        } else {
+            try {
+                if (task.isTypeAcceptClose()) {
+                    this.workflowControllerService.close(task);
+                    return stopwatch.stop(VIEW_PATH + "&" + getCombinedListOptions());
+                } else {
+                    this.workflowControllerService.assignTaskToUser(task);
+                    ServiceManager.getTaskService().save(task);
+                }
+            } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
+                    e);
+            }
+        }
+        return stopwatch.stop(TaskWorkView.getViewPath(task, "processes", getCombinedListOptions()));
+    }
+
+    /**
+     * Returns the view path to navigate to the "work on" task view.
+     *
+     * @param task the task to work on
+     * @return the view path
+     */
+    public String workOnTask(Task task) {
+        return TaskWorkView.getViewPath(task, "processes", getCombinedListOptions());
     }
 }

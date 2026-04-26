@@ -155,7 +155,9 @@ public class TaskListView extends BaseListView {
     /**
      * Take over task by user which calls this method.
      *
-     * @return page
+     * @param task the task that is supposed to be taken over
+     * @param referrer the current page (either "tasks" or "desktop")
+     * @return view path
      */
     public String takeOverTask(Task task, String referrer) {
         Stopwatch stopwatch = new Stopwatch(this, "takeOverTask");

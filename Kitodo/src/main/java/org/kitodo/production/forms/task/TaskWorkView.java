@@ -36,6 +36,7 @@ import org.kitodo.export.TiffHeader;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.ValidatableForm;
+import org.kitodo.production.forms.process.ProcessListView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
@@ -74,7 +75,7 @@ public class TaskWorkView extends ValidatableForm {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("id", task.getId().toString());
         queryParams.put("referer", referrer);
-        if (Objects.nonNull(referrer) && referrer.equals("tasks")) {
+        if (Objects.nonNull(referrer) && (referrer.equals("tasks") || referrer.equals("processes"))) {
             queryParams.put("referrerListOptions", "_" + URLEncoder.encode(referrerListOptions, StandardCharsets.UTF_8));
         }
         return VIEW_PATH + "&" + queryParams.entrySet().stream()
@@ -344,21 +345,29 @@ public class TaskWorkView extends ValidatableForm {
     public void setReferrerFromTemplate(String referrer) {
         if ("desktop".equals(referrer)) {
             this.referrer = "desktop";
+        } else if ("processes".equals(referrer)) {
+            this.referrer = "processes";
         } else {
             this.referrer = "tasks";
         }
     }
 
     /**
-     * Return the view path to the referring view, which can be either the desktop view or task list.
+     * Return the view path to the referring view, which can be the desktop view, the process list or task list.
      * 
      * @return the view path
      */
     private String getReferrerViewPath() {
-        if (this.referrer.equals("tasks")) {
-            return TaskListView.getViewPath() + "&" + getReferrerListOptions();
+        String base = switch (this.referrer) {
+            case "tasks" -> TaskListView.getViewPath();
+            case "processes" -> ProcessListView.getViewPath();
+            default -> "desktop?faces-redirect=true";
+        };
+        String options = getReferrerListOptions();
+        if (Objects.isNull(options) || options.isBlank()) {
+            return base;
         }
-        return "desktop";
+        return base + "&" + options;
     }
 
 }
