@@ -1934,28 +1934,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Export Mets.
-     *
-     * @param processId
-     *            Id of which process should be exported
-     * @throws DAOException
-     *             Thrown on database error
-     * @throws DAOException
-     *             Thrown on index error
-     * @throws IOException
-     *             Thrown on I/O error
-     * @throws SAXException
-     *             When starting the export fails
-     * @throws FileStructureValidationException
-     *             when XML validation of process metadata file fails during export
-     */
-    public static void exportMets(int processId) throws DAOException, IOException, SAXException, FileStructureValidationException {
-        Process process = ServiceManager.getProcessService().getById(processId);
-        ExportMets export = new ExportMets();
-        export.startExport(process);
-    }
-
-    /**
      * Link a list of given processes to user home directory.
      *
      * @param processes List of processes
