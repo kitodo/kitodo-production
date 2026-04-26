@@ -120,8 +120,18 @@ public class IndexingService {
             if (Objects.nonNull(monitor)) {
                 massIndexer.monitor(monitor);
             }
-            massIndexer.idFetchSize(Integer.MIN_VALUE).batchSizeToLoadObjects(1000);
-            return massIndexer.start();
+            String driverName = ormSession
+                    .doReturningWork(c -> c.getMetaData().getDriverName());
+            String normalizedDriverName = Objects.isNull(driverName) ? "" : driverName.toLowerCase();
+            if (normalizedDriverName.contains("mysql") && !normalizedDriverName.contains("mariadb")) {
+                // MySQL needs a special setting for the fetch size
+                // See https://docs.hibernate.org/search/7.0/reference/en-US/html_single/#indexing-massindexer-basics
+                massIndexer.idFetchSize(Integer.MIN_VALUE);
+            } else {
+                // Other Databases
+                massIndexer.idFetchSize(500);
+            }
+            return massIndexer.batchSizeToLoadObjects(1000).start();
         }
     }
 
