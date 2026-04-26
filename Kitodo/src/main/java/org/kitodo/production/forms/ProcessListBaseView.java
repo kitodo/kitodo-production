@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -44,6 +46,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.utils.Stopwatch;
+import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.data.PageEvent;
@@ -51,6 +54,8 @@ import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
 
 public class ProcessListBaseView extends BaseForm {
+
+    private String errorMessage = "";
 
     private static final Logger logger = LogManager.getLogger(ProcessListBaseView.class);
     private ChartMode chartMode;
@@ -78,6 +83,15 @@ public class ProcessListBaseView extends BaseForm {
         Stopwatch stopwatch = new Stopwatch(this, "ProcessListBaseView");
         super.setLazyBeanModel(new LazyProcessModel(ServiceManager.getProcessService()));
         stopwatch.stop();
+    }
+
+    /**
+     * Get error message.
+     * @return error message
+     */
+    public String getErrorMessage() {
+        Stopwatch stopwatch = new Stopwatch(this, "getErrorMessage");
+        return stopwatch.stop(errorMessage);
     }
 
     /**
@@ -749,17 +763,27 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void delete(Process process) {
         Stopwatch stopwatch = new Stopwatch(this.getClass(), process, "delete");
-        if (process.getChildren().isEmpty()) {
-            try {
-                ProcessService.deleteProcess(process.getId());
-            } catch (DAOException | IOException e) {
-                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
+        try {
+            List<ImportConfiguration> configurations = ServiceManager.getImportConfigurationService()
+                    .getProcessTemplateConfigurationByProcessId(process.getId());
+            if (!configurations.isEmpty()) {
+                errorMessage = Helper.getTranslation("processUsedAsTemplateProcess", configurations.get(0).getTitle());
+                Ajax.update("errorDialog");
+                PrimeFaces.current().executeScript("PF('errorDialog').show();");
+            } else if (process.getChildren().isEmpty()) {
+                try {
+                    ProcessService.deleteProcess(process.getId());
+                } catch (DAOException | IOException e) {
+                    Helper.setErrorMessage(ERROR_DELETING, new Object[]{ObjectType.PROCESS.getTranslationSingular()}, logger, e);
+                }
             }
-        } else {
-            this.deleteProcessDialog = new DeleteProcessDialog();
-            this.deleteProcessDialog.setProcess(process);
-            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+            else {
+                this.deleteProcessDialog = new DeleteProcessDialog();
+                this.deleteProcessDialog.setProcess(process);
+                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[]{ObjectType.IMPORT_CONFIGURATION.getTranslationSingular()}, logger, e);
         }
         stopwatch.stop();
     }
@@ -870,4 +894,22 @@ public class ProcessListBaseView extends BaseForm {
         Stopwatch stopwatch = new Stopwatch(this, "getNumberOfGlobalProcessMetadataStatistics");
         return stopwatch.stop(processMetadataStatistics.size());
     }
+
+    /**
+     * Rename media files of all selected processes.
+     */
+    public void renameMedia() {
+        Stopwatch stopwatch = new Stopwatch(this, "renameMedia");
+        List<Process> processes = getSelectedProcesses();
+        errorMessage = ServiceManager.getFileService().tooManyProcessesSelectedForMediaRenaming(processes.size());
+        if (StringUtils.isBlank(errorMessage)) {
+            PrimeFaces.current().executeScript("PF('renameMediaConfirmDialog').show();");
+        } else {
+            Ajax.update("errorDialog");
+            PrimeFaces.current().executeScript("PF('errorDialog').show();");
+        }
+        stopwatch.stop();
+    }
+
+
 }
