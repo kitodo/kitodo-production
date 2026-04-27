@@ -65,7 +65,7 @@ public class ProcessListBaseView extends BaseListView {
 
     boolean allSelected = false;
     HashSet<Integer> excludedProcessIds = new HashSet<>();
-    private final ProcessProgressHelper progressService = new ProcessProgressHelper();
+    private final ProcessProgressHelper processProgressHelper = new ProcessProgressHelper();
 
     /**
      * Constructor.
@@ -160,7 +160,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return true if at least one task exists, otherwise false
      */
     public boolean hasAnyTasks(Process process) {
-        return progressService.hasAnyTasks(getCachedTaskStatusCounts(process));
+        return processProgressHelper.hasAnyTasks(getCachedTaskStatusCounts(process));
     }
 
     /**
@@ -192,7 +192,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return formatted task titles or an empty string if none exist
      */
     public String getCurrentTaskTitles(Process process) {
-        return progressService.buildTaskTitleTooltip(
+        return processProgressHelper.buildTaskTitleTooltip(
                 getLazyProcessModel().getTaskTitleCache().get(process.getId())
         );
     }
@@ -229,7 +229,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return progress percentage for the given status
      */
     public double progress(Process process, TaskStatus status) {
-        return progressService.progress(
+        return processProgressHelper.progress(
                 getCachedTaskStatusCounts(process),
                 status
         );
@@ -244,7 +244,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return percentage of tasks completed
      */
     public double progressClosed(Process process) {
-        return progressService.progressClosed(getCachedTaskStatusCounts(process));
+        return processProgressHelper.progressClosed(getCachedTaskStatusCounts(process));
     }
 
     /**
@@ -256,7 +256,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return percentage of tasks in progress
      */
     public double progressInProcessing(Process process) {
-        return progressService.progressInProcessing(
+        return processProgressHelper.progressInProcessing(
                 getCachedTaskStatusCounts(process)
         );
     }
@@ -271,7 +271,7 @@ public class ProcessListBaseView extends BaseListView {
      * @return percentage of startable tasks
      */
     public double progressOpen(Process process) {
-        return progressService.progressOpen(
+        return processProgressHelper.progressOpen(
                 getCachedTaskStatusCounts(process)
         );
     }
