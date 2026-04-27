@@ -400,6 +400,10 @@ public class MockDatabase {
         authorities.add(new Authority("renameMedia" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("renameMedia" + CLIENT_ASSIGNABLE));
 
+        // Delete media files
+        authorities.add(new Authority("deleteMedia" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteMedia" + CLIENT_ASSIGNABLE));
+
         // Assign import configurations to clients
         authorities.add(new Authority("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE));
 
@@ -1645,13 +1649,7 @@ public class MockDatabase {
         firstRole.setClient(firstClient);
 
         // insert administration authorities
-        for (int i = 0; i < 34; i++) {
-            firstRole.getAuthorities().add(allAuthorities.get(i));
-        }
-
-        firstRole.getAuthorities().add(ServiceManager.getAuthorityService()
-                .getByTitle("useMassImport" + CLIENT_ASSIGNABLE));
-
+        firstRole.getAuthorities().addAll(allAuthorities);
         ServiceManager.getRoleService().save(firstRole);
 
         Role secondRole = new Role();
