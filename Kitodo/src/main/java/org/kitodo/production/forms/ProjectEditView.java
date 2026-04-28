@@ -70,7 +70,7 @@ public class ProjectEditView extends BaseEditView {
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
-
+    private String originalFileGroup;
     private Project baseProject;
     /**
      * The folder currently under edit in the pop-up dialog.
@@ -123,6 +123,7 @@ public class ProjectEditView extends BaseEditView {
      */
     public void setEditingFolder(Folder folder) {
         this.editingFolder = folder;
+        this.originalFileGroup = Objects.nonNull(folder) ? folder.getFileGroup() : null;
         this.generator = new FolderGenerator(folder);
     }
 
@@ -183,12 +184,23 @@ public class ProjectEditView extends BaseEditView {
         }
     }
 
+    /**
+     * Sync project folders with workingFolders using fileGroup as key.
+     * Removes folders deleted in UI and replaces existing ones with same fileGroup.
+     * Ensures exactly one folder per fileGroup is persisted.
+     */
     private void syncFoldersToProject() {
-        project.getFolders().removeIf(folder -> !workingFolders.contains(folder));
+        // remove folders whose fileGroup is no longer present
+        project.getFolders().removeIf(projectFolder ->
+                workingFolders.stream()
+                        .noneMatch(wf -> Objects.equals(wf.getFileGroup(), projectFolder.getFileGroup()))
+        );
+        // add or replace by fileGroup
         for (Folder workingFolder : workingFolders) {
-            if (!project.getFolders().contains(workingFolder)) {
-                project.getFolders().add(workingFolder);
-            }
+            project.getFolders().removeIf(pf ->
+                    Objects.equals(pf.getFileGroup(), workingFolder.getFileGroup())
+            );
+            project.getFolders().add(workingFolder);
         }
     }
 
@@ -281,7 +293,11 @@ public class ProjectEditView extends BaseEditView {
                 .anyMatch(folder -> folder != editingFolder
                         && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
         if (duplicate) {
-            Helper.setErrorMessage("errorDuplicateFilegroup", new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            Helper.setErrorMessage(
+                    "errorDuplicateFilegroup",
+                    new Object[] { editingFolder.getFileGroup() }
+            );
+            editingFolder.setFileGroup(originalFileGroup);
             return;
         }
 
@@ -471,7 +487,8 @@ public class ProjectEditView extends BaseEditView {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+        return getFolderList().stream()
+                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
                 .collect(Collectors.toList());
     }
 
@@ -494,7 +511,14 @@ public class ProjectEditView extends BaseEditView {
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return getFolderList().stream()
+                .filter(folder -> StringUtils.isNotBlank(folder.getFileGroup()))
+                .collect(Collectors.toMap(
+                        Folder::getFileGroup,
+                        Function.identity(),
+                        (existing, replacement) ->
+                                Objects.nonNull(existing.getId()) ? existing : replacement
+                ));
     }
 
 
