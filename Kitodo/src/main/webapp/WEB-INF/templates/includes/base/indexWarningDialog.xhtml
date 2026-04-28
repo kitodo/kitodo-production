@@ -43,8 +43,8 @@
 
         <p:panelGrid columns="1">
             <h:form id="retryForm">
-                <p:panelGrid>
-                    <p:row>
+                <p:panelGrid columns="1">
+                    <p:column>
                         <p:button href="#{request.contextPath}/logout"
                                   id="logoutButton"
                                   value="#{msgs.logout}"
@@ -59,7 +59,7 @@
                                          action="#{LoginForm.performPostLoginChecks()}"
                                          update="messageWrapper"
                                          styleClass="secondary right"/>
-                    </p:row>
+                    </p:column>
                 </p:panelGrid>
             </h:form>
         </p:panelGrid>

@@ -83,8 +83,8 @@
             </p:accordionPanel>
         </h:form>
         <div class="select-selector">
-            <p:panelGrid>
-                <p:row>
+            <p:panelGrid columns="1">
+                <p:column>
                     <h:form id="massImportResultDialogButtonForm">
                         <p:button id="goToProcesses"
                                   value="#{msgs['processes']}"
@@ -95,7 +95,7 @@
                                          styleClass="secondary right"
                                          onclick="PF('massImportResultDialog').hide();"/>
                     </h:form>
-                </p:row>
+                </p:column>
             </p:panelGrid>
         </div>
     </p:dialog>
