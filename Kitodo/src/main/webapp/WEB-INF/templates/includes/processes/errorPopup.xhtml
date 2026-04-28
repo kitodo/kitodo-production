@@ -33,15 +33,15 @@
 
         <p:panelGrid columns="1">
             <h:form id="buttonForm">
-                <p:panelGrid>
-                    <p:row>
+                <p:panelGrid columns="1">
+                    <p:column>
                         <p:commandButton id="okButton"
                                          value="#{msgs.ok}"
                                          update="messageWrapper"
                                          style="margin-right: 32px;"
                                          onclick="PF('errorDialog').hide();"
                                          styleClass="primary right"/>
-                    </p:row>
+                    </p:column>
                 </p:panelGrid>
             </h:form>
         </p:panelGrid>

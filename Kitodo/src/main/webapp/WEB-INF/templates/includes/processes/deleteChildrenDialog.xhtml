@@ -29,8 +29,8 @@
         <p><h:outputFormat value="#{msgs['deleteProcessChildren']}">
             <f:param value="#{ProcessListView.deleteProcessDialog.process.children.size()}" />
         </h:outputFormat></p>
-        <p:panelGrid>
-            <p:row>
+        <p:panelGrid columns="1">
+            <p:column>
                 <h:form id="deleteChildrenForm">
                     <p:commandButton id="deleteChildrenButton"
                                      action="#{ProcessListView.deleteProcessDialog.deleteWithChildren}"
@@ -55,7 +55,7 @@
                                      styleClass="secondary right"
                                      onclick="PF('deleteChildrenDialog').hide();"/>
                 </h:form>
-            </p:row>
+            </p:column>
         </p:panelGrid>
     </p:dialog>
 </ui:composition>
