@@ -72,6 +72,7 @@ public class WorkflowEditView extends BaseEditView {
     private String svgDiagram;
     private boolean dataEditorSettingsDefined = false;
     private String xmlDiagram;
+    private String originalTitle;
     private WorkflowStatus workflowStatus;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     public static final String SVG_EXTENSION = ".svg";
@@ -141,6 +142,14 @@ public class WorkflowEditView extends BaseEditView {
             return this.stayOnCurrentPage;
         }
         try {
+            if (!workflow.getTitle().equals(originalTitle)
+                    && ServiceManager.getWorkflowService()
+                    .workflowTitleExists(workflow.getTitle())) {
+                Helper.setErrorMessage(
+                        Helper.getTranslation("duplicateWorkflowTitle", workflow.getTitle())
+                );
+                return this.stayOnCurrentPage;
+            }
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
@@ -151,6 +160,7 @@ public class WorkflowEditView extends BaseEditView {
                     migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
                 }
+                handleDiagramFilesAfterTitleChange();
                 return WorkflowListView.VIEW_PATH + "&" + getReferrerListOptions();
             } else {
                 return this.stayOnCurrentPage;
@@ -162,6 +172,47 @@ public class WorkflowEditView extends BaseEditView {
             Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
                 e);
             return this.stayOnCurrentPage;
+        }
+    }
+
+    /**
+     * Handles renaming of diagram files when the workflow title changes.
+     *
+     * <p>XML files are treated as authoritative and will be replaced if a new version exists.</p>
+     *
+     * <p>SVG handling depends on whether a new (non empty) SVG-diagram was submitted:
+     * <ul>
+     *   <li>If no SVG was submitted (e.g. editor did not modify it), the existing SVG is moved to the new filename.</li>
+     *   <li>If a new SVG was submitted and successfully written, the old SVG is deleted.</li>
+     * </ul>
+     *
+     * <p>This logic avoids unnecessary data loss and ensures that existing diagrams are preserved
+     * when no changes were made in the editor.</p>
+     */
+    private void handleDiagramFilesAfterTitleChange() {
+        if (Objects.isNull(originalTitle) || originalTitle.equals(workflow.getTitle())) {
+            return;
+        }
+        try {
+            Map<String, URI> oldUris = getDiagramUris(originalTitle);
+            Map<String, URI> newUris = getDiagramUris(workflow.getTitle());
+            URI oldXml = oldUris.get(XML_DIAGRAM_URI);
+            URI oldSvg = oldUris.get(SVG_DIAGRAM_URI);
+            URI newXml = newUris.get(XML_DIAGRAM_URI);
+            URI newSvg = newUris.get(SVG_DIAGRAM_URI);
+            if (fileService.fileExist(oldXml) && fileService.fileExist(newXml)) {
+                fileService.delete(oldXml);
+            }
+            if (fileService.fileExist(oldSvg)) {
+                if (StringUtils.isBlank(svgDiagram)) {
+                    fileService.moveFile(oldSvg, newSvg);
+                } else if (fileService.fileExist(newSvg)) {
+                    fileService.delete(oldSvg);
+                }
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("errorHandlingWorkflowFiles",
+                    new Object[] { originalTitle }, logger, e);
         }
     }
 
@@ -271,30 +322,39 @@ public class WorkflowEditView extends BaseEditView {
      * @return true if save, false if not
      */
     private boolean saveFiles() throws IOException, WorkflowException {
-        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
-                .getRequestParameterMap();
-
+        FacesContext context = FacesContext.getCurrentInstance();
         Map<String, URI> diagramsUris = getDiagramUris();
 
         URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
         URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
-        xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
+        if (Objects.nonNull(context)) {
+            xmlDiagram = context.getExternalContext()
+                    .getRequestParameterMap()
+                    .get("editForm:workflowTabView:xmlDiagram");
+        }
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+            if (StringUtils.isBlank(xmlDiagram)) {
+                Helper.setErrorMessage(
+                        Helper.getTranslation("errorWorkflowDiagramMissing")
+                );
+                return false;
+            }
 
             Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             reader.validateWorkflowTasks();
 
             Converter converter = new Converter(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             converter.validateWorkflowTaskList();
-
-            saveFile(svgDiagramURI, svgDiagram);
+            if (StringUtils.isNotBlank(svgDiagram)) {
+                saveFile(svgDiagramURI, svgDiagram);
+            }
             saveFile(xmlDiagramURI, xmlDiagram);
         }
 
-        return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
+        return fileService.fileExist(xmlDiagramURI);
     }
 
     private Map<String, URI> getDiagramUris() {
@@ -416,6 +476,7 @@ public class WorkflowEditView extends BaseEditView {
                 try {
                     Workflow workflow = ServiceManager.getWorkflowService().getById(id);
                     setWorkflow(workflow);
+                    this.originalTitle = workflow.getTitle();
                     setWorkflowStatus(workflow.getStatus());
                     readXMLDiagram();
                     this.dataEditorSettingsDefined = this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow);
