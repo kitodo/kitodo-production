@@ -198,18 +198,15 @@ public class ListingST extends BaseTestSelenium {
         assertEquals(2, templatesProject.size(), "Displayed wrong number of project's templates");
         assertEquals("Fourth template", templatesProject.get(1), "Displayed wrong project's template");
 
-        int templatesInDatabase = (int) ServiceManager.getTemplateService().getAll().stream()
-                .filter(template -> template.getClient().getId() == 1)
-                .count();
-        int templatesDisplayed = projectsPage.countListedTemplates();
+        projectsPage.goToTemplateTab();
+        pollAssertTrue(() -> Browser.getDriver().findElement(By.id("templateTab")).isDisplayed());
 
         List<String> detailsTemplate =  projectsPage.getTemplateDetails();
-        //TODO: find way to read this table without exception
-        //assertEquals("Displayed wrong number of template's details", 4, detailsTemplate.size());
-        //assertEquals("Displayed wrong template's workflow", "", detailsTemplate.get(0));
-        //assertEquals("Displayed wrong template's ruleset", "SLUBHH", detailsTemplate.get(1));
-        //assertEquals("Displayed wrong template's docket", "second", detailsTemplate.get(2));
-        //assertEquals("Displayed wrong template's project", "First project", detailsTemplate.get(2));
+        assertEquals(4, detailsTemplate.size(), "Displayed wrong number of template's details");
+        assertEquals("second", detailsTemplate.get(0), "Displayed wrong template's docket");
+        assertEquals("SUBHH", detailsTemplate.get(1), "Displayed wrong template's ruleset");
+        assertEquals("", detailsTemplate.get(2), "Displayed wrong template's workflow");
+        assertEquals("First project", detailsTemplate.get(3), "Displayed wrong template's project");
 
     int workflowsInDatabase = (int) ServiceManager.getWorkflowService().getAll().stream()
         .filter(workflow -> workflow.getClient().getId() == 1)
