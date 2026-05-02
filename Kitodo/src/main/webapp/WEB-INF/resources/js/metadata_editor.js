@@ -16,6 +16,19 @@
 
 var metadataEditor = metadataEditor || {};
 
+metadataEditor.global = {
+    toggleFullscreenMode() {
+    document.body.classList.toggle('fullscreen-mode');
+    // Force layout recalculation
+    setTimeout(function () {
+        if (typeof window.setHeight === 'function') {
+            window.setHeight();
+        }
+        window.dispatchEvent(new Event('resize'));
+    }, 50);
+    }
+};
+
 metadataEditor.metadataTree = {
 
     /**
