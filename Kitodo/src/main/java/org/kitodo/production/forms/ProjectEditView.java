@@ -512,8 +512,7 @@ public class ProjectEditView extends BaseEditView {
 
     private Map<String, Folder> getFolderMap() {
         return getFolderList().stream()
-                .filter(folder -> StringUtils.isNotBlank(folder.getFileGroup()))
-                .collect(Collectors.toMap(
+               .collect(Collectors.toMap(
                         Folder::getFileGroup,
                         Function.identity(),
                         (existing, replacement) ->
