@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
@@ -380,6 +381,24 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
     }
 
     /**
+     * Creates a metadata view for one line of the auxiliary table.
+     * This method takes metadata groups into account that are not defined in the ruleset.
+     *
+     * @param row row to make a view for
+     * @param index index of the metadata object in the row
+     * @return metadata view
+     */
+    private MetadataViewInterface rowToView(AuxiliaryTableRow row, int index) {
+        if (row.getKey().isUndefined()) {
+            Collection<Metadata> metadataObjects = row.getDataObjects(index);
+            if (!metadataObjects.isEmpty() && metadataObjects.iterator().next() instanceof MetadataGroup) {
+                return getNestedKeyView(row.getId());
+            }
+        }
+        return rowToView(row);
+    }
+
+    /**
      * Creates a key view for a grouped key. This is the case when when
      * {@code <key>} elements occur within another {@code <key>} element in the
      * ruleset.
@@ -424,7 +443,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
                 excludedDataObjects.addAll(auxiliaryTableRow.getDataObjects(0));
             } else {
                 for (int i = 0; i < auxiliaryTableRow.getNumberOfTypeViewsToGenerate(); i++) {
-                    Optional<MetadataViewInterface> definedTypeView = Optional.of(rowToView(auxiliaryTableRow));
+                    Optional<MetadataViewInterface> definedTypeView = Optional.of(rowToView(auxiliaryTableRow, i));
                     sortedVisibleMetadata.add(new FormRow(definedTypeView, auxiliaryTableRow.getDataObjects(i)));
                 }
             }
