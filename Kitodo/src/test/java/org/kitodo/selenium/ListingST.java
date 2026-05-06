@@ -28,7 +28,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
 import org.kitodo.selenium.testframework.pages.DesktopPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
@@ -45,7 +44,6 @@ public class ListingST extends BaseTestSelenium {
     private static ProjectsPage projectsPage;
     private static TasksPage tasksPage;
     private static UsersPage usersPage;
-    private static CurrentTasksEditPage currentTasksEditPage;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -54,7 +52,6 @@ public class ListingST extends BaseTestSelenium {
         projectsPage = Pages.getProjectsPage();
         tasksPage = Pages.getTasksPage();
         usersPage = Pages.getUsersPage();
-        currentTasksEditPage = Pages.getCurrentTasksEditPage();
     }
 
     @BeforeEach
