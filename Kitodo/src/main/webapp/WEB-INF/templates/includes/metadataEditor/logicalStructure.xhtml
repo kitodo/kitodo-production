@@ -254,7 +254,7 @@
             <p:menuitem value="#{msgs.deleteMedia}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
-                        styleClass="plain"
+                        styleClass="plain removeSelectedMedia"
                         disabled="#{readOnly}"
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"

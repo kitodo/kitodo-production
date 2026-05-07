@@ -33,6 +33,7 @@ import org.kitodo.production.services.ServiceManager;
 public class RoleServiceIT {
 
     private static final RoleService roleService = ServiceManager.getRoleService();
+    private static final AuthorityService authorityService = ServiceManager.getAuthorityService();
 
     private static final int EXPECTED_ROLES_COUNT = 10;
 
@@ -125,9 +126,9 @@ public class RoleServiceIT {
 
     @Test
     public void shouldGetAuthorizationsAsString() throws Exception {
-        Role role = roleService.getById(1);
+        Role role = roleService.getById(1); // admin role
         int actual = roleService.getAuthorizationsAsString(role).size();
-        int expected = 35;
+        long expected = authorityService.count(); // admin role should have all authorities
         assertEquals(expected, actual, "Number of authority strings doesn't match!");
     }
 
