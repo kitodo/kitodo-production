@@ -200,7 +200,8 @@ public class ProjectEditView extends BaseEditView {
         List<Folder> removedFolders = project.getFolders().stream()
                 .filter(projectFolder ->
                         workingFolders.stream().noneMatch(workingFolder ->
-                                Objects.equals(projectFolder.getId(), workingFolder.getId())
+                                (Objects.nonNull(projectFolder.getId())
+                                        && Objects.equals(projectFolder.getId(), workingFolder.getId()))
                                         || projectFolder == workingFolder
                         )
                 )
@@ -213,9 +214,11 @@ public class ProjectEditView extends BaseEditView {
         for (Folder workingFolder : workingFolders) {
             boolean exists = project.getFolders().stream()
                     .anyMatch(projectFolder ->
-                            Objects.equals(projectFolder.getId(), workingFolder.getId())
+                            (Objects.nonNull(projectFolder.getId())
+                                    && Objects.equals(projectFolder.getId(), workingFolder.getId()))
                                     || projectFolder == workingFolder
                     );
+
             if (!exists) {
                 project.getFolders().add(workingFolder);
             }
@@ -334,11 +337,12 @@ public class ProjectEditView extends BaseEditView {
             return;
         }
         boolean duplicate = workingFolders.stream()
-                .anyMatch(folder ->
-                        !Objects.equals(folder.getId(), editingFolder.getId())
-                                && folder != editingFolder
-                                && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup())
+                .filter(folder -> folder != editingFolder)
+                .map(Folder::getFileGroup)
+                .anyMatch(fileGroup ->
+                        Objects.equals(fileGroup, editingFolder.getFileGroup())
                 );
+
         if (duplicate) {
             Helper.setErrorMessage(
                     "errorDuplicateFilegroup",
@@ -348,11 +352,11 @@ public class ProjectEditView extends BaseEditView {
             return;
         }
 
-        boolean exists = workingFolders.stream()
-                .anyMatch(folder ->
-                        (Objects.nonNull(folder.getId())
-                                && Objects.equals(folder.getId(), editingFolder.getId()))
-                                || folder == editingFolder
+        boolean exists = project.getFolders().stream()
+                .anyMatch(projectFolder ->
+                        (Objects.nonNull(projectFolder.getId())
+                                && Objects.equals(projectFolder.getId(), editingFolder.getId()))
+                                || projectFolder == editingFolder
                 );
 
         if (!exists) {
@@ -581,14 +585,6 @@ public class ProjectEditView extends BaseEditView {
                 ? EMPTY_FILE_GROUP_SENTINEL
                 : fileGroup;
     }
-
-    private String fromUiFileGroup(String fileGroup) {
-        return EMPTY_FILE_GROUP_SENTINEL.equals(fileGroup)
-                ? ""
-                : fileGroup;
-    }
-
-
 
     /**
      * Returns an encapsulation to access the generator properties of the folder
