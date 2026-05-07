@@ -196,19 +196,57 @@ public class ProjectEditView extends BaseEditView {
      * Ensures exactly one folder per fileGroup is persisted.
      */
     private void syncFoldersToProject() {
-        // remove folders whose fileGroup is no longer present
-        project.getFolders().removeIf(projectFolder ->
-                workingFolders.stream()
-                        .noneMatch(wf -> Objects.equals(wf.getFileGroup(), projectFolder.getFileGroup()))
-        );
-        // add or replace by fileGroup
+
+        List<Folder> removedFolders = project.getFolders().stream()
+                .filter(projectFolder ->
+                        workingFolders.stream().noneMatch(workingFolder ->
+                                Objects.equals(projectFolder.getId(), workingFolder.getId())
+                                        || projectFolder == workingFolder
+                        )
+                )
+                .toList();
+
+        removedFolders.forEach(this::clearFolderReferences);
+
+        project.getFolders().removeAll(removedFolders);
+
         for (Folder workingFolder : workingFolders) {
-            project.getFolders().removeIf(pf ->
-                    Objects.equals(pf.getFileGroup(), workingFolder.getFileGroup())
-            );
-            project.getFolders().add(workingFolder);
+            boolean exists = project.getFolders().stream()
+                    .anyMatch(projectFolder ->
+                            Objects.equals(projectFolder.getId(), workingFolder.getId())
+                                    || projectFolder == workingFolder
+                    );
+            if (!exists) {
+                project.getFolders().add(workingFolder);
+            }
         }
     }
+
+    private void clearFolderReferences(Folder folder) {
+        if (Objects.equals(project.getPreview(), folder)) {
+            project.setPreview(null);
+        }
+        if (Objects.equals(project.getAudioPreview(), folder)) {
+            project.setAudioPreview(null);
+        }
+        if (Objects.equals(project.getVideoPreview(), folder)) {
+            project.setVideoPreview(null);
+        }
+        if (Objects.equals(project.getMediaView(), folder)) {
+            project.setMediaView(null);
+        }
+        if (Objects.equals(project.getAudioMediaView(), folder)) {
+            project.setAudioMediaView(null);
+        }
+        if (Objects.equals(project.getVideoMediaView(), folder)) {
+            project.setVideoMediaView(null);
+        }
+        if (Objects.equals(project.getGeneratorSource(), folder)) {
+            project.setGeneratorSource(null);
+        }
+    }
+
+
 
     private void commitTemplates() throws DAOException {
         if (copyTemplates) {
