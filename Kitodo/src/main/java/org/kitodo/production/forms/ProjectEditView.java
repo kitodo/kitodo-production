@@ -296,8 +296,11 @@ public class ProjectEditView extends BaseEditView {
             return;
         }
         boolean duplicate = workingFolders.stream()
-                .anyMatch(folder -> folder != editingFolder
-                        && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
+                .anyMatch(folder ->
+                        !Objects.equals(folder.getId(), editingFolder.getId())
+                                && folder != editingFolder
+                                && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup())
+                );
         if (duplicate) {
             Helper.setErrorMessage(
                     "errorDuplicateFilegroup",
@@ -309,7 +312,9 @@ public class ProjectEditView extends BaseEditView {
 
         boolean exists = workingFolders.stream()
                 .anyMatch(folder ->
-                        Objects.equals(folder.getId(), editingFolder.getId())
+                        (Objects.nonNull(folder.getId())
+                                && Objects.equals(folder.getId(), editingFolder.getId()))
+                                || folder == editingFolder
                 );
 
         if (!exists) {
@@ -768,8 +773,7 @@ public class ProjectEditView extends BaseEditView {
      *         video preview folder
      */
     public void setVideoPreview(String videoPreview) {
-        project.setVideoPreview(getFolderMap().get(videoPreview)
-        );
+        project.setVideoPreview(getFolderMap().get(videoPreview));
     }
 
     /**
