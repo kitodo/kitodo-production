@@ -72,6 +72,9 @@ public class ProjectEditView extends BaseEditView {
     private Boolean hasProcesses;
     private String originalFileGroup;
     private Project baseProject;
+
+    private static final String EMPTY_FILE_GROUP_SENTINEL = "__EMPTY_FILE_GROUP__";
+
     /**
      * The folder currently under edit in the pop-up dialog.
      */
@@ -132,9 +135,12 @@ public class ProjectEditView extends BaseEditView {
      */
     public Collection<String> getAvailableFileGroups() {
         Collection<String> fileGroups = Folder.getDefaultFileGroups();
-        if (Objects.nonNull(editingFolder) && StringUtils.isNotBlank(editingFolder.getFileGroup())) {
+
+        if (Objects.nonNull(editingFolder)
+                && Objects.nonNull(editingFolder.getFileGroup())) {
             fileGroups.add(editingFolder.getFileGroup());
         }
+
         return fileGroups;
     }
 
@@ -301,7 +307,12 @@ public class ProjectEditView extends BaseEditView {
             return;
         }
 
-        if (!workingFolders.contains(editingFolder)) {
+        boolean exists = workingFolders.stream()
+                .anyMatch(folder ->
+                        Objects.equals(folder.getId(), editingFolder.getId())
+                );
+
+        if (!exists) {
             workingFolders.add(editingFolder);
         }
     }
@@ -488,7 +499,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public List<SelectItem> getSelectableFolders() {
         return getFolderList().stream()
-                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+                .map(folder -> new SelectItem(
+                        toUiFileGroup(folder.getFileGroup()),
+                        folder.toString()))
                 .collect(Collectors.toList());
     }
 
@@ -512,12 +525,24 @@ public class ProjectEditView extends BaseEditView {
 
     private Map<String, Folder> getFolderMap() {
         return getFolderList().stream()
-               .collect(Collectors.toMap(
-                        Folder::getFileGroup,
+                .collect(Collectors.toMap(
+                        folder -> toUiFileGroup(folder.getFileGroup()),
                         Function.identity(),
                         (existing, replacement) ->
                                 Objects.nonNull(existing.getId()) ? existing : replacement
                 ));
+    }
+
+    private String toUiFileGroup(String fileGroup) {
+        return StringUtils.isEmpty(fileGroup)
+                ? EMPTY_FILE_GROUP_SENTINEL
+                : fileGroup;
+    }
+
+    private String fromUiFileGroup(String fileGroup) {
+        return EMPTY_FILE_GROUP_SENTINEL.equals(fileGroup)
+                ? ""
+                : fileGroup;
     }
 
 
@@ -561,7 +586,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getGeneratorSource() {
         Folder source = project.getGeneratorSource();
-        return Objects.isNull(source) ? null : source.getFileGroup();
+        return Objects.isNull(source)
+                ? null
+                : toUiFileGroup(source.getFileGroup());
     }
 
     /**
@@ -582,7 +609,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getMediaView() {
         Folder mediaView = project.getMediaView();
-        return Objects.isNull(mediaView) ? null : mediaView.getFileGroup();
+        return Objects.isNull(mediaView)
+                ? null
+                : toUiFileGroup(mediaView.getFileGroup());
     }
 
     /**
@@ -602,7 +631,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getAudioMediaView() {
         Folder audioMediaView = project.getAudioMediaView();
-        return Objects.isNull(audioMediaView) ? null : audioMediaView.getFileGroup();
+        return Objects.isNull(audioMediaView)
+                ? null
+                : toUiFileGroup(audioMediaView.getFileGroup());
     }
 
     /**
@@ -641,7 +672,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getVideoMediaView() {
         Folder videoMediaView = project.getVideoMediaView();
-        return Objects.isNull(videoMediaView) ? null : videoMediaView.getFileGroup();
+        return Objects.isNull(videoMediaView)
+                ? null
+                : toUiFileGroup(videoMediaView.getFileGroup());
     }
 
     /**
@@ -661,7 +694,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getPreview() {
         Folder preview = project.getPreview();
-        return Objects.isNull(preview) ? null : preview.getFileGroup();
+        return Objects.isNull(preview)
+                ? null
+                : toUiFileGroup(preview.getFileGroup());
     }
 
     /**
@@ -699,7 +734,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getAudioPreview() {
         Folder audioPreview = project.getAudioPreview();
-        return Objects.isNull(audioPreview) ? null : audioPreview.getFileGroup();
+        return Objects.isNull(audioPreview)
+                ? null
+                : toUiFileGroup(audioPreview.getFileGroup());
     }
 
     /**
@@ -719,7 +756,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getVideoPreview() {
         Folder videoPreview = project.getVideoPreview();
-        return Objects.isNull(videoPreview) ? null : videoPreview.getFileGroup();
+        return Objects.isNull(videoPreview)
+                ? null
+                : toUiFileGroup(videoPreview.getFileGroup());
     }
 
     /**
@@ -729,7 +768,8 @@ public class ProjectEditView extends BaseEditView {
      *         video preview folder
      */
     public void setVideoPreview(String videoPreview) {
-        project.setVideoPreview(getFolderMap().get(videoPreview));
+        project.setVideoPreview(getFolderMap().get(videoPreview)
+        );
     }
 
     /**
