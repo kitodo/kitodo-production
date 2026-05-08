@@ -832,7 +832,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>6.2.17</version>
+                <version>6.2.18</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars</groupId>
