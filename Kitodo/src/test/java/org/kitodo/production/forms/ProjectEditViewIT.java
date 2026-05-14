@@ -255,4 +255,55 @@ public class ProjectEditViewIT {
         assertEquals("GROUP_B",
                 updated.getGeneratorSource().getFileGroup());
     }
+
+    @Test
+    public void shouldRejectChangingFileGroupToDuplicateEmptyValue() throws Exception {
+
+        ProjectEditView view = new ProjectEditView();
+
+        Project project = ServiceManager.getProjectService()
+                .getProjectWithFolders(1)
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        /*
+         * Create folder with empty group
+         */
+        view.addFolder();
+        Folder emptyFolder = view.getEditingFolder();
+        emptyFolder.setFileGroup("");
+        emptyFolder.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        /*
+         * Create folder with non-empty group
+         */
+        view.addFolder();
+        Folder maxFolder = view.getEditingFolder();
+        maxFolder.setFileGroup("MAX");
+        maxFolder.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        /*
+         * Delete original empty group folder
+         */
+        view.setEditingFolder(emptyFolder);
+        view.deleteFolder();
+
+        /*
+         * Edit MAX -> empty
+         */
+        view.setEditingFolder(maxFolder);
+        maxFolder.setFileGroup("");
+        view.saveFolder();
+
+        long emptyCount = view.getFolderList().stream()
+                .map(Folder::getFileGroup)
+                .map(group -> group == null ? "" : group.trim())
+                .filter(String::isEmpty)
+                .count();
+
+        assertEquals(1, emptyCount);
+    }
 }

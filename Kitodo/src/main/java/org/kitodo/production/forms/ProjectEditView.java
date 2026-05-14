@@ -352,12 +352,8 @@ public class ProjectEditView extends BaseEditView {
             return;
         }
 
-        boolean exists = project.getFolders().stream()
-                .anyMatch(projectFolder ->
-                        (Objects.nonNull(projectFolder.getId())
-                                && Objects.equals(projectFolder.getId(), editingFolder.getId()))
-                                || projectFolder == editingFolder
-                );
+        boolean exists = workingFolders.stream()
+                .anyMatch(folder -> folder == editingFolder);
 
         if (!exists) {
             workingFolders.add(editingFolder);
