@@ -300,7 +300,7 @@ public class ProjectEditViewIT {
 
         long emptyCount = view.getFolderList().stream()
                 .map(Folder::getFileGroup)
-                .map(group -> group == null ? "" : group.trim())
+                .map(group -> Objects.isNull(group) ? "" : group.trim())
                 .filter(String::isEmpty)
                 .count();
 

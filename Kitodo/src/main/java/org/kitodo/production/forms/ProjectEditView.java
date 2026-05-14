@@ -336,11 +336,18 @@ public class ProjectEditView extends BaseEditView {
         if (Objects.isNull(editingFolder)) {
             return;
         }
+        editingFolder.setFileGroup(
+                StringUtils.trimToEmpty(editingFolder.getFileGroup())
+        );
         boolean duplicate = workingFolders.stream()
                 .filter(folder -> folder != editingFolder)
                 .map(Folder::getFileGroup)
+                .map(StringUtils::trimToEmpty)
                 .anyMatch(fileGroup ->
-                        Objects.equals(fileGroup, editingFolder.getFileGroup())
+                        Objects.equals(
+                                fileGroup,
+                                StringUtils.trimToEmpty(editingFolder.getFileGroup())
+                        )
                 );
 
         if (duplicate) {
