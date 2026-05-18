@@ -164,12 +164,8 @@ public class MetadataPanel implements Serializable {
     }
 
     private boolean isDivisionUntyped(LogicalDivision division) {
-        if (division instanceof LogicalDivision logicalDivision) {
-            return Objects.isNull(logicalDivision.getType()) || logicalDivision.getType().isBlank();
-        }
-        return false;
+        return Objects.isNull(division.getType()) || division.getType().isBlank();
     }
-
 
     void showPageInLogical(PhysicalDivision physicalDivision) {
         if (Objects.nonNull(physicalDivision)) {

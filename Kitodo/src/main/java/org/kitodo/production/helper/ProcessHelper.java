@@ -461,7 +461,7 @@ public class ProcessHelper {
                                                    RulesetManagementInterface rulesetManagement, String acquisitionStage,
                                                    List<Locale.LanguageRange> priorityList) {
         String type = division.getType();
-        if (Objects.nonNull(type) && !type.isEmpty()) {
+        if (Objects.nonNull(type) && !type.isBlank()) {
             StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(type,
                     acquisitionStage, priorityList);
             for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {

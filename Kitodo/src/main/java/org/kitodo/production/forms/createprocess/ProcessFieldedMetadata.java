@@ -681,12 +681,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 String id = row.getMetadataID();
                 if (row instanceof ProcessSimpleMetadata && specialFields.contains(id)
                         && ((ProcessSimpleMetadata) row).getSettings()
-                        .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV) && !untyped) {
+                        .getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
                     updateDivisionFromProcessDetail(id, (ProcessSimpleMetadata) row);
-                } else {
-                    if (!untyped) {
-                        metadata.addAll(row.getMetadataWithFilledValues());
-                    }
+                } else if (!untyped) {
+                    metadata.addAll(row.getMetadataWithFilledValues());
                 }
             }
             if (Objects.nonNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
@@ -698,7 +696,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                         }
                     }
                 }
-                metadata.addAll(hiddenMetadata);
+                if (!untyped) {
+                    metadata.addAll(hiddenMetadata);
+                }
             }
         } catch (InvalidMetadataValueException invalidValueException) {
             if (Objects.isNull(division)) {
@@ -729,17 +729,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * Restricts the visible metadata fields of this element to structural metadata only.
      */
     public void filterToStructuralFields() {
-        treeNode.getChildren().removeIf(child -> {
-            ProcessDetail row = (ProcessDetail) child.getData();
-            String key = row.getMetadataID();
-
-            return !isStructuralKey(key);
-        });
-    }
-
-    private boolean isStructuralKey(String key) {
-        return METADATA_KEY_LABEL.equals(key)
-                || METADATA_KEY_ORDERLABEL.equals(key);
+        treeNode.getChildren().removeIf(child ->
+                !specialFields.contains(((ProcessDetail) child.getData()).getMetadataID()));
     }
 
     private boolean isDivisionUntyped() {
