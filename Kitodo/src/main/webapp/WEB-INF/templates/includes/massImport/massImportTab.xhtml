@@ -74,6 +74,24 @@
                                     update="recordsForm:recordsTableWrapper recordsForm:catalogSelectionWrapper massImportButtonForm"/>
                         </p:selectOneMenu>
                     </h:panelGroup>
+
+                    <h:panelGroup styleClass="separator-selection">
+                        <p:outputLabel for="groupEntrySeparator"
+                                       value="#{msgs['massImport.metadataGroupSeparator']}"/>
+                        <p:selectOneMenu id="groupEntrySeparator"
+                                         styleClass="input"
+                                         maxlength="1"
+                                         autoWidth="false"
+                                         value="#{MassImportForm.metadataGroupEntrySeparator}">
+                            <f:selectItem noSelectionOption="true"
+                                          itemValue="#{null}"
+                                          itemLabel="-- Select metadata group entry separator --"
+                                          itemDescription="Please select a separator character to parse CSV cell contents into Kitodo metadata groups"/>
+                            <f:selectItems value="#{MassImportForm.metadataGroupEntrySeparators}"/>
+                            <p:ajax event="change"
+                                    update="recordsForm:recordsTableWrapper recordsForm:catalogSelectionWrapper massImportButtonForm"/>
+                        </p:selectOneMenu>
+                    </h:panelGroup>
                 </h:panelGroup>
             </p:row>
         </p:panelGrid>
