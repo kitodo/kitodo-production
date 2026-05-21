@@ -39,6 +39,7 @@
                             <p:selectOneMenu id="metadataType"
                                              converter="#{processDetailConverter}"
                                              value="#{MassImportForm.addMetadataDialog.metadataDetail}"
+                                             autoWidth="false"
                                              title="#{msgs.type}">
                                 <f:selectItems value="#{MassImportForm.addMetadataDialog.allMetadataTypes}"
                                                var="metadataType"
