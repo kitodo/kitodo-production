@@ -348,16 +348,6 @@ from system library in Java 11+ -->
                 <groupId>org.apache.myfaces.core</groupId>
                 <artifactId>myfaces-impl</artifactId>
                 <version>${myfaces.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-collections</groupId>
-                        <artifactId>commons-collections</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
