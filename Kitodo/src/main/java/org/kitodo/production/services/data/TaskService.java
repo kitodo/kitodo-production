@@ -266,9 +266,13 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             boolean showAutomaticTasks, List<TaskStatus> taskStatus) {
         BeanQuery query = new BeanQuery(Task.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects()
-                .stream().filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
+        Collection<Integer> projectIDs = ServiceManager.getUserService()
+                .getCurrentUser()
+                .getProjects().stream()
+                .map(Project::getId)
+                .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
+        query.addBooleanRestriction("process.project.active", Boolean.TRUE);
         List<Role> userRoles = ServiceManager.getUserService().getCurrentUser().getRoles();
         final Client currentClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
         List<Role> userClientRoles = userRoles.stream().filter(role -> Objects.equals(role.getClient(), currentClient))
