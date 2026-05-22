@@ -1419,6 +1419,7 @@ public class MockDatabase {
         eleventhTask.setProcess(secondProcess);
         eleventhTask.setScriptName("scriptName");
         eleventhTask.setScriptPath("../type/automatic/script/path");
+        eleventhTask.setTemplate(firstTemplate);
         eleventhTask.getRoles().add(role);
         role.getTasks().add(eleventhTask);
         firstUser.getProcessingTasks().add(eleventhTask);
@@ -1433,6 +1434,7 @@ public class MockDatabase {
         twelfthTask.setProcessingUser(firstUser);
         twelfthTask.setProcessingStatus(TaskStatus.INWORK);
         twelfthTask.setProcess(secondProcess);
+        twelfthTask.setTemplate(firstTemplate);
         twelfthTask.getRoles().add(role);
         role.getTasks().add(twelfthTask);
         firstUser.getProcessingTasks().add(twelfthTask);
@@ -1447,6 +1449,7 @@ public class MockDatabase {
         thirteenTask.setProcessingBegin(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirteenTask.setProcessingStatus(TaskStatus.OPEN);
         thirteenTask.setProcess(secondProcess);
+        thirteenTask.setTemplate(firstTemplate);
         thirteenTask.getRoles().add(role);
         role.getTasks().add(thirteenTask);
         secondProcess.getTasks().add(thirteenTask);

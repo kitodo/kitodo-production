@@ -66,7 +66,7 @@ public class TemplateServiceIT {
         assertTrue(condition, "Template was not found in database!");
 
         assertEquals(2, template.getProcesses().size(), "Template was found but processes were not inserted!");
-        assertEquals(5, template.getTasks().size(), "Template was found but tasks were not inserted!");
+        assertEquals(8, template.getTasks().size(), "Template was found but tasks were not inserted!");
     }
 
     @Test

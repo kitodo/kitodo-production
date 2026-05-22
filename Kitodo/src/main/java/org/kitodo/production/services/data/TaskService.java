@@ -343,19 +343,20 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     }
 
     /**
-     * Finds all task names that each differ from any other. That means, no
+     * Finds all template task names that each differ from any other. That means, no
      * doubles.
      *
      * <p>
      * <b>API Note:</b><br>
-     * This method actually returns all task names of all clients and is
+     * This method actually returns all template task names of all clients and is
      * therefore more suitable for operational purposes, rather not for display
      * purposes.
      *
-     * @return all different task names
+     * @return all different template task names
      */
     public List<String> findTaskTitlesDistinct() throws DAOException {
         BeanQuery beanQuery = new BeanQuery(Task.class);
+        beanQuery.addNotNullRestriction("template");
         return super.dao.getStringsByQuery(beanQuery.formQueryForDistinct("title", true),
                 beanQuery.getQueryParameters());
     }
