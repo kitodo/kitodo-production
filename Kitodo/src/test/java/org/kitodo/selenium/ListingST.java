@@ -27,6 +27,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.DesktopPage;
+import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
@@ -219,6 +220,28 @@ public class ListingST extends BaseTestSelenium {
         int batchesInDatabase = ServiceManager.getBatchService().getAll().size();
         int batchesDisplayed = processesPage.countListedBatches();
         assertEquals(batchesInDatabase, batchesDisplayed, "Displayed wrong number of batches");
+    }
+
+    @Test
+    public void listProcessesWithInactiveProjectTest() throws Exception {
+        projectsPage.goTo();
+        ProjectEditPage projectEditPage = projectsPage.editProject();
+        projectEditPage.toggleProjectActiveCheckbox();
+        projectEditPage.save();
+
+        processesPage.goTo();
+        // expect "1" instead of "0" because "No records found" message of empty table also takes up one row
+        assertEquals(1, processesPage.countListedProcesses(), "Processes of inactive projects should be hidden");
+
+        projectsPage.goTo();
+        projectsPage.editProject();
+        projectEditPage.toggleProjectActiveCheckbox();
+        projectEditPage.save();
+
+        processesPage.goTo();
+        long processesInDatabase = ServiceManager.getProcessService().countResults(null);
+        assertEquals(processesInDatabase, processesPage.countListedProcesses(),
+                "Processes should be visible again after project reactivation");
     }
 
     @Test
