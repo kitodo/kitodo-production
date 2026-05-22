@@ -70,8 +70,11 @@ public class ProjectEditView extends BaseEditView {
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
     private Boolean hasProcesses;
-
+    private String originalFileGroup;
     private Project baseProject;
+
+    private static final String EMPTY_FILE_GROUP_SENTINEL = "__EMPTY_FILE_GROUP__";
+
     /**
      * The folder currently under edit in the pop-up dialog.
      */
@@ -123,6 +126,7 @@ public class ProjectEditView extends BaseEditView {
      */
     public void setEditingFolder(Folder folder) {
         this.editingFolder = folder;
+        this.originalFileGroup = Objects.nonNull(folder) ? folder.getFileGroup() : null;
         this.generator = new FolderGenerator(folder);
     }
 
@@ -131,9 +135,12 @@ public class ProjectEditView extends BaseEditView {
      */
     public Collection<String> getAvailableFileGroups() {
         Collection<String> fileGroups = Folder.getDefaultFileGroups();
-        if (Objects.nonNull(editingFolder) && StringUtils.isNotBlank(editingFolder.getFileGroup())) {
+
+        if (Objects.nonNull(editingFolder)
+                && Objects.nonNull(editingFolder.getFileGroup())) {
             fileGroups.add(editingFolder.getFileGroup());
         }
+
         return fileGroups;
     }
 
@@ -183,14 +190,66 @@ public class ProjectEditView extends BaseEditView {
         }
     }
 
+    /**
+     * Sync project folders with workingFolders using fileGroup as key.
+     * Removes folders deleted in UI and replaces existing ones with same fileGroup.
+     * Ensures exactly one folder per fileGroup is persisted.
+     */
     private void syncFoldersToProject() {
-        project.getFolders().removeIf(folder -> !workingFolders.contains(folder));
+
+        List<Folder> removedFolders = project.getFolders().stream()
+                .filter(projectFolder ->
+                        workingFolders.stream().noneMatch(workingFolder ->
+                                (Objects.nonNull(projectFolder.getId())
+                                        && Objects.equals(projectFolder.getId(), workingFolder.getId()))
+                                        || projectFolder == workingFolder
+                        )
+                )
+                .toList();
+
+        removedFolders.forEach(this::clearFolderReferences);
+
+        project.getFolders().removeAll(removedFolders);
+
         for (Folder workingFolder : workingFolders) {
-            if (!project.getFolders().contains(workingFolder)) {
+            boolean exists = project.getFolders().stream()
+                    .anyMatch(projectFolder ->
+                            (Objects.nonNull(projectFolder.getId())
+                                    && Objects.equals(projectFolder.getId(), workingFolder.getId()))
+                                    || projectFolder == workingFolder
+                    );
+
+            if (!exists) {
                 project.getFolders().add(workingFolder);
             }
         }
     }
+
+    private void clearFolderReferences(Folder folder) {
+        if (Objects.equals(project.getPreview(), folder)) {
+            project.setPreview(null);
+        }
+        if (Objects.equals(project.getAudioPreview(), folder)) {
+            project.setAudioPreview(null);
+        }
+        if (Objects.equals(project.getVideoPreview(), folder)) {
+            project.setVideoPreview(null);
+        }
+        if (Objects.equals(project.getMediaView(), folder)) {
+            project.setMediaView(null);
+        }
+        if (Objects.equals(project.getAudioMediaView(), folder)) {
+            project.setAudioMediaView(null);
+        }
+        if (Objects.equals(project.getVideoMediaView(), folder)) {
+            project.setVideoMediaView(null);
+        }
+        if (Objects.equals(project.getGeneratorSource(), folder)) {
+            project.setGeneratorSource(null);
+        }
+    }
+
+
 
     private void commitTemplates() throws DAOException {
         if (copyTemplates) {
@@ -277,15 +336,33 @@ public class ProjectEditView extends BaseEditView {
         if (Objects.isNull(editingFolder)) {
             return;
         }
+        editingFolder.setFileGroup(
+                StringUtils.trimToEmpty(editingFolder.getFileGroup())
+        );
         boolean duplicate = workingFolders.stream()
-                .anyMatch(folder -> folder != editingFolder
-                        && Objects.equals(folder.getFileGroup(), editingFolder.getFileGroup()));
+                .filter(folder -> folder != editingFolder)
+                .map(Folder::getFileGroup)
+                .map(StringUtils::trimToEmpty)
+                .anyMatch(fileGroup ->
+                        Objects.equals(
+                                fileGroup,
+                                StringUtils.trimToEmpty(editingFolder.getFileGroup())
+                        )
+                );
+
         if (duplicate) {
-            Helper.setErrorMessage("errorDuplicateFilegroup", new Object[] {ObjectType.FOLDER.getTranslationPlural()});
+            Helper.setErrorMessage(
+                    "errorDuplicateFilegroup",
+                    new Object[] { editingFolder.getFileGroup() }
+            );
+            editingFolder.setFileGroup(originalFileGroup);
             return;
         }
 
-        if (!workingFolders.contains(editingFolder)) {
+        boolean exists = workingFolders.stream()
+                .anyMatch(folder -> folder == editingFolder);
+
+        if (!exists) {
             workingFolders.add(editingFolder);
         }
     }
@@ -471,7 +548,10 @@ public class ProjectEditView extends BaseEditView {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+        return getFolderList().stream()
+                .map(folder -> new SelectItem(
+                        toUiFileGroup(folder.getFileGroup()),
+                        folder.toString()))
                 .collect(Collectors.toList());
     }
 
@@ -494,10 +574,20 @@ public class ProjectEditView extends BaseEditView {
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return getFolderList().stream()
+                .collect(Collectors.toMap(
+                        folder -> toUiFileGroup(folder.getFileGroup()),
+                        Function.identity(),
+                        (existing, replacement) ->
+                                Objects.nonNull(existing.getId()) ? existing : replacement
+                ));
     }
 
-
+    private String toUiFileGroup(String fileGroup) {
+        return StringUtils.isEmpty(fileGroup)
+                ? EMPTY_FILE_GROUP_SENTINEL
+                : fileGroup;
+    }
 
     /**
      * Returns an encapsulation to access the generator properties of the folder
@@ -538,7 +628,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getGeneratorSource() {
         Folder source = project.getGeneratorSource();
-        return Objects.isNull(source) ? null : source.getFileGroup();
+        return Objects.isNull(source)
+                ? null
+                : toUiFileGroup(source.getFileGroup());
     }
 
     /**
@@ -559,7 +651,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getMediaView() {
         Folder mediaView = project.getMediaView();
-        return Objects.isNull(mediaView) ? null : mediaView.getFileGroup();
+        return Objects.isNull(mediaView)
+                ? null
+                : toUiFileGroup(mediaView.getFileGroup());
     }
 
     /**
@@ -579,7 +673,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getAudioMediaView() {
         Folder audioMediaView = project.getAudioMediaView();
-        return Objects.isNull(audioMediaView) ? null : audioMediaView.getFileGroup();
+        return Objects.isNull(audioMediaView)
+                ? null
+                : toUiFileGroup(audioMediaView.getFileGroup());
     }
 
     /**
@@ -618,7 +714,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getVideoMediaView() {
         Folder videoMediaView = project.getVideoMediaView();
-        return Objects.isNull(videoMediaView) ? null : videoMediaView.getFileGroup();
+        return Objects.isNull(videoMediaView)
+                ? null
+                : toUiFileGroup(videoMediaView.getFileGroup());
     }
 
     /**
@@ -638,7 +736,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getPreview() {
         Folder preview = project.getPreview();
-        return Objects.isNull(preview) ? null : preview.getFileGroup();
+        return Objects.isNull(preview)
+                ? null
+                : toUiFileGroup(preview.getFileGroup());
     }
 
     /**
@@ -676,7 +776,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getAudioPreview() {
         Folder audioPreview = project.getAudioPreview();
-        return Objects.isNull(audioPreview) ? null : audioPreview.getFileGroup();
+        return Objects.isNull(audioPreview)
+                ? null
+                : toUiFileGroup(audioPreview.getFileGroup());
     }
 
     /**
@@ -696,7 +798,9 @@ public class ProjectEditView extends BaseEditView {
      */
     public String getVideoPreview() {
         Folder videoPreview = project.getVideoPreview();
-        return Objects.isNull(videoPreview) ? null : videoPreview.getFileGroup();
+        return Objects.isNull(videoPreview)
+                ? null
+                : toUiFileGroup(videoPreview.getFileGroup());
     }
 
     /**

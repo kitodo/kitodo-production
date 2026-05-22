@@ -20,6 +20,8 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.services.ServiceManager;
 
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,5 +92,218 @@ public class ProjectEditViewIT {
         assertEquals(initialSize + 1, view.getFolderList().size());
         view.cancel();
         assertEquals(initialSize, view.getFolderList().size(), "Sandbox should have reset to original entity state");
+    }
+
+    @Test
+    public void shouldRejectDuplicateTransientFileGroup() throws Exception {
+        ProjectEditView view = new ProjectEditView();
+        Project project = ServiceManager.getProjectService()
+                .getProjectWithFolders(1)
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        view.addFolder();
+        Folder first = view.getEditingFolder();
+        first.setFileGroup("DUPLICATE");
+        first.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        assertEquals(1,
+                view.getFolderList().stream()
+                        .filter(f -> "DUPLICATE".equals(f.getFileGroup()))
+                        .count());
+
+        view.addFolder();
+        Folder second = view.getEditingFolder();
+        second.setFileGroup("DUPLICATE");
+        second.setMimeType("image/jpeg");
+
+        view.saveFolder();
+
+        assertEquals(1,
+                view.getFolderList().stream()
+                        .filter(f -> "DUPLICATE".equals(f.getFileGroup()))
+                        .count());
+    }
+
+    @Test
+    public void shouldRejectDuplicateEmptyFileGroup() throws Exception {
+        ProjectEditView view = new ProjectEditView();
+        Project project = ServiceManager.getProjectService()
+                .getProjectWithFolders(1)
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        view.addFolder();
+        Folder first = view.getEditingFolder();
+        first.setFileGroup("");
+        first.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        view.addFolder();
+        Folder second = view.getEditingFolder();
+        second.setFileGroup("");
+        second.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        long emptyCount = view.getFolderList().stream()
+                .filter(f -> Objects.nonNull(f.getFileGroup())
+                        && f.getFileGroup().isEmpty())
+                .count();
+
+        assertEquals(1, emptyCount);
+    }
+
+    @Test
+    public void shouldHandleFolderLifecycleAcrossMultipleSaves() throws Exception {
+        /*
+         * STEP 1
+         * Load + add folders
+         */
+        ProjectEditView view = new ProjectEditView();
+
+        Project project = ServiceManager.getProjectService()
+                .getProjectWithFolders(1)
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        view.addFolder();
+        Folder folderA = view.getEditingFolder();
+        folderA.setFileGroup("GROUP_A");
+        folderA.setMimeType("image/jpeg");
+        folderA.setPath("folderA");
+        view.saveFolder();
+
+        view.addFolder();
+        Folder folderB = view.getEditingFolder();
+        folderB.setFileGroup("GROUP_B");
+        folderB.setMimeType("image/jpeg");
+        folderB.setPath("folderB");
+        view.saveFolder();
+
+        view.save();
+
+        /*
+         * STEP 2
+         * Reload + assign usages
+         */
+        view = new ProjectEditView();
+
+        project = ServiceManager.getProjectService()
+                .getProjectWithFolders(project.getId())
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        view.setPreview("GROUP_A");
+        view.setMediaView("GROUP_A");
+        view.setGeneratorSource("GROUP_A");
+
+        view.save();
+
+        /*
+         * STEP 3
+         * Reload + delete referenced folder
+         */
+        view = new ProjectEditView();
+
+        project = ServiceManager.getProjectService()
+                .getProjectWithFolders(project.getId())
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        Folder folderAFromReload = view.getFolderList().stream()
+                .filter(folder -> "GROUP_A".equals(folder.getFileGroup()))
+                .findFirst()
+                .orElseThrow();
+       /*
+         * Reassign usages
+         */
+        view.setPreview("GROUP_B");
+        view.setMediaView("GROUP_B");
+        view.setGeneratorSource("GROUP_B");
+
+        /*
+         * Delete old folder
+         */
+        view.setEditingFolder(folderAFromReload);
+        view.deleteFolder();
+
+        view.save();
+
+        /*
+         * STEP 4
+         * Verify persisted state
+         */
+        Project updated = ServiceManager.getProjectService()
+                .getProjectWithFolders(project.getId())
+                .orElseThrow();
+
+        assertTrue(updated.getFolders().stream()
+                .noneMatch(folder -> "GROUP_A".equals(folder.getFileGroup())));
+
+        assertEquals("GROUP_B",
+                updated.getPreview().getFileGroup());
+
+        assertEquals("GROUP_B",
+                updated.getMediaView().getFileGroup());
+
+        assertEquals("GROUP_B",
+                updated.getGeneratorSource().getFileGroup());
+    }
+
+    @Test
+    public void shouldRejectChangingFileGroupToDuplicateEmptyValue() throws Exception {
+
+        ProjectEditView view = new ProjectEditView();
+
+        Project project = ServiceManager.getProjectService()
+                .getProjectWithFolders(1)
+                .orElseThrow();
+
+        view.loadProject(project.getId(), false);
+
+        /*
+         * Create folder with empty group
+         */
+        view.addFolder();
+        Folder emptyFolder = view.getEditingFolder();
+        emptyFolder.setFileGroup("");
+        emptyFolder.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        /*
+         * Create folder with non-empty group
+         */
+        view.addFolder();
+        Folder maxFolder = view.getEditingFolder();
+        maxFolder.setFileGroup("MAX");
+        maxFolder.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        /*
+         * Delete original empty group folder
+         */
+        view.setEditingFolder(emptyFolder);
+        view.deleteFolder();
+
+        /*
+         * Edit MAX -> empty
+         */
+        view.setEditingFolder(maxFolder);
+        maxFolder.setFileGroup("");
+        view.saveFolder();
+
+        long emptyCount = view.getFolderList().stream()
+                .map(Folder::getFileGroup)
+                .map(group -> Objects.isNull(group) ? "" : group.trim())
+                .filter(String::isEmpty)
+                .count();
+
+        assertEquals(1, emptyCount);
     }
 }
