@@ -16,8 +16,7 @@
 
 var metadataEditor = metadataEditor || {};
 
-metadataEditor.global = {
-    toggleFullscreenMode() {
+metadataEditor.toggleFullscreenMode = function () {
     document.body.classList.toggle('fullscreen-mode');
     // Force layout recalculation
     setTimeout(function () {
@@ -26,8 +25,7 @@ metadataEditor.global = {
         }
         window.dispatchEvent(new Event('resize'));
     }, 50);
-    }
-};
+}
 
 metadataEditor.metadataTree = {
 
