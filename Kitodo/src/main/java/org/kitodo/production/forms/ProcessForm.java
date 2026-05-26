@@ -377,9 +377,20 @@ public class ProcessForm extends TemplateBaseForm {
         Stopwatch stopwatch = new Stopwatch(this, "saveTaskAndRedirect");
         saveTask(this.task);
         try {
-            this.process = ServiceManager.getProcessService().getById(this.process.getId());
+            String redirectPath = DEFAULT_LINK +  "?faces-redirect=true";
+            FacesContext  facesContext = FacesContext.getCurrentInstance();
+            // null check required for integration tests, where no faces context exists
+            if (Objects.nonNull(facesContext) && Objects.nonNull(facesContext.getExternalContext())) {
+                String referer = facesContext.getExternalContext().getRequestHeaderMap().get("referer");
+                if (referer.contains("referer=tasks")) {
+                    redirectPath = taskEditReferer + "?faces-redirect=true";
+                } else if (referer.contains("referer=processEdit")) {
+                    redirectPath = processEditPath; // processEditPath already contains 'faces-redirect'
+                }
+            }
+            this.process = ServiceManager.getProcessService().getById(this.task.getProcess().getId());
             ServiceManager.getProcessService().save(this.process);
-            return stopwatch.stop(processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId()));
+            return stopwatch.stop(redirectPath);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.PROCESS.getTranslationSingular()},
                     logger, e);
