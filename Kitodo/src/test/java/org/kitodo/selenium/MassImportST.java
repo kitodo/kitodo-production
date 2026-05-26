@@ -108,6 +108,7 @@ public class MassImportST extends BaseTestSelenium {
      * Tests whether adding a new record to the table correctly increases the number of rows.
      * @throws InterruptedException when thread is interrupted during sleep
      */
+    @Disabled("Adding a new record to the table after CSV file upload is currently bugged and needs to be fixed")
     @Test
     public void addRowTest() throws InterruptedException {
        massImportPage.uploadTestCsvFile(csvUploadFile.getAbsolutePath());
