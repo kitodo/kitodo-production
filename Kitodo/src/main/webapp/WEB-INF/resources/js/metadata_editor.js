@@ -25,7 +25,7 @@ metadataEditor.toggleFullscreenMode = function () {
         }
         window.dispatchEvent(new Event('resize'));
     }, 50);
-}
+};
 
 metadataEditor.metadataTree = {
 
