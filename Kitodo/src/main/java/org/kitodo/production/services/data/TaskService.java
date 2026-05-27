@@ -177,7 +177,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
-        query.performIndexSearches();
+        query.applyIndexRestriction("process.id");
         return count(query.formCountQuery(), query.getQueryParameters());
     }
 
@@ -258,7 +258,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        query.performIndexSearches();
+        query.applyIndexRestriction("process.id");
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
