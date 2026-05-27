@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.ProcessKeywords;
 
 /**
@@ -89,9 +88,9 @@ class IndexQueryPart implements UserSpecifiedFilter {
      * @param indexQueries
      *            puts the prepared tokens for the search queries here
      */
-    void putQueryParameters(List<Pair<FilterField, String>> indexQueries) {
+    void putQueryParameters(List<IndexQueryTerm> indexQueries) {
         for (String lookingFor : lookfor) {
-            indexQueries.add(Pair.of(filterField, lookingFor));
+            indexQueries.add(new IndexQueryTerm(filterField.getSearchField(), lookingFor, operand));
         }
     }
 
