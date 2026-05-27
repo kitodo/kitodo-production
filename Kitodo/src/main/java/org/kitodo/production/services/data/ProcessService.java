@@ -142,6 +142,7 @@ import org.xml.sax.SAXException;
 public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
+    private static final String FIELD_ID = "id";
 
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
@@ -305,7 +306,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         if (!showInactiveProjects) {
             query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
-        query.applyIndexRestriction("id");
+        query.applyIndexRestriction(FIELD_ID);
         return query;
     }
 
@@ -480,7 +481,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
-        query.applyIndexRestriction("id");
+        query.applyIndexRestriction(FIELD_ID);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -511,7 +512,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.restrictWithUserFilterString(metadata.entrySet().stream().map(entry -> '"' + entry.getKey() + ':' + entry
                 .getValue() + '"').collect(Collectors.joining(" ")));
         query.setUnordered();
-        query.applyIndexRestriction("id");
+        query.applyIndexRestriction(FIELD_ID);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -676,7 +677,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.applyIndexRestriction("id");
+        query.applyIndexRestriction(FIELD_ID);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
@@ -2571,7 +2572,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         }
 
         query.restrictToClient(sessionClientId);
-        query.applyIndexRestriction("id");
+        query.applyIndexRestriction(FIELD_ID);
         query.addInnerJoin("project proj");
         query.defineSorting("id", SortOrder.ASCENDING);
 
