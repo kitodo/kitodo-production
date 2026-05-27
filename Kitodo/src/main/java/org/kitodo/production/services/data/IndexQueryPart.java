@@ -13,9 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.ProcessKeywords;
@@ -25,8 +23,6 @@ import org.kitodo.data.database.beans.ProcessKeywords;
  * search index.
  */
 class IndexQueryPart implements UserSpecifiedFilter {
-
-    private static final String UNIQUE_PARAMETER_EXTENSION = "query";
 
     private static final char VALUE_SEPARATOR = 'q';
     private final List<String> lookfor = new ArrayList<>();
@@ -88,33 +84,14 @@ class IndexQueryPart implements UserSpecifiedFilter {
     }
 
     /**
-     * Inserts the search parameters into the database query logic.
-     * 
-     * @param varName
-     *            variable name of the HQL search
-     * @param parameterName
-     *            name of the search parameter for the results
-     * @param idField
-     *            field name of the process ID
+     * Adds the prepared index search terms for this filter to the list of index queries.
+     *
      * @param indexQueries
      *            puts the prepared tokens for the search queries here
-     * @param restrictions
-     *            puts the HQL restrictions here
      */
-    void putQueryParameters(String varName, String parameterName, String idField,
-            Map<String, Pair<FilterField, String>> indexQueries,
-            Collection<String> restrictions) {
-        if (lookfor.size() == 1) {
-            restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + parameterName + ')');
-            indexQueries.put(parameterName, Pair.of(filterField, lookfor.getFirst()));
-        } else if (lookfor.size() >= 1) {
-            int queryCount = 0;
-            for (String lookingFor : lookfor) {
-                queryCount++;
-                String uniqueParameterName = parameterName + UNIQUE_PARAMETER_EXTENSION + queryCount;
-                restrictions.add(varName + "." + idField + (operand ? " IN (:" : " NOT IN (:") + uniqueParameterName + ')');
-                indexQueries.put(uniqueParameterName, Pair.of(filterField, lookingFor));
-            }
+    void putQueryParameters(List<Pair<FilterField, String>> indexQueries) {
+        for (String lookingFor : lookfor) {
+            indexQueries.add(Pair.of(filterField, lookingFor));
         }
     }
 
