@@ -16,13 +16,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.exception.DataException;
 import org.hibernate.search.engine.search.projection.SearchProjection;
-import org.hibernate.search.engine.search.query.SearchQuery;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -34,6 +32,7 @@ import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
+import org.kitodo.production.services.data.IndexQueryTerm;
 
 public class IndexingService {
 
@@ -138,15 +137,21 @@ public class IndexingService {
     }
 
     /**
-     * Searches for entities matching all given field/value terms and returns their IDs.
+     * Searches for entities matching the given index query terms and returns their IDs.
+     *
+     * <p>The terms are combined into a single boolean Elasticsearch query.
+     * Positive terms are added as filter predicates, negated terms as exclusion
+     * predicates.</p>
      *
      * @param beanClass
      *            class of beans to search for
      * @param terms
-     *            list of field/value pairs to match (AND-combined)
+     *            index query terms to combine in the search query
      * @return ids of the found beans
      */
-    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, List<Pair<String, String>> terms) {
+    public Collection<Integer> searchIds(
+            Class<? extends BaseBean> beanClass,
+            List<IndexQueryTerm> terms) {
         try (Session ormSession = HibernateUtil.getSession()) {
             SearchSession searchSession = Search.session(ormSession);
             SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
@@ -155,12 +160,17 @@ public class IndexingService {
                     .select(idField)
                     .where(searchPredicateFactory -> {
                         var booleanPredicate = searchPredicateFactory.bool();
-                        for (Pair<String, String> term : terms) {
-                            booleanPredicate.filter(
-                                    searchPredicateFactory.match()
-                                            .field(term.getLeft())
-                                            .matching(term.getRight())
-                            );
+                        for (IndexQueryTerm term : terms) {
+
+                            var predicate = searchPredicateFactory.match()
+                                    .field(term.field())
+                                    .matching(term.token());
+
+                            if (term.operand()) {
+                                booleanPredicate.filter(predicate);
+                            } else {
+                                booleanPredicate.mustNot(predicate);
+                            }
                         }
                         return booleanPredicate;
                     });
@@ -169,7 +179,7 @@ public class IndexingService {
             String termSummary = String.join(", ",
                     terms.stream()
                             .distinct()
-                            .map(t -> t.getLeft() + "=\"" + t.getRight() + "\"")
+                            .map(t -> t.field() + "=\"" + t.token() + "\"")
                             .toList());
             logger.debug(
                     "Searching {} IDs with terms {}: {} hits",

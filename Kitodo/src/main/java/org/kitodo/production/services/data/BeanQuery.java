@@ -63,7 +63,7 @@ public class BeanQuery {
     private final List<String> restrictionAlternatives = new ArrayList<>();
     private boolean indexFiltersAsAlternatives = false;
     private Pair<String, String> sorting;
-    private final List<Pair<FilterField, String>> indexQueries = new ArrayList<>();
+    private final List<IndexQueryTerm> indexQueries = new ArrayList<>();
     private final Map<String, Object> parameters = new HashMap<>();
 
     /**
@@ -246,14 +246,9 @@ public class BeanQuery {
      * ID collection is returned by the caller.
      */
     private Collection<Integer> performIndexSearches() {
-        List<Pair<String,String>> terms = new ArrayList<>();
-        for (var entry : indexQueries) {
-            String field = entry.getLeft().getSearchField();
-            String token = entry.getRight();
-            terms.add(Pair.of(field, token));
-        }
+        Collection<Integer> ids =
+                indexingService.searchIds(Process.class, indexQueries);
         indexQueries.clear();
-        Collection<Integer> ids = indexingService.searchIds(Process.class, terms);
         return ids.isEmpty() ? NO_HIT : ids;
     }
 
