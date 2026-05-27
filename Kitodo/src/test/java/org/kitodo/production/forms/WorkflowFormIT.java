@@ -107,7 +107,7 @@ public class WorkflowFormIT {
         createAndSaveDataEditorSetting(templateTask.getId());
 
         int numberOfTasksForFirstTemplateBeforeUpdate = firstTemplate.getTasks().size();
-        assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
+        assertEquals(8, numberOfTasksForFirstTemplateBeforeUpdate);
         List<DataEditorSetting> dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().getFirst().getId());
         List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService

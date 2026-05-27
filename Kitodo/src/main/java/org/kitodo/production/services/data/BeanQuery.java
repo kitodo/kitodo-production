@@ -157,6 +157,15 @@ public class BeanQuery {
     }
 
     /**
+     * Requires that the value in the given field is not {@code null}.
+     *
+     * @param field field that should be not {@code null}
+     */
+    public void addNotNullRestriction(String field) {
+        restrictions.add(varName + '.' + field + " IS NOT NULL");
+    }
+
+    /**
      * Requires that hits in a specific field must contain specific string.
      * 
      * @param field
