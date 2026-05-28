@@ -4089,6 +4089,15 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     background-color: var(--blue);
 }
 
+#imagePreviewForm\:loadingSymbol {
+    display: flex;
+    height: 100px;
+    margin: auto;
+    position: absolute;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+}
+
 #imagePreviewForm\:mediaDetailNavigationPanel {
     position: absolute;
     width: 100%;

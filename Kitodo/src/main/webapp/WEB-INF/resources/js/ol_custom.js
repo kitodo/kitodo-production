@@ -422,6 +422,7 @@ class KitodoDetailMap {
     onRenderComplete() {
         this.showCanvas();
         this.saveCurrentView();
+        $("#imagePreviewForm\\:loadingSymbol").hide();
     }
 
     /**
@@ -481,6 +482,7 @@ class KitodoDetailMap {
      */
     update() {
         this.registerImageLoadEvent();
+        $("#imagePreviewForm\\:loadingSymbol").show();
     }
 }
 
