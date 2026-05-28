@@ -175,6 +175,7 @@ public class IndexingService {
                     .where(f -> f.matchAll())
                     .fetchTotalHitCount();
         } catch (SearchException e) {
+            logger.debug("Search index temporarily unavailable during indexing initialization/rebuild.", e);
             // Index temporarily not available, just return 0
             return 0;
         }
