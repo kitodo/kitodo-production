@@ -13,7 +13,9 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -44,7 +46,6 @@ public class DocketListView extends BaseListView {
     @PostConstruct
     public void init() {
         setLazyBeanModel(new LazyBeanModel(ServiceManager.getDocketService()));
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
 
         columns = new ArrayList<>();
         try {
@@ -53,6 +54,11 @@ public class DocketListView extends BaseListView {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("docket");
+
+        if (selectedColumns.stream().anyMatch(column -> "docket.title".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
     }
 
     /**
@@ -92,7 +98,15 @@ public class DocketListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "file");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "docket.title"),
+            Map.entry("file", "docket.filename")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(entry -> entry.getKey())
+            .collect(Collectors.toSet());
     }
 
 }

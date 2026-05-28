@@ -14,8 +14,10 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -58,7 +60,10 @@ public class LdapGroupListView extends BaseListView {
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup");
 
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        if (selectedColumns.stream().anyMatch(column -> "ldapgroup.ldapgroup".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
     }
 
     /**
@@ -116,7 +121,16 @@ public class LdapGroupListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "homeDirectory", "gidNumber");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "ldapgroup.ldapgroup"),
+            Map.entry("homeDirectory", "ldapgroup.home_directory"),
+            Map.entry("gidNumber", "ldapgroup.gidNumber")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(entry -> entry.getKey())
+            .collect(Collectors.toSet());
     }
 
     /**

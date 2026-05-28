@@ -13,7 +13,9 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -57,7 +59,10 @@ public class RoleListView extends BaseListView {
             deselectRoleClientColumn();
         }
 
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        if (selectedColumns.stream().anyMatch(column -> "role.role".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
     }
 
     /**
@@ -137,7 +142,15 @@ public class RoleListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "client.name");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "role.role"),
+            Map.entry("client.name", "role.client")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(entry -> entry.getKey())
+            .collect(Collectors.toSet());
     }
 
     /**

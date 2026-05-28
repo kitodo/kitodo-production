@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.model.SelectItem;
@@ -494,10 +495,23 @@ public class ProcessListView extends ProcessListBaseView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of(
-            "id", "title", "progressCombined", "lastEditingUser", "processingBeginLastTask", 
-            "processingEndLastTask", "correctionCommentStatus", "project.title", "creationDate"
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "process.title"),
+            Map.entry("progressCombined", "process.state"),
+            Map.entry("lastEditingUser", "process.lastEditingUser"),
+            Map.entry("processingBeginLastTask", "process.processingBeginLastTask"),
+            Map.entry("processingEndLastTask", "process.processingEndLastTask"),
+            Map.entry("correctionCommentStatus", "process.comments"),
+            Map.entry("project.title", "process.project"),
+            Map.entry("creationDate", "process.duration")
         );
+
+        return Stream.concat(
+            Stream.of("id"), // id column is always allowed and can't be hidden
+            fieldsToColumns.entrySet().stream()
+                .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+                .map(entry -> entry.getKey())
+            ).collect(Collectors.toSet());
     }
 
     /**

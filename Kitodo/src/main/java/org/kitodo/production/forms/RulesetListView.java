@@ -13,7 +13,9 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -46,7 +48,6 @@ public class RulesetListView extends BaseListView {
     @PostConstruct
     public void init() {
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRulesetService()));
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
 
         columns = new ArrayList<>();
         try {
@@ -55,6 +56,11 @@ public class RulesetListView extends BaseListView {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ruleset");
+
+        if (selectedColumns.stream().anyMatch(column -> "ruleset.title".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
     }
 
     /**
@@ -94,7 +100,16 @@ public class RulesetListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "file", "orderMetadataByRuleset");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "ruleset.title"),
+            Map.entry("file", "ruleset.filename"),
+            Map.entry("orderMetadataByRuleset", "ruleset.sorting")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(entry -> entry.getKey())
+            .collect(Collectors.toSet());
     }
 
 }
