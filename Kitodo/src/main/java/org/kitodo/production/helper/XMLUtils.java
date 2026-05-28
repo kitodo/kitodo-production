@@ -179,6 +179,7 @@ public class XMLUtils {
             SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
+        disableExternalEntities(factory);
         DocumentBuilder builder = factory.newDocumentBuilder();
         xmlString = removeBom(xmlString);
         return builder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
@@ -276,6 +277,8 @@ public class XMLUtils {
     public static int getNumberOfEADElements(String xmlString, String eadLevel) throws XMLStreamException {
         int count = 0;
         XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
         XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(xmlString));
         while (reader.hasNext()) {
             int event = reader.next();
@@ -289,4 +292,25 @@ public class XMLUtils {
         return count;
     }
 
+    private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
+    private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
+    private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
+
+    /**
+     * Disable DOCTYPE declarations and external entity resolution on the given
+     * factory to prevent XML External Entity (XXE) injection. This mirrors the
+     * secure configuration already used by {@link #load(InputStream)} and the
+     * external-catalog response parsers.
+     *
+     * @param factory the DocumentBuilderFactory to harden
+     * @throws ParserConfigurationException if a feature cannot be set
+     */
+    private static void disableExternalEntities(DocumentBuilderFactory factory) throws ParserConfigurationException {
+        factory.setFeature(DISALLOW_DOCTYPE_DECL, true);
+        factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
+        factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
+    }
 }

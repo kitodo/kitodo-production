@@ -19,14 +19,18 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Locale;
 
 public class XMLUtilsTest {
@@ -82,6 +86,35 @@ public class XMLUtilsTest {
     @Test
     public void shouldParseXMLString() {
         Assertions.assertDoesNotThrow(() -> XMLUtils.parseXMLString(XML_STRING));
+    }
+
+    @Test
+    public void parseXMLStringShouldNotResolveExternalEntities() throws Exception {
+        File secret = File.createTempFile("xxe-canary", ".txt");
+        secret.deleteOnExit();
+        Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
+        String payload = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE foo [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
+                + "<foo>&xxe;</foo>";
+        // With DOCTYPE declarations disallowed, parsing must fail rather than
+        // expand the external entity and disclose the file content.
+        SAXException exception = Assertions.assertThrows(SAXException.class,
+                () -> XMLUtils.parseXMLString(payload));
+        Assertions.assertFalse(exception.getMessage().contains("XXE-CANARY-SECRET"));
+    }
+
+    @Test
+    public void getNumberOfEADElementsShouldNotResolveExternalEntities() throws Exception {
+        File secret = File.createTempFile("xxe-canary", ".txt");
+        secret.deleteOnExit();
+        Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
+        String payload = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE ead [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
+                + "<ead><c level=\"file\">&xxe;</c></ead>";
+        // With DTD support disabled, the StAX reader must reject the DOCTYPE
+        // instead of resolving the external entity.
+        Assertions.assertThrows(XMLStreamException.class,
+                () -> XMLUtils.getNumberOfEADElements(payload, "file"));
     }
 
     @Test
