@@ -49,6 +49,7 @@ public class ClientEditView extends BaseEditView {
     @PostConstruct
     public void init() {
         client = new Client();
+        client.setListColumns(ServiceManager.getListColumnService().getAllStandardListColumns());
         rolesForClient = new ArrayList<>();
         try {
             allClients = ServiceManager.getClientService().getAll();
