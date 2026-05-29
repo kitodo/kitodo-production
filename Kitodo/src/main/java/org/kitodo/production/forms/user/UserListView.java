@@ -14,8 +14,10 @@ package org.kitodo.production.forms.user;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -67,7 +69,10 @@ public class UserListView extends BaseListView {
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("user");
 
-        sortBy = SortMeta.builder().field("surname").order(SortOrder.ASCENDING).build();
+        if (selectedColumns.stream().anyMatch(column -> "user.username".equals(column.getTitle()))) {
+            // if surname column is visible, sort by surname by default
+            sortBy = SortMeta.builder().field("surname").order(SortOrder.ASCENDING).build();
+        }
     }
 
     /**
@@ -250,7 +255,15 @@ public class UserListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("surname", "location");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("surname", "user.username"),
+            Map.entry("location", "user.location")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     }
 
     /**

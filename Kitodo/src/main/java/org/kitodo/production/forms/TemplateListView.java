@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -61,7 +63,6 @@ public class TemplateListView extends BaseListView {
         templateFilters = new LinkedList<>();
         templateFilters.add(DEACTIVATED_TEMPLATES_FILTER);
         selectedTemplateFilters = new LinkedList<>();
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
 
         columns = new ArrayList<>();
         try {
@@ -70,6 +71,11 @@ public class TemplateListView extends BaseListView {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("template");
+
+        if (selectedColumns.stream().anyMatch(column -> "template.title".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }        
     }
 
     /**
@@ -196,6 +202,18 @@ public class TemplateListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "ruleset.title", "active");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "template.title"),
+            Map.entry("ruleset.title", "template.ruleset"),
+            Map.entry("docket.title", "template.docket"),
+            Map.entry("workflow.title", "template.workflow")
+        );
+
+        return Stream.concat(
+            Stream.of("active"),
+            fieldsToColumns.entrySet().stream()
+                .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+                .map(Map.Entry::getKey)
+        ).collect(Collectors.toSet());
     }
 }
