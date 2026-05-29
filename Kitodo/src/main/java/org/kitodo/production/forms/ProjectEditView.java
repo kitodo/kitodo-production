@@ -556,6 +556,34 @@ public class ProjectEditView extends BaseEditView {
     }
 
     /**
+     * Returns the selectable folders for the generator source.
+     *
+     * @return selectable folders for the generator source
+     */
+    public List<SelectItem> getSelectableGeneratorSourceFolders() {
+        return getFolderList().stream()
+                .map(folder -> {
+                    SelectItem item = new SelectItem(
+                            toUiFileGroup(folder.getFileGroup()),
+                            folder.toString());
+                    item.setDisabled(folder.isGeneratedImageFolder());
+                    return item;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns whether the folder currently being edited is the configured generator source.
+     *
+     * @return whether the edited folder is the configured generator source
+     */
+    public boolean isGeneratorSourceFolder() {
+        return Objects.nonNull(editingFolder)
+                && Objects.nonNull(project.getGeneratorSource())
+                && editingFolder == project.getGeneratorSource();
+    }
+
+    /**
      * Checks if folder list contains audio folder.
      *
      * @return true if folder list contains audio folder
