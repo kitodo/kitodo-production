@@ -54,14 +54,17 @@ The declaration of xml:space and xml:lang may need to be commented out because
 of problems processing the schema using various tools
 -->
       
-<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="w3-xml.xsd"/>
 
 <!-- 
     An XSLT stylesheet may contain an in-line schema within an xsl:import-schema element,
     so the Schema for schemas needs to be imported
+
+    Kitodo application specific adaption: Inline xs:schema support intentionally omitted to avoid importing XMLSchema.xsd and its dependency chain during
+    mapping file validation.
 -->
   
-<xs:import namespace="http://www.w3.org/2001/XMLSchema" schemaLocation="http://www.w3.org/2001/XMLSchema.xsd"/>
+<!--<xs:import namespace="http://www.w3.org/2001/XMLSchema" schemaLocation="http://www.w3.org/2001/XMLSchema.xsd"/>-->
 
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 <xs:annotation>
@@ -397,9 +400,13 @@ of problems processing the schema using various tools
   <xs:complexType>
     <xs:complexContent>
       <xs:extension base="xsl:element-only-versioned-element-type">
+        <!--
+        Kitodo application specific adaption: Inline xs:schema support intentionally omitted to avoid importing XMLSchema.xsd and its dependency chain during
+        mapping file validation.
         <xs:sequence>
           <xs:element ref="xs:schema" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
+        -->
         <xs:attribute name="namespace" type="xs:anyURI"/>
         <xs:attribute name="schema-location" type="xs:anyURI"/>                  
       </xs:extension>
