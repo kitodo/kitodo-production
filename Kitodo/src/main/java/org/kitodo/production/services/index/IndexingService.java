@@ -25,6 +25,7 @@ import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.hibernate.search.mapper.pojo.massindexing.MassIndexingMonitor;
+import org.hibernate.search.util.common.SearchException;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -180,8 +181,13 @@ public class IndexingService {
     public long getAllIndexed() {
         try (Session ormSession = HibernateUtil.getSession()) {
             SearchSession searchSession = Search.session(ormSession);
-            long allIndexed = searchSession.search(Process.class).where(f -> f.matchAll()).fetchTotalHitCount();
-            return allIndexed;
+            return searchSession.search(Process.class)
+                    .where(f -> f.matchAll())
+                    .fetchTotalHitCount();
+        } catch (SearchException e) {
+            logger.debug("Search index temporarily unavailable during indexing initialization/rebuild.", e);
+            // Index temporarily not available, just return 0
+            return 0;
         }
     }
 }
