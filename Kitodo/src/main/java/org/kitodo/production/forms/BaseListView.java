@@ -56,7 +56,7 @@ public class BaseListView extends BaseForm {
             return Map.ofEntries(
                 entry(SortOrder.ASCENDING, "asc"), 
                 entry(SortOrder.DESCENDING, "desc")
-            ).getOrDefault(sortBy.getOrder(), null);
+            ).get(sortBy.getOrder());
         }
         return null;
     }

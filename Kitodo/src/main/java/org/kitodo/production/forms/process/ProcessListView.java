@@ -510,7 +510,7 @@ public class ProcessListView extends ProcessListBaseView {
             Stream.of("id"), // id column is always allowed and can't be hidden
             fieldsToColumns.entrySet().stream()
                 .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
-                .map(entry -> entry.getKey())
+                .map(Map.Entry::getKey)
             ).collect(Collectors.toSet());
     }
 

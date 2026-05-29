@@ -129,7 +129,7 @@ public class WorkflowListView extends BaseListView {
 
         return fieldsToColumns.entrySet().stream()
             .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
-            .map(entry -> entry.getKey())
+            .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
     }
 
