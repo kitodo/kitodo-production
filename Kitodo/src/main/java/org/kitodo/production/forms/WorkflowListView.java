@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -52,7 +54,6 @@ public class WorkflowListView extends BaseListView {
     @PostConstruct
     public void init() {
         super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getWorkflowService()));
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
 
         columns = new ArrayList<>();
         try {
@@ -61,6 +62,11 @@ public class WorkflowListView extends BaseListView {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow");
+
+        if (selectedColumns.stream().anyMatch(column -> "workflow.title".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
     }
 
     /**
@@ -116,7 +122,15 @@ public class WorkflowListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "status");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "workflow.title"),
+            Map.entry("status", "workflow.status")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     }
 
 }

@@ -129,7 +129,10 @@ public class TaskListView extends BaseListView {
         selectedTaskStatus.add(TaskStatus.OPEN);
         selectedTaskStatus.add(TaskStatus.INWORK);
 
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        if (selectedColumns.stream().anyMatch(column -> "task.title".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
         stopwatch.stop();
     }
 
@@ -662,10 +665,23 @@ public class TaskListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of(
-            "title", "process.id", "process.title", "processingStatus", "processingUser.surname", 
-            "processingBegin", "processingEnd", "correctionCommentStatus", "process.project.title", "process.creationDate"
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "task.title"),
+            Map.entry("process.id", "task.processId"),
+            Map.entry("process.title", "task.process"),
+            Map.entry("processingStatus", "task.state"),
+            Map.entry("processingUser.surname", "task.lastEditingUser"),
+            Map.entry("processingBegin", "task.processingBegin"),
+            Map.entry("processingEnd", "task.processingEnd"),
+            Map.entry("correctionCommentStatus", "task.comments"),
+            Map.entry("process.project.title", "task.project"),
+            Map.entry("process.creationDate", "task.duration")
         );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     }
 
     /**

@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import static java.util.Map.entry;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,7 +40,10 @@ public class BaseListView extends BaseForm {
      * @return the field name as URL query parameter (e.g. "title")
      */
     public String getSortByField() {
-        return sortBy.getField();
+        if (Objects.nonNull(sortBy)) {
+            return sortBy.getField();
+        }
+        return null;
     }
 
     /**
@@ -48,7 +52,13 @@ public class BaseListView extends BaseForm {
      * @return the sort order as URL query parameter (either "asc" or "desc")
      */
     public String getSortByOrder() {
-        return Map.ofEntries(entry(SortOrder.ASCENDING, "asc"), entry(SortOrder.DESCENDING, "desc")).getOrDefault(sortBy.getOrder(), "");
+        if (Objects.nonNull(sortBy)) {
+            return Map.ofEntries(
+                entry(SortOrder.ASCENDING, "asc"), 
+                entry(SortOrder.DESCENDING, "desc")
+            ).get(sortBy.getOrder());
+        }
+        return null;
     }
 
     /**
@@ -105,12 +115,13 @@ public class BaseListView extends BaseForm {
      * @return the combined list view options (URL query parameters)
      */
     public String getCombinedListOptions() {
-        return Map.ofEntries(
-            entry("firstRow",  String.valueOf(getFirstRow())),
-            entry("sortField", getSortByField()), 
-            entry("sortOrder", getSortByOrder()), 
-            entry("filter", getFilter())
-        ).entrySet().stream()
+        Map<String, String> parameterMap = new HashMap<>();
+        parameterMap.put("firstRow", String.valueOf(getFirstRow()));
+        parameterMap.put("sortField", getSortByField());
+        parameterMap.put("sortOrder", getSortByOrder()); 
+        parameterMap.put("filter", getFilter());
+
+        return parameterMap.entrySet().stream()
             .filter(entry -> Objects.nonNull(entry.getValue()))
             .map(entry -> entry.getKey() + "=" + entry.getValue().replace("&", "%26"))
             .collect(Collectors.joining("&"));

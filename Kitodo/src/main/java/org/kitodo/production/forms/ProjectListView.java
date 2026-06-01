@@ -13,7 +13,9 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
@@ -55,7 +57,10 @@ public class ProjectListView extends BaseListView {
         selectedColumns = new ArrayList<>();
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("project"));
 
-        sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        if (selectedColumns.stream().anyMatch(column -> "project.title".equals(column.getTitle()))) {
+            // if title column is visible, sort by title by default
+            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        }
         setLazyBeanModel(new LazyBeanModel(ServiceManager.getProjectService()));
     }
 
@@ -89,7 +94,16 @@ public class ProjectListView extends BaseListView {
      */
     @Override
     protected Set<String> getAllowedSortFields() {
-        return Set.of("title", "metsRightsOwner", "active");
+        Map<String, String> fieldsToColumns = Map.ofEntries(
+            Map.entry("title", "project.title"),
+            Map.entry("metsRightsOwner", "project.metsRightsOwner"),
+            Map.entry("active", "project.active")
+        );
+
+        return fieldsToColumns.entrySet().stream()
+            .filter(entry ->  selectedColumns.stream().anyMatch(column -> entry.getValue().equals(column.getTitle())))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     }
 
 }
