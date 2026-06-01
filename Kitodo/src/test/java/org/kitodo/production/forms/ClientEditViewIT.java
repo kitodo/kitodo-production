@@ -13,16 +13,17 @@ package org.kitodo.production.forms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 public class ClientEditViewIT {
-
-    private final ClientEditView clientEditView = new ClientEditView();
 
     /**
      * Setup Database and start elasticsearch.
@@ -51,6 +52,7 @@ public class ClientEditViewIT {
      */
     @Test
     public void testRoleAdding() throws DAOException {
+        ClientEditView clientEditView = new ClientEditView();
         clientEditView.load(1);
         int numberOfRolesForFirstClient = ServiceManager.getRoleService().getAllRolesByClientId(1).size();
         final int numberOfAuthoritiesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(2).getFirst().getAuthorities()
@@ -71,5 +73,17 @@ public class ClientEditViewIT {
         assertEquals(11, numberOfRolesForFirstClient, "Role was not added");
         assertEquals(numberOfOldAuthorities, numberOfNewAuthorities, "Authorities were not added");
         assertEquals(numberOfAuthoritiesToCopy, numberOfOldAuthorities, "Authorities were removed from second client");
+    }
+
+    /**
+     * Test that when creating new clients, standard list columns are assigned.
+     */
+    @Test
+    public void testListColumnsForNewClients() {
+        ClientEditView clientEditView = new ClientEditView();
+        clientEditView.init();
+        
+        List<ListColumn> standardListColumns = ServiceManager.getListColumnService().getAllStandardListColumns();
+        assertEquals(clientEditView.getClient().getListColumns(), standardListColumns);
     }
 }
