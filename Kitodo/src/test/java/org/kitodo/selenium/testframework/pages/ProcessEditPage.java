@@ -77,6 +77,11 @@ public class ProcessEditPage extends EditPage<ProcessEditPage> {
         return Pages.getProcessesPage();
     }
 
+    public ProcessesPage cancel() throws ReflectiveOperationException {
+        clickButtonAndWaitForRedirect(cancelButton, Pages.getProcessesPage().getUrl());
+        return Pages.getProcessesPage();
+    }
+
     private void addTemplateProperty(String title, String value) throws InterruptedException {
         addTemplatePropertyButton.click();
         Thread.sleep(Browser.getDelayAfterNewItemClick());
