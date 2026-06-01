@@ -79,7 +79,7 @@ public class ClientEditViewIT {
      * Test that when creating new clients, standard list columns are assigned.
      */
     @Test
-    public void testListColumnsForNewClients() throws Exception {
+    public void testListColumnsForNewClients() {
         ClientEditView clientEditView = new ClientEditView();
         clientEditView.init();
         
