@@ -554,7 +554,7 @@ public class KitodoScriptServiceIT {
         assertEquals(6, process.getSortHelperMetadata());
         assertEquals(2, process.getSortHelperDocstructs());
 
-        String script = "action:addData " + "key:" + metadataKey + " value:legal note;" + "key:" + metadataKey + " value:secondNote";
+        String script = "action:addData key:" + metadataKey + " \"value:legal note\"; key:" + metadataKey + " \"value:secondNote\"";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();

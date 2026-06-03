@@ -74,6 +74,7 @@ import org.xml.sax.SAXException;
 public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
+    private static final String FIELD_PROCESS_ID = "process.id";
 
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
@@ -177,7 +178,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
             boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
-        query.performIndexSearches();
+        query.applyIndexRestriction(FIELD_PROCESS_ID);
         return count(query.formCountQuery(), query.getQueryParameters());
     }
 
@@ -258,7 +259,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        query.performIndexSearches();
+        query.applyIndexRestriction(FIELD_PROCESS_ID);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 

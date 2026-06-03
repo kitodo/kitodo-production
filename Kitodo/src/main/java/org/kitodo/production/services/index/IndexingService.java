@@ -33,6 +33,7 @@ import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
+import org.kitodo.production.services.data.IndexQueryTerm;
 
 public class IndexingService {
 
@@ -137,25 +138,56 @@ public class IndexingService {
     }
 
     /**
-     * Searches for a search term in a search field and returns the hit IDs.
-     * 
+     * Searches for entities matching the given index query terms and returns their IDs.
+     *
+     * <p>The terms are combined into a single boolean Elasticsearch query.
+     * Positive terms are added as filter predicates, negated terms as exclusion
+     * predicates.</p>
+     *
      * @param beanClass
      *            class of beans to search for
-     * @param searchField
-     *            search field to search on
-     * @param value
-     *            value to be found in the search field
+     * @param terms
+     *            index query terms to combine in the search query
      * @return ids of the found beans
      */
-    public Collection<Integer> searchIds(Class<? extends BaseBean> beanClass, String searchField, String value) {
+    public Collection<Integer> searchIds(
+            Class<? extends BaseBean> beanClass,
+            List<IndexQueryTerm> terms) {
         try (Session ormSession = HibernateUtil.getSession()) {
             SearchSession searchSession = Search.session(ormSession);
             SearchProjection<Integer> idField = searchSession.scope(beanClass).projection().field("id", Integer.class)
                     .toProjection();
-            List<Integer> ids = searchSession.search(beanClass).select(idField).where(function -> function.match().field(
-                    searchField).matching(value)).fetchAll().hits();
-            logger.debug("Searching {} IDs in field \"{}\" for \"{}\": {} hits", beanClass.getSimpleName(), searchField,
-                    value, ids.size());
+            var query = searchSession.search(beanClass)
+                    .select(idField)
+                    .where(searchPredicateFactory -> {
+                        var booleanPredicate = searchPredicateFactory.bool();
+                        for (IndexQueryTerm term : terms) {
+
+                            var predicate = searchPredicateFactory.match()
+                                    .field(term.field())
+                                    .matching(term.token());
+
+                            if (term.operand()) {
+                                booleanPredicate.filter(predicate);
+                            } else {
+                                booleanPredicate.mustNot(predicate);
+                            }
+                        }
+                        return booleanPredicate;
+                    });
+            List<Integer> ids = query.fetchAll().hits();
+
+            String termSummary = String.join(", ",
+                    terms.stream()
+                            .distinct()
+                            .map(t -> t.field() + "=\"" + t.token() + "\"")
+                            .toList());
+            logger.debug(
+                    "Searching {} IDs with terms {}: {} hits",
+                    beanClass.getSimpleName(),
+                    termSummary,
+                    ids.size()
+            );
             return ids;
         }
     }
