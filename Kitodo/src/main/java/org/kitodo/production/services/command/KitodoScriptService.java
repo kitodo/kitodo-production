@@ -792,10 +792,10 @@ public class KitodoScriptService {
         }
     }
 
-    private void setImportConfiguration(List<Process> processes) throws DAOException {
-        Object id = this.parameters.get("id");
+    private void setImportConfiguration(List<Process> processes) throws DAOException, NumberFormatException {
+        String id = this.parameters.get("id");
         if (Objects.nonNull(id)) {
-            Integer configurationId = Integer.valueOf(id.toString());
+            Integer configurationId = Integer.valueOf(id);
             ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(configurationId);
             for (Process process : processes) {
                 process.setImportConfiguration(importConfiguration);
