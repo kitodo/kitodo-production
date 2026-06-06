@@ -124,6 +124,20 @@
                             <p:tooltip for="configurationTypeHelp"
                                        value="#{msgs['tooltip.importConfig.configurationTypeHelp']}"/>
                         </div>
+                        <h:panelGroup layout="block"
+                                      id="idField"
+                                      rendered="#{isEditMode or isViewMode}">
+                            <p:outputLabel for="id" value="#{msgs.id}"/>
+                            <p:inputText id="id"
+                                         styleClass="input-with-button"
+                                         value="#{importConfigurationEditView.importConfiguration.id}"
+                                         disabled="#{true}"/>
+                            <p:commandButton id="idHelp" type="button"
+                                             styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="idHelp"
+                                       value="#{msgs['importConfig.id']}"/>
+
+                        </h:panelGroup>
                     </p:row>
                 </p:panelGrid>
 
