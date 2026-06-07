@@ -54,8 +54,8 @@ public class ListingQueryParameterST extends BaseTestSelenium {
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
 
-        User user = ServiceManager.getUserService().getByLogin("kowal");
-        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+        //User user = ServiceManager.getUserService().getByLogin("kowal");
+        //SecurityTestUtils.addUserDataToSecurityContext(user, 1);
     }
 
     @AfterEach

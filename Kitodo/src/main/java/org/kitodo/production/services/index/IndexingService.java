@@ -188,7 +188,6 @@ public class IndexingService {
                     termSummary,
                     ids.size()
             );
-            logger.error("=== SEARCH DEBUG === terms={} ids={}", termSummary, ids);
             return ids;
         }
     }
