@@ -73,7 +73,7 @@ public class SearchingST extends BaseTestSelenium {
         int numberOfResults = processesPage.getProcessIds().size();
         assertEquals(2, numberOfResults, "There should be two processes found");
 
-        processesPage.searchInSearchField("Second");
+        processesPage.searchInSearchField("Second process");
         await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
             () -> assertEquals(1, processesPage.getProcessIds().size(), "There should be one process found"));
 
