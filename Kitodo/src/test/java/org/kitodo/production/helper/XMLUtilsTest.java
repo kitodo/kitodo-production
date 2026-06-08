@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 
 public class XMLUtilsTest {
@@ -90,7 +91,8 @@ public class XMLUtilsTest {
 
     @Test
     public void parseXMLStringShouldNotResolveExternalEntities() throws Exception {
-        File secret = File.createTempFile("xxe-canary", ".txt");
+        Path secretPath = Files.createTempFile("xxe-canary", ".txt");
+        File secret = secretPath.toFile();
         secret.deleteOnExit();
         Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
         String payload = "<?xml version=\"1.0\"?>\n"
@@ -105,7 +107,8 @@ public class XMLUtilsTest {
 
     @Test
     public void getNumberOfEADElementsShouldNotResolveExternalEntities() throws Exception {
-        File secret = File.createTempFile("xxe-canary", ".txt");
+        Path secretPath = Files.createTempFile("xxe-canary", ".txt");
+        File secret = secretPath.toFile();
         secret.deleteOnExit();
         Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
         String payload = "<?xml version=\"1.0\"?>\n"
