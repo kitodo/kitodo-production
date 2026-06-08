@@ -15,18 +15,24 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 
 public class XMLUtilsTest {
@@ -39,6 +45,9 @@ public class XMLUtilsTest {
     private static final String EXPECTED_EXCEPTION_MESSAGE = "javax.xml.transform.TransformerException: "
             + "A location step was expected following the '/' or '//' token.";
     private static Locale originalDefaultLocale;
+
+    @TempDir
+    Path tempDir;
 
     @BeforeAll
     public static void setLocaleToEnglish() {
@@ -85,6 +94,31 @@ public class XMLUtilsTest {
     }
 
     @Test
+    public void parseXMLStringShouldNotResolveExternalEntities() throws Exception {
+        File secret = createTestFile();
+        String payload = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE foo [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
+                + "<foo>&xxe;</foo>";
+        // With DOCTYPE declarations disallowed, parsing must fail rather than
+        // expand the external entity and disclose the file content.
+        SAXException exception = Assertions.assertThrows(SAXException.class,
+                () -> XMLUtils.parseXMLString(payload));
+        Assertions.assertFalse(exception.getMessage().contains("XXE-CANARY-SECRET"));
+    }
+
+    @Test
+    public void getNumberOfEADElementsShouldNotResolveExternalEntities() throws Exception {
+        File secret = createTestFile();
+        String payload = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE ead [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
+                + "<ead><c level=\"file\">&xxe;</c></ead>";
+        // With DTD support disabled, the StAX reader must reject the DOCTYPE
+        // instead of resolving the external entity.
+        Assertions.assertThrows(XMLStreamException.class,
+                () -> XMLUtils.getNumberOfEADElements(payload, "file"));
+    }
+
+    @Test
     public void shouldValidateXpathSyntax() {
         Assertions.assertDoesNotThrow(() -> XMLUtils.validateXPathSyntax(VALID_XPATH));
     }
@@ -94,5 +128,13 @@ public class XMLUtilsTest {
         XPathExpressionException exception = Assertions.assertThrows(XPathExpressionException.class,
                 () -> XMLUtils.validateXPathSyntax(INVALID_XPATH));
         Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getMessage());
+    }
+
+    private File createTestFile() throws IOException {
+        Path secretPath = Files.createTempFile(tempDir, "xxe-canary", ".txt");
+        File secret = secretPath.toFile();
+        secret.deleteOnExit();
+        Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
+        return secret;
     }
 }
