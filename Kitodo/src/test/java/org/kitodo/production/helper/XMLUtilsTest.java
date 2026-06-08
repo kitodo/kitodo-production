@@ -91,10 +91,7 @@ public class XMLUtilsTest {
 
     @Test
     public void parseXMLStringShouldNotResolveExternalEntities() throws Exception {
-        Path secretPath = Files.createTempFile("xxe-canary", ".txt");
-        File secret = secretPath.toFile();
-        secret.deleteOnExit();
-        Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
+        File secret = createTestFile();
         String payload = "<?xml version=\"1.0\"?>\n"
                 + "<!DOCTYPE foo [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
                 + "<foo>&xxe;</foo>";
@@ -107,10 +104,7 @@ public class XMLUtilsTest {
 
     @Test
     public void getNumberOfEADElementsShouldNotResolveExternalEntities() throws Exception {
-        Path secretPath = Files.createTempFile("xxe-canary", ".txt");
-        File secret = secretPath.toFile();
-        secret.deleteOnExit();
-        Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
+        File secret = createTestFile();
         String payload = "<?xml version=\"1.0\"?>\n"
                 + "<!DOCTYPE ead [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
                 + "<ead><c level=\"file\">&xxe;</c></ead>";
@@ -130,5 +124,13 @@ public class XMLUtilsTest {
         XPathExpressionException exception = Assertions.assertThrows(XPathExpressionException.class,
                 () -> XMLUtils.validateXPathSyntax(INVALID_XPATH));
         Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getMessage());
+    }
+
+    private File createTestFile() throws IOException {
+        Path secretPath = Files.createTempFile("xxe-canary", ".txt");
+        File secret = secretPath.toFile();
+        secret.deleteOnExit();
+        Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
+        return secret;
     }
 }
