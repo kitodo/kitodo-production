@@ -546,9 +546,9 @@ public class KitodoScriptService {
 
             for (Process process : processes) {
                 process.setRuleset(ruleset);
-                ServiceManager.getProcessService().save(process);
+                saveProcess(process);
             }
-        } catch (DAOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             Helper.setErrorMessage(e);
             logger.error(e.getMessage(), e);
         }
@@ -799,7 +799,7 @@ public class KitodoScriptService {
             ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(configurationId);
             for (Process process : processes) {
                 process.setImportConfiguration(importConfiguration);
-                ServiceManager.getProcessService().save(process);
+                saveProcess(process);
             }
         } else {
             Helper.setErrorMessage("missing parameter: id");
