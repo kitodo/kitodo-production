@@ -60,6 +60,10 @@ import org.xml.sax.SAXException;
  */
 public class XMLUtils {
 
+    private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
+    private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
+    private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -291,10 +295,6 @@ public class XMLUtils {
         }
         return count;
     }
-
-    private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
-    private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
-    private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
 
     /**
      * Disable DOCTYPE declarations and external entity resolution on the given

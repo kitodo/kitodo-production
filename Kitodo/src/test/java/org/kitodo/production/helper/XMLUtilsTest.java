@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,6 +45,9 @@ public class XMLUtilsTest {
     private static final String EXPECTED_EXCEPTION_MESSAGE = "javax.xml.transform.TransformerException: "
             + "A location step was expected following the '/' or '//' token.";
     private static Locale originalDefaultLocale;
+
+    @TempDir
+    Path tempDir;
 
     @BeforeAll
     public static void setLocaleToEnglish() {
@@ -127,7 +131,7 @@ public class XMLUtilsTest {
     }
 
     private File createTestFile() throws IOException {
-        Path secretPath = Files.createTempFile("xxe-canary", ".txt");
+        Path secretPath = Files.createTempFile(tempDir, "xxe-canary", ".txt");
         File secret = secretPath.toFile();
         secret.deleteOnExit();
         Files.write(secret.toPath(), "XXE-CANARY-SECRET".getBytes(StandardCharsets.UTF_8));
