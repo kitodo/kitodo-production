@@ -14,6 +14,7 @@ package org.kitodo.production.services.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -39,6 +40,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -1044,5 +1046,23 @@ public class KitodoScriptServiceIT {
         assertEquals(0, process.getSortHelperImages());
         assertEquals(6, process.getSortHelperMetadata());
         assertEquals(2, process.getSortHelperDocstructs());
+    }
+
+    @Test
+    public void shouldSetImportConfiguration() throws Exception {
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
+        Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
+        assertNull(process.getImportConfiguration(), "Test process should not have an import configuration");
+
+        String script = "action:setImportConfiguration id:1";
+        List<Process> processes = new ArrayList<>();
+        processes.add(process);
+
+        ServiceManager.getKitodoScriptService().execute(processes, script);
+
+        Process updatedProcess = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
+        ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(1);
+        assertEquals(importConfiguration, updatedProcess.getImportConfiguration(), "Import configuration was not set!");
     }
 }
