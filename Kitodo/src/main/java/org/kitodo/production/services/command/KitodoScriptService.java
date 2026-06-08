@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
@@ -164,6 +165,9 @@ public class KitodoScriptService {
             case "doit":
             case "doit2":
                 exportDms(processes, String.valueOf(Boolean.FALSE));
+                break;
+            case "setImportConfiguration":
+                setImportConfiguration(processes);
                 break;
             default:
                 return executeOtherScript(processes, script);
@@ -542,9 +546,9 @@ public class KitodoScriptService {
 
             for (Process process : processes) {
                 process.setRuleset(ruleset);
-                ServiceManager.getProcessService().save(process);
+                saveProcess(process);
             }
-        } catch (DAOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             Helper.setErrorMessage(e);
             logger.error(e.getMessage(), e);
         }
@@ -785,6 +789,20 @@ public class KitodoScriptService {
             ServiceManager.getTaskService().save(task);
         } catch (DAOException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
+        }
+    }
+
+    private void setImportConfiguration(List<Process> processes) throws DAOException, NumberFormatException {
+        String id = this.parameters.get("id");
+        if (Objects.nonNull(id)) {
+            Integer configurationId = Integer.valueOf(id);
+            ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(configurationId);
+            for (Process process : processes) {
+                process.setImportConfiguration(importConfiguration);
+                saveProcess(process);
+            }
+        } else {
+            Helper.setErrorMessage("missing parameter: id");
         }
     }
 }

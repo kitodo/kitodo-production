@@ -617,7 +617,7 @@ public class ProcessForm extends TemplateBaseForm {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DAOException | IOException | InvalidImagesException e) {
+        } catch (DAOException | IOException | InvalidImagesException | NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
