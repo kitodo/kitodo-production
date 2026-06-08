@@ -44,6 +44,7 @@
             <h:outputText value="#{msgs['importConfig.mode.create']}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs['importConfig.mode.edit']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs['importConfig.mode.view']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isViewMode}"/>
+            <h:outputText styleClass="set-apart" value="(#{msgs.id}: #{importConfigurationEditView.importConfiguration.id})" rendered="#{isEditMode or isViewMode}"/>
         </h3>
 
         <p:button id="cancel" value="#{msgs.cancel}"
@@ -124,20 +125,6 @@
                             <p:tooltip for="configurationTypeHelp"
                                        value="#{msgs['tooltip.importConfig.configurationTypeHelp']}"/>
                         </div>
-                        <h:panelGroup layout="block"
-                                      id="idField"
-                                      rendered="#{isEditMode or isViewMode}">
-                            <p:outputLabel for="id" value="#{msgs.id}"/>
-                            <p:inputText id="id"
-                                         styleClass="input-with-button"
-                                         value="#{importConfigurationEditView.importConfiguration.id}"
-                                         disabled="#{true}"/>
-                            <p:commandButton id="idHelp" type="button"
-                                             styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                            <p:tooltip for="idHelp"
-                                       value="#{msgs['importConfig.id']}"/>
-
-                        </h:panelGroup>
                     </p:row>
                 </p:panelGrid>
 
