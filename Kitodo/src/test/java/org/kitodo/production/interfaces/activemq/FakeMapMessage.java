@@ -11,10 +11,10 @@
 
 package org.kitodo.production.interfaces.activemq;
 
-import java.util.*;
+import java.util.HashMap;
 
-import org.mockito.invocation.*;
-import org.mockito.stubbing.*;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class FakeMapMessage implements Answer<Object> {
 

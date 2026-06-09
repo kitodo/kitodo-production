@@ -11,22 +11,31 @@
 
 package org.kitodo.production.interfaces.activemq;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.jms.*;
+import javax.jms.MapMessage;
 
-import org.junit.jupiter.api.*;
-import org.kitodo.*;
-import org.kitodo.config.*;
-import org.kitodo.config.enums.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kitodo.ExecutionPermission;
+import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.production.services.*;
-import org.kitodo.production.services.data.*;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
+import org.kitodo.production.services.data.ProcessService;
 
 public class CreateNewProcessesProcessorIT {
     private final ProcessService processService = ServiceManager.getProcessService();
