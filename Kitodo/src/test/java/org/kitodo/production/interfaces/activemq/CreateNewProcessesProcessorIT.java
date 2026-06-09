@@ -36,13 +36,12 @@ import org.kitodo.production.services.data.BeanQuery;
 import org.kitodo.production.services.data.ProcessService;
 
 public class CreateNewProcessesProcessorIT {
-    private final ProcessService processService = ServiceManager.getProcessService();
-
-
     private static final File scriptDeleteSymLink = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
     private static final File scriptCreateDirMeta = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
+
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     @BeforeEach
     public void prepare() throws Exception {
