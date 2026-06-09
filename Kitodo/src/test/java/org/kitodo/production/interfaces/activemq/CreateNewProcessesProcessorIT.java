@@ -13,6 +13,7 @@ package org.kitodo.production.interfaces.activemq;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.util.*;
@@ -72,7 +73,7 @@ public class CreateNewProcessesProcessorIT {
         }
 
         // test
-        MapMessage message = new FakeMapMessage();
+        MapMessage message = mock(MapMessage.class, new FakeMapMessage());
         message.setString("id", processTitle); // map message subject (used in logging)
         message.setInt("project", projectId);
         message.setInt("template", templateId);
