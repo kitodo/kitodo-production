@@ -63,7 +63,7 @@ public class CreateNewProcessesProcessorIT {
     }
 
     @Test
-    public void test() throws Exception {
+    public void shouldCreateNewProcess() throws Exception {
         // test data
         final int projectId = 1;
         final int templateId = 1;
