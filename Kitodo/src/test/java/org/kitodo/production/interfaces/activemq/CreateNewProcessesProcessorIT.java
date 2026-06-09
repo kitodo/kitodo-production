@@ -11,9 +11,7 @@
 
 package org.kitodo.production.interfaces.activemq;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
@@ -96,7 +94,7 @@ public class CreateNewProcessesProcessorIT {
         BeanQuery query = new BeanQuery(Process.class);
         query.addStringRestriction("title", processTitle);
         List<Process> found = processService.getByQuery(query.formQueryWithoutSelect(), query.getQueryParameters());
-        assertThat("should have created the process", found.size(), is(equalTo(1)));
+        assertEquals(1, found.size(), "should have created the process");
 
         // clean up
         ProcessService.deleteProcess(found.get(0));
