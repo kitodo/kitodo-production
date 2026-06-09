@@ -68,16 +68,14 @@ public class CreateNewProcessesProcessorIT {
         final int projectId = 1;
         final int templateId = 1;
         final String processTitle = "TestAMQ";
-        final Map<String, Object> metadata = new HashMap<>(); {
-            metadata.put("document_type", "Monograph");
-            metadata.put("singleDigCollection", Arrays.asList("Collection 1", "Collection 2"));
-            Map<String, Object> author = new HashMap<>(); {
-                author.put("Role", "Author");
-                author.put("FirstName", "Max");
-                author.put("LastName", "Mustermann");
-            }
-            metadata.put("Person", author);
-        }
+        final Map<String, Object> metadata = new HashMap<>();
+        metadata.put("document_type", "Monograph");
+        metadata.put("singleDigCollection", Arrays.asList("Collection 1", "Collection 2"));
+        Map<String, Object> author = new HashMap<>();
+        author.put("Role", "Author");
+        author.put("FirstName", "Max");
+        author.put("LastName", "Mustermann");
+        metadata.put("Person", author);
 
         // test
         MapMessage message = mock(MapMessage.class, new FakeMapMessage());
@@ -89,7 +87,7 @@ public class CreateNewProcessesProcessorIT {
 
         CreateNewProcessesProcessor underTest = new CreateNewProcessesProcessor();
         underTest.onMessage(message);
-        
+
         // checks
         BeanQuery query = new BeanQuery(Process.class);
         query.addStringRestriction("title", processTitle);
