@@ -63,7 +63,7 @@ var scrollUp = function (elementID, triggerCompleteFunction) {
     if (triggerCompleteFunction) {
         scrollableContent.animate({
             scrollTop: scrollableContent.scrollTop() - SCROLL_SPEED
-        }, 90, null, checkScrollPosition(scrollableContent));
+        }, 90, null, () => checkScrollPosition(scrollableContent));
     } else {
         scrollableContent.animate({
             scrollTop: scrollableContent.scrollTop() - SCROLL_SPEED
@@ -76,7 +76,7 @@ var scrollDown = function (elementID, triggerCompleteFunction) {
     if (triggerCompleteFunction) {
         scrollableContent.animate({
             scrollTop: scrollableContent.scrollTop() + SCROLL_SPEED
-        }, 90, null, checkScrollPosition(scrollableContent));
+        }, 90, null, () => checkScrollPosition(scrollableContent));
     } else {
         scrollableContent.animate({
             scrollTop: scrollableContent.scrollTop() + SCROLL_SPEED
