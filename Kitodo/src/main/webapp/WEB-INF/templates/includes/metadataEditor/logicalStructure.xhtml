@@ -179,7 +179,7 @@
                         update="linkProcessDialog" />
             <p:menuitem
                     value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
-                    rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null}"
+                    rendered="#{DataEditorForm.structurePanel.isCreatingStructureFromSelectionPossible()}"
                     icon="fa fa-plus fa-sm"
                     styleClass="plain"
                     disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
