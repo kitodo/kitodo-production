@@ -1262,14 +1262,14 @@ public class StructurePanel implements Serializable {
 
     /**
      * Checks whether conditions are met for displaying the context menu option to create a structure element.
-     * First condition: more than one media element is selected
+     * First condition: at least one media element is selected
      * Second condition: no logical nodes beside the media elements are selected
      *
      * @return whether both conditions are met and a structure element can be created from the current selection
      */
     public boolean isCreatingStructureFromSelectionPossible() {
         int numberOfSelectedMedia = dataEditor.getSelectedMedia().size();
-        boolean mediaSelected = numberOfSelectedMedia > 1;
+        boolean mediaSelected = numberOfSelectedMedia >= 1;
         boolean onlyMediaSelected = numberOfSelectedMedia == getSelectedLogicalNodes().size();
         return mediaSelected && onlyMediaSelected;
     }
