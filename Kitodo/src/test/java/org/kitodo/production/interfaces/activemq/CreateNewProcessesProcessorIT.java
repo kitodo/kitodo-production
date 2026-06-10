@@ -36,10 +36,8 @@ import org.kitodo.production.services.data.BeanQuery;
 import org.kitodo.production.services.data.ProcessService;
 
 public class CreateNewProcessesProcessorIT {
-    private static final File scriptDeleteSymLink = new File(
-            ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
     private static final File scriptCreateDirMeta = new File(
-            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
+            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
 
     private final ProcessService processService = ServiceManager.getProcessService();
 
@@ -49,7 +47,6 @@ public class CreateNewProcessesProcessorIT {
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
         ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
-        ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
     }
 
     @AfterEach
@@ -58,7 +55,6 @@ public class CreateNewProcessesProcessorIT {
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
         ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
-        ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
     }
 
     @Test
