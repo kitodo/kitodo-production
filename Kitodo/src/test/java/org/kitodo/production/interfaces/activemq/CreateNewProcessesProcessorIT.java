@@ -94,6 +94,6 @@ public class CreateNewProcessesProcessorIT {
         assertEquals(1, found.size(), "should have created the process");
 
         // clean up
-        ProcessService.deleteProcess(found.get(0));
+        ProcessService.deleteProcess(found.getFirst());
     }
 }
