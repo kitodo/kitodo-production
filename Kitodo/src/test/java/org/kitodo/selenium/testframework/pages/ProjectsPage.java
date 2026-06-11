@@ -344,8 +344,18 @@ public class ProjectsPage extends Page<ProjectsPage> {
 
     public List<String> getTemplateDetails() {
         int index = triggerRowToggle(templatesTable, "Fourth template");
-        WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateRowExpansionTable"));
+        String elementId =
+                TEMPLATE_TABLE + ":" + index + ":templateRowExpansionTable";
+        await()
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() ->
+                        assertTrue(
+                                Browser.getDriver()
+                                        .findElement(By.id(elementId))
+                                        .isDisplayed()));
+        WebElement detailsTable =
+                Browser.getDriver().findElement(By.id(elementId));
+
         return getGridData(detailsTable);
     }
 
