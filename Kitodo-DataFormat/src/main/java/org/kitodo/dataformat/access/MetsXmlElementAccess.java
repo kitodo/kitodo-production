@@ -58,6 +58,7 @@ import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.MetsDocumentID;
 import org.kitodo.dataformat.metskitodo.MetsType.StructLink;
 import org.kitodo.dataformat.metskitodo.StructLinkType.SmLink;
 import org.kitodo.dataformat.metskitodo.StructMapType;
+import org.kitodo.utils.Guard;
 import org.kitodo.utils.JAXBContextCache;
 
 /**
@@ -441,12 +442,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         StructLink structLink = new StructLink();
         List<Object> content = structLink.getSmLinkOrSmLinkGrp();
         for (Pair<String, String> link : smLinkData) {
-            if (Objects.isNull(link.getLeft())) {
-                throw new IllegalArgumentException("link.left must not be null");
-            }
-            if (Objects.isNull(link.getRight())) {
-                throw new IllegalArgumentException("link.right must not be null");
-            }
+            Guard.isNotNull("link.left", link.getLeft());
+            Guard.isNotNull("link.right", link.getRight());
             SmLink smLink = new SmLink();
             smLink.setFrom(link.getLeft());
             smLink.setTo(link.getRight());
