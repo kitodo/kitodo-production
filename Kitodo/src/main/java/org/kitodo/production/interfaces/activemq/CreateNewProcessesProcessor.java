@@ -106,7 +106,7 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
                  | NoRecordFoundException | NoSuchMetadataFieldException | ParserConfigurationException
                  | ProcessGenerationException | SAXException | TransformerException | UnsupportedFormatException
                  | URISyntaxException | XPathExpressionException | FileStructureValidationException e) {
-            throw new ProcessorException(e.getMessage());
+            throw new ProcessorException(e);
         }
     }
 
