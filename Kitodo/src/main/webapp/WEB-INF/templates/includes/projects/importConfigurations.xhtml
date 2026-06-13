@@ -36,6 +36,15 @@
         <p:ajax event="page" listener="#{ImportConfigurationListView.onPageChange}"/>
         <p:ajax event="sort" listener="#{ImportConfigurationListView.onSortChange}"/>
 
+        <p:column id="idColumn"
+                  width="70"
+                  styleClass="numeric"
+                  headerText="#{msgs.id}"
+                  sortBy="#{item.id}">
+            <h:outputText value="#{item.id}"
+                          title="#{item.id}"/>
+        </p:column>
+
         <p:column headerText="#{msgs.title}" 
                   sortBy="#{item.title}">
             <h:outputText value="#{item.title}"

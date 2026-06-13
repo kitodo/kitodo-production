@@ -48,6 +48,7 @@
             <h:outputText value="#{msgs['importConfig.mode.create']}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs['importConfig.mode.edit']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs['importConfig.mode.view']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isViewMode}"/>
+            <h:outputText styleClass="set-apart" value="(#{msgs.id}: #{importConfigurationEditView.importConfiguration.id})" rendered="#{isEditMode or isViewMode}"/>
         </h3>
 
         <p:button id="cancel" value="#{msgs.cancel}"
