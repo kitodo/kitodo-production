@@ -99,7 +99,7 @@ public class MediaPartialsPanel implements Serializable {
 
         LogicalDivision logicalDivision = mediaPartialDivision.getKey();
         if (dataEditor.getStructurePanel()
-                .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
+                .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision(), null)) {
             logicalDivision.getViews().remove();
             dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
             calculateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),

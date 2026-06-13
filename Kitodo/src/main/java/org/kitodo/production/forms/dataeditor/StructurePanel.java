@@ -244,12 +244,13 @@ public class StructurePanel implements Serializable {
             for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
                 structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
             }
-            if (deletePhysicalDivision(physicalDivision)) {
+            if (deletePhysicalDivision(physicalDivision, null)) {
                 physicalDivision.getLogicalDivisions().clear();
             }
         } else {
             for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
                 PhysicalDivision physicalDivision = selectedPhysicalDivision.getKey();
+                LogicalDivision logicalDivision = selectedPhysicalDivision.getValue();
                 if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
                     if (physicalDivision.getLogicalDivisions().size() > 1) {
                         Helper.setMessage(physicalDivision + ": is removed fom all assigned structural elements");
@@ -258,7 +259,7 @@ public class StructurePanel implements Serializable {
                         structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
                     }
                     physicalDivision.getLogicalDivisions().clear();
-                    if (!deletePhysicalDivision(physicalDivision)) {
+                    if (!deletePhysicalDivision(physicalDivision, logicalDivision)) {
                         return;
                     }
 
@@ -301,10 +302,11 @@ public class StructurePanel implements Serializable {
     /**
      * Delete as physical division.
      *
-     * @param physicalDivision The physical division.
+     * @param physicalDivision The physical division that is deleted.
+     * @param logicalDivision The optional parent logical division that might contain a view to the physical division
      * @return True if deleted
      */
-    public boolean deletePhysicalDivision(PhysicalDivision physicalDivision) {
+    public boolean deletePhysicalDivision(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
         LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(physicalDivision,
                 dataEditor.getWorkpiece().getPhysicalStructure());
         if (ancestors.isEmpty()) {
@@ -313,6 +315,9 @@ public class StructurePanel implements Serializable {
         }
         PhysicalDivision parent = ancestors.getLast();
         parent.getChildren().remove(physicalDivision);
+        if (Objects.nonNull(logicalDivision)) {
+            logicalDivision.getViews().removeIf(v -> v.getPhysicalDivision().equals(physicalDivision));
+        }
         return true;
     }
 
