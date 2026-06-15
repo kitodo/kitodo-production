@@ -47,7 +47,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.xml.sax.SAXException;
 
 /**
  * Tests for functions in the metadata editor.
@@ -1058,6 +1057,59 @@ public class MetadataST extends BaseTestSelenium {
             .until(() -> Browser.getDriver().findElement(
                 By.cssSelector("#logicalTree\\:0_0 .ui-treenode-label")
             ).getText().equals("1 : -"));
+    }
+
+    /**
+     * Verify that a media element can be deleted via the context menu option "delete media" after deleting its parent logical division.
+     */
+    @Test
+    public void mediaCanBeRemovedAfterDeletingParentLogicalDivisionTest() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
+
+        // wait until logical structure tree is available
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // check media 2 exists in tree structure at "Band -> Band -> Band -> 2"
+        assertEquals("2 : -", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0_0_0_0 .ui-treenode-label")).getText());
+
+        // check parent logical structure is called "Band"
+        assertEquals("Band", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0_0_0 .ui-treenode-label")).getText());
+
+        // select parent logical structure of media 2
+        metaDataEditor.selectStructureTreeNode("0_0_0", false, false);
+
+        // open context menu
+        metaDataEditor.openContextMenuForStructureTreeNode("0_0_0");
+
+        // click on menu entry "remove element"
+        metaDataEditor.clickStructureTreeContextMenuEntry("unlink-process");
+
+        // check media 2 exists now as child of "Band -> Band"
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(
+                By.cssSelector("#logicalTree\\:0_0_0 .ui-treenode-label")
+            ).getText().equals("2 : -"));
+
+        // select media 2
+        metaDataEditor.selectStructureTreeNode("0_0_0", false, false);
+
+        // open context menu
+        metaDataEditor.openContextMenuForStructureTreeNode("0_0_0");
+
+        // click on menu entry "delete media"
+        metaDataEditor.clickStructureTreeContextMenuEntry("removeSelectedMedia");
+
+        // check that media 2 tree node does not exist any more
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElements(By.cssSelector("#logicalTree .ui-treenode-label"))
+                    .stream().filter(e -> e.getText().equals("2 : -")).findFirst().isEmpty());
     }
 
     /**
