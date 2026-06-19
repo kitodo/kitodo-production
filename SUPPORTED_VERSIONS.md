@@ -4,9 +4,10 @@ The following versions of Kitodo.Production are currently being supported with o
 
 | Version | Active Development       |      Security Fixes      |
 |-----| :----------------------: |:------------------------:|
-| 4.0 | :heavy_check_mark:       |    :heavy_check_mark:    |
-| 3.9 | :heavy_check_mark:       |    :heavy_check_mark:    |
-| 3.8 | :heavy_multiplication_x: |    :heavy_check_mark:    |
+| 4.1 | :heavy_check_mark:       |    :heavy_check_mark:    |
+| 4.0 | :heavy_multiplication_x: |    :heavy_check_mark:    |
+| 3.9 | :heavy_multiplication_x: |    :heavy_check_mark:    |
+| 3.8 | :heavy_multiplication_x: | :heavy_multiplication_x: |
 | 3.7 | :heavy_multiplication_x: | :heavy_multiplication_x: |
 | 3.6 | :heavy_multiplication_x: | :heavy_multiplication_x: |
 | 3.5 | :heavy_multiplication_x: | :heavy_multiplication_x: |
