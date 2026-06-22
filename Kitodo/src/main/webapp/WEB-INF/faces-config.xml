@@ -39,5 +39,12 @@
         <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory
         </exception-handler-factory>
     </factory>
+    <render-kit>
+        <renderer>
+            <component-family>jakarta.faces.Form</component-family>
+            <renderer-type>jakarta.faces.Form</renderer-type>
+            <renderer-class>org.kitodo.production.security.CsrfFormRenderer</renderer-class>
+        </renderer>
+    </render-kit>
 </faces-config>
 
