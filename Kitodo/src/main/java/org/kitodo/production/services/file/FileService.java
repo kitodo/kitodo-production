@@ -141,8 +141,7 @@ public class FileService {
             logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
         } else {
             CommandService commandService = ServiceManager.getCommandService();
-            String path = FileSystems.getDefault()
-                    .getPath(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
+            String path = Paths.get(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
                     .normalize().toAbsolutePath().toString();
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
