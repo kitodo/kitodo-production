@@ -297,18 +297,19 @@ public class MetsXmlElementAccessIT {
     public void duplicateMetsFileDefinitionWithStrictFileIdCheck() {
         // mock access to KitodoConfig usage
         PropertiesConfiguration propertiesConfiguration = Mockito.mock(PropertiesConfiguration.class);
-        MockedStatic<KitodoConfig> mockedConfig = Mockito.mockStatic(KitodoConfig.class);
-        mockedConfig.when(KitodoConfig::getConfig).thenReturn(propertiesConfiguration);
-        // mock getBoolean method call like in the main class
-        Mockito.when(propertiesConfiguration.getBoolean("useStrictMetsFileIdCheck", false)).thenReturn(true);
+        try (MockedStatic<KitodoConfig> mockedConfig = Mockito.mockStatic(KitodoConfig.class)) {
+            mockedConfig.when(KitodoConfig::getConfig).thenReturn(propertiesConfiguration);
+            // mock getBoolean method call like in the main class
+            Mockito.when(propertiesConfiguration.getBoolean("useStrictMetsFileIdCheck", false)).thenReturn(true);
 
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> new MetsXmlElementAccess().read(
-                        new FileInputStream("src/test/resources/meta_duplicate_file.xml")
-                )
-            );
+            Exception exception = assertThrows(IllegalArgumentException.class,
+                    () -> new MetsXmlElementAccess().read(
+                            new FileInputStream("src/test/resources/meta_duplicate_file.xml")
+                    )
+                );
 
-        assertEquals("Corrupt file: each METS file ID has to be unique but FILE_0001 is used multiple times!", exception.getMessage());
+            assertEquals("Corrupt file: each METS file ID has to be unique but FILE_0001 is used multiple times!", exception.getMessage());
+        }
     }
 
     @Test
