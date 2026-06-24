@@ -16,6 +16,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -117,12 +118,18 @@ public class LdapUser implements DirContext {
              * Encryption of password und Base64-Enconding
              */
 
-            String passwordEncrytion = ldapGroup.getLdapServer().getPasswordEncryption().getTitle();
-
-            MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            SecureRandom secureRandom = new SecureRandom();
+            byte[] salt = new byte[8];
+            secureRandom.nextBytes(salt);
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
-            String encodedDigest = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + encodedDigest);
+            md.update(salt);
+            byte[] hash = md.digest();
+            byte[] hashAndSalt = new byte[hash.length + salt.length];
+            System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+            System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+            String encodedDigest = Base64.encodeBase64String(hashAndSalt);
+            this.attributes.put("userPassword", "{SSHA}" + encodedDigest);
         }
     }
 
