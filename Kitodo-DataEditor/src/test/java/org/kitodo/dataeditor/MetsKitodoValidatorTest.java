@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -39,7 +40,9 @@ public class MetsKitodoValidatorTest {
 
     @AfterEach
     public void revertFile() throws IOException {
-        IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
+        try (OutputStream out = Files.newOutputStream(Paths.get(pathOfOldMetaFormat))) {
+            IOUtils.write(testMetaOldFormat, out);
+        }
     }
 
     @Test
