@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -141,7 +140,7 @@ public class KitodoServiceLoader<T> {
      * they can be used in all frontend files
      */
     private void loadBeans() {
-        Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
+        Path moduleFolder = Paths.get(modulePath);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
             for (Path f : stream) {
                 try (JarFile jarFile = new JarFile(f.toString())) {
@@ -196,7 +195,7 @@ public class KitodoServiceLoader<T> {
      */
     private void loadFrontendFilesIntoCore() {
 
-        Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
+        Path moduleFolder = Paths.get(modulePath);
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
 
@@ -381,7 +380,7 @@ public class KitodoServiceLoader<T> {
      * earlier class loader created at an earlier time.</p>
      */
     private void loadModulesIntoClasspath() {
-        Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
+        Path moduleFolder = Paths.get(modulePath);
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
 
