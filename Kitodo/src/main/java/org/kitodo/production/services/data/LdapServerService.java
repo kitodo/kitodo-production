@@ -392,20 +392,27 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
      */
     public boolean changeUserPassword(User user, String inNewPassword) throws NoSuchAlgorithmException {
         MD4Digest digester = new MD4Digest();
-        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
                 ModificationItem[] mods = new ModificationItem[4];
 
                 // encryption of password and Base64-Encoding
-                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
+                MessageDigest md = MessageDigest.getInstance("SHA-1");
+                SecureRandom secureRandom = new SecureRandom();
+                byte[] salt = new byte[8];
+                secureRandom.nextBytes(salt);
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
+                md.update(salt);
+                byte[] hash = md.digest();
+                byte[] hashAndSalt = new byte[hash.length + salt.length];
+                System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+                System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+                String encryptedPassword = Base64.encodeBase64String(hashAndSalt);
 
                 // change attribute userPassword
                 BasicAttribute userPassword = new BasicAttribute("userPassword",
-                        "{" + passwordEncryption + "}" + encryptedPassword);
+                        "{SSHA}" + encryptedPassword);
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
 
                 // change attribute lanmgrPassword
