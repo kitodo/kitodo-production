@@ -23,6 +23,7 @@ import java.util.AbstractMap;
 import java.util.LinkedList;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,7 @@ public class MediaPartialFormTest {
     PhysicalDivision physicalDivision;
     PhysicalDivision physicalStructure;
 
+    private static MockedStatic<Ajax> ajaxMockedStatic;
 
     /**
      * Initialize test class.
@@ -55,10 +57,20 @@ public class MediaPartialFormTest {
     @BeforeAll
     public static void initTestClass() {
         // mock frontend update calls
-        Mockito.mockStatic(Ajax.class);
+        ajaxMockedStatic = Mockito.mockStatic(Ajax.class);
         PrimeFaces primeFaces = mock(PrimeFaces.class);
         MockedStatic<PrimeFaces> primefacesSingleton = Mockito.mockStatic(PrimeFaces.class);
         primefacesSingleton.when(PrimeFaces::current).thenReturn(primeFaces);
+    }
+
+    /**
+     * Clean up static mocks.
+     */
+    @AfterAll
+    public static void cleanupTestClass() {
+        if (ajaxMockedStatic != null) {
+            ajaxMockedStatic.close();
+        }
     }
 
     /**
