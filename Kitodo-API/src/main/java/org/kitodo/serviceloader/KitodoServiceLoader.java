@@ -80,8 +80,7 @@ public class KitodoServiceLoader<T> {
     private static final String JAR = "*.jar";
     private static final String ERROR = "Classpath could not be accessed";
 
-    private static final Path SYSTEM_TEMP_FOLDER = FileSystems.getDefault()
-            .getPath(System.getProperty("java.io.tmpdir"));
+    private static final Path SYSTEM_TEMP_FOLDER = Paths.get(System.getProperty("java.io.tmpdir"));
 
     private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
