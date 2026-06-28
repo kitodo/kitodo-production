@@ -9,6 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+/* global de_DE, en_EN, es_ES */
 var availableUserRoles = [];
 var language = "de";
 
