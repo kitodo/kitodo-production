@@ -69,10 +69,13 @@ public class VariableReplacer {
     /**
      * This regular expression is used to search for placeholders that need to
      * be replaced.
+     * 
+     * <p>Uses regular expression possesive quantifier ++ in order to prevent 
+     * possible denial of service attack from user input.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
             "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrdworkflowid)|"
-                    + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
+                    + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]++)|"
                     + "(?:(filename|basename|relativepath))))\\)");
     /**
      * The map is filled with replacement instructions that are required for
