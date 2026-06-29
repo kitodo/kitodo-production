@@ -200,7 +200,6 @@ public class FilterMenu {
      * @return the last category in this filter string
      */
     private String findSuggestionCategory(String input) {
-        // 
         String[] colonSplit = (input + " ").split(":"); 
         String secondLastSplit = colonSplit.length > 1 ? colonSplit[colonSplit.length - 2] : "";
         // find the last word by reversing the string and finding the first word
