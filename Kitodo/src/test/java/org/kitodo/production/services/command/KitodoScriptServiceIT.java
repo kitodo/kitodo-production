@@ -11,14 +11,17 @@
 
 package org.kitodo.production.services.command;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,18 +50,21 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.xml.sax.SAXParseException;
 
 public class KitodoScriptServiceIT {
-    // private static final Logger logger =
-    // LogManager.getLogger(KitodoScriptServiceIT.class);
     private static final String metadataWithDuplicatesTestFile = "testMetaWithDuplicateMetadata.xml";
     private static final String directoryForDerivateGeneration = "testFilesForDerivativeGeneration";
+    private static final String metadataFileInvalidMets = "testMetadataFileInvalidMets.xml";
+    private static final String metadataFileMalformedXml = "testMetadataFileMalformedXml.xml";
     private static int kitodoScriptTestProcessId = -1;
+    private static final List<Integer> invalidMetsStructureProcessIds = new ArrayList<>();
     private static final String testProcessTitle = "Second process";
     private static final int projectId = 1;
     private static final int templateId = 1;
@@ -87,7 +93,7 @@ public class KitodoScriptServiceIT {
      * Add metadata test process and metadata file for KitodoScriptService tests.
      */
     @BeforeEach
-    public void prepareFileCopy() throws IOException, DAOException {
+    public void prepareTestFiles() throws IOException, DAOException {
         kitodoScriptTestProcessId = MockDatabase.insertTestProcess(testProcessTitle, projectId, templateId, rulesetId);
         ProcessTestUtils.copyTestResources(kitodoScriptTestProcessId, directoryForDerivateGeneration);
         ProcessTestUtils.copyTestMetadataFile(kitodoScriptTestProcessId, metadataWithDuplicatesTestFile);
@@ -97,9 +103,13 @@ public class KitodoScriptServiceIT {
      * Remove test process and metadata file for KitodoScriptService tests.
      */
     @AfterEach
-    public void removeKitodoScriptServiceTestFile() throws IOException, DAOException {
+    public void cleanupTestFiles() throws DAOException {
         ProcessTestUtils.removeTestProcess(kitodoScriptTestProcessId);
         kitodoScriptTestProcessId = -1;
+        for (int id : invalidMetsStructureProcessIds) {
+            ProcessTestUtils.removeTestProcess(id);
+        }
+        invalidMetsStructureProcessIds.clear();
     }
 
     @Test
@@ -1064,5 +1074,92 @@ public class KitodoScriptServiceIT {
         Process updatedProcess = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(1);
         assertEquals(importConfiguration, updatedProcess.getImportConfiguration(), "Import configuration was not set!");
+    }
+
+    /**
+     * Verifies that calling the KitodoScript 'resaveMetadataFile' fixes the structure of invalid METS files.
+     *
+     * @throws Exception when setting up test resources fails
+     */
+    @Test
+    public void shouldResaveAndFixInvalidMetsFile() throws Exception {
+        int testProcessId = MockDatabase.insertTestProcess("Invalid mets process", projectId, templateId, rulesetId);
+        invalidMetsStructureProcessIds.add(testProcessId);
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, metadataFileInvalidMets);
+        Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
+        URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
+
+        // Loading metadata file with invalid METS structure should fail
+        assertThrows(FileStructureValidationException.class, () -> ServiceManager.getMetsService().loadWorkpiece(processUri));
+
+        List<Process> processes = new ArrayList<>();
+        processes.add(testProcess);
+
+        // Skript to resave metadata file with valid METS structure
+        String script = "action:resaveMetadataFile";
+
+        ServiceManager.getKitodoScriptService().execute(processes, script);
+
+        // Loading metadata file with updated, valid METS structure should now succeed
+        assertDoesNotThrow(() -> ServiceManager.getMetsService().loadWorkpiece(processUri));
+    }
+
+    /**
+     * Verifies that calling the KitodoScript 'resaveMetadataFile' on a list of processes does not get interrupted when
+     * the metadata file of one process cannot be read.
+     *
+     * @throws Exception when setting up test resources fails
+     */
+    @Test
+    public void shouldNotStopResavingMetadataFilesWhenEncounteringProcessWithUnreadableMetadataFile() throws Exception {
+        int firstProcessId = MockDatabase.insertTestProcess("First invalid mets process", projectId, templateId, rulesetId);
+        ProcessTestUtils.copyTestMetadataFile(firstProcessId, metadataFileInvalidMets);
+        int secondProcessId = MockDatabase.insertTestProcess("Test process without metadata file", projectId, templateId, rulesetId);
+        int thirdProcessId = MockDatabase.insertTestProcess("Test process with malformed XML file", projectId, templateId, rulesetId);
+        ProcessTestUtils.copyTestMetadataFile(thirdProcessId, metadataFileMalformedXml);
+        int fourthProcessId = MockDatabase.insertTestProcess("Second invalid mets process", projectId, templateId, rulesetId);
+        ProcessTestUtils.copyTestMetadataFile(fourthProcessId, metadataFileInvalidMets);
+
+        invalidMetsStructureProcessIds.add(firstProcessId);
+        invalidMetsStructureProcessIds.add(secondProcessId);
+        invalidMetsStructureProcessIds.add(thirdProcessId);
+        invalidMetsStructureProcessIds.add(fourthProcessId);
+
+        List<Process> processes = new ArrayList<>();
+        processes.add(ServiceManager.getProcessService().getById(firstProcessId));
+        processes.add(ServiceManager.getProcessService().getById(secondProcessId));
+        processes.add(ServiceManager.getProcessService().getById(thirdProcessId));
+        processes.add(ServiceManager.getProcessService().getById(fourthProcessId));
+
+        URI firstProcessUri = ServiceManager.getProcessService().getMetadataFileUri(processes.get(0));
+        URI secondProcessUri = ServiceManager.getProcessService().getMetadataFileUri(processes.get(1));
+        URI thirdProcessUri = ServiceManager.getProcessService().getMetadataFileUri(processes.get(2));
+        URI fourthProcessUri = ServiceManager.getProcessService().getMetadataFileUri(processes.get(3));
+
+        // Trying to load test processes with invalid METS structures should result in validation exception
+        assertThrows(FileStructureValidationException.class, () -> ServiceManager.getMetsService().loadWorkpiece(firstProcessUri));
+        assertThrows(FileStructureValidationException.class, () -> ServiceManager.getMetsService().loadWorkpiece(fourthProcessUri));
+
+        // Trying to load test process without metadata file should result in IOException
+        assertThrows(IOException.class, () -> ServiceManager.getMetsService().loadWorkpiece(secondProcessUri));
+
+        // Trying to load test process with malformed XML file should result in SAXParseException
+        assertThrows(SAXParseException.class, () -> ServiceManager.getMetsService().loadWorkpiece(thirdProcessUri));
+
+        // Skript to resave metadata file with valid METS structure
+        String script = "action:resaveMetadataFile";
+
+        // Re-save all test processes with process missing metadata file entirely _between_ processes with invalid METS structure
+        ServiceManager.getKitodoScriptService().execute(processes, script);
+
+        // Loading updated metadata files of first _and_ third process should now be possible
+        assertDoesNotThrow(() -> ServiceManager.getMetsService().loadWorkpiece(firstProcessUri));
+        assertDoesNotThrow(() -> ServiceManager.getMetsService().loadWorkpiece(fourthProcessUri));
+
+        // Trying to load process without metadata file still results in IOException
+        assertThrows(IOException.class, () -> ServiceManager.getMetsService().loadWorkpiece(secondProcessUri));
+
+        // Trying to load process with malformed XML file still results in SAXParseException
+        assertThrows(SAXParseException.class, () -> ServiceManager.getMetsService().loadWorkpiece(thirdProcessUri));
     }
 }
