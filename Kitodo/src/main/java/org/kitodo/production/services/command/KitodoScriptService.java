@@ -55,6 +55,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class KitodoScriptService {
     private static volatile KitodoScriptService instance = null;
@@ -800,15 +801,19 @@ public class KitodoScriptService {
         }
     }
 
-    private void resaveMetadataFile(List<Process> processes) throws IOException, FileStructureValidationException,
+    private void resaveMetadataFile(List<Process> processes) throws FileStructureValidationException,
             SAXException {
         MetsService metsService = ServiceManager.getMetsService();
         ProcessService processService = ServiceManager.getProcessService();
         for (Process process : processes) {
-            URI metadataFileUri = processService.getMetadataFileUri(process);
-            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri, false);
-            fileService.createBackupFile(process);
-            metsService.saveWorkpiece(workpiece, metadataFileUri);
+            try {
+                URI metadataFileUri = processService.getMetadataFileUri(process);
+                Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri, false);
+                fileService.createBackupFile(process);
+                metsService.saveWorkpiece(workpiece, metadataFileUri);
+            } catch (IOException | SAXParseException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
