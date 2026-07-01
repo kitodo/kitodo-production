@@ -18,7 +18,12 @@ import java.util.Objects;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.controller.SessionClientController;
+import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -29,6 +34,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    private static final Logger logger = LogManager.getLogger(CustomLoginSuccessHandler.class);
     private static final String DESKTOP_LANDING_PAGE = "/pages/desktop";
     private static final String EMPTY_LANDING_PAGE = "/pages/checks";
     private static final String SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
@@ -39,18 +45,23 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
 
-        SessionClientController controller = new SessionClientController();
-        if (controller.getAvailableClientsOfCurrentUser().size() > 1 && Objects.isNull(controller
-                .getDefaultClientOfCurrentUser())) {
-            // redirect to empty landing page, where dialogs are displayed depending on both checks!
-            redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse, EMPTY_LANDING_PAGE);
-        } else {
-            if (Objects.nonNull(httpServletRequest.getSession())) {
-                // calling showClientSelectDialog automatically sets the only one available client here
-                controller.showClientSelectDialog();
-                redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse,
-                        getOriginalRequest(httpServletRequest.getSession().getAttribute(SAVED_REQUEST)));
+        try {
+            SessionClientController controller = new SessionClientController();
+            if (ServiceManager.getIndexingService().isIndexCorrupted()
+                    || (controller.getAvailableClientsOfCurrentUser().size() > 1
+                    && Objects.isNull(controller.getDefaultClientOfCurrentUser()))) {
+                // redirect to empty landing page, where dialogs are displayed depending on both checks!
+                redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse, EMPTY_LANDING_PAGE);
+            } else {
+                if (Objects.nonNull(httpServletRequest.getSession())) {
+                    // calling showClientSelectDialog automatically sets the only one available client here
+                    controller.showClientSelectDialog();
+                    redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse,
+                            getOriginalRequest(httpServletRequest.getSession().getAttribute(SAVED_REQUEST)));
+                }
             }
+        } catch (DataException | DAOException e) {
+            logger.error(e.getLocalizedMessage());
         }
     }
 
