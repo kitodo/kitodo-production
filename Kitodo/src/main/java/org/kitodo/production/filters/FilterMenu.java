@@ -162,10 +162,10 @@ public class FilterMenu {
                     suggestions = createSuggestionsForProcessCategory(matcherNextCategory.group());
                 } else {
                     // process value should be suggested
-                    Pattern patternPreviousCategory = Pattern.compile("\\w+:(?!.*:)");
-                    Matcher matcherPreviousCategory = patternPreviousCategory.matcher(input);
-                    String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
-                    suggestions = createSuggestionsForProcessValue(checkFilterCategory(category, processCategories), lastPart);
+                    suggestions = createSuggestionsForProcessValue(
+                        checkFilterCategory(findSuggestionCategory(input), processCategories), 
+                        lastPart
+                    );
                 }
             } else if (Objects.nonNull(taskForm)) {
                 if (matcherNextCategory.find()) {
@@ -173,10 +173,10 @@ public class FilterMenu {
                     suggestions = createSuggestionsForTaskCategory(matcherNextCategory.group());
                 } else {
                     // process/task value should be suggested
-                    Pattern patternPreviousCategory = Pattern.compile("\\w+:(?!.*:)");
-                    Matcher matcherPreviousCategory = patternPreviousCategory.matcher(input);
-                    String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
-                    suggestions = createSuggestionsForTaskValue(checkFilterCategory(category, taskCategories), lastPart);
+                    suggestions = createSuggestionsForTaskValue(
+                        checkFilterCategory(findSuggestionCategory(input), taskCategories), 
+                        lastPart
+                    );
                 }
             } else if (Objects.nonNull(userForm)) {
                 if (matcherNextCategory.find()) {
@@ -185,6 +185,28 @@ public class FilterMenu {
                 }
             }
         }
+    }
+
+    /**
+     * Return the last category in the filter string that is used for displaying suggestions.
+     * 
+     * <p>Does not use regular expression matching with negative lookahead to prevent possible 
+     * denial of service attack from user input. Instead, split input at colon symbol by adding 
+     * space at the end such that the potential category is always split as the second last 
+     * array element. Finally, finds last word in string by revesering it and finding first 
+     * word instead, which has linear search complexity.
+     * 
+     * @param input the filter string
+     * @return the last category in this filter string
+     */
+    private String findSuggestionCategory(String input) {
+        String[] colonSplit = (input + " ").split(":"); 
+        String secondLastSplit = colonSplit.length > 1 ? colonSplit[colonSplit.length - 2] : "";
+        // find the last word by reversing the string and finding the first word
+        String reversed = new StringBuilder(secondLastSplit).reverse().toString();
+        Matcher firstWordMatcher = Pattern.compile("^\\w+").matcher(reversed);
+        String firstReversedWord = firstWordMatcher.find() ? ":" + firstWordMatcher.group() : "";
+        return new StringBuilder(firstReversedWord).reverse().toString();
     }
 
     private List<Suggestion> filterSuggestionsForCategory(String input, List<FilterString> suggestions) {
