@@ -250,6 +250,19 @@ public class BeanQuery {
     }
 
     /**
+     * Returns IDs matched by index restrictions.
+     *
+     * @return matching IDs, NO_HIT if the index search has no hits,
+     *         or null if no index restrictions are applied
+     */
+    public Collection<Integer> retrieveIndexRestrictionIds() {
+        if (indexQueries.isEmpty()) {
+            return null;
+        }
+        return performIndexSearches();
+    }
+
+    /**
      * Executes all collected index query terms as a single combined index search
      * and returns the matching process IDs. If no hits are found, a non-matching
      * ID collection is returned by the caller.
