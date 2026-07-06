@@ -396,43 +396,9 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
-                // encryption of password and Base64-Encoding
-                PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
-                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
-                SecureRandom secureRandom = new SecureRandom();
-                byte[] salt = new byte[8];
-                secureRandom.nextBytes(salt);
-                md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                md.update(salt);
-                byte[] hash = md.digest();
-                byte[] hashAndSalt = new byte[hash.length + salt.length];
-                System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
-                System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
-                String encryptedPassword = Base64.encodeBase64String(hashAndSalt);
-
-                ModificationItem[] mods = new ModificationItem[4];
-
-                // change attribute userPassword
-                BasicAttribute userPassword = new BasicAttribute("userPassword",
-                        passwordEncryption.getLdapPrefix() + encryptedPassword);
-                mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
-
-                // change attribute lanmgrPassword
-                BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
-                mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
-
-                // change attribute ntlmPassword
-                BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
-                mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
-
-                BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
-                        String.valueOf(System.currentTimeMillis() / 1000L));
-                mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
-
+                ModificationItem[] mods = createPasswordModificationItems(user, inNewPassword, digester);
                 DirContext ctx = new InitialDirContext(env);
                 ctx.modifyAttributes(buildUserDN(user), mods);
-
-                // Close the context when we're done
                 ctx.close();
                 return true;
             } catch (NamingException e) {
@@ -441,6 +407,40 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
             }
         }
         return false;
+    }
+
+    private ModificationItem[] createPasswordModificationItems(User user, String inNewPassword, MD4Digest digester)
+            throws NoSuchAlgorithmException {
+        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
+        MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] salt = new byte[8];
+        secureRandom.nextBytes(salt);
+        md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
+        md.update(salt);
+        byte[] hash = md.digest();
+        byte[] hashAndSalt = new byte[hash.length + salt.length];
+        System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+        System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+        String encryptedPassword = Base64.encodeBase64String(hashAndSalt);
+
+        ModificationItem[] mods = new ModificationItem[4];
+
+        BasicAttribute userPassword = new BasicAttribute("userPassword",
+                passwordEncryption.getLdapPrefix() + encryptedPassword);
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
+
+        BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
+        mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
+
+        BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
+        mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
+
+        BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
+                String.valueOf(System.currentTimeMillis() / 1000L));
+        mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
+
+        return mods;
     }
 
     private URI getUserHomeDirectoryWithTLS(Hashtable<String, String> env, String userFolderBasePath, User user) {
