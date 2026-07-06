@@ -176,6 +176,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     private static final Map<Integer, Collection<String>> RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT = new HashMap<>();
     private static final List<String> BG_COLORS = Arrays
             .asList(ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";"));
+    private static final Collection<Integer> NO_HIT = Collections.singletonList(0);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -2553,6 +2554,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
         BeanQuery query = new BeanQuery(Process.class);
 
+        // If individual processes are selected, export exactly those processes.
+        // Filters and index restrictions are only relevant when exporting all selected results.
+        if (!allSelected) {
+            query.addInCollectionRestriction(FIELD_ID, selectedProcessIds);
+            query.restrictToClient(sessionClientId);
+            query.addInnerJoin("project proj");
+            query.defineSorting("id", SortOrder.ASCENDING);
+            return query;
+        }
+
         if (StringUtils.isNotBlank(filter)) {
             query.restrictWithUserFilterString(filter);
         }
@@ -2563,19 +2574,33 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             query.addBooleanRestriction("project.active", Boolean.TRUE);
         }
 
-        if (allSelected) {
+        Collection<Integer> indexIds = query.retrieveIndexRestrictionIds();
+
+        if (Objects.isNull(indexIds)) {
             if (Objects.nonNull(excludedProcessIds) && !excludedProcessIds.isEmpty()) {
-                query.addNotInCollectionRestriction("id", excludedProcessIds);
+                query.addNotInCollectionRestriction(FIELD_ID, excludedProcessIds);
             }
         } else {
-            query.addInCollectionRestriction("id", selectedProcessIds);
+            query.addInCollectionRestriction(FIELD_ID, excludeIds(indexIds, excludedProcessIds));
         }
 
         query.restrictToClient(sessionClientId);
-        query.applyIndexRestriction(FIELD_ID);
         query.addInnerJoin("project proj");
         query.defineSorting("id", SortOrder.ASCENDING);
 
         return query;
+    }
+
+    private Collection<Integer> excludeIds(Collection<Integer> ids, Collection<Integer> excludedIds) {
+        if (Objects.isNull(excludedIds) || excludedIds.isEmpty()) {
+            return ids;
+        }
+
+        Set<Integer> excludedIdSet = new HashSet<>(excludedIds);
+        Collection<Integer> result = ids.stream()
+                .filter(id -> !excludedIdSet.contains(id))
+                .toList();
+
+        return result.isEmpty() ? NO_HIT : result;
     }
 }
