@@ -99,6 +99,11 @@ public class LdapUser implements DirContext {
 
             /*
              * Samba passwords
+             *
+             * LM and NTLM hashes are required for Active Directory and Samba
+             * compatibility. They are inherently weak (DES-based LM, MD4-based
+             * NTLM) but cannot be changed without breaking AD domain joins.
+             * The userPassword attribute uses SSHA which is properly salted.
              */
             /* LanMgr */
             try {
@@ -115,7 +120,7 @@ public class LdapUser implements DirContext {
             this.attributes.put("sambaNTPassword", toHexString(hmm));
 
             /*
-             * Encryption of password und Base64-Enconding
+             * Encryption of password and Base64-Encoding
              */
 
             MessageDigest md = MessageDigest.getInstance("SHA-1");
