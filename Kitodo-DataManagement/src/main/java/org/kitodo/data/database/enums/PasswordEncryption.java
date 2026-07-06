@@ -16,18 +16,21 @@ package org.kitodo.data.database.enums;
  * database.
  */
 public enum PasswordEncryption {
-    SHA(0, "SHA"),
-    MD5(1, "MD5");
+    SHA(0, "SHA", "{SSHA}"),
+    MD5(1, "MD5", "{SMD5}"),
+    SHA_256(2, "SHA-256", "{SSHA-256}");
 
-    private int value;
-    private String title;
+    private final int value;
+    private final String title;
+    private final String ldapPrefix;
 
     /**
-     * Private constructor, initializes integer value.
+     * Private constructor, initializes integer value, title and LDAP prefix.
      */
-    PasswordEncryption(int value, String title) {
+    PasswordEncryption(int value, String title, String ldapPrefix) {
         this.value = value;
         this.title = title;
+        this.ldapPrefix = ldapPrefix;
     }
 
     /**
@@ -46,6 +49,15 @@ public enum PasswordEncryption {
      */
     public String getTitle() {
         return this.title;
+    }
+
+    /**
+     * Get LDAP prefix for salted password hash, per RFC 2307.
+     *
+     * @return LDAP prefix e.g. "{SSHA}", "{SMD5}", "{SSHA-256}"
+     */
+    public String getLdapPrefix() {
+        return this.ldapPrefix;
     }
 
     /**
