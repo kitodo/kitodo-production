@@ -399,9 +399,7 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
 
                 // encryption of password and Base64-Encoding
                 PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
-                String algorithm = passwordEncryption.getTitle();
-                String ldapPrefix = "SHA".equals(algorithm) ? "{SSHA}" : "{SMD5}";
-                MessageDigest md = MessageDigest.getInstance(algorithm);
+                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
                 SecureRandom secureRandom = new SecureRandom();
                 byte[] salt = new byte[8];
                 secureRandom.nextBytes(salt);
@@ -415,7 +413,7 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
 
                 // change attribute userPassword
                 BasicAttribute userPassword = new BasicAttribute("userPassword",
-                        ldapPrefix + encryptedPassword);
+                        passwordEncryption.getLdapPrefix() + encryptedPassword);
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
 
                 // change attribute lanmgrPassword

@@ -126,9 +126,7 @@ public class LdapUser implements DirContext {
              */
 
             PasswordEncryption passwordEncryption = ldapGroup.getLdapServer().getPasswordEncryption();
-            String algorithm = passwordEncryption.getTitle();
-            String ldapPrefix = "SHA".equals(algorithm) ? "{SSHA}" : "{SMD5}";
-            MessageDigest md = MessageDigest.getInstance(algorithm);
+            MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
             SecureRandom secureRandom = new SecureRandom();
             byte[] salt = new byte[8];
             secureRandom.nextBytes(salt);
@@ -139,7 +137,7 @@ public class LdapUser implements DirContext {
             System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
             System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
             String encodedDigest = Base64.encodeBase64String(hashAndSalt);
-            this.attributes.put("userPassword", ldapPrefix + encodedDigest);
+            this.attributes.put("userPassword", passwordEncryption.getLdapPrefix() + encodedDigest);
         }
     }
 
