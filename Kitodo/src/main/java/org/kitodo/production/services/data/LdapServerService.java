@@ -396,8 +396,6 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
-                ModificationItem[] mods = new ModificationItem[4];
-
                 // encryption of password and Base64-Encoding
                 PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
                 MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
@@ -411,6 +409,8 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
                 System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
                 System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
                 String encryptedPassword = Base64.encodeBase64String(hashAndSalt);
+
+                ModificationItem[] mods = new ModificationItem[4];
 
                 // change attribute userPassword
                 BasicAttribute userPassword = new BasicAttribute("userPassword",

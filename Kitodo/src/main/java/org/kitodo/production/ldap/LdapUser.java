@@ -18,8 +18,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Hashtable;
-
-import org.kitodo.data.database.enums.PasswordEncryption;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
@@ -53,6 +51,7 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.PasswordEncryption;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can
