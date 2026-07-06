@@ -1,0 +1,18 @@
+{
+  "env": {
+    "browser": true,
+    "jquery": true,
+    "es6": true,
+    "es2021": true
+  },
+  "globals": {
+    "PF": "readonly",
+    "PrimeFaces": "readonly",
+    "jsf": "readonly",
+    "faces": "readonly",
+    "mojarra": "readonly"
+  },
+  "rules": {
+    "no-undef": "error"
+  }
+}
