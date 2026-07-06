@@ -18,6 +18,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Hashtable;
+
+import org.kitodo.data.database.enums.PasswordEncryption;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
@@ -123,7 +125,10 @@ public class LdapUser implements DirContext {
              * Encryption of password and Base64-Encoding
              */
 
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            PasswordEncryption passwordEncryption = ldapGroup.getLdapServer().getPasswordEncryption();
+            String algorithm = passwordEncryption.getTitle();
+            String ldapPrefix = "SHA".equals(algorithm) ? "{SSHA}" : "{SMD5}";
+            MessageDigest md = MessageDigest.getInstance(algorithm);
             SecureRandom secureRandom = new SecureRandom();
             byte[] salt = new byte[8];
             secureRandom.nextBytes(salt);
@@ -134,7 +139,7 @@ public class LdapUser implements DirContext {
             System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
             System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
             String encodedDigest = Base64.encodeBase64String(hashAndSalt);
-            this.attributes.put("userPassword", "{SSHA}" + encodedDigest);
+            this.attributes.put("userPassword", ldapPrefix + encodedDigest);
         }
     }
 
