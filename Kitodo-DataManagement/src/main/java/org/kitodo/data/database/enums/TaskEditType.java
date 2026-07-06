@@ -50,8 +50,8 @@ public enum TaskEditType {
      */
     QUEUE(5, "queue");
 
-    private int value;
-    private String title;
+    private final int value;
+    private final String title;
 
     /**
      * Private constructor, initializes integer value and title.

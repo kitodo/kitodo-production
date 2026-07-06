@@ -18,7 +18,7 @@ public enum ParameterImageManagement implements ParameterInterface {
     TIMEOUT_SEC("ImageManagement.timeoutSec"),
     SSH_HOST("ImageManagement.sshHosts");
 
-    private String name;
+    private final String name;
 
     /**
      * Private constructor to hide the implicit public one.

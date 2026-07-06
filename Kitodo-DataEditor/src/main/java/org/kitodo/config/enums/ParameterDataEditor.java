@@ -15,7 +15,7 @@ public enum ParameterDataEditor implements ParameterInterface {
 
     METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination");
 
-    private String name;
+    private final String name;
 
     /**
      * Private constructor to hide the implicit public one.
