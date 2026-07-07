@@ -67,7 +67,7 @@ public class AdaptivePasswordEncoderTest {
     public void hashScryptShouldStartWithScryptPrefix() {
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
         String hash = encoder.hashScrypt("testPassword");
-        assertTrue(hash.startsWith("$s0"), "Hash should start with $s0 for scrypt, got: " + hash);
+        assertTrue(hash.startsWith("$4"), "Hash should start with $4 for scrypt, got: " + hash);
     }
 
     @Test
@@ -94,32 +94,32 @@ public class AdaptivePasswordEncoderTest {
     }
 
     @Test
-    public void hashPbkdf2ShouldProduceNonNullResult() {
+    public void hashPbkdf2WithHmacShouldProduceNonNullResult() {
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
-        String hash = encoder.hashPbkdf2("testPassword");
+        String hash = encoder.hashPbkdf2WithHmac("testPassword");
         assertNotNull(hash);
     }
 
     @Test
-    public void hashPbkdf2ShouldProduceDifferentHashesForSamePassword() {
+    public void hashPbkdf2WithHmacShouldProduceDifferentHashesForSamePassword() {
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
-        String hash1 = encoder.hashPbkdf2("testPassword");
-        String hash2 = encoder.hashPbkdf2("testPassword");
+        String hash1 = encoder.hashPbkdf2WithHmac("testPassword");
+        String hash2 = encoder.hashPbkdf2WithHmac("testPassword");
         assertNotEquals(hash1, hash2, "Same password should produce different hashes due to random salt");
     }
 
     @Test
-    public void matchesPbkdf2ShouldReturnTrueForCorrectPassword() {
+    public void matchesPbkdf2WithHmacShouldReturnTrueForCorrectPassword() {
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
         String password = "mySecretPassword123";
-        String hash = encoder.hashPbkdf2(password);
-        assertTrue(encoder.matchesPbkdf2(password, hash));
+        String hash = encoder.hashPbkdf2WithHmac(password);
+        assertTrue(encoder.matchesPbkdf2WithHmac(password, hash));
     }
 
     @Test
-    public void matchesPbkdf2ShouldReturnFalseForIncorrectPassword() {
+    public void matchesPbkdf2WithHmacShouldReturnFalseForIncorrectPassword() {
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
-        String hash = encoder.hashPbkdf2("correctPassword");
-        assertTrue(!encoder.matchesPbkdf2("wrongPassword", hash));
+        String hash = encoder.hashPbkdf2WithHmac("correctPassword");
+        assertTrue(!encoder.matchesPbkdf2WithHmac("wrongPassword", hash));
     }
 }
