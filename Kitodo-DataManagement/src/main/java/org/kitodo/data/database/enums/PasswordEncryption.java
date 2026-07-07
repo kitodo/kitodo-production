@@ -19,7 +19,9 @@ public enum PasswordEncryption {
     SHA(0, "SHA", "{SSHA}"),
     MD5(1, "MD5", "{SMD5}"),
     SHA_256(2, "SHA-256", "{SSHA-256}"),
-    BCRYPT(3, "BCRYPT", "{BCRYPT}");
+    BCRYPT(3, "BCRYPT", "{BCRYPT}"),
+    SCRYPT(4, "SCRYPT", "{SCRYPT}"),
+    PBKDF2(5, "PBKDF2", "{PBKDF2}");
 
     private final int value;
     private final String title;

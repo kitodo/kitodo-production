@@ -78,7 +78,32 @@ public class LdapUserTest {
         String bcryptHash = value.substring(8);
         assertTrue(bcryptHash.startsWith("$2"), "BCRYPT hash should start with $2, got: " + bcryptHash);
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
-        assertTrue(encoder.matches("testPassword123", bcryptHash), "BCRYPT hash should match original password");
+        assertTrue(encoder.matchesBcrypt("testPassword123", bcryptHash), "BCRYPT hash should match original password");
+    }
+
+    @Test
+    public void configureUserPasswordWithScrypt() throws Exception {
+        LdapUser ldapUser = createLdapUser(PasswordEncryption.SCRYPT);
+        Attributes attrs = ldapUser.getAttributes("");
+        Object userPassword = attrs.get("userPassword").get();
+        String value = userPassword.toString();
+        assertTrue(value.startsWith("{SCRYPT}"), "SCRYPT password should start with {SCRYPT}, got: " + value);
+        String scryptHash = value.substring(8);
+        assertTrue(scryptHash.startsWith("$4"), "SCRYPT hash should start with $4, got: " + scryptHash);
+        AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
+        assertTrue(encoder.matchesScrypt("testPassword123", scryptHash), "SCRYPT hash should match original password");
+    }
+
+    @Test
+    public void configureUserPasswordWithPbkdf2() throws Exception {
+        LdapUser ldapUser = createLdapUser(PasswordEncryption.PBKDF2);
+        Attributes attrs = ldapUser.getAttributes("");
+        Object userPassword = attrs.get("userPassword").get();
+        String value = userPassword.toString();
+        assertTrue(value.startsWith("{PBKDF2}"), "PBKDF2 password should start with {PBKDF2}, got: " + value);
+        String pbkdf2Hash = value.substring(8);
+        AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
+        assertTrue(encoder.matchesPbkdf2("testPassword123", pbkdf2Hash), "PBKDF2 hash should match original password");
     }
 
     @Test
