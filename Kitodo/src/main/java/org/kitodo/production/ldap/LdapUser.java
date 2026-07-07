@@ -16,6 +16,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -50,6 +51,8 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.PasswordEncryption;
+import org.kitodo.production.security.password.AdaptivePasswordEncoder;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can
@@ -81,49 +84,64 @@ public class LdapUser implements DirContext {
             throws NamingException, NoSuchAlgorithmException {
         MD4Digest digester = new MD4Digest();
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
-
             if (Objects.nonNull(user.getLdapLogin())) {
                 this.ldapLogin = user.getLdapLogin();
-
             } else {
                 this.ldapLogin = user.getLogin();
             }
-
             LdapGroup ldapGroup = user.getLdapGroup();
             if (Objects.isNull(ldapGroup.getObjectClasses())) {
                 throw new NamingException("no objectclass defined");
             }
-
             prepareAttributes(ldapGroup, user, inUidNumber);
-
-            /*
-             * Samba passwords
-             */
-            /* LanMgr */
-            try {
-                this.attributes.put("sambaLMPassword", toHexString(lmHash(inPassword)));
-            } catch (InvalidKeyException | NoSuchPaddingException | BadPaddingException
-                    | IllegalBlockSizeException | RuntimeException e) {
-                logger.error(e.getMessage(), e);
-            }
-            /* NTLM */
-            byte[] unicodePassword = inPassword.getBytes(StandardCharsets.UTF_16LE);
-            byte[] hmm = new byte[digester.getDigestSize()];
-            digester.update(unicodePassword, 0, unicodePassword.length);
-            digester.doFinal(hmm, 0);
-            this.attributes.put("sambaNTPassword", toHexString(hmm));
-
-            /*
-             * Encryption of password und Base64-Enconding
-             */
-
-            String passwordEncrytion = ldapGroup.getLdapServer().getPasswordEncryption().getTitle();
-
-            MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
-            md.update(inPassword.getBytes(StandardCharsets.UTF_8));
-            String encodedDigest = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + encodedDigest);
+            setSambaPasswords(inPassword, digester);
+            setUserPassword(inPassword, ldapGroup);
         }
+    }
+
+    private void setSambaPasswords(String inPassword, MD4Digest digester) throws NoSuchAlgorithmException {
+        try {
+            this.attributes.put("sambaLMPassword", toHexString(lmHash(inPassword)));
+        } catch (InvalidKeyException | NoSuchPaddingException | BadPaddingException
+                | IllegalBlockSizeException | RuntimeException e) {
+            logger.error(e.getMessage(), e);
+        }
+        byte[] unicodePassword = inPassword.getBytes(StandardCharsets.UTF_16LE);
+        byte[] hmm = new byte[digester.getDigestSize()];
+        digester.update(unicodePassword, 0, unicodePassword.length);
+        digester.doFinal(hmm, 0);
+        this.attributes.put("sambaNTPassword", toHexString(hmm));
+    }
+
+    private void setUserPassword(String inPassword, LdapGroup ldapGroup) throws NoSuchAlgorithmException {
+        PasswordEncryption passwordEncryption = ldapGroup.getLdapServer().getPasswordEncryption();
+        AdaptivePasswordEncoder adaptivePasswordEncoder = new AdaptivePasswordEncoder();
+        String hashedPassword;
+        switch (passwordEncryption) {
+            case BCRYPT:
+                hashedPassword = adaptivePasswordEncoder.hashBcrypt(inPassword);
+                break;
+            case SCRYPT:
+                hashedPassword = adaptivePasswordEncoder.hashScrypt(inPassword);
+                break;
+            case PBKDF2:
+                hashedPassword = adaptivePasswordEncoder.hashPbkdf2WithHmac(inPassword);
+                break;
+            default:
+                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
+                SecureRandom secureRandom = new SecureRandom();
+                byte[] salt = new byte[8];
+                secureRandom.nextBytes(salt);
+                md.update(inPassword.getBytes(StandardCharsets.UTF_8));
+                md.update(salt);
+                byte[] hash = md.digest();
+                byte[] hashAndSalt = new byte[hash.length + salt.length];
+                System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+                System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+                hashedPassword = Base64.encodeBase64String(hashAndSalt);
+                break;
+        }
+        this.attributes.put("userPassword", passwordEncryption.getLdapPrefix() + hashedPassword);
     }
 
     private void prepareAttributes(LdapGroup ldapGroup, User user, String inUidNumber) {

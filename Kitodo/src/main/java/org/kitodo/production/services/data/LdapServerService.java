@@ -24,6 +24,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -68,6 +69,7 @@ import org.kitodo.data.database.persistence.LdapServerDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
 import org.kitodo.production.security.AESUtil;
+import org.kitodo.production.security.password.AdaptivePasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -392,38 +394,12 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
      */
     public boolean changeUserPassword(User user, String inNewPassword) throws NoSuchAlgorithmException {
         MD4Digest digester = new MD4Digest();
-        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
-                ModificationItem[] mods = new ModificationItem[4];
-
-                // encryption of password and Base64-Encoding
-                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
-                md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-
-                // change attribute userPassword
-                BasicAttribute userPassword = new BasicAttribute("userPassword",
-                        "{" + passwordEncryption + "}" + encryptedPassword);
-                mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
-
-                // change attribute lanmgrPassword
-                BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
-                mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
-
-                // change attribute ntlmPassword
-                BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
-                mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
-
-                BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
-                        String.valueOf(System.currentTimeMillis() / 1000L));
-                mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
-
+                ModificationItem[] mods = createPasswordModificationItems(user, inNewPassword, digester);
                 DirContext ctx = new InitialDirContext(env);
                 ctx.modifyAttributes(buildUserDN(user), mods);
-
-                // Close the context when we're done
                 ctx.close();
                 return true;
             } catch (NamingException e) {
@@ -432,6 +408,55 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
             }
         }
         return false;
+    }
+
+    private ModificationItem[] createPasswordModificationItems(User user, String inNewPassword, MD4Digest digester)
+            throws NoSuchAlgorithmException {
+        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
+        AdaptivePasswordEncoder adaptivePasswordEncoder = new AdaptivePasswordEncoder();
+        String encryptedPassword;
+        switch (passwordEncryption) {
+            case BCRYPT:
+                encryptedPassword = adaptivePasswordEncoder.hashBcrypt(inNewPassword);
+                break;
+            case SCRYPT:
+                encryptedPassword = adaptivePasswordEncoder.hashScrypt(inNewPassword);
+                break;
+            case PBKDF2:
+                encryptedPassword = adaptivePasswordEncoder.hashPbkdf2WithHmac(inNewPassword);
+                break;
+            default:
+                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
+                SecureRandom secureRandom = new SecureRandom();
+                byte[] salt = new byte[8];
+                secureRandom.nextBytes(salt);
+                md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
+                md.update(salt);
+                byte[] hash = md.digest();
+                byte[] hashAndSalt = new byte[hash.length + salt.length];
+                System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+                System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+                encryptedPassword = Base64.encodeBase64String(hashAndSalt);
+                break;
+        }
+
+        ModificationItem[] mods = new ModificationItem[4];
+
+        BasicAttribute userPassword = new BasicAttribute("userPassword",
+                passwordEncryption.getLdapPrefix() + encryptedPassword);
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
+
+        BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
+        mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
+
+        BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
+        mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
+
+        BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
+                String.valueOf(System.currentTimeMillis() / 1000L));
+        mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
+
+        return mods;
     }
 
     private URI getUserHomeDirectoryWithTLS(Hashtable<String, String> env, String userFolderBasePath, User user) {
