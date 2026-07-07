@@ -99,15 +99,30 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DAOException {
 
+        BeanQuery query = getSortedProjectsQuery(sortField, sortOrder);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+    }
+
+    public List<Project> loadActiveProjects(int first, int pageSize, String sortField, SortOrder sortOrder)
+            throws DAOException {
+
+        BeanQuery query = getSortedProjectsQuery(sortField, sortOrder);
+        query.addBooleanRestriction("active", true);
+
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+    }
+
+    private BeanQuery getSortedProjectsQuery(String sortField, SortOrder sortOrder) {
         if (StringUtils.isBlank(sortField)) {
             sortField = "title";
         }
         if (Objects.isNull(sortOrder)) {
             sortOrder = SortOrder.ASCENDING;
         }
+
         BeanQuery query = getProjectsQuery();
         query.defineSorting(sortField, sortOrder);
-        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+        return query;
     }
 
     private static BeanQuery getProjectsQuery() {
