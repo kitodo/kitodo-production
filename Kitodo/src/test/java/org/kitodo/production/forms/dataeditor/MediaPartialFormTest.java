@@ -50,6 +50,7 @@ public class MediaPartialFormTest {
     PhysicalDivision physicalStructure;
 
     private static MockedStatic<Ajax> ajaxMockedStatic;
+    private static MockedStatic<PrimeFaces> primefacesSingleton;
 
     /**
      * Initialize test class.
@@ -59,7 +60,7 @@ public class MediaPartialFormTest {
         // mock frontend update calls
         ajaxMockedStatic = Mockito.mockStatic(Ajax.class);
         PrimeFaces primeFaces = mock(PrimeFaces.class);
-        MockedStatic<PrimeFaces> primefacesSingleton = Mockito.mockStatic(PrimeFaces.class);
+        primefacesSingleton = Mockito.mockStatic(PrimeFaces.class);
         primefacesSingleton.when(PrimeFaces::current).thenReturn(primeFaces);
     }
 
@@ -70,6 +71,9 @@ public class MediaPartialFormTest {
     public static void cleanupTestClass() {
         if (ajaxMockedStatic != null) {
             ajaxMockedStatic.close();
+        }
+        if (primefacesSingleton != null) {
+            primefacesSingleton.close();
         }
     }
 
