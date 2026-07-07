@@ -18,7 +18,8 @@ package org.kitodo.data.database.enums;
 public enum PasswordEncryption {
     SHA(0, "SHA", "{SSHA}"),
     MD5(1, "MD5", "{SMD5}"),
-    SHA_256(2, "SHA-256", "{SSHA-256}");
+    SHA_256(2, "SHA-256", "{SSHA-256}"),
+    BCRYPT(3, "BCRYPT", "{BCRYPT}");
 
     private final int value;
     private final String title;

@@ -69,6 +69,7 @@ import org.kitodo.data.database.persistence.LdapServerDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
 import org.kitodo.production.security.AESUtil;
+import org.kitodo.production.security.password.AdaptivePasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -412,17 +413,23 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
     private ModificationItem[] createPasswordModificationItems(User user, String inNewPassword, MD4Digest digester)
             throws NoSuchAlgorithmException {
         PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
-        MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] salt = new byte[8];
-        secureRandom.nextBytes(salt);
-        md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-        md.update(salt);
-        byte[] hash = md.digest();
-        byte[] hashAndSalt = new byte[hash.length + salt.length];
-        System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
-        System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
-        String encryptedPassword = Base64.encodeBase64String(hashAndSalt);
+        String encryptedPassword;
+        if (passwordEncryption == PasswordEncryption.BCRYPT) {
+            AdaptivePasswordEncoder adaptivePasswordEncoder = new AdaptivePasswordEncoder();
+            encryptedPassword = adaptivePasswordEncoder.hash(inNewPassword);
+        } else {
+            MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
+            SecureRandom secureRandom = new SecureRandom();
+            byte[] salt = new byte[8];
+            secureRandom.nextBytes(salt);
+            md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
+            md.update(salt);
+            byte[] hash = md.digest();
+            byte[] hashAndSalt = new byte[hash.length + salt.length];
+            System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+            System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+            encryptedPassword = Base64.encodeBase64String(hashAndSalt);
+        }
 
         ModificationItem[] mods = new ModificationItem[4];
 

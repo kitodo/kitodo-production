@@ -31,6 +31,7 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PasswordEncryption;
+import org.kitodo.production.security.password.AdaptivePasswordEncoder;
 
 public class LdapUserTest {
 
@@ -65,6 +66,19 @@ public class LdapUserTest {
         assertTrue(value.startsWith("{SSHA-256}"), "SHA-256 password should start with {SSHA-256}, got: " + value);
         assertTrue(value.length() > 10, "SSHA-256 password should have content after prefix");
         verifySaltedHash(value.substring(10), "SHA-256");
+    }
+
+    @Test
+    public void configureUserPasswordWithBcrypt() throws Exception {
+        LdapUser ldapUser = createLdapUser(PasswordEncryption.BCRYPT);
+        Attributes attrs = ldapUser.getAttributes("");
+        Object userPassword = attrs.get("userPassword").get();
+        String value = userPassword.toString();
+        assertTrue(value.startsWith("{BCRYPT}"), "BCRYPT password should start with {BCRYPT}, got: " + value);
+        String bcryptHash = value.substring(8);
+        assertTrue(bcryptHash.startsWith("$2"), "BCRYPT hash should start with $2, got: " + bcryptHash);
+        AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
+        assertTrue(encoder.matches("testPassword123", bcryptHash), "BCRYPT hash should match original password");
     }
 
     @Test
