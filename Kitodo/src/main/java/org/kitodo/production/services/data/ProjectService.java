@@ -103,6 +103,22 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
 
+    /**
+     * Loads active projects in the requested range and sort order.
+     *
+     * <p>This is used for views such as the desktop project widget where deactivated
+     * projects must not be offered for process creation.</p>
+     *
+     * @param first
+     *            index of the first result to load
+     * @param pageSize
+     *            maximum number of projects to load
+     * @param sortField
+     *            project field to sort by; defaults to title if blank
+     * @param sortOrder
+     *            sort order; defaults to ascending if null
+     * @return list of active projects
+     */
     public List<Project> loadActiveProjects(int first, int pageSize, String sortField, SortOrder sortOrder)
             throws DAOException {
 
@@ -119,7 +135,6 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         if (Objects.isNull(sortOrder)) {
             sortOrder = SortOrder.ASCENDING;
         }
-
         BeanQuery query = getProjectsQuery();
         query.defineSorting(sortField, sortOrder);
         return query;
