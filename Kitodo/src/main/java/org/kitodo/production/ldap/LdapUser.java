@@ -125,7 +125,7 @@ public class LdapUser implements DirContext {
                 hashedPassword = adaptivePasswordEncoder.hashScrypt(inPassword);
                 break;
             case PBKDF2:
-                hashedPassword = adaptivePasswordEncoder.hashPbkdf2(inPassword);
+                hashedPassword = adaptivePasswordEncoder.hashPbkdf2WithHmac(inPassword);
                 break;
             default:
                 MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());

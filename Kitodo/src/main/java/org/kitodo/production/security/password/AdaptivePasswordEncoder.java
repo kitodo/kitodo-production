@@ -44,7 +44,14 @@ public class AdaptivePasswordEncoder {
         return SCRYPT_ENCODER.matches(rawPassword, encodedPassword);
     }
 
-    public String hashPbkdf2(String rawPassword) {
+    /**
+     * Hash a password using PBKDF2 with HMAC SHA-256.
+     *
+     * @param rawPassword
+     *            the password to hash
+     * @return the hashed password as a Base64 encoded string
+     */
+    public String hashPbkdf2WithHmac(String rawPassword) {
         try {
             SecureRandom random = new SecureRandom();
             byte[] salt = new byte[SALT_LENGTH];
@@ -61,7 +68,16 @@ public class AdaptivePasswordEncoder {
         }
     }
 
-    public boolean matchesPbkdf2(String rawPassword, String encodedPassword) {
+    /**
+     * Check if a password matches a PBKDF2 hashed password.
+     *
+     * @param rawPassword
+     *            the password to check
+     * @param encodedPassword
+     *            the hashed password to compare against
+     * @return true if the password matches, false otherwise
+     */
+    public boolean matchesPbkdf2WithHmac(String rawPassword, String encodedPassword) {
         try {
             byte[] decoded = Base64.decodeBase64(encodedPassword);
             byte[] storedHash = new byte[32];

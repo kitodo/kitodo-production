@@ -423,7 +423,7 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
                 encryptedPassword = adaptivePasswordEncoder.hashScrypt(inNewPassword);
                 break;
             case PBKDF2:
-                encryptedPassword = adaptivePasswordEncoder.hashPbkdf2(inNewPassword);
+                encryptedPassword = adaptivePasswordEncoder.hashPbkdf2WithHmac(inNewPassword);
                 break;
             default:
                 MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());

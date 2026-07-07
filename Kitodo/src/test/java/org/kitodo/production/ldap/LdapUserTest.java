@@ -103,7 +103,7 @@ public class LdapUserTest {
         assertTrue(value.startsWith("{PBKDF2}"), "PBKDF2 password should start with {PBKDF2}, got: " + value);
         String pbkdf2Hash = value.substring(8);
         AdaptivePasswordEncoder encoder = new AdaptivePasswordEncoder();
-        assertTrue(encoder.matchesPbkdf2("testPassword123", pbkdf2Hash), "PBKDF2 hash should match original password");
+        assertTrue(encoder.matchesPbkdf2WithHmac("testPassword123", pbkdf2Hash), "PBKDF2 hash should match original password");
     }
 
     @Test
