@@ -115,24 +115,33 @@ public class LdapUser implements DirContext {
 
     private void setUserPassword(String inPassword, LdapGroup ldapGroup) throws NoSuchAlgorithmException {
         PasswordEncryption passwordEncryption = ldapGroup.getLdapServer().getPasswordEncryption();
-        if (passwordEncryption == PasswordEncryption.BCRYPT) {
-            AdaptivePasswordEncoder adaptivePasswordEncoder = new AdaptivePasswordEncoder();
-            String hashedPassword = adaptivePasswordEncoder.hash(inPassword);
-            this.attributes.put("userPassword", passwordEncryption.getLdapPrefix() + hashedPassword);
-            return;
+        AdaptivePasswordEncoder adaptivePasswordEncoder = new AdaptivePasswordEncoder();
+        String hashedPassword;
+        switch (passwordEncryption) {
+            case BCRYPT:
+                hashedPassword = adaptivePasswordEncoder.hashBcrypt(inPassword);
+                break;
+            case SCRYPT:
+                hashedPassword = adaptivePasswordEncoder.hashScrypt(inPassword);
+                break;
+            case PBKDF2:
+                hashedPassword = adaptivePasswordEncoder.hashPbkdf2(inPassword);
+                break;
+            default:
+                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
+                SecureRandom secureRandom = new SecureRandom();
+                byte[] salt = new byte[8];
+                secureRandom.nextBytes(salt);
+                md.update(inPassword.getBytes(StandardCharsets.UTF_8));
+                md.update(salt);
+                byte[] hash = md.digest();
+                byte[] hashAndSalt = new byte[hash.length + salt.length];
+                System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
+                System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
+                hashedPassword = Base64.encodeBase64String(hashAndSalt);
+                break;
         }
-        MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] salt = new byte[8];
-        secureRandom.nextBytes(salt);
-        md.update(inPassword.getBytes(StandardCharsets.UTF_8));
-        md.update(salt);
-        byte[] hash = md.digest();
-        byte[] hashAndSalt = new byte[hash.length + salt.length];
-        System.arraycopy(hash, 0, hashAndSalt, 0, hash.length);
-        System.arraycopy(salt, 0, hashAndSalt, hash.length, salt.length);
-        String encodedDigest = Base64.encodeBase64String(hashAndSalt);
-        this.attributes.put("userPassword", passwordEncryption.getLdapPrefix() + encodedDigest);
+        this.attributes.put("userPassword", passwordEncryption.getLdapPrefix() + hashedPassword);
     }
 
     private void prepareAttributes(LdapGroup ldapGroup, User user, String inUidNumber) {
