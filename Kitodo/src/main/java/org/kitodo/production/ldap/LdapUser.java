@@ -52,6 +52,7 @@ import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PasswordEncryption;
+import org.kitodo.production.security.password.AdaptivePasswordEncoder;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can
@@ -114,6 +115,12 @@ public class LdapUser implements DirContext {
 
     private void setUserPassword(String inPassword, LdapGroup ldapGroup) throws NoSuchAlgorithmException {
         PasswordEncryption passwordEncryption = ldapGroup.getLdapServer().getPasswordEncryption();
+        if (passwordEncryption == PasswordEncryption.BCRYPT) {
+            AdaptivePasswordEncoder adaptivePasswordEncoder = new AdaptivePasswordEncoder();
+            String hashedPassword = adaptivePasswordEncoder.hash(inPassword);
+            this.attributes.put("userPassword", passwordEncryption.getLdapPrefix() + hashedPassword);
+            return;
+        }
         MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
         SecureRandom secureRandom = new SecureRandom();
         byte[] salt = new byte[8];
