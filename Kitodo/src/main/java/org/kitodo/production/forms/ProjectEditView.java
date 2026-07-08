@@ -173,12 +173,13 @@ public class ProjectEditView extends BaseEditView {
         ServiceManager.getProjectService().evict(project);
         if (isTitleValid()) {
             try {
-                addFirstUserToNewProject();
-
-                commitTemplates();
                 syncFoldersToProject();
                 ServiceManager.getProjectService().save(project);
-
+                commitTemplates();
+                User firstUser = addFirstUserToNewProject();
+                if (Objects.nonNull(firstUser)) {
+                    ServiceManager.getUserService().save(firstUser);
+                }
                 return getProjectEditReferrerViewPath();
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
@@ -293,14 +294,14 @@ public class ProjectEditView extends BaseEditView {
         return false;
     }
 
-    private void addFirstUserToNewProject() throws DAOException {
+    private User addFirstUserToNewProject() throws DAOException {
         if (this.project.getUsers().isEmpty()) {
             User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);
             this.project.getUsers().add(user);
-            ServiceManager.getProjectService().save(this.project);
-            ServiceManager.getUserService().save(user);
+            return user;
         }
+        return null;
     }
 
     /**

@@ -15,8 +15,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 
 
@@ -305,5 +307,50 @@ public class ProjectEditViewIT {
                 .count();
 
         assertEquals(1, emptyCount);
+    }
+
+    @Test
+    public void shouldSaveNewProjectWithTransientFolderUsages() throws Exception {
+        User user = ServiceManager.getUserService().getByLogin("kowal");
+        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+
+        ProjectEditView view = new ProjectEditView();
+        view.loadProject(0, false);
+
+        Project project = view.getProject();
+        project.setTitle("Project with transient folder usages");
+
+        view.addFolder();
+        Folder folder = view.getEditingFolder();
+        folder.setFileGroup("TRANSIENT_USAGE_GROUP");
+        folder.setPath("transientUsageFolder");
+        folder.setMimeType("image/jpeg");
+        view.saveFolder();
+
+        view.setPreview("TRANSIENT_USAGE_GROUP");
+        view.setMediaView("TRANSIENT_USAGE_GROUP");
+        view.setGeneratorSource("TRANSIENT_USAGE_GROUP");
+
+        view.save();
+
+        Project savedProject = ServiceManager.getProjectService()
+                .getProjectsWithTitleAndClient(project.getTitle(), project.getClient().getId())
+                .getFirst();
+
+        Project savedProjectWithFolders = ServiceManager.getProjectService()
+                .getProjectWithFolders(savedProject.getId())
+                .orElseThrow();
+
+        assertTrue(savedProjectWithFolders.getFolders().stream()
+                .anyMatch(savedFolder -> "TRANSIENT_USAGE_GROUP".equals(savedFolder.getFileGroup())));
+
+        assertEquals("TRANSIENT_USAGE_GROUP", savedProjectWithFolders.getPreview().getFileGroup());
+        assertEquals("TRANSIENT_USAGE_GROUP", savedProjectWithFolders.getMediaView().getFileGroup());
+        assertEquals("TRANSIENT_USAGE_GROUP", savedProjectWithFolders.getGeneratorSource().getFileGroup());
+
+        User updatedUser = ServiceManager.getUserService().getByLogin("kowal");
+        assertTrue(updatedUser.getProjects().stream()
+                        .anyMatch(userProject -> userProject.getId().equals(savedProjectWithFolders.getId())),
+                "New project should be assigned to current user");
     }
 }
