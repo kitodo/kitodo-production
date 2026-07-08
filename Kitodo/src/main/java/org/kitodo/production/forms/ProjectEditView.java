@@ -156,6 +156,7 @@ public class ProjectEditView extends BaseEditView {
         try {
             this.baseProject = ServiceManager.getProjectService().getById(itemId);
             this.project = ServiceManager.getProjectService().duplicateProject(baseProject);
+            this.workingFolders = new ArrayList<>(project.getFolders());
             this.setSaveDisabled(false);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
