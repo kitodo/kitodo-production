@@ -11,8 +11,12 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -27,10 +31,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ProcessState;
@@ -137,5 +144,109 @@ public class ProcessListViewIT {
 
         Process updated = ServiceManager.getProcessService().getById(process.getId());
         assertNotEquals(ProcessState.COMPLETED.getValue(), updated.getSortHelperStatus());
+    }
+
+    @Test
+    public void shouldDeleteSimpleProjectFromListView() throws Exception {
+        Project project = new Project();
+        project.setTitle("Simple project to delete");
+        ServiceManager.getProjectService().save(project);
+
+        int projectId = project.getId();
+
+        assertEquals(projectId, ServiceManager.getProjectService().getById(projectId).getId());
+
+        ProjectListView projectListView = new ProjectListView();
+
+        assertDoesNotThrow(() -> projectListView.delete(projectId));
+
+        assertThrows(DAOException.class, () -> ServiceManager.getProjectService().getById(projectId));
+    }
+
+    @Test
+    public void shouldDeleteProjectWithTemplateFoldersAndUsersFromListView() throws Exception {
+        User user = ServiceManager.getUserService().getById(1);
+
+        Project project = new Project();
+        project.setTitle("Complex project to delete");
+        project.setClient(ServiceManager.getClientService().getById(1));
+        project.getUsers().add(user);
+        ServiceManager.getProjectService().save(project);
+
+        user.getProjects().add(project);
+        ServiceManager.getUserService().save(user);
+
+        Template template = new Template();
+        template.setTitle("Template of complex project to delete");
+        template.setClient(project.getClient());
+        template.setDocket(ServiceManager.getDocketService().getById(1));
+        template.setRuleset(ServiceManager.getRulesetService().getById(1));
+        template.getProjects().add(project);
+        ServiceManager.getTemplateService().save(template);
+
+        project.getTemplates().add(template);
+
+        Folder mediaFolder = new Folder();
+        mediaFolder.setFileGroup("DEFAULT");
+        mediaFolder.setMimeType("image/jpeg");
+        mediaFolder.setPath("images/default");
+        mediaFolder.setCopyFolder(true);
+        mediaFolder.setCreateFolder(true);
+        mediaFolder.setLinkingMode(LinkingMode.ALL);
+        mediaFolder.setProject(project);
+        project.getFolders().add(mediaFolder);
+        project.setMediaView(mediaFolder);
+
+        Folder sourceFolder = new Folder();
+        sourceFolder.setFileGroup("SOURCE");
+        sourceFolder.setMimeType("image/tiff");
+        sourceFolder.setPath("images/source");
+        sourceFolder.setCopyFolder(false);
+        sourceFolder.setCreateFolder(true);
+        sourceFolder.setLinkingMode(LinkingMode.NO);
+        sourceFolder.setProject(project);
+        project.getFolders().add(sourceFolder);
+        project.setGeneratorSource(sourceFolder);
+
+        ServiceManager.getProjectService().save(project);
+
+        int projectId = project.getId();
+        int userId = user.getId();
+        int templateId = template.getId();
+
+        Project savedProject = ServiceManager.getProjectService().getById(projectId);
+
+        List<Integer> folderIds = savedProject.getFolders()
+                .stream()
+                .map(Folder::getId)
+                .toList();
+
+        assertEquals(projectId, savedProject.getId());
+        assertEquals(2, folderIds.size());
+        assertTrue(ServiceManager.getUserService().getById(userId).getProjects()
+                .stream()
+                .anyMatch(userProject -> userProject.getId().equals(projectId)));
+        assertTrue(ServiceManager.getTemplateService().getById(templateId).getProjects()
+                .stream()
+                .anyMatch(templateProject -> templateProject.getId().equals(projectId)));
+
+        for (Integer folderId : folderIds) {
+            assertEquals(folderId, ServiceManager.getFolderService().getById(folderId).getId());
+        }
+
+        ProjectListView projectListView = new ProjectListView();
+        assertDoesNotThrow(() -> projectListView.delete(projectId));
+        assertThrows(DAOException.class, () -> ServiceManager.getProjectService().getById(projectId));
+
+        for (Integer folderId : folderIds) {
+            assertThrows(DAOException.class, () -> ServiceManager.getFolderService().getById(folderId));
+        }
+
+        assertFalse(ServiceManager.getUserService().getById(userId).getProjects()
+                .stream()
+                .anyMatch(userProject -> userProject.getId().equals(projectId)));
+        assertFalse(ServiceManager.getTemplateService().getById(templateId).getProjects()
+                .stream()
+                .anyMatch(templateProject -> templateProject.getId().equals(projectId)));
     }
 }
