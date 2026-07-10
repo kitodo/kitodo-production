@@ -41,7 +41,6 @@ import org.kitodo.test.utils.TestConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
-@Disabled("Breaks ListingSessionClientST due to incomplete clean-up")
 public class ImportingST extends BaseTestSelenium {
 
     private static StubServer server;
@@ -170,12 +169,13 @@ public class ImportingST extends BaseTestSelenium {
      *
      * @throws Exception when opening the "create new process" form fails
      */
+    @Disabled("Error: element not interactable")
     @Test
     public void checkCollapsedCheckboxMetadataIsPreserved() throws Exception {
         projectsPage.createNewProcess("Book template");
         importPage.cancelCatalogSearch();
         importPage.insertTestTitle("Testvorgang");
-        importPage.selectCheckBox(0);
+        importPage.selectCheckBox(0); // <-- PROBLEM HERE
         importPage.toggleTreeTable();
         importPage.clickSaveButton();
         await("Waiting to be redirected to processes page after saving process with selected mandatory checkbox "
