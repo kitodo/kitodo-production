@@ -214,11 +214,6 @@ public class ProcessDataTab {
      * Read project configs for display in GUI.
      */
     public void prepare() {
-        try {
-            ServiceManager.getImportService().prepare(createProcessForm.getProject().getTitle());
-            updateProcessMetadata();
-        } catch (IOException | DoctypeMissingException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        updateProcessMetadata();
     }
 }

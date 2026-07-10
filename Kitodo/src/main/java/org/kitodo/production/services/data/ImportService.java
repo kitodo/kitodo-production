@@ -71,7 +71,6 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.constants.StringConstants;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -89,7 +88,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
-import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -1132,19 +1130,6 @@ public class ImportService {
             }
         }
         return author;
-    }
-
-    /**
-     * Prepare.
-     * @param projectTitle
-     *      title of the project
-     * @throws IOException when trying to create a 'ConfigProject' instance.
-     * @throws DoctypeMissingException when trying to load TifDefinition fails
-     */
-    public void prepare(String projectTitle) throws IOException, DoctypeMissingException {
-        ConfigProject configProject = new ConfigProject(projectTitle);
-        usingTemplates = configProject.isUseTemplates();
-        tiffDefinition = configProject.getTifDefinition();
     }
 
     /**
