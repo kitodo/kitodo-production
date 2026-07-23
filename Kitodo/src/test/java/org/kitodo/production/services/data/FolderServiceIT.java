@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -67,5 +68,28 @@ public class FolderServiceIT {
             assertNotEquals(null, folder.getProject(), "No project assigned");
             assertEquals(project.getTitle(), folder.getProject().getTitle(), "No project assigned");
         }
+    }
+
+    @Test
+    public void testFolderCloning() throws DAOException {
+        FolderService folderService = new FolderService();
+
+        Folder baseFolder = folderService.getById(1);
+        Folder clonedFolder = folderService.cloneFolder(baseFolder);
+
+        assertEquals(baseFolder.getDerivative(), clonedFolder.getDerivative());
+        assertEquals(baseFolder.getDpi(), clonedFolder.getDpi());
+        assertEquals(baseFolder.getFileGroup(), clonedFolder.getFileGroup());
+        assertEquals(baseFolder.getImageSize(), clonedFolder.getImageSize());
+        assertEquals(baseFolder.getLinkingMode(), clonedFolder.getLinkingMode());
+        assertEquals(baseFolder.getLtpValidationConfiguration(), clonedFolder.getLtpValidationConfiguration());
+        assertEquals(baseFolder.getMimeType(), clonedFolder.getMimeType());
+        assertEquals(baseFolder.getPath(), clonedFolder.getPath());
+        assertEquals(baseFolder.getProject(), clonedFolder.getProject());
+        assertEquals(baseFolder.getPath(), clonedFolder.getPath());
+        assertEquals(baseFolder.getUrlStructure(), clonedFolder.getUrlStructure());
+        assertEquals(baseFolder.isCopyFolder(), clonedFolder.isCopyFolder());
+        assertEquals(baseFolder.isCreateFolder(), clonedFolder.isCreateFolder());
+        assertEquals(baseFolder.isValidateFolder(), clonedFolder.isValidateFolder());
     }
 }

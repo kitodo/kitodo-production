@@ -189,12 +189,50 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     public Project duplicateProject(Project baseProject) {
         Project duplicatedProject = new Project();
 
+        duplicateGeneralProjectSettings(baseProject, duplicatedProject);
+
+        duplicateFolderSettings(baseProject, duplicatedProject);
+
+        duplicateImportConfiguration(baseProject, duplicatedProject);
+
+        return duplicatedProject;
+    }
+
+    private void duplicateImportConfiguration(Project baseProject, Project duplicatedProject) {
+        duplicatedProject.setDefaultImportConfiguration(baseProject.getDefaultImportConfiguration());
+        duplicatedProject.setDefaultChildProcessImportConfiguration(baseProject.getDefaultChildProcessImportConfiguration());
+    }
+
+    private void duplicateFolderSettings(Project baseProject, Project duplicatedProject) {
+        FolderService folderService = ServiceManager.getFolderService();
+        List<Folder> duplicatedFolders = new ArrayList<>();
+
+        for (Folder folder : baseProject.getFolders()) {
+            Folder duplicatedFolder = folderService.cloneFolder(folder);
+            duplicatedFolder.setProject(duplicatedProject);
+            duplicatedFolders.add(duplicatedFolder);
+        }
+
+        duplicatedProject.setFolders(duplicatedFolders);
+        duplicatedProject.setGeneratorSource(baseProject.getGeneratorSource());
+        duplicatedProject.setMediaView(baseProject.getMediaView());
+        duplicatedProject.setPreview(baseProject.getPreview());
+        duplicatedProject.setAudioMediaView(baseProject.getAudioMediaView());
+        duplicatedProject.setAudioPreview(baseProject.getAudioPreview());
+        duplicatedProject.setAudioMediaViewWaveform(baseProject.isAudioMediaViewWaveform());
+        duplicatedProject.setVideoMediaView(baseProject.getVideoMediaView());
+        duplicatedProject.setVideoPreview(baseProject.getVideoPreview());
+        duplicatedProject.setPreviewHoverMode(baseProject.getPreviewHoverMode());
+    }
+
+    private void duplicateGeneralProjectSettings(Project baseProject, Project duplicatedProject) {
         duplicatedProject.setTitle(baseProject.getTitle() + "_" + Helper.generateRandomString(3));
         duplicatedProject.setClient(baseProject.getClient());
         duplicatedProject.setStartDate(baseProject.getStartDate());
         duplicatedProject.setEndDate(baseProject.getEndDate());
         duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
         duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
+        duplicatedProject.setActive(baseProject.isActive());
         duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
         duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
         duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
@@ -205,34 +243,6 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
-
-        FolderService folderService = ServiceManager.getFolderService();
-        List<Folder> duplicatedFolders = new ArrayList<>();
-        Folder generatorSource = null;
-        Folder mediaView = null;
-        Folder preview = null;
-
-        for (Folder folder : baseProject.getFolders()) {
-            Folder duplicatedFolder = folderService.cloneFolder(folder);
-            duplicatedFolder.setProject(duplicatedProject);
-            duplicatedFolders.add(duplicatedFolder);
-
-            if (folder.equals(baseProject.getGeneratorSource())) {
-                generatorSource = duplicatedFolder;
-            }
-            if (folder.equals(baseProject.getMediaView())) {
-                mediaView = duplicatedFolder;
-            }
-            if (folder.equals(baseProject.getPreview())) {
-                preview = duplicatedFolder;
-            }
-        }
-        duplicatedProject.setFolders(duplicatedFolders);
-        duplicatedProject.setGeneratorSource(generatorSource);
-        duplicatedProject.setMediaView(mediaView);
-        duplicatedProject.setPreview(preview);
-
-        return duplicatedProject;
     }
 
     /**
