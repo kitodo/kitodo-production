@@ -107,7 +107,7 @@
                               timeout="#{SessionClientController.getAutomaticLogoutWarningSeconds()}"
                               update="sticky-notifications"
                               ontimerstep="updateLogoutCountdown(intervalData)"
-                              ontimercomplete="window.location.replace('/kitodo/logout');"/>
+                              ontimercomplete="$('#timerForm')[0].action='#{request.contextPath}/logout';$('#timerForm')[0].submit();"/>
                 </h:form>
             </ui:fragment>
         </h:body>

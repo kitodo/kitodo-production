@@ -16,6 +16,7 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -110,10 +111,10 @@ public class SecurityConfig {
      * @throws Exception when something fails
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {     
-        // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.
-        // codeql[java/spring-disabled-csrf-protection] suppress
-        http.csrf(csrf -> csrf.disable());
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // enable CSRF protection
+        // see: https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html
+        http.csrf(Customizer.withDefaults());
 
         http.sessionManagement(session -> session.maximumSessions(1).sessionRegistry(getSessionRegistry())
                 .expiredUrl(LOGIN_PAGE));
