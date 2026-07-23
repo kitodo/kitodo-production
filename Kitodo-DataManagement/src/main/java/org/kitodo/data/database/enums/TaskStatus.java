@@ -34,9 +34,9 @@ public enum TaskStatus {
      */
     DONE(3, "statusDone", "stepdone");
 
-    private int value;
-    private String title;
-    private String searchString;
+    private final int value;
+    private final String title;
+    private final String searchString;
 
     /**
      * Private constructor, initializes integer value, title and big

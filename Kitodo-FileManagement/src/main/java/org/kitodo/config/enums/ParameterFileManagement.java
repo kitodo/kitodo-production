@@ -22,7 +22,7 @@ public enum ParameterFileManagement implements ParameterInterface {
     CREATE_SOURCE_FOLDER("createSourceFolder"),
     FILE_MAX_WAIT_MILLISECONDS("file.maxWaitMilliseconds");
 
-    private String name;
+    private final String name;
 
     /**
      * Private constructor to hide the implicit public one.

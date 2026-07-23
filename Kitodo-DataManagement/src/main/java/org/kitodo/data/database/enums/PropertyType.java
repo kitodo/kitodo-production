@@ -24,8 +24,8 @@ public enum PropertyType {
     MESSAGE_ERROR(4, "messageError"),
     STRING(5, "String");
 
-    private int id;
-    private String name;
+    private final int id;
+    private final String name;
 
     PropertyType(int id, String inName) {
         this.id = id;

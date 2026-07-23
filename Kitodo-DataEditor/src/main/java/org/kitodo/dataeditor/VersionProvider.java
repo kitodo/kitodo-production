@@ -26,7 +26,7 @@ import org.kitodo.dataformat.DataFormatVersionProvider;
  * Provides methods to get information about module or data format.
  */
 public class VersionProvider {
-    private static DataFormatVersionProvider dataFormatVersionProvider = new DataFormatVersionProvider();
+    private static final DataFormatVersionProvider dataFormatVersionProvider = new DataFormatVersionProvider();
     private static final Logger logger = LogManager.getLogger(VersionProvider.class);
 
     /**
