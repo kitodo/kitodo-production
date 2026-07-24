@@ -330,6 +330,6 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
             template.getProjects().remove(project);
             ServiceManager.getTemplateService().save(template);
         }
-        ServiceManager.getProjectService().remove(project);
+        ServiceManager.getProjectService().remove(projectID);
     }
 }
