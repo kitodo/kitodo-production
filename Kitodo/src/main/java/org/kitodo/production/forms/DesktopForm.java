@@ -161,7 +161,7 @@ public class DesktopForm extends BaseForm {
     public List<Project> getProjects() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList() && projectList.isEmpty()) {
-                projectList = ServiceManager.getProjectService().loadData(0, 10, "title", SortOrder.ASCENDING, null);
+                projectList = ServiceManager.getProjectService().loadActiveProjects(0, 10, "title", SortOrder.ASCENDING);
             }
         } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
