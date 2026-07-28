@@ -97,6 +97,8 @@ public class FolderService extends BaseBeanService<Folder, FolderDAO> {
         clone.setDpi(source.getDpi().orElse(null));
         clone.setImageSize(source.getImageSize().orElse(null));
         clone.setLinkingMode(source.getLinkingMode());
+        clone.setValidateFolder(source.isValidateFolder());
+        clone.setLtpValidationConfiguration(source.getLtpValidationConfiguration());
         return clone;
     }
 }
