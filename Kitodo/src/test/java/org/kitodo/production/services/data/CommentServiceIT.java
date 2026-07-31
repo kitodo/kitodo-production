@@ -56,7 +56,7 @@ public class CommentServiceIT {
     }
 
     /**
-     * Tests wether comment is correctly saved and removed from database.
+     * Tests whether comment is correctly saved and removed from database.
      * 
      * @throws Exception
      *             when saving or deleting comment fails.

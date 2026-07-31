@@ -210,7 +210,7 @@ public class VariableReplacerTest {
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
 
         String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
-        // missing meta data element will be replaced by emtpy string and a warning message appear in the log
+        // missing meta data element will be replaced by empty string and a warning message appear in the log
         String expected = "-language  -scriptType keine_OCR";
         assertEquals(expected, replaced, "String should contain expected metadata!");
     }

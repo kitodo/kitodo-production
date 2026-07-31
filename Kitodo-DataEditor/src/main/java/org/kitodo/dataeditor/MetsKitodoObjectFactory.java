@@ -110,7 +110,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
     }
 
     /**
-     * Creates a DivType object for using as root div in mets physical sruct map.
+     * Creates a DivType object for using as root div in mets physical struct map.
      *
      * @return The DivType object.
      */
@@ -122,7 +122,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
     }
 
     /**
-     * Creates a DivType object for using as root div in mets logical sruct map.
+     * Creates a DivType object for using as root div in mets logical struct map.
      *
      * @return The DivType object.
      */

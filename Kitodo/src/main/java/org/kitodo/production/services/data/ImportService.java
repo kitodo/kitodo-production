@@ -1491,7 +1491,7 @@ public class ImportService {
      * as metadata values.
      * @param metadata map containing metadata to
      * @param templateId ID of template whose ruleset contains definition of 'recordIdentifier' functional metadata
-     * @param strict boolean parameter controling whether an exception should be thrown or not if no 'recordIdentifier' was found
+     * @param strict boolean parameter controlling whether an exception should be thrown or not if no 'recordIdentifier' was found
      * @return value of metadata configured as 'recordIdentifier'
      * @throws ConfigException when no 'recordIdentifier' metadata was found in given metadata map
      * @throws IOException when loading ruleset file fails

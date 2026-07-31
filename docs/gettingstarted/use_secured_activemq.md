@@ -83,11 +83,11 @@ Adjust the `conf/activemq.xml` file
     </broker>
 </beans>
 ```
-## Using authentification and authorization
+## Using authentication and authorization
 
 See https://activemq.apache.org/security
 
-### Define authentification
+### Define authentication
 
 Adjust the `conf/activemq.xml` file
 

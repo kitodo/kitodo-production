@@ -189,7 +189,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
     }
 
     /**
-     * Hash code implementation based on all properties of this conditon.
+     * Hash code implementation based on all properties of this condition.
      */
     @Override
     public int hashCode() {

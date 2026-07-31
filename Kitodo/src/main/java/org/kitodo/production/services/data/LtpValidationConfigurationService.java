@@ -50,7 +50,7 @@ public class LtpValidationConfigurationService
     }
 
     /**
-     * Return a ltp validation configuration for a specific id but also load the list of attched folders,
+     * Return a ltp validation configuration for a specific id but also load the list of attached folders,
      * which is not loaded by default due to the lazy fetch strategy.
      * 
      * @param id the id of the validation configuration that is supposed to be loaded
