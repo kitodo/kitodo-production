@@ -17,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,8 +29,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.LinkingMode;
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
@@ -193,5 +199,110 @@ public class ProjectServiceIT {
         Project project = projectService.getById(1);
         boolean result = projectService.hasProcesses(project.getId());
         assertTrue(result, "Project with processes incorrectly reported as empty!");
+    }
+
+    @Test
+    public void testProjectDuplication() throws DAOException {
+        // create new project with all settings set
+        Project baseProject = new Project();
+        baseProject.setTitle("Project for duplication");
+        ClientService clientService = ServiceManager.getClientService();
+        baseProject.setClient(clientService.getById(1));
+        LocalDate localDate = LocalDate.of(2026, 8, 7);
+        baseProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        baseProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        baseProject.setNumberOfPages(32);
+        baseProject.setNumberOfVolumes(2);
+        baseProject.setActive(false);
+        baseProject.setDmsImportRootPath("/foo/baar");
+        baseProject.setMetsRightsOwner("Kitodo e.V.");
+        baseProject.setMetsRightsOwnerLogo("kitodo.png");
+        baseProject.setMetsRightsOwnerMail("foo@example.org");
+        baseProject.setMetsRightsOwnerSite("www.kitodo.org");
+        baseProject.setMetsDigiprovPresentation("Foo Baz");
+        baseProject.setMetsDigiprovReference("Baz Foo");
+        baseProject.setMetsPointerPath("pointer path");
+        baseProject.setMetsPurl("purl");
+        baseProject.setMetsContentIDs("contend id");
+
+        // sub folder
+        Folder firstFolder = new Folder();
+        firstFolder.setFileGroup("FOO");
+        firstFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
+        firstFolder.setMimeType("image/jpeg");
+        firstFolder.setPath("jpgs/max");
+        firstFolder.setCopyFolder(true);
+        firstFolder.setCreateFolder(true);
+        firstFolder.setDerivative(1.0);
+        firstFolder.setLinkingMode(LinkingMode.EXISTING);
+
+        Folder secondFolder = new Folder();
+        secondFolder.setFileGroup("BAR");
+        secondFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
+        secondFolder.setMimeType("image/jpeg");
+        secondFolder.setPath("jpgs/default");
+        secondFolder.setCopyFolder(true);
+        secondFolder.setCreateFolder(true);
+        secondFolder.setDerivative(0.8);
+        secondFolder.setLinkingMode(LinkingMode.ALL);
+
+        baseProject.getFolders().add(firstFolder);
+        baseProject.getFolders().add(secondFolder);
+
+        // set some folder use settings
+        baseProject.setGeneratorSource(secondFolder);
+        baseProject.setMediaView(secondFolder);
+        baseProject.setPreview(firstFolder);
+        baseProject.setPreviewHoverMode(PreviewHoverMode.TOOLTIP_PREVIEW);
+
+        // duplicate the project
+        ProjectService projectService = ServiceManager.getProjectService();
+        Project duplicatedProject = projectService.duplicateProject(baseProject);
+
+        // general settings
+        assertTrue(duplicatedProject.getTitle().startsWith(baseProject.getTitle()));
+        assertEquals(baseProject.getClient(), duplicatedProject.getClient());
+        assertEquals(baseProject.getStartDate(), duplicatedProject.getStartDate());
+        assertEquals(baseProject.getEndDate(), duplicatedProject.getEndDate());
+        assertEquals(baseProject.getNumberOfPages(), duplicatedProject.getNumberOfPages());
+        assertEquals(baseProject.getNumberOfVolumes(), duplicatedProject.getNumberOfVolumes());
+        assertEquals(baseProject.isActive(), duplicatedProject.isActive());
+        assertEquals(baseProject.getDmsImportRootPath(), duplicatedProject.getDmsImportRootPath());
+        assertEquals(baseProject.getMetsRightsOwner(), duplicatedProject.getMetsRightsOwner());
+        assertEquals(baseProject.getMetsRightsOwnerLogo(), duplicatedProject.getMetsRightsOwnerLogo());
+        assertEquals(baseProject.getMetsRightsOwnerMail(), duplicatedProject.getMetsRightsOwnerMail());
+        assertEquals(baseProject.getMetsRightsOwnerSite(), duplicatedProject.getMetsRightsOwnerSite());
+        assertEquals(baseProject.getMetsDigiprovPresentation(), duplicatedProject.getMetsDigiprovPresentation());
+        assertEquals(baseProject.getMetsDigiprovReference(), duplicatedProject.getMetsDigiprovReference());
+        assertEquals(baseProject.getMetsPointerPath(), duplicatedProject.getMetsPointerPath());
+        assertEquals(baseProject.getMetsPurl(), duplicatedProject.getMetsPurl());
+        assertEquals(baseProject.getMetsContentIDs(), duplicatedProject.getMetsContentIDs());
+
+        // simple sub folder check
+        assertEquals(baseProject.getFolders().size(), duplicatedProject.getFolders().size());
+
+        // folder use settings
+        assertEquals(baseProject.getGeneratorSource(), duplicatedProject.getGeneratorSource());
+        assertEquals(baseProject.getMediaView(), duplicatedProject.getMediaView());
+        assertEquals(baseProject.getPreview(), duplicatedProject.getPreview());
+        assertEquals(baseProject.getAudioMediaView(), duplicatedProject.getAudioMediaView());
+        assertEquals(baseProject.getAudioPreview(), duplicatedProject.getAudioPreview());
+        assertEquals(baseProject.isAudioMediaViewWaveform(), duplicatedProject.isAudioMediaViewWaveform());
+        assertEquals(baseProject.getVideoMediaView(), duplicatedProject.getVideoMediaView());
+        assertEquals(baseProject.getVideoPreview(), duplicatedProject.getVideoPreview());
+        assertEquals(baseProject.getPreviewHoverMode(), duplicatedProject.getPreviewHoverMode());
+
+        // project template
+        assertEquals(baseProject.getTemplates(),  duplicatedProject.getTemplates());
+
+        // import configuration
+        assertEquals(
+                baseProject.getDefaultImportConfiguration(),
+                duplicatedProject.getDefaultImportConfiguration()
+        );
+        assertEquals(
+                baseProject.getDefaultChildProcessImportConfiguration(),
+                duplicatedProject.getDefaultChildProcessImportConfiguration()
+        );
     }
 }
