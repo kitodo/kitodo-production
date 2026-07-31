@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +52,9 @@ public class KitodoConfigTest {
 
     @AfterAll
     public static void tearDown() {
-        mockedParameterAPI.close();
+        if (Objects.nonNull(mockedParameterAPI)) {
+            mockedParameterAPI.close();
+        }
     }
 
     @Test

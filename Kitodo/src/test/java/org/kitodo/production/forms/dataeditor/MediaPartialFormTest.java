@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.AfterAll;
@@ -69,7 +70,7 @@ public class MediaPartialFormTest {
      */
     @AfterAll
     public static void cleanupTestClass() {
-        if (ajaxMockedStatic != null) {
+        if (Objects.nonNull(ajaxMockedStatic)) {
             ajaxMockedStatic.close();
         }
         if (primefacesSingleton != null) {
