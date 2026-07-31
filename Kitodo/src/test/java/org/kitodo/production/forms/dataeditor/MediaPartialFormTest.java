@@ -73,7 +73,7 @@ public class MediaPartialFormTest {
         if (Objects.nonNull(ajaxMockedStatic)) {
             ajaxMockedStatic.close();
         }
-        if (primefacesSingleton != null) {
+        if (Objects.nonNull(primefacesSingleton)) {
             primefacesSingleton.close();
         }
     }
