@@ -360,13 +360,13 @@ public class EmptyTask extends Thread {
 
     /**
      * Returns whether the delete button shall be
-     * shown as read-only property "deleteable". In our interpretation, a thread
-     * is deleteable if it is either new or has terminated and is still lounging
+     * shown as read-only property "deletable". In our interpretation, a thread
+     * is deletable if it is either new or has terminated and is still lounging
      * around.
      *
      * @return whether the delete button shall show
      */
-    public boolean isDeleteable() {
+    public boolean isDeletable() {
         switch (getState()) {
             case NEW:
             case TERMINATED:

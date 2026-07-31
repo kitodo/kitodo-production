@@ -469,8 +469,8 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         return thumbnailOverlay;
     }
 
-    private void clickItemWhenDisplayed(By selector, long delay, long intervall, long timeout) {
-        await().ignoreExceptions().pollDelay(delay, TimeUnit.MILLISECONDS).pollInterval(intervall, TimeUnit.MILLISECONDS)
+    private void clickItemWhenDisplayed(By selector, long delay, long interval, long timeout) {
+        await().ignoreExceptions().pollDelay(delay, TimeUnit.MILLISECONDS).pollInterval(interval, TimeUnit.MILLISECONDS)
                 .atMost(timeout, TimeUnit.SECONDS).until(Browser.getDriver().findElement(selector)::isDisplayed);
         Browser.getDriver().findElement(selector).click();
     }

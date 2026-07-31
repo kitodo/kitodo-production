@@ -449,7 +449,7 @@ public class KitodoScriptService {
                 Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.ok"),
                     generationModeTranslated, process.getTitle(), String.join(", ", generatedFolders)));
             } else {
-                Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.partitial"),
+                Helper.setMessage(MessageFormat.format(Helper.getTranslation("kitodoScript.generateImages.partial"),
                     generationModeTranslated, process.getTitle(), generatedFolders,
                     String.join(", ", ungeneratableFolders)));
             }

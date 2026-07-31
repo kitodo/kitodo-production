@@ -14,14 +14,14 @@ function enableOrDisable(target, locked, unlocked) {
     target.firstChild.classList.toggle('fa-unlock');
 
     var elements = $('#editForm\\:projectTabView input:visible');
-    var calandars = $('#editForm\\:projectTabView .ui-datepicker-trigger');
+    var calendars = $('#editForm\\:projectTabView .ui-datepicker-trigger');
     if ($("span", target).filter(".ui-button-text").text() === locked) {
         elements.removeClass('ui-state-disabled');
         elements.prop('disabled', false);
         $("#editForm\\:projectTabView .ui-selectonemenu:visible").removeClass('ui-state-disabled');
         $("#editForm\\:projectTabView .ui-chkbox-box:visible").removeClass('ui-state-disabled');
-        calandars.prop('disabled', false);
-        calandars.removeClass('ui-state-disabled');
+        calendars.prop('disabled', false);
+        calendars.removeClass('ui-state-disabled');
         $("#editForm\\:projectTabView .ui-commandlink:visible").removeClass('ui-state-disabled');
         $('#editForm\\:projectTabView :submit:visible').not(target).removeClass('ui-state-disabled');
     } else {
@@ -29,8 +29,8 @@ function enableOrDisable(target, locked, unlocked) {
         elements.prop('disabled', true);
         $("#editForm\\:projectTabView .ui-selectonemenu:visible").addClass('ui-state-disabled');
         $("#editForm\\:projectTabView .ui-chkbox-box:visible").addClass('ui-state-disabled');
-        calandars.prop('disabled', 'disabled');
-        calandars.addClass('ui-state-disabled');
+        calendars.prop('disabled', 'disabled');
+        calendars.addClass('ui-state-disabled');
         $("#editForm\\:projectTabView .ui-commandlink:visible").addClass('ui-state-disabled');
         $('#editForm\\:projectTabView :submit:visible').not(target).addClass('ui-state-disabled');
     }
@@ -40,9 +40,9 @@ function enableOrDisable(target, locked, unlocked) {
 }
 
 function disableGlobally(locked) {
-    var lockbutons = $("#editForm\\:projectTabView\\:detailLockedButton, #editForm\\:projectTabView\\:technicalLockedButton," +
+    var lockbuttons = $("#editForm\\:projectTabView\\:detailLockedButton, #editForm\\:projectTabView\\:technicalLockedButton," +
         " #editForm\\:projectTabView\\:metsParamLockedButton, #editForm\\:projectTabView\\:templateLockedButton");
-    lockbutons.each(function () {
+    lockbuttons.each(function () {
         $(this).children(':first').removeClass('fa-unlock');
         $(this).children(':first').addClass('fa-lock');
         $("span", $(this)).filter(".ui-button-text").text(locked);
@@ -57,9 +57,9 @@ function disableGlobally(locked) {
     });
     $("#editForm\\:projectTabView .ui-chkbox-box").addClass('ui-state-disabled');
     $("#editForm\\:projectTabView .ui-commandlink").addClass('ui-state-disabled');
-    var calandars = $('#editForm\\:projectTabView .ui-datepicker-trigger');
-    calandars.prop('disabled', 'disabled');
-    calandars.addClass('ui-state-disabled');
-    $('#editForm\\:projectTabView :submit').not(lockbutons).addClass('ui-state-disabled');
+    var calendars = $('#editForm\\:projectTabView .ui-datepicker-trigger');
+    calendars.prop('disabled', 'disabled');
+    calendars.addClass('ui-state-disabled');
+    $('#editForm\\:projectTabView :submit').not(lockbuttons).addClass('ui-state-disabled');
     $("#editForm\\:projectTabView .ui-selectonemenu").addClass("ui-state-disabled");
 }

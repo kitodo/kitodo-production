@@ -253,7 +253,7 @@ public class StructurePanel implements Serializable {
                 LogicalDivision logicalDivision = selectedPhysicalDivision.getValue();
                 if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
                     if (physicalDivision.getLogicalDivisions().size() > 1) {
-                        Helper.setMessage(physicalDivision + ": is removed fom all assigned structural elements");
+                        Helper.setMessage(physicalDivision + ": is removed from all assigned structural elements");
                     }
                     for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
                         structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
