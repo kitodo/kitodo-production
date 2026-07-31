@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -43,8 +44,12 @@ public class DataEditorTest {
 
     @AfterEach
     public void revertFile() throws IOException {
-        IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
-        IOUtils.write( testmetaUnsupportedFormat, Files.newOutputStream(Paths.get("src/test/resources/testmetaUnsupportedFormat.xml")));
+        try (OutputStream out1 = Files.newOutputStream(Paths.get(pathOfOldMetaFormat))) {
+            IOUtils.write(testMetaOldFormat, out1);
+        }
+        try (OutputStream out2 = Files.newOutputStream(Paths.get("src/test/resources/testmetaUnsupportedFormat.xml"))) {
+            IOUtils.write(testmetaUnsupportedFormat, out2);
+        }
     }
 
     @Test
