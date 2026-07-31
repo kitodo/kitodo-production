@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
@@ -108,10 +109,47 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DAOException {
 
-        BeanQuery query = getProjectsQuery();
-        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        BeanQuery query = getSortedProjectsQuery(sortField, sortOrder);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
+
+    /**
+     * Loads active projects in the requested range and sort order.
+     *
+     * <p>This is used for views such as the desktop project widget where deactivated
+     * projects must not be offered for process creation.</p>
+     *
+     * @param first
+     *            index of the first result to load
+     * @param pageSize
+     *            maximum number of projects to load
+     * @param sortField
+     *            project field to sort by; defaults to title if blank
+     * @param sortOrder
+     *            sort order; defaults to ascending if null
+     * @return list of active projects
+     */
+    public List<Project> loadActiveProjects(int first, int pageSize, String sortField, SortOrder sortOrder)
+            throws DAOException {
+
+        BeanQuery query = getSortedProjectsQuery(sortField, sortOrder);
+        query.addBooleanRestriction("active", true);
+
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+    }
+
+    private BeanQuery getSortedProjectsQuery(String sortField, SortOrder sortOrder) {
+        if (StringUtils.isBlank(sortField)) {
+            sortField = "title";
+        }
+        if (Objects.isNull(sortOrder)) {
+            sortOrder = SortOrder.ASCENDING;
+        }
+        BeanQuery query = getProjectsQuery();
+        query.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        return query;
+    }
+
 
     private static BeanQuery getProjectsQuery() {
         BeanQuery projectQuery = new BeanQuery(Project.class);
