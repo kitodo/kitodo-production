@@ -11,10 +11,10 @@
 
 package org.kitodo.production.services.security;
 
-import java.util.List;
 import java.util.Objects;
 
-import org.kitodo.data.database.beans.Project;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityAccessService extends SecurityAccess {
 
+    private static final Logger logger = LogManager.getLogger(SecurityAccessService.class);
     private static volatile SecurityAccessService instance = null;
 
     /**
@@ -1121,8 +1122,16 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     private boolean hasAuthorityForProject(Integer projectId) {
-        List<Project> projects = ServiceManager.getUserService().getCurrentUser().getProjects();
-        return projects.stream().anyMatch(project -> project.getId().equals(projectId)) || projectId == 0;
+        if (Objects.equals(projectId, 0)) {
+            return true;
+        }
+        try {
+            return ServiceManager.getProjectService()
+                    .isProjectAssignedToCurrentUser(projectId);
+        } catch (DAOException e) {
+            logger.error("Could not check project authorization for project {}", projectId, e);
+            return false;
+        }
     }
 
     /**
