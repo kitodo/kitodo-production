@@ -437,7 +437,7 @@ public class WorkflowControllerServiceIT {
 
         workflowService.unassignTaskFromUser(task);
         assertNull(task.getProcessingUser(), "User was not unassigned from the task!");
-        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task was not set up to open after unassing of the user!");
+        assertEquals(TaskStatus.OPEN, task.getProcessingStatus(), "Task was not set up to open after unassign of the user!");
     }
 
     @Test

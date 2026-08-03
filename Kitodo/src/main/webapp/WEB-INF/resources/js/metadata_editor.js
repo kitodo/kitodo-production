@@ -294,7 +294,7 @@ metadataEditor.gallery = {
         },
 
         /**
-         * Adds or removes single thumbnails to the current selection using the multi seletion style (ctrl key).
+         * Adds or removes single thumbnails to the current selection using the multi selection style (ctrl key).
          *
          * @param event the mouse event
          * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object 
@@ -452,7 +452,7 @@ metadataEditor.gallery = {
         /**
          * Find all logical tree node ids for a list of order-values.
          * @param orderList the list order values
-         * @returns the correspoding tree node ids for each thumbnail identified by each order value
+         * @returns the corresponding tree node ids for each thumbnail identified by each order value
          */
         findTreeNodeIdsByOrderList(orderList) {
             let treeNodeIds = [];
@@ -480,7 +480,7 @@ metadataEditor.gallery = {
          */
         findLastSelectedTreeNodeId() {
             let thumbnail = $("#imagePreviewForm .thumbnail.last-selection");
-            if (thumbnail.lenght > 0) {
+            if (thumbnail.length > 0) {
                 return this.findTreeNodeIdByThumbnail(thumbnail);
             }
             return null;

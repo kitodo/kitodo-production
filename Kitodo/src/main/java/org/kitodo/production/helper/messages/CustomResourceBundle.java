@@ -71,7 +71,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
     }
 
     /**
-     * Checks if properties file for a specfiic external resource bundle does exist.
+     * Checks if properties file for a specific external resource bundle does exist.
      * Remembers existence in static map such that filesystem is not checked repeatedly.
      * 
      * <p>This check is required because resource bundles seem to always load if an URLClassLoader

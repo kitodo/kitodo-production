@@ -22,7 +22,7 @@ kitodo.tabView = kitodo.tabView || {};
  * @param string tab the id of the new active tab (should match id attribute of the `p:tab` component)
  */
 kitodo.tabView.onTabChange = function(tabId) {
-    // write tabId into browser URL such that the page can be refreshed without loosing the active tab state
+    // write tabId into browser URL such that the page can be refreshed without losing the active tab state
     kitodo.updateQueryParameter('tab', tabId); 
 
     // remove URL query parameters related to list view pagination, sort state and filter state
