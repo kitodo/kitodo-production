@@ -311,15 +311,15 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
         parameters.put("clientId", userService.getSessionClientId());
 
         return !getByQuery(
-                "SELECT project "
-                        + "FROM Project project "
-                        + "JOIN project.users user "
-                        + "WHERE project.id = :projectId "
-                        + "AND user.id = :userId "
-                        + "AND project.client.id = :clientId",
-                parameters,
-                0,
-                1
+            "SELECT project "
+                + "FROM Project project "
+                + "JOIN project.users user "
+                + "WHERE project.id = :projectId "
+                + "AND user.id = :userId "
+                + "AND project.client.id = :clientId",
+            parameters,
+            0,
+            1
         ).isEmpty();
     }
 
