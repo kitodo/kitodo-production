@@ -34,9 +34,9 @@ public enum KitodoConfigFile {
     PROJECT_CONFIGURATION("kitodo_projects.xml"),
 
     /**
-     * Configuration file for login blacklist.
+     * Configuration file for login denylist.
      */
-    LOGIN_BLACKLIST("kitodo_loginBlacklist.txt");
+    LOGIN_DENYLIST("kitodo_loginDenylist.txt");
 
     private final String name;
     private final File file;
