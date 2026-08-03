@@ -139,9 +139,9 @@
                                     </h:link>
                                 </li>
                                 <li class="logout">
-                                    <h:outputLink value="#{request.contextPath}/logout" id="logout">
+                                    <p:commandLink id="logout" ajax="false" onclick="$('#logout-form')[0].action='#{request.contextPath}/logout'">
                                         #{msgs.logout}<i class="fa fa-power-off"/>
-                                    </h:outputLink>
+                                    </p:commandLink>
                                 </li>
                             </ul>
                         </h:form>
