@@ -296,11 +296,12 @@ public class ProjectEditView extends BaseEditView {
     }
 
     private User addFirstUserToNewProject() throws DAOException {
-        if (this.project.getUsers().isEmpty()) {
-            User user = ServiceManager.getUserService().getCurrentUser();
-            user.getProjects().add(this.project);
-            this.project.getUsers().add(user);
-            return user;
+        if (project.getUsers().isEmpty()) {
+            User currentUser = ServiceManager.getUserService().getCurrentUser();
+            User freshUser = ServiceManager.getUserService().getById(currentUser.getId());
+            freshUser.getProjects().add(project);
+            project.getUsers().add(freshUser);
+            return freshUser;
         }
         return null;
     }
