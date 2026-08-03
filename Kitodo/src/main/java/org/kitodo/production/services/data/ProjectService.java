@@ -309,6 +309,32 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     }
 
     /**
+     * Checks whether the current user is assigned to the specified project in the
+     * currently selected client.
+     * @param projectId
+     *            ID of the project to check
+     * @return  true if the current user is assigned to the project in the current client, otherwise false
+     */
+    public boolean isProjectAssignedToCurrentUser(Integer projectId) throws DAOException {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("projectId", projectId);
+        parameters.put("userId", userService.getCurrentUser().getId());
+        parameters.put("clientId", userService.getSessionClientId());
+
+        return !getByQuery(
+                "SELECT project "
+                        + "FROM Project project "
+                        + "JOIN project.users user "
+                        + "WHERE project.id = :projectId "
+                        + "AND user.id = :userId "
+                        + "AND project.client.id = :clientId",
+                parameters,
+                0,
+                1
+        ).isEmpty();
+    }
+
+    /**
      * Returns all projects of the specified client and name.
      *
      * @param title
