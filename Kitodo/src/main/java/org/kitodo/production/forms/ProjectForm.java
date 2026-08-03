@@ -230,10 +230,12 @@ public class ProjectForm extends BaseForm {
         ServiceManager.getProjectService().evict(project);
         if (isTitleValid()) {
             try {
-                addFirstUserToNewProject();
-
                 commitTemplates();
                 commitFolders();
+                User firstUser = addFirstUserToNewProject();
+                if (Objects.nonNull(firstUser)) {
+                    ServiceManager.getUserService().save(firstUser);
+                }
 
                 ServiceManager.getProjectService().save(project);
 
