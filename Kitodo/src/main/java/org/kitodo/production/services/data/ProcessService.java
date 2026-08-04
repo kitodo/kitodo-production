@@ -2433,14 +2433,16 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @return name of ImportConfiguration
      * @throws DAOException when loading import configuration by ID or saving updated processes fails
      */
-    public String setImportConfigurationForMultipleProcesses(List<Process> processes, int configurationId)
-            throws DAOException {
-        ImportConfiguration configuration = ServiceManager.getImportConfigurationService().getById(configurationId);
-        for (Process process : processes) {
-            process.setImportConfiguration(configuration);
-            save(process);
-        }
-        return configuration.getTitle();
+    public String setImportConfigurationForMultipleProcesses(
+            List<Process> processes, int configurationId) throws DAOException {
+
+        ImportConfiguration importConfiguration =  ServiceManager.getImportConfigurationService().getById(configurationId);
+        dao.setImportConfigurationForProcesses(
+                processes.stream()
+                        .map(Process::getId)
+                        .toList(),
+                importConfiguration);
+        return importConfiguration.getTitle();
     }
 
     private int getNumberOfImagesForIndex(Workpiece workpiece) {

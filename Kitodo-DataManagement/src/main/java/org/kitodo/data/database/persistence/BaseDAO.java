@@ -509,6 +509,30 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Executes an update or delete HQL query.
+     *
+     * @param query
+     *            HQL query to execute
+     * @param parameters
+     *            named query parameters
+     * @return number of affected database rows
+     */
+    public int executeUpdate(String query, Map<String, Object> parameters) throws DAOException {
+        try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
+            Transaction transaction = session.beginTransaction();
+            Query<?> updateQuery = session.createQuery(query);
+            addParameters(updateQuery, parameters);
+            int updatedRows = updateQuery.executeUpdate();
+            session.flush();
+            transaction.commit();
+            return updatedRows;
+        } catch (PersistenceException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    /**
      * Store given object.
      *
      * @param object
