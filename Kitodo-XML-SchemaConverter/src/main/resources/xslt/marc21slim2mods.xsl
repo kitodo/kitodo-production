@@ -6,8 +6,9 @@
 	<xsl:strip-space elements="*"/>
 
 	<!-- Maintenance note: For each revision, change the content of <recordInfo><recordOrigin> to reflect the new revision number.
-	MARC21slim2MODS3-4 (Revision 1.95) 20141219
+	MARC21slim2MODS3-4 (Revision 1.96) 20241004
 
+Revision 1.96 - 005 insert "T" between date and time for ISO-8601:2019 compliance. 2024/10/04 ntra
 Revision 1.95 - Added a xsl:when to deal with '#' and ' ' in $leader19 and $controlField008-18 - ws 2014/12/19
 Revision 1.94 - Leader 07 b mapping changed from "continuing" to "serial" tmee 2014/02/21
 Revision 1.93 - Fixed personal name transform for ind1=0 tmee 2014/01/31
@@ -2654,9 +2655,19 @@ Revision 1.02 - Added Log Comment  2003/03/24 19:37:42  ckeith
 				</recordCreationDate>
 			</xsl:for-each>
 
-			<xsl:for-each select="marc:controlfield[@tag=005]">
+		<!-- 	<xsl:for-each select="marc:controlfield[@tag=005]">
 				<recordChangeDate encoding="iso8601">
 					<xsl:value-of select="."/>
+				</recordChangeDate>
+			</xsl:for-each> -->
+			<xsl:for-each select="marc:controlfield[@tag=005]">
+				<!--voyager timestamp:20010702132215.0 simple tests; assumes a timestamp -->
+				<recordChangeDate encoding="iso8601">
+					<xsl:choose>
+						<xsl:when test="contains(.,'T')"><xsl:value-of select="."/></xsl:when>
+						<xsl:when test="string-length(.) >  8"><xsl:value-of select="concat(substring(.,1,8), 'T', substring(.,9))"/></xsl:when>
+						<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+					</xsl:choose>
 				</recordChangeDate>
 			</xsl:for-each>
 			<xsl:for-each select="marc:controlfield[@tag=001]">
@@ -2671,7 +2682,7 @@ Revision 1.02 - Added Log Comment  2003/03/24 19:37:42  ckeith
 			</xsl:for-each>
 
 			<recordOrigin>Converted from MARCXML to MODS version 3.4 using MARC21slim2MODS3-4.xsl
-				(Revision 1.95 2014/12/19)</recordOrigin>
+				(Revision 1.96 2024/10/04)</recordOrigin>
 
 			<xsl:for-each select="marc:datafield[@tag=040]/marc:subfield[@code='b']">
 				<languageOfCataloging>
