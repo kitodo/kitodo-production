@@ -300,14 +300,14 @@ function toggleFirstColumn() {
     if (firstColumn.hasClass(COLLAPSED)) {
         firstColumn.animate({width: COLLAPSED_COL_WIDTH});
         if (secondColumn.hasClass(COLLAPSED)) {
-            thirdColumn.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH}, function() {resizeMap()});
+            thirdColumn.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH}, function() {resizeMap();});
         } else {
             secondColumn.animate({width:  wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
         }
     } else {
         var neededWidth = firstColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
         if (secondColumn.hasClass(COLLAPSED)) {
-            thirdColumn.animate({width: wrapper.width() - firstColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH}, function() {resizeMap()});
+            thirdColumn.animate({width: wrapper.width() - firstColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH}, function() {resizeMap();});
             firstColumn.animate({width: firstColumnWidth});
         } else if (neededWidth > 0) {
             var substractFromWidth = firstColumnWidth - (wrapper.width() - secondColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
@@ -317,7 +317,7 @@ function toggleFirstColumn() {
                 thirdColumn.animate({width: thirdColumn.data('min-width')}, function() {resizeMap();});
             } else {
                 secondColumn.animate({width: secondColumn.data('min-width')});
-                thirdColumn.animate({width: wrapper.width() - firstColumnWidth - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH}, function() {resizeMap()});
+                thirdColumn.animate({width: wrapper.width() - firstColumnWidth - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH}, function() {resizeMap();});
                 firstColumn.animate({width: firstColumnWidth});
             }
         } else {
@@ -341,7 +341,7 @@ function toggleSecondColumn() {
         if (thirdColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
         } else {
-            thirdColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - firstColumn.width() - 2 * SEPARATOR_WIDTH},function() {resizeMap()});
+            thirdColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - firstColumn.width() - 2 * SEPARATOR_WIDTH},function() {resizeMap();});
         }
     } else {
         var neededWidth = secondColumnWidth - COLLAPSED_COL_WIDTH - (thirdColumn.width() - thirdColumn.data('min-width'));
@@ -353,14 +353,14 @@ function toggleSecondColumn() {
             if (substractFromWidth > 0) {
                 firstColumn.animate({width: firstColumn.data('min-width')});
                 secondColumn.animate({width: secondColumnWidth - substractFromWidth});
-                thirdColumn.animate({width: thirdColumn.data('min-width')},function() {resizeMap()});
+                thirdColumn.animate({width: thirdColumn.data('min-width')},function() {resizeMap();});
             } else {
                 thirdColumn.animate({width: thirdColumn.data('min-width')},function() {resizeMap()});
                 firstColumn.animate({width: wrapper.width() - secondColumnWidth - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
                 secondColumn.animate({width: secondColumnWidth});
             }
         } else {
-            thirdColumn.animate({width: wrapper.width() - firstColumn.width() - secondColumnWidth - 2 * SEPARATOR_WIDTH},function() {resizeMap()});
+            thirdColumn.animate({width: wrapper.width() - firstColumn.width() - secondColumnWidth - 2 * SEPARATOR_WIDTH},function() {resizeMap();});
             secondColumn.animate({width: secondColumnWidth});
         }
     }
@@ -388,13 +388,13 @@ function toggleThirdColumn() {
         var neededWidth = thirdColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
         if (secondColumn.hasClass(COLLAPSED)) {
             firstColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
-            thirdColumn.animate({width: thirdColumnWidth}, function() {resizeMap()});
+            thirdColumn.animate({width: thirdColumnWidth}, function() {resizeMap();});
         } else if (neededWidth > 0) {
             var substractFromWidth = thirdColumnWidth - (wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
             if (substractFromWidth > 0) {
                 firstColumn.animate({width: firstColumn.data('min-width')});
                 secondColumn.animate({width: secondColumn.data('min-width')});
-                thirdColumn.animate({width: thirdColumnWidth - substractFromWidth}, function() {resizeMap()});
+                thirdColumn.animate({width: thirdColumnWidth - substractFromWidth}, function() {resizeMap();});
             } else {
                 firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
                 secondColumn.animate({width: secondColumn.data('min-width')});
@@ -522,10 +522,10 @@ function saveLayout() {
 }
 
 $(document).ready(function() {
-    $('#firstResizer').mousedown(function(e) {handleMouseDown(e)});
-    $('#secondResizer').mousedown(function(e) {handleMouseDown(e)});
-    $('#verticalResizerFirstColumn').mousedown(function(e) {handleMouseDown(e)});
-    $('#verticalResizerSecondColumn').mousedown(function(e) {handleMouseDown(e)});
+    $('#firstResizer').mousedown(function(e) {handleMouseDown(e);});
+    $('#secondResizer').mousedown(function(e) {handleMouseDown(e);});
+    $('#verticalResizerFirstColumn').mousedown(function(e) {handleMouseDown(e);});
+    $('#verticalResizerSecondColumn').mousedown(function(e) {handleMouseDown(e);});
     setSizes();
     $("#loadingScreen").hide();
 });
