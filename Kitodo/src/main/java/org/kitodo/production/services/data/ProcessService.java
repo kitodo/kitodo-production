@@ -2438,10 +2438,10 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
         ImportConfiguration importConfiguration =  ServiceManager.getImportConfigurationService().getById(configurationId);
         dao.setImportConfigurationForProcesses(
-                processes.stream()
-                        .map(Process::getId)
-                        .toList(),
-                importConfiguration);
+            processes.stream()
+                .map(Process::getId)
+                .toList(),
+            importConfiguration);
         return importConfiguration.getTitle();
     }
 

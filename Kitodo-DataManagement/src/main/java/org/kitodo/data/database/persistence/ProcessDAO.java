@@ -108,15 +108,14 @@ public class ProcessDAO extends BaseDAO<Process> {
 
         for (List<Integer> processIdChunk
                 : ListUtils.partition(processIds, UPDATE_CHUNK_SIZE)) {
-
             executeUpdate(
-                    "UPDATE Process process "
-                            + "SET process.importConfiguration = :configuration "
-                            + "WHERE process.id IN (:processIds)",
-                    Map.of(
-                            "configuration", configuration,
-                            "processIds", processIdChunk
-                    ));
+                "UPDATE Process process "
+                    + "SET process.importConfiguration = :configuration "
+                    + "WHERE process.id IN (:processIds)",
+                Map.of(
+                    "configuration", configuration,
+                    "processIds", processIdChunk
+                ));
         }
     }
 }
