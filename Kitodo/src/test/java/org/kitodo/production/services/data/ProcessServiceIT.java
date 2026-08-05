@@ -47,6 +47,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
@@ -852,5 +853,60 @@ public class ProcessServiceIT {
             }
         }
         return false;
+    }
+
+    @Test
+    public void shouldSetImportConfigurationForMultipleProcesses() throws Exception {
+        ImportConfiguration testConfiguration = new ImportConfiguration();
+        testConfiguration.setTitle("Bulk update test configuration");
+        ServiceManager.getImportConfigurationService().save(testConfiguration);
+
+        Process firstProcess = processService.getById(1);
+        Process secondProcess = processService.getById(2);
+        Process unselectedProcess = processService.getById(3);
+
+        ImportConfiguration firstOriginalConfiguration = firstProcess.getImportConfiguration();
+        ImportConfiguration secondOriginalConfiguration = secondProcess.getImportConfiguration();
+        Integer unselectedOriginalConfigurationId = Objects.isNull(unselectedProcess.getImportConfiguration())
+            ? null
+            : unselectedProcess.getImportConfiguration().getId();
+
+        try {
+            String configurationTitle =
+                processService.setImportConfigurationForMultipleProcesses(
+                    List.of(firstProcess, secondProcess),
+                    testConfiguration.getId());
+
+            firstProcess = processService.getById(1);
+            secondProcess = processService.getById(2);
+            unselectedProcess = processService.getById(3);
+
+            assertEquals(
+                testConfiguration.getTitle(),
+                configurationTitle,
+                "Wrong import configuration title was returned!");
+            assertEquals(
+                testConfiguration.getId(),
+                firstProcess.getImportConfiguration().getId(),
+                "Import configuration was not assigned to the first process!");
+            assertEquals(
+                testConfiguration.getId(),
+                secondProcess.getImportConfiguration().getId(),
+                "Import configuration was not assigned to the second process!");
+            Integer unselectedConfigurationId = Objects.isNull(unselectedProcess.getImportConfiguration())
+                ? null
+                : unselectedProcess.getImportConfiguration().getId();
+            assertEquals(
+                unselectedOriginalConfigurationId,
+                unselectedConfigurationId,
+                "Import configuration of an unselected process was changed!");
+        } finally {
+            firstProcess.setImportConfiguration(firstOriginalConfiguration);
+            secondProcess.setImportConfiguration(secondOriginalConfiguration);
+            processService.save(firstProcess);
+            processService.save(secondProcess);
+
+            ServiceManager.getImportConfigurationService().remove(testConfiguration);
+        }
     }
 }
