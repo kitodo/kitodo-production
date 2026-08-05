@@ -66,6 +66,10 @@
                                      styleClass="input-with-button"
                                      required="#{not empty param['editForm:save']}"
                                      value="#{importConfigurationEditView.importConfiguration.metadataFormat}">
+                        <f:selectItem itemValue="#{null}"
+                                      itemLabel="#{msgs['selectMetadataFormat']}"
+                                      itemDisabled="true"
+                                      noSelectionOption="true"/>
                         <f:selectItems value="#{importConfigurationEditView.metadataFormats}"/>
                         <p:ajax event="change"
                                 oncomplete="toggleSave()"/>
