@@ -595,7 +595,7 @@ public class MigrationForm extends BaseForm {
             }
         });
 
-        Helper.setMessage("All uncrypted LDAP Manager passwords were successfully encrypted.");
+        Helper.setMessage("All unencrypted LDAP Manager passwords were successfully encrypted.");
     }
 
     /**
