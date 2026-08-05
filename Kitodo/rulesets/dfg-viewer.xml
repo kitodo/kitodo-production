@@ -1304,7 +1304,7 @@
                 </option>
                 <option value="digitized microfilm">
                     <label>Digitizing a microform</label>
-                    <label lang="de">Mirkoform</label>
+                    <label lang="de">Mikroform</label>
                 </option>
                 <option value="digitized other analog">
                     <label>Digitizing an intermediate form</label>
