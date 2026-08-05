@@ -31,4 +31,4 @@ kitodo.tabView.onTabChange = function(tabId) {
     kitodo.removeQueryParameter('sortField');
     kitodo.removeQueryParameter('sortOrder');
     kitodo.removeQueryParameter('filter');
-}
+};

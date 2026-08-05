@@ -30,4 +30,4 @@ window.onload = function () {
         setFilter(this.value);
         applyFilter(this.value);
     });
-}
+};
