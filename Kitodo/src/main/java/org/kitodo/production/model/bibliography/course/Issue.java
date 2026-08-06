@@ -54,7 +54,7 @@ public class Issue {
      * Dates with issue on days of week without regular appearance.
      *
      * <p>
-     * Implementers note: SortedSet and SortedMap do not declare HashCode &
+     * Implementation note: SortedSet and SortedMap do not declare HashCode &
      * Equals and cannot be used in a sensible way here.
      */
     private Set<LocalDate> additions;
