@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
@@ -36,6 +38,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -400,7 +403,7 @@ public class ProjectServiceIT {
         assertEquals(baseProject.getPreviewHoverMode(), duplicatedProject.getPreviewHoverMode());
 
         // project template
-        assertEquals(baseProject.getTemplates(),  duplicatedProject.getTemplates());
+        assertEquals(baseProject.getTemplates(), duplicatedProject.getTemplates());
 
         // import configuration
         assertEquals(
@@ -411,5 +414,46 @@ public class ProjectServiceIT {
                 baseProject.getDefaultChildProcessImportConfiguration(),
                 duplicatedProject.getDefaultChildProcessImportConfiguration()
         );
+    }
+
+    @Test
+    public void shouldCheckWhetherProjectIsAssignedToCurrentUser()
+            throws DAOException, ProjectDeletionException {
+        UserService userService = ServiceManager.getUserService();
+        User authenticatedUser = userService.getCurrentUser();
+        Client sessionClient = userService.getSessionClientOfAuthenticatedUser();
+
+        Project assignedProject = new Project();
+        assignedProject.setTitle("Assigned project lookup test");
+        assignedProject.setClient(sessionClient);
+
+        assignedProject.getUsers().add(authenticatedUser);
+        authenticatedUser.getProjects().add(assignedProject);
+
+        try {
+            projectService.save(assignedProject);
+            userService.save(authenticatedUser);
+
+            assertTrue(
+                    projectService.isProjectAssignedToCurrentUser(assignedProject.getId()),
+                    "Project should be assigned to the current user");
+
+            assignedProject.getUsers().remove(authenticatedUser);
+            authenticatedUser.getProjects().remove(assignedProject);
+
+            projectService.save(assignedProject);
+            userService.save(authenticatedUser);
+
+            assertFalse(
+                    projectService.isProjectAssignedToCurrentUser(assignedProject.getId()),
+                    "Project should no longer be assigned to the current user");
+        } finally {
+            authenticatedUser.getProjects().remove(assignedProject);
+            assignedProject.getUsers().remove(authenticatedUser);
+
+            if (Objects.nonNull(assignedProject.getId())) {
+                ProjectService.delete(assignedProject.getId());
+            }
+        }
     }
 }
