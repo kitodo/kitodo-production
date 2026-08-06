@@ -128,7 +128,7 @@ public class WorkflowControllerService {
      * @param task
      *            to change status down
      */
-    public void setTaskStatusDown(Task task) {
+    public void setTaskStatusDown(Task task) throws DAOException {
         setTaskStatusDown(Collections.singletonList(task));
     }
 
@@ -138,16 +138,23 @@ public class WorkflowControllerService {
      * @param tasks
      *            to change status down
      */
-    public void setTaskStatusDown(List<Task> tasks) {
+    public void setTaskStatusDown(List<Task> tasks) throws DAOException {
+        User currentUser = getCurrentUser();
+        Date now = new Date();
+
         for (Task task : tasks) {
             task.setEditType(TaskEditType.ADMIN);
-            task.setProcessingTime(new Date());
-            taskService.replaceProcessingUser(task, getCurrentUser());
+            task.setProcessingTime(now);
+            taskService.replaceProcessingUser(task, currentUser);
             setProcessingStatusDown(task);
+            taskService.save(task);
+
             if (task.getProcessingStatus() == TaskStatus.LOCKED) {
                 List<Task> previousTasks = getPreviousTasks(task);
+
                 for (Task previousTask : previousTasks) {
                     setProcessingStatusDown(previousTask);
+                    taskService.save(previousTask);
                 }
             }
         }
@@ -183,7 +190,7 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusDown(Process process) {
+    public void setTasksStatusDown(Process process) throws DAOException {
         List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
         if (currentTask.isEmpty()) {
             currentTask = getLastClosedTask(process);
@@ -836,11 +843,16 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusDown(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus);
+
                 updateProcessSortHelperStatus(processForStatus);
+
+                ServiceManager.getProcessService().updateSortHelperStatus(
+                    processForStatus.getId(),
+                    processForStatus.getSortHelperStatus()
+                );
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
-                        new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
             }
         }
     }

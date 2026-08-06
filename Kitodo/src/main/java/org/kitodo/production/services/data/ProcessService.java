@@ -923,6 +923,11 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
+    public void updateSortHelperStatus(Integer processId, String sortHelperStatus)
+        throws DAOException {
+        dao.updateSortHelperStatus(processId, sortHelperStatus);
+    }
+
     /**
      * Create and return String used as progress tooltip for a given process. Tooltip contains OPEN tasks and tasks
      * INWORK.
