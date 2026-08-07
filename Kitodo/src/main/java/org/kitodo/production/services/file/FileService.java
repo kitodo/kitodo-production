@@ -1518,12 +1518,12 @@ public class FileService {
             if (MetadataLock.isLocked(processId)) {
                 lockedProcesses.add(processId);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ANONYMIZE)) {
-                    logger.error("Unable to lock process " + processId + " for media renaming because it is currently "
-                            + "being worked on by another user");
+                    logger.error("Unable to lock process {} for media renaming because it is currently being worked on "
+                                    + "by another user", processId);
                 } else {
                     User currentUser = MetadataLock.getLockUser(processId);
-                    logger.error("Unable to lock process " + processId + " for media renaming because it is currently "
-                            + "being worked on by another user (" + currentUser.getFullName() + ")");
+                    logger.error("Unable to lock process {} for media renaming because it is currently being worked on "
+                                    + "by another user ({})", processId, currentUser.getFullName());
                 }
             } else {
                 MetadataLock.setLocked(processId, ServiceManager.getUserService().getCurrentUser());
@@ -1542,7 +1542,7 @@ public class FileService {
      */
     public void revertRenaming(BidiMap<URI, URI> filenameMappings, Workpiece workpiece) {
         // revert media variant URIs for all media files in workpiece to previous, original values
-        logger.info("Reverting to original media filenames of process " + workpiece.getId());
+        logger.info("Reverting to original media filenames of process {}", workpiece.getId());
         for (PhysicalDivision physicalDivision : workpiece
                 .getAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES)) {
             for (Entry<MediaVariant, URI> mediaVariantURIEntry : physicalDivision.getMediaFiles().entrySet()) {

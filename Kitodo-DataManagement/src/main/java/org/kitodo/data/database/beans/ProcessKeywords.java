@@ -218,8 +218,8 @@ public class ProcessKeywords {
             String processId = Integer.toString(process.getId());
             Path path = Paths.get(KitodoConfig.getKitodoDataDirectory(), processId, "meta.xml");
             if (!Files.isReadable(path)) {
-                logger.info((Files.exists(path) ? "File not readable for indexing: "
-                        : "Missing metadata file for indexing: ") + path);
+                logger.info("{}{}", Files.exists(path) ? "File not readable for indexing: " : "Missing metadata file for indexing: ",
+                        path);
                 return Collections.emptySet();
             }
             logger.debug("Indexing {} in process {} \"{}\"", path, process.getId(), process.getTitle());

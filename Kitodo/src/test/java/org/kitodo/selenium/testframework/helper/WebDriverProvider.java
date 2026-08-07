@@ -63,7 +63,7 @@ public class WebDriverProvider {
             FileUtils.copyURLToFile(geckoUrl, geckoDriverTarFile);
             File theDir = new File(extractFolder);
             if (!theDir.mkdir()) {
-                logger.error("Unable to create directory '" + theDir.getPath() + "'!");
+                logger.error("Unable to create directory '{}'!", theDir.getPath());
             }
             extractTarFileToFolder(geckoDriverTarFile, theDir);
         } else {

@@ -125,7 +125,7 @@ public class CatalogConfigurationImporter {
             importConfiguration.setUsername(OPACConfig.getUsername(opacTitle));
             importConfiguration.setPassword(OPACConfig.getPassword(opacTitle));
         } catch (ConfigurationRuntimeException e) {
-            logger.info("No credentials configured for configuration '" + opacTitle + "'.");
+            logger.info("No credentials configured for configuration '{}'.", opacTitle);
         }
     }
 
@@ -232,8 +232,8 @@ public class CatalogConfigurationImporter {
                 mappingFiles.add(getConfiguredMappingFile(allMappingFiles, filename, configuration));
             }
         } catch (ConfigurationRuntimeException e) {
-            logger.info("No 'mappingFiles' element found in catalog configuration '" + configuration.getTitle()
-                    + "', trying to determine default mapping files.");
+            logger.info("No 'mappingFiles' element found in catalog configuration '{}', trying to determine default mapping files.",
+                    configuration.getTitle());
             String formatName = OPACConfig.getMetadataFormat(configuration.getTitle());
             MetadataFormat metadataFormat = MetadataFormat.getMetadataFormat(formatName);
             List<MetadataFormatConversion> defaultConversions = MetadataFormatConversion
@@ -359,7 +359,7 @@ public class CatalogConfigurationImporter {
                     }
                 }
             } catch (ConfigurationRuntimeException e) {
-                logger.error("Unable to import OPAC configuration '" + catalogName + "' (" + e.getMessage() + ")");
+                logger.error("Unable to import OPAC configuration '{}' ({})", catalogName, e.getMessage());
             }
         }
         return allMappingFiles;

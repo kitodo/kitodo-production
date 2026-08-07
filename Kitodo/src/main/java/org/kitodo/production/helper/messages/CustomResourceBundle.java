@@ -95,7 +95,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
             propertiesFileExistsMap.put(key, file.exists());
 
             if (!file.exists()) {
-                logger.info("Could not find external resource bundle '" + bundleName + "' at " + file);
+                logger.info("Could not find external resource bundle '{}' at {}", bundleName, file);
             }
         }
         return propertiesFileExistsMap.get(key);
@@ -119,7 +119,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
             try {
                 return ResourceBundle.getBundle(bundleName, locale, urlLoader);
             } catch (MissingResourceException e) {
-                logger.error("Could not load external resource bundle '" + bundleName + "': " + e.getMessage());
+                logger.error("Could not load external resource bundle '{}': {}", bundleName, e.getMessage());
             }
         }
         return null;
