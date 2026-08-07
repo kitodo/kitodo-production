@@ -34,6 +34,8 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.CommonQueryContract;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
@@ -509,6 +511,27 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Executes an update or delete HQL query.
+     *
+     * @param query
+     *            HQL query to execute
+     * @param parameters
+     *            named query parameters
+     */
+    public void executeUpdate(String query, Map<String, Object> parameters) throws DAOException {
+        try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
+            Transaction transaction = session.beginTransaction();
+            MutationQuery mutationQuery = session.createMutationQuery(query);
+            addMutationParameters(mutationQuery, parameters);
+            mutationQuery.executeUpdate();
+            transaction.commit();
+        } catch (PersistenceException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    /**
      * Store given object.
      *
      * @param object
@@ -596,7 +619,15 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         }
     }
 
+    private void addMutationParameters(MutationQuery query, Map<String, Object> parameters) {
+        addParameters(parameters, query);
+    }
+
     private void addParameters(Query<?> query, Map<String, Object> parameters) {
+        addParameters(parameters, query);
+    }
+
+    private void addParameters(Map<String, Object> parameters, CommonQueryContract query) {
         if (Objects.nonNull(parameters)) {
             for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
                 if (parameter.getValue() instanceof List) {
