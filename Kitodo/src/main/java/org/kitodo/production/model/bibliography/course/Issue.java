@@ -64,7 +64,7 @@ public class Issue {
      * = Sunday]
      *
      * <p>
-     * Implemention note: SortedSet and SortedMap do not declare HashCode &
+     * Implementation note: SortedSet and SortedMap do not declare HashCode &
      * Equals and cannot be used in a sensible way here.
      */
     private Set<Integer> daysOfWeek;
@@ -73,7 +73,7 @@ public class Issue {
      * Dates of days without issue on days of regular appearance (i.e. holidays)
      *
      * <p>
-     * Implemention note: SortedSet and SortedMap do not declare HashCode &
+     * Implementation note: SortedSet and SortedMap do not declare HashCode &
      * Equals and cannot be used in a sensible way here.
      */
     private Set<LocalDate> exclusions;
