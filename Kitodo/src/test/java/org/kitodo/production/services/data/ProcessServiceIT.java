@@ -790,6 +790,90 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldExcludeDeselectedProcessesWhenAllAreSelected() throws Exception {
+        int includedProcessId = MockDatabase.insertTestProcess("Included Export Process", 1, 1, 1);
+        int excludedProcessId = MockDatabase.insertTestProcess("Excluded Export Process", 1, 1, 1);
+
+        Process includedProcess = processService.getById(includedProcessId);
+        int clientId = includedProcess.getProject().getClient().getId();
+
+        try {
+            List<ProcessExportDTO> result = processService.getProcessesForExport(
+                null,
+                true,
+                true,
+                clientId,
+                true, // allSelected
+                List.of(),
+                List.of(excludedProcessId)
+            );
+
+            List<Integer> resultIds = result.stream()
+                .map(ProcessExportDTO::getId)
+                .toList();
+
+            assertTrue(resultIds.contains(includedProcessId),
+                "Filtered and selected process should be exported");
+            assertFalse(resultIds.contains(excludedProcessId),
+                "Deselected process should not be exported");
+        } finally {
+            ProcessTestUtils.removeTestProcess(includedProcessId);
+            ProcessTestUtils.removeTestProcess(excludedProcessId);
+        }
+    }
+
+    @Test
+    public void shouldExcludeDeselectedProcessesFromFilteredExport() throws Exception {
+        int includedProcessId = MockDatabase.insertTestProcess("Included Export Process", 1, 1, 1);
+        int excludedProcessId = MockDatabase.insertTestProcess("Excluded Export Process", 1, 1, 1);
+
+        ProcessTestUtils.copyTestMetadataFile(includedProcessId, TEST_METADATA_FILE);
+        ProcessTestUtils.copyTestMetadataFile(excludedProcessId, TEST_METADATA_FILE);
+
+        Process includedProcess = processService.getById(includedProcessId);
+        int clientId = includedProcess.getProject().getClient().getId();
+
+        try {
+            User userOne = ServiceManager.getUserService().getById(1);
+
+            await().until(() -> {
+                SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
+
+                List<Integer> indexedIds = processService.findByMetadata(
+                        Collections.singletonMap("TSL_ATS", "Proc"))
+                    .stream()
+                    .map(Process::getId)
+                    .toList();
+
+                return indexedIds.contains(includedProcessId)
+                    && indexedIds.contains(excludedProcessId);
+            });
+
+            List<ProcessExportDTO> result = processService.getProcessesForExport(
+                "\"TSL_ATS:Proc\"",
+                true,
+                true,
+                clientId,
+                true,
+                List.of(),
+                List.of(excludedProcessId)
+            );
+
+            List<Integer> resultIds = result.stream()
+                .map(ProcessExportDTO::getId)
+                .toList();
+
+            assertTrue(resultIds.contains(includedProcessId),
+                "Matching selected process should be exported");
+            assertFalse(resultIds.contains(excludedProcessId),
+                "Deselected matching process should not be exported");
+        } finally {
+            ProcessTestUtils.removeTestProcess(includedProcessId);
+            ProcessTestUtils.removeTestProcess(excludedProcessId);
+        }
+    }
+
+    @Test
     public void shouldFindProcessIdsWithChildren() throws Exception {
         ProcessService processService = ServiceManager.getProcessService();
         List<Process> processes = processService.getAll();

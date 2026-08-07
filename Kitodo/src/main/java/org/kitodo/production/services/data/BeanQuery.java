@@ -79,6 +79,18 @@ public class BeanQuery {
         sorting = Pair.of(varName + ".id", "ASC");
     }
 
+    private String uniqueParameterName(String field) {
+        String baseName = varName(field);
+        String parameterName = baseName;
+        int count = 2;
+
+        while (parameters.containsKey(parameterName)) {
+            parameterName = baseName + count++;
+        }
+
+        return parameterName;
+    }
+
     /**
      * Requires that the hits in a specific field must have a specific value.
      * 
@@ -111,7 +123,7 @@ public class BeanQuery {
      *            value that the class field must accept one of
      */
     public void addInCollectionRestriction(String fieldName, Collection<?> values) {
-        String parameterName = varName(fieldName);
+        String parameterName = uniqueParameterName(fieldName);
         restrictions.add(varName + '.' + fieldName + " IN (:" + parameterName + ')');
         parameters.put(parameterName, values);
     }
@@ -140,7 +152,7 @@ public class BeanQuery {
      *            value that the field must not accept
      */
     public void addNotInCollectionRestriction(String field, Collection<Integer> values) {
-        String parameterName = varName(field);
+        String parameterName = uniqueParameterName(field);
         restrictions.add(varName + '.' + field + " NOT IN (:" + parameterName + ')');
         parameters.put(parameterName, values);
     }
