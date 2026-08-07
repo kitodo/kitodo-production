@@ -140,7 +140,7 @@ public class BeanQuery {
      *            value that the field must not accept
      */
     public void addNotInCollectionRestriction(String field, Collection<Integer> values) {
-        String parameterName = varName(field);
+        String parameterName = varName(field) + "NotIn";
         restrictions.add(varName + '.' + field + " NOT IN (:" + parameterName + ')');
         parameters.put(parameterName, values);
     }
