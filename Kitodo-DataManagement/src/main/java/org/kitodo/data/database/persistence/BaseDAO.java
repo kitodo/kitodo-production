@@ -517,17 +517,15 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            HQL query to execute
      * @param parameters
      *            named query parameters
-     * @return number of affected database rows
      */
-    public int executeUpdate(String query, Map<String, Object> parameters) throws DAOException {
+    public void executeUpdate(String query, Map<String, Object> parameters) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             debugLogQuery(query, parameters);
             Transaction transaction = session.beginTransaction();
             MutationQuery mutationQuery = session.createMutationQuery(query);
             addMutationParameters(mutationQuery, parameters);
-            int updatedRows = mutationQuery.executeUpdate();
+            mutationQuery.executeUpdate();
             transaction.commit();
-            return updatedRows;
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
