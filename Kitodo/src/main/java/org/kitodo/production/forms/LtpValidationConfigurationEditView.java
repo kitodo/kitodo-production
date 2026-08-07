@@ -265,7 +265,7 @@ public class LtpValidationConfigurationEditView extends BaseEditView {
     private boolean isSimpleCondition(LtpValidationCondition condition, String property,
             LtpValidationConditionOperation operation) {
         if (Objects.nonNull(condition) && Objects.nonNull(condition.getProperty())
-                && condition.getProperty().toLowerCase().equals(property.toLowerCase())
+                && condition.getProperty().equalsIgnoreCase(property)
                 && Objects.nonNull(condition.getOperation()) && condition.getOperation().equals(operation)) {
             return true;
         }

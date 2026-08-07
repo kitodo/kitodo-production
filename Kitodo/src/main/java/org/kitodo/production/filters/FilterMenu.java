@@ -311,8 +311,8 @@ public class FilterMenu {
      */
     private FilterString checkFilterCategory(String categoryInput, List<FilterString> categories) {
         return categories.stream()
-                .filter(f -> f.getFilterGerman().equals(categoryInput.toLowerCase())
-                        || f.getFilterEnglish().equals(categoryInput.toLowerCase()))
+                .filter(f -> f.getFilterGerman().equalsIgnoreCase(categoryInput)
+                        || f.getFilterEnglish().equalsIgnoreCase(categoryInput))
                 .findFirst().orElse(null);
     }
 

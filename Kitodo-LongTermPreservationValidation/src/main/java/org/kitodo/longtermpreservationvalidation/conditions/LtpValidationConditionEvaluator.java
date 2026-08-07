@@ -119,7 +119,7 @@ public class LtpValidationConditionEvaluator {
             return getConditionIncorrectNumberOfValuesResult(value);
         }
 
-        if (value.toLowerCase().equals(condition.getValues().getFirst().toLowerCase())) {
+        if (value.equalsIgnoreCase(condition.getValues().getFirst())) {
             return new LtpValidationConditionResult(true, null, value);
         }
 
