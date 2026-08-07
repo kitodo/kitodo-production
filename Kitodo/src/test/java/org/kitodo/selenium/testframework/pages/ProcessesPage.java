@@ -53,27 +53,27 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
     private static final String CALENDER_ACTION_XPATH = "//a[@href='/kitodo/pages/calendarEdit?id=%s']";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESSES_TAB_VIEW)
     private WebElement processesTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESSES_TABLE + DATA)
     private WebElement processesTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESSES_TABLE_HEADER)
     private WebElement processesTableHeader;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":selectBatches")
     private WebElement batchesSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":selectProcesses")
     private WebElement processesSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/processEdit') and contains(@href, 'id=1')]")
     private WebElement editProcessLink;
 
@@ -83,71 +83,71 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private WebElement editMetadataLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "search")
     private WebElement searchForProcessesButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESSES_FORM + ":createExcel")
     private WebElement downloadSearchResultAsExcel;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESSES_FORM + ":createPdf")
     private WebElement downloadSearchResultAsPdf;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESSES_FORM + ":actionsButton")
     private WebElement actionsButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":batchActionsButton")
     private WebElement possibleBatchActionsButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":processActionsButton")
     private WebElement possibleProcessActionsButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":createBatchSelection")
     private WebElement createBatchLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":renameBatchSelection")
     private WebElement renameBatchLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":deleteBatchSelection")
     private WebElement deleteBatchLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":addProcessesToBatch")
     private WebElement addProcessesToBatchLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":removeProcessesFromBatchSelection")
     private WebElement removeProcessesFromBatchLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = BATCH_FORM + ":downloadDocket")
     private WebElement downloadDocketForBatchLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "createBatchForm:batchTitle")
     private WebElement createBatchTitleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "createBatchForm:save")
     private WebElement createBatchSaveButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "renameBatchForm:batchTitle")
     private WebElement renameBatchTitleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "renameBatchForm:save")
     private WebElement renameBatchSaveButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = FILTER_INPUT)
     private WebElement filterInput;
 

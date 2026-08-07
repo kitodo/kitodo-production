@@ -20,79 +20,79 @@ public class LdapGroupEditPage extends EditPage<LdapGroupEditPage> {
 
     private static final String LDAP_GROUP_TAB_VIEW = EDIT_FORM + ":ldapGroupTabView";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":title")
     private WebElement titleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":userDn")
     private WebElement userDnInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":homeDirectory")
     private WebElement homeDirectoryInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":gidNumber")
     private WebElement gidNumberInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":objectClasses")
     private WebElement objectClassesInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaSid")
     private WebElement sambaSidInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sn")
     private WebElement snInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":uid")
     private WebElement uidInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":description")
     private WebElement descriptionInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":displayName")
     private WebElement displayNameInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":gecos")
     private WebElement gecosInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":loginShell")
     private WebElement loginShellInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaAcctFlags")
     private WebElement sambaAcctFlagsInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaLogonScript")
     private WebElement sambaLogonScriptInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaPrimaryGroupSid")
     private WebElement sambaPrimaryGroupSidInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaPwdMustChange")
     private WebElement sambaPwdMustChangeInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaPasswordHistory")
     private WebElement sambaPasswordHistoryInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaLogonHours")
     private WebElement sambaLogonHoursInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaKickoffTime")
     private WebElement sambaKickoffTimeInput;
 

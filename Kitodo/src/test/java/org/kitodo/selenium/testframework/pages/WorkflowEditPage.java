@@ -27,19 +27,19 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
     private static final String WORKFLOW_TAB_VIEW = EDIT_FORM + ":workflowTabView";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = WORKFLOW_TAB_VIEW + ":xmlDiagramName")
     private WebElement fileInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = WORKFLOW_TAB_VIEW + ":js-create-diagram")
     private WebElement createDiagram;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = WORKFLOW_TAB_VIEW + ":status")
     private WebElement workflowStatusInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//div[@id='"+WORKFLOW_TAB_VIEW +":status_panel']/div/ul/li[text()='Aktiv']" )
     private WebElement activeOption;
 

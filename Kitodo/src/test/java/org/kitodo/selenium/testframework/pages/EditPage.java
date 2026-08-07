@@ -28,15 +28,15 @@ abstract class EditPage<T> extends Page<T> {
 
     static final String EDIT_FORM = "editForm";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":save")
     WebElement saveButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":cancel")
     WebElement cancelButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":error-messages")
     WebElement errorMessages;
 

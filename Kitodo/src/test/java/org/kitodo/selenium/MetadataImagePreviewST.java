@@ -76,7 +76,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test
     public void imageVisibleTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
 
         // check detail view is not yet visible
@@ -95,7 +95,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test 
     public void zoomLevelTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open detail view and wait for openlayers canvas
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -130,7 +130,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test 
     public void rotationTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open detail view and wait for openlayers canvas
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -165,7 +165,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test
     public void viewPersistsImageChange() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open detail view and wait for openlayers canvas
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -213,7 +213,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test
     public void navigationButtonTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor and detail view
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);

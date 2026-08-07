@@ -30,23 +30,23 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     private static final String PROJECT_TAB_VIEW = EDIT_FORM + ":projectTabView";
     private static final String SAVE_BUTTON_ID = EDIT_FORM + ":save";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECT_TAB_VIEW + ":title")
     private WebElement titleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECT_TAB_VIEW + ":pages")
     private WebElement pagesAmountInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECT_TAB_VIEW + ":band")
     private WebElement volumeAmountInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(className = "ui-chkbox-box")
     private WebElement projectActiveCheckbox;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "editForm:detailLockedButton")
     private WebElement detailLockedButton;
 

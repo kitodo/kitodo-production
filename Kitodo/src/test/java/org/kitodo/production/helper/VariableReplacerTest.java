@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 public class VariableReplacerTest {
 
     int projectId = 12;
+    private static final String VARIABLE_REPLACEMENT_ERROR_MESSAGE = "String was replaced incorrectly!";
 
     @Test
     public void shouldReplaceTitle() {
@@ -41,7 +42,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-title (processtitle) -hardcoded test");
         String expected = "-title Replacement -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-prefs (prefs) -hardcoded test");
         String expected = "-prefs src/test/resources/rulesets/ruleset_test.xml -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-processpath (processpath) -hardcoded test");
         String expected = "-processpath 2 -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-processpath (projectid) -hardcoded test");
         String expected = "-processpath " + projectId + " -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -84,7 +85,7 @@ public class VariableReplacerTest {
                 "-title (processtitle) -filename (filename) -hardcoded test", testFilenameWithPath);
         String expected = "-title Replacement -filename " + testFilename + " -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -98,7 +99,7 @@ public class VariableReplacerTest {
                 testFilenameWithPath);
         String expected = "-filename " + testFilename + " -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replaceWithFilename("-basename (basename) -hardcoded test", testFilename);
         String expected = "-basename testFilename -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
     
     @Test
@@ -123,7 +124,7 @@ public class VariableReplacerTest {
                 testFilenameWithPath);
         String expected = "-filename " + testFilenameWithPath + " -hardcoded test";
 
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test
@@ -172,13 +173,13 @@ public class VariableReplacerTest {
         VariableReplacer variableReplacerTemplate = new VariableReplacer(null, process, null);
         String replaced = variableReplacerTemplate.replace("-title (ocrdworkflowid) -hardcoded test");
         String expected = "-title " + template.getOcrdWorkflowId() + " -hardcoded test";
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
 
         process.setOcrdWorkflowId("/process-ocrd-workflow.sh");
         VariableReplacer variableReplacerProcess = new VariableReplacer(null, process, null);
         replaced = variableReplacerProcess.replace("-title (ocrdworkflowid) -hardcoded test");
         expected = "-title " + process.getOcrdWorkflowId() + " -hardcoded test";
-        assertEquals(expected, replaced, "String was replaced incorrectly!");
+        assertEquals(expected, replaced, VARIABLE_REPLACEMENT_ERROR_MESSAGE);
     }
 
     @Test

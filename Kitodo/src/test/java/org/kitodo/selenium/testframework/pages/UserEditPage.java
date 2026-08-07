@@ -33,87 +33,87 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private static final String USER_TAB_VIEW = EDIT_FORM + ":userTabView";
     private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW)
     private WebElement userEditTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":firstName")
     private WebElement firstNameInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":surname")
     private WebElement lastNameInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":login")
     private WebElement loginInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":password")
     private WebElement passwordInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":passwordValidation")
     private WebElement confirmPasswordInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":location")
     private WebElement locationInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":metaDataLanguage")
     private WebElement metadataLanguageSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":table-size")
     private WebElement tableSizeInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":languages")
     private WebElement languageSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":addRoleButton")
     private WebElement addUserToRoleButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":addProjectButton")
     private WebElement addUserToProjectButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USER_TAB_VIEW + ":addClientButton")
     private WebElement addUserToClientButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "roleForm:selectRoleTable_data")
     private WebElement selectRoleTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "userProjectForm:selectProjectTable_data")
     private WebElement selectProjectTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "userClientForm:selectClientTable_data")
     private WebElement selectClientTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "addRoleDialog")
     private WebElement addToRoleDialog;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "addProjectDialog")
     private WebElement addToProjectDialog;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "addClientDialog")
     private WebElement addToClientDialog;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "user-menu")
     private WebElement userMenuButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(partialLinkText = "Benutzerdaten & Einstellungen")
     private WebElement userConfigButton;
 

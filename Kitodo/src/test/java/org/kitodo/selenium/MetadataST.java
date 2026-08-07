@@ -156,7 +156,7 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void removeMetadataLockTest() throws Exception {
         // Open process in metadata editor by default user to set metadata lock for this process and user
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
         Pages.getMetadataEditorPage().save();
         // Leave metadata editor without explicitly clicking the 'close' button
@@ -174,7 +174,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void changeProcessLinkOrderTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editParentProcessMetadata();
         assertTrue(Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE), "Wrong initial order of linked child processes");
         assertTrue(Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(SECOND_CHILD_PROCESS_TITLE), "Wrong initial order of linked child processes");
@@ -192,7 +192,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void toggleAllStructureNodesTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
         assertEquals(2, Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements(), "Number of visible nodes is wrong initially");
         Pages.getMetadataEditorPage().collapseAll();
@@ -206,7 +206,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void totalNumberOfScansTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertEquals("(3 Medien)", Pages.getMetadataEditorPage().getNumberOfScans(), "Total number of scans is not correct");
     }
@@ -217,7 +217,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void showPaginationByDefaultTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
         Pages.getMetadataEditorPage().closeEditor();
@@ -241,7 +241,7 @@ public class MetadataST extends BaseTestSelenium {
         String paginationScopeId = "paginationForm:selectPaginationScope";
         String paginationTypeId = "paginationForm:paginationTypeSelect";
         String secondTypeCssSelector = "#paginationForm\\:paginationTypeSelect_items li:nth-child(2)";
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         Browser.getDriver().findElement(By.id(paginationTogglerId)).click();
         // get current scope value
@@ -269,7 +269,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void updateMediaReferencesTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_REFERENCES_TEST_PROCESS_TITLE);
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .until(() -> Pages.getMetadataEditorPage().isFileReferencesUpdatedDialogVisible());
@@ -285,7 +285,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void renameMediaFilesTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertEquals(FIRST_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel(), "Second child node in structure tree has wrong label BEFORE renaming media files");
         Pages.getMetadataEditorPage().renameMedia();
@@ -302,7 +302,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void singleDragAndDropPageGalleryTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
@@ -383,7 +383,7 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     @Disabled
     public void multiDragAndDropStructureTreeTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
@@ -465,7 +465,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void createStructureElementTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_PROCESS_TITLE);
         WebElement createdStructure = Pages.getMetadataEditorPage().createStructureElement();
         assertEquals("Band", createdStructure.getText(), "Added structure element has wrong type!");
@@ -508,7 +508,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void movePagesToUnsavedStructureTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_AND_DRAG_N_DROP_TEST_PROCESS_TITLE);
         Pages.getMetadataEditorPage().createStructureElement();
         String dropId = "imagePreviewForm:structuredPages:1:structureElementDataList_content";
@@ -525,7 +525,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void saveLayoutTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         
@@ -573,7 +573,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void showPhysicalPageNumberBelowThumbnailTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
        
         // open the metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -596,7 +596,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void selectDefaultPaginationTypeTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open the metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -633,7 +633,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void showLogicalPageNumberBelowThumbnailTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open the metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -656,7 +656,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void selectStructureTreeTitleTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open the metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -693,7 +693,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void linkPageToNextDivision() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
@@ -741,7 +741,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void linkPageToNextDivisionViaGalleryWhileMediaIsHiddenInStructureTreeTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
@@ -791,7 +791,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void focusRecentlyAddedMetadataRowTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open the metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -852,7 +852,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void openPageInSeparateWindowTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // remember current window handle
         String firstWindowHandle = Browser.getDriver().getWindowHandle();
@@ -899,7 +899,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void importMetadataDialogAppearsTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open the metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -945,7 +945,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void multiSelectInLogicalStructureTreeTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -998,7 +998,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void selectAssignedMediaTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -1029,7 +1029,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void editLinkedProcessMetadataTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editParentProcessMetadata();
         WebDriver webDriver = Browser.getDriver();
 
@@ -1056,7 +1056,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void mediaCanBeRemovedTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
@@ -1093,7 +1093,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void mediaCanBeRemovedAfterDeletingParentLogicalDivisionTest() throws Exception {
-        login("kowal");
+        login(KOWAL_USER);
 
         // open metadata editor
         Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);

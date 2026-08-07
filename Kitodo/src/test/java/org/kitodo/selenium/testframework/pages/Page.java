@@ -38,40 +38,41 @@ public abstract class Page<T> {
     static final String DATA = "_data";
     static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
     static final String WAIT_FOR_FILTER_FORM_MENU = "Wait for filter form menu to open";
+    static final String UNUSED = "unused";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "user-menu")
     private WebElement userMenuButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(className = "ui-growl-item-container")
     private WebElement errorPopup;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(className = "ui-messages-error-summary")
     private WebElement errorMessage;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "yesButton")
     private WebElement confirmRemoveButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "noButton")
     WebElement cancelRemoveButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "headerText")
     private WebElement header;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "search-form:search-field")
     private WebElement searchField;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "search-form:search")
     private WebElement searchButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "portal-header")
     private WebElement pageHeader;
 
