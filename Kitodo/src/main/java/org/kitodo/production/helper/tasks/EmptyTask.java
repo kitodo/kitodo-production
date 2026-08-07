@@ -337,7 +337,7 @@ public class EmptyTask extends Thread {
     }
 
     /**
-     * Returns wether the start button shall be shown
+     * Returns whether the start button shall be shown
      * as read-only property "startable". A thread can be started as long as it
      * has not yet been started.
      *
@@ -348,8 +348,8 @@ public class EmptyTask extends Thread {
     }
 
     /**
-     * Returns wether the stop button shall be shown
-     * as read-only property "stopable". A thread can be stopped if it is
+     * Returns whether the stop button shall be shown
+     * as read-only property "stoppable". A thread can be stopped if it is
      * working.
      *
      * @return whether the stop button shall show

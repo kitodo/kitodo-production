@@ -818,7 +818,7 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /*
-     * Verifies that an image can be openend in a separate window by clicking on the corresponding 
+     * Verifies that an image can be opened in a separate window by clicking on the corresponding 
      * context menu item of the first logical tree node.
      */
     @Test

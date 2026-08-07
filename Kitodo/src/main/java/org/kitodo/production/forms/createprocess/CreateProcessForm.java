@@ -767,8 +767,8 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
 
 
     /**
-     * Saves the metadata files of the main process, all anchestors and children.
-     * We update all anchestors in the database and index as well.
+     * Saves the metadata files of the main process, all ancestors and children.
+     * We update all ancestors in the database and index as well.
      * If they already have a database entry, they are NOT updated automatically when saving the
      * main process.
      */

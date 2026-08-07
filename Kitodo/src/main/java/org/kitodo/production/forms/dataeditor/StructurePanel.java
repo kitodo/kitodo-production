@@ -272,7 +272,7 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Delete all currently selected physical divisons.
+     * Delete all currently selected physical divisions.
      */
     public void deleteSelectedPhysicalDivisions() {
         if (Objects.nonNull(selectedPhysicalNodes)) {

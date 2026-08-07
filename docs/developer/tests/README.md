@@ -9,7 +9,7 @@ When the application code changes, it should produce different results and cause
 tests to fail. If a unit test does not fail in this situation, it may indicate an issue
 with the test suite.
 
-To run a mutation test, you have to add the Pitest plugin to build/plugins in your moduls pom.xml.
+To run a mutation test, you have to add the Pitest plugin to build/plugins in your modules pom.xml.
 
 ```
 <plugin>
