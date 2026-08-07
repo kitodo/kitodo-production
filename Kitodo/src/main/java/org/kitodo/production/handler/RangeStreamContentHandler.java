@@ -162,7 +162,7 @@ public class RangeStreamContentHandler extends BaseDynamicContentHandler {
         } else if (ranges.size() == 1) {
             // Return single part of file.
             Range r = ranges.getFirst();
-            logger.info("Returning part of file : from (" + r.getStart() + ") to (" + r.getEnd() + ")");
+            logger.info("Returning part of file : from ({}) to ({})", r.getStart(), r.getEnd());
             response.setContentType(streamedContent.getContentType());
             response.setHeader("Content-Range", "bytes " + r.getStart() + "-" + r.getEnd() + "/" + r.getTotal());
             response.setHeader("Content-Length", String.valueOf(r.getLength()));
@@ -177,7 +177,7 @@ public class RangeStreamContentHandler extends BaseDynamicContentHandler {
             ServletOutputStream servletOutputStream = (ServletOutputStream) outputStream;
             // Copy multi part range.
             for (Range r : ranges) {
-                logger.info("Return multi part of file : from (" + r.getStart() + ") to (" + r.getEnd() + ")");
+                logger.info("Return multi part of file : from ({}) to ({})", r.getStart(), r.getEnd());
                 // Add multipart boundary and header fields for every range.
                 servletOutputStream.println();
                 servletOutputStream.println("--" + MULTIPART_BOUNDARY);

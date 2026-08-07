@@ -71,7 +71,7 @@ public class RenameMediaThread extends EmptyTask {
                         renamingMap);
                 try (OutputStream out = ServiceManager.getFileService().write(metaXmlUri)) {
                     ServiceManager.getMetsService().save(workpiece, out);
-                    logger.info("Renamed " + numberOfRenamedFiles + " media files for process " + process.getId());
+                    logger.info("Renamed {} media files for process {}", numberOfRenamedFiles, process.getId());
                 }
             } catch (IOException | URISyntaxException | SAXException | FileStructureValidationException e) {
                 logger.error(e.getMessage());

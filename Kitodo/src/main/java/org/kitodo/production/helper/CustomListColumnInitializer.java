@@ -58,10 +58,8 @@ public class CustomListColumnInitializer {
         } catch (DAOException e) {
             logger.error("Unable to update custom list columns in database!");
         } catch (NoSuchElementException e) {
-            logger.info("Configuration key '"
-                    + ParameterCore.PROCESS_PROPERTIES
-                    + "' or '" + ParameterCore.TASK_CUSTOM_COLUMNS
-                    + "' not found in configuration => unable to load corresponding custom columns!");
+            logger.info("Configuration key '{}' or '{}' not found in configuration => unable to load corresponding custom columns!",
+                    ParameterCore.PROCESS_PROPERTIES, ParameterCore.TASK_CUSTOM_COLUMNS);
         }
     }
 
