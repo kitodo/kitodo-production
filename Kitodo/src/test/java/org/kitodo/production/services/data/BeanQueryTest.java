@@ -87,8 +87,8 @@ public class BeanQueryTest {
         BeanQuery beanQuery = new BeanQuery(Process.class);
         beanQuery.addNotInCollectionRestriction("id", excludedProcessIds);
         assertThat("should construct HQL query with not in collection restriction", beanQuery.formQueryForAll(),
-            containsString("WHERE process.id NOT IN (:id)"));
-        assertThat("should define id as Collection<Integer>", beanQuery.getQueryParameters().get("id"), is(equalTo(
+            containsString("WHERE process.id NOT IN (:idNotIn)"));
+        assertThat("should define id as Collection<Integer>", beanQuery.getQueryParameters().get("idNotIn"), is(equalTo(
             excludedProcessIds)));
     }
 
