@@ -122,6 +122,14 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
         assignMappingFile();
     }
 
+    /**
+     * Create a new import configuration with file upload.
+     */
+    public void insertFileUploadImportConfiguration() {
+        titleInput.sendKeys("File upload configuration");
+        selectFileUpload();
+    }
+
     public void save() throws ReflectiveOperationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
     }
@@ -129,6 +137,20 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
     private void selectCatalogSearch() {
         clickElement(configurationTypeMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(configurationTypeMenu.getAttribute("id") + "_1")));
+    }
+
+    private void selectFileUpload() {
+        clickElement(configurationTypeMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(configurationTypeMenu.getAttribute("id") + "_2")));
+    }
+
+    /**
+     * Returns the currently selected upload metadata format.
+     *
+     * @return currently selected upload metadata format as String
+     */
+    public String getUploadMetadataFormat() {
+        return Browser.getDriver().findElement(By.id("editForm:importConfigurationTabView:uploadMetadataFormat")).getText();
     }
 
     private void selectCustomInterfaceType() {
