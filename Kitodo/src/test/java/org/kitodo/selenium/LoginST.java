@@ -14,6 +14,7 @@ package org.kitodo.selenium;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +65,8 @@ public class LoginST extends BaseTestSelenium {
         final String csrfToken = (String) Browser.getDriver().executeScript("return $('input[name=\"_csrf\"]').val();");
 
         // check that CSRF token is not empty
-        assertFalse(csrfToken.isEmpty());
+        assertNotNull(csrfToken);
+        assertFalse(csrfToken.isBlank());
 
         // modify CSRF token to something invalid
         Browser.getDriver().executeScript("$('input[name=\"_csrf\"]').val('abc');");
@@ -77,11 +79,11 @@ public class LoginST extends BaseTestSelenium {
                 .until(() -> Pages.getLoginPage().isAt());
 
         // retrieve CSRF token again 
-        final String csrfTokeAfterFailure = (String) Browser.getDriver().executeScript("return $('input[name=\"_csrf\"]').val();");
+        final String csrfTokenAfterFailure = (String) Browser.getDriver().executeScript("return $('input[name=\"_csrf\"]').val();");
 
         // check that CSRF token has changed (due to reload)
-        assertNotEquals("abc", csrfTokeAfterFailure);
-        assertNotEquals(csrfToken, csrfTokeAfterFailure);
+        assertNotEquals("abc", csrfTokenAfterFailure);
+        assertNotEquals(csrfToken, csrfTokenAfterFailure);
 
         // do successful login 
         loginPage.performLoginAsAdmin();
