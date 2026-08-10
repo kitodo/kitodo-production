@@ -144,6 +144,7 @@ public final class XMLSecurity {
      */
     public static SAXSource newSecureSource(InputStream inputStream) throws ParserConfigurationException, SAXException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
         factory.setFeature(DISALLOW_DOCTYPE_DECL, true);
         factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
         factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
