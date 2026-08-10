@@ -53,6 +53,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.utils.XMLSecurity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -248,7 +249,7 @@ public class ExportMets {
     private Map<String, String> extractLabels(byte[] xmlBytes) {
         Map<String, String> labels = new HashMap<>();
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = XMLSecurity.newDocumentBuilderFactory();
             factory.setNamespaceAware(true);
             Document doc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
             XPath xpath = XPathFactory.newInstance().newXPath();

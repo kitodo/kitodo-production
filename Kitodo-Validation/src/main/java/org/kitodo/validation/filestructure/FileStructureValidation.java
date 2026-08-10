@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.filestructure.FileStructureValidationInterface;
+import org.kitodo.utils.XMLSecurity;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -87,13 +88,18 @@ public class FileStructureValidation implements FileStructureValidationInterface
 
     private Validator initializeXmlValidator(Collection<URI> xsdFilePaths) throws SAXException {
         FileStructureValidationErrorHandler xmlValidationErrorHandler = new FileStructureValidationErrorHandler();
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory schemaFactory = XMLSecurity.newSchemaFactory();
         Source[] sources = new Source[xsdFilePaths.size()];
         for (int i = 0; i < xsdFilePaths.size(); i++) {
             sources[i] = new StreamSource(new File(xsdFilePaths.toArray(new URI[0])[i]));
         }
         Schema schema = schemaFactory.newSchema(sources);
         Validator xmlValidator = schema.newValidator();
+        try {
+            xmlValidator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException e) {
+            logger.warn("Unable to restrict external access on Validator: {}", e.getMessage());
+        }
         xmlValidator.setErrorHandler(xmlValidationErrorHandler);
         return xmlValidator;
     }
