@@ -788,7 +788,11 @@ public class GalleryPanel {
                 if (Objects.nonNull(galleryStripe)) {
                     return dataEditor.isSelected(physicalDivision, galleryStripe.getStructure());
                 } else {
-                    return dataEditor.isSelected(physicalDivision, getLogicalStructureOfMedia(galleryMediaContent).getStructure());
+                    GalleryStripe logicalStructure = getLogicalStructureOfMedia(galleryMediaContent);
+                    if (Objects.nonNull(logicalStructure)) {
+                        return dataEditor.isSelected(physicalDivision, logicalStructure.getStructure());
+                    }
+                    return false;
                 }
             }
         }
@@ -898,13 +902,13 @@ public class GalleryPanel {
      * @param selectionType the type of selection based on the pressed modifier key
      */
     private void select(GalleryMediaContent currentSelection, GalleryStripe parentStripe, String selectionType) {
-        if (Objects.isNull(parentStripe)) {
-            parentStripe = getLogicalStructureOfMedia(currentSelection);
-        }
-
         if (Objects.isNull(currentSelection)) {
             Helper.setErrorMessage("Passed GalleryMediaContent must not be null.");
             return;
+        }
+
+        if (Objects.isNull(parentStripe)) {
+            parentStripe = getLogicalStructureOfMedia(currentSelection);
         }
 
         switch (selectionType) {

@@ -138,18 +138,22 @@ public class MediaPartialsPanel implements Serializable {
     public List<SelectItem> getMediaPartialChildDivisionsOfSelection() {
         List<SelectItem> mediaPartialDivisions = new ArrayList<>();
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
-        if (Objects.nonNull(lastSelection) && MediaUtil.isAudioOrVideo(
-                dataEditor.getGalleryPanel().getGalleryMediaContent(lastSelection.getKey()).getMediaViewMimeType())) {
-            mediaPartialDivisions.addAll(DataEditorService.getSortedAllowedSubstructuralElements(
-                    dataEditor.getRulesetManagement()
-                    .getStructuralElementView(lastSelection.getRight().getType(), dataEditor.getAcquisitionStage(),
-                            dataEditor.getPriorityList()), dataEditor.getProcess().getRuleset()));
-            Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
-                    .getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
-            mediaPartialDivisions = mediaPartialDivisions.stream()
-                    .filter(selectItem -> selectItem.getValue() instanceof String)
-                    .filter(selectItem -> mediaPartialDivisionIds.contains((String) selectItem.getValue()))
-                    .collect(Collectors.toList());
+        if (Objects.nonNull(lastSelection)) {
+            GalleryMediaContent galleryMediaContent = dataEditor.getGalleryPanel()
+                    .getGalleryMediaContent(lastSelection.getKey());
+            if (Objects.nonNull(galleryMediaContent)
+                    && MediaUtil.isAudioOrVideo(galleryMediaContent.getMediaViewMimeType())) {
+                mediaPartialDivisions.addAll(DataEditorService.getSortedAllowedSubstructuralElements(
+                        dataEditor.getRulesetManagement()
+                        .getStructuralElementView(lastSelection.getRight().getType(), dataEditor.getAcquisitionStage(),
+                                dataEditor.getPriorityList()), dataEditor.getProcess().getRuleset()));
+                Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
+                        .getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
+                mediaPartialDivisions = mediaPartialDivisions.stream()
+                        .filter(selectItem -> selectItem.getValue() instanceof String)
+                        .filter(selectItem -> mediaPartialDivisionIds.contains((String) selectItem.getValue()))
+                        .collect(Collectors.toList());
+            }
         }
         return mediaPartialDivisions;
     }

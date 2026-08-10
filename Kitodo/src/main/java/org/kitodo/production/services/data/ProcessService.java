@@ -1989,15 +1989,17 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      */
     public static void downloadToHome(WebDav webDav, int processId) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processId);
-        if (ServiceManager.getProcessService().isImageFolderInUse(process)) {
-            Helper.setMessage(
-                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
-                            + Helper.getTranslation("isInUse"),
-                    ServiceManager.getUserService()
-                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
-            webDav.downloadToHome(process, true);
-        } else {
-            webDav.downloadToHome(process, false);
+        if (Objects.nonNull(process)) {
+            if (ServiceManager.getProcessService().isImageFolderInUse(process)) {
+                Helper.setMessage(
+                        Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                                + Helper.getTranslation("isInUse"),
+                        ServiceManager.getUserService()
+                                .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
+                webDav.downloadToHome(process, true);
+            } else {
+                webDav.downloadToHome(process, false);
+            }
         }
     }
 
