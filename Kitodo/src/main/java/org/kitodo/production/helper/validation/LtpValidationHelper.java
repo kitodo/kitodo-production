@@ -297,7 +297,7 @@ public class LtpValidationHelper {
      * @return the map of validation results for each file in the folder
      */
     public static Map<URI, LtpValidationResult> validateImageFolderForTask(Task task, Folder folder) {
-        logger.debug("validating images in folder: " + folder.getRelativePath());
+        logger.debug("validating images in folder: {}", folder.getRelativePath());
 
         Subfolder subfolder = new Subfolder(task.getProcess(), folder);
         Optional<FileType> fileType = subfolder.getFileFormat().getFileType();
@@ -445,7 +445,7 @@ public class LtpValidationHelper {
             return true;
         }
 
-        logger.debug("validate uploaded file: " + absoluteFilePath);
+        logger.debug("validate uploaded file: {}", absoluteFilePath);
         Optional<FileType> fileType = subfolder.getFileFormat().getFileType();
         List<LtpValidationCondition> conditions = folder.getLtpValidationConfiguration().getValidationConditions();
         LtpValidationResult result = ltpService.validate(absoluteFilePath, fileType.orElse(null), conditions);

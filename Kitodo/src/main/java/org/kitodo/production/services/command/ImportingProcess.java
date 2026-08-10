@@ -191,7 +191,7 @@ final class ImportingProcess {
             FileStructureValidationException {
 
         this.importingProcesses = importingProcesses;
-        logger.info("Starting to validate " + this.directoryName);
+        logger.info("Starting to validate {}", this.directoryName);
         Path metaFilePath = sourceDir.resolve(META_FILE_NAME);
         Workpiece workpiece = metsService.loadWorkpiece(metaFilePath.toUri());
         validateMetsFile(ruleset, strictValidation, workpiece);
@@ -204,8 +204,8 @@ final class ImportingProcess {
         baseType = workpiece.getLogicalStructure().getType();
         title = formProcessTitle(ruleset, workpiece);
 
-        logger.info("Validation of " + this.directoryName + (errors.isEmpty() ? " completed without errors"
-                : " completed with errors:" + lineSeparator() + String.join(lineSeparator(), errors)));
+        logger.info("Validation of {}{}", this.directoryName, errors.isEmpty() ? " completed without errors" : " completed with errors:"
+                + lineSeparator() + String.join(lineSeparator(), errors));
     }
 
     /**
@@ -444,7 +444,7 @@ final class ImportingProcess {
                     workpiece.getLogicalStructure().getMetadata());
             }
             processId = createDatabaseProcess();
-            logger.info("Created process #" + processId);
+            logger.info("Created process #{}", processId);
         } else if (action == 1) {
             createBaseDirectory(processId.toString());
             filesAndDirectoriesIterator = filesAndDirectories.iterator();
@@ -514,7 +514,7 @@ final class ImportingProcess {
         fileService.searchForMedia(process, workpiece);
         Path outputMetsFile = outputDir.resolve(META_FILE_NAME);
         metsService.saveWorkpiece(workpiece, outputMetsFile.toUri());
-        logger.info("Wrote METS file " + outputMetsFile);
+        logger.info("Wrote METS file {}", outputMetsFile);
     }
 
     private void addLinkInDatabase(Process parent, Integer childProcessId) throws DAOException {
@@ -548,7 +548,7 @@ final class ImportingProcess {
             } else {
                 Files.write(errorFile, errors, StandardCharsets.UTF_8);
             }
-            logger.info("Wrote errors file " + errorFile);
+            logger.info("Wrote errors file {}", errorFile);
         } else {
             copyDirectoryOrFile(filesAndDirectories.get(action - 2));
         }
@@ -579,7 +579,7 @@ final class ImportingProcess {
     private void createBaseDirectory(String directoryName) throws IOException {
         outputDir = copyToRoot.resolve(directoryName);
         Files.createDirectories(outputDir);
-        logger.info("Created process directory " + outputDir);
+        logger.info("Created process directory {}", outputDir);
     }
 
     /**
@@ -594,11 +594,11 @@ final class ImportingProcess {
         Path destinationItem = outputDir.resolve(relativeItem);
         if (Files.isDirectory(sourceItem)) {
             Files.createDirectories(destinationItem);
-            logger.info("Created directory " + destinationItem);
+            logger.info("Created directory {}", destinationItem);
         } else {
             Files.copy(sourceItem, destinationItem, StandardCopyOption.REPLACE_EXISTING,
                 StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS);
-            logger.info("Copied " + sourceItem + " as " + destinationItem);
+            logger.info("Copied {} as {}", sourceItem, destinationItem);
         }
     }
 

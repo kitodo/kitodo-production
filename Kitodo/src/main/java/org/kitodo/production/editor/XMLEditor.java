@@ -149,7 +149,7 @@ public class XMLEditor implements Serializable {
         } catch (TransformerConfigurationException e) {
             logger.error("ERROR: transformer configuration exception: {}", e.getMessage());
         } catch (FileNotFoundException e) {
-            logger.error("ERROR: file not found: " + e.getMessage());
+            logger.error("ERROR: file not found: {}", e.getMessage());
         } catch (IOException e) {
             logger.error("ERROR: could not save XML configuration: {}", e.getMessage());
         } catch (SAXException e) {

@@ -401,7 +401,7 @@ public class KitodoServiceLoader<T> {
             if (!jarsToBeAdded.isEmpty()) {
 
                 for (URL url : jarsToBeAdded) {
-                    logger.info("Loading module jar file from path " + url.toString());
+                    logger.info("Loading module jar file from path {}", url.toString());
                     KitodoServiceLoader.loadedJars.add(url.toString());
                 }
                 URL[] urls = new URL[jarsToBeAdded.size()];

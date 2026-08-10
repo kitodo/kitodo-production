@@ -257,7 +257,7 @@ public class ProcessTestUtils {
      */
     public static void logTestProcessInfo(Process process) {
         logger.info(" ************* ");
-        logger.info(" Process '" + process.getTitle() + "' has ID " + process.getId());
+        logger.info(" Process '{}' has ID {}", process.getTitle(), process.getId());
         logger.info(" ************* ");
     }
 

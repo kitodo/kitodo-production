@@ -71,7 +71,7 @@ public class ActiveMQDirector implements Runnable {
     }
 
     private Connection getConnectionFromActiveMQSslFactory(String server) throws Exception {
-        logger.trace("Using the ActiveMQSslConnectionFactory to establish a connection to \"" + server + "\"");
+        logger.trace("Using the ActiveMQSslConnectionFactory to establish a connection to \"{}\"", server);
         ActiveMQSslConnectionFactory factory = new ActiveMQSslConnectionFactory(server);
         factory.setKeyStore(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_KEYSTORE));
         factory.setKeyStorePassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_KEYSTORE_PASSWORD));
@@ -79,7 +79,7 @@ public class ActiveMQDirector implements Runnable {
         factory.setTrustStorePassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_TRUSTSTORE_PASSWORD));
 
         if (ConfigCore.getBooleanParameter(ParameterCore.ACTIVE_MQ_USE_AUTH, false))  {
-            logger.trace("Using authentication on connection \"" + server + "\"");
+            logger.trace("Using authentication on connection \"{}\"", server);
             factory.setUserName(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_USERNAME));
             factory.setPassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_PASSWORD));
         }
@@ -88,11 +88,11 @@ public class ActiveMQDirector implements Runnable {
     }
 
     private Connection getConnectionFromActiveMQFactory(String server) throws JMSException {
-        logger.trace("Using the ActiveMQConnectionFactory to establish a connection to \"" + server + "\"");
+        logger.trace("Using the ActiveMQConnectionFactory to establish a connection to \"{}\"", server);
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(server);
 
         if (ConfigCore.getBooleanParameter(ParameterCore.ACTIVE_MQ_USE_AUTH, false))  {
-            logger.trace("Using authentication on connection \"" + server + "\"");
+            logger.trace("Using authentication on connection \"{}\"", server);
             factory.setUserName(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_USERNAME));
             factory.setPassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_PASSWORD));
         }
