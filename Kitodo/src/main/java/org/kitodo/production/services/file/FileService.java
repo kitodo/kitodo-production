@@ -1428,9 +1428,8 @@ public class FileService {
 
     /**
      * Rename media files of current process according to their corresponding media units order attribute. Given Map
-     * "filenameMapping" is altered via side effect and does not need to be returned. Instead, the number of acutally
+     * "filenameMapping" is altered via side effect and does not need to be returned. Instead, the number of actually
      * changed filenames is returned to the calling method.
-     *
      * @param process Process object for which media files are renamed.
      * @param workpiece Workpiece object of process
      * @param filenameMapping Bidirectional map containing current filename mapping; empty until first renaming

@@ -649,7 +649,7 @@ public class MigrationForm extends BaseForm {
     }
 
     /**
-     * Start updating internal meta information in separat tasks.
+     * Start updating internal meta information in separate tasks.
      */
     public void startUpdateInternalMetaInformation() {
         for (Project project : selectedProjects) {

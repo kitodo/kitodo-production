@@ -275,7 +275,7 @@ public class KitodoJhoveNisoImageMetadataHelper {
      * Extract indexed label properties and add them to the metadata map.
      * 
      * @param metadata
-     *            the niso image matadata
+     *            the niso image metadata
      * @param map
      *            the simple string map that is being filled
      */

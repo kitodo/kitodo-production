@@ -22,7 +22,7 @@ import org.kitodo.production.services.image.MissingOrDamagedImagesFilterPredicat
  */
 public enum GenerationMode {
     /**
-     * Gerenates all images.
+     * Generates all images.
      */
     ALL {
         @Override

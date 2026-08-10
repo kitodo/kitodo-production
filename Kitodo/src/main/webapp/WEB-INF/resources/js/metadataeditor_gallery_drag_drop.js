@@ -23,7 +23,7 @@
  */
 function registerMakeDragAndDroppable() {
 
-    // define debouce function that will allow to make components draggable in one go
+    // define debounce function that will allow to make components draggable in one go
     // after all of them have been updated via Primefaces when reloading the gallery
     function makeDebounced(func, timeout = 100) {
         let timer = null;

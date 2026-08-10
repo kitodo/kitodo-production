@@ -42,7 +42,7 @@ import org.kitodo.longtermpreservationvalidation.conditions.LtpValidationConditi
  * <p>
  * The png module (PNG-gdm, "com.mcgath.jhove.module.PngModule") is disabled,
  * because it depends on the package "jhove-ext-modules". For some reason,
- * including this jar interfers with the xml processing in Kitodo.Production
+ * including this jar interferes with the xml processing in Kitodo.Production
  * somehow. Specifically, mods2kitodo schema conversion does not work correctly.
  * </p>
  */
@@ -122,7 +122,7 @@ public class KitodoJhoveBase {
      * Validates an existing file.
      * 
      * @param module
-     *            the JHove module that is used to validate the exsting file
+     *            the JHove module that is used to validate the existing file
      * @param file
      *            the existing file
      * @param conditions

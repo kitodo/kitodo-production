@@ -39,7 +39,7 @@ public abstract class Division<T extends Division<T>> {
     private List<URI> contentIds = new ArrayList<>(0);
 
     /**
-     * The label for this divison.
+     * The label for this division.
      */
     private String label;
 

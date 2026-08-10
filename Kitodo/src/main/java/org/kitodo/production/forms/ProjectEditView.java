@@ -476,7 +476,7 @@ public class ProjectEditView extends BaseEditView {
     /**
      * Gets the locked status of the form.
      *
-     * @return te value of locked
+     * @return the value of locked
      */
     public boolean isLocked() {
         return locked;
