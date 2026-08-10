@@ -12,11 +12,16 @@
 package org.kitodo.data.database.persistence;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.ListUtils;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class ProcessDAO extends BaseDAO<Process> {
+
+    private static final int UPDATE_CHUNK_SIZE = 1000;
 
     @Override
     public Process getById(Integer id) throws DAOException {
@@ -86,5 +91,31 @@ public class ProcessDAO extends BaseDAO<Process> {
     @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Process.class, id);
+    }
+
+    /**
+     * Sets the given import configuration for the processes identified by the
+     * provided IDs.
+     *
+     * @param processIds
+     *            IDs of processes to update
+     * @param configuration
+     *            import configuration to assign
+     */
+    public void setImportConfigurationForProcesses(
+            List<Integer> processIds,
+            ImportConfiguration configuration) throws DAOException {
+
+        for (List<Integer> processIdChunk
+                : ListUtils.partition(processIds, UPDATE_CHUNK_SIZE)) {
+            executeUpdate(
+                "UPDATE Process process "
+                    + "SET process.importConfiguration = :configuration "
+                    + "WHERE process.id IN (:processIds)",
+                Map.of(
+                    "configuration", configuration,
+                    "processIds", processIdChunk
+                ));
+        }
     }
 }
