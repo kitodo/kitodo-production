@@ -45,7 +45,8 @@
             <h:form id="retryForm">
                 <p:panelGrid columns="1">
                     <p:column>
-                        <p:button href="#{request.contextPath}/logout"
+                        <p:button href="#"
+                                  onclick="$('#retryForm')[0].action='#{request.contextPath}/logout';$('#retryForm')[0].submit();"
                                   id="logoutButton"
                                   value="#{msgs.logout}"
                                   styleClass="primary right"
