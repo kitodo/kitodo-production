@@ -153,7 +153,7 @@
     <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
       <mets:xmlData>
         <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
-          <kitodo:metadata name="TitleDocMain">Lageplan und Gartengrundstück des Phramazeutischen Institutes</kitodo:metadata>
+          <kitodo:metadata name="TitleDocMain">Lageplan und Gartengrundstück des Pharmazeutischen Institutes</kitodo:metadata>
         </kitodo:kitodo>
       </mets:xmlData>
     </mets:mdWrap>
@@ -270,7 +270,7 @@
     <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
       <mets:xmlData>
         <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
-          <kitodo:metadata name="TitleDocMain">Liste der Regagenzien</kitodo:metadata>
+          <kitodo:metadata name="TitleDocMain">Liste der Reagenzien</kitodo:metadata>
         </kitodo:kitodo>
       </mets:xmlData>
     </mets:mdWrap>
@@ -828,7 +828,7 @@
     <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
       <mets:xmlData>
         <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
-          <kitodo:metadata name="TitleDocMain">Raum für Vorgeschrittene</kitodo:metadata>
+          <kitodo:metadata name="TitleDocMain">Raum für Fortgeschrittene</kitodo:metadata>
         </kitodo:kitodo>
       </mets:xmlData>
     </mets:mdWrap>

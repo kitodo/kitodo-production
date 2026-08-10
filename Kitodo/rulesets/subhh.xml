@@ -302,7 +302,7 @@
             'key' tag:
                 If present, declares the containing element to be a subclass of
                 kitodo:metadataGroup (otherwise the element is a subclass of
-                kitodo:metatadata). For attributes and member tags, the
+                kitodo:metadata). For attributes and member tags, the
                 definition given above applies, with the exception of the
                 domain, which can only be set on the very outer key tag and is
                 inherited by all sub-keys. A key that groups other keys should
@@ -617,7 +617,7 @@
                 <label>Abt Herwegen Institut Maria Laach</label>
             </option>
             <option value="GAU">
-                <label>Altägypthisches Seminar GAU</label>
+                <label>Altägyptisches Seminar GAU</label>
             </option>
             <option value="Alber"/>
             <option value="ArchivfuerLiturgiewissenschaften">

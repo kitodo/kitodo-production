@@ -225,7 +225,7 @@ public class FileLoader {
         content.add(
             "        <item from=\"vorlage\" isdoctype=\"monograph|multivolume|periodical\" ughbinding=\"true\" docstruct=\"topstruct\" met"
                     + "adata=\"ListOfCreators\"> Autoren </item>");
-        content.add("        <!-- identifer -->");
+        content.add("        <!-- identifier -->");
         content.add(
             "        <item from=\"werk\" isnotdoctype=\"periodical\" ughbinding=\"true\" metadata=\"TSL_ATS\" docstruct=\"topstruct\">ATS<"
                     + "/item>");

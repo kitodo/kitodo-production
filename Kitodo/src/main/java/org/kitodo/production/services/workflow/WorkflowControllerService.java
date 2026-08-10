@@ -383,7 +383,7 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Unassing user from task.
+     * Unassign user from task.
      *
      * @param task
      *            object

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+    <mets:dmdSec ID="DMDLOG_0000">
+        <mets:mdWrap>
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Vorgang mit fehlerhafter METS-Struktur</kitodo:metadata>
+                    <kitodo:metadata name="document_type">Monograph</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
+    </mets:structMap>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="PHYS_0000" TYPE="physSequence"/>
+    </mets:structMap>
+</mets:mets>

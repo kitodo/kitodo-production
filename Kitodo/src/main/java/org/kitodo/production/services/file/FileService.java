@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -141,8 +140,7 @@ public class FileService {
             logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
         } else {
             CommandService commandService = ServiceManager.getCommandService();
-            String path = FileSystems.getDefault()
-                    .getPath(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
+            String path = Paths.get(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
                     .normalize().toAbsolutePath().toString();
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
@@ -1430,9 +1428,8 @@ public class FileService {
 
     /**
      * Rename media files of current process according to their corresponding media units order attribute. Given Map
-     * "filenameMapping" is altered via side effect and does not need to be returned. Instead, the number of acutally
+     * "filenameMapping" is altered via side effect and does not need to be returned. Instead, the number of actually
      * changed filenames is returned to the calling method.
-     *
      * @param process Process object for which media files are renamed.
      * @param workpiece Workpiece object of process
      * @param filenameMapping Bidirectional map containing current filename mapping; empty until first renaming

@@ -194,7 +194,7 @@ public class LtpValidationConfigurationEditView extends BaseEditView {
 
     /**
      * Adds an empty validation condition to the list of conditions if the user
-     * clicks on the add validation condition buttton.
+     * clicks on the add validation condition button.
      */
     public void addValidationCondition() {
         LtpValidationCondition condition = new LtpValidationCondition();
@@ -260,12 +260,12 @@ public class LtpValidationConfigurationEditView extends BaseEditView {
      * @param operation
      *            the expected operation
      * @return true if the condition is a condition matching the given property
-     *         and operation, indepedent of its value
+     *         and operation, independent of its value
      */
     private boolean isSimpleCondition(LtpValidationCondition condition, String property,
             LtpValidationConditionOperation operation) {
         if (Objects.nonNull(condition) && Objects.nonNull(condition.getProperty())
-                && condition.getProperty().toLowerCase().equals(property.toLowerCase())
+                && condition.getProperty().equalsIgnoreCase(property)
                 && Objects.nonNull(condition.getOperation()) && condition.getOperation().equals(operation)) {
             return true;
         }
@@ -434,7 +434,7 @@ public class LtpValidationConfigurationEditView extends BaseEditView {
      * Sets the filename pattern that needs to match each file of a folder.
      * 
      * @param simpleFilenamePattern
-     *            the filname pattern
+     *            the filename pattern
      */
     public void setSimpleFilenamePattern(String simpleFilenamePattern) {
         this.simpleFilenamePattern = simpleFilenamePattern;

@@ -192,7 +192,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     /**
      * Return the currently selected mime type value (not label).
      * 
-     * @return the currrently selected mime type value (not label)
+     * @return the currently selected mime type value (not label)
      */
     public String getMimeType() throws Exception {
         return new Select(mimeTypeSelect).getFirstSelectedOption().getAttribute("value");

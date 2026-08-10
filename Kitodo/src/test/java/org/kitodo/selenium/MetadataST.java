@@ -475,7 +475,7 @@ public class MetadataST extends BaseTestSelenium {
      * Verifies that moving media to newly created, but unsaved structure element in the gallery using drag'n'drop works
      * as expected.
      *
-     * @throws Exception when page nagivation fails
+     * @throws Exception when page navigation fails
      */
     @Test
     public void movePagesToUnsavedStructureTest() throws Exception {
@@ -818,7 +818,7 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /*
-     * Verifies that an image can be openend in a separate window by clicking on the corresponding 
+     * Verifies that an image can be opened in a separate window by clicking on the corresponding 
      * context menu item of the first logical tree node.
      */
     @Test

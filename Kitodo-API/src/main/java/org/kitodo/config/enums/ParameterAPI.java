@@ -34,7 +34,7 @@ public enum ParameterAPI implements ParameterInterface {
      */
     DIR_XML_CONFIG("directory.config");
 
-    private String name;
+    private final String name;
 
     /**
      * Private constructor to hide the implicit public one.

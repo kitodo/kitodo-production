@@ -38,8 +38,8 @@ public enum KitodoConfigFile {
      */
     LOGIN_BLACKLIST("kitodo_loginBlacklist.txt");
 
-    private String name;
-    private File file;
+    private final String name;
+    private final File file;
 
     /**
      * Private constructor for KitodoConfigFile enum.

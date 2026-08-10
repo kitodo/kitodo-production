@@ -40,7 +40,7 @@ public class FolderGenerator {
     private static final double PERCENT = 100.0d;
 
     /**
-     * Image resoulution in DPI.
+     * Image resolution in DPI.
      */
     private int dpi = 300;
 
@@ -95,7 +95,7 @@ public class FolderGenerator {
     /**
      * Returns the selected generator method.
      *
-     * @return the generator methodd
+     * @return the generator method
      */
     public String getMethod() {
         if (folder.getDerivative().isPresent()) {

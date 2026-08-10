@@ -34,7 +34,7 @@ public class DataEditorSettingService extends BaseBeanService<DataEditorSetting,
     }
 
     /**
-     * Return signleton variable of type DataEditorSettingService.
+     * Return singleton variable of type DataEditorSettingService.
      *
      * @return unique instance of DataEditorSettingService
      */

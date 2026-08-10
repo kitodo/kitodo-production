@@ -34,7 +34,7 @@
                 <item from="vorlage" ughbinding="true"
                       docstruct="topstruct" metadata="ListOfCreators">Autoren
                 </item>
-                <!-- identifer -->
+                <!-- identifier -->
                 <item from="werk" ughbinding="true" metadata="TSL_ATS" docstruct="topstruct">
                     ATS
                 </item>

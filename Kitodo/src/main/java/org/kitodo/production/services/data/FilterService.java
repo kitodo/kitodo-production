@@ -380,11 +380,11 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
      * @return filter for search item, or {@code null} if it doesn’t make sense
      */
     private static UserSpecifiedFilter parseQueryPart(String item, boolean indexed) {
-        boolean substract = item.startsWith(NOT_SEARCH_PREFIX);
-        if (substract) {
+        boolean subtract = item.startsWith(NOT_SEARCH_PREFIX);
+        if (subtract) {
             item = item.substring(1);
         }
-        boolean operand = !substract;
+        boolean operand = !subtract;
 
         int colon = item.indexOf(":");
         if (colon < 0) {

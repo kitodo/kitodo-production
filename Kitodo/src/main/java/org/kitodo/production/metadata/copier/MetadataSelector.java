@@ -28,7 +28,7 @@ public abstract class MetadataSelector extends DataSelector {
      *
      * @param path
      *            path to create a metadata selector from.
-     * @return a metadata selector instance representing the given paht
+     * @return a metadata selector instance representing the given path
      * @throws ConfigurationException
      *             if the path cannot be evaluated
      */

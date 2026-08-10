@@ -21,14 +21,18 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.config.enums.ParameterAPI;
+import org.mockito.MockedStatic;
 
 public class KitodoConfigTest {
 
     private static ParameterAPI NONE;
+    private static MockedStatic<ParameterAPI> mockedParameterAPI;
 
     /**
      * Init once before tests.
@@ -40,10 +44,17 @@ public class KitodoConfigTest {
         NONE = mock(ParameterAPI.class);
         doReturn(3).when(NONE).ordinal();
 
-        mockStatic(ParameterAPI.class);
+        mockedParameterAPI = mockStatic(ParameterAPI.class);
         when(ParameterAPI.values())
                 .thenReturn(new ParameterAPI[] {ParameterAPI.DIR_MODULES, ParameterAPI.DIR_PROCESSES,
                                                 ParameterAPI.DIR_XML_CONFIG, NONE });
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if (Objects.nonNull(mockedParameterAPI)) {
+            mockedParameterAPI.close();
+        }
     }
 
     @Test

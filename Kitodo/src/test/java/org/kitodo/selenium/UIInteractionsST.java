@@ -27,6 +27,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.kitodo.selenium.testframework.pages.ImportConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
@@ -36,6 +37,7 @@ import org.openqa.selenium.WebElement;
 public class UIInteractionsST extends BaseTestSelenium {
 
     private static ProjectsPage projectsPage;
+    private static ImportConfigurationEditPage importConfigurationEditPage;
     private static UsersPage usersPage;
     private static final String FILTER_ROLES_SWITCH_SELECTOR = "#allClientsRolesForm\\:showAllClientsRoles > .ui-chkbox-box";
 
@@ -43,6 +45,7 @@ public class UIInteractionsST extends BaseTestSelenium {
     public static void setup() throws Exception {
         projectsPage = Pages.getProjectsPage();
         usersPage = Pages.getUsersPage();
+        importConfigurationEditPage = Pages.getImportConfigurationEditPage();
     }
 
     @AfterEach
@@ -122,5 +125,21 @@ public class UIInteractionsST extends BaseTestSelenium {
         List<WebElement> roleSwitches = Browser.getDriver().findElements(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
         assertTrue(roleSwitches.isEmpty(), "Role filter switch should be unavailable for users without the "
                 + "corresponding global permission to see roles of all clients");
+    }
+
+    /**
+     * Verifies that the 'Metadata format for file upload' field in the 'New import configuration' form does not
+     * incorrectly display a specific metadata format as the initial value.
+     *
+     * @throws Exception when navigating to the import configuration page fails.
+     */
+    @Test
+    public void initialMetadataFormatForImportConfigurationTest() throws Exception {
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+        projectsPage.createNewImportConfiguration();
+        importConfigurationEditPage.insertFileUploadImportConfiguration();
+        String expectedInitialLabel = "Bitte Metadatenformat auswählen";
+        assertEquals(expectedInitialLabel, importConfigurationEditPage.getUploadMetadataFormat(),
+                "Wrong label for metadata format selection");
     }
 }

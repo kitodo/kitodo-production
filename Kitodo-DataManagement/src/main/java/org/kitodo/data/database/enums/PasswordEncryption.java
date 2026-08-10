@@ -19,8 +19,8 @@ public enum PasswordEncryption {
     SHA(0, "SHA"),
     MD5(1, "MD5");
 
-    private int value;
-    private String title;
+    private final int value;
+    private final String title;
 
     /**
      * Private constructor, initializes integer value.

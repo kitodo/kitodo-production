@@ -17,8 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,9 +30,15 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.LinkingMode;
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -193,5 +203,257 @@ public class ProjectServiceIT {
         Project project = projectService.getById(1);
         boolean result = projectService.hasProcesses(project.getId());
         assertTrue(result, "Project with processes incorrectly reported as empty!");
+    }
+
+    @Test
+    public void shouldDeleteSimpleProject() throws Exception {
+        Project project = new Project();
+        project.setTitle("Simple project to delete");
+        ServiceManager.getProjectService().save(project);
+
+        int projectId = project.getId();
+
+        assertEquals(projectId, ServiceManager.getProjectService().getById(projectId).getId());
+
+        ServiceManager.getProjectService().remove(projectId);
+
+        assertThrows(DAOException.class, () -> ServiceManager.getProjectService().getById(projectId));
+    }
+
+    @Test
+    public void shouldDeleteProjectWithTemplateFoldersAndUsers() throws Exception {
+        User user = ServiceManager.getUserService().getById(1);
+
+        Project project = new Project();
+        project.setTitle("Complex project to delete");
+        project.setClient(ServiceManager.getClientService().getById(1));
+        project.getUsers().add(user);
+        ServiceManager.getProjectService().save(project);
+
+        user.getProjects().add(project);
+        ServiceManager.getUserService().save(user);
+
+        Template template = new Template();
+        template.setTitle("Template of complex project to delete");
+        template.setClient(project.getClient());
+        template.setDocket(ServiceManager.getDocketService().getById(1));
+        template.setRuleset(ServiceManager.getRulesetService().getById(1));
+        template.getProjects().add(project);
+        ServiceManager.getTemplateService().save(template);
+
+        project.getTemplates().add(template);
+
+        Folder mediaFolder = new Folder();
+        mediaFolder.setFileGroup("DEFAULT");
+        mediaFolder.setMimeType("image/jpeg");
+        mediaFolder.setPath("images/default");
+        mediaFolder.setCopyFolder(true);
+        mediaFolder.setCreateFolder(true);
+        mediaFolder.setLinkingMode(LinkingMode.ALL);
+        mediaFolder.setProject(project);
+        project.getFolders().add(mediaFolder);
+        project.setMediaView(mediaFolder);
+
+        Folder sourceFolder = new Folder();
+        sourceFolder.setFileGroup("SOURCE");
+        sourceFolder.setMimeType("image/tiff");
+        sourceFolder.setPath("images/source");
+        sourceFolder.setCopyFolder(false);
+        sourceFolder.setCreateFolder(true);
+        sourceFolder.setLinkingMode(LinkingMode.NO);
+        sourceFolder.setProject(project);
+        project.getFolders().add(sourceFolder);
+        project.setGeneratorSource(sourceFolder);
+
+        ServiceManager.getProjectService().save(project);
+
+        int projectId = project.getId();
+        int userId = user.getId();
+        int templateId = template.getId();
+
+        Project savedProject = ServiceManager.getProjectService().getById(projectId);
+
+        List<Integer> folderIds = savedProject.getFolders()
+                .stream()
+                .map(Folder::getId)
+                .toList();
+
+        assertEquals(projectId, savedProject.getId());
+        assertEquals(2, folderIds.size());
+        assertTrue(ServiceManager.getUserService().getById(userId).getProjects()
+                .stream()
+                .anyMatch(userProject -> userProject.getId().equals(projectId)));
+        assertTrue(ServiceManager.getTemplateService().getById(templateId).getProjects()
+                .stream()
+                .anyMatch(templateProject -> templateProject.getId().equals(projectId)));
+
+        for (Integer folderId : folderIds) {
+            assertEquals(folderId, ServiceManager.getFolderService().getById(folderId).getId());
+        }
+
+        ProjectService.delete(projectId);
+
+        assertThrows(
+                DAOException.class,
+                () -> ServiceManager.getProjectService().getById(projectId)
+        );
+
+        for (Integer folderId : folderIds) {
+            assertThrows(DAOException.class,
+                    () -> ServiceManager.getFolderService().getById(folderId));
+        }
+
+        assertFalse(ServiceManager.getUserService().getById(userId).getProjects()
+                .stream()
+                .anyMatch(userProject -> userProject.getId().equals(projectId)));
+        assertFalse(ServiceManager.getTemplateService().getById(templateId).getProjects()
+                .stream()
+                .anyMatch(templateProject -> templateProject.getId().equals(projectId)));
+    }
+
+    @Test
+    public void testProjectDuplication() throws DAOException {
+        // create new project with all settings set
+        Project baseProject = new Project();
+        baseProject.setTitle("Project for duplication");
+        ClientService clientService = ServiceManager.getClientService();
+        baseProject.setClient(clientService.getById(1));
+        LocalDate localDate = LocalDate.of(2026, 8, 7);
+        baseProject.setStartDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        baseProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        baseProject.setNumberOfPages(32);
+        baseProject.setNumberOfVolumes(2);
+        baseProject.setActive(false);
+        baseProject.setDmsImportRootPath("/foo/baar");
+        baseProject.setMetsRightsOwner("Kitodo e.V.");
+        baseProject.setMetsRightsOwnerLogo("kitodo.png");
+        baseProject.setMetsRightsOwnerMail("foo@example.org");
+        baseProject.setMetsRightsOwnerSite("www.kitodo.org");
+        baseProject.setMetsDigiprovPresentation("Foo Baz");
+        baseProject.setMetsDigiprovReference("Baz Foo");
+        baseProject.setMetsPointerPath("pointer path");
+        baseProject.setMetsPurl("purl");
+        baseProject.setMetsContentIDs("contend id");
+
+        // sub folder
+        Folder firstFolder = new Folder();
+        firstFolder.setFileGroup("FOO");
+        firstFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
+        firstFolder.setMimeType("image/jpeg");
+        firstFolder.setPath("jpgs/max");
+        firstFolder.setCopyFolder(true);
+        firstFolder.setCreateFolder(true);
+        firstFolder.setDerivative(1.0);
+        firstFolder.setLinkingMode(LinkingMode.EXISTING);
+
+        Folder secondFolder = new Folder();
+        secondFolder.setFileGroup("BAR");
+        secondFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
+        secondFolder.setMimeType("image/jpeg");
+        secondFolder.setPath("jpgs/default");
+        secondFolder.setCopyFolder(true);
+        secondFolder.setCreateFolder(true);
+        secondFolder.setDerivative(0.8);
+        secondFolder.setLinkingMode(LinkingMode.ALL);
+
+        baseProject.getFolders().add(firstFolder);
+        baseProject.getFolders().add(secondFolder);
+
+        // set some folder use settings
+        baseProject.setGeneratorSource(secondFolder);
+        baseProject.setMediaView(secondFolder);
+        baseProject.setPreview(firstFolder);
+        baseProject.setPreviewHoverMode(PreviewHoverMode.TOOLTIP_PREVIEW);
+
+        // duplicate the project
+        ProjectService projectService = ServiceManager.getProjectService();
+        Project duplicatedProject = projectService.duplicateProject(baseProject);
+
+        // general settings
+        assertTrue(duplicatedProject.getTitle().startsWith(baseProject.getTitle()));
+        assertEquals(baseProject.getClient(), duplicatedProject.getClient());
+        assertEquals(baseProject.getStartDate(), duplicatedProject.getStartDate());
+        assertEquals(baseProject.getEndDate(), duplicatedProject.getEndDate());
+        assertEquals(baseProject.getNumberOfPages(), duplicatedProject.getNumberOfPages());
+        assertEquals(baseProject.getNumberOfVolumes(), duplicatedProject.getNumberOfVolumes());
+        assertEquals(baseProject.isActive(), duplicatedProject.isActive());
+        assertEquals(baseProject.getDmsImportRootPath(), duplicatedProject.getDmsImportRootPath());
+        assertEquals(baseProject.getMetsRightsOwner(), duplicatedProject.getMetsRightsOwner());
+        assertEquals(baseProject.getMetsRightsOwnerLogo(), duplicatedProject.getMetsRightsOwnerLogo());
+        assertEquals(baseProject.getMetsRightsOwnerMail(), duplicatedProject.getMetsRightsOwnerMail());
+        assertEquals(baseProject.getMetsRightsOwnerSite(), duplicatedProject.getMetsRightsOwnerSite());
+        assertEquals(baseProject.getMetsDigiprovPresentation(), duplicatedProject.getMetsDigiprovPresentation());
+        assertEquals(baseProject.getMetsDigiprovReference(), duplicatedProject.getMetsDigiprovReference());
+        assertEquals(baseProject.getMetsPointerPath(), duplicatedProject.getMetsPointerPath());
+        assertEquals(baseProject.getMetsPurl(), duplicatedProject.getMetsPurl());
+        assertEquals(baseProject.getMetsContentIDs(), duplicatedProject.getMetsContentIDs());
+
+        // simple sub folder check
+        assertEquals(baseProject.getFolders().size(), duplicatedProject.getFolders().size());
+
+        // folder use settings
+        assertEquals(baseProject.getGeneratorSource(), duplicatedProject.getGeneratorSource());
+        assertEquals(baseProject.getMediaView(), duplicatedProject.getMediaView());
+        assertEquals(baseProject.getPreview(), duplicatedProject.getPreview());
+        assertEquals(baseProject.getAudioMediaView(), duplicatedProject.getAudioMediaView());
+        assertEquals(baseProject.getAudioPreview(), duplicatedProject.getAudioPreview());
+        assertEquals(baseProject.isAudioMediaViewWaveform(), duplicatedProject.isAudioMediaViewWaveform());
+        assertEquals(baseProject.getVideoMediaView(), duplicatedProject.getVideoMediaView());
+        assertEquals(baseProject.getVideoPreview(), duplicatedProject.getVideoPreview());
+        assertEquals(baseProject.getPreviewHoverMode(), duplicatedProject.getPreviewHoverMode());
+
+        // project template
+        assertEquals(baseProject.getTemplates(), duplicatedProject.getTemplates());
+
+        // import configuration
+        assertEquals(
+                baseProject.getDefaultImportConfiguration(),
+                duplicatedProject.getDefaultImportConfiguration()
+        );
+        assertEquals(
+                baseProject.getDefaultChildProcessImportConfiguration(),
+                duplicatedProject.getDefaultChildProcessImportConfiguration()
+        );
+    }
+
+    @Test
+    public void shouldCheckWhetherProjectIsAssignedToCurrentUser()
+            throws DAOException, ProjectDeletionException {
+        UserService userService = ServiceManager.getUserService();
+        User authenticatedUser = userService.getCurrentUser();
+        Client sessionClient = userService.getSessionClientOfAuthenticatedUser();
+
+        Project assignedProject = new Project();
+        assignedProject.setTitle("Assigned project lookup test");
+        assignedProject.setClient(sessionClient);
+
+        assignedProject.getUsers().add(authenticatedUser);
+        authenticatedUser.getProjects().add(assignedProject);
+
+        try {
+            projectService.save(assignedProject);
+            userService.save(authenticatedUser);
+
+            assertTrue(
+                    projectService.isProjectAssignedToCurrentUser(assignedProject.getId()),
+                    "Project should be assigned to the current user");
+
+            assignedProject.getUsers().remove(authenticatedUser);
+            authenticatedUser.getProjects().remove(assignedProject);
+
+            projectService.save(assignedProject);
+            userService.save(authenticatedUser);
+
+            assertFalse(
+                    projectService.isProjectAssignedToCurrentUser(assignedProject.getId()),
+                    "Project should no longer be assigned to the current user");
+        } finally {
+            authenticatedUser.getProjects().remove(assignedProject);
+            assignedProject.getUsers().remove(authenticatedUser);
+
+            if (Objects.nonNull(assignedProject.getId())) {
+                ProjectService.delete(assignedProject.getId());
+            }
+        }
     }
 }

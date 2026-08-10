@@ -26,7 +26,7 @@ import org.kitodo.api.validation.longtermpreservation.LtpValidationConditionSeve
 import org.kitodo.api.validation.longtermpreservation.LtpValidationResultState;
 
 /**
- * Evalutes validation conditions by checking them against a map of extracted
+ * Evaluates validation conditions by checking them against a map of extracted
  * property values.
  */
 public class LtpValidationConditionEvaluator {
@@ -119,7 +119,7 @@ public class LtpValidationConditionEvaluator {
             return getConditionIncorrectNumberOfValuesResult(value);
         }
 
-        if (value.toLowerCase().equals(condition.getValues().getFirst().toLowerCase())) {
+        if (value.equalsIgnoreCase(condition.getValues().getFirst())) {
             return new LtpValidationConditionResult(true, null, value);
         }
 
@@ -361,7 +361,7 @@ public class LtpValidationConditionEvaluator {
      *            the conditions that were checked
      * @param conditionResults
      *            the results for each condition
-     * @return the overall validation sucesss or failure state
+     * @return the overall validation success or failure state
      */
     public static LtpValidationResultState summarizeValidationState(
             List<? extends LtpValidationConditionInterface> conditions,

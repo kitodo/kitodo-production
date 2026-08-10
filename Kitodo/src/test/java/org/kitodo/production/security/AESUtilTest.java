@@ -49,7 +49,7 @@ public class AESUtilTest {
 
         String secondDecrypt = AESUtil.decrypt(secondEncrypt, secretInConfig);
 
-        assertEquals(input, secondDecrypt, "Secound decrypted text does not match the original text");
+        assertEquals(input, secondDecrypt, "Second decrypted text does not match the original text");
     }
 
 

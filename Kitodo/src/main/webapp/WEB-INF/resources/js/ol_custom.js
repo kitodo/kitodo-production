@@ -294,7 +294,7 @@ class KitodoDetailMap {
     }
 
     /**
-     * Return extent array containg image dimensions.
+     * Return extent array containing image dimensions.
      * 
      * @param {Array} dimensions dimensions in pixel as [width, height]
      * @returns {Array} the extent array
