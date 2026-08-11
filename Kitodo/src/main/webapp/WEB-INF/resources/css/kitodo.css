@@ -1869,7 +1869,7 @@ Import form
 }
 
 #editForm\:processFromTemplateTabView\:logicalStructure {
-    height: calc(100% - 170px);
+    max-height: calc(100dvh - 350px);
     overflow: auto;
 }
 
