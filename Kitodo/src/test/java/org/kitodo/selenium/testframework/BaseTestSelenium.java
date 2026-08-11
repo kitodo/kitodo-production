@@ -18,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.kitodo.ExecutionPermission;
@@ -25,6 +28,8 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 import static org.awaitility.Awaitility.await;
 
@@ -38,6 +43,12 @@ public class BaseTestSelenium {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
+
+        try (Session ormSession = HibernateUtil.getSession()) {
+            MassIndexer massIndexer = Search.session(ormSession).massIndexer(Process.class);
+            massIndexer.dropAndCreateSchemaOnStart(true);
+            massIndexer.startAndWait();
+        }
 
         usersDirectory.mkdir();
 
