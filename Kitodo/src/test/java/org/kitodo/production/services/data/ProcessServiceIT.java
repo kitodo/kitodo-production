@@ -755,13 +755,13 @@ public class ProcessServiceIT {
         int clientId = selectedProcess1.getProject().getClient().getId();
 
         List<ProcessExportDTO> result = processService.getProcessesForExport(
-                null,
-                true,
-                true,
-                clientId,
-                false, // allSelected
-                List.of(selectedProcessId1, selectedProcessId2),
-                List.of()
+            null, // no filter
+            true, // include closed
+            true, // include inactive projects
+            clientId,
+            false, // allSelected
+            List.of(selectedProcessId1, selectedProcessId2), // selectedProcessIds
+            List.of() // excludedProcessIds
         );
 
         List<Integer> resultIds = result.stream()
@@ -778,16 +778,163 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         List<ProcessExportDTO> result = processService.getProcessesForExport(
-                null,
-                true,
-                true,
-                process.getProject().getClient().getId(),
-                false, // allSelected
-                List.of(),
-                List.of()
+            null, // no filter
+            true, // include closed
+            true, // include inactive projects
+            process.getProject().getClient().getId(),
+            false, // allSelected
+            List.of(), // selectedProcessIds
+            List.of() // excludedProcessIds
         );
 
         assertTrue(result.isEmpty(), "Export should be empty when no processes are selected");
+    }
+
+    @Test
+    public void shouldExcludeDeselectedProcessesWhenAllAreSelected() throws Exception {
+       int includedProcessId = MockDatabase.insertTestProcess("Included Export Process", 1, 1, 1);
+       int excludedProcessId = MockDatabase.insertTestProcess("Excluded Export Process", 1, 1, 1);
+
+       try {
+           Process includedProcess = processService.getById(includedProcessId);
+           int clientId = includedProcess.getProject().getClient().getId();
+
+           List<ProcessExportDTO> result = processService.getProcessesForExport(
+               null, // no filter
+               true, // include closed
+               true, // include inactive projects
+               clientId,
+               true, // allSelected
+               List.of(), // selectedProcessIds
+               List.of(excludedProcessId) // excludedProcessIds
+           );
+
+           List<Integer> resultIds = result.stream()
+                .map(ProcessExportDTO::getId)
+                .toList();
+
+           assertTrue(resultIds.contains(includedProcessId),
+               "Selected process should be exported");
+           assertFalse(resultIds.contains(excludedProcessId),
+               "Deselected process should not be exported");
+        } finally {
+           ProcessTestUtils.removeTestProcess(includedProcessId);
+           ProcessTestUtils.removeTestProcess(excludedProcessId);
+        }
+    }
+
+    @Test
+    public void shouldExcludeDeselectedProcessesFromFilteredExport() throws Exception {
+        int includedProcessId = MockDatabase.insertTestProcess("Included Export Process", 1, 1, 1);
+        int excludedProcessId = MockDatabase.insertTestProcess("Excluded Export Process", 1, 1, 1);
+
+        try {
+           ProcessTestUtils.copyTestMetadataFile(includedProcessId, TEST_METADATA_FILE);
+           ProcessTestUtils.copyTestMetadataFile(excludedProcessId, TEST_METADATA_FILE);
+
+           Process includedProcess = processService.getById(includedProcessId);
+           int clientId = includedProcess.getProject().getClient().getId();
+           User userOne = ServiceManager.getUserService().getById(1);
+           awaitProcessesInMetadataIndex(userOne, includedProcessId, excludedProcessId);
+
+            List<ProcessExportDTO> result = processService.getProcessesForExport(
+                "\"TSL_ATS:Proc\"",   // no filter
+                true, // include closed
+                true, // include inactive projects
+                clientId,
+                true, // allSelected
+                List.of(), // selectedProcessIds
+                List.of(excludedProcessId) // excludedProcessIds
+            );
+
+            List<Integer> resultIds = result.stream()
+                .map(ProcessExportDTO::getId)
+                .toList();
+
+            assertTrue(resultIds.contains(includedProcessId),
+                "Selected process should be exported");
+            assertFalse(resultIds.contains(excludedProcessId),
+                "Deselected process should not be exported");
+        } finally {
+            ProcessTestUtils.removeTestProcess(includedProcessId);
+            ProcessTestUtils.removeTestProcess(excludedProcessId);
+        }
+    }
+
+    @Test
+    public void shouldExcludeDeselectedProcessesFromSelection() throws Exception {
+        int includedProcessId = MockDatabase.insertTestProcess("Included Selection Process", 1, 1, 1);
+        int excludedProcessId = MockDatabase.insertTestProcess("Excluded Selection Process", 1, 1, 1);
+
+        try {
+
+            List<Process> result = processService.findSelectedProcesses(
+                true, // showClosedProcesses
+                true, // showInactiveProjects
+                null, //filter
+                List.of(excludedProcessId) // excludedProcessIds
+            );
+
+            List<Integer> resultIds = result.stream()
+                .map(Process::getId)
+                .toList();
+
+            assertTrue(resultIds.contains(includedProcessId),
+                "Selected process should be returned");
+            assertFalse(resultIds.contains(excludedProcessId),
+                "Deselected process should not be returned");
+        } finally {
+            ProcessTestUtils.removeTestProcess(includedProcessId);
+            ProcessTestUtils.removeTestProcess(excludedProcessId);
+        }
+    }
+
+    @Test
+    public void shouldExcludeDeselectedProcessesFromFilteredSelection() throws Exception {
+        int includedProcessId = MockDatabase.insertTestProcess("Included Selection Process", 1, 1, 1);
+        int excludedProcessId = MockDatabase.insertTestProcess("Excluded Selection Process", 1, 1, 1);
+
+        try {
+            ProcessTestUtils.copyTestMetadataFile(includedProcessId, TEST_METADATA_FILE);
+            ProcessTestUtils.copyTestMetadataFile(excludedProcessId, TEST_METADATA_FILE);
+
+            User userOne = ServiceManager.getUserService().getById(1);
+            awaitProcessesInMetadataIndex(userOne, includedProcessId, excludedProcessId);
+            List<Process> result = processService.findSelectedProcesses(
+                true, // showClosedProcesses
+                true, // showInactiveProjects
+                "\"TSL_ATS:Proc\"", //filter
+                List.of(excludedProcessId)  // excludedProcessIds
+            );
+            List<Integer> resultIds = result.stream()
+                .map(Process::getId)
+                .toList();
+
+            assertTrue(resultIds.contains(includedProcessId),
+                "Process matching the filter should be selected");
+            assertFalse(resultIds.contains(excludedProcessId),
+                "Deselected process matching the filter should not be selected");
+        } finally {
+            ProcessTestUtils.removeTestProcess(includedProcessId);
+            ProcessTestUtils.removeTestProcess(excludedProcessId);
+        }
+    }
+
+    private void awaitProcessesInMetadataIndex(User user, int... processIds) {
+        await()
+            .alias("test processes to be available in the search index")
+            .until(() -> {
+                SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+
+                List<Integer> indexedIds = processService.findByMetadata(
+                        Collections.singletonMap("TSL_ATS", "Proc"))
+                    .stream()
+                    .map(Process::getId)
+                    .toList();
+
+                return Arrays.stream(processIds)
+                    .allMatch(indexedIds::contains);
+            });
     }
 
     @Test
