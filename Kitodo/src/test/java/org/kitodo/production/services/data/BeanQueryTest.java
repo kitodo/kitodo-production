@@ -93,6 +93,24 @@ public class BeanQueryTest {
     }
 
     @Test
+    public void shouldUseUniqueParameterNamesForCollectionRestrictions() {
+        Collection<Integer> selectedIds = Arrays.asList(2, 3, 5);
+        Collection<Integer> excludedIds = Arrays.asList(3);
+
+        BeanQuery beanQuery = new BeanQuery(Process.class);
+        beanQuery.addInCollectionRestriction("id", selectedIds);
+        beanQuery.addNotInCollectionRestriction("id", excludedIds);
+
+        assertThat(beanQuery.formQueryForAll(),
+            containsString("process.id IN (:id)"));
+        assertThat(beanQuery.formQueryForAll(),
+            containsString("process.id NOT IN (:id2)"));
+
+        assertThat(beanQuery.getQueryParameters().get("id"), is(equalTo(selectedIds)));
+        assertThat(beanQuery.getQueryParameters().get("id2"), is(equalTo(excludedIds)));
+    }
+
+    @Test
     public void shouldAddNullRestriction() {
         BeanQuery beanQuery = new BeanQuery(Process.class);
         beanQuery.addNullRestriction("parent.id");
