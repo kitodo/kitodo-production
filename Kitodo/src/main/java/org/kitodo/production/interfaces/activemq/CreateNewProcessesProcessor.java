@@ -22,13 +22,12 @@ import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.jms.JMSException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import jakarta.jms.JMSException;
+
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -56,7 +55,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
-import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.xml.sax.SAXException;
@@ -65,8 +63,6 @@ import org.xml.sax.SAXException;
  * An Active MQ service interface to create new processes.
  */
 public class CreateNewProcessesProcessor extends ActiveMQProcessor {
-    private static final Logger logger = LogManager.getLogger(CreateNewProcessesProcessor.class);
-
     private static final int IMPORT_WITHOUT_ANY_HIERARCHY = 1;
     private static final String LAST_CHILD = Integer.toString(-1);
     private static final List<LanguageRange> METADATA_LANGUAGE = Locale.LanguageRange.parse("en");
@@ -76,7 +72,6 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
     private final MetsService metsService = ServiceManager.getMetsService();
     private final ProcessService processService = ServiceManager.getProcessService();
     private final RulesetService rulesetService = ServiceManager.getRulesetService();
-    private final TaskService taskService = ServiceManager.getTaskService();
 
     private RulesetManagementInterface rulesetManagement;
 

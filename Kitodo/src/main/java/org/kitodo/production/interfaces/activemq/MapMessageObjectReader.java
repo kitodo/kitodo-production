@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +35,7 @@ import org.kitodo.utils.Guard;
 
 public class MapMessageObjectReader {
 
-    private MapMessage ticket;
+    private final MapMessage ticket;
     private static final Logger logger = LogManager.getLogger(MapMessageObjectReader.class);
     private static final String MANDATORY_ARGUMENT = "Mandatory argument ";
     private static final String MISSING_ARGUMENT = "Missing mandatory argument: \"";
@@ -134,10 +134,9 @@ public class MapMessageObjectReader {
         if (Objects.isNull(value)) {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
-        if (!(value instanceof String)) {
+        if (!(value instanceof String mandatoryString)) {
             throw new IllegalArgumentException(MANDATORY_ARGUMENT + key + " is not a string");
         }
-        String mandatoryString = (String) value;
         if (mandatoryString.isEmpty()) {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
