@@ -1273,7 +1273,7 @@ public class StructurePanel implements Serializable {
      * @return whether both conditions are met and a structure element can be created from the current selection
      */
     public boolean isCreatingStructureFromSelectionPossible() {
-        int numberOfSelectedMedia = dataEditor.getSelectedMedia().size();
+        int numberOfSelectedMedia = Objects.nonNull(dataEditor.getSelectedMedia()) ? dataEditor.getSelectedMedia().size() : 0;
         boolean mediaSelected = numberOfSelectedMedia >= 1;
         boolean onlyMediaSelected = numberOfSelectedMedia == getSelectedLogicalNodes().size();
         return mediaSelected && onlyMediaSelected;
