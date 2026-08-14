@@ -11,9 +11,6 @@
 
 package org.kitodo.production.process;
 
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
@@ -49,7 +46,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
@@ -61,7 +57,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
-import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
@@ -337,13 +332,11 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
         initializeRulesetFields(overallWorkpiece.getLogicalStructure().getType());
 
-        ConfigProject configProject = new ConfigProject(overallProcess.getProject().getTitle());
-
         Collection<MetadataViewInterface> allowedMetadata = rulesetService.openRuleset(overallProcess.getRuleset())
                 .getStructuralElementView(overallWorkpiece.getLogicalStructure().getType(), acquisitionStage, ENGLISH)
                 .getAllowedMetadata();
 
-        titleGenerator = initializeTitleGenerator(configProject, overallWorkpiece, allowedMetadata);
+        titleGenerator = initializeTitleGenerator(overallWorkpiece, allowedMetadata);
 
         processesToCreate = course.getProcesses();
 
@@ -414,93 +407,54 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
 
     /**
      * Initializes the title generator.
-     *
-     * @param configProject
-     *            the config project
+     * @param workpiece
+     *            the workpiece
      * @param allowedMetadata
      *            allowed Metadata views
      * @return the initialized title generator
      */
-    private static TitleGenerator initializeTitleGenerator(ConfigProject configProject, Workpiece workpiece,
-            Collection<MetadataViewInterface> allowedMetadata)
-            throws DoctypeMissingException {
+    private static TitleGenerator initializeTitleGenerator(Workpiece workpiece,
+                                                           Collection<MetadataViewInterface> allowedMetadata) {
 
         LogicalDivision logicalStructure = workpiece.getLogicalStructure();
+
         Map<String, Map<String, String>> metadata = new HashMap<>(4);
         Map<String, String> topstruct = getMetadataEntries(logicalStructure.getMetadata());
         metadata.put("topstruct", topstruct);
+
         List<LogicalDivision> children = logicalStructure.getChildren();
         metadata.put("firstchild",
-            children.isEmpty() ? Collections.emptyMap() : getMetadataEntries(children.getFirst().getMetadata()));
+                children.isEmpty() ? Collections.emptyMap() : getMetadataEntries(children.getFirst().getMetadata()));
+
         metadata.put("physSequence", getMetadataEntries(workpiece.getPhysicalStructure().getMetadata()));
 
-        String docType = null;
-        for (ConfigOpacDoctype configOpacDoctype : ConfigOpac.getAllDoctypes()) {
-            if (configOpacDoctype.getRulesetType().equals(logicalStructure.getType())) {
-                docType = configOpacDoctype.getTitle();
-                break;
-            }
-        }
-
-        List<AdditionalField> projectAdditionalFields = configProject.getAdditionalFields();
         ProcessFieldedMetadata table = new ProcessFieldedMetadata();
-        for (AdditionalField additionalField : projectAdditionalFields) {
-            if (isDocTypeAndNotIsNotDoctype(additionalField, docType)) {
-                String value = metadata.getOrDefault(additionalField.getDocStruct(), Collections.emptyMap())
-                        .get(additionalField.getMetadata());
-                List<MetadataViewInterface> filteredViews = allowedMetadata
-                        .stream()
-                        .filter(v -> v.getId().equals(additionalField.getMetadata()))
-                        .toList();
-                if (!filteredViews.isEmpty()) {
-                    MetadataEntry metadataEntry = new MetadataEntry();
-                    metadataEntry.setValue(value);
-                    if (filteredViews.getFirst().isComplex()) {
-                        table.createMetadataGroupPanel((ComplexMetadataViewInterface) filteredViews.getFirst(),
-                            Collections.singletonList(metadataEntry));
-                    } else {
-                        table.createMetadataEntryEdit((SimpleMetadataViewInterface) filteredViews.getFirst(),
-                            Collections.singletonList(metadataEntry));
-                    }
-                }
-            }
-        }
-        return new TitleGenerator(topstruct.getOrDefault("TSL_ATS", ""), table.getRows());
-    }
 
-    /**
-     * Returns whether an additional field is assigned to the doc type and not
-     * excluded from it. The {@code isDocType}s and {@code isNotDoctype}s are a
-     * list as a string, separated by a horizontal line ({@code |}, U+007C).
-     *
-     * @param additionalField
-     *            the field in question
-     * @param docType
-     *            the doc type used
-     * @return whether the field is assigned and not excluded
-     */
-    private static boolean isDocTypeAndNotIsNotDoctype(AdditionalField additionalField, String docType) {
-        boolean isDocType = false;
-        boolean isNotDoctype = false;
-        String isDocTypes = additionalField.getIsDocType();
-        if (Objects.nonNull(isDocTypes)) {
-            for (String isDocTypeOption : isDocTypes.split("\\|")) {
-                if (isDocTypeOption.equals(docType)) {
-                    isDocType = true;
-                    break;
-                }
+        for (MetadataViewInterface view : allowedMetadata) {
+            String value = metadata.getOrDefault("topstruct", Collections.emptyMap()).get(view.getId());
+            if (Objects.isNull(value)) {
+                value = metadata.getOrDefault("firstchild", Collections.emptyMap()).get(view.getId());
+            }
+            if (Objects.isNull(value)) {
+                value = metadata.getOrDefault("physSequence", Collections.emptyMap()).get(view.getId());
+            }
+            if (Objects.isNull(value)) {
+                continue;
+            }
+
+            MetadataEntry metadataEntry = new MetadataEntry();
+            metadataEntry.setValue(value);
+
+            if (view.isComplex()) {
+                table.createMetadataGroupPanel((ComplexMetadataViewInterface) view,
+                        Collections.singletonList(metadataEntry));
+            } else {
+                table.createMetadataEntryEdit((SimpleMetadataViewInterface) view,
+                        Collections.singletonList(metadataEntry));
             }
         }
-        String isNotDoctypes = additionalField.getIsNotDoctype();
-        if (Objects.nonNull(isNotDoctypes)) {
-            for (String isNotDoctypeOption : isNotDoctypes.split("\\|")) {
-                if (isNotDoctypeOption.equals(docType)) {
-                    isNotDoctype = true;
-                    break;
-                }
-            }
-        }
-        return isDocType ^ !isNotDoctype;
+
+        return new TitleGenerator(topstruct.getOrDefault("TSL_ATS", ""), table.getRows());
     }
 
     /**
