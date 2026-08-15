@@ -44,97 +44,17 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 public class ExportMets {
-    private final FileService fileService = ServiceManager.getFileService();
-    protected LegacyPrefsHelper myPrefs;
-
     private static final Logger logger = LogManager.getLogger(ExportMets.class);
-
-    /**
-     * The field exportDmsTask holds an optional task instance. Its progress and
-     * its errors will be passed to the task manager screen (if available) for
-     * visualization.
-     */
-    protected EmptyTask exportDmsTask = null;
-
-    /**
-     * DMS-Export in das Benutzer-Homeverzeichnis.
-     *
-     * @param process
-     *            Process object
-     */
-    public boolean startExport(Process process) throws DAOException, IOException, SAXException, FileStructureValidationException {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
-        boolean exportSuccessful = startExport(process, userHome);
-        if (exportSuccessful) {
-            if (Objects.nonNull(process.getParent())) {
-                startExport(process.getParent());
-            }
-        }
-        return exportSuccessful;
-    }
-
-    /**
-     * DMS-Export an eine gewünschte Stelle.
-     *
-     * @param process
-     *            Process object
-     * @param userHome
-     *            String
-     */
-    public boolean startExport(Process process, URI userHome) throws IOException, DAOException, SAXException,
-            FileStructureValidationException {
-
-        /*
-         * Read Document
-         */
-        this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
-        LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
-
-        if (ServiceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
-            return false;
-        }
-
-        prepareUserDirectory(userHome);
-
-        String targetFileName = atsPpnBand + "_mets.xml";
-        URI metaFile = userHome.resolve(userHome.getRawPath() + "/" + targetFileName);
-        return writeMetsFile(process, metaFile, gdzfile);
-    }
-
-    /**
-     * prepare user directory.
-     *
-     * @param targetFolder
-     *            the folder to prove and maybe create it
-     */
-    protected void prepareUserDirectory(URI targetFolder) {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        try {
-            fileService.createDirectoryForUser(targetFolder, user.getLogin());
-        } catch (IOException | RuntimeException e) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setException(e);
-            }
-            Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder, logger,
-                e);
-        }
-    }
 
     /**
      * write MetsFile to given Path.
@@ -147,16 +67,13 @@ public class ExportMets {
      *            the FileFormat-Object to use for Mets-Writing
      * @return true or false
      */
-    protected boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
+    public boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
             throws IOException, DAOException, SAXException, FileStructureValidationException {
 
         Workpiece workpiece = gdzfile.getWorkpiece();
         try {
             ServiceManager.getSchemaService().tempConvert(workpiece, process);
         } catch (URISyntaxException e) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setException(e);
-            }
             Helper.setErrorMessage("Writing METS file failed!", e.getLocalizedMessage(), logger, e);
             return false;
         }
@@ -183,9 +100,6 @@ public class ExportMets {
                     bufferedOutputStream.write(transformedBytes);
                     enrichInternalLabelsIfNeeded(process, transformedBytes);
                 } catch (FileNotFoundException | TransformerException e) {
-                    if (Objects.nonNull(exportDmsTask)) {
-                        exportDmsTask.setException(e);
-                    }
                     Helper.setErrorMessage("Writing METS file failed!", e.getLocalizedMessage(), logger, e);
                     return false;
                 }
