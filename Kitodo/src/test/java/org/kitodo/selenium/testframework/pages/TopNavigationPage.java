@@ -145,49 +145,55 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      * Hovers dashboard menu and clicks on link to help page.
      */
     void gotoHelp() {
-        RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkHelp")));
+        clickNavigationLink("linkHelp");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to tasks page.
      */
     void gotoTasks() throws InterruptedException {
-        RemoteWebDriver driver = Browser.getDriver();
         Thread.sleep(Browser.getDelayAfterDelete());
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkTasks")));
+        clickNavigationLink("linkTasks");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to processes page.
      */
     void gotoProcesses() {
-        RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id(LINK_PROCESSES_ID)));
+        clickNavigationLink(LINK_PROCESSES_ID);
     }
 
     /**
      * Hovers dashboard menu and clicks on link to projects page.
      */
     void gotoProjects() {
-        RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkProjects")));
+        clickNavigationLink("linkProjects");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to users page.
      */
     void gotoUsers() {
-        RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkUsers")));
+        clickNavigationLink("linkUsers");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to system page.
      */
     void gotoSystem() {
+        clickNavigationLink("linkSystem");
+    }
+
+    /**
+     * Waits until the navigation link with the given ID is present in the DOM and clicks it.
+     *
+     * @param linkId ID of the navigation link
+     */
+    private void clickNavigationLink(String linkId) {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkSystem")));
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(90));
+        webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id(linkId)));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id(linkId)));
     }
 
     /**
