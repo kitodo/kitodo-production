@@ -452,7 +452,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
-                <version>1.84</version>
+                <version>1.85.2</version>
             </dependency>
             <dependency>
                 <groupId>org.camunda.bpm.model</groupId>
