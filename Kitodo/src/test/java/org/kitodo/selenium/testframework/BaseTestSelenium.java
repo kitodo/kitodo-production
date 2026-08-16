@@ -85,7 +85,11 @@ public class BaseTestSelenium {
 
         usersDirectory.delete();
 
-        MockDatabase.stopNode();
+        // The search server node is not stopped here, but kept running across
+        // all selenium test classes, because the Tomcat application would keep
+        // stale connections to a restarted index server and the first index
+        // query of every test class would stall. The node is stopped when the
+        // JVM terminates, so it is kept only within this surefire execution.
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
     }
