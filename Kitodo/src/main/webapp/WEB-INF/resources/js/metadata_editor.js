@@ -537,7 +537,7 @@ metadataEditor.gallery = {
                     tooltipElement.setAttribute("data-preloaded", "true");
                     tooltipElement.getElementsByTagName('img')[0].height = tempImage.height;
                     PF(tooltip.cfg.widgetVar).show();
-                }
+                };
                 return false;
             }
             return true;
