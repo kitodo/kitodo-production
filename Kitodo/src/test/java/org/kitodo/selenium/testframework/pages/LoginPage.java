@@ -13,7 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.KitodoLegacyPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.WebElement;
@@ -49,7 +49,7 @@ public class LoginPage extends Page<LoginPage> {
     }
 
     public void performLogin(User user) throws InterruptedException {
-        SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+        KitodoLegacyPasswordEncoder passwordEncoder = new KitodoLegacyPasswordEncoder();
         String password = passwordEncoder.decrypt(user.getPassword());
 
         usernameInput.clear();
