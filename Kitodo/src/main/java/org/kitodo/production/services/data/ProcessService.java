@@ -2561,10 +2561,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         if (!includeClosed) {
             query.restrictToNotCompletedProcesses();
         }
-        if (!includeInactiveProjects) {
-            query.addBooleanRestriction("project.active", Boolean.TRUE);
-        }
-
         if (allSelected) {
             if (Objects.nonNull(excludedProcessIds) && !excludedProcessIds.isEmpty()) {
                 query.addNotInCollectionRestriction("id", excludedProcessIds);
@@ -2574,6 +2570,11 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         }
 
         query.restrictToClient(sessionClientId);
+
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
+                .filter(project -> includeInactiveProjects || project.isActive()).map(project -> project.getId())
+                .collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
         query.applyIndexRestriction(FIELD_ID);
         query.addInnerJoin("project proj");
         query.defineSorting("id", SortOrder.ASCENDING);
