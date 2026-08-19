@@ -117,21 +117,23 @@ public class MassImportForm extends BaseForm {
      */
     public void handleFileUpload(FileUploadEvent event) {
         file = event.getFile();
-        try {
-            List<String> csvLines = massImportService.getLines(file);
-            resetValues();
-            if (!csvLines.isEmpty()) {
-                importedCsvHeaderLine = csvLines.getFirst();
-                csvSeparator = ServiceManager.getMassImportService().guessCsvSeparator(csvLines);
-                updateMetadataKeys();
-                if (csvLines.size() > 1) {
-                    importedCsvLines = csvLines.subList(1, csvLines.size());
-                    parseCsvLines();
+        if (Objects.nonNull(file)) {
+            try {
+                List<String> csvLines = massImportService.getLines(file);
+                resetValues();
+                if (!csvLines.isEmpty()) {
+                    importedCsvHeaderLine = csvLines.getFirst();
+                    csvSeparator = ServiceManager.getMassImportService().guessCsvSeparator(csvLines);
+                    updateMetadataKeys();
+                    if (csvLines.size() > 1) {
+                        importedCsvLines = csvLines.subList(1, csvLines.size());
+                        parseCsvLines();
+                    }
                 }
+            } catch (IOException | CsvException | KitodoCsvImportException e) {
+                Helper.setErrorMessage(e);
+                records = new LinkedList<>();
             }
-        } catch (IOException | CsvException | KitodoCsvImportException e) {
-            Helper.setErrorMessage(e);
-            records = new LinkedList<>();
         }
     }
 
