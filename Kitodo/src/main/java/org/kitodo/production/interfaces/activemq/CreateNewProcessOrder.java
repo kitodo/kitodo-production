@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
@@ -98,7 +98,7 @@ public class CreateNewProcessOrder {
      *             if the ImportConfiguartionDAO is unable to find an import
      *             configuration with the given ID
      * @throws IllegalArgumentException
-     *             If a required field is missing in the Active MQ message
+     *             If a required field is missing in the Active MQ
      *             message, or contains inappropriate values.
      * @throws JMSException
      *             Defined by the JMS API. I have not seen any cases where this
@@ -127,7 +127,7 @@ public class CreateNewProcessOrder {
      *             if the ImportConfiguartionDAO is unable to find an import
      *             configuration with that ID
      */
-    private static final List<Pair<ImportConfiguration, String>> convertImports(@Nullable List<?> imports)
+    private static List<Pair<ImportConfiguration, String>> convertImports(@Nullable List<?> imports)
             throws DAOException {
 
         if (Objects.isNull(imports) || imports.isEmpty()) {
@@ -137,10 +137,9 @@ public class CreateNewProcessOrder {
         final ImportConfigurationService importConfigurationService = ServiceManager.getImportConfigurationService();
         List<Pair<ImportConfiguration, String>> result = new ArrayList<>();
         for (Object dubious : imports) {
-            if (!(dubious instanceof Map)) {
+            if (!(dubious instanceof Map<?, ?> map)) {
                 throw new IllegalArgumentException("Entry of \"imports\" is not a map");
             }
-            Map<?, ?> map = (Map<?, ?>) dubious;
             ImportConfiguration importconfiguration = importConfigurationService.getById(MapMessageObjectReader
                     .getMandatoryInteger(map, FIELD_IMPORT_CONFIG));
             String value = MapMessageObjectReader.getMandatoryString(map, FIELD_IMPORT_VALUE);
@@ -162,7 +161,7 @@ public class CreateNewProcessOrder {
      *             if the process count for the title is not exactly one
      */
     @CheckForNull
-    private static final Integer convertProcessId(String processId) throws DAOException, ProcessorException {
+    private static Integer convertProcessId(String processId) throws DAOException, ProcessorException {
         if (Objects.isNull(processId)) {
             return null;
         }
@@ -170,7 +169,7 @@ public class CreateNewProcessOrder {
             return Integer.valueOf(processId);
         } else {
             Collection<Process> parents = ServiceManager.getProcessService().findByTitle(processId);
-            if (parents.size() == 0) {
+            if (parents.isEmpty()) {
                 throw new ProcessorException("Parent process not found");
             } else if (parents.size() > 1) {
                 throw new ProcessorException("Parent process exists more than one");
@@ -184,7 +183,7 @@ public class CreateNewProcessOrder {
      * Converts metadata details into safe data objects. For {@code null}, it
      * will return an empty collection, never {@code null}.
      */
-    private static final HashSet<Metadata> convertMetadata(@Nullable Map<?, ?> metadata, @Nullable MdSec domain) {
+    private static HashSet<Metadata> convertMetadata(@Nullable Map<?, ?> metadata, @Nullable MdSec domain) {
 
         HashSet<Metadata> result = new HashSet<>();
         if (Objects.isNull(metadata)) {
@@ -193,10 +192,9 @@ public class CreateNewProcessOrder {
 
         for (Entry<?, ?> entry : metadata.entrySet()) {
             Object dubiousKey = entry.getKey();
-            if (!(dubiousKey instanceof String) || ((String) dubiousKey).isEmpty()) {
+            if (!(dubiousKey instanceof String key) || key.isEmpty()) {
                 throw new IllegalArgumentException("Invalid metadata key");
             }
-            String key = (String) dubiousKey;
 
             Object dubiousValuesList = entry.getValue();
             if (!(dubiousValuesList instanceof List)) {

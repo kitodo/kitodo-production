@@ -16,13 +16,13 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.jms.Connection;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
@@ -46,7 +46,7 @@ public class ActiveMQDirector implements Runnable {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
     // When implementing new services, add them to this list
-    private static Collection<ActiveMQProcessor> services;
+    private static final Collection<ActiveMQProcessor> services;
 
     static {
         services = Arrays.asList(new FinalizeStepProcessor(), new TaskActionProcessor(),
@@ -118,7 +118,7 @@ public class ActiveMQDirector implements Runnable {
             }
 
             connection.start();
-            connection.setExceptionListener(exception -> logger.error(exception));
+            connection.setExceptionListener(logger::error);
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (Exception e) {
             logger.fatal("Error connecting to ActiveMQ server, giving up.", e);

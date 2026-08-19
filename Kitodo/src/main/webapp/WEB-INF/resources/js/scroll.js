@@ -15,7 +15,7 @@ var interval;
 var structureInterval;
 
 function atTop(scrollableContent) {
-    return scrollableContent.scrollTop() <= 0
+    return scrollableContent.scrollTop() <= 0;
 }
 
 function atBottom(scrollableContent) {
