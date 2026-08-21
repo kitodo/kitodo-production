@@ -327,7 +327,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
             this.metadataFileValidationErrors.addAll(e.getValidationResult().getResultMessages());
             setValidationErrorTitle(Helper.getTranslation("validation.invalidMetadataFile"));
             showValidationExceptionDialog(e, this.referringView);
-        } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
+        } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException | IllegalStateException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
