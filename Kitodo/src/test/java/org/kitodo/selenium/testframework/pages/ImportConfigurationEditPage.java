@@ -126,9 +126,31 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
     }
 
+    /**
+     * Create a new import configuration with file upload.
+     */
+    public void insertFileUploadImportConfiguration() {
+        titleInput.sendKeys("File upload configuration");
+        selectFileUpload();
+    }
+
     private void selectCatalogSearch() {
         clickElement(configurationTypeMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(configurationTypeMenu.getAttribute("id") + "_1")));
+    }
+
+    private void selectFileUpload() {
+        clickElement(configurationTypeMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(configurationTypeMenu.getAttribute("id") + "_2")));
+    }
+
+    /**
+     * Returns the currently selected upload metadata format.
+     *
+     * @return currently selected upload metadata format as String
+     */
+    public String getUploadMetadataFormat() {
+        return Browser.getDriver().findElement(By.id("editForm:importConfigurationTabView:uploadMetadataFormat")).getText();
     }
 
     private void selectCustomInterfaceType() {
