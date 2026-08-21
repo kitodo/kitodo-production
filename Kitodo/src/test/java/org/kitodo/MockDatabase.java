@@ -144,12 +144,14 @@ public class MockDatabase {
     }
 
     public static void startNode() throws Exception {
-        final String nodeName = "index";
-        final String port = "9205"; // defined in test resources file hibernate.cfg.xml
-        Environment environment = prepareEnvironment(port, nodeName, Paths.get("target", "classes"));
-        removeOldDataDirectories("target/" + nodeName);
-        node = new ExtendedNode(environment, Collections.singleton(Netty4Plugin.class));
-        node.start();
+        if (node == null) {
+            final String nodeName = "index";
+            final String port = "9205"; // defined in test resources file hibernate.cfg.xml
+            Environment environment = prepareEnvironment(port, nodeName, Paths.get("target", "classes"));
+            removeOldDataDirectories("target/" + nodeName);
+            node = new ExtendedNode(environment, Collections.singleton(Netty4Plugin.class));
+            node.start();
+        }
     }
 
     public static void stopNode() throws Exception {
