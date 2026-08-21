@@ -69,6 +69,7 @@ import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.utils.XMLSecurity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -132,7 +133,7 @@ public class ImportEadProcessesThread extends EmptyTask {
         boolean stopOnError = ConfigCore.getBooleanParameter(ParameterCore.STOP_EAD_COLLECTION_IMPORT_ON_EXCEPTION);
         try {
             int numberOfElements = XMLUtils.getNumberOfEADElements(xmlString, eadLevel);
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            XMLInputFactory inputFactory = XMLSecurity.newXmlInputFactory();
             XMLEventReader eventReader = inputFactory.createXMLEventReader(new StringReader(xmlString));
             boolean inProcessElement = false;
             boolean inParentProcessElement = false;

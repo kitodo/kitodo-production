@@ -13,7 +13,6 @@ package org.kitodo.api.externaldatamanagement;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
@@ -34,6 +33,7 @@ import org.jdom2.output.XMLOutputter;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.utils.XMLSecurity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -42,17 +42,17 @@ import org.xml.sax.SAXException;
 
 public class XmlResponseHandler {
 
-    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    private static final DocumentBuilderFactory documentBuilderFactory;
     private static final XMLOutputter xmlOutputter = new XMLOutputter();
     private static final XPath xPath = XPathFactory.newInstance().newXPath();
 
     static {
-        documentBuilderFactory.setNamespaceAware(true);
         try {
-            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        } catch (ParserConfigurationException parserConfigurationException) {
-            throw new UndeclaredThrowableException(parserConfigurationException);
+            documentBuilderFactory = XMLSecurity.newDocumentBuilderFactory();
+        } catch (ParserConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
         }
+        documentBuilderFactory.setNamespaceAware(true);
         xmlOutputter.setFormat(Format.getPrettyFormat());
     }
 
