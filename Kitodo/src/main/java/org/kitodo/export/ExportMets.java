@@ -77,7 +77,7 @@ public class ExportMets {
      *            Process object
      */
     public boolean startExport(Process process) throws DAOException, IOException, SAXException, FileStructureValidationException {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getCurrentUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         boolean exportSuccessful = startExport(process, userHome);
         if (exportSuccessful) {
@@ -124,7 +124,7 @@ public class ExportMets {
      *            the folder to prove and maybe create it
      */
     protected void prepareUserDirectory(URI targetFolder) {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getCurrentUser();
         try {
             fileService.createDirectoryForUser(targetFolder, user.getLogin());
         } catch (IOException | RuntimeException e) {
