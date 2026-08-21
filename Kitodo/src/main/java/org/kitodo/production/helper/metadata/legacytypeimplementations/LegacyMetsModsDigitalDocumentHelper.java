@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.NoSuchElementException;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -84,9 +85,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
         this.workpiece = new Workpiece();
 
         try {
-            User user = ServiceManager.getUserService().getCurrentUser();
-            String metadataLanguage = user != null ? user.getMetadataLanguage()
-                    : Helper.getRequestParameter("Accept-Language");
+            String metadataLanguage = Helper.getRequestParameter("Accept-Language");
+            try {
+                metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+            } catch (NoSuchElementException e) {
+                // ignore if no user is logged in
+            }
             this.priorityList = LanguageRange.parse(! metadataLanguage.isEmpty() ? metadataLanguage : "en");
         } catch (NullPointerException e) {
             /*

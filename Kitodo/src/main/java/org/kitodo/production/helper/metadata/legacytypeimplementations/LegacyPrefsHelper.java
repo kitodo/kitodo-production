@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Level;
@@ -83,9 +84,12 @@ public class LegacyPrefsHelper {
                 List<LanguageRange> priorityList;
 
                 try {
-                    User user = ServiceManager.getUserService().getCurrentUser();
-                    String metadataLanguage = user != null ? user.getMetadataLanguage()
-                            : Helper.getRequestParameter("Accept-Language");
+                    String metadataLanguage = Helper.getRequestParameter("Accept-Language");
+                    try {
+                        metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+                    } catch (NoSuchElementException e) {
+                        // ignore if no user is logged in
+                    }                    
                     priorityList = LanguageRange.parse(! metadataLanguage.isEmpty() ? metadataLanguage : "en");
                 } catch (NullPointerException e) {
                     /*
