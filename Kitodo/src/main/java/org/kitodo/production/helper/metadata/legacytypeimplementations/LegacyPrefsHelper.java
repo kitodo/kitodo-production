@@ -83,7 +83,7 @@ public class LegacyPrefsHelper {
                 List<LanguageRange> priorityList;
 
                 try {
-                    User user = ServiceManager.getUserService().getAuthenticatedUser();
+                    User user = ServiceManager.getUserService().getCurrentUser();
                     String metadataLanguage = user != null ? user.getMetadataLanguage()
                             : Helper.getRequestParameter("Accept-Language");
                     priorityList = LanguageRange.parse(! metadataLanguage.isEmpty() ? metadataLanguage : "en");

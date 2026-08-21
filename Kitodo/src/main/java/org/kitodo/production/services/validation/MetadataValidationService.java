@@ -242,7 +242,7 @@ public class MetadataValidationService {
      * @return the metadata language
      */
     private List<LanguageRange> getMetadataLanguage() {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getCurrentUser();
         String metadataLanguage = user != null ? user.getMetadataLanguage()
                 : Helper.getRequestParameter("Accept-Language");
         return LanguageRange.parse(StringUtils.isNotBlank(metadataLanguage) ? metadataLanguage : "en");

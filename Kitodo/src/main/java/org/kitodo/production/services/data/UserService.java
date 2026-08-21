@@ -206,6 +206,9 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
 
     /**
      * Gets the current authenticated user of current threads security context.
+     * 
+     * <p>This user object is not updated throughout the user session. It contains the user object retrieved from the database at the time 
+     * of login. Do not use this object to query or modify user information or associated beans.</p>
      *
      * @return The SecurityUserDetails object or null if no user is authenticated.
      */
