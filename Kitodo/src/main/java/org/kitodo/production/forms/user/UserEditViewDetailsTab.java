@@ -11,15 +11,13 @@
 
 package org.kitodo.production.forms.user;
 
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingException;
 
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
@@ -30,7 +28,10 @@ import jakarta.validation.ValidatorFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.logintask.LoginTaskStatus;
+import org.kitodo.api.logintask.LoginTaskType;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.LoginTask;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
@@ -38,8 +39,8 @@ import org.kitodo.production.forms.BaseTabEditView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.password.KitodoPassword;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.LoginTaskService;
 import org.kitodo.production.services.data.UserService;
 import org.primefaces.PrimeFaces;
 
@@ -54,12 +55,14 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
     
     private static final Logger logger = LogManager.getLogger(UserEditViewDetailsTab.class);
 
-    private final transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private final transient UserService userService = ServiceManager.getUserService();
+    private final transient LoginTaskService loginTaskService = ServiceManager.getLoginTaskService();
 
     private String passwordToEncrypt;
     private String oldPassword;
     private List<Client> clientsOfUser;
+
+    private Optional<LoginTask> lastLdapLoginTask;
 
     /**
      * Return user object currently being edited.
@@ -129,6 +132,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
         this.userObject = userObject;
         this.clientsOfUser = UserService.getClientsOfUserSorted(userObject);
         passwordToEncrypt = "";
+        loadLastLdapLoginTask();
     }
 
     /**
@@ -171,7 +175,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
 
         // save the password only when user is created else changePasswordForCurrentUser is used
         if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
-            userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
+            userObject.setPassword(userService.getPasswordEncoder().encode(passwordToEncrypt));
         }
 
         return true;
@@ -194,18 +198,66 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
     }
 
     /**
-     * Writes the user to the ldap server, meaning create a new LDAP user entry.
+     * Return label for ldap login task button.
+     * 
+     * @return the label
      */
-    public String writeUserAtLdapServer() {
-        try {
-            ServiceManager.getLdapServerService().createNewUser(this.userObject,
-                passwordEncoder.decrypt(this.userObject.getPassword()));
-        } catch (NameAlreadyBoundException e) {
-            Helper.setErrorMessage("Ldap entry already exists", logger, e);
-        } catch (NoSuchAlgorithmException | NamingException | IOException | RuntimeException e) {
-            Helper.setErrorMessage("Could not generate ldap entry", logger, e);
+    public String getLdapLoginTaskButtonLabel() {
+        String label = Helper.getTranslation("ldapWriteConfiguration");
+        if (Objects.isNull(lastLdapLoginTask) || lastLdapLoginTask.isEmpty()) {
+            return label;
         }
-        return null;
+
+        boolean lastSuccessful = LoginTaskStatus.COMPLETED.equals(lastLdapLoginTask.get().getStatus());
+        boolean lastFailed = LoginTaskStatus.FAILED.equals(lastLdapLoginTask.get().getStatus()); 
+
+        if (lastSuccessful) {
+            Date lastExecutionDate = lastLdapLoginTask.get().getExecutedAt();
+            label = Helper.getTranslation("ldapWriteConfigurationSuccessful", Helper.getDateAsFormattedString(lastExecutionDate));
+        } else if (lastFailed) {
+            String lastError = lastLdapLoginTask.get().getError();
+            label = Helper.getTranslation("ldapWriteConfigurationFailed", lastError);
+        }
+
+        return label;
+    }
+
+    /**
+     * Return true if the user has a pending ldap login task.
+     * 
+     * <p>Will disable the button to add a new ldap login task</p>
+     */
+    public boolean hasPendingLdapLoginTask() {
+        return Objects.nonNull(lastLdapLoginTask) 
+            && lastLdapLoginTask.isPresent() 
+            && LoginTaskStatus.PENDING.equals(lastLdapLoginTask.get().getStatus());
+    }
+
+    /**
+     * User requests to add a new ldap login task to write user credentials to the ldap server.
+     */
+    public void addLdapLoginTask() {
+        loginTaskService.addLoginTask(this.userObject, LoginTaskType.SAVE_USER_TO_LDAP);
+        loadLastLdapLoginTask();
+    }
+
+    /**
+     * User cancels the the last pending ldap login task.
+     */
+    public void cancelLdapLoginTask() {
+        if (Objects.nonNull(this.lastLdapLoginTask) && this.lastLdapLoginTask.isPresent()) {
+            loginTaskService.cancelLoginTask(this.lastLdapLoginTask.get());
+        }
+        loadLastLdapLoginTask();
+    }
+
+    /**
+     * Retrieve whether the current user already has a pending login task to save user credentials to the ldap server.
+     * 
+     * @return true if pending login task exists
+     */
+    private void loadLastLdapLoginTask() {
+        this.lastLdapLoginTask = loginTaskService.getLastLoginTaskForUserAndType(this.userObject, LoginTaskType.SAVE_USER_TO_LDAP);
     }
 
     /**
@@ -276,7 +328,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
             // user has admin rights and old password doesn't matter
             return true;
         }
-        return Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
+        return userService.getPasswordEncoder().matches(this.oldPassword, this.userObject.getPassword());
     }
 
 }

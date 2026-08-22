@@ -33,7 +33,7 @@ public class SecurityPasswordEncoderTest {
     @Test
     public void encryptTest() {
         for (String clearText : testData.keySet()) {
-            String encrypted = new SecurityPasswordEncoder().encrypt(clearText);
+            String encrypted = new KitodoLegacyPasswordEncoder().encrypt(clearText);
             assertEquals(testData.get(clearText), encrypted, "Encrypted Password doesn't match the precomputed one!");
         }
     }
@@ -41,7 +41,7 @@ public class SecurityPasswordEncoderTest {
     @Test
     public void decryptTest() {
         for (String clearText : testData.keySet()) {
-            String decrypted = new SecurityPasswordEncoder().decrypt(testData.get(clearText));
+            String decrypted = new KitodoLegacyPasswordEncoder().decrypt(testData.get(clearText));
             assertEquals(clearText, decrypted, "Decrypted Password doesn't match the given plain text");
         }
     }
