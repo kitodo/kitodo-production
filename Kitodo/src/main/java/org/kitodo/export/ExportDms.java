@@ -164,7 +164,7 @@ public class ExportDms extends ExportMets {
         } catch (IOException | DAOException | SAXException | FileStructureValidationException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
-                logger.error(Helper.getTranslation(ERROR_EXPORT, process.getTitle()), e);
+                logger.error("Export canceled for process: '{}'", process.getTitle(), e);
             } else {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
@@ -307,7 +307,7 @@ public class ExportDms extends ExportMets {
         } catch (RuntimeException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
-                logger.error(Helper.getTranslation(ERROR_EXPORT, process.getTitle()), e);
+                logger.error("Export canceled for process: '{}'", process.getTitle(), e);
             } else {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
