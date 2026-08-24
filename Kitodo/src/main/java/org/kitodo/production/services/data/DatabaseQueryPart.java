@@ -95,6 +95,8 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
         if (Objects.isNull(query)) {
             return SQL_FALSE;
         }
+        String queryObjectParameter = "queryObject" + parameterName;
+        query = query.replace(":queryObject", ":" + queryObjectParameter);
         query = query.contains("~") ? query.replace("~", varName) : varName + '.' + query;
         query = query.contains("#") ? query.replace("#", parameterName)
                 : query + (value.contains("%") ? " LIKE :" : " = :") + parameterName;
@@ -111,7 +113,7 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
      */
     void addParameters(String parameterName, Map<String, Object> parameters) {
         if (Objects.nonNull(filterField.getQueryObject())) {
-            parameters.put("queryObject", filterField.getQueryObject());
+            parameters.put("queryObject" + parameterName, filterField.getQueryObject());
         }
         parameters.put(parameterName, value);
     }
