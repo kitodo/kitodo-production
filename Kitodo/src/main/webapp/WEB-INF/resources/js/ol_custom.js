@@ -358,7 +358,8 @@ class KitodoDetailMap {
                 constrainOnlyCenter: true,
                 smoothExtentConstraint: true,
                 showFullExtent: true,
-                padding: [20, 20, 20, 20]
+                padding: [20, 20, 20, 20],
+                constrainResolution: true
             })
         });
         if (this.#view.center == null) {
