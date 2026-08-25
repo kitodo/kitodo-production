@@ -482,7 +482,22 @@ public class Helper {
      * @return translated String
      */
     public static String getTranslation(String title, String... insertions) {
-        String pattern = getString(desiredLanguage(), title);
+        return getTranslation(desiredLanguage(), title, insertions);
+    }
+
+    /**
+     * Get translation in the given language.
+     *
+     * @param locale
+     *            language in which the message should be translated
+     * @param title
+     *            String
+     * @param insertions
+     *            Strings
+     * @return translated String
+     */
+    public static String getTranslation(Locale locale, String title, String... insertions) {
+        String pattern = getString(locale, title);
         String message = pattern;
         try {
             message = MessageFormat.format(pattern, (Object[]) insertions);
