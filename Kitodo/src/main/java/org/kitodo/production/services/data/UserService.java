@@ -219,7 +219,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     /**
      * Return the current User object after loading it from the database (cached for each request).
      * 
-     * <p>Previously, the user object was loaded from the spring security context. This meant that the user 
+     * <p>Previously, the user object was loaded from the Spring Security context. This meant that the user 
      * object and associated beans (e.g. assigned clients, assigned projects) were cached for the full duration
      * of the user session. If user details were changed by other users (e.g. administrators) while a user is 
      * logged in, these would not be reflected immediately for this user, because the user object was never
