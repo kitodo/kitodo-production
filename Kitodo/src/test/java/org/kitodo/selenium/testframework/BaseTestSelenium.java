@@ -22,7 +22,10 @@ import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -88,6 +91,20 @@ public class BaseTestSelenium {
         MockDatabase.stopNode();
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
+    }
+
+    @BeforeEach
+    public void debugLogBefore(TestInfo testInfo) {
+        String className = testInfo.getTestClass().get().getSimpleName();
+        String methodName = testInfo.getTestMethod().get().getName();
+        logger.debug("execute test: {}#{}", className, methodName);
+    }
+
+    @AfterEach
+    public void debugLogAfter(TestInfo testInfo) {
+        String className = testInfo.getTestClass().get().getSimpleName();
+        String methodName = testInfo.getTestMethod().get().getName();
+        logger.debug("finished test: {}#{}", className, methodName);
     }
 
     protected void pollAssertTrue(Callable<Boolean> conditionEvaluator) {
