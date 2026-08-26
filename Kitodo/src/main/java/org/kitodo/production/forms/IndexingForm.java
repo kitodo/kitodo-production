@@ -173,7 +173,7 @@ public class IndexingForm {
      */
     public void startAllIndexing() {
         indexingStartedTime = LocalDateTime.now();
-        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
+        indexingStartedUser = ServiceManager.getUserService().getCurrentUser().getFullName();
         for (IndexingRow indexingRow : indexingRows.values()) {
             if (!indexingRow.isIndexingInProgress()) {
                 indexingRow.callIndexing();
