@@ -45,6 +45,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.model.LazyProcessModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.export.MetsExportService;
 import org.kitodo.utils.Stopwatch;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
@@ -522,7 +523,7 @@ public class ProcessListBaseView extends BaseListView {
     public void exportMets(int processId) {
         Stopwatch stopwatch = new Stopwatch(this.getClass(), processId, "exportMets");
         try {
-            ProcessService.exportMets(processId);
+            MetsExportService.exportToUserHome(ServiceManager.getProcessService().getById(processId));
         } catch (DAOException | IOException | SAXException | FileStructureValidationException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);

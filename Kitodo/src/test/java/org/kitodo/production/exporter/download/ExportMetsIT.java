@@ -37,6 +37,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.export.MetsExportService;
 import org.kitodo.production.services.file.FileService;
 
 public class ExportMetsIT {
@@ -101,7 +102,7 @@ public class ExportMetsIT {
             fileService.createDirectory(ConfigCore.getUriParameter(ParameterCore.DIR_USERS), userDirectory);
         }
 
-        exportMets.startExport(process);
+        MetsExportService.exportToUserHome(process);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_mets.xml"));
         assertTrue(strings.toString().contains("<kitodo:metadata name=\"singleDigCollection\">test collection</kitodo:metadata>"), "Export of metadata 'singleDigCollection' was wrong");
