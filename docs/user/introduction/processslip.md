@@ -5,7 +5,7 @@ In Kitodo.Production besteht die Möglichkeit, nach dem Anlegen eines Vorgangs d
 
 ## Laufzettel für Produktionsvorlage auswählen
 
-Beim Erstellen einer Produktionsvorlage, muss ein dazugehöriger Laufzettel ausgewählt werden. Dieser Laufzettel wird dann für die Vorgänge, welche die Produktionsvorlage verwenden, übernommen.
+Beim Erstellen einer Produktionsvorlage muss ein dazugehöriger Laufzettel ausgewählt werden. Dieser Laufzettel wird dann für die Vorgänge, welche die Produktionsvorlage verwenden, übernommen.
 
 <center><img src= "../pictures/ProduktionsvorlageLaufzettelAuswaehlen.png" alt="Bild" width= 80% height= auto></center>
 

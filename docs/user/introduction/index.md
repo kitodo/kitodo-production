@@ -23,7 +23,7 @@ Kitodo wird Ihnen bei der ersten Nutzung sowohl optisch als auch in der Benutzun
 <center><img src= "../pictures/NeuerWorkflow.png" alt="Bild" width= 100% height= auto></center>
 <li> Sie gelangen auf die Seite "<b>Neuen Workflow anlegen</b>". Geben Sie dort zuerst den Titel für den Workflow ein. </li>
 <center><img src= "../pictures/NeuenWorkflowAnlegenTitel.png" alt="Bild" width= 70% height= auto></center>
-<li> Nun können Sie mit den Symbolen auf der linken Seiten Ihren Workflo erstellen. Ziehen Sie dies Symbole einfach in die entsprechende Reihenfolge und Position. </li>
+<li> Nun können Sie mit den Symbolen auf der linken Seite Ihren Workflow erstellen. Ziehen Sie diese Symbole einfach in die entsprechende Reihenfolge und Position. </li>
 <center><img src= "../pictures/WorkflowNeueAufgabe.png" alt="Bild" width= 70% height= auto></center>
 <li> Achten Sie dabei darauf, dass immer Verbindungen zwischen den Symbolen vorhanden sind. Klicken Sie dazu auf das jeweilige Symbol und wählen die Verbindung aus und klicken auf das folgende Symbol.</li>
 <center><img src= "../pictures/WorkflowVerbindung.png" alt="Bild" width= 70% height= auto></center>
@@ -65,7 +65,7 @@ Nachdem nun Projekt, Workflow und Produktionsvorlage erstellt sind, muss (falls 
 <center><img src= "../pictures/ProduktionsvorlageHinzufügen.png" alt="Bild" width= 70% height= auto></center>
 <li>Die ausgewählte Produktionsvorlage erscheint nun in Ihrem Projekt unter dem Abschnitt <i>Aufgabe</i>.
 <center><img src= "../pictures/ProduktionsvorlageAusgewählt.png" alt="Bild" width= 70% height= auto></center>
-<li> Schießen Sie nun noch das Pop-up-Fenster indem Sie auf "<b>Schließen</b>" klicken.</li>
+<li> Schießen Sie nun noch das Pop-up-Fenster, indem Sie auf "<b>Schließen</b>" klicken.</li>
 <center><img src= "../pictures/ProduktionsvorlageSchließen.png" alt="Bild" width= 50% height= auto></center>
 <li> "<b>Speichern</b>" Sie anschließend Ihre Änderung an dem Projekt.</li>
 <center><img src= "../pictures/ProduktionsvorlageSpeichern1.png" alt="Bild" width= 70% height= auto></center>
