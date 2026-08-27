@@ -65,7 +65,7 @@ Nachdem nun Projekt, Workflow und Produktionsvorlage erstellt sind, muss (falls 
 <center><img src= "../pictures/ProduktionsvorlageHinzufügen.png" alt="Bild" width= 70% height= auto></center>
 <li>Die ausgewählte Produktionsvorlage erscheint nun in Ihrem Projekt unter dem Abschnitt <i>Aufgabe</i>.
 <center><img src= "../pictures/ProduktionsvorlageAusgewählt.png" alt="Bild" width= 70% height= auto></center>
-<li> Schießen Sie nun noch das Pop-up-Fenster, indem Sie auf "<b>Schließen</b>" klicken.</li>
+<li> Schließen Sie nun noch das Pop-up-Fenster, indem Sie auf "<b>Schließen</b>" klicken.</li>
 <center><img src= "../pictures/ProduktionsvorlageSchließen.png" alt="Bild" width= 50% height= auto></center>
 <li> "<b>Speichern</b>" Sie anschließend Ihre Änderung an dem Projekt.</li>
 <center><img src= "../pictures/ProduktionsvorlageSpeichern1.png" alt="Bild" width= 70% height= auto></center>
