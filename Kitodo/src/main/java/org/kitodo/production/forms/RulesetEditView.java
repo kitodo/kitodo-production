@@ -24,6 +24,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseId;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -56,7 +58,7 @@ public class RulesetEditView extends ValidatableForm {
     private static final String AT_MARK = "@";
 
     /**
-     * Initialize Rulset form.
+     * Initialize Ruleset form.
      */
     public RulesetEditView() {
         super();
@@ -148,6 +150,9 @@ public class RulesetEditView extends ValidatableForm {
         if (Objects.nonNull(id) && !Objects.equals(id, 0)) {
             try {
                 this.ruleset = ServiceManager.getRulesetService().getById(id);
+                if (!hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
+                    Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
+                }
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id }, logger, e);
             }
@@ -188,12 +193,21 @@ public class RulesetEditView extends ValidatableForm {
      * @return collection of strings containing metadata keys
      */
     public Collection<String> getFunctionalMetadataKeys(FunctionalMetadata functionalMetadata) {
+        // validate ruleset file against ruleset.xsd before trying to load functional metadata keys
         try {
+            ServiceManager.getFileStructureValidationService().validateRuleset(this.ruleset);
             return RulesetService.getFunctionalMetadataKeys(ruleset, functionalMetadata);
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
-            return new ArrayList<>();
+        } catch (FileStructureValidationException e) {
+            setValidationErrorTitle(Helper.getTranslation("validation.invalidRuleset"));
+            showValidationExceptionDialog(e, null);
+        } catch (IOException | IllegalArgumentException | SAXException e) {
+            logger.error(e.getLocalizedMessage());
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            if (Objects.nonNull(facesContext) && PhaseId.UPDATE_MODEL_VALUES.equals(facesContext.getCurrentPhaseId())) {
+                Helper.setErrorMessage(e.getLocalizedMessage());
+            }
         }
+        return new ArrayList<>();
     }
 
     /**
