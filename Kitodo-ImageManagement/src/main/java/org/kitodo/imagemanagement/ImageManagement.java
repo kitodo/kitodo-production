@@ -46,7 +46,14 @@ public class ImageManagement implements ImageManagementInterface {
      * Temporary directory location.
      */
     private static final File TMPDIR = new File(
-            KitodoConfig.getParameter(ParameterImageManagement.DIR_TMP, System.getProperty("java.io.tmpdir")));
+            KitodoConfig.getParameter(ParameterImageManagement.DIR_TMP, () -> {
+                try {
+                    return Files.createTempDirectory(ParameterImageManagement.DIR_TMP.getName()).toString();
+                } catch (IOException e) {
+                    logger.error("could not create temporary directory for image management", e);
+                    return null;
+                }
+            }));
 
     /**
      * Image format used internally to create web images, optimized for small

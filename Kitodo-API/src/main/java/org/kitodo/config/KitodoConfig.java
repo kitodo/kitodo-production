@@ -16,6 +16,7 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConversionException;
@@ -111,6 +112,30 @@ public class KitodoConfig extends Config {
         } catch (ConversionException e) {
             logConversionException(key.getName(), CONFIG_FILE, String.class, e, defaultValue);
             return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the selected parameter from the configuration file. If no such
+     * parameter exists, returns the default value provided by a supplier function.
+     *
+     * @param key
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
+     * @param supplier
+     *            the supplier function that is called in case the parameter taken from 
+     *            the config file does not exist or an exception occurred
+     * @return value for the requested key, or the supplied default value if not found
+     */
+    public static String getParameter(ParameterInterface key, Supplier<String> supplier) {
+        try {
+            return getConfig().getString(key.getName());
+        } catch (ConversionException e) {
+            String defaultValue = supplier.get();
+            logConversionException(key.getName(), CONFIG_FILE, String.class, e, defaultValue);
+            return defaultValue;
+        } catch (NoSuchElementException e) {
+            return supplier.get();
         }
     }
 
