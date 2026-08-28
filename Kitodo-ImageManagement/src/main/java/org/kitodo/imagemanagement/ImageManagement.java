@@ -145,7 +145,7 @@ public class ImageManagement implements ImageManagementInterface {
     private static Image summarize(String prefix, String suffix, URI sourceUri, Function<FutureDerivative, ?> lambda,
             String message, Object pTwo) throws IOException {
 
-        File tempFile = File.createTempFile(prefix, suffix, TMPDIR);
+        File tempFile = Files.createTempFile(TMPDIR.toPath(), prefix, suffix).toFile();
         try {
             tempFile.deleteOnExit();
             ImageConverter imageConverter = new ImageConverter(sourceUri);
