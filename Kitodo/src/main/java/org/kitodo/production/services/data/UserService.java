@@ -238,8 +238,10 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
                 if (Objects.nonNull(authenticatedUser)) {
                     return ServiceManager.getUserService().getById(authenticatedUser.getId());
                 }
+                logger.debug("spring security context has no authenticated user");
                 return null;
             } catch (DAOException e) {
+                logger.error("cannot retrieve authenticated user from database", e);
                 return null;
             }
         }, User.class);
