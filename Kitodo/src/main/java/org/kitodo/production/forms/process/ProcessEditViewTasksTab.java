@@ -119,9 +119,15 @@ public class ProcessEditViewTasksTab extends BaseTabEditView<Process> {
      */
     public void setTaskStatusDown(Task task) {
         final Stopwatch stopwatch = new Stopwatch(this, "setTaskStatusDown");
-        workflowControllerService.setTaskStatusDown(task);
-        ProcessService.deleteSymlinksFromUserHomes(task);
-        refreshParent();
+        try {
+            workflowControllerService.setTaskStatusDown(task);
+            ProcessService.deleteSymlinksFromUserHomes(task);
+            refreshParent();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorChangeTaskStatus",
+                new Object[] {Helper.getTranslation("down"), task.getProcess().getId()},
+                logger, e);
+        }
         stopwatch.stop();
     }
 
