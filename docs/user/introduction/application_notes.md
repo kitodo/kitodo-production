@@ -1,1 +1,0 @@
-# Anwendungshinweise und Weiteres
