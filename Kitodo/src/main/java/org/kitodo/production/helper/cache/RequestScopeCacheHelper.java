@@ -73,7 +73,9 @@ public class RequestScopeCacheHelper {
             // save value if it does not yet exist
             if (!cache.containsKey(key)) {
                 T value = supplier.get();
-                cache.put(key, value);
+                if (Objects.nonNull(value)) {
+                    cache.put(key, value);
+                }
             };
             return clazz.cast(cache.get(key));
         }
