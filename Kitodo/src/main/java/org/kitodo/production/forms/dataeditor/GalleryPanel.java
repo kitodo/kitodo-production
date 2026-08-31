@@ -33,6 +33,7 @@ import jakarta.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -192,7 +193,11 @@ public class GalleryPanel {
 
         int toStripeIndex = getDropStripeIndex(dropId);
         if (toStripeIndex == -1 || !dragStripeIndexMatches(dragId)) {
-            logger.error("Unsupported drag'n'drop event from {} to {}", dragId, dropId);
+            logger.error(
+                "Unsupported drag'n'drop event from '{}' to '{}'", 
+                StringEscapeUtils.escapeJava(dragId), 
+                StringEscapeUtils.escapeJava(dropId)
+            );
             return;
         }
 
