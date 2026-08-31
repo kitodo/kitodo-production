@@ -424,4 +424,41 @@ public class ImageGeneratorIT {
         assertNotEquals(resultFileTwoBefore, lastModifiedTime(mixedResultTwo), mixedResultTwo + MESSAGE_NOT_CHANGED);
         assertNotEquals(resultFileThreeBefore, lastModifiedTime(mixedResultThree), mixedResultThree + MESSAGE_NOT_CHANGED);
     }
+
+    /**
+     * Verifies that the configured source folder is ignored when it is also
+     * supplied as an output folder.
+     */
+    @Test
+    public void testSourceFolderIsNotRegenerated() throws Exception {
+        Process process = new Process();
+        process.setId(processId);
+        process.setTitle(processTitle);
+
+        Folder folder = new Folder();
+        folder.setPath(tiffFolder);
+        folder.setMimeType(tiffType);
+        folder.setDerivative(1.0);
+
+        Subfolder sourceFolder = new Subfolder(process, folder);
+        VariableReplacer variableReplacer = new MockVariableReplacer(processTitle);
+        setField(sourceFolder, "variableReplacer", variableReplacer);
+
+        Subfolder outputFolder = new Subfolder(process, folder);
+        setField(outputFolder, "variableReplacer", variableReplacer);
+
+        Collection<Subfolder> outputs = Collections.singletonList(outputFolder);
+        // Intentionally use the same Folder configuration for source and output.
+        ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, GenerationMode.ALL, outputs);
+
+        Optional<FileTime> inputFileOneBefore = lastModifiedTime(inputFileOne);
+        Optional<FileTime> inputFileTwoBefore = lastModifiedTime(inputFileTwo);
+        Optional<FileTime> inputFileThreeBefore = lastModifiedTime(inputFileThree);
+
+        imageGenerator.run();
+
+        assertEquals(inputFileOneBefore, lastModifiedTime(inputFileOne), inputFileOne + MESSAGE_CHANGED);
+        assertEquals(inputFileTwoBefore, lastModifiedTime(inputFileTwo), inputFileTwo + MESSAGE_CHANGED);
+        assertEquals(inputFileThreeBefore, lastModifiedTime(inputFileThree), inputFileThree + MESSAGE_CHANGED);
+    }
 }
