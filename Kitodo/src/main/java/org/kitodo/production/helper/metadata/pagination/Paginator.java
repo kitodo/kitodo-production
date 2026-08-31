@@ -35,6 +35,7 @@ public class Paginator implements Iterator<String> {
      */
     private HalfInteger value;
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private void parse(String initializer) {
 
         StringBuilder stringBuilder = new StringBuilder();
