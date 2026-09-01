@@ -166,7 +166,7 @@ public class BatchTaskHelper extends BatchHelper {
             }
             task.setEditType(TaskEditType.MANUAL_MULTI);
             task.setProcessingTime(new Date());
-            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            User user = ServiceManager.getUserService().getCurrentUser();
             ServiceManager.getTaskService().replaceProcessingUser(task, user);
 
             try {

@@ -44,11 +44,12 @@
         <tomcat.baseversion>10</tomcat.baseversion>
         <tomcat.version>10.1.46</tomcat.version>
         <awaitility.version>4.0.3</awaitility.version>
-        <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
+        <com.h2database.h2.version>2.3.232</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-net.version>3.9.0</commons-net.version>
+        <commons-text.version>1.15.0</commons-text.version>
         <font-awesome.version>4.7.0</font-awesome.version>
         <omnifaces.version>4.7.12</omnifaces.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
@@ -88,12 +89,12 @@
         <mockito.version>5.21.0</mockito.version>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>4.40.0</selenium.version>
-        <spring.security.version>7.0.6</spring.security.version>
-        <flyway-maven-plugin.version>12.3.0</flyway-maven-plugin.version>
+        <spring.security.version>7.1.0</spring.security.version>
+        <flyway-maven-plugin.version>12.11.0</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>3.5.8</mariadb-java-client.version>
+        <mariadb-java-client.version>3.5.9</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
@@ -204,6 +205,11 @@
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
                 <version>${commons-net.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.reactivex.rxjava2</groupId>
@@ -776,7 +782,7 @@ from system library in Java 11+ -->
                 <!-- spring security dependency used at runtime -->
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-faces</artifactId>
-                <version>3.0.1</version>
+                <version>3.0.2</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>

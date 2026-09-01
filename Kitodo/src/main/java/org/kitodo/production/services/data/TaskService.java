@@ -832,7 +832,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * @return list of tasks in work by other users
      */
     public static List<Task> getTasksInWorkByOtherUsers(List<Task> tasks) {
-        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        int authenticatedUserId = ServiceManager.getUserService().getCurrentUser().getId();
         return tasks.stream()
                 .filter(t -> Objects.nonNull(t.getProcessingUser())
                         && authenticatedUserId != t.getProcessingUser().getId())
@@ -845,7 +845,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * @return list of current task options for new correction comment
      */
     public static List<Task> getCurrentTaskOptions(Process process) {
-        int authenticatedUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        int authenticatedUserId = ServiceManager.getUserService().getCurrentUser().getId();
         // NOTE: checking for 'INWORK' tasks that do not have a 'processingUser' shouldn't be necessary, but the current
         // version of Kitodo.Production allows setting tasks to 'INWORK' without explicitly assigning a user to it via a
         // process' task list (e.g. administrative action)

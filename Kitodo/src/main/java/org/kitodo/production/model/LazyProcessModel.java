@@ -187,7 +187,7 @@ public class LazyProcessModel extends LazyBeanModel {
                 .findProcessIdsWithChildren(processIds);
 
         List<Integer> userRoleIds = ServiceManager.getUserService()
-                .getAuthenticatedUser()
+                .getCurrentUser()
                 .getRoles()
                 .stream()
                 .map(Role::getId)

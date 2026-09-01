@@ -48,6 +48,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.cache.RequestScopeCacheHelper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.KitodoDelegatingPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
@@ -65,6 +66,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     private final KitodoDelegatingPasswordEncoder passwordEncoder = new KitodoDelegatingPasswordEncoder();
     private static final int DEFAULT_CLIENT_ID =
             ConfigCore.getIntParameterOrDefaultValue(ParameterCore.DEFAULT_CLIENT_ID);
+    private static final String CURRENT_USER_CACHE_KEY = "current_user";
 
     /**
      * Constructor.
@@ -204,7 +206,10 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     /**
-     * Gets the current authenticated user of current threads security context.
+     * Gets the currently authenticated user from the current thread's security context.
+     * 
+     * <p>This user object is not updated throughout the user session. It contains the user object retrieved from the database at the time 
+     * of login. Do not use this object to query or modify user information or associated beans.</p>
      *
      * @return The SecurityUserDetails object or null if no user is authenticated.
      */
@@ -213,17 +218,38 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     /**
-     * Get the current authenticated user as User bean.
+     * Return the current User object after loading it from the database (cached for each request).
+     * 
+     * <p>Previously, the user object was loaded from the Spring Security context. This meant that the user 
+     * object and associated beans (e.g. assigned clients, assigned projects) were cached for the full duration
+     * of the user session. If user details were changed by other users (e.g. administrators) while a user is 
+     * logged in, these would not be reflected immediately for this user, because the user object was never
+     * updated from the database during the user session.</p>
+     * 
+     * <p>Instead, the user object is now loaded exactly once from the database for each request. Any updates to
+     * user details or associated beans (e.g. assigned clients, assigned projects) are immediately reflected in 
+     * views even while the user is logged in.</p>
      *
      * @return the User object
      */
     public User getCurrentUser() {
-        SecurityUserDetails authenticatedUser = getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser)) {
-            return new User(authenticatedUser);
-        } else {
+        User user = RequestScopeCacheHelper.getFromCache(CURRENT_USER_CACHE_KEY, () -> {
+            try {
+                SecurityUserDetails authenticatedUser = getAuthenticatedUser();
+                if (Objects.nonNull(authenticatedUser)) {
+                    return ServiceManager.getUserService().getById(authenticatedUser.getId());
+                }
+                logger.debug("spring security context has no authenticated user");
+                return null;
+            } catch (DAOException e) {
+                logger.error("cannot retrieve authenticated user from database", e);
+                return null;
+            }
+        }, User.class);
+        if (Objects.isNull(user)) {
             throw new NoSuchElementException("There is currently no authenticated user for this thread");
         }
+        return user;
     }
 
     /**
@@ -294,13 +320,13 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     private boolean isLoginAllowed(String login) {
-        KitodoConfigFile blacklist = KitodoConfigFile.LOGIN_BLACKLIST;
-        // If user defined blacklist doesn't exists, use default one
-        try (InputStream inputStream = blacklist.exists() ? Files.newInputStream(blacklist.getFile().toPath())
-                : Thread.currentThread().getContextClassLoader().getResourceAsStream(blacklist.getName());
+        KitodoConfigFile denylist = KitodoConfigFile.LOGIN_DENYLIST;
+        // If user defined denylist doesn't exists, use default one
+        try (InputStream inputStream = denylist.exists() ? Files.newInputStream(denylist.getFile().toPath())
+                : Thread.currentThread().getContextClassLoader().getResourceAsStream(denylist.getName());
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader reader = new BufferedReader(inputStreamReader)) {
-            if (isLoginFoundOnBlackList(reader, login)) {
+            if (isLoginOnDenyList(reader, login)) {
                 return false;
             }
         } catch (IOException e) {
@@ -311,10 +337,10 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     /**
-     * Go through the user defined blacklist file line by line and compare with
+     * Go through the user defined denylist file line by line and compare with
      * login.
      */
-    private boolean isLoginFoundOnBlackList(BufferedReader reader, String login) throws IOException {
+    private boolean isLoginOnDenyList(BufferedReader reader, String login) throws IOException {
         String notAllowedLogin;
         while ((notAllowedLogin = reader.readLine()) != null) {
             if (notAllowedLogin.length() > 0 && login.equalsIgnoreCase(notAllowedLogin)) {

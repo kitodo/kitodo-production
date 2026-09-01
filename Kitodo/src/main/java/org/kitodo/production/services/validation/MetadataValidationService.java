@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -242,9 +243,12 @@ public class MetadataValidationService {
      * @return the metadata language
      */
     private List<LanguageRange> getMetadataLanguage() {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        String metadataLanguage = user != null ? user.getMetadataLanguage()
-                : Helper.getRequestParameter("Accept-Language");
+        String metadataLanguage = Helper.getRequestParameter("Accept-Language");
+        try {
+            metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+        } catch (NoSuchElementException e) {
+            // ignore if no user is logged in
+        }
         return LanguageRange.parse(StringUtils.isNotBlank(metadataLanguage) ? metadataLanguage : "en");
     }
 

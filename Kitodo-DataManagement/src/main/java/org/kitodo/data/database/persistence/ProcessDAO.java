@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,5 +118,26 @@ public class ProcessDAO extends BaseDAO<Process> {
                     "processIds", processIdChunk
                 ));
         }
+    }
+
+    /**
+     *  Updates the sort helper status of the process with the given ID directly in the database.
+     *
+     * @param processId ID of the process to update
+     * @param sortHelperStatus new sort helper status, may be {@code null}
+     */
+    public void updateSortHelperStatus(Integer processId, String sortHelperStatus)
+        throws DAOException {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sortHelperStatus", sortHelperStatus);
+        parameters.put("processId", processId);
+
+        executeUpdate("""
+            UPDATE Process p
+            SET p.sortHelperStatus = :sortHelperStatus
+            WHERE p.id = :processId
+            """, parameters);
+
     }
 }

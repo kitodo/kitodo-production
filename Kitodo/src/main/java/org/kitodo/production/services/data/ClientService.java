@@ -110,7 +110,7 @@ public class ClientService extends BaseBeanService<Client, ClientDAO> {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
             return clients.stream().map(Client::getName).collect(Collectors.joining(COMMA_DELIMITER));
         } else {
-            return clients.stream().filter(client -> ServiceManager.getUserService().getAuthenticatedUser().getClients()
+            return clients.stream().filter(client -> ServiceManager.getUserService().getCurrentUser().getClients()
                     .contains(client)).map(Client::getName).collect(Collectors.joining(COMMA_DELIMITER));
         }
     }

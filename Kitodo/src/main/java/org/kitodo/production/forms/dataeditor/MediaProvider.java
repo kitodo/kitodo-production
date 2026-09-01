@@ -26,6 +26,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.production.helper.Helper;
@@ -125,20 +126,20 @@ public class MediaProvider implements Serializable {
                     Map<String, GalleryMediaContent> processPreviewData = mediaResolver.get(processId);
                     GalleryMediaContent mediaContent = processPreviewData.get(mediaIdString);
                     if (Objects.nonNull(mediaContent)) {
-                        logger.trace("Serving image request {}", mediaIdString);
+                        logger.trace("Serving image request '{}'", StringEscapeUtils.escapeJava(mediaIdString));
                         if (PREVIEW.equals(mediaVariant)) {
                             return mediaContent.getPreviewData();
                         }
                         if (MEDIA_VIEW.equals(mediaVariant)) {
                             return mediaContent.getMediaViewData();
                         }
-                        logger.error("Error: Unknown media variant '{}'", mediaVariant);
+                        logger.error("Error: Unknown media variant '{}'", StringEscapeUtils.escapeJava(mediaVariant));
                     }
-                    logger.debug("Cannot serve image request, mediaId = {}", mediaIdString);
+                    logger.debug("Cannot serve image request, mediaId = '{}'", StringEscapeUtils.escapeJava(mediaIdString));
                 }
                 logger.debug("Media resolver does not contain media content for process with ID {}", processId);
             } catch (NumberFormatException e) {
-                Helper.setErrorMessage("Process ID '" + processIdString + "' is not numeric!");
+                Helper.setErrorMessage("Process ID '" + StringEscapeUtils.escapeJava(processIdString) + "' is not numeric!");
             }
         }
         return DefaultStreamedContent.builder().stream(() -> InputStream.nullInputStream()).build();

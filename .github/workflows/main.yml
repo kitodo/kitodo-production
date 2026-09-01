@@ -54,7 +54,7 @@ jobs:
         run:
             mysql -u root -proot kitodo < $GITHUB_WORKSPACE/Kitodo/setup/default.sql
       - name: set up JDK 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: 'temurin'

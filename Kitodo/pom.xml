@@ -27,7 +27,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <maxAllowedViolations>2</maxAllowedViolations>
+        <maxAllowedViolations>0</maxAllowedViolations>
         <cargo.plugin.version>1.10.22</cargo.plugin.version>
         <jsf.projectStage>Production</jsf.projectStage>
         <myfaces.resourceMaxTimeExpires>604800000</myfaces.resourceMaxTimeExpires>
@@ -72,6 +72,10 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>

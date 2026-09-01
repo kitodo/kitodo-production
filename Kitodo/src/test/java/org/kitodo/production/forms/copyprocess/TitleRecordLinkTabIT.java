@@ -103,8 +103,9 @@ public class TitleRecordLinkTabIT {
     @Test
     public void shouldPreventLinkingToParentProcessOfUnassignedProject() throws DAOException {
         Project firstProject = ServiceManager.getProjectService().getById(1);
-        SecurityUserDetails user = ServiceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getCurrentUser();
         user.getProjects().remove(firstProject);
+        ServiceManager.getUserService().save(user);
 
         TitleRecordLinkTab testedTitleRecordLinkTab = searchForHierarchyParent();
 
@@ -115,6 +116,7 @@ public class TitleRecordLinkTabIT {
 
         // re-add first project to user
         user.getProjects().add(firstProject);
+        ServiceManager.getUserService().save(user);
     }
 
     private TitleRecordLinkTab searchForHierarchyParent() throws DAOException {

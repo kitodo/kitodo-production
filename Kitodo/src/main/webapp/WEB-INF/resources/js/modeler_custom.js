@@ -9,6 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+/* global de_DE, en_EN, es_ES */
 var availableUserRoles = [];
 var language = "de";
 
@@ -20,9 +21,9 @@ $(window).on("load", function () {
 		} else {
 			$('#editForm\\:workflowTabView\\:js-create-diagram')[0].click();
 		}
-		language = $("#editForm\\:workflowTabView\\:editor_language").val();
-		if(!language) {
-			language = "de";
+		language = document.body.getAttribute('lang') || 'de';
+		if (['de', 'en', 'es'].indexOf(language) === -1) {
+			language = 'de';
 		}
 
 		var userRoles = $("#editForm\\:workflowTabView\\:roleId_input").children();
@@ -36,17 +37,27 @@ $(window).on("load", function () {
 
 function getLocalizedStringForKey(key) {
 
-	var availableLanguages = ["de", "en"];
+	var availableLanguages = ["de", "en", "es"];
 
 	var localizedString;
 
 	switch (availableLanguages.indexOf(language)) {
 		default: {
+			if (typeof de_DE !== 'undefined') {
 				localizedString = de_DE[key];
+			}
 			break;
 		}
 		case 1: {
-			localizedString = en_EN[key];
+			if (typeof en_EN !== 'undefined') {
+				localizedString = en_EN[key];
+			}
+			break;
+		}
+		case 2: {
+			if (typeof es_ES !== 'undefined') {
+				localizedString = es_ES[key];
+			}
 			break;
 		}
 	}
