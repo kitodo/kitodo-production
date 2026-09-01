@@ -53,8 +53,9 @@ public class ScreenshotTestWatcher implements TestWatcher {
                     .map(method -> method.getName())
                     .orElse("unknown");
 
-            String fileName = String.format("%s-%s-%d.png", className, methodName, System.currentTimeMillis());
-            Files.write(directory.resolve(fileName), screenshot);
+            Path filepath = directory.resolve(String.format("%s-%s-%d.png", className, methodName, System.currentTimeMillis()));
+            logger.debug("writing selenium screenshot to {}", filepath);
+            Files.write(filepath, screenshot);
         } catch (IOException e) {
             logger.error("error generating screenshot after test failure", e);
         }
