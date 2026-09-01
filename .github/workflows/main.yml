@@ -79,5 +79,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: selenium-screenshots
-          path: $GITHUB_WORKSPACE/Kitodo/target/selenium-screenshots
+          path: ${{ github.workspace }}/Kitodo/target/selenium-screenshots
           if-no-files-found: ignore
