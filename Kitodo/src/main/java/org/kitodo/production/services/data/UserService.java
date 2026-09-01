@@ -238,8 +238,10 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
                 if (Objects.nonNull(authenticatedUser)) {
                     return ServiceManager.getUserService().getById(authenticatedUser.getId());
                 }
+                logger.debug("spring security context has no authenticated user");
                 return null;
             } catch (DAOException e) {
+                logger.error("cannot retrieve authenticated user from database", e);
                 return null;
             }
         }, User.class);
@@ -317,13 +319,13 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     private boolean isLoginAllowed(String login) {
-        KitodoConfigFile blacklist = KitodoConfigFile.LOGIN_BLACKLIST;
-        // If user defined blacklist doesn't exists, use default one
-        try (InputStream inputStream = blacklist.exists() ? Files.newInputStream(blacklist.getFile().toPath())
-                : Thread.currentThread().getContextClassLoader().getResourceAsStream(blacklist.getName());
+        KitodoConfigFile denylist = KitodoConfigFile.LOGIN_DENYLIST;
+        // If user defined denylist doesn't exists, use default one
+        try (InputStream inputStream = denylist.exists() ? Files.newInputStream(denylist.getFile().toPath())
+                : Thread.currentThread().getContextClassLoader().getResourceAsStream(denylist.getName());
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader reader = new BufferedReader(inputStreamReader)) {
-            if (isLoginFoundOnBlackList(reader, login)) {
+            if (isLoginOnDenyList(reader, login)) {
                 return false;
             }
         } catch (IOException e) {
@@ -334,10 +336,10 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
     }
 
     /**
-     * Go through the user defined blacklist file line by line and compare with
+     * Go through the user defined denylist file line by line and compare with
      * login.
      */
-    private boolean isLoginFoundOnBlackList(BufferedReader reader, String login) throws IOException {
+    private boolean isLoginOnDenyList(BufferedReader reader, String login) throws IOException {
         String notAllowedLogin;
         while ((notAllowedLogin = reader.readLine()) != null) {
             if (notAllowedLogin.length() > 0 && login.equalsIgnoreCase(notAllowedLogin)) {

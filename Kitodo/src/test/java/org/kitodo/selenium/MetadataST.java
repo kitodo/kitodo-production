@@ -472,6 +472,35 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verifies that gallery panel remains collapsed after creating structure element.
+     *
+     * @throws Exception when editing metadata or creating structure element fails.
+     */
+    @Test
+    public void keepCollapsedPanelStateOnStructureElementCreationTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_PROCESS_TITLE);
+        // verify that gallery is displayed by default
+        assertTrue(Browser.getDriver().findElement(By.id("imagePreviewForm")).isDisplayed());
+        WebElement thirdColumn = Browser.getDriver().findElement(By.id("thirdColumnWrapper"));
+        // verify that third column is visible
+        assertTrue(thirdColumn.isDisplayed(), "ThirdColumnWrapper should be visible");
+        // verify that column collapse button in third column is visible
+        WebElement collapseButton = thirdColumn.findElement(By.className("columnExpandButton"));
+        assertTrue(collapseButton.isDisplayed(), "Column collapse button should be visible");
+        // collapse gallery panel
+        collapseButton.click();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(() -> !Browser.getDriver().findElement(By.id("imagePreviewForm")).isDisplayed());
+        // verify that gallery is not displayed anymore
+        assertFalse(Browser.getDriver().findElement(By.id("imagePreviewForm")).isDisplayed());
+        // create structure element
+        Pages.getMetadataEditorPage().createStructureElement();
+        // verify that gallery panel is still collapsed after creating structure element
+        assertFalse(Browser.getDriver().findElement(By.id("imagePreviewForm")).isDisplayed());
+    }
+
+    /**
      * Verifies that moving media to newly created, but unsaved structure element in the gallery using drag'n'drop works
      * as expected.
      *

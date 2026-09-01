@@ -504,11 +504,9 @@ function expandThirdColumn() {
 function updateMetadataEditorView(showMetadataColumn) {
     PF('dialogAddDocStrucType').hide();
     PF('dialogEditDocStrucType').hide();
-    expandFirstColumn();
     if (showMetadataColumn) {
         expandSecondColumn();
     }
-    expandThirdColumn();
     scrollToSelectedThumbnail();
     metadataEditor.detailMap.update();
     metadataEditor.gallery.mediaView.update();
