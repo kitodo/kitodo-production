@@ -67,5 +67,11 @@ jobs:
       - name: run build
         run:
             mvn clean install -B '-Pall-tests,flyway,checkstyle,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
-
-
+      # upload selenium screenshots as downloadable artifact only if pipeline failed
+      - name: upload selenium screenshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: selenium-screenshots
+          path: $GITHUB_WORKSPACE/Kitodo/target/selenium-screenshots
+          if-no-files-found: ignore
