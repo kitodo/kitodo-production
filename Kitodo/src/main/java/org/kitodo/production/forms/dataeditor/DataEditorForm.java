@@ -588,12 +588,12 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
             structurePanel.preserve();
             // reset "image filename renaming map" so nothing is reverted after saving!
             filenameMapping = new DualHashBidiMap<>();
-            ServiceManager.getProcessService().updateChildrenFromLogicalStructure(process, workpiece.getLogicalStructure());
+            // Force reload of the process to ensure consistency
+            Process freshProcess = ServiceManager.getProcessService().getById(process.getId());
+            ServiceManager.getProcessService().updateChildrenFromLogicalStructure(freshProcess, workpiece.getLogicalStructure());
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
-                // Force reload of the process to ensure consistency
-                Process freshProcess = ServiceManager.getProcessService().getById(process.getId());
                 ServiceManager.getProcessService().updateAmountOfInternalMetaInformation(freshProcess, true);
                 unsavedUploadedMedia.clear();
                 deleteUnsavedDeletedMedia();
