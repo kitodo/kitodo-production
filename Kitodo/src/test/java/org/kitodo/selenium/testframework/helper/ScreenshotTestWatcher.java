@@ -26,6 +26,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Junit TestWatcher implementation that monitors failed tests and generates a screenshot of the current browser window.
+ */
 public class ScreenshotTestWatcher implements TestWatcher {
 
     private static final Logger logger = LogManager.getLogger(ScreenshotTestWatcher.class);
@@ -35,6 +38,9 @@ public class ScreenshotTestWatcher implements TestWatcher {
         "target/selenium-screenshots"
     );
     
+    /**
+     * Is executed when a test case fails and saves a screenshot of the current browser window.
+     */
     public void testFailed(ExtensionContext context, @Nullable Throwable cause) {
         WebDriver driver = Browser.getDriver();
         if (!(driver instanceof TakesScreenshot)) {
@@ -42,22 +48,22 @@ public class ScreenshotTestWatcher implements TestWatcher {
             return;
         }
 
+        String className = context.getRequiredTestClass().getSimpleName();
+        String methodName = context.getTestMethod()
+                .map(method -> method.getName())
+                .orElse("unknown");
+
+        Path directory = Path.of(SCREENSHOT_DIRECTORY).toAbsolutePath().normalize();
+        Path filepath = directory.resolve(String.format("%s-%s-%d.png", className, methodName, System.currentTimeMillis()));
+
+        logger.debug("generating selenium screenshot at {} for failed test case {}#{}", filepath, className, methodName);
+        byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);       
+
         try {
-            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-
-            Path directory = Path.of(SCREENSHOT_DIRECTORY).toAbsolutePath().normalize();
             Files.createDirectories(directory);
-
-            String className = context.getRequiredTestClass().getSimpleName();
-            String methodName = context.getTestMethod()
-                    .map(method -> method.getName())
-                    .orElse("unknown");
-
-            Path filepath = directory.resolve(String.format("%s-%s-%d.png", className, methodName, System.currentTimeMillis()));
-            logger.debug("writing selenium screenshot to {}", filepath);
             Files.write(filepath, screenshot);
         } catch (IOException e) {
-            logger.error("error generating screenshot after test failure", e);
+            logger.error("error saving screenshot after test failure", e);
         }
 	}
 }
