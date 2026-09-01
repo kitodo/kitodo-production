@@ -41,6 +41,7 @@ public class ScreenshotTestWatcher implements TestWatcher {
     /**
      * Is executed when a test case fails and saves a screenshot of the current browser window.
      */
+    @Override
     public void testFailed(ExtensionContext context, @Nullable Throwable cause) {
         WebDriver driver = Browser.getDriver();
         if (!(driver instanceof TakesScreenshot)) {
