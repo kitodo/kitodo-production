@@ -40,6 +40,9 @@ public class ScreenshotTestWatcher implements TestWatcher {
     
     /**
      * Is executed when a test case fails and saves a screenshot of the current browser window.
+     * 
+     * @param context the current extension context
+	 * @param cause the throwable that caused test failure
      */
     @Override
     public void testFailed(ExtensionContext context, @Nullable Throwable cause) {
