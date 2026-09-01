@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Junit TestWatcher implementation that monitors failed tests and generates a screenshot of the current browser window.
+ * JUnit TestWatcher implementation that monitors failed tests and generates a screenshot of the current browser window.
  */
 public class ScreenshotTestWatcher implements TestWatcher {
 
