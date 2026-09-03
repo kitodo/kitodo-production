@@ -17,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Function;
 
 import javax.imageio.ImageIO;
@@ -43,17 +45,16 @@ public class ImageManagement implements ImageManagementInterface {
     private static final String RAW_IMAGE_FORMAT = ".bmp";
 
     /**
-     * Temporary directory location.
+     * Temporary directory location either loaded from kitodo_config.properties or automatically created.
      */
-    private static final File TMPDIR = new File(
-            KitodoConfig.getParameter(ParameterImageManagement.DIR_TMP, () -> {
-                try {
-                    return Files.createTempDirectory(ParameterImageManagement.DIR_TMP.getName()).toString();
-                } catch (IOException e) {
-                    logger.error("could not create temporary directory for image management", e);
-                    return null;
-                }
-            }));
+    private static final String TEMPORARY_DIRECTORY_PATH = KitodoConfig.getParameter(ParameterImageManagement.DIR_TMP, () -> {
+        try {
+            return Files.createTempDirectory(ParameterImageManagement.DIR_TMP.getName()).toString();
+        } catch (IOException e) {
+            logger.error("Could not create temporary directory for image management", e);
+            return null;
+        }
+    });
 
     /**
      * Image format used internally to create web images, optimized for small
@@ -144,8 +145,10 @@ public class ImageManagement implements ImageManagementInterface {
      */
     private static Image summarize(String prefix, String suffix, URI sourceUri, Function<FutureDerivative, ?> lambda,
             String message, Object pTwo) throws IOException {
-
-        File tempFile = Files.createTempFile(TMPDIR.toPath(), prefix, suffix).toFile();
+        if (Objects.isNull(TEMPORARY_DIRECTORY_PATH)) {
+            throw new IOException("temporary directory for image generation not available");
+        }
+        File tempFile = Files.createTempFile(Path.of(TEMPORARY_DIRECTORY_PATH), prefix, suffix).toFile();
         try {
             tempFile.deleteOnExit();
             ImageConverter imageConverter = new ImageConverter(sourceUri);
