@@ -124,6 +124,7 @@ public class ImportConfigurationService extends BaseBeanService<ImportConfigurat
      */
     public List<ImportConfiguration> getProcessTemplateConfigurationByProcessId(int processId) throws DAOException {
         return getAllImportConfigurations(ImportConfigurationType.PROCESS_TEMPLATE).stream()
+                .filter(importConfiguration -> Objects.nonNull(importConfiguration.getDefaultTemplateProcess()))
                 .filter(importConfiguration -> importConfiguration.getDefaultTemplateProcess().getId() == processId)
                 .collect(Collectors.toList());
     }
