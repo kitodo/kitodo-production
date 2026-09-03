@@ -146,7 +146,7 @@ public class ImageManagement implements ImageManagementInterface {
     private static Image summarize(String prefix, String suffix, URI sourceUri, Function<FutureDerivative, ?> lambda,
             String message, Object pTwo) throws IOException {
         if (Objects.isNull(TEMPORARY_DIRECTORY_PATH)) {
-            throw new IOException("temporary directory for image generation not available");
+            throw new IOException("Temporary directory for image generation not available");
         }
         File tempFile = Files.createTempFile(Path.of(TEMPORARY_DIRECTORY_PATH), prefix, suffix).toFile();
         try {
