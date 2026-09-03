@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Collection;
 
 import org.kitodo.api.docket.DocketData;
@@ -24,7 +25,7 @@ public class Docket implements DocketInterface {
 
     @Override
     public File generateDocket(DocketData docketData, URI xslFileUri) throws IOException {
-        File file = File.createTempFile("docket.pdf", ".tmp");
+        File file = Files.createTempFile("docket.pdf", ".tmp").toFile();
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             new ExportDocket(new File(xslFileUri)).startExport(docketData, fileOutputStream);
@@ -35,7 +36,7 @@ public class Docket implements DocketInterface {
 
     @Override
     public File generateMultipleDockets(Collection<DocketData> docketData, URI xslFileUri) throws IOException {
-        File file = File.createTempFile("docket_multipage.pdf", ".tmp");
+        File file = Files.createTempFile("docket_multipage.pdf", ".tmp").toFile();
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             new ExportDocket(new File(xslFileUri)).startExport(docketData, fileOutputStream);
