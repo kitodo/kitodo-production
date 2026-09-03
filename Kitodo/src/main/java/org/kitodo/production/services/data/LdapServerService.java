@@ -202,16 +202,16 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
             /*
              * check if HomeDir exists, else create it
              */
-            logger.debug("HomeVerzeichnis pruefen");
+            logger.debug("Checking home directory");
 
             URI homePath = getUserHomeDirectory(user);
 
             if (!new File(homePath).exists()) {
-                logger.debug("HomeVerzeichnis existiert noch nicht");
+                logger.debug("Home directory does not exist yet");
                 ServiceManager.getFileService().createDirectoryForUser(homePath, user.getLogin());
-                logger.debug("HomeVerzeichnis angelegt");
+                logger.debug("Home directory created");
             } else {
-                logger.debug("HomeVerzeichnis existiert schon");
+                logger.debug("Home directory already exists");
             }
         } else {
             Helper.setMessage("ldapIsReadOnly");
@@ -427,7 +427,7 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
                 ctx.close();
                 return true;
             } catch (NamingException e) {
-                logger.debug("Benutzeranmeldung nicht korrekt oder Passwortänderung nicht möglich", e);
+                logger.debug("User login not correct or password change not possible", e);
                 return false;
             }
         }

@@ -314,7 +314,7 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
                 userSpecifiedFilters.add(userSpecifiedFilter);
             }
         }
-        logger.debug("`{}´ -> {}", filter, userSpecifiedFilters);
+        logger.debug("\"{}\" -> {}", filter, userSpecifiedFilters);
         return userSpecifiedFilters;
     }
 

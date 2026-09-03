@@ -167,7 +167,7 @@ public class ImageManagement implements ImageManagementInterface {
                 Files.delete(tempFile.toPath());
                 logger.trace("Successfully deleted {}", tempFile);
             } catch (IOException e) {
-                logger.warn("Couldn’t delete {}", tempFile, e);
+                logger.warn("Couldn't delete {}", tempFile, e);
             }
         }
     }
