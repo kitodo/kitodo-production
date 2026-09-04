@@ -23,19 +23,19 @@ public class RoleEditPage extends EditPage<RoleEditPage> {
 
     private static final String ROLE_TAB_VIEW = EDIT_FORM + ":roleTabView";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ROLE_TAB_VIEW)
     private WebElement roleTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ROLE_TAB_VIEW + ":titleInput")
     private WebElement titleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ROLE_TAB_VIEW + ":authoritiesGlobalPick")
     private WebElement globalAuthoritiesPickList;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ROLE_TAB_VIEW + ":authoritiesClientPick")
     private WebElement clientAuthoritiesPickList;
 

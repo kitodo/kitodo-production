@@ -71,6 +71,8 @@ public class KitodoScriptServiceIT {
     private static final int rulesetId = 1;
     private static final int userId = 1;
     private static final int clientId = 1;
+    private static final String META_XML = "meta.xml";
+    private static final String META_XML_1 = "meta.xml.1";
 
     private static final File scriptCreateDirMeta = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
@@ -246,8 +248,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "LegalNoteAndTermsOfUse";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "PDM1.0");
@@ -290,8 +292,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "LegalNoteAndTermsOfUse";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
@@ -336,8 +338,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMain";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
@@ -382,8 +384,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMain";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
@@ -428,8 +430,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         LegacyMetsModsDigitalDocumentHelper metadataFile = ServiceManager.getProcessService()
                 .readMetadataFile(process);
@@ -498,8 +500,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "LegalNoteAndTermsOfUse";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
@@ -542,8 +544,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "LegalNoteAndTermsOfUse";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
@@ -593,8 +595,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "LegalNoteAndTermsOfUse";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
@@ -633,8 +635,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "LegalNoteAndTermsOfUse";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, String.valueOf(kitodoScriptTestProcessId));
@@ -677,8 +679,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -722,8 +724,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -767,8 +769,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TSL_ATS";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
@@ -812,8 +814,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -857,8 +859,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -902,8 +904,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -956,8 +958,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");
@@ -1010,8 +1012,8 @@ public class KitodoScriptServiceIT {
         String metadataKey = "TitleDocMainShort";
 
         File processDir = new File(ConfigCore.getKitodoDataDirectory(), process.getId().toString());
-        File mainMetsFile = new File(processDir, "meta.xml");
-        File backupMetsFile = new File(processDir, "meta.xml.1");
+        File mainMetsFile = new File(processDir, META_XML);
+        File backupMetsFile = new File(processDir, META_XML_1);
 
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
         oldMetadataSearchMap.put(metadataKey, "SecondMetaShort");

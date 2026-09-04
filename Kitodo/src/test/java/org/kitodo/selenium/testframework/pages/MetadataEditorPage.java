@@ -36,11 +36,11 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     private static final String SAVE_AND_EXIT_BUTTON_ID = "buttonForm:saveExit";
     private static final String LOGICAL_TREE = "logicalTree";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "structureTreeForm")
     private WebElement structureTreeForm;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "numberOfScans")
     private WebElement numberOfScans;
 

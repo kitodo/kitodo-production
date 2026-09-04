@@ -31,63 +31,63 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     private static final String ARGUMENTS_CLICK = "arguments[0].click()";
     private static final String LINK_PROCESSES_ID = "linkProcessesNavigationForm:linkProcesses";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "user-menu")
     private WebElement userMenuButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "logout-form:logout")
     private WebElement logoutButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "dashboard-menu")
     private WebElement dashboardMenuButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "dashboard-menu-header")
     private WebElement dashboardMenuHeader;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkTasks")
     private WebElement linkTasks;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LINK_PROCESSES_ID)
     private WebElement linkProcesses;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkProjects")
     private WebElement linkProjects;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkUsers")
     private WebElement linkUsers;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkModules")
     private WebElement linkModules;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkClients")
     private WebElement linkClients;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkHelp")
     private WebElement linkHelp;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "linkSystem")
     private WebElement linkSystem;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(className = "ui-selectonemenu-trigger")
     private WebElement clientSelectTrigger;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "select-session-client-form:setSessionClientButton")
     private WebElement acceptClientSelectionButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "select-session-client-form:cancelSessionClientSelectionButton")
     private WebElement cancelClientSelectionButton;
 

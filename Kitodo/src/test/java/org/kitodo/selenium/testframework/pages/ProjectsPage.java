@@ -47,138 +47,138 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private static final String FIRST_TEMPLATE = "First template";
     private static final String MASS_IMPORT_LINK = "a.ui-commandlink:has(i.fa-stack-overflow)";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECTS_TAB_VIEW)
     private WebElement projectsTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECTS_TABLE + DATA)
     private WebElement projectsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TEMPLATE_TABLE + DATA)
     private WebElement templatesTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = WORKFLOW_TABLE + DATA)
     private WebElement workflowsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = DOCKET_TABLE + DATA)
     private WebElement docketsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = RULESET_TABLE + DATA)
     private WebElement rulesetsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = IMPORT_CONFIGURATIONS_TABLE + DATA)
     private WebElement importConfigurationsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = MAPPING_FILE_TABLE + DATA)
     private WebElement mappingFilesTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = MAPPING_FILE_FORMAT_DIALOG)
     private WebElement mappingFileFormatDialog;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newElementButton_button")
     private WebElement newElementButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newProjectButton")
     private WebElement newProjectButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newLtpValidationConfigurationButton")
     private WebElement newLtpValidationConfigurationButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newTemplateButton")
     private WebElement newTemplateButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newWorkflowButton")
     private WebElement newWorkflowButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newDocketButton")
     private WebElement newDocketButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newRulesetButton")
     private WebElement newRulesetButton;
 
     @FindBy(id = "newElementForm:newOpacConfigurationButton")
     private WebElement newImportConfigurationButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "convertMenu:convertCatalogConfigurations")
     private WebElement importOpacConfigsButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "importCatalogConfigurationsForm:catalogConfigurationSelection")
     private WebElement catalogSelection;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "importCatalogConfigurationsForm:startCatalogConfigurationsImport")
     private WebElement startOpacConfigurationImportButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "mappingFileFormatsForm:mappingFileTitle")
     private WebElement mappingFileTitle;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "mappingFileFormatsForm:inputFormat")
     private WebElement mappingFileInputFormatMenu;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "mappingFileFormatsForm:outputFormat")
     private WebElement mappingFileOutputFormatMenu;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "mappingFileFormatsForm:ok")
     private WebElement mappingFileOkButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/projectEdit') and contains(@href, 'id=1')]")
     private WebElement editProjectLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/templateEdit') and contains(@href, 'id=4')]")
     private WebElement editTemplateLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/workflowEdit') and contains(@href, 'id=2')]")
     private WebElement editWorkflowLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/docketEdit') and contains(@href, 'id=1')]")
     private WebElement editDocketLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/rulesetEdit') and contains(@href, 'id=1')]")
     private WebElement editRulesetLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/importConfigurationEdit') and contains(@href, 'id=1')]")
     private WebElement editImportConfigurationLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TEMPLATE_TABLE + ":0:templateActionForm:action22")
     private WebElement createProcess;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECTS_TABLE + ":0:projectActionForm:deleteProject")
     private WebElement deleteFirstProjectButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = DOCKET_TABLE + ":0:actionForm:deleteDocket")
     private WebElement deleteFirstDocketButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = RULESET_TABLE + ":0:actionForm:deleteRuleset")
     private WebElement deleteFirstRulesetButton;
 
