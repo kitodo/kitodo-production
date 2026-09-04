@@ -130,7 +130,7 @@ public class AddDocStrucTypeDialog extends AddNodeDialog {
                 MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), selectedStructure.get(), selectedDocStructPosition);
             }
-            dataEditor.refreshStructurePanel();
+            dataEditor.refreshLogicalStructurePanel();
             dataEditor.getPaginationPanel().show();
         }
     }
@@ -151,7 +151,7 @@ public class AddDocStrucTypeDialog extends AddNodeDialog {
                     dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getPhysicalDivision(), newStructure));
                 }
             }
-            dataEditor.refreshStructurePanel();
+            dataEditor.refreshLogicalStructurePanel();
             
             try {
                 dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(newStructure));
