@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ListColumnDAO;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -88,11 +90,12 @@ public class ListColumnService extends BaseBeanService<ListColumn, ListColumnDAO
      */
     public SelectItemGroup getListColumnsForListAsSelectItemGroup(String listTitle) throws DAOException {
         SelectItemGroup itemGroup = new SelectItemGroup(Helper.getTranslation(listTitle));
+        Locale currentLocale = LocaleHelper.getCurrentLocale();
 
         itemGroup.setSelectItems(getAll().stream()
                 .filter(listColumn -> listColumn.getTitle().startsWith(listTitle + "."))
                 .map(listColumn -> new SelectItem(listColumn,
-                        Helper.getTranslation(listColumn.getTitle().replace(listTitle + ".", ""))))
+                        Helper.getString(currentLocale, listColumn.getTitle().replace(listTitle + ".", ""))))
                 .toArray(SelectItem[]::new));
 
         return itemGroup;
