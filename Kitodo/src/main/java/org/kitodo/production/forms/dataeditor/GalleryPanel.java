@@ -12,6 +12,8 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +59,8 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
+import org.primefaces.util.DynamicContentSrcBuilder;
+import org.primefaces.util.Lazy;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
@@ -104,6 +110,8 @@ public class GalleryPanel {
 
     private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator.comparing(
             pair -> pair.getLeft().getPhysicalDivision().getOrder());
+
+    private static final String PREVIEW_BASE_URL_KEY = GalleryPanel.class.getName() + ".previewBaseUrl";
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -226,6 +234,7 @@ public class GalleryPanel {
         dataEditor.getPaginationPanel().show();
         this.updateStripes();
         updateSelectionAfterDragDrop(viewsToBeMoved, toStripeIndex);
+        updateSelectionState();
     }
 
     /**
@@ -419,6 +428,76 @@ public class GalleryPanel {
         updateMedia();
         stripes = new ArrayList<>();
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
+        updateSelectionState();
+
+        boolean discontinuous = !dataEditor.consecutivePagesSelected();
+        PreviewHoverMode previewHoverMode = getPreviewHoverMode();
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        boolean showPhysicalPageNumber = Boolean.TRUE.equals(
+            context.getApplication().evaluateExpressionGet(
+                context,
+                "#{LoginForm.loggedUser.isShowPhysicalPageNumberBelowThumbnail()}",
+                Boolean.class));
+
+        boolean showLogicalPageNumber = Boolean.TRUE.equals(
+            context.getApplication().evaluateExpressionGet(
+                context,
+                "#{LoginForm.loggedUser.isShowLogicalPageNumberBelowThumbnail()}",
+                Boolean.class));
+
+        for (GalleryMediaContent media : medias) {
+            media.setDiscontinuous(discontinuous);
+
+            media.setPreviewTooltip(
+                PreviewHoverMode.TOOLTIP_PREVIEW.equals(previewHoverMode)
+                    && media.isShowingInPreview()
+                    && MediaUtil.isImage(media.getPreviewMimeType())
+                    ||
+                    PreviewHoverMode.TOOLTIP_MEDIAVIEW.equals(previewHoverMode)
+                        && media.isShowingInMediaView()
+                        && MediaUtil.isImage(media.getMediaViewMimeType()));
+
+            media.setAssignmentIndex(
+                media.isAssignedSeveralTimes()
+                    ? getSeveralAssignmentsIndex(media) + 1
+                    : 0);
+
+            media.setShowPhysicalPageNumber(showPhysicalPageNumber);
+            media.setShowLogicalPageNumber(showLogicalPageNumber);
+        }
+    }
+
+    private void updateSelectionState() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+
+        for (int stripeIndex = 0; stripeIndex < stripes.size(); stripeIndex++) {
+            GalleryStripe stripe = stripes.get(stripeIndex);
+
+            for (GalleryMediaContent media : stripe.getMedias()) {
+                PhysicalDivision physicalDivision =
+                    media.getView().getPhysicalDivision();
+
+                boolean selected = dataEditor.isSelected(
+                    physicalDivision,
+                    stripe.getStructure());
+
+                boolean lastSelected = selected
+                    && Objects.nonNull(lastSelection)
+                    && Objects.equals(
+                    physicalDivision,
+                    lastSelection.getKey());
+
+                if (stripeIndex == 0) {
+                    media.setSelectedInUnstructuredStripe(selected);
+                    media.setLastSelectionInUnstructuredStripe(lastSelected);
+                } else {
+                    stripe.getSelectedMedia().put(media.getId(), selected);
+                    stripe.getLastSelectedMedia().put(media.getId(), lastSelected);
+                }
+            }
+        }
     }
 
     private static MediaVariant getMediaVariant(Folder folderSettings, List<PhysicalDivision> physicalDivisions) {
@@ -897,6 +976,7 @@ public class GalleryPanel {
                 Helper.setErrorMessage("Could not select stripe: Stripe index \"" + stripeIndex + "\" could not be parsed.");
             }
         }
+        updateSelectionState();
     }
 
     /**
@@ -1085,4 +1165,65 @@ public class GalleryPanel {
 
         return lastPhysicalDivision.equals(lastSelection.getKey());
     }
+
+    public String preparePreviewUrls(
+        UIComponent component,
+        int processId,
+        String sessionId) {
+
+        String baseUrl = getPreviewBaseUrl(component);
+
+        for (GalleryMediaContent media : medias) {
+            String url = appendParameter(baseUrl, "mediaId", media.getId());
+            url = appendParameter(url, "process", Integer.toString(processId));
+            url = appendParameter(url, "sessionId", sessionId);
+
+            media.setPreviewUrl(url);
+        }
+
+        return "";
+    }
+
+    private String appendParameter(String url, String name, String value) {
+        String separator = url.contains("?") ? "&" : "?";
+
+        return url
+            + separator
+            + URLEncoder.encode(name, StandardCharsets.UTF_8)
+            + "="
+            + URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    private String getPreviewBaseUrl(UIComponent component) {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        Map<Object, Object> attributes = context.getAttributes();
+
+        String baseUrl = (String) attributes.get(PREVIEW_BASE_URL_KEY);
+
+        if (baseUrl == null) {
+            ValueExpression valueExpression = context.getApplication()
+                .getExpressionFactory()
+                .createValueExpression(
+                    context.getELContext(),
+                    "#{mediaProvider.previewData}",
+                    Object.class);
+
+            Lazy<Object> value = new Lazy<>(
+                () -> valueExpression.getValue(context.getELContext()));
+
+            baseUrl = DynamicContentSrcBuilder.build(
+                context,
+                component,
+                valueExpression,
+                value,
+                true,
+                true);
+
+            attributes.put(PREVIEW_BASE_URL_KEY, baseUrl);
+        }
+
+        return baseUrl;
+    }
+
 }
