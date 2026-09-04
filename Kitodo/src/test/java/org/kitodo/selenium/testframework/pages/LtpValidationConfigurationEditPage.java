@@ -25,7 +25,7 @@ import org.openqa.selenium.support.ui.Select;
 public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationConfigurationEditPage> {
 
     private static final String TABVIEW = "editForm:ltpValidationConfigurationTabView";
-    public static final String VALUE = "value";
+    private static final String VALUE = "value";
 
     @SuppressWarnings(UNUSED)
     @FindBy(id = TABVIEW)

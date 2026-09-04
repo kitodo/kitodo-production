@@ -32,8 +32,8 @@ import org.xml.sax.SAXException;
 
 public class VariableReplacerTest {
 
-    int projectId = 12;
     private static final String VARIABLE_REPLACEMENT_ERROR_MESSAGE = "String was replaced incorrectly!";
+    int projectId = 12;
 
     @Test
     public void shouldReplaceTitle() {
