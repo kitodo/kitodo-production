@@ -488,7 +488,7 @@ public class Block {
             Helper.setErrorMessage(e.getMessage());
         }
         try {
-            if (!this.firstAppearance.equals(firstAppearance)) {
+            if (Objects.nonNull(this.firstAppearance) && !this.firstAppearance.equals(firstAppearance)) {
                 course.clearProcesses();
             }
         } catch (NullPointerException e) {
@@ -533,7 +533,7 @@ public class Block {
             Helper.setErrorMessage(e.getMessage());
         }
         try {
-            if (!this.lastAppearance.equals(lastAppearance)) {
+            if (Objects.nonNull(this.lastAppearance) && !this.lastAppearance.equals(lastAppearance)) {
                 course.clearProcesses();
             }
         } catch (NullPointerException e) {
@@ -576,7 +576,7 @@ public class Block {
     public void setPublicationPeriod(LocalDate firstAppearance, LocalDate lastAppearance) {
         prohibitOverlaps(firstAppearance, lastAppearance);
         try {
-            if (!this.firstAppearance.equals(firstAppearance)) {
+            if (Objects.nonNull(this.firstAppearance) && !this.firstAppearance.equals(firstAppearance)) {
                 course.clearProcesses();
             }
         } catch (NullPointerException e) {
@@ -585,7 +585,7 @@ public class Block {
             }
         }
         try {
-            if (!this.lastAppearance.equals(lastAppearance)) {
+            if (Objects.nonNull(this.lastAppearance) && !this.lastAppearance.equals(lastAppearance)) {
                 course.clearProcesses();
             }
         } catch (NullPointerException e) {
