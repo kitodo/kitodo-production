@@ -25,11 +25,21 @@
         <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
+            <h:panelGroup binding="#{previewUrlComponent}" />
+
+            <h:outputText
+                    id="previewUrlPreparation"
+                    value="#{DataEditorForm.galleryPanel.preparePreviewUrls(
+             previewUrlComponent,
+             DataEditorForm.process.id,
+             session.id)}"
+                    style="display:none" />
 
             <p:remoteCommand
                 name="triggerOnPageDrop"
                 actionListener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                update="@(.pageList)
+                update="previewUrlPreparation
+                        @(.pageList)
                         logicalTree
                         physicalTree
                         paginationForm:paginationWrapperPanel"/>
