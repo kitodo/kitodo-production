@@ -478,7 +478,7 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void keepCollapsedPanelStateOnStructureElementCreationTest() throws Exception {
-        login(KOWAL);
+        login(KOWAL_USER);
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_PROCESS_TITLE);
         // verify that gallery is displayed by default
         assertTrue(Browser.getDriver().findElement(By.id("imagePreviewForm")).isDisplayed());
