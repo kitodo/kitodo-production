@@ -80,6 +80,22 @@ public class GalleryMediaContent {
      */
     private String logicalTreeNodeId;
 
+    private String previewUrl;
+
+    private boolean discontinuous;
+
+    private boolean previewTooltip;
+
+    private boolean showPhysicalPageNumber;
+
+    private boolean showLogicalPageNumber;
+
+    private int assignmentIndex;
+
+    private boolean selectedInUnstructuredStripe;
+
+    private boolean lastSelectionInUnstructuredStripe;
+
     /**
      * Creates a new gallery media content.
      *
@@ -311,6 +327,74 @@ public class GalleryMediaContent {
      */
     public void setLogicalTreeNodeId(String treeNodeId) {
         this.logicalTreeNodeId = treeNodeId;
+    }
+
+    public String getPreviewUrl() {
+        return previewUrl;
+    }
+
+    public void setPreviewUrl(String previewUrl) {
+        this.previewUrl = previewUrl;
+    }
+
+    public boolean isDiscontinuous() {
+        return discontinuous;
+    }
+
+    public void setDiscontinuous(boolean discontinuous) {
+        this.discontinuous = discontinuous;
+    }
+
+    public boolean isPreviewTooltip() {
+        return previewTooltip;
+    }
+
+    public void setPreviewTooltip(boolean previewTooltip) {
+        this.previewTooltip = previewTooltip;
+    }
+
+    public boolean isShowPhysicalPageNumber() {
+        return showPhysicalPageNumber;
+    }
+
+    public void setShowPhysicalPageNumber(boolean showPhysicalPageNumber) {
+        this.showPhysicalPageNumber = showPhysicalPageNumber;
+    }
+
+    public boolean isShowLogicalPageNumber() {
+        return showLogicalPageNumber;
+    }
+
+    public void setShowLogicalPageNumber(boolean showLogicalPageNumber) {
+        this.showLogicalPageNumber = showLogicalPageNumber;
+    }
+
+    public int getAssignmentIndex() {
+        return assignmentIndex;
+    }
+
+    public void setAssignmentIndex(int assignmentIndex) {
+        this.assignmentIndex = assignmentIndex;
+    }
+
+    public boolean isShowAssignmentIndex() {
+        return assignmentIndex > 0;
+    }
+
+    public boolean isSelectedInUnstructuredStripe() {
+        return selectedInUnstructuredStripe;
+    }
+
+    public void setSelectedInUnstructuredStripe(boolean selectedInUnstructuredStripe) {
+        this.selectedInUnstructuredStripe = selectedInUnstructuredStripe;
+    }
+
+    public boolean isLastSelectionInUnstructuredStripe() {
+        return lastSelectionInUnstructuredStripe;
+    }
+
+    public void setLastSelectionInUnstructuredStripe(boolean lastSelectionInUnstructuredStripe) {
+        this.lastSelectionInUnstructuredStripe = lastSelectionInUnstructuredStripe;
     }
 
 }
