@@ -456,6 +456,18 @@ public class Folder extends BaseBean {
         this.ltpValidationConfiguration = ltpValidationConfiguration;
     }
 
+    /**
+     * Returns whether image generation is configured for this folder.
+     *
+     * @return whether image generation is configured
+     */
+    @Transient
+    public boolean isGeneratedImageFolder() {
+        return Objects.nonNull(derivative)
+                || Objects.nonNull(dpi)
+                || Objects.nonNull(imageSize);
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
