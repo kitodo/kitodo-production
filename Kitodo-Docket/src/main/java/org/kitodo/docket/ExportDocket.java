@@ -17,10 +17,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -30,6 +31,8 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
 import org.kitodo.api.docket.DocketData;
+import org.kitodo.utils.XMLSecurity;
+import org.xml.sax.SAXException;
 
 /**
  * This class provides generating a run note based on the generated xml log.
@@ -90,7 +93,6 @@ public class ExportDocket {
 
     private byte[] generatePdfBytes(ByteArrayOutputStream out) throws IOException {
         // generate pdf file
-        StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
         StreamSource transformSource = new StreamSource(xsltFile);
         FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI());
         builder.setStrictFOValidation(false);
@@ -98,14 +100,19 @@ public class ExportDocket {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         // transform xml
         try {
-            Transformer xslTransformer = TransformerFactory.newInstance().newTransformer(transformSource);
+            Transformer xslTransformer = XMLSecurity.newTransformerFactory().newTransformer(transformSource);
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, outStream);
             Result res = new SAXResult(fop.getDefaultHandler());
+            Source source = XMLSecurity.newSecureSource(new ByteArrayInputStream(out.toByteArray()));
             xslTransformer.transform(source, res);
         } catch (FOPException e) {
             throw new IOException("FOPException occurred", e);
         } catch (TransformerException e) {
             throw new IOException("TransformerException occurred", e);
+        } catch (ParserConfigurationException e) {
+            throw new IOException("ParserConfigurationException occurred", e);
+        } catch (SAXException e) {
+            throw new IOException("SAXException occurred", e);
         }
 
         // write the content to output stream
