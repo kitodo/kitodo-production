@@ -51,7 +51,6 @@ import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.metadata.MetadataEditor;
-import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.w3c.dom.Element;
@@ -258,14 +257,7 @@ public class ProcessHelper {
 
         tempProcess.setAtstsl(
                 generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, tempProcess.getProcess(),
-                        currentTitle));
-
-        tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
-        String tiffDefinition = ServiceManager.getImportService().getTiffDefinition();
-        if (Objects.nonNull(tiffDefinition)) {
-            tempProcess.setTiffHeaderImageDescription(generateTiffHeader(processDetails, tempProcess.getAtstsl(),
-                    ServiceManager.getImportService().getTiffDefinition(), docType));
-        }
+                       currentTitle));
     }
 
     /**
@@ -533,15 +525,6 @@ public class ProcessHelper {
 
     private static boolean shouldGenerateAtstslFields(TempProcess tempProcess) {
         return StringUtils.isBlank(tempProcess.getProcess().getTitle());
-    }
-
-    /**
-     * Generate tiff header.
-     */
-    private static String generateTiffHeader(List<ProcessDetail> processDetails, String atstsl, String tiffDefinition,
-            String docType) throws ProcessGenerationException {
-        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(atstsl, processDetails);
-        return tiffHeaderGenerator.generateTiffHeader(tiffDefinition, docType);
     }
 
     private static String getTitleFromWorkpiece(Process process) {
