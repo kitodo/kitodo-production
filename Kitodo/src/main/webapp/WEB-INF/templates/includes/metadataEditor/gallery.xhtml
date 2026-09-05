@@ -172,6 +172,9 @@
 
             <!-- View current page with OpenLayers -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' and not empty DataEditorForm.galleryPanel.medias}">
+                <p:graphicImage alt="in progress"
+                                id="loadingSymbol"
+                                value="/pages/images/loading.svg"/>
                 <!-- OpenLayers Kitodo custom controls -->
                 <h:panelGroup id="mediaDetailContainer"
                               layout="block"
