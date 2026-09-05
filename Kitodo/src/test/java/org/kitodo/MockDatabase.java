@@ -93,7 +93,7 @@ import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.process.ProcessGenerator;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.KitodoLegacyPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
@@ -1547,7 +1547,7 @@ public class MockDatabase {
     }
 
     private static void insertUsers() throws DAOException {
-        SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+        KitodoLegacyPasswordEncoder passwordEncoder = new KitodoLegacyPasswordEncoder();
         Client firstClient = ServiceManager.getClientService().getById(1);
         Client secondClient = ServiceManager.getClientService().getById(2);
 

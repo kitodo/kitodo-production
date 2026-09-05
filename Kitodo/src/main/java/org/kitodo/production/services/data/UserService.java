@@ -50,19 +50,20 @@ import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.cache.RequestScopeCacheHelper;
 import org.kitodo.production.security.SecurityUserDetails;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.KitodoDelegatingPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserService extends BaseBeanService<User, UserDAO> implements UserDetailsService {
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static volatile UserService instance = null;
     private static final String CLIENT_ID = "clientId";
-    private final SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private final KitodoDelegatingPasswordEncoder passwordEncoder = new KitodoDelegatingPasswordEncoder();
     private static final int DEFAULT_CLIENT_ID =
             ConfigCore.getIntParameterOrDefaultValue(ParameterCore.DEFAULT_CLIENT_ID);
     private static final String CURRENT_USER_CACHE_KEY = "current_user";
@@ -485,6 +486,13 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         }
     }
 
+    /** 
+     * Return the spring seucrity password encoder implementation used to encrypt user passwords.
+     */
+    public PasswordEncoder getPasswordEncoder() {
+        return this.passwordEncoder;
+    }
+
     /**
      * Changes the password for given User object.
      *
@@ -500,7 +508,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         } else {
             userWithNewPassword = user;
         }
-        userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
+        userWithNewPassword.setPassword(passwordEncoder.encode(newPassword));
         save(userWithNewPassword);
     }
 

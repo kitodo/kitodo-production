@@ -11,21 +11,28 @@
 
 package org.kitodo.production.security;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingException;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.logintask.LoginTaskType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LocaleHelper;
-import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.security.password.KitodoUserDetailsPasswordService;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.LoginTaskService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.DisabledException;
@@ -54,6 +61,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private DefaultSpringSecurityContextSource ldapContextSource = null;
     private BindAuthenticator bindAuthenticator = null;
     private final LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
+
+    private static final LoginTaskService loginTaskService = ServiceManager.getLoginTaskService();
 
     /**
      * The private Constructor which initially reads the local config.
@@ -91,7 +100,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
                     Helper.getString(LocaleHelper.getCurrentLocale(), "errorUserIsDisabled")));
             }
             LdapGroup ldapGroup = user.getLdapGroup();
-            if (ldapAuthentication && Objects.nonNull(ldapGroup)) {
+            boolean noLdapLoginTask = loginTaskService.getPendingLoginTaskForUserAndType(user, LoginTaskType.SAVE_USER_TO_LDAP).isEmpty();
+            if (ldapAuthentication && Objects.nonNull(ldapGroup) && noLdapLoginTask) {
                 if (Objects.isNull(ldapGroup.getLdapServer())) {
                     throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
                 }
@@ -147,7 +157,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(ServiceManager.getUserService());
-        daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
+        daoAuthenticationProvider.setPasswordEncoder(ServiceManager.getUserService().getPasswordEncoder());
+        daoAuthenticationProvider.setUserDetailsPasswordService(new KitodoUserDetailsPasswordService());
         this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
 
