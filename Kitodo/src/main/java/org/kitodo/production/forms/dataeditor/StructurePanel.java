@@ -1824,7 +1824,7 @@ public class StructurePanel implements Serializable {
             if (Objects.nonNull(structureData)) {
                 expansionStates.put(structureData, treeNode.isExpanded());
                 for (TreeNode<Object> childNode : treeNode.getChildren()) {
-                    expansionStates.putAll(getLogicalTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+                    getLogicalTreeNodeExpansionStatesRecursively(childNode, expansionStates);
                 }
             }
         }
