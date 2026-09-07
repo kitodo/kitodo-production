@@ -108,6 +108,8 @@ public class GalleryPanel {
 
     private String cachingUUID = "";
 
+    private Map<PhysicalDivision, GalleryMediaContent> mediaByPhysicalDivision = new HashMap<>();
+
     private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator.comparing(
             pair -> pair.getLeft().getPhysicalDivision().getOrder());
 
@@ -408,12 +410,14 @@ public class GalleryPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
                 .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         medias = new ArrayList<>(physicalDivisions.size());
+        mediaByPhysicalDivision = new HashMap<>(physicalDivisions.size());
         dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setPhysicalDivision(physicalDivision);
             GalleryMediaContent galleryMediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
             medias.add(galleryMediaContent);
+            mediaByPhysicalDivision.put(physicalDivision, galleryMediaContent);
             dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
         }
     }
@@ -552,18 +556,16 @@ public class GalleryPanel {
                 siblingWithViewsIdx += 1;
                 siblingWithoutViewsIdx += 1;
             } else {
-                for (GalleryMediaContent galleryMediaContent : medias) {
-                    if (Objects.equals(view.getPhysicalDivision(),
-                            galleryMediaContent.getView().getPhysicalDivision())) {
-                        galleryStripe.getMedias().add(galleryMediaContent);
-                        List<Integer> viewTreeNodeIdList = new ArrayList<>(treeNodeIdList);
-                        viewTreeNodeIdList.add(siblingWithViewsIdx);
-                        String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf).collect(Collectors.joining("_"));
-                        galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
-                        dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
-                        siblingWithViewsIdx += 1;
-                        break;
-                    }
+                GalleryMediaContent galleryMediaContent = mediaByPhysicalDivision.get(view.getPhysicalDivision());
+                if (Objects.nonNull(galleryMediaContent)) {
+                    galleryStripe.getMedias().add(galleryMediaContent);
+                    List<Integer> viewTreeNodeIdList = new ArrayList<>(treeNodeIdList);
+                    viewTreeNodeIdList.add(siblingWithViewsIdx);
+                    String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf)
+                        .collect(Collectors.joining("_"));
+                    galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
+                    dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
+                    siblingWithViewsIdx += 1;
                 }
             }
         }

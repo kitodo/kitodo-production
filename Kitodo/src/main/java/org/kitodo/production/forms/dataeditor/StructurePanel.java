@@ -1018,21 +1018,24 @@ public class StructurePanel implements Serializable {
      * @return the media tree
      */
     private DefaultTreeNode<Object> buildMediaTree(PhysicalDivision mediaRoot) {
+        Map<String, StructuralElementViewInterface> divisionViewsByType = new HashMap<>();
         DefaultTreeNode<Object> rootTreeNode = new DefaultTreeNode<>();
         rootTreeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);
         }
-        buildMediaTreeRecursively(mediaRoot, rootTreeNode);
+        buildMediaTreeRecursively(mediaRoot, rootTreeNode, divisionViewsByType);
         return rootTreeNode;
     }
 
-    private void buildMediaTreeRecursively(PhysicalDivision physicalDivision, DefaultTreeNode<Object> parentTreeNode) {
-        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                physicalDivision.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+    private void buildMediaTreeRecursively(PhysicalDivision physicalDivision, DefaultTreeNode<Object> parentTreeNode,
+                                           Map<String, StructuralElementViewInterface> divisionViewsByType) {
+        StructuralElementViewInterface divisionView = divisionViewsByType.computeIfAbsent(physicalDivision.getType(),
+            type -> dataEditor.getRulesetManagement().getStructuralElementView(
+                type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()));
         DefaultTreeNode<Object> treeNode = addTreeNode(Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)
-                        ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
-                false, false, physicalDivision, parentTreeNode);
+                ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
+            false, false, physicalDivision, parentTreeNode);
 
         if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType())) {
             treeNode.setType(MEDIA_PARTIAL_NODE_TYPE);
@@ -1047,7 +1050,7 @@ public class StructurePanel implements Serializable {
         }
         if (Objects.nonNull(physicalDivision.getChildren())) {
             for (PhysicalDivision child : physicalDivision.getChildren()) {
-                buildMediaTreeRecursively(child, treeNode);
+                buildMediaTreeRecursively(child, treeNode, divisionViewsByType);
             }
         }
     }
