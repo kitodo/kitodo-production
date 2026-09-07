@@ -497,8 +497,7 @@ public class GalleryPanel {
                     media.setSelectedInUnstructuredStripe(selected);
                     media.setLastSelectionInUnstructuredStripe(lastSelected);
                 } else {
-                    stripe.getSelectedMedia().put(media.getId(), selected);
-                    stripe.getLastSelectedMedia().put(media.getId(), lastSelected);
+                    stripe.setSelectionState(media.getId(), selected, lastSelected);
                 }
             }
         }
@@ -1168,6 +1167,14 @@ public class GalleryPanel {
         return lastPhysicalDivision.equals(lastSelection.getKey());
     }
 
+    /**
+     * Prepares preview URLs for all gallery media.
+     *
+     * @param component UI component used to build the dynamic preview URL
+     * @param processId process ID
+     * @param sessionId session ID used for media caching
+     * @return empty string
+     */
     public String preparePreviewUrls(
         UIComponent component,
         int processId,
