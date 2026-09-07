@@ -121,11 +121,16 @@ public class GalleryStripe {
         return logicalTreeNodeId;
     }
 
-    public Map<String, Boolean> getSelectedMedia() {
-        return selectedMedia;
+    public boolean isSelected(String mediaId) {
+        return Boolean.TRUE.equals(selectedMedia.get(mediaId));
     }
 
-    public Map<String, Boolean> getLastSelectedMedia() {
-        return lastSelectedMedia;
+    public boolean isLastSelected(String mediaId) {
+        return Boolean.TRUE.equals(lastSelectedMedia.get(mediaId));
+    }
+
+    public void setSelectionState(String mediaId, boolean selected, boolean lastSelected) {
+        selectedMedia.put(mediaId, selected);
+        lastSelectedMedia.put(mediaId, lastSelected);
     }
 }
