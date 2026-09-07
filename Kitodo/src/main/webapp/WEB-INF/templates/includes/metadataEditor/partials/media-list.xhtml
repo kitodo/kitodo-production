@@ -26,9 +26,9 @@
             #{uiParamStripeIndex eq 0 and media.lastSelectionInUnstructuredStripe
                 ? 'last-selection' : ''}
 
-            #{uiParamStripeIndex ne 0 and stripe.selectedMedia[media.id]
+            #{uiParamStripeIndex ne 0 and stripe.isSelected(media.id)
                 ? 'selected' : ''}
-            #{uiParamStripeIndex ne 0 and stripe.lastSelectedMedia[media.id]
+            #{uiParamStripeIndex ne 0 and stripe.isLastSelected(media.id)
                 ? 'last-selection' : ''}">
         </div>
 
