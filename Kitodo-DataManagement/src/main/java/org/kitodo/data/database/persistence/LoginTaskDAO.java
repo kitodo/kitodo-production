@@ -105,7 +105,7 @@ public class LoginTaskDAO extends BaseDAO<LoginTask> {
      * @return the list of login tasks for a user of a given status
      */
     public List<LoginTask> getByUserAndStatus(User user, LoginTaskStatus status) {
-        if (Objects.isNull(user) || Objects.isNull(status)) {
+        if (Objects.isNull(user) || Objects.isNull(user.getId()) || Objects.isNull(status)) {
             return Collections.emptyList();
         }
         return getByQuery("FROM LoginTask WHERE user.id = :userId AND status = :status ORDER BY createdAt DESC", Map.of(
@@ -123,7 +123,7 @@ public class LoginTaskDAO extends BaseDAO<LoginTask> {
      * @return the list of login tasks for a user of a given status
      */
     public List<LoginTask> getByUserAndStatusAndType(User user, LoginTaskStatus status, LoginTaskType type) {
-        if (Objects.isNull(user) || Objects.isNull(status) || Objects.isNull(type)) {
+        if (Objects.isNull(user) || Objects.isNull(user.getId()) || Objects.isNull(status) || Objects.isNull(type)) {
             return Collections.emptyList();
         }
         return getByQuery("FROM LoginTask WHERE user.id = :userId AND status = :status AND type = :type ORDER BY createdAt DESC", Map.of(
@@ -141,7 +141,7 @@ public class LoginTaskDAO extends BaseDAO<LoginTask> {
      * @return the list of login tasks for a user of a given status
      */
     public List<LoginTask> getByUserAndType(User user, LoginTaskType type) {
-        if (Objects.isNull(user) || Objects.isNull(type)) {
+        if (Objects.isNull(user) || Objects.isNull(user.getId()) || Objects.isNull(type)) {
             return Collections.emptyList();
         }
         return getByQuery("FROM LoginTask WHERE user.id = :userId AND type = :type ORDER BY createdAt DESC", Map.of(
