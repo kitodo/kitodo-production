@@ -39,14 +39,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * 
  * <p>Plaintext passwords were decrypted in order to register them with LDAP.</p>
  */
+@Deprecated 
 public class KitodoLegacyPasswordEncoder implements PasswordEncoder {
 
     @Override
+    @Deprecated 
     public String encode(CharSequence rawPassword) {
         return encrypt(rawPassword.toString());
     }
 
     @Override
+    @Deprecated 
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         return encrypt(rawPassword.toString()).equals(encodedPassword);
     }
@@ -78,6 +81,7 @@ public class KitodoLegacyPasswordEncoder implements PasswordEncoder {
     /**
      * Using class constructor with default passphrase for en- and decryption.
      */
+    @Deprecated 
     public KitodoLegacyPasswordEncoder() {
         String defaultPassPhrase = "rusDML_Passphrase_for_secure_encryption_2005";
         initialize(defaultPassPhrase);
@@ -90,6 +94,7 @@ public class KitodoLegacyPasswordEncoder implements PasswordEncoder {
      *            String to encrypt
      * @return encrypted string or null on error
      */
+    @Deprecated 
     public String encrypt(String messageToEncrypt) {
         if (Objects.isNull(messageToEncrypt)) {
             messageToEncrypt = "";
@@ -112,6 +117,7 @@ public class KitodoLegacyPasswordEncoder implements PasswordEncoder {
      *            String to decrypt
      * @return decrypted string or null on error
      */
+    @Deprecated 
     public String decrypt(String messageToDecrypt) {
         try {
             byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes(StandardCharsets.UTF_8));
