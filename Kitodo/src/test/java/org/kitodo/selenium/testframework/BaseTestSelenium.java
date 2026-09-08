@@ -26,6 +26,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -33,9 +34,11 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.persistence.HibernateUtil;
+import org.kitodo.selenium.testframework.helper.ScreenshotTestWatcher;
 
 import static org.awaitility.Awaitility.await;
 
+@ExtendWith(ScreenshotTestWatcher.class)
 public class BaseTestSelenium {
 
     private static final Logger logger = LogManager.getLogger(BaseTestSelenium.class);
