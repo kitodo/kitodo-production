@@ -13,23 +13,17 @@
 
 <ui:composition
         xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <p:outputPanel styleClass="thumbnail-parent">
 
-        <div class="thumbnail
-            #{media.discontinuous ? 'discontinuous' : ''}
-
-            #{uiParamStripeIndex eq 0 and media.selectedInUnstructuredStripe
-                ? 'selected' : ''}
-            #{uiParamStripeIndex eq 0 and media.lastSelectionInUnstructuredStripe
-                ? 'last-selection' : ''}
-
-            #{uiParamStripeIndex ne 0 and stripe.isSelected(media.id)
-                ? 'selected' : ''}
-            #{uiParamStripeIndex ne 0 and stripe.isLastSelected(media.id)
-                ? 'last-selection' : ''}">
+        <div class="thumbnail #{media.discontinuous ? 'discontinuous' : ''}
+            #{uiParamStripeIndex eq 0 and media.selectedInUnstructuredStripe ? 'selected' : ''}
+            #{uiParamStripeIndex eq 0 and media.lastSelectionInUnstructuredStripe ? 'last-selection' : ''}
+            #{uiParamStripeIndex ne 0 and stripe.isSelected(media.id) ? 'selected' : ''}
+            #{uiParamStripeIndex ne 0 and stripe.isLastSelected(media.id) ? 'last-selection' : ''}">
         </div>
 
         <div class="thumbnail-container
@@ -39,95 +33,62 @@
              data-stripe="#{uiParamStripeIndex}"
              data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
 
-            <ui:fragment rendered="#{media.showingInPreview}">
+            <ui:fragment
+                    rendered="#{mediaProvider.hasPreviewVariant(media) and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
+                <p:video styleClass="mediaListItem"
+                         rendered="#{fn:startsWith(media.previewMimeType, 'video')}"
+                         player="#{media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
+                         value="#{mediaProvider.previewData}">
+                    <f:param name="mediaId"
+                             value="#{media.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="type"
+                             value="#{media.previewMimeType}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:video>
 
-                <ui:fragment rendered="#{media.type eq 'VIDEO'}">
-                    <p:video
-                            styleClass="mediaListItem"
-                            player="#{media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
-                            controls="true"
-                            value="#{mediaProvider.previewData}">
-
-                        <f:param
-                                name="mediaId"
-                                value="#{media.id}"/>
-
-                        <f:param
-                                name="process"
-                                value="#{DataEditorForm.process.id}"/>
-
-                        <f:param
-                                name="sessionId"
-                                value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-
-                        <f:param
-                                name="type"
-                                value="#{media.previewMimeType}"/>
-
-                        <f:param
-                                name="krsc"
-                                value="true"/>
-
-                    </p:video>
-                </ui:fragment>
-
-                <ui:fragment rendered="#{media.type eq 'AUDIO'}">
-                    <p:audio
-                            styleClass="mediaListItem"
-                            player="#{media.previewMimeType.endsWith('mpeg')
-                                ? 'mp3'
-                                : media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
-                            controls="true"
-                            value="#{mediaProvider.previewData}">
-
-                        <f:param
-                                name="mediaId"
-                                value="#{media.id}"/>
-
-                        <f:param
-                                name="process"
-                                value="#{DataEditorForm.process.id}"/>
-
-                        <f:param
-                                name="sessionId"
-                                value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-
-                        <f:param
-                                name="type"
-                                value="#{media.previewMimeType}"/>
-
-                        <f:param
-                                name="krsc"
-                                value="true"/>
-
-                    </p:audio>
-                </ui:fragment>
-
-                <ui:fragment rendered="#{media.type eq 'IMAGE'}">
-                    <img
-                            class="mediaListItem"
-                            src="#{media.previewUrl}"
-                            loading="lazy"
-                            alt="" />
-                </ui:fragment>
-
+                <p:audio styleClass="mediaListItem"
+                         rendered="#{fn:startsWith(media.previewMimeType, 'audio')}"
+                         player="#{fn:endsWith(media.previewMimeType, 'mpeg') ? 'mp3' : media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
+                         controls="true"
+                         value="#{mediaProvider.previewData}">
+                    <f:param name="mediaId"
+                             value="#{media.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="type"
+                             value="#{media.previewMimeType}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:audio>
             </ui:fragment>
 
-            <ui:fragment rendered="#{not media.showingInPreview}">
-                <div class="mediaListIconItem">
+            <ui:fragment rendered="#{media.showingInPreview and media.type eq 'IMAGE'}">
+                <img
+                        class="mediaListItem"
+                        src="#{media.previewUrl}"
+                        loading="lazy"
+                        alt="" />
+            </ui:fragment>
 
+            <ui:fragment rendered="#{not mediaProvider.hasPreviewVariant(media)}">
+                <div class="mediaListIconItem">
                     <ui:fragment rendered="#{media.type eq 'VIDEO'}">
                         <i class="fa fa-file-video-o"></i>
                     </ui:fragment>
-
                     <ui:fragment rendered="#{media.type eq 'AUDIO'}">
                         <i class="fa fa-file-audio-o"></i>
                     </ui:fragment>
-
                     <ui:fragment rendered="#{media.type eq 'IMAGE'}">
                         <i class="fa fa-file-image-o"></i>
                     </ui:fragment>
-
                 </div>
             </ui:fragment>
 
@@ -141,7 +102,7 @@
 
         </div>
 
-        <ui:fragment rendered="#{media.showPhysicalPageNumber}">
+        <ui:fragment rendered="#{LoginForm.loggedUser.isShowPhysicalPageNumberBelowThumbnail()}">
             <div class="thumbnail-banner physical">
 
                 <ui:fragment rendered="#{media.type eq 'VIDEO'}">
@@ -159,7 +120,7 @@
             </div>
         </ui:fragment>
 
-        <ui:fragment rendered="#{media.showLogicalPageNumber}">
+        <ui:fragment rendered="#{LoginForm.loggedUser.isShowLogicalPageNumberBelowThumbnail()}">
             <div class="thumbnail-banner logical">
                 #{msgs.page} #{media.orderlabel}
             </div>
