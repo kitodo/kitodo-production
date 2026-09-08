@@ -22,88 +22,59 @@
 
     <ui:fragment rendered="#{not media.previewTooltip}">
 
-        <h:outputText
-                rendered="#{media.isMediaPartial()}"
-                styleClass="icon-media-partial"/>
+        <h:outputText rendered="#{media.isMediaPartial()}" styleClass="icon-media-partial"/>
 
         <div class="thumbnail-overlay">
-
             <ui:fragment rendered="#{media.type eq 'VIDEO'}">
                 <span>
                     #{msgs.video} #{media.shortId}
                 </span>
             </ui:fragment>
-
             <ui:fragment rendered="#{media.type eq 'AUDIO'}">
                 <span>
                     #{msgs.audio} #{media.shortId}
                 </span>
             </ui:fragment>
-
             <ui:fragment rendered="#{media.type eq 'IMAGE'}">
                 <span>
                     #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
                 </span>
             </ui:fragment>
-
         </div>
 
     </ui:fragment>
 
-
     <ui:fragment rendered="#{media.previewTooltip}">
-
-        <p:outputPanel
-                id="mediaListImageTooltipTrigger"
-                styleClass="mediaListImageTooltipTrigger thumbnail-overlay">
-
+        <p:outputPanel id="mediaListImageTooltipTrigger"
+                       styleClass="mediaListImageTooltipTrigger thumbnail-overlay">
             <span>
                 <i class="fa fa-search-plus"></i>
             </span>
-
         </p:outputPanel>
 
-        <p:tooltip
-                for="mediaListImageTooltipTrigger"
-                styleClass="mediaListImageTooltip"
-                beforeShow="metadataEditor.gallery.pages.preloadTooltipImage(this)">
-
-            <p:graphicImage
-                    rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW'}"
-                    value="#{mediaProvider.mediaView}"
-                    a:loading="lazy">
-
-                <f:param
-                        name="mediaId"
-                        value="#{media.id}"/>
-
-                <f:param
-                        name="process"
-                        value="#{DataEditorForm.process.id}"/>
-
-                <f:param
-                        name="sessionId"
-                        value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-
+        <p:tooltip for="mediaListImageTooltipTrigger"
+                   styleClass="mediaListImageTooltip"
+                   beforeShow="metadataEditor.gallery.pages.preloadTooltipImage(this)">
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW'}"
+                            value="#{mediaProvider.mediaView}"
+                            a:loading="lazy">
+                <f:param name="mediaId"
+                         value="#{media.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
             </p:graphicImage>
 
-            <p:graphicImage
-                    rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW'}"
-                    value="#{mediaProvider.previewData}"
-                    a:loading="lazy">
-
-                <f:param
-                        name="mediaId"
-                        value="#{media.id}"/>
-
-                <f:param
-                        name="process"
-                        value="#{DataEditorForm.process.id}"/>
-
-                <f:param
-                        name="sessionId"
-                        value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW'}"
+                            value="#{mediaProvider.previewData}"
+                            a:loading="lazy">
+                <f:param name="mediaId"
+                         value="#{media.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
             </p:graphicImage>
 
             <div>
