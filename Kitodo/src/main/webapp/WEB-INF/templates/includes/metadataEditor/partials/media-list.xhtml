@@ -131,33 +131,39 @@
                 </div>
             </ui:fragment>
 
-            <span class="assigned-several-times #{media.showAssignmentIndex ? '' : 'hidden'}">
-                #{media.assignmentIndex}
-            </span>
+            <ui:fragment rendered="#{media.showAssignmentIndex}">
+                <span class="assigned-several-times">
+                    #{media.assignmentIndex}
+                </span>
+            </ui:fragment>
 
             <ui:include src="media-list-content.xhtml"/>
 
         </div>
 
-        <div class="thumbnail-banner physical #{media.showPhysicalPageNumber ? '' : 'hidden'}">
+        <ui:fragment rendered="#{media.showPhysicalPageNumber}">
+            <div class="thumbnail-banner physical">
 
-            <ui:fragment rendered="#{media.type eq 'VIDEO'}">
-                #{msgs.video} #{media.shortId}
-            </ui:fragment>
+                <ui:fragment rendered="#{media.type eq 'VIDEO'}">
+                    #{msgs.video} #{media.shortId}
+                </ui:fragment>
 
-            <ui:fragment rendered="#{media.type eq 'AUDIO'}">
-                #{msgs.audio} #{media.shortId}
-            </ui:fragment>
+                <ui:fragment rendered="#{media.type eq 'AUDIO'}">
+                    #{msgs.audio} #{media.shortId}
+                </ui:fragment>
 
-            <ui:fragment rendered="#{media.type eq 'IMAGE'}">
-                #{msgs.image} #{media.shortId}
-            </ui:fragment>
+                <ui:fragment rendered="#{media.type eq 'IMAGE'}">
+                    #{msgs.image} #{media.shortId}
+                </ui:fragment>
 
-        </div>
+            </div>
+        </ui:fragment>
 
-        <div class="thumbnail-banner logical #{media.showLogicalPageNumber ? '' : 'hidden'}">
-            #{msgs.page} #{media.orderlabel}
-        </div>
+        <ui:fragment rendered="#{media.showLogicalPageNumber}">
+            <div class="thumbnail-banner logical">
+                #{msgs.page} #{media.orderlabel}
+            </div>
+        </ui:fragment>
 
     </p:outputPanel>
 
