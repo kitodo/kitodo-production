@@ -25,15 +25,14 @@
         <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
-            <h:panelGroup binding="#{previewUrlComponent}" />
-
-            <h:outputText
+            <h:panelGroup
                     id="previewUrlPreparation"
-                    value="#{DataEditorForm.galleryPanel.preparePreviewUrls(
-             previewUrlComponent,
-             DataEditorForm.process.id,
-             session.id)}"
-                    style="display:none" />
+                    layout="block"
+                    style="display:none">
+                <f:event
+                        type="preRenderComponent"
+                        listener="#{DataEditorForm.galleryPanel.preparePreviewUrls}" />
+            </h:panelGroup>
 
             <p:remoteCommand
                 name="triggerOnPageDrop"
@@ -168,7 +167,6 @@
                                         </ui:include>
                                     </p:panel>
                                 </p:dataList>
-
 
                                 <!-- Render once instead of checking every row. -->
                                 <ui:fragment rendered="#{

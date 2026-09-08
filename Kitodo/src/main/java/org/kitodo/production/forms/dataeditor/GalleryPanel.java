@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import jakarta.el.ValueExpression;
-import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +59,6 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
 import org.primefaces.util.DynamicContentSrcBuilder;
-import org.primefaces.util.Lazy;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
@@ -430,47 +428,42 @@ public class GalleryPanel {
      */
     public void updateStripes() {
         updateMedia();
+
         stripes = new ArrayList<>();
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
+
         updateSelectionState();
 
         boolean discontinuous = !dataEditor.consecutivePagesSelected();
         PreviewHoverMode previewHoverMode = getPreviewHoverMode();
 
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        boolean showPhysicalPageNumber = Boolean.TRUE.equals(
-            context.getApplication().evaluateExpressionGet(
-                context,
-                "#{LoginForm.loggedUser.isShowPhysicalPageNumberBelowThumbnail()}",
-                Boolean.class));
-
-        boolean showLogicalPageNumber = Boolean.TRUE.equals(
-            context.getApplication().evaluateExpressionGet(
-                context,
-                "#{LoginForm.loggedUser.isShowLogicalPageNumberBelowThumbnail()}",
-                Boolean.class));
-
         for (GalleryMediaContent media : medias) {
             media.setDiscontinuous(discontinuous);
-
-            media.setPreviewTooltip(
-                PreviewHoverMode.TOOLTIP_PREVIEW.equals(previewHoverMode)
-                    && media.isShowingInPreview()
-                    && MediaUtil.isImage(media.getPreviewMimeType())
-                    ||
-                    PreviewHoverMode.TOOLTIP_MEDIAVIEW.equals(previewHoverMode)
-                        && media.isShowingInMediaView()
-                        && MediaUtil.isImage(media.getMediaViewMimeType()));
-
-            media.setAssignmentIndex(
-                media.isAssignedSeveralTimes()
-                    ? getSeveralAssignmentsIndex(media) + 1
-                    : 0);
-
-            media.setShowPhysicalPageNumber(showPhysicalPageNumber);
-            media.setShowLogicalPageNumber(showLogicalPageNumber);
+            media.setPreviewTooltip(showPreviewTooltip(media, previewHoverMode));
+            media.setAssignmentIndex(getAssignmentIndex(media));
         }
+    }
+
+    private boolean showPreviewTooltip(
+        GalleryMediaContent media, PreviewHoverMode previewHoverMode) {
+
+        if (PreviewHoverMode.TOOLTIP_PREVIEW.equals(previewHoverMode)) {
+            return media.isShowingInPreview()
+                && MediaUtil.isImage(media.getPreviewMimeType());
+        }
+
+        if (PreviewHoverMode.TOOLTIP_MEDIAVIEW.equals(previewHoverMode)) {
+            return media.isShowingInMediaView()
+                && MediaUtil.isImage(media.getMediaViewMimeType());
+        }
+
+        return false;
+    }
+
+    private int getAssignmentIndex(GalleryMediaContent media) {
+        return media.isAssignedSeveralTimes()
+            ? getSeveralAssignmentsIndex(media) + 1
+            : 0;
     }
 
     private void updateSelectionState() {
@@ -1168,29 +1161,20 @@ public class GalleryPanel {
     }
 
     /**
-     * Prepares preview URLs for all gallery media.
-     *
-     * @param component UI component used to build the dynamic preview URL
-     * @param processId process ID
-     * @param sessionId session ID used for media caching
-     * @return empty string
+     * Prepares dynamic preview URLs for all gallery media using the PrimeFaces base URL.
+     * Appends the {@code mediaId}, {@code process} and media cache {@code sessionId} parameters.
      */
-    public String preparePreviewUrls(
-        UIComponent component,
-        int processId,
-        String sessionId) {
-
-        String baseUrl = getPreviewBaseUrl(component);
+    public void preparePreviewUrls() {
+        String baseUrl = getPreviewBaseUrl();
 
         for (GalleryMediaContent media : medias) {
             String url = appendParameter(baseUrl, "mediaId", media.getId());
-            url = appendParameter(url, "process", Integer.toString(processId));
-            url = appendParameter(url, "sessionId", sessionId);
+            url = appendParameter(url, "process",
+                Integer.toString(dataEditor.getProcess().getId()));
+            url = appendParameter(url, "sessionId", cachingUUID);
 
             media.setPreviewUrl(url);
         }
-
-        return "";
     }
 
     private String appendParameter(String url, String name, String value) {
@@ -1203,36 +1187,58 @@ public class GalleryPanel {
             + URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
-    private String getPreviewBaseUrl(UIComponent component) {
+    /**
+     * Returns the PrimeFaces base URL used for gallery preview images.
+     * The URL is calculated once and then cached in the current Faces request.
+     *
+     * @return base URL for dynamic preview images
+     */
+    private String getPreviewBaseUrl() {
         FacesContext context = FacesContext.getCurrentInstance();
-
         Map<Object, Object> attributes = context.getAttributes();
 
         String baseUrl = (String) attributes.get(PREVIEW_BASE_URL_KEY);
 
-        if (baseUrl == null) {
-            ValueExpression valueExpression = context.getApplication()
-                .getExpressionFactory()
-                .createValueExpression(
-                    context.getELContext(),
-                    "#{mediaProvider.previewData}",
-                    Object.class);
-
-            Lazy<Object> value = new Lazy<>(
-                () -> valueExpression.getValue(context.getELContext()));
-
-            baseUrl = DynamicContentSrcBuilder.build(
-                context,
-                component,
-                valueExpression,
-                value,
-                true,
-                true);
-
+        if (Objects.isNull(baseUrl)) {
+            baseUrl = buildPreviewBaseUrl(context);
             attributes.put(PREVIEW_BASE_URL_KEY, baseUrl);
         }
 
         return baseUrl;
     }
 
+    /**
+     * Builds the dynamic resource URL used for image previews.
+     *
+     * <p>
+     * Normally, {@code p:graphicImage} creates this URL internally while rendering
+     * the component. Since gallery thumbnails are rendered as plain {@code <img>}
+     * elements for performance reasons, this part of the PrimeFaces behavior has
+     * to be reproduced explicitly.
+     *
+     * <p>
+     * The generated URL is associated with {@code #{mediaProvider.previewData}}.
+     * When the browser later requests the URL, PrimeFaces resolves this expression
+     * on the server and uses the returned preview data as the response content.
+     *
+     * @see <a href="https://primefaces.github.io/primefaces/13_0_0/#/core/dynamiccontent">
+     * PrimeFaces Dynamic Content documentation</a>
+     *
+     * @param context current Faces context
+     * @return generated dynamic preview base URL
+     */
+    private String buildPreviewBaseUrl(FacesContext context) {
+        ValueExpression expression = context.getApplication()
+            .getExpressionFactory()
+            .createValueExpression(
+                context.getELContext(),
+                "#{mediaProvider.previewData}",
+                Object.class);
+
+        return DynamicContentSrcBuilder.buildStreaming(
+            context,
+            null,
+            expression,
+            true);
+    }
 }
