@@ -19,12 +19,12 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
 /**
  * JUnit TestWatcher implementation that monitors failed tests and generates a screenshot of the current browser window.
@@ -45,7 +45,7 @@ public class ScreenshotTestWatcher implements TestWatcher {
 	 * @param cause the throwable that caused test failure
      */
     @Override
-    public void testFailed(ExtensionContext context, @Nullable Throwable cause) {
+    public void testFailed(ExtensionContext context, Throwable cause) {
         WebDriver driver = Browser.getDriver();
         if (!(driver instanceof TakesScreenshot)) {
             logger.warn("cannot take screenshot with driver that doesn't support screenshots: {}", driver);
@@ -54,7 +54,7 @@ public class ScreenshotTestWatcher implements TestWatcher {
 
         String className = context.getRequiredTestClass().getSimpleName();
         String methodName = context.getTestMethod()
-                .map(method -> method.getName())
+                .map(Method::getName)
                 .orElse("unknown");
 
         Path directory = Path.of(SCREENSHOT_DIRECTORY).toAbsolutePath().normalize();
