@@ -93,7 +93,7 @@ import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.process.ProcessGenerator;
-import org.kitodo.production.security.password.KitodoLegacyPasswordEncoder;
+import org.kitodo.production.security.password.KitodoDelegatingPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
@@ -115,7 +115,6 @@ public class MockDatabase {
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final String TARGET = "target";
     private static final String CHOICE = "choice";
-    private static final String TEST = "test";
     private static final String FIRST_VALUE = "first value";
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static Server tcpServer;
@@ -131,6 +130,7 @@ public class MockDatabase {
     public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
     public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
     public static final String HIERARCHY_CHILD_TO_ADD = "HierarchyChildToAdd";
+    public static final String DEFAULT_USER_PASSWORD = "test";
     public static final int PORT = 8888;
 
     public static void startDatabaseServer() throws SQLException {
@@ -1547,7 +1547,7 @@ public class MockDatabase {
     }
 
     private static void insertUsers() throws DAOException {
-        KitodoLegacyPasswordEncoder passwordEncoder = new KitodoLegacyPasswordEncoder();
+        KitodoDelegatingPasswordEncoder passwordEncoder = new KitodoDelegatingPasswordEncoder();
         Client firstClient = ServiceManager.getClientService().getById(1);
         Client secondClient = ServiceManager.getClientService().getById(2);
 
@@ -1566,7 +1566,7 @@ public class MockDatabase {
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
         firstUser.setLogin("kowal");
-        firstUser.setPassword(passwordEncoder.encrypt(TEST));
+        firstUser.setPassword(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
@@ -1583,7 +1583,7 @@ public class MockDatabase {
         secondUser.setName("Adam");
         secondUser.setSurname("Nowak");
         secondUser.setLogin("nowak");
-        secondUser.setPassword(passwordEncoder.encrypt(TEST));
+        secondUser.setPassword(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
@@ -1612,7 +1612,7 @@ public class MockDatabase {
         fourthUser.setName("Max");
         fourthUser.setSurname("Mustermann");
         fourthUser.setLogin("mmustermann");
-        fourthUser.setPassword(passwordEncoder.encrypt(TEST));
+        fourthUser.setPassword(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
         fourthUser.setLdapLogin("mmustermann");
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
@@ -1624,7 +1624,7 @@ public class MockDatabase {
         fifthUser.setName("Last");
         fifthUser.setSurname("User");
         fifthUser.setLogin("user");
-        fifthUser.setPassword(passwordEncoder.encrypt(TEST));
+        fifthUser.setPassword(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
         fifthUser.setLdapLogin("user");
         fifthUser.setLocation("Dresden");
         fifthUser.setTableSize(20);
@@ -1635,7 +1635,7 @@ public class MockDatabase {
         sixthUser.setName("Very last");
         sixthUser.setSurname("User");
         sixthUser.setLogin("verylast");
-        sixthUser.setPassword(passwordEncoder.encrypt(TEST));
+        sixthUser.setPassword(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
         sixthUser.getClients().add(firstClient);
         sixthUser.getRoles().add(metadataRole);
         sixthUser.setMetadataLanguage("de");
@@ -1807,7 +1807,7 @@ public class MockDatabase {
     }
 
     public static void insertWorkflows() throws DAOException {
-        Workflow firstWorkflow = new Workflow(TEST);
+        Workflow firstWorkflow = new Workflow("test");
         firstWorkflow.setStatus(WorkflowStatus.ACTIVE);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(firstWorkflow);

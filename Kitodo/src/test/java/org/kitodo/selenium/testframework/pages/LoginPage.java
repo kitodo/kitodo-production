@@ -11,9 +11,9 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.security.password.KitodoLegacyPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.WebElement;
@@ -48,10 +48,14 @@ public class LoginPage extends Page<LoginPage> {
         return this;
     }
 
-    public void performLogin(User user) throws InterruptedException {
-        KitodoLegacyPasswordEncoder passwordEncoder = new KitodoLegacyPasswordEncoder();
-        String password = passwordEncoder.decrypt(user.getPassword());
-
+    /**
+     * Enter user name and password into the login form and submit it for login.
+     * 
+     * @param user the user name
+     * @param password the cleartext password 
+     * @throws InterruptedException in case there is an interruption
+     */
+    public void performLogin(User user, String password) throws InterruptedException {
         usernameInput.clear();
         usernameInput.sendKeys(user.getLogin());
 
@@ -62,7 +66,13 @@ public class LoginPage extends Page<LoginPage> {
         Thread.sleep(Browser.getDelayAfterLogin());
     }
 
+    /**
+     * Login as admin user "kowal".
+     * 
+     * @throws InterruptedException in case there is an interruption
+     * @throws DAOException in case user details can not be retrieved from the database
+     */
     public void performLoginAsAdmin() throws InterruptedException, DAOException {
-        performLogin(ServiceManager.getUserService().getById(1));
+        performLogin(ServiceManager.getUserService().getById(1), MockDatabase.DEFAULT_USER_PASSWORD);
     }
 }

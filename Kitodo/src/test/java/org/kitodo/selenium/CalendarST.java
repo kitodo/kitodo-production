@@ -24,9 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.CalendarPage;
@@ -52,8 +50,7 @@ public class CalendarST extends BaseTestSelenium {
 
     @BeforeEach
     public void login() throws Exception {
-        User calendarUser = ServiceManager.getUserService().getByLogin("kowal");
-        Pages.getLoginPage().goTo().performLogin(calendarUser);
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
     @AfterEach
