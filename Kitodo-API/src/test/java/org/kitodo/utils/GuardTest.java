@@ -24,8 +24,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 class GuardTest {
+
+    private static final String VALUE = "value";
+    private static final String CAN_CAST = "canCast";
+
     @Test
-    @Tag("canCast")
+    @Tag(CAN_CAST)
     void canCastShouldCast() {
         Object input = "Hello world!";
         String greet = Guard.canCast("input", input, String.class);
@@ -33,7 +37,7 @@ class GuardTest {
     }
 
     @Test
-    @Tag("canCast")
+    @Tag(CAN_CAST)
     void canCastShouldCastToSuperclass() {
         Object input = new GregorianCalendar();
         Calendar calendar = Guard.canCast("input", input, Calendar.class);
@@ -41,7 +45,7 @@ class GuardTest {
     }
 
     @Test
-    @Tag("canCast")
+    @Tag(CAN_CAST)
     void canCastShouldNotMiscast() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             Object input = new ArrayList<File>();
@@ -115,14 +119,14 @@ class GuardTest {
     @Tag("isPositive_double")
     void isPositiveDoubleShouldNotFailForPositiveValue() {
         double value = 42;
-        Guard.isPositive("value", value);
+        Guard.isPositive(VALUE, value);
     }
 
     @Test
     @Tag("isPositive_double")
     void isPositiveDoubleShouldNotFailForPositiveBoundary() {
         double value = Double.MIN_VALUE;
-        Guard.isPositive("value", value);
+        Guard.isPositive(VALUE, value);
     }
 
     @Test
@@ -130,7 +134,7 @@ class GuardTest {
     void isPositiveDoubleShouldFailForZero() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = 0;
-            Guard.isPositive("value", value);
+            Guard.isPositive(VALUE, value);
         }, "should throw IllegalArgumentException");
         assertEquals("'value' out of range: 0.0 not > 0", e.getMessage(),
             "should provide an understandable description");
@@ -141,7 +145,7 @@ class GuardTest {
     void isPositiveDoubleShouldFailForNegative() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = -299_792_458;
-            Guard.isPositive("value", value);
+            Guard.isPositive(VALUE, value);
         }, "should throw IllegalArgumentException");
         assertEquals("'value' out of range: -2.99792458E8 not > 0", e.getMessage(),
             "should provide an understandable description");
@@ -151,14 +155,14 @@ class GuardTest {
     @Tag("isPositive_long")
     void isPositiveLongShouldNotFailForPositiveUpperBound() {
         long value = Long.MAX_VALUE;
-        Guard.isPositive("value", value);
+        Guard.isPositive(VALUE, value);
     }
 
     @Test
     @Tag("isPositive_long")
     void isPositiveLongShouldNotFailForPositiveLowerBound() {
         long value = 1;
-        Guard.isPositive("value", value);
+        Guard.isPositive(VALUE, value);
     }
 
     @Test
@@ -166,7 +170,7 @@ class GuardTest {
     void isPositiveLongShouldFailForZero() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = 0;
-            Guard.isPositive("value", value);
+            Guard.isPositive(VALUE, value);
         }, "should throw IllegalArgumentException");
         assertEquals("'value' out of range: 0 not > 0", e.getMessage(), "should provide an understandable description");
     }
@@ -176,7 +180,7 @@ class GuardTest {
     void isPositiveLongShouldFailForNegative() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = Long.MAX_VALUE + 1; // negative due to integer overflow
-            Guard.isPositive("value", value);
+            Guard.isPositive(VALUE, value);
         }, "should throw IllegalArgumentException");
         assertEquals("'value' out of range: -9223372036854775808 not > 0", e.getMessage(),
             "should provide an understandable description");

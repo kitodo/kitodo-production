@@ -38,11 +38,11 @@ public class TasksPage extends Page<TasksPage> {
     private static final String WAIT_FOR_FILTER_FORM_MENU = "Wait for filter form menu to open";
     private static final String WAIT_FOR_TASK_TABLE_COLUMN_SORT = "Wait for task table column sort";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TASK_TABLE_DATA)
     private WebElement taskTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TASK_TABLE_HEADER)
     private WebElement taskTableHeader;
 
@@ -53,7 +53,7 @@ public class TasksPage extends Page<TasksPage> {
     @FindBy(id = "filterInputForm:filterfield")
     private WebElement filterField;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "filterOptionsFormWrapper")
     private WebElement filterOptionsMenu;
 

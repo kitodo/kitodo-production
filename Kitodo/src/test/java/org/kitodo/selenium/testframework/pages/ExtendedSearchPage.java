@@ -22,31 +22,31 @@ public class ExtendedSearchPage extends Page<ExtendedSearchPage> {
     private static final String EDIT_FORM = "editForm";
     private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":submitProcessSearch")
     private WebElement submitButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":searchTabView:processID")
     private WebElement processIdInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":searchTabView:processProject")
     private WebElement projectDrowdown;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":searchTabView:taskStatus")
     private WebElement taskStatusDropDown;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":searchTabView:taskName")
     private WebElement taskNameDropDown;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":searchTabView:taskName_1")
     private WebElement taskAdditional;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = EDIT_FORM + ":searchTabView:taskStatus_4")
     private WebElement taskDone;
 

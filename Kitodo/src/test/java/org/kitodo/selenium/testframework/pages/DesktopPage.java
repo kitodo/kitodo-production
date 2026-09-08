@@ -27,23 +27,23 @@ public class DesktopPage extends Page<DesktopPage> {
     private static final String TASKS_TABLE = "taskTable";
     private static final String STATISTICS_TABLE = "statisticsTable";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESS_TABLE + DATA)
     private WebElement processTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROJECTS_TABLE + DATA)
     private WebElement projectsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TASKS_TABLE + DATA)
     private WebElement tasksTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = STATISTICS_TABLE + DATA)
     private WebElement statisticsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[@href='desktop']")
     private WebElement desktopLink;
 

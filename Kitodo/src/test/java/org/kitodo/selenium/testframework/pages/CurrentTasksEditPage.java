@@ -27,15 +27,15 @@ public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
 
     private static final String ACTION_FORM = "tasksTabView:actionForm";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ACTION_FORM + ":close")
     private WebElement closeTaskLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ACTION_FORM + ":cancel")
     private WebElement releaseTaskLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "yesButton")
     private WebElement confirmButton;
 

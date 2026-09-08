@@ -20,7 +20,7 @@ public class ClientEditPage extends EditPage<ClientEditPage> {
 
     private static final String CLIENTS_TAB_VIEW = EDIT_FORM + ":clientsTabView";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = CLIENTS_TAB_VIEW + ":nameInput")
     private WebElement nameInput;
 

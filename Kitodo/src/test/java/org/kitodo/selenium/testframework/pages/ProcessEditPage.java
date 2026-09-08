@@ -22,35 +22,35 @@ public class ProcessEditPage extends EditPage<ProcessEditPage> {
     private static final String PROCESS_EDIT_TAB_VIEW = EDIT_FORM + ":processTabView";
     private static final String TEMPLATE_PROPERTY_FORM = "templatePropertyForm";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESS_EDIT_TAB_VIEW)
     private WebElement processEditTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESS_EDIT_TAB_VIEW + ":title")
     private WebElement titleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESS_EDIT_TAB_VIEW + ":taskTable:0:deleteTask")
     private WebElement deleteFirstTaskLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = PROCESS_EDIT_TAB_VIEW + ":addTemplateProperty")
     private WebElement addTemplatePropertyButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TEMPLATE_PROPERTY_FORM + ":templatePropertyTitle")
     private WebElement templatePropertyTitleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TEMPLATE_PROPERTY_FORM + ":templatePropertyValue")
     private WebElement templatePropertyValueInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TEMPLATE_PROPERTY_FORM + ":save")
     private WebElement templatePropertySaveButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "yesButton")
     private WebElement confirmRemoveButton;
 

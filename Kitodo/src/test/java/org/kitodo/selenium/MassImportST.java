@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -166,7 +167,7 @@ public class MassImportST extends BaseTestSelenium {
     }
 
     private static File createCsvFile() throws IOException {
-        File csvFile = File.createTempFile(CSV_UPLOAD_FILENAME, CSV_UPLOAD_FILE_EXTENSION);
+        File csvFile = Files.createTempFile(CSV_UPLOAD_FILENAME, CSV_UPLOAD_FILE_EXTENSION).toFile();
         try (FileWriter writer = new FileWriter(csvFile)) {
             writer.write(String.join(StringConstants.COMMA_DELIMITER, METADATA_KEYS) + "\n");
             writer.write("123, Band 1, Hamburg\n");

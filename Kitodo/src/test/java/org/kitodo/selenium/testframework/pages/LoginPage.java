@@ -21,15 +21,15 @@ import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends Page<LoginPage> {
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "login")
     private WebElement loginButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "username")
     private WebElement usernameInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "password")
     private WebElement passwordInput;
 

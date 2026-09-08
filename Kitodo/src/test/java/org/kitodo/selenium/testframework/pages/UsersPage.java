@@ -36,75 +36,75 @@ public class UsersPage extends Page<UsersPage> {
     private static final String CLIENTS_TABLE = USERS_TAB_VIEW + ":clientsTable";
     private static final String LDAP_GROUPS_TABLE = USERS_TAB_VIEW + ":ldapGroupsTable";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USERS_TAB_VIEW)
     private WebElement usersTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USERS_TABLE + DATA)
     private WebElement usersTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ROLES_TABLE + DATA)
     private WebElement rolesTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = CLIENTS_TABLE + DATA)
     private WebElement clientsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUPS_TABLE + DATA)
     private WebElement ldapGroupsTable;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newElementButton_button")
     private WebElement newElementButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newUserButton")
     private WebElement newUserButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newRoleButton")
     private WebElement newRoleButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newClientButton")
     private WebElement newClientButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "usersTabView:usersTable:0:actionForm:editUser")
     private WebElement editUserLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/roleEdit') and contains(@href, 'id=1')]")
     private WebElement editRoleLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/clientEdit') and contains(@href, 'id=1')]")
     private WebElement editClientLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(xpath = "//a[contains(@href, '/kitodo/pages/ldapgroupEdit') and contains(@href, 'id=1')]")
     private WebElement editLdapGroupLink;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = USERS_TABLE + ":0:actionForm:deleteUser")
     private WebElement deleteFirstUserButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = ROLES_TABLE + ":0:actionForm:deleteRole")
     private WebElement deleteFirstRoleButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = CLIENTS_TABLE + ":0:actionForm:deleteClient")
     private WebElement deleteFirstClientButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = LDAP_GROUPS_TABLE + ":0:actionForm:deleteLdapgroup")
     private WebElement deleteFirstLDAPGroupButton;
 

@@ -32,75 +32,75 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private static final String HIERARCHY_PANEL = "editForm:processFromTemplateTabView:processHierarchyContent";
     private static final String IMPORT_CHILD_PROCESSES_SWITCH = "#catalogSearchForm\\:importChildren .ui-chkbox-box";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW)
     private WebElement processFromTemplateTabView;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":processTitle")
     private WebElement processTitleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":guessImages")
     private WebElement guessImagesInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":logicalStructure")
     private WebElement logicalStructureTree;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":docType")
     private WebElement docTypeSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":metadataTable:0:inputText")
     private WebElement titleInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":metadataTable:1:inputText")
     private WebElement titleSortInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":metadataTable:2:inputText")
     private WebElement ppnAnalogInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":metadataTable:3:inputText")
     private WebElement ppnDigitalInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = OPAC_SEARCH_FORM + ":catalogueSelectMenu")
     private WebElement catalogSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":chooseParent")
     private WebElement chooseParentSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = OPAC_SEARCH_FORM + ":fieldSelectMenu")
     private WebElement fieldSelect;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":searchForParent")
     private WebElement searchForParentInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":searchParent")
     private WebElement searchParentButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = OPAC_SEARCH_FORM + ":searchTerm")
     private WebElement searchTermInput;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = OPAC_SEARCH_FORM + ":performCatalogSearch")
     private WebElement performCatalogSearchButton;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = "hitlistDialogForm:hitlistDialogTable:0:selectRecord")
     private WebElement selectRecord;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(UNUSED)
     @FindBy(id = TAB_VIEW + ":generateTitleButton")
     private WebElement generateTitleButton;
 
