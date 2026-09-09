@@ -203,7 +203,7 @@ public class IndexingService {
                 .getQueryParameters());
         long indexedCount = getAllIndexed();
         if (totalCount != indexedCount) {
-            logger.warn("index is considered corrupted with {} of {} processes indexed", indexedCount, totalCount);
+            logger.warn("Index is considered corrupted with {} of {} processes indexed", indexedCount, totalCount);
         }
         return totalCount != indexedCount;
     }
