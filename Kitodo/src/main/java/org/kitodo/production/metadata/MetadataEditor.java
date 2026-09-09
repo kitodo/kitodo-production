@@ -317,7 +317,7 @@ public class MetadataEditor {
         handlePosition(workpiece, logicalDivision, position, viewsToAdd, parents, siblings, newStructure);
 
         if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
-            handleViewsToAdd(viewsToAdd, newStructure);
+            handleViewsToAdd(viewsToAdd, newStructure, workpiece.getLogicalStructure());
         }
         return newStructure;
     }
@@ -364,11 +364,18 @@ public class MetadataEditor {
         }
     }
 
-    private static void handleViewsToAdd(List<View> viewsToAdd, LogicalDivision newStructure) {
+    private static void handleViewsToAdd(List<View> viewsToAdd, LogicalDivision newStructure,
+                                         LogicalDivision rootStructure) {
         for (View viewToAdd : viewsToAdd) {
             List<LogicalDivision> logicalDivisions = viewToAdd.getPhysicalDivision().getLogicalDivisions();
-            for (LogicalDivision elementToUnassign : logicalDivisions) {
-                elementToUnassign.getViews().remove(viewToAdd);
+            if (logicalDivisions.isEmpty()) {
+                // In an unsaved process, unstructured media may not yet have
+                // the root logical division registered explicitly.
+                rootStructure.getViews().remove(viewToAdd);
+            } else {
+                for (LogicalDivision elementToUnassign : logicalDivisions) {
+                    elementToUnassign.getViews().remove(viewToAdd);
+                }
             }
             logicalDivisions.clear();
             logicalDivisions.add(newStructure);
