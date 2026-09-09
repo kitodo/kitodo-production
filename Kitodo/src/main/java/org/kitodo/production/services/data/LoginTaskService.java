@@ -63,7 +63,8 @@ public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
             loginTask.setCreatedAt(new Date());
             save(loginTask);
         } catch (DAOException e) {
-            Helper.setErrorMessage("could not add login task", logger, e);
+            logger.error("Failed to add new login task", e);
+            Helper.setErrorMessage("loginTaskAddError");
         }
     }
 
@@ -78,7 +79,8 @@ public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
             loginTask.setError(Helper.getTranslation("loginTaskCanceled"));
             save(loginTask);
         } catch (DAOException e) {
-            Helper.setErrorMessage("could not cancel login task", logger, e);
+            logger.error("Failed to cancel login task", e);
+            Helper.setErrorMessage("loginTaskCancelError");
         }
     }
 
@@ -135,7 +137,8 @@ public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
             loginTask.setStatus(LoginTaskStatus.COMPLETED);
             save(loginTask);
         } catch (DAOException e) {
-            Helper.setErrorMessage("login task could not be saved as successfully completed", logger, e);
+            logger.error("Failed to mark login task as successfully completed", e);
+            Helper.setErrorMessage("loginTaskFinishError");
         }
     }
 
@@ -152,7 +155,8 @@ public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
             loginTask.setError(error);
             save(loginTask);
         } catch (DAOException e) {
-            Helper.setErrorMessage("login task could not be saved as failed", logger, e);
+            logger.error("Failed to mark login task as completed with error", e);
+            Helper.setErrorMessage("loginTaskFailedError");
         }
     }
 

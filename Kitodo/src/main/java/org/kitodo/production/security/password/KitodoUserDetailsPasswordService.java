@@ -39,14 +39,12 @@ public class KitodoUserDetailsPasswordService implements UserDetailsPasswordServ
                 User user = new User((SecurityUserDetails)userDetails);
                 user.setPassword(newEncodedPassword);
                 userService.save(user);
-                logger.debug("password for user '{}' migrated to newest encoding strategy", userDetails.getUsername());
+                logger.debug("Password for user '{}' migrated to newest encoding strategy", userDetails.getUsername());
             } catch (DAOException e) {
-                logger.error(String.format("failed to migrate user password for user '%s'", userDetails.getUsername()), e);
+                logger.error(String.format("Failed to migrate user password for user '%s'", userDetails.getUsername()), e);
             }
         } else {
-            logger.error(
-                String.format("cannot migrate user password for user '%s', wrong user details instance", userDetails.getUsername())
-            );
+            logger.error("Cannot migrate user password for user '{}', wrong user details instance", userDetails.getUsername());
         }
 
         return userDetails;

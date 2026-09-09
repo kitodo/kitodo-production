@@ -27,7 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *   <li>argon2 - the current password encryption algorithm stored with the prefix "{argon2}"</li>
  * </ul>
  * 
- * <p>In the future, if passwords need to be migrated to a more secure encryption algorithm, additional formats can be added.</p>
+ * <p>In the future, if passwords need to be migrated to a more secure encoding algorithm, additional formats can be added.</p>
  * 
  * <p>In contrast to the legacy encoder, this password encoder doesn't support recovering plaintext passwords. Instead, any 
  * tasks that require access to the plaintext password need to be either scheduled as tasks that are performed at the next login, 
@@ -37,7 +37,6 @@ public class KitodoDelegatingPasswordEncoder extends DelegatingPasswordEncoder {
 
     private static final String LEGACY_ENCODER_ID = null;
     private static final String ARGON2_ENCODER_ID = "argon2";
-
 
     /**
      * Initialize a new delegating password encoder with encoding strategies supported by Kitodo.Production.
