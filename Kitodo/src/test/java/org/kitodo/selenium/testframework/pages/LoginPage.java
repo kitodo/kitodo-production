@@ -11,6 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
@@ -49,6 +53,10 @@ public class LoginPage extends Page<LoginPage> {
     }
 
     public void performLogin(User user) throws InterruptedException {
+        // wait until all processes that were added during database initialization are indexed
+        await().ignoreExceptions().pollInterval(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> !ServiceManager.getIndexingService().isIndexCorrupted());
+
         SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
         String password = passwordEncoder.decrypt(user.getPassword());
 
