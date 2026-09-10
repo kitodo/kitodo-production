@@ -11,6 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -56,6 +60,10 @@ public class LoginPage extends Page<LoginPage> {
      * @throws InterruptedException in case there is an interruption
      */
     public void performLogin(User user, String password) throws InterruptedException {
+        // wait until all processes that were added during database initialization are indexed
+        await().ignoreExceptions().pollInterval(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> !ServiceManager.getIndexingService().isIndexCorrupted());
+
         usernameInput.clear();
         usernameInput.sendKeys(user.getLogin());
 

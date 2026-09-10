@@ -201,7 +201,11 @@ public class IndexingService {
         BeanQuery beanQuery = new BeanQuery(Process.class);
         Long totalCount = ServiceManager.getProcessService().count(beanQuery.formCountQuery(), beanQuery
                 .getQueryParameters());
-        return totalCount != getAllIndexed();
+        long indexedCount = getAllIndexed();
+        if (totalCount != indexedCount) {
+            logger.warn("Index is considered corrupted with {} of {} processes indexed", indexedCount, totalCount);
+        }
+        return totalCount != indexedCount;
     }
 
     /**
