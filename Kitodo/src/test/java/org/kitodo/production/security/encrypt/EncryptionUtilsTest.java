@@ -33,7 +33,7 @@ public class EncryptionUtilsTest {
      */
     @Test 
     public void defaultEncryptAndDecryptTest() {
-        assertEquals(RANDOM_INPUT, EncryptionUtils.decrypt(EncryptionUtils.encrypt(RANDOM_INPUT, FIXTURE_SECRET), RANDOM_SECRET));
+        assertEquals(RANDOM_INPUT, EncryptionUtils.decrypt(EncryptionUtils.encrypt(RANDOM_INPUT, RANDOM_SECRET), RANDOM_SECRET));
     }
 
     /**
