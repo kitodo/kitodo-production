@@ -356,7 +356,7 @@ public class MetadataEditor {
                                          LogicalDivision rootStructure) {
         for (View viewToAdd : viewsToAdd) {
             List<LogicalDivision> logicalDivisions = viewToAdd.getPhysicalDivision().getLogicalDivisions();
-            if (logicalDivisions.isEmpty()) {
+            if (logicalDivisions.isEmpty() && Objects.nonNull(rootStructure)) {
                 // In an unsaved process, unstructured media may not yet have
                 // the root logical division registered explicitly.
                 rootStructure.getViews().remove(viewToAdd);
