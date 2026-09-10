@@ -12,10 +12,6 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,10 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
@@ -58,7 +50,8 @@ import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.UpdateInternalMetaInformationTask;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
 import org.kitodo.production.migration.TasksToWorkflowConverter;
-import org.kitodo.production.security.AESUtil;
+import org.kitodo.production.security.encrypt.EncryptionUtils;
+import org.kitodo.production.security.encrypt.KitodoEncryptionException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.migration.MigrationService;
 import org.kitodo.production.workflow.model.Converter;
@@ -583,19 +576,17 @@ public class MigrationForm extends BaseForm {
         List<LdapServer> ldapServers = getLdapServers();
         ldapServers.parallelStream().forEach(ldapServer -> {
             String managerPassword = ldapServer.getManagerPassword();
-            if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEncrypted(managerPassword)) {
+            if (StringUtils.isNotBlank(managerPassword) && EncryptionUtils.needsUpgrade(managerPassword)) {
                 try {
-                    ldapServer.setManagerPassword(AESUtil.encrypt(managerPassword, securitySecret));
+                    ldapServer.setManagerPassword(EncryptionUtils.upgradeEncryption(managerPassword, securitySecret));
                     ServiceManager.getLdapServerService().save(ldapServer);
-                } catch (DAOException | NoSuchPaddingException | NoSuchAlgorithmException
-                        | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
-                        | IllegalBlockSizeException | InvalidKeySpecException e) {
+                } catch (KitodoEncryptionException | DAOException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         });
 
-        Helper.setMessage("All unencrypted LDAP Manager passwords were successfully encrypted.");
+        Helper.setMessage("All LDAP Manager passwords were successfully encrypted or upgraded to a more modern encryption algorithm.");
     }
 
     /**
