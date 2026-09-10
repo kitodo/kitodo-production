@@ -112,7 +112,9 @@ public class ImageGenerator implements Runnable {
     public ImageGenerator(Subfolder sourceFolder, GenerationMode mode, Collection<Subfolder> outputs) {
         this.sourceFolder = sourceFolder;
         this.mode = mode;
-        this.outputs = outputs;
+        this.outputs = outputs.stream()
+            .filter(output -> !isSourceFolder(output))
+            .toList();
         this.state = ImageGeneratorStep.LIST_SOURCE_FOLDER;
         this.sources = Collections.emptyList();
         this.contentToBeGenerated = new LinkedList<>();
@@ -131,6 +133,27 @@ public class ImageGenerator implements Runnable {
                 }
             }
         }
+    }
+
+    /**
+     * Returns whether the given subfolder represents the configured source folder.
+     * The contents of the source folder must never be regenerated.
+     *
+     * @param subfolder
+     *            subfolder to check
+     * @return whether the subfolder is the configured source folder
+     */
+    private boolean isSourceFolder(Subfolder subfolder) {
+        Folder source = sourceFolder.getFolder();
+        Folder output = subfolder.getFolder();
+
+        if (source == output) {
+            return true;
+        }
+
+        return Objects.nonNull(source.getId())
+            && Objects.nonNull(output.getId())
+            && Objects.equals(source.getId(), output.getId());
     }
 
     /**
