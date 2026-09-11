@@ -22,14 +22,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -43,6 +40,7 @@ import jakarta.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.utils.XMLSecurity;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -63,9 +61,7 @@ public class XMLEditor implements Serializable {
      */
     public XMLEditor() {
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            documentBuilder = XMLSecurity.newDocumentBuilderFactory().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             logger.error("ERROR: unable to instantiate document builder: {}", e.getMessage());
         }
@@ -136,8 +132,7 @@ public class XMLEditor implements Serializable {
         logger.info("Saving configuration to file {}", currentConfigurationFile);
         try {
             Document document = documentBuilder.parse(new InputSource(new StringReader(this.xmlConfigurationString)));
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
+            Transformer transformer = XMLSecurity.newTransformerFactory().newTransformer();
             DOMSource domSource = new DOMSource(document);
             try (FileOutputStream outputStream = new FileOutputStream(configurationFile.getFile(), false);
                     PrintWriter printWriter = new PrintWriter(outputStream)) {

@@ -22,8 +22,8 @@ import java.util.Objects;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -37,6 +37,7 @@ import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.XMLSecurity;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -175,7 +176,11 @@ public class MetsService {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Source xmlSource = new DOMSource(document);
         Result outputTarget = new StreamResult(outputStream);
-        TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+        Transformer transformer = XMLSecurity.newTransformerFactory().newTransformer();
+        if (Objects.isNull(transformer)) {
+            throw new IOException("Unable to create transformer");
+        }
+        transformer.transform(xmlSource, outputTarget);
         InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         return metsXmlElementAccess.read(inputStream);
     }

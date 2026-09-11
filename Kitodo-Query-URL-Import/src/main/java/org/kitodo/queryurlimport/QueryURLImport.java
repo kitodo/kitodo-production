@@ -33,13 +33,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -76,6 +73,7 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.utils.XMLSecurity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -428,16 +426,13 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private Document stringToDocument(String xmlContent) throws ParserConfigurationException, IOException,
             SAXException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        DocumentBuilder documentBuilder = XMLSecurity.newDocumentBuilderFactory().newDocumentBuilder();
         return documentBuilder.parse(new InputSource(new StringReader(xmlContent)));
     }
 
     private String nodeToString(Node node) throws TransformerException {
         StringWriter writer = new StringWriter();
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Transformer transformer = XMLSecurity.newTransformerFactory().newTransformer();
         transformer.transform(new DOMSource(node), new StreamResult(writer));
         return writer.toString();
     }
