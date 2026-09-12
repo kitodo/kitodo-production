@@ -11,9 +11,14 @@
 
 package org.kitodo.production.services.data;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +29,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LoginTaskDAO;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
+import org.springframework.security.core.Authentication;
 
 public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
 
@@ -158,6 +165,36 @@ public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
             logger.error("Failed to mark login task as completed with error", e);
             Helper.setErrorMessage("loginTaskFailedError");
         }
+    }
+
+    /**
+     * Retrieves the highest priority pending login task for a user and execute it.
+     * 
+     * @param user the user
+     * @param authentication authentication object which was created during the authentication process
+     */
+    public void doLoginTasks(User user, Authentication authentication) {
+        Optional<LoginTask> pendingLoginTask = getNextPendingLoginTaskForUser(user);
+
+        if (pendingLoginTask.isEmpty()) {
+            return;
+        }
+
+        if (LoginTaskType.SAVE_USER_TO_LDAP.equals(pendingLoginTask.get().getType())) {
+            try {
+                LdapServerService ldapServerService = ServiceManager.getLdapServerService();
+                ldapServerService.createNewUser(user, String.valueOf(authentication.getCredentials()));
+                finishTaskAsSuccessfullyCompleted(pendingLoginTask.get());
+            } catch (NameAlreadyBoundException e) {
+                Helper.setErrorMessage("Ldap entry already exists", logger, e);
+                finishTaskWithError(pendingLoginTask.get(), "Ldap entry already exists");
+            } catch (NoSuchAlgorithmException | NamingException | IOException | RuntimeException e) {
+                Helper.setErrorMessage("Could not generate ldap entry", logger, e);
+                finishTaskWithError(pendingLoginTask.get(), "Could not generate ldap entry: " + e.getMessage());
+            }
+        }
+
+        // in the future, add more login tasks, e.g. redirect user to reset user password, setup 2fa
     }
 
 }

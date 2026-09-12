@@ -109,9 +109,9 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
                 if (ldapGroup.getUserDN().contains("{ldaplogin}")) {
                     authentication = new UsernamePasswordAuthenticationToken(user.getLdapLogin(), authentication.getCredentials());
                 }
-                return ldapAuthenticationProvider.authenticate(authentication);
+                return doLoginTasks(user, ldapAuthenticationProvider.authenticate(authentication));
             } else {
-                return daoAuthenticationProvider.authenticate(authentication);
+                return doLoginTasks(user, daoAuthenticationProvider.authenticate(authentication));
             }
         } catch (RuntimeException problem) {
             // if login fails because of some unchecked exception, log it
@@ -120,6 +120,22 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             // rethrow exception
             throw problem;
         }
+    }
+
+    /**
+     * Forward authentication (that includes raw password) to login task service if successfully authenticated.
+     * 
+     * <p>This code cannot be triggered from an AuthenticationSuccessHandler, because Spring removes the user's raw 
+     * password from the authentication object as soon as authentication is finalized.</p>
+     * 
+     * @param user the user
+     * @param authentication authentication object which was created during the authentication process
+     */
+    private Authentication doLoginTasks(User user, Authentication authentication) {
+        if (authentication.isAuthenticated()) {
+            ServiceManager.getLoginTaskService().doLoginTasks(user, authentication);
+        }
+        return authentication;
     }
 
     @Override
