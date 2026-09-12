@@ -138,9 +138,9 @@ public class UserEditPage extends EditPage<UserEditPage> {
         return null;
     }
 
-    public UserEditPage insertUserData(User user) {
-        passwordInput.sendKeys(user.getPassword());
-        confirmPasswordInput.sendKeys(user.getPassword());
+    public UserEditPage insertUserData(User user, String password) {
+        passwordInput.sendKeys(password);
+        confirmPasswordInput.sendKeys(password);
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());

@@ -23,10 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FileStructureValidationException;
-import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -76,7 +74,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test
     public void imageVisibleTest() throws Exception {
-        login(KOWAL_USER);
+        login();
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
 
         // check detail view is not yet visible
@@ -95,7 +93,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test 
     public void zoomLevelTest() throws Exception {
-        login(KOWAL_USER);
+        login();
 
         // open detail view and wait for openlayers canvas
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -130,7 +128,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test 
     public void rotationTest() throws Exception {
-        login(KOWAL_USER);
+        login();
 
         // open detail view and wait for openlayers canvas
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -165,7 +163,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test
     public void viewPersistsImageChange() throws Exception {
-        login(KOWAL_USER);
+        login();
 
         // open detail view and wait for openlayers canvas
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -213,7 +211,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
      */
     @Test
     public void navigationButtonTest() throws Exception {
-        login(KOWAL_USER);
+        login();
 
         // open metadata editor and detail view
         Pages.getProcessesPage().goTo().editMetadata(PROCESS_TITLE);
@@ -299,9 +297,8 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
         ProcessService.deleteProcess(processId);
     }
 
-    private void login(String username) throws ReflectiveOperationException, InterruptedException {
-        User metadataUser = ServiceManager.getUserService().getByLogin(username);
-        Pages.getLoginPage().goTo().performLogin(metadataUser);
+    private void login() throws ReflectiveOperationException, InterruptedException, DAOException {
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
     private List<WebElement> findElementsByCSS(String css) {

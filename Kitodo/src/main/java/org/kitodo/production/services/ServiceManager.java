@@ -30,6 +30,7 @@ import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.LdapGroupService;
 import org.kitodo.production.services.data.LdapServerService;
 import org.kitodo.production.services.data.ListColumnService;
+import org.kitodo.production.services.data.LoginTaskService;
 import org.kitodo.production.services.data.LtpValidationConfigurationService;
 import org.kitodo.production.services.data.MappingFileService;
 import org.kitodo.production.services.data.MassImportService;
@@ -81,6 +82,7 @@ public class ServiceManager {
     private static LdapGroupService ldapGroupService;
     private static LdapServerService ldapServerService;
     private static ListColumnService listColumnService;
+    private static LoginTaskService loginTaskService;
     private static LongTermPreservationValidationService longTermPreservationValidationService;
     private static LtpValidationConfigurationService ltpValidationConfigurationService;
     private static MetadataValidationService metadataValidationService;
@@ -326,6 +328,13 @@ public class ServiceManager {
         if (Objects.isNull(fileStructureValidationService)) {
             logServiceInitialization();
             fileStructureValidationService = new FileStructureValidationService();
+        }
+    }
+
+    private static void initializeLoginTaskService() {
+        if (Objects.isNull(loginTaskService)) {
+            logServiceInitialization();
+            loginTaskService = new LoginTaskService();
         }
     }
 
@@ -770,6 +779,18 @@ public class ServiceManager {
         initializeKitodoScriptService();
         logServiceDelivery();
         return kitodoScriptService;
+    }
+
+    /**
+     * Initialize LoginTaskService if it is not yet
+     * initialized and next return it.
+     *
+     * @return LoginTaskService object
+     */
+    public static LoginTaskService getLoginTaskService() {
+        initializeLoginTaskService();
+        logServiceDelivery();
+        return loginTaskService;
     }
 
     /**
