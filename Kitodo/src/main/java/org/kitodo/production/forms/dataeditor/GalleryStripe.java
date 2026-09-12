@@ -12,7 +12,9 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -50,6 +52,9 @@ public class GalleryStripe {
      * <p>The root node itself is never referenced, as it is not visualized anyway.</p>
      */
     private final String logicalTreeNodeId;
+
+    private final Map<String, Boolean> selectedMedia = new HashMap<>();
+    private final Map<String, Boolean> lastSelectedMedia = new HashMap<>();
 
     /**
      * Creates a new gallery stripe.
@@ -114,5 +119,18 @@ public class GalleryStripe {
      */
     public String getLogicalTreeNodeId() {
         return logicalTreeNodeId;
+    }
+
+    public boolean isSelected(String mediaId) {
+        return Boolean.TRUE.equals(selectedMedia.get(mediaId));
+    }
+
+    public boolean isLastSelected(String mediaId) {
+        return Boolean.TRUE.equals(lastSelectedMedia.get(mediaId));
+    }
+
+    public void setSelectionState(String mediaId, boolean selected, boolean lastSelected) {
+        selectedMedia.put(mediaId, selected);
+        lastSelectedMedia.put(mediaId, lastSelected);
     }
 }

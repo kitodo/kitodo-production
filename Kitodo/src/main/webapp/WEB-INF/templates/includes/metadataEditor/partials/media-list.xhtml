@@ -12,31 +12,26 @@
 -->
 
 <ui:composition
-        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:outputPanel styleClass="thumbnail-parent" >
-        <c:choose>
-            <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
-                <c:set var="thumbnailStyleClass"
-                       value="#{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.getFirst()) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="thumbnailStyleClass"
-                       value="#{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
-            </c:otherwise>
-        </c:choose>
-        <p:outputPanel
-                styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{thumbnailStyleClass}"/>
-        <p:outputPanel styleClass="thumbnail-container #{fn:startsWith(media.previewMimeType, 'video') ? 'media-type-video' : ''}#{fn:startsWith(media.previewMimeType, 'audio') ? 'media-type-audio' : ''}"
-                       a:data-order="#{media.order}"
-                       a:data-stripe="#{uiParamStripeIndex}"
-                       a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
+    <p:outputPanel styleClass="thumbnail-parent">
+
+        <div class="thumbnail #{media.discontinuous ? 'discontinuous' : ''}
+            #{uiParamStripeIndex eq 0 and media.selectedInUnstructuredStripe ? 'selected' : ''}
+            #{uiParamStripeIndex eq 0 and media.lastSelectionInUnstructuredStripe ? 'last-selection' : ''}
+            #{uiParamStripeIndex ne 0 and stripe.isSelected(media.id) ? 'selected' : ''}
+            #{uiParamStripeIndex ne 0 and stripe.isLastSelected(media.id) ? 'last-selection' : ''}">
+        </div>
+
+        <div class="thumbnail-container
+             #{media.type eq 'VIDEO' ? 'media-type-video' : ''}
+             #{media.type eq 'AUDIO' ? 'media-type-audio' : ''}"
+             data-order="#{media.order}"
+             data-stripe="#{uiParamStripeIndex}"
+             data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
 
             <ui:fragment
                     rendered="#{mediaProvider.hasPreviewVariant(media) and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
@@ -56,6 +51,7 @@
                     <f:param name="krsc"
                              value="true"/>
                 </p:video>
+
                 <p:audio styleClass="mediaListItem"
                          rendered="#{fn:startsWith(media.previewMimeType, 'audio')}"
                          player="#{fn:endsWith(media.previewMimeType, 'mpeg') ? 'mp3' : media.previewMimeType.substring(media.previewMimeType.lastIndexOf('/') + 1)}"
@@ -74,65 +70,62 @@
                 </p:audio>
             </ui:fragment>
 
-            <ui:fragment rendered="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')}">
-                <h:outputText>
-                    <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                    <p:graphicImage styleClass="mediaListItem" value="#{mediaProvider.previewData}"
-                                    a:loading="lazy">
-                        <f:param name="mediaId"
-                                 value="#{media.id}"/>
-                        <f:param name="process"
-                                 value="#{DataEditorForm.process.id}"/>
-                        <f:param name="sessionId"
-                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                    </p:graphicImage>
-                </h:outputText>
-                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                              rendered="#{media.assignedSeveralTimes}"
-                              styleClass="assigned-several-times"/>
+            <ui:fragment rendered="#{media.showingInPreview and media.type eq 'IMAGE'}">
+                <img
+                        class="mediaListItem"
+                        src="#{media.previewUrl}"
+                        loading="lazy"
+                        alt="" />
             </ui:fragment>
 
             <ui:fragment rendered="#{not mediaProvider.hasPreviewVariant(media)}">
-                <p:outputPanel styleClass="mediaListIconItem" >
-                    <h:panelGroup rendered="#{media.type eq 'VIDEO'}">
-                        <i class="fa fa-file-video-o"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{media.type eq 'AUDIO'}">
-                        <i class="fa fa-file-audio-o"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{media.type eq 'IMAGE'}">
-                        <i class="fa fa-file-image-o"/>
-                    </h:panelGroup>
-                </p:outputPanel>
-                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                              rendered="#{media.assignedSeveralTimes}"
-                              styleClass="assigned-several-times"/>
+                <div class="mediaListIconItem">
+                    <ui:fragment rendered="#{media.type eq 'VIDEO'}">
+                        <i class="fa fa-file-video-o"></i>
+                    </ui:fragment>
+                    <ui:fragment rendered="#{media.type eq 'AUDIO'}">
+                        <i class="fa fa-file-audio-o"></i>
+                    </ui:fragment>
+                    <ui:fragment rendered="#{media.type eq 'IMAGE'}">
+                        <i class="fa fa-file-image-o"></i>
+                    </ui:fragment>
+                </div>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{media.showAssignmentIndex}">
+                <span class="assigned-several-times">
+                    #{media.assignmentIndex}
+                </span>
             </ui:fragment>
 
             <ui:include src="media-list-content.xhtml"/>
 
-        </p:outputPanel>
-        
+        </div>
+
         <ui:fragment rendered="#{LoginForm.loggedUser.isShowPhysicalPageNumberBelowThumbnail()}">
-            <p:outputPanel class="thumbnail-banner physical">
-                <h:outputText rendered="#{media.type eq 'VIDEO'}">
+            <div class="thumbnail-banner physical">
+
+                <ui:fragment rendered="#{media.type eq 'VIDEO'}">
                     #{msgs.video} #{media.shortId}
-                </h:outputText>
-                <h:outputText rendered="#{media.type eq 'AUDIO'}">
+                </ui:fragment>
+
+                <ui:fragment rendered="#{media.type eq 'AUDIO'}">
                     #{msgs.audio} #{media.shortId}
-                </h:outputText>
-                <h:outputText rendered="#{media.type eq 'IMAGE'}">
+                </ui:fragment>
+
+                <ui:fragment rendered="#{media.type eq 'IMAGE'}">
                     #{msgs.image} #{media.shortId}
-                </h:outputText>
-            </p:outputPanel>
+                </ui:fragment>
+
+            </div>
         </ui:fragment>
+
         <ui:fragment rendered="#{LoginForm.loggedUser.isShowLogicalPageNumberBelowThumbnail()}">
-            <p:outputPanel class="thumbnail-banner logical">
-                <h:outputText>
-                        #{msgs.page} #{media.orderlabel}
-                </h:outputText>
-            </p:outputPanel>
+            <div class="thumbnail-banner logical">
+                #{msgs.page} #{media.orderlabel}
+            </div>
         </ui:fragment>
+
     </p:outputPanel>
 
 </ui:composition>

@@ -80,6 +80,18 @@ public class GalleryMediaContent {
      */
     private String logicalTreeNodeId;
 
+    private String previewUrl;
+
+    private boolean discontinuous;
+
+    private boolean previewTooltip;
+
+    private int assignmentIndex;
+
+    private boolean selectedInUnstructuredStripe;
+
+    private boolean lastSelectionInUnstructuredStripe;
+
     /**
      * Creates a new gallery media content.
      *
@@ -235,6 +247,123 @@ public class GalleryMediaContent {
      */
     public String getType() {
         return type.name();
+    }
+
+    /**
+     * Returns the prepared preview URL for this media.
+     *
+     * @return preview URL
+     */
+    public String getPreviewUrl() {
+        return previewUrl;
+    }
+
+    /**
+     * Sets the prepared preview URL for this media.
+     *
+     * @param previewUrl preview URL
+     */
+    public void setPreviewUrl(String previewUrl) {
+        this.previewUrl = previewUrl;
+    }
+
+    /**
+     * Returns whether the current media selection is discontinuous.
+     *
+     * @return true if the selection is discontinuous
+     */
+    public boolean isDiscontinuous() {
+        return discontinuous;
+    }
+
+    /**
+     * Sets whether the current media selection is discontinuous.
+     *
+     * @param discontinuous whether the selection is discontinuous
+     */
+    public void setDiscontinuous(boolean discontinuous) {
+        this.discontinuous = discontinuous;
+    }
+
+    /**
+     * Returns whether the preview tooltip should be shown for this media.
+     *
+     * @return true if the preview tooltip should be shown
+     */
+    public boolean isPreviewTooltip() {
+        return previewTooltip;
+    }
+
+    /**
+     * Sets whether the preview tooltip should be shown for this media.
+     *
+     * @param previewTooltip whether the preview tooltip should be shown
+     */
+    public void setPreviewTooltip(boolean previewTooltip) {
+        this.previewTooltip = previewTooltip;
+    }
+
+    /**
+     * Returns the index of this media in multiple assignments.
+     *
+     * @return assignment index
+     */
+    public int getAssignmentIndex() {
+        return assignmentIndex;
+    }
+
+    /**
+     * Sets the index of this media in multiple assignments.
+     *
+     * @param assignmentIndex assignment index
+     */
+    public void setAssignmentIndex(int assignmentIndex) {
+        this.assignmentIndex = assignmentIndex;
+    }
+
+    /**
+     * Returns whether the multiple-assignment index should be shown.
+     *
+     * @return true if the assignment index is greater than 0
+     */
+    public boolean isShowAssignmentIndex() {
+        return assignmentIndex > 0;
+    }
+
+    /**
+     * Returns whether this media is selected in the unstructured stripe.
+     *
+     * @return true if this media is selected in the unstructured stripe
+     */
+    public boolean isSelectedInUnstructuredStripe() {
+        return selectedInUnstructuredStripe;
+    }
+
+    /**
+     * Sets whether this media is selected in the unstructured stripe.
+     *
+     * @param selectedInUnstructuredStripe whether this media is selected
+     */
+    public void setSelectedInUnstructuredStripe(boolean selectedInUnstructuredStripe) {
+        this.selectedInUnstructuredStripe = selectedInUnstructuredStripe;
+    }
+
+    /**
+     * Returns whether this media is the last selection in the unstructured stripe.
+     *
+     * @return true if this media is the last selection in the unstructured stripe
+     */
+    public boolean isLastSelectionInUnstructuredStripe() {
+        return lastSelectionInUnstructuredStripe;
+    }
+
+    /**
+     * Sets whether this media is the last selection in the unstructured stripe.
+     *
+     * @param lastSelectionInUnstructuredStripe whether this media is the last selection
+     */
+    public void setLastSelectionInUnstructuredStripe(boolean lastSelectionInUnstructuredStripe) {
+        this.lastSelectionInUnstructuredStripe = lastSelectionInUnstructuredStripe;
     }
 
     /**

@@ -12,6 +12,8 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import jakarta.el.ValueExpression;
 import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +58,7 @@ import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
+import org.primefaces.util.DynamicContentSrcBuilder;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
@@ -102,8 +106,12 @@ public class GalleryPanel {
 
     private String cachingUUID = "";
 
+    private Map<PhysicalDivision, GalleryMediaContent> mediaByPhysicalDivision = new HashMap<>();
+
     private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator.comparing(
             pair -> pair.getLeft().getPhysicalDivision().getOrder());
+
+    private static final String PREVIEW_BASE_URL_KEY = GalleryPanel.class.getName() + ".previewBaseUrl";
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -226,6 +234,7 @@ public class GalleryPanel {
         dataEditor.getPaginationPanel().show();
         this.updateStripes();
         updateSelectionAfterDragDrop(viewsToBeMoved, toStripeIndex);
+        updateSelectionState();
     }
 
     /**
@@ -399,12 +408,14 @@ public class GalleryPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
                 .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         medias = new ArrayList<>(physicalDivisions.size());
+        mediaByPhysicalDivision = new HashMap<>(physicalDivisions.size());
         dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setPhysicalDivision(physicalDivision);
             GalleryMediaContent galleryMediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
             medias.add(galleryMediaContent);
+            mediaByPhysicalDivision.put(physicalDivision, galleryMediaContent);
             dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
         }
     }
@@ -417,8 +428,72 @@ public class GalleryPanel {
      */
     public void updateStripes() {
         updateMedia();
+
         stripes = new ArrayList<>();
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
+
+        updateSelectionState();
+
+        boolean discontinuous = !dataEditor.consecutivePagesSelected();
+        PreviewHoverMode previewHoverMode = getPreviewHoverMode();
+
+        for (GalleryMediaContent media : medias) {
+            media.setDiscontinuous(discontinuous);
+            media.setPreviewTooltip(showPreviewTooltip(media, previewHoverMode));
+            media.setAssignmentIndex(getAssignmentIndex(media));
+        }
+    }
+
+    private boolean showPreviewTooltip(
+        GalleryMediaContent media, PreviewHoverMode previewHoverMode) {
+
+        if (PreviewHoverMode.TOOLTIP_PREVIEW.equals(previewHoverMode)) {
+            return media.isShowingInPreview()
+                && MediaUtil.isImage(media.getPreviewMimeType());
+        }
+
+        if (PreviewHoverMode.TOOLTIP_MEDIAVIEW.equals(previewHoverMode)) {
+            return media.isShowingInMediaView()
+                && MediaUtil.isImage(media.getMediaViewMimeType());
+        }
+
+        return false;
+    }
+
+    private int getAssignmentIndex(GalleryMediaContent media) {
+        return media.isAssignedSeveralTimes()
+            ? getSeveralAssignmentsIndex(media) + 1
+            : 0;
+    }
+
+    private void updateSelectionState() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+
+        for (int stripeIndex = 0; stripeIndex < stripes.size(); stripeIndex++) {
+            GalleryStripe stripe = stripes.get(stripeIndex);
+
+            for (GalleryMediaContent media : stripe.getMedias()) {
+                PhysicalDivision physicalDivision =
+                    media.getView().getPhysicalDivision();
+
+                boolean selected = dataEditor.isSelected(
+                    physicalDivision,
+                    stripe.getStructure());
+
+                boolean lastSelected = selected
+                    && Objects.nonNull(lastSelection)
+                    && Objects.equals(
+                    physicalDivision,
+                    lastSelection.getKey());
+
+                if (stripeIndex == 0) {
+                    media.setSelectedInUnstructuredStripe(selected);
+                    media.setLastSelectionInUnstructuredStripe(lastSelected);
+                } else {
+                    stripe.setSelectionState(media.getId(), selected, lastSelected);
+                }
+            }
+        }
     }
 
     private static MediaVariant getMediaVariant(Folder folderSettings, List<PhysicalDivision> physicalDivisions) {
@@ -473,18 +548,16 @@ public class GalleryPanel {
                 siblingWithViewsIdx += 1;
                 siblingWithoutViewsIdx += 1;
             } else {
-                for (GalleryMediaContent galleryMediaContent : medias) {
-                    if (Objects.equals(view.getPhysicalDivision(),
-                            galleryMediaContent.getView().getPhysicalDivision())) {
-                        galleryStripe.getMedias().add(galleryMediaContent);
-                        List<Integer> viewTreeNodeIdList = new ArrayList<>(treeNodeIdList);
-                        viewTreeNodeIdList.add(siblingWithViewsIdx);
-                        String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf).collect(Collectors.joining("_"));
-                        galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
-                        dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
-                        siblingWithViewsIdx += 1;
-                        break;
-                    }
+                GalleryMediaContent galleryMediaContent = mediaByPhysicalDivision.get(view.getPhysicalDivision());
+                if (Objects.nonNull(galleryMediaContent)) {
+                    galleryStripe.getMedias().add(galleryMediaContent);
+                    List<Integer> viewTreeNodeIdList = new ArrayList<>(treeNodeIdList);
+                    viewTreeNodeIdList.add(siblingWithViewsIdx);
+                    String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf)
+                        .collect(Collectors.joining("_"));
+                    galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
+                    dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
+                    siblingWithViewsIdx += 1;
                 }
             }
         }
@@ -897,6 +970,7 @@ public class GalleryPanel {
                 Helper.setErrorMessage("Could not select stripe: Stripe index \"" + stripeIndex + "\" could not be parsed.");
             }
         }
+        updateSelectionState();
     }
 
     /**
@@ -1084,5 +1158,87 @@ public class GalleryPanel {
         }
 
         return lastPhysicalDivision.equals(lastSelection.getKey());
+    }
+
+    /**
+     * Prepares dynamic preview URLs for all gallery media using the PrimeFaces base URL.
+     * Appends the {@code mediaId}, {@code process} and media cache {@code sessionId} parameters.
+     */
+    public void preparePreviewUrls() {
+        String baseUrl = getPreviewBaseUrl();
+
+        for (GalleryMediaContent media : medias) {
+            String url = appendParameter(baseUrl, "mediaId", media.getId());
+            url = appendParameter(url, "process",
+                Integer.toString(dataEditor.getProcess().getId()));
+            url = appendParameter(url, "sessionId", cachingUUID);
+
+            media.setPreviewUrl(url);
+        }
+    }
+
+    private String appendParameter(String url, String name, String value) {
+        String separator = url.contains("?") ? "&" : "?";
+
+        return url
+            + separator
+            + URLEncoder.encode(name, StandardCharsets.UTF_8)
+            + "="
+            + URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Returns the PrimeFaces base URL used for gallery preview images.
+     * The URL is calculated once and then cached in the current Faces request.
+     *
+     * @return base URL for dynamic preview images
+     */
+    private String getPreviewBaseUrl() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Map<Object, Object> attributes = context.getAttributes();
+
+        String baseUrl = (String) attributes.get(PREVIEW_BASE_URL_KEY);
+
+        if (Objects.isNull(baseUrl)) {
+            baseUrl = buildPreviewBaseUrl(context);
+            attributes.put(PREVIEW_BASE_URL_KEY, baseUrl);
+        }
+
+        return baseUrl;
+    }
+
+    /**
+     * Builds the dynamic resource URL used for image previews.
+     *
+     * <p>
+     * Normally, {@code p:graphicImage} creates this URL internally while rendering
+     * the component. Since gallery thumbnails are rendered as plain {@code <img>}
+     * elements for performance reasons, this part of the PrimeFaces behavior has
+     * to be reproduced explicitly.
+     *
+     * <p>
+     * The generated URL is associated with {@code #{mediaProvider.previewData}}.
+     * When the browser later requests the URL, PrimeFaces resolves this expression
+     * on the server and uses the returned preview data as the response content.
+     *
+     * @see <a href="https://primefaces.github.io/primefaces/13_0_0/#/core/dynamiccontent">
+     * PrimeFaces Dynamic Content documentation</a>
+     *
+     * @param context current Faces context
+     * @return generated dynamic preview base URL
+     */
+    private String buildPreviewBaseUrl(FacesContext context) {
+        ValueExpression expression = context.getApplication()
+            .getExpressionFactory()
+            .createValueExpression(
+                context.getELContext(),
+                "#{mediaProvider.previewData}",
+                Object.class);
+
+        return DynamicContentSrcBuilder.buildStreaming(
+            context,
+            null,
+            expression,
+            true);
     }
 }

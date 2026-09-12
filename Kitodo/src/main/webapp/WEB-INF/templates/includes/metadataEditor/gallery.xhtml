@@ -25,11 +25,20 @@
         <ui:param name="editImages" value="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"/>
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
+            <h:panelGroup
+                    id="previewUrlPreparation"
+                    layout="block"
+                    style="display:none">
+                <f:event
+                        type="preRenderComponent"
+                        listener="#{DataEditorForm.galleryPanel.preparePreviewUrls}" />
+            </h:panelGroup>
 
             <p:remoteCommand
                 name="triggerOnPageDrop"
                 actionListener="#{DataEditorForm.galleryPanel.onPageDrop}"
-                update="@(.pageList)
+                update="previewUrlPreparation
+                        @(.pageList)
                         logicalTree
                         physicalTree
                         paginationForm:paginationWrapperPanel"/>
@@ -157,12 +166,17 @@
                                             <ui:param name="uiParamStripeIndex" value="0"/>
                                         </ui:include>
                                     </p:panel>
-                                    <!-- add one last drop area after the last page in a stripe -->
-                                    <ui:fragment rendered="#{editImages and DataEditorForm.galleryPanel.stripes.getFirst().medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.getFirst().medias.size() - 1 eq currentMedia.rowIndex}">
-                                        <p:panel id="unstructuredPageLastDropArea"
-                                                 styleClass="page-drop-area"/>
-                                    </ui:fragment>
                                 </p:dataList>
+
+                                <!-- Render once instead of checking every row. -->
+                                <ui:fragment rendered="#{
+                                    editImages
+                                    and not empty DataEditorForm.galleryPanel.stripes.getFirst().medias}">
+                                    <p:panel
+                                            id="unstructuredPageLastDropArea"
+                                            styleClass="page-drop-area"/>
+
+                                </ui:fragment>
                             </p:outputPanel>
                         </h:panelGroup>
                     </p:outputPanel>
