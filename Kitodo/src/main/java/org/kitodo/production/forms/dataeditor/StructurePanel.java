@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -148,6 +149,12 @@ public class StructurePanel implements Serializable {
      * Determines whether the hierarchy level of a tree node should be displayed with its label or not.
      */
     private boolean showHierarchyLevel = false;
+
+    /**
+     * Tracks the physical division instances already added while rebuilding the physical structure.
+     * An identity-based set is used because PhysicalDivision has mutable structural equality/hash state.
+     */
+    private Set<PhysicalDivision> addedPhysicalDivisions;
 
     /**
      * Creates a new structure panel.
@@ -1740,6 +1747,7 @@ public class StructurePanel implements Serializable {
                 physicalDivision.getLogicalDivisions().clear();
             }
             dataEditor.getWorkpiece().getPhysicalStructure().getChildren().clear();
+            addedPhysicalDivisions = Collections.newSetFromMap(new IdentityHashMap<>());
             preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
         }
     }
@@ -1765,7 +1773,7 @@ public class StructurePanel implements Serializable {
             } else if (((StructureTreeNode) child.getData()).getDataObject() instanceof View) {
                 View view = (View) ((StructureTreeNode) child.getData()).getDataObject();
                 structure.getViews().add(view);
-                if (!dataEditor.getWorkpiece().getAllPhysicalDivisions().contains(view.getPhysicalDivision())) {
+                if (addedPhysicalDivisions.add(view.getPhysicalDivision())) {
                     view.getPhysicalDivision().setOrder(order);
                     dataEditor.getWorkpiece().getPhysicalStructure().getChildren().add(view.getPhysicalDivision());
                     order++;
