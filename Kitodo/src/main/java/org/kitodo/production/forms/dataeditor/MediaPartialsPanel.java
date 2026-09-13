@@ -43,6 +43,7 @@ public class MediaPartialsPanel implements Serializable {
     public static final String REQUEST_PARAMETER_MEDIA_DURATION = "mediaDuration";
     public static final String[] UPDATE_CLIENT_IDENTIFIERS = {"structureTreeForm",
                                                               "imagePreviewForm:mediaDetailMediaPartialsContainer",
+                                                              "imagePreviewForm:previewUrlPreparation",
                                                               "imagePreviewForm:thumbnailStripe"};
     private final MediaPartialForm mediaPartialForm;
     private final DataEditorForm dataEditor;
