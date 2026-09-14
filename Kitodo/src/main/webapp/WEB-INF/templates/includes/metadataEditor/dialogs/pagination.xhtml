@@ -225,7 +225,7 @@
                                  icon="fa fa-check fa-lg"
                                  iconPos="right"
                                  onclick="PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
-                                 update="notifications, @(.ui-tree), metadataAccordion:logicalMetadataWrapperPanel, galleryHeadingWrapper,  imagePreviewForm:previewUrlPreparation, imagePreviewForm:structuredPagesField, imagePreviewForm:thumbnailStripe"
+                                 update="notifications, @(.ui-tree), metadataAccordion:logicalMetadataWrapperPanel, galleryHeadingWrapper, imagePreviewForm:structuredPagesField, imagePreviewForm:thumbnailStripe"
                                  oncomplete="scrollToSelectedPreviewThumbnail()"
                                  value="#{msgs.apply}"/>
             </h:panelGroup>

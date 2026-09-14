@@ -613,16 +613,42 @@ public class GalleryPanel {
             canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
         }
 
-        String treeNodeId = "unknown";
-        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(index)) {
-            treeNodeId = stripeTreeNodeId + "_" + index;
-        }
+        String treeNodeId = getTreeNodeId(stripeTreeNodeId, index);
 
-        return new GalleryMediaContent(mediaContentType, view, canonical,
-                Objects.nonNull(previewMediaVariant) ? previewMediaVariant.getMimeType() : null,
-                resourceListUri,
-                Objects.nonNull(mediaViewMediaVariant) ? mediaViewMediaVariant.getMimeType() : null,
-                resourceMediaViewUri, treeNodeId);
+        GalleryMediaContent media = new GalleryMediaContent(
+            mediaContentType,
+            view,
+            canonical,
+            Objects.nonNull(previewMediaVariant) ? previewMediaVariant.getMimeType() : null,
+            resourceListUri,
+            Objects.nonNull(mediaViewMediaVariant) ? mediaViewMediaVariant.getMimeType() : null,
+            resourceMediaViewUri,
+            treeNodeId);
+
+        setPreviewUrlSupplier(media);
+
+        return media;
+    }
+
+    private String getTreeNodeId(String stripeTreeNodeId, Integer index) {
+        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(index)) {
+            return stripeTreeNodeId + "_" + index;
+        }
+        return "unknown";
+    }
+
+    private void setPreviewUrlSupplier(GalleryMediaContent media) {
+        int processId = dataEditor.getProcess().getId();
+        String sessionId = cachingUUID;
+
+        media.setPreviewUrlSupplier(
+            () -> buildPreviewUrl(media.getId(), processId, sessionId));
+    }
+
+    private String buildPreviewUrl(String mediaId, int processId, String sessionId) {
+        String url = appendParameter(getPreviewBaseUrl(), "mediaId", mediaId);
+        url = appendParameter(url, "process", Integer.toString(processId));
+        return appendParameter(url, "sessionId", sessionId);
     }
 
     /**
@@ -1158,23 +1184,6 @@ public class GalleryPanel {
         }
 
         return lastPhysicalDivision.equals(lastSelection.getKey());
-    }
-
-    /**
-     * Prepares dynamic preview URLs for all gallery media using the PrimeFaces base URL.
-     * Appends the {@code mediaId}, {@code process} and media cache {@code sessionId} parameters.
-     */
-    public void preparePreviewUrls() {
-        String baseUrl = getPreviewBaseUrl();
-
-        for (GalleryMediaContent media : medias) {
-            String url = appendParameter(baseUrl, "mediaId", media.getId());
-            url = appendParameter(url, "process",
-                Integer.toString(dataEditor.getProcess().getId()));
-            url = appendParameter(url, "sessionId", cachingUUID);
-
-            media.setPreviewUrl(url);
-        }
     }
 
     private String appendParameter(String url, String name, String value) {
