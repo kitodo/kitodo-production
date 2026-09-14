@@ -11,16 +11,21 @@
 
 package org.kitodo.validation.filestructure;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -47,23 +52,35 @@ public class FileStructureValidation implements FileStructureValidationInterface
     public ValidationResult validate(String xmlContent, URI xsdFileUri) throws SAXException, IOException {
         Collection<URI> schemaUris = Collections.singletonList(xsdFileUri);
         Validator xmlValidator = initializeXmlValidator(schemaUris);
-        return validateStreamSource(new StreamSource(new StringReader(xmlContent)), xmlValidator, "N/A", schemaUris);
+        return validateStreamSource(createSecureSource(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8))),
+                xmlValidator, "N/A", schemaUris);
     }
 
     @Override
     public ValidationResult validate(URI xmlFileUri, URI xsdFileUri) throws SAXException, IOException {
         Collection<URI> schemaUris = Collections.singletonList(xsdFileUri);
         Validator xmlValidator = initializeXmlValidator(schemaUris);
-        return validateStreamSource(new StreamSource(new File(xmlFileUri)), xmlValidator, xmlFileUri.getPath(), schemaUris);
+        try (InputStream in = new FileInputStream(new File(xmlFileUri))) {
+            return validateStreamSource(createSecureSource(in), xmlValidator, xmlFileUri.getPath(), schemaUris);
+        }
     }
 
     @Override
     public ValidationResult validate(String xmlContent, Collection<URI> xsdFiles) throws IOException, SAXException {
         Validator xmlValidator = initializeXmlValidator(xsdFiles);
-        return validateStreamSource(new StreamSource(new StringReader(xmlContent)), xmlValidator, "N/A", xsdFiles);
+        return validateStreamSource(createSecureSource(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8))),
+                xmlValidator, "N/A", xsdFiles);
     }
 
-    private ValidationResult validateStreamSource(StreamSource source, Validator validator, String xmlPath, Collection<URI> xsdPaths)
+    private SAXSource createSecureSource(InputStream xmlInput) throws SAXException {
+        try {
+            return XMLSecurity.newSecureSource(xmlInput);
+        } catch (ParserConfigurationException e) {
+            throw new SAXException("Unable to create hardened SAXSource", e);
+        }
+    }
+
+    private ValidationResult validateStreamSource(Source source, Validator validator, String xmlPath, Collection<URI> xsdPaths)
             throws IOException {
         try {
             validator.validate(source);

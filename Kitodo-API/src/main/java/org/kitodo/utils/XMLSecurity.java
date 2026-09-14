@@ -162,10 +162,14 @@ public final class XMLSecurity {
     }
 
     /**
-     * Create and return a Validator from the given Schema that rejects DOCTYPE
-     * declarations (blocking external and internal entity expansion) and restricts
-     * external schema resolution to local files, to prevent XML External Entity
-     * (XXE) injection and remote schema retrieval during validation.
+     * Create and return a Validator from the given Schema with external DTD access
+     * blocked and external schema resolution limited to local files, to prevent
+     * XML External Entity (XXE) injection and remote schema retrieval during
+     * validation.
+     *
+     * DOCTYPE declarations must be rejected by the caller, e.g. by feeding the
+     * input through newSecureSource(), since the JAXP Validator does not
+     * universally support disallow-doctype-decl.
      *
      * @param schema compiled XML schema
      * @return hardened Validator
@@ -174,7 +178,6 @@ public final class XMLSecurity {
     public static Validator newSecureValidator(Schema schema) throws SAXException {
         Validator validator = schema.newValidator();
         try {
-            validator.setProperty(DISALLOW_DOCTYPE_DECL, true);
             validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "file");
         } catch (IllegalArgumentException | SAXNotRecognizedException | SAXNotSupportedException e) {

@@ -129,31 +129,33 @@ public class XMLSecurityTest {
     @Test
     public void secureValidatorShouldNotResolveExternalEntities() throws Exception {
         File secret = createTestFile();
-        // Schema-valid root: an INSECURE validator (external entities enabled, DOCTYPE
-        // allowed) would resolve &xxe; to the file content and validate successfully.
-        // A hardened validator must reject the DOCTYPE instead of completing.
+        // Schema-valid root: feeding the input through the hardened SAXSource makes the
+        // parser reject the DOCTYPE, so &xxe; is never resolved and no file is read.
         String payload = "<?xml version=\"1.0\"?>\n"
                 + "<!DOCTYPE root [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
                 + "<root><value>&xxe;</value></root>";
         Schema schema = XMLSecurity.newSchemaFactory().newSchema(new StreamSource(new StringReader(XSD)));
         Validator validator = XMLSecurity.newSecureValidator(schema);
+        SAXSource secureSource = XMLSecurity.newSecureSource(toInputStream(payload));
         SAXException exception = assertThrows(SAXException.class,
-                () -> validator.validate(new StreamSource(new StringReader(payload))));
+                () -> validator.validate(secureSource));
         assertFalse(exception.getMessage().contains(CANARY), "secret must not leak into the error");
     }
 
     @Test
     public void secureValidatorShouldRejectInternalEntityExpansion() throws Exception {
         // An internally declared entity (no SYSTEM/file) cannot be stopped by
-        // ACCESS_EXTERNAL_DTD; only rejecting the DOCTYPE declaration prevents its
-        // expansion. The root is schema-valid so an insecure validator would complete.
+        // ACCESS_EXTERNAL_DTD; only the hardened SAXSource rejecting the DOCTYPE
+        // declaration prevents its expansion. The root is schema-valid so an
+        // insecure validator would complete.
         String payload = "<?xml version=\"1.0\"?>\n"
                 + "<!DOCTYPE root [ <!ENTITY bomb \"" + CANARY + "\"> ]>\n"
                 + "<root><value>&bomb;</value></root>";
         Schema schema = XMLSecurity.newSchemaFactory().newSchema(new StreamSource(new StringReader(XSD)));
         Validator validator = XMLSecurity.newSecureValidator(schema);
+        SAXSource secureSource = XMLSecurity.newSecureSource(toInputStream(payload));
         SAXException exception = assertThrows(SAXException.class,
-                () -> validator.validate(new StreamSource(new StringReader(payload))));
+                () -> validator.validate(secureSource));
         assertFalse(exception.getMessage().contains(CANARY), "secret must not leak into the error");
     }
 
