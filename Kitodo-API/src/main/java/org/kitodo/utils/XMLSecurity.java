@@ -24,8 +24,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -34,11 +32,13 @@ import org.xml.sax.XMLReader;
 
 /**
  * Provides factory instances that are hardened against XML External Entity
- * (XXE) injection and unrestricted document type definitions.
+ * (XXE) injection and unrestricted document type definitions. Every helper
+ * fails closed: if a required security feature cannot be set it returns an
+ * error rather than a silently unhardened instance. Schema resolution is
+ * additionally restricted to local files, so xs:import/xs:include cannot reach
+ * the network while the bundled local schema imports continue to resolve.
  */
 public final class XMLSecurity {
-
-    private static final Logger logger = LogManager.getLogger(XMLSecurity.class);
 
     private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
     private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
@@ -70,6 +70,7 @@ public final class XMLSecurity {
      * and stylesheets to prevent XML External Entity (XXE) injection.
      *
      * @return hardened TransformerFactory
+     * @throws IllegalStateException if the hardening properties cannot be set
      */
     public static TransformerFactory newTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
@@ -77,25 +78,30 @@ public final class XMLSecurity {
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         } catch (IllegalArgumentException e) {
-            logger.warn("Unable to restrict external access on TransformerFactory '{}': {}",
-                    factory.getClass().getName(), e.getMessage());
+            throw new IllegalStateException(
+                    "Unable to harden TransformerFactory " + factory.getClass().getName(), e);
         }
         return factory;
     }
 
     /**
-     * Create and return a SchemaFactory that rejects external DTD access to prevent
-     * XML External Entity (XXE) injection during XML validation.
+     * Create and return a SchemaFactory that rejects external DTD access and restricts
+     * external schema resolution to local files only, to prevent XML External Entity
+     * (XXE) injection and remote schema retrieval during XML validation. The bundled
+     * local schema imports (e.g. mods-3-4.xsd) continue to resolve, while network
+     * schemas are denied.
      *
      * @return hardened SchemaFactory
+     * @throws IllegalStateException if the hardening properties cannot be set
      */
     public static SchemaFactory newSchemaFactory() {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try {
             factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "file");
         } catch (IllegalArgumentException | SAXNotRecognizedException | SAXNotSupportedException e) {
-            logger.warn("Unable to restrict external access on SchemaFactory '{}': {}",
-                    factory.getClass().getName(), e.getMessage());
+            throw new IllegalStateException(
+                    "Unable to harden SchemaFactory " + factory.getClass().getName(), e);
         }
         return factory;
     }
@@ -157,7 +163,9 @@ public final class XMLSecurity {
 
     /**
      * Create and return a Validator from the given Schema with external DTD access
-     * restricted, to prevent XML External Entity (XXE) injection during validation.
+     * restricted and external schema resolution limited to local files, to prevent
+     * XML External Entity (XXE) injection and remote schema retrieval during
+     * validation.
      *
      * @param schema compiled XML schema
      * @return hardened Validator
@@ -167,8 +175,9 @@ public final class XMLSecurity {
         Validator validator = schema.newValidator();
         try {
             validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "file");
         } catch (IllegalArgumentException | SAXNotRecognizedException | SAXNotSupportedException e) {
-            logger.warn("Unable to restrict external access on Validator: {}", e.getMessage());
+            throw new IllegalStateException("Unable to harden Validator", e);
         }
         return validator;
     }

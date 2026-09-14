@@ -139,6 +139,20 @@ public class XMLSecurityTest {
         assertFalse(exception.getMessage().contains(CANARY), "secret must not leak into the error");
     }
 
+    @Test
+    public void schemaFactoryShouldStillAllowLocalSchemaImports() throws Exception {
+        // The bundled XSDs (e.g. mods-3-4.xsd) use local xs:import. Restricting
+        // external schema access to the "file" protocol must keep those resolving
+        // while still denying the network; a blanket deny would break them.
+        Path dep = tempDir.resolve("dep.xsd");
+        Path main = tempDir.resolve("main.xsd");
+        Files.writeString(dep, DEP_XSD);
+        Files.writeString(main, MAIN_XSD);
+        assertDoesNotThrow(() -> XMLSecurity.newSchemaFactory()
+                .newSchema(new StreamSource(main.toFile())),
+                "local xs:import must still resolve under ACCESS_EXTERNAL_SCHEMA=file");
+    }
+
     private void parseWithDocumentBuilder(DocumentBuilderFactory factory, String xml)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -181,5 +195,20 @@ public class XMLSecurityTest {
                     + "      </xs:sequence>\n"
                     + "    </xs:complexType>\n"
                     + "  </xs:element>\n"
+                    + "</xs:schema>";
+
+    private static final String DEP_XSD =
+            "<?xml version=\"1.0\"?>\n"
+                    + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" "
+                    + "targetNamespace=\"http://example.com/dep\" elementFormDefault=\"qualified\">\n"
+                    + "  <xs:element name=\"dep\" type=\"xs:string\"/>\n"
+                    + "</xs:schema>";
+
+    private static final String MAIN_XSD =
+            "<?xml version=\"1.0\"?>\n"
+                    + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" "
+                    + "targetNamespace=\"http://example.com/main\" elementFormDefault=\"qualified\">\n"
+                    + "  <xs:import namespace=\"http://example.com/dep\" schemaLocation=\"dep.xsd\"/>\n"
+                    + "  <xs:element name=\"root\" type=\"xs:string\"/>\n"
                     + "</xs:schema>";
 }
