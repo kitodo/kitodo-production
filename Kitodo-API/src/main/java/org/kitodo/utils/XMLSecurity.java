@@ -167,7 +167,7 @@ public final class XMLSecurity {
      * XML External Entity (XXE) injection and remote schema retrieval during
      * validation.
      *
-     * DOCTYPE declarations must be rejected by the caller, e.g. by feeding the
+     * <p>DOCTYPE declarations must be rejected by the caller, e.g. by feeding the
      * input through newSecureSource(), since the JAXP Validator does not
      * universally support disallow-doctype-decl.
      *
