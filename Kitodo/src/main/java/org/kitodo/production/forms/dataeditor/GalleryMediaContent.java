@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.PhaseId;
@@ -91,6 +92,8 @@ public class GalleryMediaContent {
     private boolean selectedInUnstructuredStripe;
 
     private boolean lastSelectionInUnstructuredStripe;
+
+    private Supplier<String> previewUrlSupplier;
 
     /**
      * Creates a new gallery media content.
@@ -255,16 +258,19 @@ public class GalleryMediaContent {
      * @return preview URL
      */
     public String getPreviewUrl() {
+        if (Objects.isNull(previewUrl) && Objects.nonNull(previewUrlSupplier)) {
+            previewUrl = previewUrlSupplier.get();
+        }
         return previewUrl;
     }
 
     /**
-     * Sets the prepared preview URL for this media.
+     * Sets the supplier used to lazily create the preview URL.
      *
-     * @param previewUrl preview URL
+     * @param previewUrlSupplier supplier for the preview URL
      */
-    public void setPreviewUrl(String previewUrl) {
-        this.previewUrl = previewUrl;
+    public void setPreviewUrlSupplier(Supplier<String> previewUrlSupplier) {
+        this.previewUrlSupplier = previewUrlSupplier;
     }
 
     /**
