@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -94,12 +93,7 @@ public class FileStructureValidation implements FileStructureValidationInterface
             sources[i] = new StreamSource(new File(xsdFilePaths.toArray(new URI[0])[i]));
         }
         Schema schema = schemaFactory.newSchema(sources);
-        Validator xmlValidator = schema.newValidator();
-        try {
-            xmlValidator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        } catch (IllegalArgumentException e) {
-            logger.warn("Unable to restrict external access on Validator: {}", e.getMessage());
-        }
+        Validator xmlValidator = XMLSecurity.newSecureValidator(schema);
         xmlValidator.setErrorHandler(xmlValidationErrorHandler);
         return xmlValidator;
     }

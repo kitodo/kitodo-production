@@ -20,7 +20,9 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -133,8 +135,8 @@ public final class XMLSecurity {
     }
 
     /**
-     * Create and return a SAXSource that rejects DOCTYPE declarations and external
-     * entity resolution to prevent XML External Entity (XXE) injection during
+     * Create and return a hardened SAXSource that rejects DOCTYPE declarations and
+     * external entity resolution to prevent XML External Entity (XXE) injection during
      * transformation of the given input stream.
      *
      * @param inputStream input stream containing the XML document to transform
@@ -151,5 +153,23 @@ public final class XMLSecurity {
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         XMLReader reader = factory.newSAXParser().getXMLReader();
         return new SAXSource(reader, new InputSource(inputStream));
+    }
+
+    /**
+     * Create and return a Validator from the given Schema with external DTD access
+     * restricted, to prevent XML External Entity (XXE) injection during validation.
+     *
+     * @param schema compiled XML schema
+     * @return hardened Validator
+     * @throws SAXException if the Validator cannot be created
+     */
+    public static Validator newSecureValidator(Schema schema) throws SAXException {
+        Validator validator = schema.newValidator();
+        try {
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException | SAXNotRecognizedException | SAXNotSupportedException e) {
+            logger.warn("Unable to restrict external access on Validator: {}", e.getMessage());
+        }
+        return validator;
     }
 }
