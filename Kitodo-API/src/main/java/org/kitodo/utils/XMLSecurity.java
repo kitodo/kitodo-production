@@ -24,6 +24,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -32,13 +34,18 @@ import org.xml.sax.XMLReader;
 
 /**
  * Provides factory instances that are hardened against XML External Entity
- * (XXE) injection and unrestricted document type definitions. Every helper
- * fails closed: if a required security feature cannot be set it returns an
- * error rather than a silently unhardened instance. Schema resolution is
- * additionally restricted to local files, so xs:import/xs:include cannot reach
- * the network while the bundled local schema imports continue to resolve.
+ * (XXE) injection and unrestricted document type definitions. Schema
+ * resolution is additionally restricted to local files, so xs:import/
+ * xs:include cannot reach the network while the bundled local schema imports
+ * continue to resolve. Where a hardening feature cannot be set, the helpers
+ * fail closed; the TransformerFactory helper is the exception, because not
+ * all vendor implementations (e.g. Saxon) support the JAXP external-access
+ * properties there. It applies the hardening best-effort and logs a warning
+ * per unsupported property.
  */
 public final class XMLSecurity {
+
+    private static final Logger logger = LogManager.getLogger(XMLSecurity.class);
 
     private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
     private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
@@ -66,22 +73,34 @@ public final class XMLSecurity {
     }
 
     /**
-     * Create and return a TransformerFactory that restricts access to external DTDs
-     * and stylesheets to prevent XML External Entity (XXE) injection.
+     * Create and return a TransformerFactory that restricts access to external
+     * DTDs and stylesheets to prevent XML External Entity (XXE) injection.
+     *
+     * The hardening is applied best-effort: the JAXP accessExternalDTD and
+     * accessExternalStylesheet properties are supported by the default Xalan
+     * factory, but not by all vendor implementations (e.g. Saxon). For a
+     * factory that does not support a property, the property is skipped and a
+     * warning is logged. Callers using such a factory must ensure the XML
+     * input is parsed through a hardened source (see newSecureSource()),
+     * because the transformer itself will not reject DTDs in that case.
      *
      * @return hardened TransformerFactory
-     * @throws IllegalStateException if the hardening properties cannot be set
      */
     public static TransformerFactory newTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
-        try {
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(
-                    "Unable to harden TransformerFactory " + factory.getClass().getName(), e);
-        }
+        applyAttribute(factory, XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        applyAttribute(factory, XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         return factory;
+    }
+
+    private static void applyAttribute(TransformerFactory factory, String name, Object value) {
+        try {
+            factory.setAttribute(name, value);
+        } catch (IllegalArgumentException e) {
+            logger.warn("TransformerFactory {} does not support the JAXP property '{}'; "
+                    + "external DTD/stylesheet access cannot be restricted for this vendor. "
+                    + "Input must be parsed via a hardened source.", factory.getClass().getName(), name);
+        }
     }
 
     /**

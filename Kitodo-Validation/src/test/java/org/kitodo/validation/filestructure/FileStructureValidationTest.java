@@ -72,7 +72,40 @@ public class FileStructureValidationTest {
     public void shouldFailToValidateMalformedXmlString() throws IOException, SAXException {
         String xmlContent = Files.readString(Paths.get(MALFORMED_MODS_FILE));
         ValidationResult validationResult = xmlValidation.validate(xmlContent, modsSchema);
-        assertFalse(validationResult.getResultMessages().isEmpty(), "Validation should fail with malformed XML content string");
+        assertFalse(validationResult.getResultMessages().isEmpty(), "Validation should fail with malformed XML file content string");
     }
 
+    @Test
+    public void shouldRejectDoctypeWithExternalEntity() throws IOException, SAXException {
+        Path canary = Files.createTempFile("xxe-canary", ".txt");
+        Files.writeString(canary, "XXE-CANARY-12345");
+        try {
+            String xmlContent = "<?xml version=\"1.0\"?>\n"
+                    + "<!DOCTYPE mod [ <!ENTITY xxe SYSTEM \"file://" + canary.toAbsolutePath() + "\"> ]>\n"
+                    + "<mod>&xxe;</mod>";
+            ValidationResult validationResult = xmlValidation.validate(xmlContent, modsSchema);
+            assertFalse(validationResult.getResultMessages().isEmpty(),
+                    "Validation should reject a DOCTYPE declaration carrying an external entity");
+            for (String message : validationResult.getResultMessages()) {
+                assertFalse(message.contains("XXE-CANARY-12345"),
+                        "External entity content must not be resolved or leaked");
+            }
+        } finally {
+            Files.deleteIfExists(canary);
+        }
+    }
+
+    @Test
+    public void shouldRejectDoctypeWithInternalEntity() throws IOException, SAXException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE mod [ <!ENTITY bomb \"XXE-CANARY-12345\"> ]>\n"
+                + "<mod>&bomb;</mod>";
+        ValidationResult validationResult = xmlValidation.validate(xmlContent, modsSchema);
+        assertFalse(validationResult.getResultMessages().isEmpty(),
+                "Validation should reject a DOCTYPE declaration carrying an internal entity");
+        for (String message : validationResult.getResultMessages()) {
+            assertFalse(message.contains("XXE-CANARY-12345"),
+                    "Internal entity content must not be resolved or leaked");
+        }
+    }
 }
