@@ -76,7 +76,7 @@ public final class XMLSecurity {
      * Create and return a TransformerFactory that restricts access to external
      * DTDs and stylesheets to prevent XML External Entity (XXE) injection.
      *
-     * The hardening is applied best-effort: the JAXP accessExternalDTD and
+     * <p>The hardening is applied best-effort: the JAXP accessExternalDTD and
      * accessExternalStylesheet properties are supported by the default Xalan
      * factory, but not by all vendor implementations (e.g. Saxon). For a
      * factory that does not support a property, the property is skipped and a
