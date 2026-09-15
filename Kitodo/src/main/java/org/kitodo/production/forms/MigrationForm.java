@@ -564,7 +564,6 @@ public class MigrationForm extends BaseForm {
      * clicked.
      */
     public void startLdapManagerPasswordsMigration() {
-
         String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
 
         if (StringUtils.isBlank(securitySecret)) {

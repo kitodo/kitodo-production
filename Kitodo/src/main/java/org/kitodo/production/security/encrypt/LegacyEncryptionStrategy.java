@@ -21,7 +21,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Encryption strategy based on "LegacyAesUtils".
+ * Encryption strategy based on "LegacyAesUtil".
  */
 @Deprecated 
 public class LegacyEncryptionStrategy implements KitodoEncryptionStrategy {

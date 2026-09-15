@@ -21,7 +21,7 @@ public interface KitodoEncryptionStrategy {
      * @return the encrypted text
      * @throws KitodoEncryptionException in case encryption fails
      */
-    public String encrypt(String value, String secret) throws KitodoEncryptionException;
+    String encrypt(String value, String secret) throws KitodoEncryptionException;
 
     /**
      * Decrypt a previously encrypted text given the user-defined secret key.
@@ -31,6 +31,6 @@ public interface KitodoEncryptionStrategy {
      * @return the decrypted text
      * @throws KitodoEncryptionException in case decryption fails
      */
-    public String decrypt(String encryptedValue, String secret) throws KitodoEncryptionException;
+    String decrypt(String encryptedValue, String secret) throws KitodoEncryptionException;
 
 }

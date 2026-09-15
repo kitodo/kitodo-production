@@ -114,7 +114,7 @@ public class AesGcmEncryptionStrategy implements KitodoEncryptionStrategy {
      * 
      * @param secret the user-defined secret
      * @param salt the salt
-     * @return the 256bit secret key to be uesd with AES
+     * @return the 256bit secret key to be used with AES
      */
     private static SecretKey getSecretKey(String secret, byte[] salt) {
         // specify argon2id parameters

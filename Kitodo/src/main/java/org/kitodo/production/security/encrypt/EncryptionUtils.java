@@ -78,10 +78,7 @@ public class EncryptionUtils {
      */
     public static boolean needsUpgrade(String encryptedValue) {
         String strategyKey = identifyStrategy(encryptedValue);
-        if (DEFAULT_ENCRYPTION_STRATEGY_KEY.equals(strategyKey)) {
-            return false;
-        }
-        return true;
+        return !DEFAULT_ENCRYPTION_STRATEGY_KEY.equals(strategyKey);
     }
 
     /**
@@ -104,7 +101,7 @@ public class EncryptionUtils {
      */
     private static String identifyStrategy(String encryptedValue) {
         for (String key : STRATEGIES.keySet()) {
-            if (encryptedValue.startsWith(String.format("{%s}", key))) {
+            if (Objects.nonNull(key) && encryptedValue.startsWith(String.format("{%s}", key))) {
                 return key;
             }
         }

@@ -101,7 +101,6 @@ public class LdapServerEditView extends BaseEditView {
      * @return The manager password
      */
     public String getManagerPassword() {
-
         String managerPassword = ldapServer.getManagerPassword();
         String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
         if (Objects.nonNull(managerPassword) && !Strings.isBlank(securitySecret)) {
