@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -68,6 +69,17 @@ public class XsltHelperTest {
         String result = outputStream.toString(StandardCharsets.UTF_8);
         assertTrue(result.contains("fileContent"), "Transformation of a file-backed StreamSource should succeed");
         assertTrue(result.contains("<root>"), "Result should contain the transformed document");
+    }
+
+    @Test
+    public void shouldTransformReaderBackedStreamSource() throws Exception {
+        String content = "<?xml version=\"1.0\"?><root><value>readerContent</value></root>";
+
+        ByteArrayOutputStream outputStream = XsltHelper.transformXmlByXslt(
+            new StreamSource(new StringReader(content)), URI.create("src/test/resources/xslt/identity.xsl"));
+
+        String result = outputStream.toString(StandardCharsets.UTF_8);
+        assertTrue(result.contains("readerContent"), "Transformation of a reader-backed StreamSource should succeed");
     }
 
     @Test

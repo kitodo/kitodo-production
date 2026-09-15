@@ -28,6 +28,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -35,6 +37,8 @@ import org.kitodo.utils.XMLSecurity;
 import org.xml.sax.SAXException;
 
 public class XsltHelper {
+
+    private static final Logger logger = LogManager.getLogger(XsltHelper.class);
 
     private XsltHelper() {
         // private constructor to hide implicit one
@@ -64,28 +68,43 @@ public class XsltHelper {
             throw new IllegalArgumentException("Could not create XSLT transformer. Check " + xsltPath + " for errors.");
         }
         SAXSource secureSource;
-        InputStream inputStream;
+        InputStream streamToClose = null;
         try {
-            inputStream = getInputStream(source);
-            secureSource = XMLSecurity.newSecureSource(inputStream);
+            if (Objects.nonNull(source.getReader())) {
+                secureSource = XMLSecurity.newSecureSource(source.getReader());
+            } else if (Objects.nonNull(source.getInputStream())) {
+                streamToClose = source.getInputStream();
+                secureSource = XMLSecurity.newSecureSource(streamToClose);
+            } else if (Objects.nonNull(source.getSystemId())) {
+                String systemId = source.getSystemId();
+                streamToClose = new FileInputStream(systemId.startsWith("file:")
+                        ? Paths.get(URI.create(systemId)).toFile()
+                        : Paths.get(systemId).toFile());
+                secureSource = XMLSecurity.newSecureSource(streamToClose);
+            } else {
+                throw new IllegalArgumentException("StreamSource has neither an input stream, a reader, nor a system ID");
+            }
         } catch (ParserConfigurationException | SAXException e) {
+            closeQuietly(streamToClose);
             throw new IllegalStateException("Unable to create hardened SAX source", e);
         }
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); InputStream in = inputStream) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             StreamResult streamResult = new StreamResult(outputStream);
             transformer.transform(secureSource, streamResult);
             return outputStream;
+        } finally {
+            closeQuietly(streamToClose);
         }
     }
 
-    private static InputStream getInputStream(StreamSource source) throws IOException {
-        if (Objects.nonNull(source.getInputStream())) {
-            return source.getInputStream();
+    private static void closeQuietly(InputStream stream) {
+        if (Objects.nonNull(stream)) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                logger.debug("Ignoring error while closing XML input stream", e);
+            }
         }
-        String systemId = source.getSystemId();
-        return new FileInputStream(systemId.startsWith("file:")
-                ? Paths.get(URI.create(systemId)).toFile()
-                : Paths.get(systemId).toFile());
     }
 
     static URI getXsltFileFromConfig(Process process) {
