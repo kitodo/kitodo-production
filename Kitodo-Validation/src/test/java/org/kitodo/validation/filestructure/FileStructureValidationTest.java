@@ -13,6 +13,7 @@
 package org.kitodo.validation.filestructure;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.kitodo.api.validation.ValidationResult;
 import org.xml.sax.SAXException;
 
@@ -35,6 +36,9 @@ public class FileStructureValidationTest {
     private static final String VALID_MODS_FILE = TEST_FILES_DIR + "mods-3-4-valid.xml";
     private static final URI modsSchema = Paths.get(repositoryRoot + MODS_3_4_XSD).toUri();
     private final FileStructureValidation xmlValidation = new FileStructureValidation();
+
+    @TempDir
+    Path tempDir;
 
     @Test
     public void shouldSucceedToValidateValidXmlFile() throws SAXException, IOException {
@@ -77,64 +81,51 @@ public class FileStructureValidationTest {
 
     @Test
     public void shouldRejectDoctypeWithExternalEntity() throws IOException, SAXException {
-        Path canary = Files.createTempFile("xxe-canary", ".txt");
+        Path canary = Files.createTempFile(tempDir, "xxe-canary", ".txt");
         Files.writeString(canary, "XXE-CANARY-12345");
         // Permissive schema: without hardened parsing the entity would expand and
         // the document would validate successfully, so a non-empty result proves
         // the DOCTYPE was rejected.
         Path schema = createPermissiveSchema();
-        try {
-            String xmlContent = "<?xml version=\"1.0\"?>\n"
-                    + "<!DOCTYPE root [ <!ENTITY xxe SYSTEM \"file://" + canary.toAbsolutePath() + "\"> ]>\n"
-                    + "<root><value>&xxe;</value></root>";
-            ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
-            assertFalse(validationResult.getResultMessages().isEmpty(),
-                    "Validation should reject a DOCTYPE declaration carrying an external entity");
-            for (String message : validationResult.getResultMessages()) {
-                assertFalse(message.contains("XXE-CANARY-12345"),
-                        "External entity content must not be resolved or leaked");
-            }
-        } finally {
-            Files.deleteIfExists(canary);
-            Files.deleteIfExists(schema);
+        String xmlContent = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE root [ <!ENTITY xxe SYSTEM \"file://" + canary.toAbsolutePath() + "\"> ]>\n"
+                + "<root><value>&xxe;</value></root>";
+        ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
+        assertFalse(validationResult.getResultMessages().isEmpty(),
+                "Validation should reject a DOCTYPE declaration carrying an external entity");
+        for (String message : validationResult.getResultMessages()) {
+            assertFalse(message.contains("XXE-CANARY-12345"),
+                    "External entity content must not be resolved or leaked");
         }
     }
 
     @Test
     public void shouldRejectDoctypeWithInternalEntity() throws IOException, SAXException {
         Path schema = createPermissiveSchema();
-        try {
-            String xmlContent = "<?xml version=\"1.0\"?>\n"
-                    + "<!DOCTYPE root [ <!ENTITY bomb \"XXE-CANARY-12345\"> ]>\n"
-                    + "<root><value>&bomb;</value></root>";
-            ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
-            assertFalse(validationResult.getResultMessages().isEmpty(),
-                    "Validation should reject a DOCTYPE declaration carrying an internal entity");
-            for (String message : validationResult.getResultMessages()) {
-                assertFalse(message.contains("XXE-CANARY-12345"),
-                        "Internal entity content must not be resolved or leaked");
-            }
-        } finally {
-            Files.deleteIfExists(schema);
+        String xmlContent = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE root [ <!ENTITY bomb \"XXE-CANARY-12345\"> ]>\n"
+                + "<root><value>&bomb;</value></root>";
+        ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
+        assertFalse(validationResult.getResultMessages().isEmpty(),
+                "Validation should reject a DOCTYPE declaration carrying an internal entity");
+        for (String message : validationResult.getResultMessages()) {
+            assertFalse(message.contains("XXE-CANARY-12345"),
+                    "Internal entity content must not be resolved or leaked");
         }
     }
 
     @Test
     public void shouldValidateXmlStringWithNonUtf8EncodingDeclaration() throws IOException, SAXException {
         Path schema = createPermissiveSchema();
-        try {
-            String xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n"
-                    + "<root><value>caf\u00e9</value></root>";
-            ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
-            assertTrue(validationResult.getResultMessages().isEmpty(),
-                    "Character data must be preserved and must not be re-encoded before parsing");
-        } finally {
-            Files.deleteIfExists(schema);
-        }
+        String xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n"
+                + "<root><value>caf\u00e9</value></root>";
+        ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
+        assertTrue(validationResult.getResultMessages().isEmpty(),
+                "Character data must be preserved and must not be re-encoded before parsing");
     }
 
     private Path createPermissiveSchema() throws IOException {
-        Path schema = Files.createTempFile("xxe-permissive", ".xsd");
+        Path schema = Files.createTempFile(tempDir, "xxe-permissive", ".xsd");
         Files.writeString(schema,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n"

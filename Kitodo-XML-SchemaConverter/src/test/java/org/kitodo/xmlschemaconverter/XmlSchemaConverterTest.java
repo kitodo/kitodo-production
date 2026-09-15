@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -55,6 +57,9 @@ public class XmlSchemaConverterTest {
     private static final XMLSchemaConverter converter = new XMLSchemaConverter();
     private static final String MODS_TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
     private static final String MARC_TEST_FILE_PATH = "src/test/resources/marcXmlTestRecord.xml";
+
+    @TempDir
+    Path tempDir;
 
     @Test
     public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException,
@@ -160,8 +165,7 @@ public class XmlSchemaConverterTest {
     @Test
     public void shouldRejectExternalEntitiesInSourceRecord() throws IOException {
         String canary = "XXE-CANARY-12345";
-        File secret = File.createTempFile("xxe-canary", ".txt");
-        secret.deleteOnExit();
+        File secret = Files.createTempFile(tempDir, "xxe-canary", ".txt").toFile();
         Files.writeString(secret.toPath(), canary);
 
         DataRecord testRecord = new DataRecord();

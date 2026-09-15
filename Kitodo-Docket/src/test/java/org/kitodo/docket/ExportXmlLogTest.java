@@ -22,11 +22,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.kitodo.api.docket.DocketData;
 
 public class ExportXmlLogTest extends ExportXmlLog {
 
     private static final String CANARY = "XXE-CANARY-SECRET";
+
+    @TempDir
+    Path tempDir;
 
     public ExportXmlLogTest() {
         super(getDocketData());
@@ -51,8 +55,7 @@ public class ExportXmlLogTest extends ExportXmlLog {
 
     @Test
     public void shouldNotResolveExternalEntitiesInMetadataFile() throws IOException {
-        Path secret = Files.createTempFile("xxe-canary", ".txt");
-        secret.toFile().deleteOnExit();
+        Path secret = Files.createTempFile(tempDir, "xxe-canary", ".txt");
         Files.writeString(secret, CANARY);
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -60,7 +63,7 @@ public class ExportXmlLogTest extends ExportXmlLog {
                 + "<kitodo:kitodo xmlns:kitodo=\"http://meta.kitodo.org/v1/\">"
                 + "<kitodo:metadata name=\"ValueMetadata\">&xxe;</kitodo:metadata>"
                 + "</kitodo:kitodo>";
-        Path metsFile = Files.createTempFile("xxe-mets", ".xml");
+        Path metsFile = Files.createTempFile(tempDir, "xxe-mets", ".xml");
         Files.writeString(metsFile, payload);
 
         DocketData data = new DocketData();
