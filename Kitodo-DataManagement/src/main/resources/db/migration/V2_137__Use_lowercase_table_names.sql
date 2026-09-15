@@ -27,6 +27,7 @@ BEGIN
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = DATABASE()
         AND TABLE_TYPE = 'BASE TABLE'
+        AND TABLE_NAME IN ('client_x_listColumn', 'ldapGroup', 'ldapServer', 'listColumn', 'workflowCondition')
         AND BINARY TABLE_NAME != LOWER(TABLE_NAME);
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
