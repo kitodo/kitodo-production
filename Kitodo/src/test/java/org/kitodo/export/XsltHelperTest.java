@@ -12,21 +12,31 @@
 package org.kitodo.export;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.xmlunit.matchers.CompareMatcher;
 
 public class XsltHelperTest {
 
     private static final String META_XML = "testMetadataFileServiceTest.xml";
+    private static final String CANARY = "XXE-CANARY-SECRET";
+
+    @TempDir
+    Path tempDir;
 
     @Test
     public void shouldTransformKitodoToMods() throws Exception {
@@ -42,5 +52,23 @@ public class XsltHelperTest {
         assertThat(result, CompareMatcher.isIdenticalTo(expected).ignoreWhitespace());
 
         FileUtils.deleteQuietly(result);
+    }
+
+    @Test
+    public void shouldNotResolveExternalEntities() throws Exception {
+        Path secret = Files.createTempFile(tempDir, "xxe-canary", ".txt");
+        secret.toFile().deleteOnExit();
+        Files.writeString(secret, CANARY);
+
+        String payload = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE root [ <!ENTITY xxe SYSTEM \"file://" + secret.toFile().getAbsolutePath() + "\"> ]>\n"
+                + "<root><value>&xxe;</value></root>";
+
+        TransformerException exception = assertThrows(TransformerException.class,
+            () -> XsltHelper.transformXmlByXslt(
+                new StreamSource(new java.io.ByteArrayInputStream(payload.getBytes(StandardCharsets.UTF_8))),
+                URI.create("src/test/resources/xslt/identity.xsl")));
+
+        assertFalse(String.valueOf(exception.getMessage()).contains(CANARY), "secret must not leak into the error");
     }
 }

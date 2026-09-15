@@ -413,8 +413,11 @@ public class ExportXmlLog implements Consumer<OutputStream> {
             Namespace[] namespaces, Namespace xmlns)
             throws IOException, JDOMException {
         HashMap<String, String> fields = getMetsFieldsFromConfig(useAnchor);
+        SAXBuilder builder = new SAXBuilder();
+        builder.setExpandEntities(false);
+        builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         try (InputStream in = docketData.metadataFile().toURL().openStream()) {
-            Document metsDoc = new SAXBuilder().build(in);
+            Document metsDoc = builder.build(in);
             prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
         }
     }
