@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import jakarta.faces.view.ViewScoped;
@@ -62,7 +61,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
     private String oldPassword;
     private List<Client> clientsOfUser;
 
-    private Optional<LoginTask> lastLdapLoginTask;
+    private LoginTask lastLdapLoginTask;
 
     /**
      * Return user object currently being edited.
@@ -204,18 +203,18 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
      */
     public String getLdapLoginTaskButtonLabel() {
         String label = Helper.getTranslation("ldapWriteConfiguration");
-        if (Objects.isNull(lastLdapLoginTask) || lastLdapLoginTask.isEmpty()) {
+        if (Objects.isNull(lastLdapLoginTask)) {
             return label;
         }
 
-        boolean lastSuccessful = LoginTaskStatus.COMPLETED.equals(lastLdapLoginTask.get().getStatus());
-        boolean lastFailed = LoginTaskStatus.FAILED.equals(lastLdapLoginTask.get().getStatus()); 
+        boolean lastSuccessful = LoginTaskStatus.COMPLETED.equals(lastLdapLoginTask.getStatus());
+        boolean lastFailed = LoginTaskStatus.FAILED.equals(lastLdapLoginTask.getStatus()); 
 
         if (lastSuccessful) {
-            Date lastExecutionDate = lastLdapLoginTask.get().getExecutedAt();
+            Date lastExecutionDate = lastLdapLoginTask.getExecutedAt();
             label = Helper.getTranslation("ldapWriteConfigurationSuccessful", Helper.getDateAsFormattedString(lastExecutionDate));
         } else if (lastFailed) {
-            String lastError = lastLdapLoginTask.get().getError();
+            String lastError = lastLdapLoginTask.getError();
             label = Helper.getTranslation("ldapWriteConfigurationFailed", lastError);
         }
 
@@ -228,9 +227,7 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
      * <p>Will disable the button to add a new ldap login task</p>
      */
     public boolean hasPendingLdapLoginTask() {
-        return Objects.nonNull(lastLdapLoginTask) 
-            && lastLdapLoginTask.isPresent() 
-            && LoginTaskStatus.PENDING.equals(lastLdapLoginTask.get().getStatus());
+        return Objects.nonNull(lastLdapLoginTask) && LoginTaskStatus.PENDING.equals(lastLdapLoginTask.getStatus());
     }
 
     /**
@@ -242,22 +239,21 @@ public class UserEditViewDetailsTab extends BaseTabEditView<User> {
     }
 
     /**
-     * User cancels the the last pending ldap login task.
+     * User cancels the last pending ldap login task.
      */
     public void cancelLdapLoginTask() {
-        if (Objects.nonNull(this.lastLdapLoginTask) && this.lastLdapLoginTask.isPresent()) {
-            loginTaskService.cancelLoginTask(this.lastLdapLoginTask.get());
+        if (Objects.nonNull(this.lastLdapLoginTask)) {
+            loginTaskService.cancelLoginTask(this.lastLdapLoginTask);
         }
         loadLastLdapLoginTask();
     }
 
     /**
-     * Retrieve whether the current user already has a pending login task to save user credentials to the ldap server.
-     * 
-     * @return true if pending login task exists
+     * Retrieve a pending login task for the current user in case a pending login task to save user credentials to an ldap server exists.
      */
     private void loadLastLdapLoginTask() {
-        this.lastLdapLoginTask = loginTaskService.getLastLoginTaskForUserAndType(this.userObject, LoginTaskType.SAVE_USER_TO_LDAP);
+        this.lastLdapLoginTask = loginTaskService.getLastLoginTaskForUserAndType(this.userObject, LoginTaskType.SAVE_USER_TO_LDAP)
+            .orElse(null);
     }
 
     /**

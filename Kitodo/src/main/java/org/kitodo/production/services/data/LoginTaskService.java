@@ -34,9 +34,9 @@ import org.springframework.security.core.Authentication;
 
 public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
 
-    private static List<LoginTaskType> PRIORITY_SEQUENCE = List.of(LoginTaskType.SAVE_USER_TO_LDAP);
+    private static final List<LoginTaskType> PRIORITY_SEQUENCE = List.of(LoginTaskType.SAVE_USER_TO_LDAP);
 
-    private static final Logger logger = LogManager.getLogger(UserService.class);
+    private static final Logger logger = LogManager.getLogger(LoginTaskService.class);
     
     /**
      * Constructor.
@@ -117,7 +117,7 @@ public class LoginTaskService extends BaseBeanService<LoginTask, LoginTaskDAO> {
      * Return the highest priority login task for a user that is pending.
      * 
      * @param user the user
-     * @return optional containing highest priority login task if this user has a pending task
+     * @return optional containing the highest priority login task if this user has a pending task
      */
     public Optional<LoginTask> getNextPendingLoginTaskForUser(User user) {
         List<LoginTask> tasks = dao.getByUserAndStatus(user, LoginTaskStatus.PENDING);

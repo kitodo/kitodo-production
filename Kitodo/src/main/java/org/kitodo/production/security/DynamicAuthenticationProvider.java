@@ -11,12 +11,7 @@
 
 package org.kitodo.production.security;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
-
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingException;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;

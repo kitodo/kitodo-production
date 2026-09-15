@@ -30,7 +30,7 @@ public class KitodoUserDetailsPasswordService implements UserDetailsPasswordServ
 
     private static final Logger logger = LogManager.getLogger(KitodoUserDetailsPasswordService.class);
 
-    private static UserService userService = ServiceManager.getUserService();
+    private static final UserService userService = ServiceManager.getUserService();
 
     @Override
     public UserDetails updatePassword(UserDetails userDetails, String newEncodedPassword) {
@@ -41,7 +41,7 @@ public class KitodoUserDetailsPasswordService implements UserDetailsPasswordServ
                 userService.save(user);
                 logger.debug("Password for user '{}' migrated to newest encoding strategy", userDetails.getUsername());
             } catch (DAOException e) {
-                logger.error(String.format("Failed to migrate user password for user '%s'", userDetails.getUsername()), e);
+                logger.error("Failed to migrate user password for user '{}'", userDetails.getUsername(), e);
             }
         } else {
             logger.error("Cannot migrate user password for user '{}', wrong user details instance", userDetails.getUsername());

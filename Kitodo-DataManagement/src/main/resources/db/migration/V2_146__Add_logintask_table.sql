@@ -25,3 +25,4 @@ CREATE TABLE IF NOT EXISTS logintask
     KEY index_pending_tasks_for_user (user_id, status) COMMENT 'index for finding tasks for a specific user'
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
+  
