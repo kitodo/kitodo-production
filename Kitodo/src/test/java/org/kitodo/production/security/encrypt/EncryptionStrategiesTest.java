@@ -27,7 +27,7 @@ public class EncryptionStrategiesTest {
     private static final String SECRET = ",~!TrI8?3|:wX0@n=~Y#L|u;jiU|M#1Q&-K?^19.?-%byr] dHpv4).lq* ?s+^+";
     private static final String INPUT = "M9NsvwYkGqu03n59g9iq";
 
-    private static List<KitodoEncryptionStrategy> STRATEGIES = List.of(
+    private static final List<KitodoEncryptionStrategy> STRATEGIES = List.of(
         new LegacyEncryptionStrategy(),
         new AesGcmEncryptionStrategy()
     );
@@ -36,7 +36,7 @@ public class EncryptionStrategiesTest {
      * Check that encrypted text can be decrypted and matches.
      */
     @Test
-    public void encryptAndDecryptTest() throws Exception {
+    public void encryptAndDecryptTest() {
         for (KitodoEncryptionStrategy strategy : STRATEGIES) {
             String cipher = strategy.encrypt(INPUT, SECRET);
             String potentialInput = strategy.decrypt(cipher, SECRET);
@@ -45,10 +45,11 @@ public class EncryptionStrategiesTest {
     }
 
     /**
-     * Check that two encryptions of the same text lead to two different ciphers, both of which can be decrypted correctly.
+     * Check that two encryption evaluations of the same text lead to two different ciphers, both of which can be
+     * decrypted correctly.
      */
     @Test
-    public void differsEncrypt() throws Exception {
+    public void differsEncrypt() {
         for (KitodoEncryptionStrategy strategy : STRATEGIES) {
             String firstEncrypt = strategy.encrypt(INPUT, SECRET);
             String secondEncrypt = strategy.encrypt(INPUT, SECRET);

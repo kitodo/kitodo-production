@@ -24,15 +24,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.WorkflowService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
+import org.openqa.selenium.By;
 
 public class MigrationST extends BaseTestSelenium {
 
@@ -59,7 +62,7 @@ public class MigrationST extends BaseTestSelenium {
     }
 
     @Test
-    public void testMigration() throws Exception {
+    public void testWorkflowMigration() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
         process.setTemplate(null);
         ServiceManager.getProcessService().save(process);
@@ -88,5 +91,28 @@ public class MigrationST extends BaseTestSelenium {
         assertEquals(1, numberOfTemplates, "only one template should be assigned");
         assertEquals(5, workflowTemplateId, "wrong template");
         assertEquals(newTemplateTitle, processTemplateTitle, "wrong title for template");
+    }
+
+    /**
+     * Check that migrating ldap manager passwords actually encrypts them.
+     */
+    @Test 
+    public void testLdapManagerPasswordMigration() throws Exception {
+        // verify ldap manager password is currently unencrypted
+        LdapServer ldapServer = ServiceManager.getLdapServerService().getById(1);
+        assertEquals("LdapManagerPasswort", ldapServer.getManagerPassword());
+
+        // trigger password migration
+        SystemPage systemPage = Pages.getSystemPage().goTo();
+        systemPage.startLdapManagerPasswordMigration();
+
+        // wait until migration has finished
+        await().atMost(5, TimeUnit.SECONDS).pollInterval(100, TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> Browser.getDriver().findElement(By.id("error-messages"))
+                    .getText().startsWith("All LDAP Manager passwords were successfully encrypted"));
+
+        // check that password is actually encrypted now
+        ldapServer = ServiceManager.getLdapServerService().getById(1);
+        assertTrue(ldapServer.getManagerPassword().startsWith("{aes-gcm}"));
     }
 }

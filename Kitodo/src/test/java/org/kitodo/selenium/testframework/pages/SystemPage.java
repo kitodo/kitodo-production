@@ -76,6 +76,14 @@ public class SystemPage extends Page<SystemPage> {
     @FindBy(id = "closeForm:close")
     private WebElement closePopupButton;
 
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = "systemTabView:migrationForm:migrateLdapManagerPasswords")
+    private WebElement startLdapManagerPasswordMigrationButton;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = "systemTabView:migrationForm:startLdapManagerPasswordMigration")
+    private WebElement confirmLdapManagerPasswordMigration;
+
 
     public SystemPage() {
         super("pages/system");
@@ -189,5 +197,22 @@ public class SystemPage extends Page<SystemPage> {
         templateTitleInput.sendKeys(title);
         createNewTemplateButton.click();
         closePopupButton.click();
+    }
+
+    /**
+     * Start the ldap manager password migration by clicking both the migration and confirm buttons.
+     */
+    public void startLdapManagerPasswordMigration() throws Exception {
+        switchToTabByIndex(TabIndex.MIGRATION.getIndex(), systemTabView);
+
+        await().atMost(5, TimeUnit.SECONDS).pollInterval(100, TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> startLdapManagerPasswordMigrationButton.isDisplayed());
+
+        startLdapManagerPasswordMigrationButton.click();
+
+        await().atMost(5, TimeUnit.SECONDS).pollInterval(100, TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> confirmLdapManagerPasswordMigration.isDisplayed());
+
+        confirmLdapManagerPasswordMigration.click();
     }
 }
