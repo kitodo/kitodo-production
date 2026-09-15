@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -35,6 +36,8 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.utils.XMLSecurity;
+import org.xml.sax.SAXException;
 
 public class XMLSchemaConverter implements SchemaConverterInterface {
     private static final FileFormat supportedSourceFileFormat = FileFormat.XML;
@@ -100,9 +103,13 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             System.setProperty("http.agent", "Chrome");
             Transformer transformer = transformerFactory.newTransformer(xsltSource);
             xmlString = removeBom(xmlString);
-            transformer.transform(new StreamSource(new StringReader(xmlString)), new StreamResult(writer));
+            // The DataRecord may come from an external catalog and is therefore
+            // untrusted: parse it through a hardened source that rejects DOCTYPE
+            // declarations and external entities. The stylesheet side intentionally
+            // keeps its network resolver, because the mapping may fetch remote records.
+            transformer.transform(XMLSecurity.newSecureSource(new StringReader(xmlString)), new StreamResult(writer));
             return writer.toString();
-        } catch (TransformerException | IOException e) {
+        } catch (TransformerException | IOException | ParserConfigurationException | SAXException e) {
             throw new ConfigException("Error in transforming the response to internal format: " + e.getMessage(), e);
         }
     }

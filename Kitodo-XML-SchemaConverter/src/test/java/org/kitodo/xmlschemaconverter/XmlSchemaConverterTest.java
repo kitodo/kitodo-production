@@ -14,7 +14,9 @@ package org.kitodo.xmlschemaconverter;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -41,6 +43,7 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.MetadataFormatConversion;
 import org.kitodo.config.KitodoConfig;
+import org.kitodo.exceptions.ConfigException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -152,6 +155,27 @@ public class XmlSchemaConverterTest {
         assertEquals("67890", catalogId, "Catalog ID after conversion is wrong!");
         assertEquals("Test-Place", place, "PlaceOfPublication after conversion is wrong!");
         assertEquals("Test-Shelflocator", shelfmarksource, "shelfmarksource after conversion is wrong!");
+    }
+
+    @Test
+    public void shouldRejectExternalEntitiesInSourceRecord() throws IOException {
+        String canary = "XXE-CANARY-12345";
+        File secret = File.createTempFile("xxe-canary", ".txt");
+        secret.deleteOnExit();
+        Files.writeString(secret.toPath(), canary);
+
+        DataRecord testRecord = new DataRecord();
+        testRecord.setMetadataFormat(MetadataFormat.MODS);
+        testRecord.setFileFormat(FileFormat.XML);
+        testRecord.setOriginalData("<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE record [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
+                + "<root><value>&xxe;</value></root>");
+
+        ConfigException exception = assertThrows(ConfigException.class,
+                () -> converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML,
+                        List.of(new File("src/test/resources/identity.xsl"))));
+        assertFalse(String.valueOf(exception.getMessage()).contains(canary),
+                "External entity content must not be resolved or leaked");
     }
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,
