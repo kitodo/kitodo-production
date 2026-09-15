@@ -82,7 +82,10 @@ public class XsltHelper {
         if (Objects.nonNull(source.getInputStream())) {
             return source.getInputStream();
         }
-        return new FileInputStream(Paths.get(source.getSystemId()).toFile());
+        String systemId = source.getSystemId();
+        return new FileInputStream(systemId.startsWith("file:")
+                ? Paths.get(URI.create(systemId)).toFile()
+                : Paths.get(systemId).toFile());
     }
 
     static URI getXsltFileFromConfig(Process process) {
