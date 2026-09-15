@@ -192,9 +192,9 @@ public final class XMLSecurity {
      *
      * @param schema compiled XML schema
      * @return hardened Validator
-     * @throws SAXException if the Validator cannot be created
+     * @throws IllegalStateException if the Validator cannot be created
      */
-    public static Validator newSecureValidator(Schema schema) throws SAXException {
+    public static Validator newSecureValidator(Schema schema) {
         Validator validator = schema.newValidator();
         try {
             validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
