@@ -11,13 +11,13 @@
 
 package org.kitodo.validation.filestructure;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -52,8 +52,7 @@ public class FileStructureValidation implements FileStructureValidationInterface
     public ValidationResult validate(String xmlContent, URI xsdFileUri) throws SAXException, IOException {
         Collection<URI> schemaUris = Collections.singletonList(xsdFileUri);
         Validator xmlValidator = initializeXmlValidator(schemaUris);
-        return validateStreamSource(createSecureSource(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8))),
-                xmlValidator, "N/A", schemaUris);
+        return validateStreamSource(createSecureSource(new StringReader(xmlContent)), xmlValidator, "N/A", schemaUris);
     }
 
     @Override
@@ -68,11 +67,18 @@ public class FileStructureValidation implements FileStructureValidationInterface
     @Override
     public ValidationResult validate(String xmlContent, Collection<URI> xsdFiles) throws IOException, SAXException {
         Validator xmlValidator = initializeXmlValidator(xsdFiles);
-        return validateStreamSource(createSecureSource(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8))),
-                xmlValidator, "N/A", xsdFiles);
+        return validateStreamSource(createSecureSource(new StringReader(xmlContent)), xmlValidator, "N/A", xsdFiles);
     }
 
     private SAXSource createSecureSource(InputStream xmlInput) throws SAXException {
+        try {
+            return XMLSecurity.newSecureSource(xmlInput);
+        } catch (ParserConfigurationException e) {
+            throw new SAXException("Unable to create hardened SAXSource", e);
+        }
+    }
+
+    private SAXSource createSecureSource(Reader xmlInput) throws SAXException {
         try {
             return XMLSecurity.newSecureSource(xmlInput);
         } catch (ParserConfigurationException e) {

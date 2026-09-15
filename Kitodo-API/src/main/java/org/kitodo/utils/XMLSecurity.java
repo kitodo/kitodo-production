@@ -12,6 +12,7 @@
 package org.kitodo.utils;
 
 import java.io.InputStream;
+import java.io.Reader;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -170,14 +171,33 @@ public final class XMLSecurity {
      * @throws SAXException if the SAX parser cannot be created
      */
     public static SAXSource newSecureSource(InputStream inputStream) throws ParserConfigurationException, SAXException {
+        return new SAXSource(newHardenedXmlReader(), new InputSource(inputStream));
+    }
+
+    /**
+     * Create and return a hardened SAXSource that rejects DOCTYPE declarations and
+     * external entity resolution to prevent XML External Entity (XXE) injection during
+     * transformation of the given character stream. In contrast to the
+     * {@link #newSecureSource(InputStream)} variant, the XML declaration of the input
+     * is ignored, so character data does not have to be re-encoded before parsing.
+     *
+     * @param reader character stream containing the XML document to transform
+     * @return hardened SAXSource
+     * @throws ParserConfigurationException if a feature cannot be set
+     * @throws SAXException if the SAX parser cannot be created
+     */
+    public static SAXSource newSecureSource(Reader reader) throws ParserConfigurationException, SAXException {
+        return new SAXSource(newHardenedXmlReader(), new InputSource(reader));
+    }
+
+    private static XMLReader newHardenedXmlReader() throws ParserConfigurationException, SAXException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setFeature(DISALLOW_DOCTYPE_DECL, true);
         factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
         factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        XMLReader reader = factory.newSAXParser().getXMLReader();
-        return new SAXSource(reader, new InputSource(inputStream));
+        return factory.newSAXParser().getXMLReader();
     }
 
     /**

@@ -14,6 +14,7 @@ package org.kitodo.export;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,6 +53,21 @@ public class XsltHelperTest {
         assertThat(result, CompareMatcher.isIdenticalTo(expected).ignoreWhitespace());
 
         FileUtils.deleteQuietly(result);
+    }
+
+    @Test
+    public void shouldTransformFileBackedStreamSource() throws Exception {
+        Path input = Files.createTempFile(tempDir, "file-backed", ".xml");
+        input.toFile().deleteOnExit();
+        String content = "<?xml version=\"1.0\"?><root><value>fileContent</value></root>";
+        Files.writeString(input, content);
+
+        ByteArrayOutputStream outputStream = XsltHelper.transformXmlByXslt(
+            new StreamSource(input.toFile()), URI.create("src/test/resources/xslt/identity.xsl"));
+
+        String result = outputStream.toString(StandardCharsets.UTF_8);
+        assertTrue(result.contains("fileContent"), "Transformation of a file-backed StreamSource should succeed");
+        assertTrue(result.contains("<root>"), "Result should contain the transformed document");
     }
 
     @Test

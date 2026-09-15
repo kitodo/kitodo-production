@@ -119,6 +119,20 @@ public class FileStructureValidationTest {
         }
     }
 
+    @Test
+    public void shouldValidateXmlStringWithNonUtf8EncodingDeclaration() throws IOException, SAXException {
+        Path schema = createPermissiveSchema();
+        try {
+            String xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n"
+                    + "<root><value>caf\u00e9</value></root>";
+            ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
+            assertTrue(validationResult.getResultMessages().isEmpty(),
+                    "Character data must be preserved and must not be re-encoded before parsing");
+        } finally {
+            Files.deleteIfExists(schema);
+        }
+    }
+
     private Path createPermissiveSchema() throws IOException {
         Path schema = Files.createTempFile("xxe-permissive", ".xsd");
         Files.writeString(schema,
