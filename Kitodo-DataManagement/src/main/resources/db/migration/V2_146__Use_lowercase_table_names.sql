@@ -6,15 +6,20 @@
 -- It is licensed under GNU General Public License version 3 or later.
 --
 
--- This SQL script renames all tables to lowercase.
--- This is required for MariaDB on macOS or Windows because these
--- operating systems use case insensitive filesystems.
+-- This SQL script renames the tables which may have an uppercase
+-- character in their name on macOS or Windows to their lowercase
+-- name. This is required for MariaDB on macOS or Windows because
+-- these operating systems use case insensitive filesystems.
 
 -- Table renames on such filesystems must use an intermediate table name
 -- because a direct `RENAME TABLE A TO a;` does not work.
 
 -- First, create a procedure to handle the renames
 DELIMITER //
+
+-- Remove the procedure if it was left behind by a previously aborted
+-- execution of this migration.
+DROP PROCEDURE IF EXISTS rename_tables_to_lowercase;
 
 CREATE PROCEDURE rename_tables_to_lowercase()
 BEGIN
