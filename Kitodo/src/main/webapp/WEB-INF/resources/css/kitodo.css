@@ -4095,7 +4095,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     margin: auto;
     position: absolute;
     left: calc(50% - 100px);
-    top: calc(50% - 100px);
+    top: calc(50% - 50px);
 }
 
 #imagePreviewForm\:mediaDetailNavigationPanel {
