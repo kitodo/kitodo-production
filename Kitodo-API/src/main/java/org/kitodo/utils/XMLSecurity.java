@@ -27,6 +27,7 @@ import javax.xml.validation.Validator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jdom2.input.SAXBuilder;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -158,6 +159,20 @@ public final class XMLSecurity {
             throw new IllegalStateException("Unable to harden SAXParserFactory", e);
         }
         return factory;
+    }
+
+    /**
+     * Create and return a JDOM SAXBuilder that rejects DOCTYPE declarations and does not
+     * expand entities, to prevent XML External Entity (XXE) injection when parsing with
+     * the JDOM library.
+     *
+     * @return hardened SAXBuilder
+     */
+    public static SAXBuilder newSaxBuilder() {
+        SAXBuilder builder = new SAXBuilder();
+        builder.setExpandEntities(false);
+        builder.setFeature(DISALLOW_DOCTYPE_DECL, true);
+        return builder;
     }
 
     /**

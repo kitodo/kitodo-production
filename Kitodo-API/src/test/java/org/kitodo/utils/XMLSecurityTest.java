@@ -37,6 +37,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
+import org.jdom2.JDOMException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.xml.sax.InputSource;
@@ -58,6 +59,7 @@ public class XMLSecurityTest {
         assertNotNull(XMLSecurity.newSchemaFactory());
         assertNotNull(XMLSecurity.newXmlInputFactory());
         assertNotNull(XMLSecurity.newSaxParserFactory());
+        assertNotNull(XMLSecurity.newSaxBuilder());
     }
 
     @Test
@@ -84,6 +86,15 @@ public class XMLSecurityTest {
         XMLReader reader = factory.newSAXParser().getXMLReader();
         SAXException exception = assertThrows(SAXException.class,
                 () -> reader.parse(new InputSource(toInputStream(payload))));
+        assertFalse(exception.getMessage().contains(CANARY), "secret must not leak into the error");
+    }
+
+    @Test
+    public void saxBuilderShouldNotResolveExternalEntities() throws Exception {
+        File secret = createTestFile();
+        String payload = xxePayload(secret);
+        JDOMException exception = assertThrows(JDOMException.class,
+                () -> XMLSecurity.newSaxBuilder().build(toInputStream(payload)));
         assertFalse(exception.getMessage().contains(CANARY), "secret must not leak into the error");
     }
 

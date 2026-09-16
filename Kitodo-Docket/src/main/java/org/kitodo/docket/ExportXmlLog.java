@@ -48,6 +48,7 @@ import org.jdom2.xpath.XPathFactory;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.Property;
 import org.kitodo.config.KitodoConfig;
+import org.kitodo.utils.XMLSecurity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -413,9 +414,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
             Namespace[] namespaces, Namespace xmlns)
             throws IOException, JDOMException {
         HashMap<String, String> fields = getMetsFieldsFromConfig(useAnchor);
-        SAXBuilder builder = new SAXBuilder();
-        builder.setExpandEntities(false);
-        builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        SAXBuilder builder = XMLSecurity.newSaxBuilder();
         try (InputStream in = docketData.metadataFile().toURL().openStream()) {
             Document metsDoc = builder.build(in);
             prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
