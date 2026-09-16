@@ -45,7 +45,7 @@ public class XsltHelper {
     }
 
     /**
-     * Transforms a xml file by xslt and returns the result as string. The input
+     * Transforms an xml file by xslt and returns the result as string. The input
      * document is parsed with a hardened SAX parser that rejects DOCTYPE
      * declarations and external entity resolution, so the Saxon transformer
      * never sees untrusted XML features.

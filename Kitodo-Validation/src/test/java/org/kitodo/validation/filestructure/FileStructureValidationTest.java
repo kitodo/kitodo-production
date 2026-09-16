@@ -118,7 +118,7 @@ public class FileStructureValidationTest {
     public void shouldValidateXmlStringWithNonUtf8EncodingDeclaration() throws IOException, SAXException {
         Path schema = createPermissiveSchema();
         String xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n"
-                + "<root><value>caf\u00e9</value></root>";
+                + "<root><value>café</value></root>";
         ValidationResult validationResult = xmlValidation.validate(xmlContent, schema.toUri());
         assertTrue(validationResult.getResultMessages().isEmpty(),
                 "Character data must be preserved and must not be re-encoded before parsing");

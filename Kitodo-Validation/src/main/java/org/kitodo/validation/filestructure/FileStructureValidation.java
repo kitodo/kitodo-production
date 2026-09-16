@@ -74,7 +74,7 @@ public class FileStructureValidation implements FileStructureValidationInterface
         try {
             return XMLSecurity.newSecureSource(xmlInput);
         } catch (ParserConfigurationException e) {
-            throw new SAXException("Unable to create hardened SAXSource", e);
+            throw new SAXException("Unable to create hardened SAXSource from InputStream", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class FileStructureValidation implements FileStructureValidationInterface
         try {
             return XMLSecurity.newSecureSource(xmlInput);
         } catch (ParserConfigurationException e) {
-            throw new SAXException("Unable to create hardened SAXSource", e);
+            throw new SAXException("Unable to create hardened SAXSource from Reader", e);
         }
     }
 
