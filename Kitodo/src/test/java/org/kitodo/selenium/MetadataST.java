@@ -1172,7 +1172,7 @@ public class MetadataST extends BaseTestSelenium {
 
     private void login(String username) throws ReflectiveOperationException, InterruptedException {
         User metadataUser = ServiceManager.getUserService().getByLogin(username);
-        Pages.getLoginPage().goTo().performLogin(metadataUser);
+        Pages.getLoginPage().goTo().performLogin(metadataUser, MockDatabase.DEFAULT_USER_PASSWORD);
     }
 
     private static void insertTestProcessForMediaReferencesTest() throws DAOException {

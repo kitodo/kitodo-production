@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -39,8 +37,7 @@ public class LtpValidationConfigurationST extends BaseTestSelenium {
      */
     @BeforeEach
     public void doLogin() throws Exception {
-        User metadataUser = ServiceManager.getUserService().getByLogin("kowal");
-        Pages.getLoginPage().goTo().performLogin(metadataUser);
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
     /**

@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
@@ -53,7 +53,6 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.ProjectGenerator;
-import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.selenium.testframework.pages.ImportConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
@@ -265,23 +264,29 @@ public class AddingST extends BaseTestSelenium {
         assertTrue(rulesetAvailable, "Created Ruleset was not listed at rulesets table!");
     }
 
-    @Disabled("broken: this test often causes unintentional javascript warning popups when adding roles to the user")
     @Test
     public void addUserTest() throws Exception {
-        User user = UserGenerator.generateUser();
         usersPage.createNewUser();
         assertEquals("Neuen Benutzer anlegen", userEditPage.getHeaderText(), "Header for create new user is incorrect");
 
-        userEditPage.insertUserData(user);
+        String login = "user_" + RandomStringUtils.secure().next(5, true, false);
+        User user = new User();
+        user.setName("Name");
+        user.setSurname("Surname");
+        user.setLogin(login);
+        user.setLocation("Location");
+
+        String password = "P4$$woRd" + RandomStringUtils.secure().next(5, true, true);
+        userEditPage.insertUserData(user, password);
         userEditPage.addUserToRole(ServiceManager.getRoleService().getById(2).getTitle());
         userEditPage.addUserToClient(ServiceManager.getClientService().getById(2).getName());
         userEditPage.save();
         assertTrue(usersPage.isAt(), "Redirection after save was not successful");
 
-        User insertedUser = ServiceManager.getUserService().getByLogin(user.getLogin());
+        User insertedUser = ServiceManager.getUserService().getByLogin(login);
 
         Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(insertedUser);
+        Pages.getLoginPage().performLogin(insertedUser, password);
         Pages.getTopNavigation().selectSessionClient(1);
         assertEquals(ServiceManager.getClientService().getById(2).getName(), Pages.getTopNavigation().getSessionClient());
     }

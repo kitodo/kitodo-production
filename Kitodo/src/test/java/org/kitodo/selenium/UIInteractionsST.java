@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -117,7 +118,7 @@ public class UIInteractionsST extends BaseTestSelenium {
     @Test
     public void roleSwitchUnavailableTest() throws Exception {
         String setClientId = "select-session-client-form:setSessionClientButton";
-        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("nowak"));
+        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("nowak"), MockDatabase.DEFAULT_USER_PASSWORD);
         pollAssertTrue(() -> Browser.getDriver().findElement(By.id(setClientId)).isDisplayed());
         Browser.getDriver().findElement(By.id(setClientId)).click();
         usersPage.goTo();

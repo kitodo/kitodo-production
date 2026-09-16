@@ -74,14 +74,28 @@
                 <p:selectBooleanCheckbox id="active" styleClass="switch input" disabled="#{isViewMode || isConfigMode}"
                                          value="#{UserEditViewDetailsTab.userObject.active}" onchange="toggleSave()"/>
             </h:panelGroup>
-            <h:panelGroup styleClass="panel-grid-cell">
-                <p:commandButton id="writeUserToLdapButton"
-                                 action="#{UserEditViewDetailsTab.writeUserAtLdapServer}"
-                                 value="#{msgs.ldapKonfigurationSchreiben}"
+            <h:panelGroup id="ldapLoginTaskPanel" styleClass="panel-grid-cell">
+                <p:outputLabel for="editForm:userTabView:ldapLoginTaskPanel" value="#{UserEditViewDetailsTab.ldapLoginTaskButtonLabel}"/>
+                <p:commandButton id="addLdapLoginTaskButton"
+                                 action="#{UserEditViewDetailsTab.addLdapLoginTask}"
+                                 value="#{msgs.ldapCreateLdapLoginTask}"
                                  icon="fa fa-user-plus fa-lg"
                                  iconPos="right"
                                  immediate="true"
+                                 rendered="#{!UserEditViewDetailsTab.hasPendingLdapLoginTask()}"
                                  disabled="#{isViewMode || isConfigMode || UserEditViewDetailsTab.userObject.ldapGroup eq null}"
+                                 update="editForm:userTabView:ldapLoginTaskPanel"
+                                 class="button-filled-green">
+                </p:commandButton>
+                <p:commandButton id="cancelLdapLoginTaskButton"
+                                 action="#{UserEditViewDetailsTab.cancelLdapLoginTask}"
+                                 value="#{msgs.ldapCancelPendingLoginTask}"
+                                 icon="fa fa-trash fa-lg"
+                                 iconPos="right"
+                                 immediate="true"
+                                 rendered="#{UserEditViewDetailsTab.hasPendingLdapLoginTask()}"
+                                 disabled="#{isViewMode || isConfigMode}"
+                                 update="editForm:userTabView:ldapLoginTaskPanel"
                                  class="button-filled-green">
                 </p:commandButton>
             </h:panelGroup>
@@ -181,7 +195,7 @@
                     <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                     <f:selectItems value="#{LdapGroupListView.ldapGroups}" var="ldapGroup"
                                    itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
-                    <p:ajax oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
+                    <p:ajax oncomplete="toggleSave()" update="editForm:userTabView:addLdapLoginTaskButton"/>
                 </p:selectOneMenu>
             </h:panelGroup>
             <h:panelGroup styleClass="panel-grid-cell">
