@@ -90,9 +90,7 @@ public class ImageManagement implements ImageManagementInterface {
 
         fileExists(sourceUri);
         Guard.isPositive("factor", factor);
-        if (resultUri == null) {
-            throw new NullPointerException("resultUri must not be null");
-        }
+        Guard.isNotNull("resultUri", resultUri);
 
         ImageConverter imageConverter = new ImageConverter(sourceUri);
         imageConverter.addResult(resultUri, format).resize(factor);
