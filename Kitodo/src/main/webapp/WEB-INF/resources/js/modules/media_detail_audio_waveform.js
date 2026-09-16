@@ -85,7 +85,7 @@ class AudioWaveform {
 
         this.#wavesurfer.on("ready", function () {
             waveContainer.style.display = "block";
-            self.#loader.style.display = "none";
+            $("#imagePreviewForm\\:loadingSymbol").hide();
 
             let waveToolsContainer = document.getElementById("imagePreviewForm:audioWaveformTools");
             const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]');
