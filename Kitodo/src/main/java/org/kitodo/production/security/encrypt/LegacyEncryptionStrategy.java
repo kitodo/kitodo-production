@@ -32,8 +32,8 @@ public class LegacyEncryptionStrategy implements KitodoEncryptionStrategy {
         try {
             return LegacyAesUtil.encrypt(value, secret);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException
-                        | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
-                        | IllegalBlockSizeException | InvalidKeySpecException e) {
+                    | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
+                    | IllegalBlockSizeException | InvalidKeySpecException e) {
             throw new KitodoEncryptionException(e);
         }
     }
