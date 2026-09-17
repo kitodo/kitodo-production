@@ -98,7 +98,7 @@ public enum FunctionalMetadata {
      * @param mark
      *            how the special field is to be marked
      */
-    private FunctionalMetadata(String mark) {
+    FunctionalMetadata(String mark) {
         this.mark = mark;
     }
 
