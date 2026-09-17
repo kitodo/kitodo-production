@@ -189,12 +189,11 @@ public class XMLSecurityTest {
         builder.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
     }
 
-    private String readWithStax(XMLInputFactory factory, String xml) throws XMLStreamException {
+    private void readWithStax(XMLInputFactory factory, String xml) throws XMLStreamException {
         XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(xml));
         while (reader.hasNext()) {
             reader.next();
         }
-        return "";
     }
 
     private InputStream toInputStream(String xml) {
