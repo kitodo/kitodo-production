@@ -80,6 +80,10 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     private WebElement linkSystem;
 
     @SuppressWarnings(UNUSED)
+    @FindBy(id = "sessionClient")
+    private WebElement sessionClientLabel;
+
+    @SuppressWarnings(UNUSED)
     @FindBy(className = "ui-selectonemenu-trigger")
     private WebElement clientSelectTrigger;
 
@@ -113,12 +117,18 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     }
 
     public String getSessionClient() throws InterruptedException{
-        await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
+        // in case the page is still loading
+        await("Wait for visible user menu button").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> userMenuButton.isDisplayed());
 
         userMenuButton.click();
-        WebElement element = Browser.getDriver().findElement(By.id("sessionClient")).findElement(By.tagName("b"));
-        return element.getText();
+        
+        // make sure overlay is shown
+        await("Wait for user menu overlay").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> sessionClientLabel.isDisplayed());
+
+        // extract session client name from user menu overlay
+        return sessionClientLabel.findElement(By.tagName("b")).getText();
     }
 
     public void acceptClientSelection() throws ReflectiveOperationException {

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
@@ -37,7 +38,7 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     @BeforeEach
     public void login() throws Exception {
-        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getById(2));
+        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getById(2), MockDatabase.DEFAULT_USER_PASSWORD);
     }
 
     @AfterEach

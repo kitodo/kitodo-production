@@ -15,10 +15,16 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.production.security.password.KitodoDelegatingPasswordEncoder;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.UserService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -26,6 +32,9 @@ import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.openqa.selenium.By;
 
 public class LoginST extends BaseTestSelenium {
+
+    private static final String LEGACY_TEST_PASSWORD_ENCODED = "OvEJ00yyYZQ=";
+    private static final UserService userService = ServiceManager.getUserService();
     
     /**
      * Tests that login as admin is successful.
@@ -93,6 +102,41 @@ public class LoginST extends BaseTestSelenium {
                 .until(() -> Pages.getDesktopPage().isAt());
 
         // logout
+        Pages.getTopNavigation().logout();
+    }
+
+    /**
+     * Checks that a legacy password is upgraded to a new password upon user login.
+     */
+    @Test
+    public void userPasswordShouldUpgradeOnLoginTest() throws Exception {
+        // overwrite user password with legacy encoding
+        User user = userService.getById(1);
+        user.setPassword(LEGACY_TEST_PASSWORD_ENCODED);
+        userService.save(user);
+
+        // check login with legacy encoding is possible
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+
+        // wait for desktop page
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(() -> Pages.getDesktopPage().isAt());
+
+        // check password was upgraded and is still valid
+        KitodoDelegatingPasswordEncoder encoder = new KitodoDelegatingPasswordEncoder();
+        user = userService.getById(1);
+        assertTrue(user.getPassword().startsWith("{argon2}"));
+        assertTrue(encoder.matches(MockDatabase.DEFAULT_USER_PASSWORD, user.getPassword()));
+
+        // logout and login again to verify
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+
+        // wait for desktop page
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(() -> Pages.getDesktopPage().isAt());
+
+        // final logout
         Pages.getTopNavigation().logout();
     }
 

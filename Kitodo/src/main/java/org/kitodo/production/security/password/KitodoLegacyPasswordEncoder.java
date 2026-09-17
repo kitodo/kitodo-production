@@ -34,14 +34,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class SecurityPasswordEncoder implements PasswordEncoder {
+/**
+ * Legacy password encoder using symmetric DES encryption such that plaintext passwords can be recovered.
+ * 
+ * <p>Plaintext passwords were decrypted in order to register them with LDAP.</p>
+ */
+@Deprecated 
+public class KitodoLegacyPasswordEncoder implements PasswordEncoder {
 
     @Override
+    @Deprecated 
     public String encode(CharSequence rawPassword) {
         return encrypt(rawPassword.toString());
     }
 
     @Override
+    @Deprecated 
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         return encrypt(rawPassword.toString()).equals(encodedPassword);
     }
@@ -52,7 +60,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
     private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
                                                (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
-    private static final Logger logger = LogManager.getLogger(SecurityPasswordEncoder.class);
+    private static final Logger logger = LogManager.getLogger(KitodoLegacyPasswordEncoder.class);
 
     private void initialize(String passPhrase) {
         int iterationCount = 19;
@@ -73,7 +81,8 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
     /**
      * Using class constructor with default passphrase for en- and decryption.
      */
-    public SecurityPasswordEncoder() {
+    @Deprecated 
+    public KitodoLegacyPasswordEncoder() {
         String defaultPassPhrase = "rusDML_Passphrase_for_secure_encryption_2005";
         initialize(defaultPassPhrase);
     }
@@ -85,6 +94,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
      *            String to encrypt
      * @return encrypted string or null on error
      */
+    @Deprecated 
     public String encrypt(String messageToEncrypt) {
         if (Objects.isNull(messageToEncrypt)) {
             messageToEncrypt = "";
@@ -107,6 +117,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
      *            String to decrypt
      * @return decrypted string or null on error
      */
+    @Deprecated 
     public String decrypt(String messageToDecrypt) {
         try {
             byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes(StandardCharsets.UTF_8));
