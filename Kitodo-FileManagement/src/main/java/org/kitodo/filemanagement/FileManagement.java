@@ -17,7 +17,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -545,7 +544,7 @@ public class FileManagement implements FileManagementInterface {
         CommandService commandService = new CommandService();
         List<String> parameters = new ArrayList<>();
         try {
-            parameters.add(URLDecoder.decode(homeFile.getAbsolutePath(), StandardCharsets.UTF_8.name()));
+            parameters.add(URLDecoder.decode(homeFile.getAbsolutePath(), StandardCharsets.UTF_8));
             return commandService.runCommand(new File(command), parameters).isSuccessful();
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException in deleteSymLink", e);
@@ -560,12 +559,7 @@ public class FileManagement implements FileManagementInterface {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         String uriToDecode = new File(uri).getPath();
         String decodedPath;
-        try {
-            decodedPath = URLDecoder.decode(uriToDecode, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage(), e);
-            return "";
-        }
+        decodedPath = URLDecoder.decode(uriToDecode, StandardCharsets.UTF_8);
         return decodedPath;
     }
 
