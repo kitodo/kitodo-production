@@ -39,7 +39,7 @@ public class BatchProcessHelper extends BatchHelper {
     public BatchProcessHelper(Batch batch) {
         this.batch = batch;
         this.processes = batch.getProcesses();
-        this.currentProcess = processes.iterator().next();
+        this.currentProcess = processes.getFirst();
         loadProcessProperties();
     }
 
