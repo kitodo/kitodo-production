@@ -1637,8 +1637,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 json.put(prepareKey(key), value);
             } else if (value instanceof Long || value instanceof BigInteger) {
                 json.put(prepareKey(key), value.toString());
-            } else if (value instanceof JSONObject) {
-                JSONObject jsonObject = (JSONObject) value;
+            } else if (value instanceof JSONObject jsonObject) {
                 Map<String, Object> map = iterateOverJsonObject(jsonObject);
                 json.put(prepareKey(key), map);
             } else if (value instanceof JSONArray) {

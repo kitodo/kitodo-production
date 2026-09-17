@@ -189,8 +189,7 @@ public class Role extends BaseBean implements Comparable<Role> {
             return true;
         }
 
-        if (object instanceof Role) {
-            Role role = (Role) object;
+        if (object instanceof Role role) {
             return Objects.equals(this.getId(), role.getId()) && Objects.equals(this.getTitle() , role.getTitle());
         }
 

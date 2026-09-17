@@ -167,10 +167,9 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         if (!super.equals(o)) {
             return false;
         }
-        if (!(o instanceof PhysicalDivision)) {
+        if (!(o instanceof PhysicalDivision physicalDivision)) {
             return false;
         }
-        PhysicalDivision physicalDivision = (PhysicalDivision) o;
         return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartial,
                 physicalDivision.mediaPartial);
     }

@@ -238,8 +238,7 @@ public class StructurePanel implements Serializable {
             // there is nothing to do
             return;
         }
-        if (MEDIA_PARTIAL_NODE_TYPE.equals(treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        if (MEDIA_PARTIAL_NODE_TYPE.equals(treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode structureTreeNode) {
             PhysicalDivision physicalDivision = ((View) structureTreeNode.getDataObject()).getPhysicalDivision();
             for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
                 structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
@@ -468,10 +467,9 @@ public class StructurePanel implements Serializable {
      */
     Optional<LogicalDivision> getSelectedStructure() {
         TreeNode<Object> selectedLogicalNode = getSelectedLogicalNodeIfSingle();
-        if (Objects.isNull(selectedLogicalNode) || !(selectedLogicalNode.getData() instanceof StructureTreeNode)) {
+        if (Objects.isNull(selectedLogicalNode) || !(selectedLogicalNode.getData() instanceof StructureTreeNode structureTreeNode)) {
             return Optional.empty();
         }
-        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
         return Optional.ofNullable(dataObject instanceof LogicalDivision ? (LogicalDivision) dataObject : null);
     }
@@ -533,10 +531,9 @@ public class StructurePanel implements Serializable {
      */
     private static LogicalDivision preserveLogicalRecursive(TreeNode<Object> treeNode) {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof LogicalDivision)) {
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof LogicalDivision structure)) {
             return null;
         }
-        LogicalDivision structure = (LogicalDivision) structureTreeNode.getDataObject();
 
         List<LogicalDivision> childrenLive = structure.getChildren();
         childrenLive.clear();
@@ -558,10 +555,9 @@ public class StructurePanel implements Serializable {
 
     private static PhysicalDivision preservePhysicalRecursive(TreeNode<Object> treeNode) {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof PhysicalDivision)) {
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof PhysicalDivision physicalDivision)) {
             return null;
         }
-        PhysicalDivision physicalDivision = (PhysicalDivision) structureTreeNode.getDataObject();
 
         List<PhysicalDivision> childrenLive = physicalDivision.getChildren();
         childrenLive.clear();
@@ -1459,8 +1455,7 @@ public class StructurePanel implements Serializable {
         StructureTreeNode dragStructureNode
     ) throws IllegalArgumentException {
         TreeNode<Object> dragParent = dragTreeNode.getParent();
-        if (dragParent.getData() instanceof StructureTreeNode) {
-            StructureTreeNode dragParentTreeNode = (StructureTreeNode) dragParent.getData();
+        if (dragParent.getData() instanceof StructureTreeNode dragParentTreeNode) {
             if (dragParentTreeNode.getDataObject() instanceof LogicalDivision) {
                 // FIXME waiting for PrimeFaces' tree drop index bug to be fixed.
                 // Until fixed dropping nodes onto other nodes will produce random drop indices.
@@ -1712,10 +1707,9 @@ public class StructurePanel implements Serializable {
 
     private LogicalDivision preserveLogicalAndPhysicalRecursive(TreeNode<Object> treeNode) throws UnknownTreeNodeDataException {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof LogicalDivision)) {
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof LogicalDivision structure)) {
             return null;
         }
-        LogicalDivision structure = (LogicalDivision) structureTreeNode.getDataObject();
         structure.setOrder(order);
         structure.getViews().clear();
         structure.getChildren().clear();
@@ -1728,8 +1722,7 @@ public class StructurePanel implements Serializable {
                 if (Objects.nonNull(possibleChildStructure)) {
                     structure.getChildren().add(possibleChildStructure);
                 }
-            } else if (((StructureTreeNode) child.getData()).getDataObject() instanceof View) {
-                View view = (View) ((StructureTreeNode) child.getData()).getDataObject();
+            } else if (((StructureTreeNode) child.getData()).getDataObject() instanceof View view) {
                 structure.getViews().add(view);
                 if (!dataEditor.getWorkpiece().getAllPhysicalDivisions().contains(view.getPhysicalDivision())) {
                     view.getPhysicalDivision().setOrder(order);
@@ -1871,8 +1864,7 @@ public class StructurePanel implements Serializable {
     }
 
     private LogicalDivision getTreeNodeStructuralElement(TreeNode<Object> treeNode) {
-        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
                 return (LogicalDivision) structureTreeNode.getDataObject();
             }
@@ -1881,8 +1873,7 @@ public class StructurePanel implements Serializable {
     }
 
     private PhysicalDivision getTreeNodePhysicalDivision(TreeNode<Object> treeNode) {
-        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
                 return (PhysicalDivision) structureTreeNode.getDataObject();
             }
@@ -1891,8 +1882,7 @@ public class StructurePanel implements Serializable {
     }
 
     private View getTreeNodeView(TreeNode<Object> treeNode) {
-        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof View) {
                 return (View) structureTreeNode.getDataObject();
             }
@@ -1962,10 +1952,8 @@ public class StructurePanel implements Serializable {
      * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
      */
     private boolean isAssignedSeveralTimes(TreeNode<Object> treeNode) {
-        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof  StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-            if (structureTreeNode.getDataObject() instanceof View) {
-                View view = (View) structureTreeNode.getDataObject();
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode structureTreeNode) {
+            if (structureTreeNode.getDataObject() instanceof View view) {
                 return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
             }
         }
@@ -2144,11 +2132,8 @@ public class StructurePanel implements Serializable {
         if (isAssignedSeveralTimes()) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             View view = (View) structureTreeNode.getDataObject();
-            if (treeNode.getParent().getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureTreeNodeParent = (StructureTreeNode) treeNode.getParent().getData();
-                if (structureTreeNodeParent.getDataObject() instanceof LogicalDivision) {
-                    LogicalDivision logicalDivision =
-                            (LogicalDivision) structureTreeNodeParent.getDataObject();
+            if (treeNode.getParent().getData() instanceof StructureTreeNode structureTreeNodeParent) {
+                if (structureTreeNodeParent.getDataObject() instanceof LogicalDivision logicalDivision) {
                     dataEditor.unassignView(logicalDivision, view, false);
                     if (view.getPhysicalDivision().getLogicalDivisions().size() <= 1) {
                         severalAssignments.remove(view.getPhysicalDivision());

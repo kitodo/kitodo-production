@@ -233,10 +233,9 @@ public abstract class Division<T extends Division<T>> {
         if (compared == null) {
             return false;
         }
-        if (!(compared instanceof Division)) {
+        if (!(compared instanceof Division<?> other)) {
             return false;
         }
-        Division<?> other = (Division<?>) compared;
         return Objects.equals(children, other.children) && Objects.equals(label, other.label)
                 && Objects.equals(metadata, other.metadata)
                 && order == other.order && Objects.equals(orderlabel, other.orderlabel)

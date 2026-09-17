@@ -34,10 +34,7 @@ public class MetadataImageComparator implements Comparator<Object> {
         if (firstObject instanceof String && secondObject instanceof String) {
             firstName = (String) firstObject;
             secondName = (String) secondObject;
-        } else if (firstObject instanceof URI && secondObject instanceof URI) {
-            URI firstUri = (URI) firstObject;
-            URI secondUri = (URI) secondObject;
-
+        } else if (firstObject instanceof URI firstUri && secondObject instanceof URI secondUri) {
             firstName = fileService.getFileName(firstUri);
             secondName = fileService.getFileName(secondUri);
         } else {

@@ -589,10 +589,9 @@ public class Issue {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Issue)) {
+        if (!(obj instanceof Issue other)) {
             return false;
         }
-        Issue other = (Issue) obj;
         return id.equals(other.id) && course.equals(other.course)
                 && Objects.equals(additions, other.additions) && Objects.equals(daysOfWeek, other.daysOfWeek)
                 && Objects.equals(exclusions, other.exclusions) && Objects.equals(heading, other.heading);

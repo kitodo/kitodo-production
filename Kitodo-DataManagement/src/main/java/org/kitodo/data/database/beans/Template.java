@@ -290,8 +290,7 @@ public class Template extends BaseTemplateBean {
             return true;
         }
 
-        if (object instanceof Template) {
-            Template template = (Template) object;
+        if (object instanceof Template template) {
             return Objects.equals(this.getId(), template.getId());
         }
 

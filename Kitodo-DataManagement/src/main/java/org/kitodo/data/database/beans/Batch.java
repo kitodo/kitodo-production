@@ -171,8 +171,7 @@ public class Batch extends BaseBean {
             return true;
         }
 
-        if (object instanceof Batch) {
-            Batch batch = (Batch) object;
+        if (object instanceof Batch batch) {
             return Objects.equals(this.getId(), batch.getId());
         }
         return false;

@@ -97,10 +97,9 @@ public class LogicalDivision extends Division<LogicalDivision> {
         if (!super.equals(o)) {
             return false;
         }
-        if (!(o instanceof LogicalDivision)) {
+        if (!(o instanceof LogicalDivision other)) {
             return false;
         }
-        LogicalDivision other = (LogicalDivision) o;
         return Objects.equals(link, other.link)
                 && Objects.equals(views, other.views);
     }

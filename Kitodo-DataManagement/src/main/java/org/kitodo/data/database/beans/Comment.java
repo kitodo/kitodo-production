@@ -270,8 +270,7 @@ public class Comment extends BaseBean {
         if (this == object) {
             return true;
         }
-        if (object instanceof Comment) {
-            Comment comment = (Comment) object;
+        if (object instanceof Comment comment) {
             return Objects.nonNull(this.getId()) && this.getId().equals(comment.getId());
         }
         return false;

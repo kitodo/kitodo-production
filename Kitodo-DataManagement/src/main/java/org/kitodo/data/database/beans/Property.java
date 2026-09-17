@@ -284,8 +284,7 @@ public class Property extends BaseBean implements Comparable<Property> {
             return true;
         }
 
-        if (object instanceof Property) {
-            Property property = (Property) object;
+        if (object instanceof Property property) {
             return Objects.equals(this.getId(), property.getId());
         }
 

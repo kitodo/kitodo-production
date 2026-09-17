@@ -52,11 +52,10 @@ public class KitodoJhoveRepInfoParser {
      */
     private static void parsePropertyOfTypeList(String propertyKey, Object propertyValue,
             Map<String, String> propertyMap, Stack<Pair<String, Property>> stack) {
-        if (propertyValue instanceof List<?>) {
-            List<?> valueList = (List<?>) propertyValue;
+        if (propertyValue instanceof List<?> valueList) {
             if (valueList.size() > 0) {
                 if (valueList.getFirst() instanceof Property) {
-                    for (Object p : ((List<?>) propertyValue)) {
+                    for (Object p : valueList) {
                         stack.add(Pair.of(propertyKey, (Property) p));
                     }
                 } else if (valueList.getFirst() instanceof String) {
@@ -84,8 +83,7 @@ public class KitodoJhoveRepInfoParser {
      */
     private static void parsePropertyOfTypeArray(String propertyKey, Object propertyValue,
             Map<String, String> propertyMap, Stack<Pair<String, Property>> stack) {
-        if (propertyValue instanceof Property[]) {
-            Property[] propertyArray = (Property[]) propertyValue;
+        if (propertyValue instanceof Property[] propertyArray) {
             stack.addAll(IntStream.range(0, propertyArray.length)
                     .mapToObj((i) -> Pair.of(propertyKey, propertyArray[i])).toList());
         } else if (propertyValue instanceof String[]) {
@@ -124,8 +122,7 @@ public class KitodoJhoveRepInfoParser {
             Object propertyValue = entry.getRight().getValue();
 
             if (propertyArity == PropertyArity.SCALAR) {
-                if (propertyValue instanceof NisoImageMetadata) {
-                    NisoImageMetadata metadata = (NisoImageMetadata) propertyValue;
+                if (propertyValue instanceof NisoImageMetadata metadata) {
                     propertyMap.putAll(KitodoJhoveNisoImageMetadataHelper.nisoImageMetadataToMap(metadata));
                 } else {
                     propertyMap.put(propertyKey, String.valueOf(propertyValue));

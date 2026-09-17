@@ -293,8 +293,7 @@ public class LdapGroup extends BaseBean {
             return true;
         }
 
-        if (object instanceof LdapGroup) {
-            LdapGroup ldapGroup = (LdapGroup) object;
+        if (object instanceof LdapGroup ldapGroup) {
             return Objects.equals(this.getId(), ldapGroup.getId());
         }
 

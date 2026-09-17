@@ -904,8 +904,7 @@ public class ImportConfiguration extends BaseBean {
         if (this == object) {
             return true;
         }
-        if (object instanceof ImportConfiguration) {
-            ImportConfiguration importConfiguration = (ImportConfiguration) object;
+        if (object instanceof ImportConfiguration importConfiguration) {
             return Objects.equals(this.getId(), importConfiguration.getId());
         }
         return false;

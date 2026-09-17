@@ -253,10 +253,9 @@ public class RestrictivePermit implements ConditionsMapInterface {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof RestrictivePermit)) {
+        if (!(obj instanceof RestrictivePermit other)) {
             return false;
         }
-        RestrictivePermit other = (RestrictivePermit) obj;
         if (division == null) {
             if (other.division != null) {
                 return false;

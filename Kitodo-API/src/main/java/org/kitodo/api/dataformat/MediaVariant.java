@@ -89,8 +89,7 @@ public class MediaVariant {
             return true;
         }
 
-        if (obj instanceof MediaVariant) {
-            MediaVariant other = (MediaVariant) obj;
+        if (obj instanceof MediaVariant other) {
 
             if (Objects.isNull(use)) {
                 return Objects.isNull(other.use);

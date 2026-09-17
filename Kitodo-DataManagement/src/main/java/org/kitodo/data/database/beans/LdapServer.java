@@ -327,8 +327,7 @@ public class LdapServer extends BaseBean {
             return true;
         }
 
-        if (object instanceof LdapServer) {
-            LdapServer ldapServer = (LdapServer) object;
+        if (object instanceof LdapServer ldapServer) {
             return Objects.equals(this.getId(), ldapServer.getId());
         }
 

@@ -124,8 +124,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
         Map<String, List<FileXmlElementAccess>> physicalDivisionsMap = new HashMap<>();
         for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
-            if (smLinkOrSmLinkGrp instanceof SmLink) {
-                SmLink smLink = (SmLink) smLinkOrSmLinkGrp;
+            if (smLinkOrSmLinkGrp instanceof SmLink smLink) {
                 physicalDivisionsMap.computeIfAbsent(smLink.getFrom(), any -> new LinkedList<>());
                 physicalDivisionsMap.get(smLink.getFrom()).add(divIDsToPhysicalDivisions.get(smLink.getTo()));
             }

@@ -350,10 +350,8 @@ public class DataEditorService {
     public static View getViewOfBaseMediaByMediaFiles(List<TreeNode<Object>> treeNodes, Map<MediaVariant, URI> mediaFiles) {
         for (TreeNode<Object> treeNode : treeNodes) {
             if (StructurePanel.VIEW_NODE_TYPE.equals(
-                    treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();
-                if (structureMediaTreeNode.getDataObject() instanceof View) {
-                    View view = (View) structureMediaTreeNode.getDataObject();
+                    treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode structureMediaTreeNode) {
+                if (structureMediaTreeNode.getDataObject() instanceof View view) {
                     if (view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
                         return view;
                     }

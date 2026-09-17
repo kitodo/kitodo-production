@@ -853,8 +853,7 @@ public class Task extends BaseBean {
             return true;
         }
 
-        if (object instanceof Task) {
-            Task task = (Task) object;
+        if (object instanceof Task task) {
             return Objects.equals(this.getId(), task.getId());
         }
 

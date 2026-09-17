@@ -75,8 +75,7 @@ public class Client extends BaseBean {
             return true;
         }
 
-        if (object instanceof Client) {
-            Client client = (Client) object;
+        if (object instanceof Client client) {
             return Objects.equals(this.getId(), client.getId());
         }
 

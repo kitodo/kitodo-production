@@ -120,8 +120,7 @@ public class JAXBContextCache {
 
         @Override
         public boolean equals(Object potentialContextDescriptor) {
-            if (potentialContextDescriptor instanceof ContextDescriptor) {
-                final ContextDescriptor contextDescriptor = ((ContextDescriptor) potentialContextDescriptor);
+            if (potentialContextDescriptor instanceof ContextDescriptor contextDescriptor) {
                 return clazz.equals(contextDescriptor.clazz) && this.fileName.equals(contextDescriptor.fileName)
                         && this.fileLastModified == contextDescriptor.fileLastModified;
             }

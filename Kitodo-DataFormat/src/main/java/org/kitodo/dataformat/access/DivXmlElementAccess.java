@@ -212,11 +212,9 @@ public class DivXmlElementAccess extends LogicalDivision {
         Collection<Metadata> metadata = new HashSet<>();
         if (Objects.nonNull(mdSecType) && Objects.nonNull(mdSecType.getMdWrap())) {
             for (Object object : mdSecType.getMdWrap().getXmlData().getAny()) {
-                if (object instanceof JAXBElement) {
-                    JAXBElement<?> jaxbElement = (JAXBElement<?>) object;
+                if (object instanceof JAXBElement<?> jaxbElement) {
                     Object value = jaxbElement.getValue();
-                    if (value instanceof KitodoType) {
-                        KitodoType kitodoType = (KitodoType) value;
+                    if (value instanceof KitodoType kitodoType) {
                         for (MetadataType metadataEntry : kitodoType.getMetadata()) {
                             if (!metadataEntry.getValue().isEmpty()) {
                                 metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());

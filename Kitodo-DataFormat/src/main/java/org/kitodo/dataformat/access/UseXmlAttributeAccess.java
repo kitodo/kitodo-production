@@ -97,8 +97,7 @@ public class UseXmlAttributeAccess {
             return true;
         }
 
-        if (obj instanceof UseXmlAttributeAccess) {
-            UseXmlAttributeAccess other = (UseXmlAttributeAccess) obj;
+        if (obj instanceof UseXmlAttributeAccess other) {
             if (Objects.isNull(mediaVariant)) {
                 return Objects.isNull(other.mediaVariant);
             } else {

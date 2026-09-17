@@ -995,9 +995,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public static String getStructureElementTitle(Object dataObject, Collection<String> metadataKeys) {
         String title = "";
-        if (dataObject instanceof LogicalDivision) {
-            LogicalDivision logicalDivision = ((LogicalDivision) dataObject);
-            
+        if (dataObject instanceof LogicalDivision logicalDivision) {
             title = metadataKeys.stream()
                 .map((key) -> DataEditorService.getTitleValue(logicalDivision, key))
                 .filter((t) -> !t.isEmpty()).findFirst().orElse("");

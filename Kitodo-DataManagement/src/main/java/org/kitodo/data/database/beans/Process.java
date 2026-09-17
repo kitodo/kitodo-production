@@ -722,8 +722,7 @@ public class Process extends BaseTemplateBean {
             return true;
         }
 
-        if (object instanceof Process) {
-            Process process = (Process) object;
+        if (object instanceof Process process) {
             return Objects.equals(this.getId(), process.getId());
         }
 

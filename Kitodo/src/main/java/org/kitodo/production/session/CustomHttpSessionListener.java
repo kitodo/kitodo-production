@@ -49,8 +49,7 @@ public class CustomHttpSessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent sessionEvent) {
         Object securityContextObject = sessionEvent.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        if (Objects.nonNull(securityContextObject) && securityContextObject instanceof SecurityContextImpl) {
-            SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
+        if (Objects.nonNull(securityContextObject) && securityContextObject instanceof SecurityContextImpl securityContext) {
             Object principal = securityContext.getAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
                 logger.debug("Session expired: {}", sessionEvent.getSession().getId());

@@ -161,8 +161,7 @@ public class Ruleset extends BaseBean {
             return true;
         }
 
-        if (object instanceof Ruleset) {
-            Ruleset ruleset = (Ruleset) object;
+        if (object instanceof Ruleset ruleset) {
             return Objects.equals(this.getId(), ruleset.getId());
         }
 

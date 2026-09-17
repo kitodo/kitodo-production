@@ -283,8 +283,7 @@ public class UploadFileDialog {
     private void initPosition() {
         TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
         if (Objects.nonNull(selectedLogicalNode)
-                && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+                && selectedLogicalNode.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof View) {
                 if (Objects.nonNull(selectedLogicalNode.getParent())
                         && selectedLogicalNode.getParent().getData() instanceof StructureTreeNode
@@ -308,8 +307,7 @@ public class UploadFileDialog {
         possiblePositions = new ArrayList<>();
         TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
         if (Objects.nonNull(selectedLogicalNode)
-                && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+                && selectedLogicalNode.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof View) {
                 possiblePositions.add(new SelectItem(InsertionPosition.BEFORE_CURRENT_ELEMENT,
                         Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
