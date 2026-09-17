@@ -35,7 +35,6 @@ import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FileStructureValidationException;
 import org.kitodo.production.helper.Helper;
