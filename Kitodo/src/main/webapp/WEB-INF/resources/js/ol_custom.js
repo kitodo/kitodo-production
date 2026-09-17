@@ -353,12 +353,13 @@ class KitodoDetailMap {
                 center: this.unnormalizeCenter(this.#view.center, extent), 
                 zoom: this.#view.zoom,
                 rotation: this.#view.rotation,
-                zoomFactor: 1.1,
+                zoomFactor: 1.2,
                 extent,
                 constrainOnlyCenter: true,
                 smoothExtentConstraint: true,
                 showFullExtent: true,
-                padding: [20, 20, 20, 20]
+                padding: [20, 20, 20, 20],
+                constrainResolution: true
             })
         });
         if (this.#view.center == null) {
