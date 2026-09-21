@@ -19,7 +19,7 @@
 
     <p:outputPanel styleClass="thumbnail-parent">
 
-        <div class="thumbnail #{media.discontinuous ? 'discontinuous' : ''}
+        <div class="thumbnail #{DataEditorForm.galleryPanel.selectionDiscontinuous ? 'discontinuous' : ''}
             #{uiParamStripeIndex eq 0 and media.selectedInUnstructuredStripe ? 'selected' : ''}
             #{uiParamStripeIndex eq 0 and media.lastSelectionInUnstructuredStripe ? 'last-selection' : ''}
             #{uiParamStripeIndex ne 0 and stripe.isMediaSelected(media.id) ? 'selected' : ''}
