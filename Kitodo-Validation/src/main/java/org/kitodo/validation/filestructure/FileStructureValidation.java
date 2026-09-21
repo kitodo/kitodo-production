@@ -12,7 +12,10 @@
 package org.kitodo.validation.filestructure;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.Collection;
@@ -20,8 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -32,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.filestructure.FileStructureValidationInterface;
+import org.kitodo.utils.XMLSecurity;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -47,23 +52,41 @@ public class FileStructureValidation implements FileStructureValidationInterface
     public ValidationResult validate(String xmlContent, URI xsdFileUri) throws SAXException, IOException {
         Collection<URI> schemaUris = Collections.singletonList(xsdFileUri);
         Validator xmlValidator = initializeXmlValidator(schemaUris);
-        return validateStreamSource(new StreamSource(new StringReader(xmlContent)), xmlValidator, "N/A", schemaUris);
+        return validateStreamSource(createSecureSource(new StringReader(xmlContent)), xmlValidator, "N/A", schemaUris);
     }
 
     @Override
     public ValidationResult validate(URI xmlFileUri, URI xsdFileUri) throws SAXException, IOException {
         Collection<URI> schemaUris = Collections.singletonList(xsdFileUri);
         Validator xmlValidator = initializeXmlValidator(schemaUris);
-        return validateStreamSource(new StreamSource(new File(xmlFileUri)), xmlValidator, xmlFileUri.getPath(), schemaUris);
+        try (InputStream in = new FileInputStream(new File(xmlFileUri))) {
+            return validateStreamSource(createSecureSource(in), xmlValidator, xmlFileUri.getPath(), schemaUris);
+        }
     }
 
     @Override
     public ValidationResult validate(String xmlContent, Collection<URI> xsdFiles) throws IOException, SAXException {
         Validator xmlValidator = initializeXmlValidator(xsdFiles);
-        return validateStreamSource(new StreamSource(new StringReader(xmlContent)), xmlValidator, "N/A", xsdFiles);
+        return validateStreamSource(createSecureSource(new StringReader(xmlContent)), xmlValidator, "N/A", xsdFiles);
     }
 
-    private ValidationResult validateStreamSource(StreamSource source, Validator validator, String xmlPath, Collection<URI> xsdPaths)
+    private SAXSource createSecureSource(InputStream xmlInput) throws SAXException {
+        try {
+            return XMLSecurity.newSecureSource(xmlInput);
+        } catch (ParserConfigurationException e) {
+            throw new SAXException("Unable to create hardened SAXSource from InputStream", e);
+        }
+    }
+
+    private SAXSource createSecureSource(Reader xmlInput) throws SAXException {
+        try {
+            return XMLSecurity.newSecureSource(xmlInput);
+        } catch (ParserConfigurationException e) {
+            throw new SAXException("Unable to create hardened SAXSource from Reader", e);
+        }
+    }
+
+    private ValidationResult validateStreamSource(Source source, Validator validator, String xmlPath, Collection<URI> xsdPaths)
             throws IOException {
         try {
             validator.validate(source);
@@ -87,13 +110,13 @@ public class FileStructureValidation implements FileStructureValidationInterface
 
     private Validator initializeXmlValidator(Collection<URI> xsdFilePaths) throws SAXException {
         FileStructureValidationErrorHandler xmlValidationErrorHandler = new FileStructureValidationErrorHandler();
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory schemaFactory = XMLSecurity.newSchemaFactory();
         Source[] sources = new Source[xsdFilePaths.size()];
         for (int i = 0; i < xsdFilePaths.size(); i++) {
             sources[i] = new StreamSource(new File(xsdFilePaths.toArray(new URI[0])[i]));
         }
         Schema schema = schemaFactory.newSchema(sources);
-        Validator xmlValidator = schema.newValidator();
+        Validator xmlValidator = XMLSecurity.newSecureValidator(schema);
         xmlValidator.setErrorHandler(xmlValidationErrorHandler);
         return xmlValidator;
     }

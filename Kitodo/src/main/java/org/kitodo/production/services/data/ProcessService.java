@@ -127,6 +127,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.XMLSecurity;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -1939,7 +1940,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      */
     public NodeList getNodeListFromMetadataFile(Process process, String xpath) throws IOException {
         try (InputStream fileInputStream = ServiceManager.getFileService().readMetadataFile(process)) {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory builderFactory = XMLSecurity.newDocumentBuilderFactory();
             builderFactory.setNamespaceAware(true);
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             org.w3c.dom.Document xmlDocument = builder.parse(fileInputStream);

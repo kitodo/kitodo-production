@@ -23,12 +23,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -36,7 +34,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -50,6 +47,7 @@ import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.constants.StringConstants;
 import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.utils.XMLSecurity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,10 +60,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
  */
 public class XMLUtils {
-
-    private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
-    private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
-    private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
 
     /**
      * Private constructor to hide the implicit public one.
@@ -91,7 +85,7 @@ public class XMLUtils {
     public static byte[] documentToByteArray(Document data, Integer indent) throws TransformerException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Transformer transformer = XMLSecurity.newTransformerFactory().newTransformer();
         if (Objects.nonNull(indent)) {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", indent.toString());
@@ -143,9 +137,7 @@ public class XMLUtils {
      */
     public static Document load(InputStream data) throws SAXException, IOException {
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            return documentBuilderFactory.newDocumentBuilder().parse(data);
+            return XMLSecurity.newDocumentBuilderFactory().newDocumentBuilder().parse(data);
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -164,9 +156,7 @@ public class XMLUtils {
      */
     public static Document newDocument() throws IOException {
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            return documentBuilderFactory.newDocumentBuilder().newDocument();
+            return XMLSecurity.newDocumentBuilderFactory().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -184,9 +174,8 @@ public class XMLUtils {
      */
     public static Document parseXMLString(String xmlString) throws IOException, ParserConfigurationException,
             SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = XMLSecurity.newDocumentBuilderFactory();
         factory.setNamespaceAware(true);
-        disableExternalEntities(factory);
         DocumentBuilder builder = factory.newDocumentBuilder();
         xmlString = removeBom(xmlString);
         return builder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
@@ -250,7 +239,7 @@ public class XMLUtils {
      */
     public static String elementToString(Element element) throws TransformerException {
         StringWriter stringWriter = new StringWriter();
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Transformer transformer = XMLSecurity.newTransformerFactory().newTransformer();
         transformer.transform(new DOMSource(element), new StreamResult(stringWriter));
         return stringWriter.toString();
     }
@@ -283,9 +272,7 @@ public class XMLUtils {
      */
     public static int getNumberOfEADElements(String xmlString, String eadLevel) throws XMLStreamException {
         int count = 0;
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        XMLInputFactory factory = XMLSecurity.newXmlInputFactory();
         XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(xmlString));
         while (reader.hasNext()) {
             int event = reader.next();
@@ -310,34 +297,11 @@ public class XMLUtils {
     public static void checkIfXmlIsWellFormed(String xmlContent) throws IOException, SAXException {
         SAXParser saxParser;
         try {
-            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-            saxParserFactory.setValidating(false);
-            saxParserFactory.setNamespaceAware(true);
-            saxParserFactory.setFeature(DISALLOW_DOCTYPE_DECL, true);
-
-            saxParser = saxParserFactory.newSAXParser();
+            saxParser = XMLSecurity.newSaxParserFactory().newSAXParser();
         } catch (ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         }
         InputSource inputSource = new InputSource(new StringReader(xmlContent));
         saxParser.parse(inputSource, new DefaultHandler());
-    }
-
-    /**
-     * Disable DOCTYPE declarations and external entity resolution on the given
-     * factory to prevent XML External Entity (XXE) injection. This mirrors the
-     * secure configuration already used by {@link #load(InputStream)} and the
-     * external-catalog response parsers.
-     *
-     * @param factory the DocumentBuilderFactory to harden
-     * @throws ParserConfigurationException if a feature cannot be set
-     */
-    private static void disableExternalEntities(DocumentBuilderFactory factory) throws ParserConfigurationException {
-        factory.setFeature(DISALLOW_DOCTYPE_DECL, true);
-        factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
-        factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setXIncludeAware(false);
-        factory.setExpandEntityReferences(false);
     }
 }

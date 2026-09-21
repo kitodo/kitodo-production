@@ -26,9 +26,10 @@ import java.util.Optional;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -38,6 +39,8 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.XMLSecurity;
+import org.xml.sax.SAXException;
 
 /**
  * Provides methods for handling jaxb generated java objects and xml files.
@@ -61,15 +64,16 @@ public class JaxbXmlUtils {
      */
     static String transformXmlByXslt(URI xmlFile, URI xslFile) throws TransformerException, IOException {
         FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(FileManagementInterface.class).loadModule();
-        TransformerFactory factory = TransformerFactory.newInstance();
         StreamSource styleSource = new StreamSource(xslFile.getPath());
-        Transformer transformer = factory.newTransformer(styleSource);
+        Transformer transformer = XMLSecurity.newTransformerFactory().newTransformer(styleSource);
         try (InputStream inputStream = fileManagementModule.read(xmlFile);
                 StringWriter stringWriter = new StringWriter()) {
-            StreamSource source = new StreamSource(inputStream);
+            Source source = XMLSecurity.newSecureSource(inputStream);
             StreamResult result = new StreamResult(stringWriter);
             transformer.transform(source, result);
             return stringWriter.toString();
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IOException(e);
         }
     }
 
