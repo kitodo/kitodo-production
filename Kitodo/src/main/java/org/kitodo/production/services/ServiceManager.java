@@ -944,7 +944,7 @@ public class ServiceManager {
             String fullClassName = callStack[2].getClassName();
             int lastDotIndex = fullClassName.lastIndexOf('.');
             String requestingClass = fullClassName.substring(lastDotIndex + 1);
-            logger.trace(String.format("Providing %s to %s", serviceName, requestingClass));
+            logger.trace("Providing {} to {}", serviceName, requestingClass);
         }
     }
 }

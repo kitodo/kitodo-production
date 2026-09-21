@@ -73,8 +73,9 @@ public class WebServiceResult {
         if (Objects.isNull(ActiveMQDirector.getResultsTopic())) {
             // If reporting to ActiveMQ is disabled, write log message
             logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
-                "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
-                        + (Objects.nonNull(message) ? " (" + message + ")" : ""));
+                "Processing message \"{}@{}\" reports {}.{}",
+                id, queueName, level.toLowerCase(), Objects.nonNull(message) ? " (" + message + ")" : "");
+
         } else {
             try {
                 MapMessage report = ActiveMQDirector.getSession().createMapMessage();
