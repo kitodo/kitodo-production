@@ -156,17 +156,11 @@
                                             <ui:param name="uiParamStripeIndex" value="0"/>
                                         </ui:include>
                                     </p:panel>
+                                    <ui:fragment rendered="#{currentMedia.rowIndex eq currentMedia.rowCount - 1}">
+                                        <p:panel id="unstructuredPageLastDropArea"
+                                                 styleClass="page-drop-area"/>
+                                    </ui:fragment>
                                 </p:dataList>
-
-                                <!-- Render once instead of checking every row. -->
-                                <ui:fragment rendered="#{
-                                    editImages
-                                    and not empty DataEditorForm.galleryPanel.stripes.getFirst().medias}">
-                                    <p:panel
-                                            id="unstructuredPageLastDropArea"
-                                            styleClass="page-drop-area"/>
-
-                                </ui:fragment>
                             </p:outputPanel>
                         </h:panelGroup>
                     </p:outputPanel>
