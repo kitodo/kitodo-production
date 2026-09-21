@@ -113,6 +113,8 @@ public class GalleryPanel {
 
     private static final String PREVIEW_BASE_URL_KEY = GalleryPanel.class.getName() + ".previewBaseUrl";
 
+    private boolean selectionDiscontinuous;
+
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
         this.mediaPartialsPanel = new MediaPartialsPanel(dataEditor);
@@ -187,6 +189,15 @@ public class GalleryPanel {
      */
     public List<GalleryStripe> getStripes() {
         return stripes;
+    }
+
+    /**
+     * Returns whether the current media selection is discontinuous.
+     *
+     * @return whether the current media selection is discontinuous
+     */
+    public boolean isSelectionDiscontinuous() {
+        return selectionDiscontinuous;
     }
 
     /**
@@ -434,11 +445,10 @@ public class GalleryPanel {
 
         updateSelectionState();
 
-        boolean discontinuous = !dataEditor.consecutivePagesSelected();
+        selectionDiscontinuous = !dataEditor.consecutivePagesSelected();
         PreviewHoverMode previewHoverMode = getPreviewHoverMode();
 
         for (GalleryMediaContent media : medias) {
-            media.setDiscontinuous(discontinuous);
             media.setPreviewTooltip(showPreviewTooltip(media, previewHoverMode));
             media.setAssignmentIndex(getAssignmentIndex(media));
         }
