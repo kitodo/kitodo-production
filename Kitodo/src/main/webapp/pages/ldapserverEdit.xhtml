@@ -137,9 +137,11 @@
                         <div>
                             <p:outputLabel for="managerPassword" value="Manager password"/>
                             <p:password id="managerPassword"
-                                        class="input"
+                                        styleClass="password"
                                         value="#{LdapServerEditView.managerPassword}"
                                         disabled="#{isViewMode}"
+                                        maxlength="128"
+                                        toggleMask="true"
                                         redisplay="true"
                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>

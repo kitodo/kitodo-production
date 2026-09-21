@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.security;
+package org.kitodo.production.security.encrypt;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -35,9 +35,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AESUtil {
+@Deprecated
+public class LegacyAesUtil {
 
-    private static final Logger logger = LogManager.getLogger(AESUtil.class);
+    private static final Logger logger = LogManager.getLogger(LegacyAesUtil.class);
 
     private static final SecureRandom secureRandom = new SecureRandom();
 
@@ -71,6 +72,7 @@ public class AESUtil {
      *            The secret from config properties
      * @return The encrypted value as base64 string.
      */
+    @Deprecated
     public static String encrypt(String value, String secret)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
@@ -113,6 +115,7 @@ public class AESUtil {
      *            The value to be checked.
      * @return boolean true if value is encrypted using encrypt function
      */
+    @Deprecated
     public static boolean isEncrypted(String potentialEncryptedValue) {
         try {
             if (Objects.nonNull(potentialEncryptedValue)) {
@@ -142,6 +145,7 @@ public class AESUtil {
      *            The secret from config properties
      * @return The decrypted value.
      */
+    @Deprecated
     public static String decrypt(String encryptValue, String secret)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
@@ -158,6 +162,7 @@ public class AESUtil {
         return new String(value);
     }
 
+    @Deprecated
     private static SecretKey getSecretKey(String secret, byte[] salt)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
         KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256); // AES-256

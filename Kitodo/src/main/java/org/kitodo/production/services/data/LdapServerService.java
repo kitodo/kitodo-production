@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -27,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -54,9 +52,9 @@ import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -67,7 +65,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
-import org.kitodo.production.security.AESUtil;
+import org.kitodo.production.security.encrypt.EncryptionUtils;
+import org.kitodo.production.security.encrypt.KitodoEncryptionException;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -133,19 +132,12 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
         env.put(Context.SECURITY_PRINCIPAL, ldapServer.getManagerLogin());
 
         String managerPassword = ldapServer.getManagerPassword();
-        if (AESUtil.isEncrypted(managerPassword)) {
-            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
-
-            if (StringUtils.isBlank(securitySecret)) {
-                logger.error("The security.secret.ldapManagerPassword parameter was not configured in kitodo_config.properties file.");
-            }
-
+        String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
+        if (Objects.nonNull(managerPassword) && !Strings.isBlank(securitySecret)) {
             try {
-                managerPassword = AESUtil.decrypt(managerPassword, securitySecret);
-            } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
-                    | InvalidKeyException | BadPaddingException | IllegalBlockSizeException
-                    | InvalidKeySpecException e) {
-                logger.error(e.getLocalizedMessage(), e);
+                managerPassword = EncryptionUtils.decrypt(managerPassword, securitySecret);
+            } catch (KitodoEncryptionException e) {
+                logger.error("Decryption of ldap manager password failed", e);
             }
         }
         env.put(Context.SECURITY_CREDENTIALS, managerPassword);

@@ -848,7 +848,8 @@ body .content-header > .ui-panel-content {
     width:100%;
 }
 
-.password {
+.password,
+.ui-password:has(.password) {
     width: 100%;
     min-width: 200px;
 }
