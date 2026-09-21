@@ -130,7 +130,7 @@ public class AddDocStrucTypeDialog extends AddNodeDialog {
                 MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), selectedStructure.get(), selectedDocStructPosition);
             }
-            dataEditor.refreshLogicalStructurePanel();
+            dataEditor.refreshStructurePanel();
             dataEditor.getPaginationPanel().show();
         }
     }
