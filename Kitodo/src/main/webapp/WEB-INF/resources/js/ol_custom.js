@@ -250,10 +250,8 @@ class KitodoDetailMap {
      */
     hideCanvas() {
         let canvas = document.querySelector("#map canvas");
-        let loadingIcon = document.querySelector("#map > .fa-spinner");
         if (canvas) {
             canvas.style.opacity = 0;
-            loadingIcon.style.opacity = 1;
         }
     }
     
@@ -262,10 +260,8 @@ class KitodoDetailMap {
      */
     showCanvas() {
         let canvas = document.querySelector("#map canvas");
-        let loadingIcon = document.querySelector("#map > .fa-spinner");
         if (canvas) {
             canvas.style.opacity = 1;
-            loadingIcon.style.opacity = 0;
         }
     }
 
@@ -423,6 +419,7 @@ class KitodoDetailMap {
     onRenderComplete() {
         this.showCanvas();
         this.saveCurrentView();
+        $("#imagePreviewForm\\:loadingSymbol").hide();
     }
 
     /**
@@ -482,6 +479,7 @@ class KitodoDetailMap {
      */
     update() {
         this.registerImageLoadEvent();
+        $("#imagePreviewForm\\:loadingSymbol").show();
     }
 }
 

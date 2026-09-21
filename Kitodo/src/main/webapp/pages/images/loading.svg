@@ -1,0 +1,42 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<svg xmlns='http://www.w3.org/2000/svg'
+     viewBox='0 0 300 300'>
+    <defs>
+        <linearGradient id="alphaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#DDD" stop-opacity="1" />
+            <stop offset="100%" stop-color="#DDD" stop-opacity="0" />
+        </linearGradient>
+    </defs>
+    <circle transform='rotate(0)'
+            transform-origin='center'
+            fill='none'
+            stroke='url(#alphaGradient)'
+            stroke-width='15'
+            stroke-linecap='round'
+            stroke-dasharray='230 1000'
+            stroke-dashoffset='0'
+            cx='150'
+            cy='150'
+            r='70'>
+        <animateTransform
+                attributeName='transform'
+                type='rotate'
+                from='0'
+                to='360'
+                dur='2'
+                repeatCount='indefinite'>
+        </animateTransform>
+    </circle>
+</svg>

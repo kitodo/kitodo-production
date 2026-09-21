@@ -4017,14 +4017,6 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     height: 100%;
 }
 
-#map > i {
-    color: var(--pure-white);
-    left: 50%;
-    opacity: 0;
-    position: absolute;
-    top: 50%;
-}
-
 #map .ol-overlaycontainer-stopevent {
     left: 16px;
     position: absolute;
@@ -4088,6 +4080,15 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 
 #map div.ol-control button {
     background-color: var(--blue);
+}
+
+#imagePreviewForm\:loadingSymbol {
+    display: flex;
+    height: 100px;
+    margin: auto;
+    position: absolute;
+    left: calc(50% - 100px);
+    top: calc(50% - 50px);
 }
 
 #imagePreviewForm\:mediaDetailNavigationPanel {
