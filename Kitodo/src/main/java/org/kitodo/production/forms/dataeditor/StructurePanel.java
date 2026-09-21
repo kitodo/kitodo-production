@@ -621,37 +621,6 @@ public class StructurePanel implements Serializable {
         dataEditor.checkForChanges();
     }
 
-    private void showLogical() {
-        this.structure = dataEditor.getWorkpiece().getLogicalStructure();
-
-        this.previousExpansionStatesLogicalTree = getLogicalTreeNodeExpansionStates(this.logicalTree);
-        this.logicalTree = buildStructureTree();
-        updateLogicalNodeExpansionStates(this.logicalTree, this.previousExpansionStatesLogicalTree);
-
-        this.previouslySelectedLogicalNodes = getSelectedLogicalNodes();
-        dataEditor.checkForChanges();
-    }
-
-    /**
-     * Reloads the logical structure tree.
-     *
-     * @param keepSelection whether the current logical tree selection should be restored
-     */
-    public void showLogical(boolean keepSelection) {
-        if (!keepSelection) {
-            showLogical();
-            return;
-        }
-
-        final Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
-        List<TreeNode<Object>> keepSelectedLogicalNodes = getSelectedLogicalNodes();
-
-        showLogical();
-
-        setSelectedLogicalNodes(keepSelectedLogicalNodes);
-        restoreSelectionFromRowKeys(logicalRowKeys, this.logicalTree);
-    }
-
     private Set<String> getTreeNodeRowKeys(Collection<TreeNode<Object>> nodes) {
         HashSet<String> logicalRowKeys = new HashSet<>();
         if (Objects.nonNull(nodes)) {
