@@ -83,8 +83,6 @@ public class GalleryMediaContent {
 
     private String previewUrl;
 
-    private boolean discontinuous;
-
     private boolean previewTooltip;
 
     private int assignmentIndex;
@@ -265,24 +263,6 @@ public class GalleryMediaContent {
             previewUrl = previewUrlSupplier.get();
         }
         return previewUrl;
-    }
-
-    /**
-     * Returns whether the current media selection is discontinuous.
-     *
-     * @return true if the selection is discontinuous
-     */
-    public boolean isDiscontinuous() {
-        return discontinuous;
-    }
-
-    /**
-     * Sets whether the current media selection is discontinuous.
-     *
-     * @param discontinuous whether the selection is discontinuous
-     */
-    public void setDiscontinuous(boolean discontinuous) {
-        this.discontinuous = discontinuous;
     }
 
     /**
