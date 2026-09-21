@@ -614,7 +614,6 @@ public class GalleryPanel {
         }
 
         String treeNodeId = getTreeNodeId(stripeTreeNodeId, index);
-
         String mediaId = canonical;
         int processId = dataEditor.getProcess().getId();
         String sessionId = cachingUUID;
