@@ -11,7 +11,10 @@
 
 package org.kitodo.production.forms;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.forms.FolderGenerator;
@@ -31,11 +34,11 @@ public class FolderGeneratorTest {
         Folder imageSizeFolder = new Folder();
         imageSizeFolder.setImageSize(150);
         FolderGenerator derivativeFolderGenerator = new FolderGenerator(derivativeFolder);
-        Assertions.assertEquals(DERIVATIVE, derivativeFolderGenerator.getMethod());
+        assertEquals(DERIVATIVE, derivativeFolderGenerator.getMethod());
         FolderGenerator dpiFolderGenerator = new FolderGenerator(dpiFolder);
-        Assertions.assertEquals(DPI, dpiFolderGenerator.getMethod());
+        assertEquals(DPI, dpiFolderGenerator.getMethod());
         FolderGenerator imageSizeFolderGenerator = new FolderGenerator(imageSizeFolder);
-        Assertions.assertEquals(IMAGE_SIZE, imageSizeFolderGenerator.getMethod());
+        assertEquals(IMAGE_SIZE, imageSizeFolderGenerator.getMethod());
     }
 
     @Test
@@ -43,18 +46,18 @@ public class FolderGeneratorTest {
         Folder folder = new Folder();
         FolderGenerator folderGenerator = new FolderGenerator(folder);
         folderGenerator.setMethod(DERIVATIVE);
-        Assertions.assertTrue(folder.getDerivative().isPresent(), "Derivative should be set");
-        Assertions.assertEquals(1.00d, folder.getDerivative().get());
-        Assertions.assertFalse(folder.getDpi().isPresent(), "DPI should be null");
-        Assertions.assertFalse(folder.getImageSize().isPresent(), "Image size should be null");
+        assertTrue(folder.getDerivative().isPresent(), "Derivative should be set");
+        assertEquals(1.00d, folder.getDerivative().get());
+        assertFalse(folder.getDpi().isPresent(), "DPI should be null");
+        assertFalse(folder.getImageSize().isPresent(), "Image size should be null");
         folderGenerator.setMethod(DPI);
-        Assertions.assertFalse(folder.getDerivative().isPresent(), "Derivative should be null");
-        Assertions.assertTrue(folder.getDpi().isPresent(), "DPI should be set");
-        Assertions.assertFalse(folder.getImageSize().isPresent(), "Image size should be null");
+        assertFalse(folder.getDerivative().isPresent(), "Derivative should be null");
+        assertTrue(folder.getDpi().isPresent(), "DPI should be set");
+        assertFalse(folder.getImageSize().isPresent(), "Image size should be null");
         folderGenerator.setMethod(IMAGE_SIZE);
-        Assertions.assertFalse(folder.getDerivative().isPresent(), "Derivative should be null");
-        Assertions.assertFalse(folder.getDpi().isPresent(), "DPI should be null");
-        Assertions.assertTrue(folder.getImageSize().isPresent(), "Image size should be set");
+        assertFalse(folder.getDerivative().isPresent(), "Derivative should be null");
+        assertFalse(folder.getDpi().isPresent(), "DPI should be null");
+        assertTrue(folder.getImageSize().isPresent(), "Image size should be set");
     }
 
 }
