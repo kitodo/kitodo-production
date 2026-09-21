@@ -121,11 +121,23 @@ public class GalleryStripe {
         return logicalTreeNodeId;
     }
 
-    public boolean isSelected(String mediaId) {
+    /**
+     * Returns whether the media with the given ID is selected.
+     *
+     * @param mediaId ID of the media
+     * @return whether the media is selected
+     */
+    public boolean isMediaSelected(String mediaId) {
         return Boolean.TRUE.equals(selectedMedia.get(mediaId));
     }
 
-    public boolean isLastSelected(String mediaId) {
+    /**
+     * Returns whether the media with the given ID is the last selected media.
+     *
+     * @param mediaId ID of the media
+     * @return whether the media is the last selected media
+     */
+    public boolean isMediaLastSelected(String mediaId) {
         return Boolean.TRUE.equals(lastSelectedMedia.get(mediaId));
     }
 

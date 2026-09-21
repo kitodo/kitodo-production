@@ -615,7 +615,11 @@ public class GalleryPanel {
 
         String treeNodeId = getTreeNodeId(stripeTreeNodeId, index);
 
-        GalleryMediaContent media = new GalleryMediaContent(
+        String mediaId = canonical;
+        int processId = dataEditor.getProcess().getId();
+        String sessionId = cachingUUID;
+
+        return new GalleryMediaContent(
             mediaContentType,
             view,
             canonical,
@@ -623,11 +627,8 @@ public class GalleryPanel {
             resourceListUri,
             Objects.nonNull(mediaViewMediaVariant) ? mediaViewMediaVariant.getMimeType() : null,
             resourceMediaViewUri,
-            treeNodeId);
-
-        setPreviewUrlSupplier(media);
-
-        return media;
+            treeNodeId,
+            () -> buildPreviewUrl(mediaId, processId, sessionId));
     }
 
     private String getTreeNodeId(String stripeTreeNodeId, Integer index) {
@@ -635,14 +636,6 @@ public class GalleryPanel {
             return stripeTreeNodeId + "_" + index;
         }
         return "unknown";
-    }
-
-    private void setPreviewUrlSupplier(GalleryMediaContent media) {
-        int processId = dataEditor.getProcess().getId();
-        String sessionId = cachingUUID;
-
-        media.setPreviewUrlSupplier(
-            () -> buildPreviewUrl(media.getId(), processId, sessionId));
     }
 
     private String buildPreviewUrl(String mediaId, int processId, String sessionId) {

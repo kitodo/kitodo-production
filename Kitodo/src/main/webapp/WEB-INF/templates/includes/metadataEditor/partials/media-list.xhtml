@@ -22,8 +22,8 @@
         <div class="thumbnail #{media.discontinuous ? 'discontinuous' : ''}
             #{uiParamStripeIndex eq 0 and media.selectedInUnstructuredStripe ? 'selected' : ''}
             #{uiParamStripeIndex eq 0 and media.lastSelectionInUnstructuredStripe ? 'last-selection' : ''}
-            #{uiParamStripeIndex ne 0 and stripe.isSelected(media.id) ? 'selected' : ''}
-            #{uiParamStripeIndex ne 0 and stripe.isLastSelected(media.id) ? 'last-selection' : ''}">
+            #{uiParamStripeIndex ne 0 and stripe.isMediaSelected(media.id) ? 'selected' : ''}
+            #{uiParamStripeIndex ne 0 and stripe.isMediaLastSelected(media.id) ? 'last-selection' : ''}">
         </div>
 
         <div class="thumbnail-container

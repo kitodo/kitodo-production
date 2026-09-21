@@ -93,7 +93,7 @@ public class GalleryMediaContent {
 
     private boolean lastSelectionInUnstructuredStripe;
 
-    private Supplier<String> previewUrlSupplier;
+    private final Supplier<String> previewUrlSupplier;
 
     /**
      * Creates a new gallery media content.
@@ -104,9 +104,11 @@ public class GalleryMediaContent {
      *         URI to content for media preview. Can be {@code null}, then a placeholder is used.
      * @param mediaViewUri
      *         URI to the content for the media view. Can be {@code null}, then no media view is offered.
+     * @param previewUrlSupplier
+     *         supplier used to lazily create the preview URL
      */
     GalleryMediaContent(MediaContentType type, View view, String canonical, String previewMimeType, URI previewUri,
-            String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId) {
+            String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId, Supplier<String> previewUrlSupplier) {
         this.type = type;
         this.view = view;
         this.id = canonical;
@@ -115,6 +117,7 @@ public class GalleryMediaContent {
         this.mediaViewMimeType = mediaViewMimeType;
         this.mediaViewUri = mediaViewUri;
         this.logicalTreeNodeId = logicalTreeNodeId;
+        this.previewUrlSupplier = previewUrlSupplier;
     }
 
     /**
@@ -262,15 +265,6 @@ public class GalleryMediaContent {
             previewUrl = previewUrlSupplier.get();
         }
         return previewUrl;
-    }
-
-    /**
-     * Sets the supplier used to lazily create the preview URL.
-     *
-     * @param previewUrlSupplier supplier for the preview URL
-     */
-    public void setPreviewUrlSupplier(Supplier<String> previewUrlSupplier) {
-        this.previewUrlSupplier = previewUrlSupplier;
     }
 
     /**
