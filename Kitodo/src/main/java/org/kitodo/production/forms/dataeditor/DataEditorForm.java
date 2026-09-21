@@ -822,11 +822,6 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         galleryPanel.updateStripes();
     }
 
-    void refreshLogicalStructurePanel() {
-        structurePanel.showLogical(true);
-        galleryPanel.updateStripes();
-    }
-
     void setProcess(Process process) {
         this.process = process;
     }
