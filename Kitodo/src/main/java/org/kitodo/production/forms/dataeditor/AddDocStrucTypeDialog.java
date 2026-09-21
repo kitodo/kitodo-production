@@ -151,7 +151,7 @@ public class AddDocStrucTypeDialog extends AddNodeDialog {
                     dataEditor.getSelectedMedia().add(new ImmutablePair<>(view.getPhysicalDivision(), newStructure));
                 }
             }
-            dataEditor.refreshLogicalStructurePanel();
+            dataEditor.refreshStructurePanel();
             
             try {
                 dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(newStructure));
