@@ -151,12 +151,6 @@ public class StructurePanel implements Serializable {
     private boolean showHierarchyLevel = false;
 
     /**
-     * Tracks the physical division instances already added while rebuilding the physical structure.
-     * An identity-based set is used because PhysicalDivision has mutable structural equality/hash state.
-     */
-    private Set<PhysicalDivision> addedPhysicalDivisions;
-
-    /**
      * Creates a new structure panel.
      *
      * @param dataEditor
@@ -1747,12 +1741,16 @@ public class StructurePanel implements Serializable {
                 physicalDivision.getLogicalDivisions().clear();
             }
             dataEditor.getWorkpiece().getPhysicalStructure().getChildren().clear();
-            addedPhysicalDivisions = Collections.newSetFromMap(new IdentityHashMap<>());
-            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
+            // Use identity semantics because PhysicalDivision has mutable structural equality/hash state.
+            Set<PhysicalDivision> addedPhysicalDivisions = Collections.newSetFromMap(new IdentityHashMap<>());
+            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1),
+                addedPhysicalDivisions);
         }
     }
 
-    private LogicalDivision preserveLogicalAndPhysicalRecursive(TreeNode<Object> treeNode) throws UnknownTreeNodeDataException {
+    private LogicalDivision preserveLogicalAndPhysicalRecursive(TreeNode<Object> treeNode,
+            Set<PhysicalDivision> addedPhysicalDivisions)
+            throws UnknownTreeNodeDataException {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
         if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof LogicalDivision)) {
             return null;
@@ -1766,7 +1764,7 @@ public class StructurePanel implements Serializable {
                 throw new UnknownTreeNodeDataException(child.getData().getClass().getCanonicalName());
             }
             if (((StructureTreeNode) child.getData()).getDataObject() instanceof LogicalDivision) {
-                LogicalDivision possibleChildStructure = preserveLogicalAndPhysicalRecursive(child);
+                LogicalDivision possibleChildStructure = preserveLogicalAndPhysicalRecursive(child, addedPhysicalDivisions);
                 if (Objects.nonNull(possibleChildStructure)) {
                     structure.getChildren().add(possibleChildStructure);
                 }
