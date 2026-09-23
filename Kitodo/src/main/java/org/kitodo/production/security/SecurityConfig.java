@@ -288,75 +288,67 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void authorizePageAuthorityEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/authorityEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/authorityEdit*").hasAnyAuthority(
                 EDIT_AUTHORITY + GLOBAL,
                 EDIT_AUTHORITY + CLIENT_ANY,
                 VIEW_AUTHORITY + GLOBAL,
-                VIEW_AUTHORITY + CLIENT_ANY)
-        );
+                VIEW_AUTHORITY + CLIENT_ANY);
     }
 
     private void authorizePageCalendarEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/calendarEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/calendarEdit*").hasAnyAuthority(
                 ADD_PROCESS + GLOBAL,
-                ADD_PROCESS + CLIENT_ANY)
-        );
+                ADD_PROCESS + CLIENT_ANY);
     }
 
     private void authorizePageTaskEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/taskEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/taskEdit*").hasAnyAuthority(
                 EDIT_TASK + GLOBAL,
-                EDIT_TASK + CLIENT_ANY)
-        );
+                EDIT_TASK + CLIENT_ANY);
     }
 
     private void authorizePageImportConfigurationEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/importConfigurationEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/importConfigurationEdit*").hasAnyAuthority(
                 EDIT_IMPORT_CONFIGURATION + GLOBAL,
                 EDIT_IMPORT_CONFIGURATION + CLIENT_ANY,
                 VIEW_IMPORT_CONFIGURATION + GLOBAL,
-                VIEW_IMPORT_CONFIGURATION + CLIENT_ANY)
-        );
+                VIEW_IMPORT_CONFIGURATION + CLIENT_ANY);
     }
 
     private void authorizePageLdapServerEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/ldapserverEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/ldapserverEdit*").hasAnyAuthority(
                 EDIT_LDAP_SERVER + GLOBAL,
-                VIEW_LDAP_SERVER + GLOBAL)
-        );
+                VIEW_LDAP_SERVER + GLOBAL);
     }
 
     private void authorizePageLtpValidationConfigurationEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/ltpValidationConfigurationEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/ltpValidationConfigurationEdit*").hasAnyAuthority(
                 EDIT_LTP_VALIDATION_CONFIGURATION + GLOBAL,
                 EDIT_LTP_VALIDATION_CONFIGURATION + CLIENT_ANY,
                 VIEW_LTP_VALIDATION_CONFIGURATION + GLOBAL,
-                VIEW_LTP_VALIDATION_CONFIGURATION + CLIENT_ANY)
-        );
+                VIEW_LTP_VALIDATION_CONFIGURATION + CLIENT_ANY);
     }
 
     private void authorizePageMappingFileEdit(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/mappingFileEdit*").hasAnyAuthority(
+        http.authorizeRequests(requests -> requests
+            .antMatchers("/pages/mappingFileEdit*").hasAnyAuthority(
                 EDIT_MAPPING_FILE + GLOBAL,
                 EDIT_MAPPING_FILE + CLIENT_ANY,
                 VIEW_MAPPING_FILE + GLOBAL,
-                VIEW_MAPPING_FILE + CLIENT_ANY)
-        );
+                VIEW_MAPPING_FILE + CLIENT_ANY);
     }
 
     private void authorizePageProcessFromTemplate(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(requests -> requests
-            .requestMatchers("/pages/processFromTemplate*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/processFromTemplate*").hasAnyAuthority(
                 ADD_PROCESS + GLOBAL,
-                ADD_PROCESS + CLIENT_ANY)
-        );
+                ADD_PROCESS + CLIENT_ANY);
     }
 
     private void handleFormLogin(HttpSecurity http) throws Exception {
