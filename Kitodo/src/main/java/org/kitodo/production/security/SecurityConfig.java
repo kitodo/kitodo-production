@@ -289,7 +289,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private void authorizePageAuthorityEdit(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/authorityEdit*").hasAnyAuthority(
+            .antMatchers("/pages/authorityEdit.jsf*").hasAnyAuthority(
                 EDIT_AUTHORITY + GLOBAL,
                 EDIT_AUTHORITY + CLIENT_ANY,
                 VIEW_AUTHORITY + GLOBAL,
@@ -298,21 +298,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private void authorizePageCalendarEdit(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/calendarEdit*").hasAnyAuthority(
+            .antMatchers("/pages/calendarEdit.jsf*").hasAnyAuthority(
                 ADD_PROCESS + GLOBAL,
                 ADD_PROCESS + CLIENT_ANY);
     }
 
     private void authorizePageTaskEdit(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/taskEdit*").hasAnyAuthority(
+            .antMatchers("/pages/taskEdit.jsf*").hasAnyAuthority(
                 EDIT_TASK + GLOBAL,
                 EDIT_TASK + CLIENT_ANY);
     }
 
     private void authorizePageImportConfigurationEdit(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/importConfigurationEdit*").hasAnyAuthority(
+            .antMatchers("/pages/importConfigurationEdit.jsf*").hasAnyAuthority(
                 EDIT_IMPORT_CONFIGURATION + GLOBAL,
                 EDIT_IMPORT_CONFIGURATION + CLIENT_ANY,
                 VIEW_IMPORT_CONFIGURATION + GLOBAL,
@@ -321,14 +321,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private void authorizePageLdapServerEdit(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/ldapserverEdit*").hasAnyAuthority(
+            .antMatchers("/pages/ldapserverEdit.jsf*").hasAnyAuthority(
                 EDIT_LDAP_SERVER + GLOBAL,
                 VIEW_LDAP_SERVER + GLOBAL);
     }
 
     private void authorizePageLtpValidationConfigurationEdit(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/ltpValidationConfigurationEdit*").hasAnyAuthority(
+            .antMatchers("/pages/ltpValidationConfigurationEdit.jsf*").hasAnyAuthority(
                 EDIT_LTP_VALIDATION_CONFIGURATION + GLOBAL,
                 EDIT_LTP_VALIDATION_CONFIGURATION + CLIENT_ANY,
                 VIEW_LTP_VALIDATION_CONFIGURATION + GLOBAL,
@@ -336,8 +336,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void authorizePageMappingFileEdit(HttpSecurity http) throws Exception {
-        http.authorizeRequests(requests -> requests
-            .antMatchers("/pages/mappingFileEdit*").hasAnyAuthority(
+        http.authorizeRequests()
+            .antMatchers("/pages/mappingFileEdit.jsf*").hasAnyAuthority(
                 EDIT_MAPPING_FILE + GLOBAL,
                 EDIT_MAPPING_FILE + CLIENT_ANY,
                 VIEW_MAPPING_FILE + GLOBAL,
@@ -346,7 +346,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private void authorizePageProcessFromTemplate(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/processFromTemplate*").hasAnyAuthority(
+            .antMatchers("/pages/processFromTemplate.jsf*").hasAnyAuthority(
                 ADD_PROCESS + GLOBAL,
                 ADD_PROCESS + CLIENT_ANY);
     }
