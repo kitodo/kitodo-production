@@ -37,15 +37,26 @@ public class SecurityConfig {
     private SessionRegistry sessionRegistry;
     private static final String CLIENT_ANY = "CLIENT_ANY";
     private static final String GLOBAL = "GLOBAL";
+    private static final String ADD_PROCESS = "addProcess_";
+    private static final String EDIT_AUTHORITY = "editAuthority_";
     private static final String EDIT_CLIENT = "editClient_";
     private static final String EDIT_DOCKET = "editDocket_";
+    private static final String EDIT_IMPORT_CONFIGURATION = "editImportConfiguration_";
+    private static final String EDIT_INDEX = "editIndex_";
+    private static final String EDIT_LDAP_GROUP = "editLdapGroup_";
+    private static final String EDIT_LDAP_SERVER = "editLdapServer_";
+    private static final String EDIT_LTP_VALIDATION_CONFIGURATION = "editLtpValidationConfiguration_";
+    private static final String EDIT_MAPPING_FILE = "editMappingFile_";
     private static final String EDIT_RULESET = "editRuleset_";
     private static final String EDIT_PROCESS = "editProcess_";
     private static final String EDIT_PROJECT = "editProject_";
     private static final String EDIT_ROLE = "editRole_";
+    private static final String EDIT_TASK = "editTask_";
     private static final String EDIT_TEMPLATE = "editTemplate_";
     private static final String EDIT_WORKFLOW = "editWorkflow_";
+    private static final String VIEW_ALL_CIENTS = "viewAllClients_";
     private static final String VIEW_ALL_DOCKETS = "viewAllDockets_";
+    private static final String VIEW_ALL_LDAP_GROUPS = "viewAllLdapGroups_";
     private static final String VIEW_ALL_PROCESSES = "viewAllProcesses_";
     private static final String VIEW_ALL_PROJECTS = "viewAllProjects_";
     private static final String VIEW_ALL_RULESETS = "viewAllRulesets_";
@@ -54,8 +65,15 @@ public class SecurityConfig {
     private static final String VIEW_ALL_USERS = "viewAllUsers_";
     private static final String VIEW_ALL_ROLES = "viewAllRoles_";
     private static final String VIEW_ALL_WORKFLOWS = "viewAllWorkflows_";
+    private static final String VIEW_AUTHORITY = "viewAuthority_";
     private static final String VIEW_CLIENT = "viewClient_";
     private static final String VIEW_DOCKET = "viewDocket_";
+    private static final String VIEW_IMPORT_CONFIGURATION = "viewImportConfiguration_";
+    private static final String VIEW_INDEX = "viewIndex_";
+    private static final String VIEW_LDAP_GROUP = "viewLdapGroup_";
+    private static final String VIEW_LDAP_SERVER = "viewLdapServer_";
+    private static final String VIEW_LTP_VALIDATION_CONFIGURATION = "viewLtpValidationConfiguration_";
+    private static final String VIEW_MAPPING_FILE = "viewMappingFile_";
     private static final String VIEW_PROCESS = "viewProcess_";
     private static final String VIEW_PROJECT = "viewProject_";
     private static final String VIEW_RULESET = "viewRuleset_";
@@ -132,32 +150,27 @@ public class SecurityConfig {
     }
 
     private void authorizeSpecificPages(HttpSecurity http) throws Exception {
+        authorizePageAuthorityEdit(http);
+        authorizePageCalendarEdit(http);
         authorizePageClientEdit(http);
-
+        authorizePageImportConfigurationEdit(http);
         authorizePageIndexing(http);
-
+        authorizePageLdapServerEdit(http);
+        authorizePageLtpValidationConfigurationEdit(http);
+        authorizePageMappingFileEdit(http);
         authorizePageProcesses(http);
-
         authorizePageProcessEdit(http);
-
+        authorizePageProcessFromTemplate(http);
         authorizePageProjects(http);
-
         authorizePageProjectEdit(http);
-
+        authorizePageTaskEdit(http);
         authorizePageTemplateEdit(http);
-
         authorizePageDocketEdit(http);
-
         authorizePageRulesetEdit(http);
-
         authorizePageWorkflowEdit(http);
-
         authorizePageTasks(http);
-
         authorizePageUsers(http);
-
         authorizePageRoleEdit(http);
-
         authorizePageLdapGroupEdit(http);
     }
 
@@ -174,8 +187,8 @@ public class SecurityConfig {
     private void authorizePageLdapGroupEdit(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/ldapgroupEdit*").hasAnyAuthority(
-                "editLdapGroup_" + GLOBAL,
-                "viewLdapGroup_" + GLOBAL)
+                EDIT_LDAP_GROUP + GLOBAL,
+                VIEW_LDAP_GROUP + GLOBAL)
         );
     }
 
@@ -196,8 +209,8 @@ public class SecurityConfig {
                 VIEW_ALL_USERS + CLIENT_ANY,
                 VIEW_ALL_ROLES + GLOBAL,
                 VIEW_ALL_ROLES + CLIENT_ANY,
-                "viewAllClients_" + GLOBAL,
-                "viewAllLdapGroups_" + GLOBAL)
+                VIEW_ALL_CIENTS + GLOBAL,
+                VIEW_ALL_LDAP_GROUPS + GLOBAL)
         );
     }
 
@@ -295,8 +308,8 @@ public class SecurityConfig {
     private void authorizePageIndexing(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
             .requestMatchers("/pages/indexingPage").hasAnyAuthority(
-                "editIndex_" + GLOBAL,
-                "viewIndex_" + GLOBAL)
+                EDIT_INDEX + GLOBAL,
+                VIEW_INDEX + GLOBAL)
         );
     }
 
@@ -307,6 +320,78 @@ public class SecurityConfig {
                 EDIT_CLIENT + CLIENT_ANY,
                 VIEW_CLIENT + GLOBAL,
                 VIEW_CLIENT + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageAuthorityEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/authorityEdit*").hasAnyAuthority(
+                EDIT_AUTHORITY + GLOBAL,
+                EDIT_AUTHORITY + CLIENT_ANY,
+                VIEW_AUTHORITY + GLOBAL,
+                VIEW_AUTHORITY + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageCalendarEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/calendarEdit*").hasAnyAuthority(
+                ADD_PROCESS + GLOBAL,
+                ADD_PROCESS + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageTaskEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/taskEdit*").hasAnyAuthority(
+                EDIT_TASK + GLOBAL,
+                EDIT_TASK + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageImportConfigurationEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/importConfigurationEdit*").hasAnyAuthority(
+                EDIT_IMPORT_CONFIGURATION + GLOBAL,
+                EDIT_IMPORT_CONFIGURATION + CLIENT_ANY,
+                VIEW_IMPORT_CONFIGURATION + GLOBAL,
+                VIEW_IMPORT_CONFIGURATION + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageLdapServerEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/ldapserverEdit*").hasAnyAuthority(
+                EDIT_LDAP_SERVER + GLOBAL,
+                VIEW_LDAP_SERVER + GLOBAL)
+        );
+    }
+
+    private void authorizePageLtpValidationConfigurationEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/ltpValidationConfigurationEdit*").hasAnyAuthority(
+                EDIT_LTP_VALIDATION_CONFIGURATION + GLOBAL,
+                EDIT_LTP_VALIDATION_CONFIGURATION + CLIENT_ANY,
+                VIEW_LTP_VALIDATION_CONFIGURATION + GLOBAL,
+                VIEW_LTP_VALIDATION_CONFIGURATION + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageMappingFileEdit(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/mappingFileEdit*").hasAnyAuthority(
+                EDIT_MAPPING_FILE + GLOBAL,
+                EDIT_MAPPING_FILE + CLIENT_ANY,
+                VIEW_MAPPING_FILE + GLOBAL,
+                VIEW_MAPPING_FILE + CLIENT_ANY)
+        );
+    }
+
+    private void authorizePageProcessFromTemplate(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(requests -> requests
+            .requestMatchers("/pages/processFromTemplate*").hasAnyAuthority(
+                ADD_PROCESS + GLOBAL,
+                ADD_PROCESS + CLIENT_ANY)
         );
     }
 
