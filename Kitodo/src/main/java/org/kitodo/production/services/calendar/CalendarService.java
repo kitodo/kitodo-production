@@ -47,7 +47,6 @@ import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 import org.kitodo.production.model.bibliography.course.metadata.MetadataEditMode;
-import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 
