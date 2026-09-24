@@ -11,20 +11,11 @@
 
 package org.kitodo.production.helper;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.kitodo.production.model.bibliography.course.Course;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,6 +25,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.kitodo.production.model.bibliography.course.Course;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 public class XMLUtilsTest {
 
@@ -66,7 +71,7 @@ public class XMLUtilsTest {
         Course course = new Course();
         Document document = course.toXML();
         byte[] byteArray = XMLUtils.documentToByteArray(document, 2);
-        Assertions.assertNotNull(byteArray);
+        assertNotNull(byteArray);
     }
 
     @Test
@@ -75,30 +80,30 @@ public class XMLUtilsTest {
         Node parentNode = document.createElement(TEST_ELEMENT);
         parentNode.appendChild(document.createElement(TEST_CHILD_ELEMENT));
         Element childNode = XMLUtils.getFirstChildWithTagName(parentNode, TEST_CHILD_ELEMENT);
-        Assertions.assertNotNull(childNode);
+        assertNotNull(childNode);
     }
 
     @Test
     public void shouldLoadInputStream() {
         InputStream inputStream = new ByteArrayInputStream(XML_STRING.getBytes(StandardCharsets.UTF_8));
-        Assertions.assertDoesNotThrow(() -> XMLUtils.load(inputStream));
+        assertDoesNotThrow(() -> XMLUtils.load(inputStream));
     }
 
     @Test
     public void shouldCreateNewDocument() {
-        Assertions.assertDoesNotThrow(XMLUtils::newDocument);
+        assertDoesNotThrow(XMLUtils::newDocument);
     }
 
     @Test
     public void shouldParseXMLString() {
-        Assertions.assertDoesNotThrow(() -> XMLUtils.parseXMLString(XML_STRING));
+        assertDoesNotThrow(() -> XMLUtils.parseXMLString(XML_STRING));
     }
 
     @Test
     public void shouldThrowExceptionWhenParsingMalformedXmlContent() {
-        SAXException saxException = Assertions.assertThrows(SAXException.class,
+        SAXException saxException = assertThrows(SAXException.class,
                 () -> XMLUtils.checkIfXmlIsWellFormed(MALFORMED_XML_STRING));
-        Assertions.assertEquals("The markup in the document following the root element must be well-formed.",
+        assertEquals("The markup in the document following the root element must be well-formed.",
                 saxException.getMessage());
     }
 
@@ -110,9 +115,9 @@ public class XMLUtilsTest {
                 + "<foo>&xxe;</foo>";
         // With DOCTYPE declarations disallowed, parsing must fail rather than
         // expand the external entity and disclose the file content.
-        SAXException exception = Assertions.assertThrows(SAXException.class,
+        SAXException exception = assertThrows(SAXException.class,
                 () -> XMLUtils.parseXMLString(payload));
-        Assertions.assertFalse(exception.getMessage().contains("XXE-CANARY-SECRET"));
+        assertFalse(exception.getMessage().contains("XXE-CANARY-SECRET"));
     }
 
     @Test
@@ -121,7 +126,7 @@ public class XMLUtilsTest {
         String payload = "<?xml version=\"1.0\"?>\n"
                 + "<!DOCTYPE foo [ <!ENTITY xxe SYSTEM \"file://" + secret.getAbsolutePath() + "\"> ]>\n"
                 + "<foo>&xxe;</foo>";
-        Assertions.assertThrows(SAXException.class,
+        assertThrows(SAXException.class,
                 () -> XMLUtils.checkIfXmlIsWellFormed(payload));
     }
 
@@ -133,20 +138,20 @@ public class XMLUtilsTest {
                 + "<ead><c level=\"file\">&xxe;</c></ead>";
         // With DTD support disabled, the StAX reader must reject the DOCTYPE
         // instead of resolving the external entity.
-        Assertions.assertThrows(XMLStreamException.class,
+        assertThrows(XMLStreamException.class,
                 () -> XMLUtils.getNumberOfEADElements(payload, "file"));
     }
 
     @Test
     public void shouldValidateXpathSyntax() {
-        Assertions.assertDoesNotThrow(() -> XMLUtils.validateXPathSyntax(VALID_XPATH));
+        assertDoesNotThrow(() -> XMLUtils.validateXPathSyntax(VALID_XPATH));
     }
 
     @Test
     public void shouldThrowExceptionWhenValidatingInvalidXPathSyntax() {
-        XPathExpressionException exception = Assertions.assertThrows(XPathExpressionException.class,
+        XPathExpressionException exception = assertThrows(XPathExpressionException.class,
                 () -> XMLUtils.validateXPathSyntax(INVALID_XPATH));
-        Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getMessage());
+        assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getMessage());
     }
 
     private File createTestFile() throws IOException {
