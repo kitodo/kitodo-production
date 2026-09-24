@@ -1683,9 +1683,22 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      *         empty String otherwise
      */
     public static String getPropertyValue(Process process, String propertyName) {
+        // metadata is saved to workpiece properties since Kitodo 3.9
+        for (Property workpieceProperty : process.getWorkpieces()) {
+            if (workpieceProperty.getTitle().equals(propertyName)) {
+                return workpieceProperty.getValue();
+            }
+        }
+        // metadata was saved to general properties before Kitodo 3.9
         for (Property property : process.getProperties()) {
             if (property.getTitle().equals(propertyName)) {
                 return property.getValue();
+            }
+        }
+        // arbitrary data can also be saved to template properties manually; this is not a standard use case, but it is possible
+        for (Property templateProperty : process.getTemplates()) {
+            if (templateProperty.getTitle().equals(propertyName)) {
+                return templateProperty.getValue();
             }
         }
         return "";
