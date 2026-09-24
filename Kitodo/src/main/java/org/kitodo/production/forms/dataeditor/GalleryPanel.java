@@ -130,7 +130,7 @@ public class GalleryPanel {
      */
     public Pair<PhysicalDivision, LogicalDivision> getLastSelection() {
         if (!dataEditor.getSelectedMedia().isEmpty()) {
-            return dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
+            return dataEditor.getSelectedMedia().getLast();
         } else if (dataEditor.getSelectedStructure().isPresent()
                 && !dataEditor.getSelectedStructure().get().getViews().isEmpty()) {
             return new ImmutablePair<>(
@@ -150,7 +150,7 @@ public class GalleryPanel {
         if (isSelected(galleryMediaContent, galleryStripe) && !dataEditor.getSelectedMedia().isEmpty()
                 && Objects.nonNull(galleryMediaContent)) {
             return Objects.equals(galleryMediaContent.getView().getPhysicalDivision(),
-                    dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1).getKey());
+                    dataEditor.getSelectedMedia().getLast().getKey());
         }
         return false;
     }
@@ -725,7 +725,7 @@ public class GalleryPanel {
                 }
             }
 
-            GalleryStripe lastStripe = galleryStripes.get(galleryStripes.size() - 1);
+            GalleryStripe lastStripe = galleryStripes.getLast();
             for (int i = 0; i <= lastIndex; i++) {
                 mediaWithinRange.add(
                         new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getPhysicalDivision(), lastStripe.getStructure()));
@@ -758,7 +758,7 @@ public class GalleryPanel {
                 }
             }
 
-            GalleryStripe lastStripe = galleryStripes.get(galleryStripes.size() - 1);
+            GalleryStripe lastStripe = galleryStripes.getLast();
             for (int i = lastStripe.getMedias().size() - 1; i >= lastIndex; i--) {
                 mediaWithinRange.add(
                         new ImmutablePair<>(lastStripe.getMedias().get(i).getView().getPhysicalDivision(), lastStripe.getStructure()));
@@ -1078,7 +1078,7 @@ public class GalleryPanel {
             return false;
         }
 
-        PhysicalDivision lastPhysicalDivision = medias.get(medias.size() - 1).getView().getPhysicalDivision();
+        PhysicalDivision lastPhysicalDivision = medias.getLast().getView().getPhysicalDivision();
         if (Objects.isNull(lastPhysicalDivision)) {
             return false;
         }
