@@ -453,7 +453,7 @@ public class LtpValidationHelper {
         validationResults.put(relativeFilePath, result);
 
         if (validationResultHasError(result, conditions, LtpValidationConditionSeverity.ERROR)) {
-            logger.error("uploaded file has validation errors: " + result);
+            logger.error("uploaded file has validation errors: {}", result);
             return false;
         }
 

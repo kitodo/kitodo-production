@@ -346,15 +346,15 @@ public class VariableReplacer {
 
     private String determineReplacementForGeneratorSource(Matcher variableFinder, String match) {
         if (Objects.isNull(process)) {
-            logger.warn("Cannot replace \"(" + match + ")\": no process given");
+            logger.warn("Cannot replace \"({})\": no process given", match);
             return variableFinder.group(1);
         }
         if (Objects.isNull(process.getProject())) {
-            logger.warn("Cannot replace \"(" + match + ")\": process has no project assigned");
+            logger.warn("Cannot replace \"({})\": process has no project assigned", match);
             return variableFinder.group(1);
         }
         if (Objects.isNull(process.getProject().getGeneratorSource())) {
-            logger.warn("Cannot replace \"(" + match + ")\": process has no generator source assigned");
+            logger.warn("Cannot replace \"({})\": process has no generator source assigned", match);
             return variableFinder.group(1);
         }
 
