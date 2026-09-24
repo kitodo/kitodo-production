@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -75,7 +76,7 @@ public class MetsKitodoWriterTest {
             "Implementation-Vendor: kitodo.org\n" +
             "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
-        FileUtils.write(manifestFile, manifest, "UTF-8");
+        FileUtils.write(manifestFile, manifest, StandardCharsets.UTF_8);
     }
 
     @AfterAll
