@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -89,7 +90,7 @@ public class MetsKitodoWrapperTest {
             "Implementation-Vendor: kitodo.org\n" +
             "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
-        FileUtils.write(manifestFile, manifest, "UTF-8");
+        FileUtils.write(manifestFile, manifest, StandardCharsets.UTF_8);
     }
 
     @AfterAll
