@@ -25,7 +25,7 @@ public enum ProcessState {
 
     private final String value;
 
-    private ProcessState(String value) {
+    ProcessState(String value) {
         this.value = value;
     }
 

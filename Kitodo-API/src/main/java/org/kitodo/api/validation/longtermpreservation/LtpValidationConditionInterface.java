@@ -33,7 +33,7 @@ public interface LtpValidationConditionInterface {
      * 
      * @return the property of the the file that is checked
      */
-    public String getProperty();
+    String getProperty();
 
     /**
      * Return the operation that is used to check the property against the
@@ -42,7 +42,7 @@ public interface LtpValidationConditionInterface {
      * @return the operation that is used to check the property against the
      *         condition values
      */
-    public LtpValidationConditionOperation getOperation();
+    LtpValidationConditionOperation getOperation();
 
     /**
      * Return a list of values that are checked against the property of the
@@ -56,7 +56,7 @@ public interface LtpValidationConditionInterface {
      * 
      * @return the list of values
      */
-    public List<String> getValues();
+    List<String> getValues();
 
     /**
      * Return the severity of the validation condition, whether the condition is
@@ -65,6 +65,6 @@ public interface LtpValidationConditionInterface {
      * 
      * @return the severity of the validation condition
      */
-    public LtpValidationConditionSeverity getSeverity();
+    LtpValidationConditionSeverity getSeverity();
 
 }

@@ -56,7 +56,7 @@ public enum FunctionalDivision {
      * @param mark
      *            how the special field is to be marked
      */
-    private FunctionalDivision(String mark) {
+    FunctionalDivision(String mark) {
         this.mark = mark;
     }
 

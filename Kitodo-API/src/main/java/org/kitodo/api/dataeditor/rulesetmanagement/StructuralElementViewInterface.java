@@ -42,5 +42,5 @@ public interface StructuralElementViewInterface extends ComplexMetadataViewInter
      *
      * @return a process title, if defined
      */
-    public Optional<String> getProcessTitle();
+    Optional<String> getProcessTitle();
 }
