@@ -23,18 +23,16 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.security.password.KitodoUserDetailsPasswordService;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.LoginTaskService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
@@ -87,12 +85,11 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
+        String username = authentication.getName();
         try {
-            User user = ServiceManager.getUserService().getByLdapLoginOrLogin(authentication.getName());
+            User user = ServiceManager.getUserService().getByLdapLoginOrLogin(username);
             if (!user.isActive()) {
-                throw new DisabledException(SpringSecurityMessageSource.getAccessor().getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.disabled",
-                    Helper.getString(LocaleHelper.getCurrentLocale(), "errorUserIsDisabled")));
+                throw new DisabledException(String.format("User account '%s' is disabled", user.getLogin()));
             }
             LdapGroup ldapGroup = user.getLdapGroup();
             boolean noLdapLoginTask = loginTaskService.getPendingLoginTaskForUserAndType(user, LoginTaskType.SAVE_USER_TO_LDAP).isEmpty();
@@ -108,6 +105,11 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             } else {
                 return doLoginTasks(user, daoAuthenticationProvider.authenticate(authentication));
             }
+        } catch (BadCredentialsException e) {
+            // log custom message containing username
+            String logMessage = String.format("Invalid password entered for user account '%s'", username);
+            logger.debug(logMessage);
+            throw new BadCredentialsException(logMessage);
         } catch (RuntimeException problem) {
             // if login fails because of some unchecked exception, log it
             // when in debug mode
