@@ -199,6 +199,8 @@ metadataEditor.gallery = {
      */
     pages: {
 
+        selectionHandledOnMouseDown: false,
+
         /**
          * Remember the current selection and its order by keeping a list of logical tree node ids.
          */
@@ -224,11 +226,13 @@ metadataEditor.gallery = {
          * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object
          */
         handleMouseDown(event, target) {
+            this.selectionHandledOnMouseDown = false;
             if (target.closest(".thumbnail-parent").find(".selected").length === 0) {
-                // do not trigger selection, if thumbnail was previously selected, such that 
+                // do not trigger selection, if thumbnail was previously selected, such that
                 // drag and drop for multiple selected thumbnails is possible
                 // otherwise, this event would select this thumbnail as only selection before dragging starts
                 this.handleSelect(event, target);
+                this.selectionHandledOnMouseDown = true;
             }
         },
 
@@ -240,11 +244,16 @@ metadataEditor.gallery = {
          */
         handleMouseUp(event, target) {
             metadataEditor.gallery.dragdrop.removeDragAmountIcon();
+
             if (metadataEditor.gallery.dragdrop.dragging) {
                 metadataEditor.gallery.dragdrop.dragging = false;
-            } else if (event.button !== 2 || target.closest(".thumbnail-parent").find(".selected").length === 0) {
+            } else if (!this.selectionHandledOnMouseDown
+                && (event.button !== 2
+                    || target.closest(".thumbnail-parent").find(".selected").length === 0)) {
                 this.handleSelect(event, target);
             }
+
+            this.selectionHandledOnMouseDown = false;
         },
 
         /**
