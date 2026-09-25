@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -51,7 +50,6 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -67,6 +65,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
 import org.kitodo.production.security.encrypt.EncryptionUtils;
 import org.kitodo.production.security.encrypt.KitodoEncryptionException;
+import org.kitodo.production.security.password.LdapUserPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -390,14 +389,9 @@ public class LdapServerService extends BaseBeanService<LdapServer, LdapServerDAO
             try {
                 ModificationItem[] mods = new ModificationItem[4];
 
-                // encryption of password and Base64-Encoding
-                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
-                md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-
                 // change attribute userPassword
                 BasicAttribute userPassword = new BasicAttribute("userPassword",
-                        "{" + passwordEncryption + "}" + encryptedPassword);
+                    LdapUserPasswordEncoder.encode(passwordEncryption, inNewPassword));
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
 
                 // change attribute lanmgrPassword

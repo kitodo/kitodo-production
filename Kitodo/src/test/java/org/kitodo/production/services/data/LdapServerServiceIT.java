@@ -40,6 +40,10 @@ public class LdapServerServiceIT {
         LdapServer ldapServer = ldapServerService.getById(1);
         assertEquals("FirstLdapServer", ldapServer.getTitle(), "LpadServer title is not matching");
         assertFalse(ldapServer.isUseSsl(), "LpadServer useSsl is not matching");
-        assertEquals("SHA", ldapServer.getPasswordEncryption().getTitle(), "LdapServer password encoding is not matching");
+        assertEquals(
+            "SHA-1 with Salt (maximum compatibility)", 
+            ldapServer.getPasswordEncryption().getTitle(), 
+            "LdapServer password encoding is not matching"
+        );
     }
 }

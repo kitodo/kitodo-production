@@ -14,7 +14,6 @@ package org.kitodo.production.ldap;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.Objects;
@@ -43,13 +42,14 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.PasswordEncryption;
+import org.kitodo.production.security.password.LdapUserPasswordEncoder;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can
@@ -113,16 +113,9 @@ public class LdapUser implements DirContext {
             digester.doFinal(hmm, 0);
             this.attributes.put("sambaNTPassword", toHexString(hmm));
 
-            /*
-             * Encryption of password und Base64-Enconding
-             */
-
-            String passwordEncrytion = ldapGroup.getLdapServer().getPasswordEncryption().getTitle();
-
-            MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
-            md.update(inPassword.getBytes(StandardCharsets.UTF_8));
-            String encodedDigest = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + encodedDigest);
+            // userPassword attribute
+            PasswordEncryption passwordEncodingMethod = ldapGroup.getLdapServer().getPasswordEncryption();
+            this.attributes.put("userPassword", LdapUserPasswordEncoder.encode(passwordEncodingMethod, inPassword));
         }
     }
 
