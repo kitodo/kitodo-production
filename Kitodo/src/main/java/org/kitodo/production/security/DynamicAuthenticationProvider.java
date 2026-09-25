@@ -11,7 +11,6 @@
 
 package org.kitodo.production.security;
 
-import java.util.Locale;
 import java.util.Objects;
 
 import jakarta.enterprise.context.RequestScoped;
@@ -24,7 +23,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.password.KitodoUserDetailsPasswordService;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.LoginTaskService;
@@ -91,7 +89,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         try {
             User user = ServiceManager.getUserService().getByLdapLoginOrLogin(username);
             if (!user.isActive()) {
-                throw new DisabledException(Helper.getTranslation(Locale.ENGLISH, "errorUserIsDisabled", user.getLogin()));
+                throw new DisabledException(String.format("User account '%s' is disabled", user.getLogin()));
             }
             LdapGroup ldapGroup = user.getLdapGroup();
             boolean noLdapLoginTask = loginTaskService.getPendingLoginTaskForUserAndType(user, LoginTaskType.SAVE_USER_TO_LDAP).isEmpty();
@@ -109,7 +107,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             }
         } catch (BadCredentialsException e) {
             // log custom message containing username
-            String logMessage = Helper.getTranslation(Locale.ENGLISH, "loginInvalidPassword", username);
+            String logMessage = String.format("Invalid password entered for user account '%s'", username);
             logger.debug(logMessage);
             throw new BadCredentialsException(logMessage);
         } catch (RuntimeException problem) {
