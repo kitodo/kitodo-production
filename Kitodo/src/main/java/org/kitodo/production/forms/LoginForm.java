@@ -20,9 +20,12 @@ import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.controller.SessionClientController;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.CustomLoginSuccessHandler;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
@@ -31,6 +34,7 @@ import org.primefaces.PrimeFaces;
 @Named("LoginForm")
 @SessionScoped
 public class LoginForm implements Serializable {
+    private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private User loggedUser;
     private boolean firstVisit = true;
     private static final String INDEXING_PAGE = "system?tabIndex=";
@@ -119,6 +123,16 @@ public class LoginForm implements Serializable {
                 redirect(context);
             }
         }
+    }
+
+    /**
+     * Write the original error message to the log files and return a save generic error message to the user.
+     * @param errorMessage the original error message
+     * @return the generic error message presented to the user
+     */
+    public String getGenericErrorMessage(String errorMessage) {
+        logger.error(errorMessage);
+        return Helper.getTranslation("loginBadCredentials");
     }
 
     private void redirect(ExternalContext context) throws IOException {

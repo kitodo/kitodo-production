@@ -207,7 +207,7 @@ public class ProcessTestUtils {
         try {
             ProcessService.deleteProcess(process.getId());
         } catch (Exception e) {
-            logger.error("Error removing process " + process.getTitle() + " (" + process.getId() + "): " + e.getMessage());
+            logger.error("Error removing process {} ({}): {}", process.getTitle(), process.getId(), e.getMessage());
         }
     }
 

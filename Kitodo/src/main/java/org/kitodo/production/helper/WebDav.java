@@ -17,7 +17,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -196,12 +195,7 @@ public class WebDav implements Serializable {
      */
     private String getEncodedProcessLinkName(Process process) {
         String encodedProcessLinkName;
-        try {
-            encodedProcessLinkName = URLEncoder.encode(getProcessLinkName(process), StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage(), e);
-            return "";
-        }
+        encodedProcessLinkName = URLEncoder.encode(getProcessLinkName(process), StandardCharsets.UTF_8);
         return encodedProcessLinkName;
     }
 

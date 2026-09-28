@@ -59,7 +59,8 @@
                     <h3>#{msgs.pleaseSignIn}</h3>
                     <form action="${request.contextPath}/login" method="post">
                         <span style="color: red; ">
-                            <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.localizedMessage}"/>
+                            <h:outputText rendered="${not empty SPRING_SECURITY_LAST_EXCEPTION.localizedMessage}"
+                                          value="#{LoginForm.getGenericErrorMessage(SPRING_SECURITY_LAST_EXCEPTION.localizedMessage)}"/>
                         </span>
                         <div>
                             <label for="username">#{msgs.username}</label>

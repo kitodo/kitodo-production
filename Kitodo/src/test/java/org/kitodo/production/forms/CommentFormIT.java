@@ -11,12 +11,13 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
@@ -68,7 +69,7 @@ public class CommentFormIT {
         long numberOfCommentsBeforeAddingComment = ServiceManager.getCommentService().count();
         commentForm.addComment();
         long numberOfCommentsAfterAddingComment = ServiceManager.getCommentService().count();
-        Assertions.assertEquals(numberOfCommentsAfterAddingComment, numberOfCommentsBeforeAddingComment + 1);
+        assertEquals(numberOfCommentsAfterAddingComment, numberOfCommentsBeforeAddingComment + 1);
     }
 
     @Test
@@ -80,7 +81,7 @@ public class CommentFormIT {
         long numberOfCommentsBeforeRemovingComment = ServiceManager.getCommentService().count();
         commentForm.removeComment(testComment);
         long numberOfCommentsAfterRemovingComment = ServiceManager.getCommentService().count();
-        Assertions.assertEquals(numberOfCommentsAfterRemovingComment, numberOfCommentsBeforeRemovingComment - 1);
+        assertEquals(numberOfCommentsAfterRemovingComment, numberOfCommentsBeforeRemovingComment - 1);
     }
 
     @Test
@@ -92,12 +93,12 @@ public class CommentFormIT {
         List<Task> tasks = commentForm.getPreviousStepsForProblemReporting();
         long numberOfClosedTasks = testProcess.getTasks().stream()
                 .filter(t -> TaskStatus.DONE.equals(t.getProcessingStatus())).count();
-        Assertions.assertEquals(numberOfClosedTasks, tasks.size(), "Number of potential correction tasks is wrong");
+        assertEquals(numberOfClosedTasks, tasks.size(), "Number of potential correction tasks is wrong");
         WorkflowControllerService workflowControllerService = new WorkflowControllerService();
         workflowControllerService.setTasksStatusUp(testProcess);
         commentForm.setProcessById(testProcess.getId());
         tasks = commentForm.getPreviousStepsForProblemReporting();
-        Assertions.assertEquals(numberOfClosedTasks + 1, tasks.size(), "List or potential correction tasks for error" +
+        assertEquals(numberOfClosedTasks + 1, tasks.size(), "List or potential correction tasks for error" +
                 " reporting should contain at least one more task than before after setting up the process status");
     }
 

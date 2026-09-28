@@ -95,7 +95,7 @@ public class KitodoJhoveRepInfoParser {
         } else if (propertyValue instanceof long[]) {
             propertyMap.put(propertyKey, Arrays.toString((long[]) propertyValue));
         } else {
-            logger.debug("JHove RepInfo contains property array of unknown type: " + propertyValue.toString());
+            logger.debug("JHove RepInfo contains property array of unknown type: {}", propertyValue.toString());
         }
     }
 

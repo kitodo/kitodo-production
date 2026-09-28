@@ -206,8 +206,7 @@ public abstract class Page<T> {
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
             } catch (TimeoutException e) {
-                logger.error(
-                    "Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
+                logger.error("Clicking on button with id {} was not successful. Retrying now.", button.getAttribute("id"));
             }
         }
         throw new TimeoutException("Could not access button: " + button.getAttribute("id") + "!");
