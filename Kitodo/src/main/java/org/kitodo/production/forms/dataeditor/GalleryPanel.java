@@ -496,12 +496,10 @@ public class GalleryPanel {
                     physicalDivision,
                     lastSelection.getKey());
 
-                if (stripeIndex == 0) {
-                    media.setSelectedInUnstructuredStripe(selected);
-                    media.setLastSelectionInUnstructuredStripe(lastSelected);
-                } else {
-                    stripe.setSelectionState(media.getId(), selected, lastSelected);
-                }
+                stripe.setSelectionState(
+                    media.getId(),
+                    selected,
+                    lastSelected);
             }
         }
     }

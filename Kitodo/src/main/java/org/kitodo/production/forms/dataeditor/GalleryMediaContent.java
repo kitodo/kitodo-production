@@ -45,7 +45,7 @@ public class GalleryMediaContent {
     private final String id;
 
     /**
-     * URI to content for media preview.
+     * Internal URI used to locate the media preview content.
      */
     private final URI previewUri;
 
@@ -81,15 +81,14 @@ public class GalleryMediaContent {
      */
     private String logicalTreeNodeId;
 
+    /**
+     * Public URL used by the browser to retrieve the media preview.
+     */
     private String previewUrl;
 
     private boolean previewTooltip;
 
     private int assignmentIndex;
-
-    private boolean selectedInUnstructuredStripe;
-
-    private boolean lastSelectionInUnstructuredStripe;
 
     private final Supplier<String> previewUrlSupplier;
 
@@ -308,42 +307,6 @@ public class GalleryMediaContent {
      */
     public boolean isShowAssignmentIndex() {
         return assignmentIndex > 0;
-    }
-
-    /**
-     * Returns whether this media is selected in the unstructured stripe.
-     *
-     * @return true if this media is selected in the unstructured stripe
-     */
-    public boolean isSelectedInUnstructuredStripe() {
-        return selectedInUnstructuredStripe;
-    }
-
-    /**
-     * Sets whether this media is selected in the unstructured stripe.
-     *
-     * @param selectedInUnstructuredStripe whether this media is selected
-     */
-    public void setSelectedInUnstructuredStripe(boolean selectedInUnstructuredStripe) {
-        this.selectedInUnstructuredStripe = selectedInUnstructuredStripe;
-    }
-
-    /**
-     * Returns whether this media is the last selection in the unstructured stripe.
-     *
-     * @return true if this media is the last selection in the unstructured stripe
-     */
-    public boolean isLastSelectionInUnstructuredStripe() {
-        return lastSelectionInUnstructuredStripe;
-    }
-
-    /**
-     * Sets whether this media is the last selection in the unstructured stripe.
-     *
-     * @param lastSelectionInUnstructuredStripe whether this media is the last selection
-     */
-    public void setLastSelectionInUnstructuredStripe(boolean lastSelectionInUnstructuredStripe) {
-        this.lastSelectionInUnstructuredStripe = lastSelectionInUnstructuredStripe;
     }
 
     /**
