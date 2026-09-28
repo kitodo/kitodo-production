@@ -141,6 +141,13 @@ public class GalleryStripe {
         return Boolean.TRUE.equals(lastSelectedMedia.get(mediaId));
     }
 
+    /**
+     * Sets the selection state of the media with the given ID.
+     *
+     * @param mediaId ID of the media
+     * @param selected whether the media is selected
+     * @param lastSelected whether the media is the last selected media
+     */
     public void setSelectionState(String mediaId, boolean selected, boolean lastSelected) {
         selectedMedia.put(mediaId, selected);
         lastSelectedMedia.put(mediaId, lastSelected);
