@@ -46,7 +46,7 @@ public class LdapUserPasswordEncoderTest {
 
         for (PasswordEncryption method : saltedMethods) {
             String hashOne = LdapUserPasswordEncoder.encode(method, "Test$234");
-            String hashTwo = LdapUserPasswordEncoder.encode(method,"Test$234");
+            String hashTwo = LdapUserPasswordEncoder.encode(method, "Test$234");
             assertNotEquals(hashOne, hashTwo);
         }   
     }
