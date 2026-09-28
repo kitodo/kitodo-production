@@ -13,6 +13,7 @@ package org.kitodo.command;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,6 @@ import org.kitodo.api.command.CommandResult;
 public class Command implements CommandInterface {
 
     private static final Logger logger = LogManager.getLogger(Command.class);
-    private static final String CHARSET = "UTF-8";
 
     /**
      * Method executes a script.
@@ -85,7 +85,7 @@ public class Command implements CommandInterface {
     private static ArrayList<String> inputStreamArrayToList(InputStream inputStream) {
         ArrayList<String> list = new ArrayList<>();
 
-        try (Scanner inputLines = new Scanner(inputStream, CHARSET)) {
+        try (Scanner inputLines = new Scanner(inputStream, StandardCharsets.UTF_8)) {
             while (inputLines.hasNextLine()) {
                 String myLine = inputLines.nextLine();
                 list.add(myLine);
