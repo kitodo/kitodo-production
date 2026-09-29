@@ -18,6 +18,7 @@ import java.util.Objects;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.http.Cookie;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
@@ -98,7 +99,7 @@ public class LocaleHelper {
         if (Objects.nonNull(securityUserDetails)) {
             try {
                 User user = ServiceManager.getUserService().getById(securityUserDetails.getId());
-                return new Locale.Builder().setLanguageTag(user.getLanguage()).build();
+                return LocaleUtils.toLocale(user.getLanguage());
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorLoadingOne",
                     new Object[] {ObjectType.USER.getTranslationSingular(), securityUserDetails.getId() }, logger, e);
@@ -132,7 +133,7 @@ public class LocaleHelper {
         if (facesContext.getExternalContext().getRequestCookieMap().containsKey(COOKIE_LANG_NAME)) {
             // locale from cookie
             Cookie cookie = (Cookie) facesContext.getExternalContext().getRequestCookieMap().get(COOKIE_LANG_NAME);
-            locale = new Locale.Builder().setLanguageTag(cookie.getValue()).build();
+            locale = LocaleUtils.toLocale(cookie.getValue());
         } else {
             locale = facesContext.getExternalContext().getRequestLocale(); // browser locale
         }
