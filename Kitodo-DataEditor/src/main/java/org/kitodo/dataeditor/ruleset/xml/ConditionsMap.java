@@ -18,7 +18,7 @@ import java.util.Map;
 
 class ConditionsMap extends HashMap<String, Map<String, Condition>> implements ConditionsMapInterface {
 
-    public ConditionsMap(List<Condition> conditions) {
+    ConditionsMap(List<Condition> conditions) {
         for (Condition condition : conditions) {
             super.computeIfAbsent(condition.getKey(), unused -> new HashMap<>()).put(condition.getEquals(), condition);
         }
