@@ -95,6 +95,7 @@
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>3.5.9</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+        <fasterxml.jackson.version>2.21.5</fasterxml.jackson.version>
     </properties>
 
     <repositories>
@@ -462,12 +463,12 @@ from system library in Java 11+ -->
 	        <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.18.9</version>
+                <version>${fasterxml.jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.21.5</version>
+                <version>${fasterxml.jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
