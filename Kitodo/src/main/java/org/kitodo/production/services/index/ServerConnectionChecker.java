@@ -38,7 +38,7 @@ class ServerConnectionChecker implements Runnable {
 
     private final IndexingService indexingService;
 
-    public ServerConnectionChecker(IndexingService indexingService) {
+    ServerConnectionChecker(IndexingService indexingService) {
         this.indexingService = indexingService;
     }
 
