@@ -1654,7 +1654,7 @@ public class StructurePanel implements Serializable {
             dragParents = MetadataEditor.getAncestorsOfLogicalDivision(dragStructure,
                     dataEditor.getWorkpiece().getLogicalStructure());
             if (!dragParents.isEmpty()) {
-                LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
+                LogicalDivision parentStructure = dragParents.getLast();
                 if (parentStructure.getChildren().contains(dragStructure)) {
                     return true;
                 } else {
@@ -1685,7 +1685,7 @@ public class StructurePanel implements Serializable {
                 throw new IllegalArgumentException(Helper.getTranslation("dataEditor.noParentsError",
                     dragNode.getLabel()));
             } else {
-                PhysicalDivision parentUnit = dragParents.get(dragParents.size() - 1);
+                PhysicalDivision parentUnit = dragParents.getLast();
                 if (parentUnit.getChildren().contains(dragUnit)) {
                     return true;
                 } else {
