@@ -50,7 +50,7 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
      *            user entered search value
      * @return search value for like search
      */
-    private static final String likeValue(LikeSearch likeSearch, String value) {
+    private static String likeValue(LikeSearch likeSearch, String value) {
         boolean asteriskAllowed = Objects.equals(likeSearch, LikeSearch.ALLOWED);
         if (!asteriskAllowed) {
             value = value.replace("*", "");

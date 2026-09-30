@@ -75,7 +75,7 @@ public class KitodoJhoveBase {
      * 
      * @return the initialize JhoveBase instance
      */
-    private static final JhoveBase initBase() {
+    private static JhoveBase initBase() {
         logger.debug("initialize jhove base class and load jhove modules");
         try {
             JhoveBase base = new JhoveBase();
