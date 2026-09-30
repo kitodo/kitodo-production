@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.PhaseId;
@@ -44,7 +45,7 @@ public class GalleryMediaContent {
     private final String id;
 
     /**
-     * URI to content for media preview.
+     * Internal URI used to locate the media preview content.
      */
     private final URI previewUri;
 
@@ -81,6 +82,17 @@ public class GalleryMediaContent {
     private String logicalTreeNodeId;
 
     /**
+     * Public URL used by the browser to retrieve the media preview.
+     */
+    private String previewUrl;
+
+    private boolean previewTooltip;
+
+    private int assignmentIndex;
+
+    private final Supplier<String> previewUrlSupplier;
+
+    /**
      * Creates a new gallery media content.
      *
      * @param canonical
@@ -89,9 +101,11 @@ public class GalleryMediaContent {
      *         URI to content for media preview. Can be {@code null}, then a placeholder is used.
      * @param mediaViewUri
      *         URI to the content for the media view. Can be {@code null}, then no media view is offered.
+     * @param previewUrlSupplier
+     *         supplier used to lazily create the preview URL
      */
     GalleryMediaContent(MediaContentType type, View view, String canonical, String previewMimeType, URI previewUri,
-            String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId) {
+            String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId, Supplier<String> previewUrlSupplier) {
         this.type = type;
         this.view = view;
         this.id = canonical;
@@ -100,6 +114,7 @@ public class GalleryMediaContent {
         this.mediaViewMimeType = mediaViewMimeType;
         this.mediaViewUri = mediaViewUri;
         this.logicalTreeNodeId = logicalTreeNodeId;
+        this.previewUrlSupplier = previewUrlSupplier;
     }
 
     /**
@@ -235,6 +250,63 @@ public class GalleryMediaContent {
      */
     public String getType() {
         return type.name();
+    }
+
+    /**
+     * Returns the prepared preview URL for this media.
+     *
+     * @return preview URL
+     */
+    public String getPreviewUrl() {
+        if (Objects.isNull(previewUrl) && Objects.nonNull(previewUrlSupplier)) {
+            previewUrl = previewUrlSupplier.get();
+        }
+        return previewUrl;
+    }
+
+    /**
+     * Returns whether the preview tooltip should be shown for this media.
+     *
+     * @return true if the preview tooltip should be shown
+     */
+    public boolean isPreviewTooltip() {
+        return previewTooltip;
+    }
+
+    /**
+     * Sets whether the preview tooltip should be shown for this media.
+     *
+     * @param previewTooltip whether the preview tooltip should be shown
+     */
+    public void setPreviewTooltip(boolean previewTooltip) {
+        this.previewTooltip = previewTooltip;
+    }
+
+    /**
+     * Returns the index of this media in multiple assignments.
+     *
+     * @return assignment index
+     */
+    public int getAssignmentIndex() {
+        return assignmentIndex;
+    }
+
+    /**
+     * Sets the index of this media in multiple assignments.
+     *
+     * @param assignmentIndex assignment index
+     */
+    public void setAssignmentIndex(int assignmentIndex) {
+        this.assignmentIndex = assignmentIndex;
+    }
+
+    /**
+     * Returns whether the multiple-assignment index should be shown.
+     *
+     * @return true if the assignment index is greater than 0
+     */
+    public boolean isShowAssignmentIndex() {
+        return assignmentIndex > 0;
     }
 
     /**
