@@ -90,7 +90,7 @@
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.7.15</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
-        <fasterxml.jackson.version>2.22.2</fasterxml.jackson.version>
+        <fasterxml.jackson.version>2.22.3</fasterxml.jackson.version>
     </properties>
 
     <repositories>
