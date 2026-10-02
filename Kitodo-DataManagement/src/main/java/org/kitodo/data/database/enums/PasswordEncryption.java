@@ -16,8 +16,17 @@ package org.kitodo.data.database.enums;
  * database.
  */
 public enum PasswordEncryption {
-    SHA(0, "SHA"),
-    MD5(1, "MD5");
+    SHA(0, "SHA-1 (insecure)"),
+    MD5(1, "MD5 (insecure)"),
+
+    // Salted SHA-1, see https://man7.org/linux/man-pages/man5/slapd.conf.5.html
+    SSHA(2, "SHA-1 with Salt (maximum compatibility)"),
+
+    // Salted SHA-256 via Crypt, see https://man7.org/linux/man-pages/man3/crypt.3.html
+    CRYPT_5(3, "SHA-256 with Salt (Linux only, libcrypt required)"),
+
+    // Salted SHA-512 via Crypt, see https://man7.org/linux/man-pages/man3/crypt.3.html
+    CRYPT_6(4, "SHA-512 with Salt (recommended, Linux only, libcrypt required)");
 
     private final int value;
     private final String title;

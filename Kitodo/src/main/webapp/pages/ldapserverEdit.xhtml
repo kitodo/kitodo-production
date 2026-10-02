@@ -151,7 +151,8 @@
                                              disabled="#{isViewMode}"
                                              required="#{empty param['editForm:saveButtonToggler']}">
                                 <f:selectItems value="#{LdapServerEditView.passwordEncryption}" var="encryption"
-                                               itemValue="#{encryption}" />
+                                               itemValue="#{encryption}" 
+                                               itemLabel="#{encryption.title}" />
                                 <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>

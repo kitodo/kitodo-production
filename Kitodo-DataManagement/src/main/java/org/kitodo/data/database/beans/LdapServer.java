@@ -56,7 +56,7 @@ public class LdapServer extends BaseBean {
 
     @Column(name = "passwordEncryption")
     @Convert(converter = PasswordEncryptionConverter.class)
-    private PasswordEncryption passwordEncryption = PasswordEncryption.MD5;
+    private PasswordEncryption passwordEncryption = PasswordEncryption.SSHA;
 
     @Column(name = "rootCertificate")
     private String rootCertificate;
