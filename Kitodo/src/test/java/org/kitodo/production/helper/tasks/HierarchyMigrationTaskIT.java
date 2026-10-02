@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class HierarchyMigrationTaskIT {
                 + "                <mets:mptr xlink:href=\"\" LOCTYPE=\"URL\"/>\n" + "            </mets:div>\n"
                 + "        </mets:div>\n" + "    </mets:structMap>\n" + "</mets:mets>\n");
         File processHome = new File(ConfigCore.getKitodoDataDirectory(), "2");
-        FileUtils.writeLines(new File(processHome, "meta_anchor.xml"), "UTF-8", lines);
+        FileUtils.writeLines(new File(processHome, "meta_anchor.xml"), StandardCharsets.UTF_8.name(), lines);
     }
 
     private static void createTestMetafile() throws Exception {
@@ -159,7 +160,7 @@ public class HierarchyMigrationTaskIT {
                 + "                <mets:div ID=\"LOG_0011\" TYPE=\"Article\"/>\n"
                 + "            </mets:div>\n" + "        </mets:div>\n" + "    </mets:structMap>\n" + "</mets:mets>\n");
         File processHome = new File(ConfigCore.getKitodoDataDirectory(), "2");
-        FileUtils.writeLines(new File(processHome, "meta.xml"), "UTF-8", lines);
+        FileUtils.writeLines(new File(processHome, "meta.xml"), StandardCharsets.UTF_8.name(), lines);
     }
 
     private static void cleanUp() {

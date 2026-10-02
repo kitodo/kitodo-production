@@ -62,7 +62,7 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
         startActiveMQ();
     }
 
-    private static final Optional<Manifest> retrieveManifestFileAsStream(ServletContext context) {
+    private static Optional<Manifest> retrieveManifestFileAsStream(ServletContext context) {
         try (InputStream manifestResource = context.getResourceAsStream("/META-INF/MANIFEST.MF")) {
             if (Objects.nonNull(manifestResource)) {
                 return Optional.of(new Manifest(manifestResource));

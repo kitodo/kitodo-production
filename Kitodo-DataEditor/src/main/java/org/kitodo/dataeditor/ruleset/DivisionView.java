@@ -38,7 +38,7 @@ class DivisionView extends NestedKeyView<DivisionDeclaration> implements Structu
      * @param priorityList
      *            the user's wish list for the best possible translation
      */
-    public DivisionView(Ruleset ruleset, DivisionDeclaration divisionDeclaration, String acquisitionStage,
+    DivisionView(Ruleset ruleset, DivisionDeclaration divisionDeclaration, String acquisitionStage,
             List<LanguageRange> priorityList) {
 
         super(ruleset, divisionDeclaration,

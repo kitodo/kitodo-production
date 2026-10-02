@@ -14,6 +14,7 @@ package org.kitodo.production.editor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class XMLEditorTest {
         xmlEditor.loadXMLConfiguration(KitodoConfigFile.PROJECT_CONFIGURATION.getName());
         xmlEditor.setXMLConfiguration(SAVE_XML);
         xmlEditor.saveXMLConfiguration();
-        String savedString = FileUtils.readFileToString(KitodoConfigFile.PROJECT_CONFIGURATION.getFile(), "utf-8");
+        String savedString = FileUtils.readFileToString(KitodoConfigFile.PROJECT_CONFIGURATION.getFile(), StandardCharsets.UTF_8);
         assertEquals(SAVE_XML, savedString);
     }
 }

@@ -145,7 +145,7 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
      * @param priorityList
      *            the user’s wish list for the best possible translation
      */
-    public NestedKeyView(Ruleset ruleset, D declaration, Rule rule, Settings settings,
+    NestedKeyView(Ruleset ruleset, D declaration, Rule rule, Settings settings,
             List<LanguageRange> priorityList) {
 
         super(declaration, rule, priorityList);

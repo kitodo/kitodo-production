@@ -213,7 +213,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            type of the {@code <structMap>} to read
      * @return a stream of {@code <structMap>}s
      */
-    private static final Stream<StructMapType> getStructMapsStreamByType(Mets mets, String type) {
+    private static Stream<StructMapType> getStructMapsStreamByType(Mets mets, String type) {
         return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
     }
 

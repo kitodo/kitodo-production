@@ -19,6 +19,7 @@ import edu.harvard.hul.ois.jhove.RepInfo;
 
 import java.io.File;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -74,11 +75,11 @@ public class KitodoJhoveBase {
      * 
      * @return the initialize JhoveBase instance
      */
-    private static final JhoveBase initBase() {
+    private static JhoveBase initBase() {
         logger.debug("initialize jhove base class and load jhove modules");
         try {
             JhoveBase base = new JhoveBase();
-            base.setEncoding("utf-8");
+            base.setEncoding(StandardCharsets.UTF_8.name());
             for (String moduleClass : JHOVE_MODULE_CLASSES) {
                 try {
                     Class<?> cl = Class.forName(moduleClass);

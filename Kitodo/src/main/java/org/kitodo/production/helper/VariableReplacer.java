@@ -116,7 +116,7 @@ public class VariableReplacer {
      * instructions for obsolete replacement patterns from the configuration
      * file.
      */
-    private final void initializeLegacyVariablesPreprocessor() {
+    private void initializeLegacyVariablesPreprocessor() {
         StringBuilder regexBuilder = null;
         boolean useLegacyVariablesPreprocessor = false;
         for (Iterator<String> iterator = ConfigCore.getConfig().getKeys(); iterator.hasNext();) {

@@ -31,7 +31,7 @@ public class NewspaperMigrationTask extends EmptyTask {
     /**
      * The migration is performed in three parts that build upon each other.
      */
-    private static enum Part {
+    private enum Part {
         /**
          * First, the individual processes are converted.
          */

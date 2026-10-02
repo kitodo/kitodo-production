@@ -65,7 +65,7 @@ public class FLocatXmlElementAccess {
         uri = getAndRepairUri(file);
     }
 
-    private final URI getAndRepairUri(FileType file) {
+    private URI getAndRepairUri(FileType file) {
         String href = file.getFLocat().getFirst().getHref();
         try {
             return new URI(href);
