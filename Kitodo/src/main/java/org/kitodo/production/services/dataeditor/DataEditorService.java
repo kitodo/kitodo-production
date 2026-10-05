@@ -657,4 +657,24 @@ public class DataEditorService {
         }
         return false;
     }
+
+    /**
+     * Removes all references to previously deleted media from the given workpiece.
+     *
+     * @param workpiece workpiece from which deleted media is removed
+     * @param deleted physical division representing the deleted media
+     */
+    public static void removeDeletedMediaFromWorkpiece(Workpiece workpiece, PhysicalDivision deleted) {
+        workpiece.getAllLogicalDivisions().forEach(logicalDivision ->
+            logicalDivision.getViews()
+                .removeIf(view -> containsMedia(view.getPhysicalDivision(), deleted)));
+
+        workpiece.getPhysicalStructure().getChildren()
+            .removeIf(physicalDivision -> containsMedia(physicalDivision, deleted));
+    }
+
+    private static boolean containsMedia(PhysicalDivision physicalDivision, PhysicalDivision deleted) {
+        return physicalDivision.getMediaFiles().values().stream()
+            .anyMatch(deleted.getMediaFiles().values()::contains);
+    }
 }
