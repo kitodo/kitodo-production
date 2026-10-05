@@ -56,6 +56,7 @@ import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
@@ -433,7 +434,7 @@ public class UploadFileDialog {
     private void addMediaToWorkpiece() throws InvalidImagesException, MediaNotFoundException {
         ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
         for (PhysicalDivision deleted : dataEditor.getUnsavedDeletedMedia()) {
-            removeDeletedMediaFromWorkpiece(deleted);
+            DataEditorService.removeDeletedMediaFromWorkpiece(dataEditor.getWorkpiece(), deleted);
         }
 
         List<View> views = selectedMedia.stream()
@@ -456,20 +457,6 @@ public class UploadFileDialog {
             default:
                 throw new IllegalArgumentException("Position of new div element is not supported");
         }
-    }
-
-    private void removeDeletedMediaFromWorkpiece(PhysicalDivision deleted) {
-        dataEditor.getWorkpiece().getAllLogicalDivisions().forEach(logicalDivision ->
-            logicalDivision.getViews()
-                .removeIf(view -> containsDeletedMedia(view.getPhysicalDivision(), deleted)));
-
-        dataEditor.getWorkpiece().getPhysicalStructure().getChildren()
-            .removeIf(physicalDivision -> containsDeletedMedia(physicalDivision, deleted));
-    }
-
-    private static boolean containsDeletedMedia(PhysicalDivision physicalDivision, PhysicalDivision deleted) {
-        return physicalDivision.getMediaFiles().values().stream()
-            .anyMatch(deleted.getMediaFiles().values()::contains);
     }
 
     /**

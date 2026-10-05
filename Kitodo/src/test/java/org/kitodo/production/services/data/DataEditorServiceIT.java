@@ -39,6 +39,8 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -57,6 +59,7 @@ public class DataEditorServiceIT {
     private static final String TEST_PROCESS_TITLE = "DataEditorTestProcess";
     private static final String TEST_METADATA_FILE = "testmeta.xml";
     private static final String TEST_RULESET = "src/test/resources/rulesets/ruleset_test.xml";
+    private static final String TEST_DELETED_MEDIA_FILE = "testDeletedMediaRediscoveryMeta.xml";
     private static final String ENGLISH = "en";
     private static final String CONTRIBUTOR_PERSON = "ContributorPerson";
     private static final String EXPECTED_EXCEPTION_MESSAGE = "Unable to update metadata of process %d; " +
@@ -68,6 +71,7 @@ public class DataEditorServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.insertFoldersForSecondProject();
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
         User userOne = ServiceManager.getUserService().getById(1);
@@ -197,5 +201,51 @@ public class DataEditorServiceIT {
         LogicalDivision logicalRoot = workpiece.getLogicalStructure();
         assertNotNull(logicalRoot);
         return logicalRoot;
+    }
+
+    @Test
+    public void shouldRemoveDeletedMediaRediscoveredByMediaSearch() throws Exception {
+        testProcessId = MockDatabase.insertTestProcessForMediaReferencesTestIntoSecondProject();
+        ProcessTestUtils.copyTestFiles(testProcessId, TEST_DELETED_MEDIA_FILE);
+
+        Process process = ServiceManager.getProcessService().getById(testProcessId);
+
+        Workpiece workpiece = ServiceManager.getMetsService()
+            .loadWorkpiece(ServiceManager.getProcessService().getMetadataFileUri(process));
+        PhysicalDivision deleted = workpiece.getAllPhysicalDivisions().stream()
+            .filter(physicalDivision -> !physicalDivision.getMediaFiles().isEmpty())
+            .findFirst()
+            .orElseThrow();
+
+        URI deletedMedia = deleted.getMediaFiles().values().iterator().next();
+        // Simulate the state after deleting media in the editor.
+        deleted.getLogicalDivisions().forEach(logicalDivision ->
+            logicalDivision.getViews()
+                .removeIf(view -> view.getPhysicalDivision().equals(deleted)));
+        deleted.getLogicalDivisions().clear();
+        workpiece.getPhysicalStructure().getChildren().remove(deleted);
+        assertFalse(containsMedia(workpiece, deletedMedia));
+        // The file still exists on disk until the editor is saved.
+        ServiceManager.getFileService().searchForMedia(process, workpiece);
+       // Reproduce #5737.
+       assertTrue(containsMedia(workpiece, deletedMedia));
+       DataEditorService.removeDeletedMediaFromWorkpiece(workpiece, deleted);
+       assertFalse(containsMedia(workpiece, deletedMedia));
+       boolean logicalReferenceExists = false;
+       for (LogicalDivision logicalDivision : workpiece.getAllLogicalDivisions()) {
+           for (View view : logicalDivision.getViews()) {
+               if (view.getPhysicalDivision().getMediaFiles().containsValue(deletedMedia)) {
+                   logicalReferenceExists = true;
+                   break;
+               }
+           }
+       }
+       assertFalse(logicalReferenceExists);
+    }
+
+    private static boolean containsMedia(Workpiece workpiece, URI media) {
+        return workpiece.getAllPhysicalDivisions().stream()
+            .flatMap(physicalDivision -> physicalDivision.getMediaFiles().values().stream())
+            .anyMatch(media::equals);
     }
 }
