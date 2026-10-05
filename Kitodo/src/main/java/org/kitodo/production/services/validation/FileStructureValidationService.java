@@ -210,7 +210,8 @@ public class FileStructureValidationService {
                         "validation.internalDataRecordValidationError"), validationResult);
             } else {
                 throw new FileStructureValidationException(Helper.getTranslation(
-                        "validation.internalDataRecordAndMappingFilesValidationError", mappingFiles), validationResult);
+                        "validation.internalDataRecordAndMappingFilesValidationError", mappingFiles, String.join(", ", schemata)),
+                        validationResult);
             }
         }
     }
