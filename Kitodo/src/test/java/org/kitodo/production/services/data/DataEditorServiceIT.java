@@ -227,20 +227,20 @@ public class DataEditorServiceIT {
         assertFalse(containsMedia(workpiece, deletedMedia));
         // The file still exists on disk until the editor is saved.
         ServiceManager.getFileService().searchForMedia(process, workpiece);
-       // Reproduce #5737.
-       assertTrue(containsMedia(workpiece, deletedMedia));
-       DataEditorService.removeDeletedMediaFromWorkpiece(workpiece, deleted);
-       assertFalse(containsMedia(workpiece, deletedMedia));
-       boolean logicalReferenceExists = false;
-       for (LogicalDivision logicalDivision : workpiece.getAllLogicalDivisions()) {
-           for (View view : logicalDivision.getViews()) {
-               if (view.getPhysicalDivision().getMediaFiles().containsValue(deletedMedia)) {
-                   logicalReferenceExists = true;
-                   break;
-               }
-           }
-       }
-       assertFalse(logicalReferenceExists);
+        // Reproduce #5737.
+        assertTrue(containsMedia(workpiece, deletedMedia));
+        DataEditorService.removeMediaReferencesFromWorkpiece(workpiece, deleted);
+        assertFalse(containsMedia(workpiece, deletedMedia));
+        boolean logicalReferenceExists = false;
+        for (LogicalDivision logicalDivision : workpiece.getAllLogicalDivisions()) {
+            for (View view : logicalDivision.getViews()) {
+                if (view.getPhysicalDivision().getMediaFiles().containsValue(deletedMedia)) {
+                    logicalReferenceExists = true;
+                    break;
+                }
+            }
+        }
+        assertFalse(logicalReferenceExists);
     }
 
     private static boolean containsMedia(Workpiece workpiece, URI media) {
