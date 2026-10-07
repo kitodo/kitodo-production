@@ -148,12 +148,23 @@ public class MetadataPanel implements Serializable {
 
     void showLogical(Optional<LogicalDivision> optionalStructure) {
         if (optionalStructure.isPresent() && Objects.isNull(optionalStructure.get().getLink())) {
+
             logicalMetadataTable = createProcessFieldedMetadata(optionalStructure.get());
+
+            if (isDivisionUntyped(optionalStructure.get())) {
+                logicalMetadataTable.filterToStructuralFields();
+            }
+
             dataEditorForm.getAddMetadataDialog().prepareAddableMetadataForStructure(
                     getLogicalMetadataRows().getChildren());
+
         } else {
             logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
         }
+    }
+
+    private boolean isDivisionUntyped(LogicalDivision division) {
+        return Objects.isNull(division.getType()) || division.getType().isBlank();
     }
 
     void showPageInLogical(PhysicalDivision physicalDivision) {
