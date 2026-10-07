@@ -434,7 +434,7 @@ public class UploadFileDialog {
     private void addMediaToWorkpiece() throws InvalidImagesException, MediaNotFoundException {
         ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
         for (PhysicalDivision deleted : dataEditor.getUnsavedDeletedMedia()) {
-            DataEditorService.removeDeletedMediaFromWorkpiece(dataEditor.getWorkpiece(), deleted);
+            DataEditorService.removeMediaReferencesFromWorkpiece(dataEditor.getWorkpiece(), deleted);
         }
 
         List<View> views = selectedMedia.stream()
