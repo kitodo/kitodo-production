@@ -156,6 +156,7 @@
                                             <ui:param name="uiParamStripeIndex" value="0"/>
                                         </ui:include>
                                     </p:panel>
+                                    <!-- add one last drop area after the last page in a stripe -->
                                     <ui:fragment rendered="#{currentMedia.rowIndex eq currentMedia.rowCount - 1}">
                                         <p:panel id="unstructuredPageLastDropArea"
                                                  styleClass="page-drop-area"/>

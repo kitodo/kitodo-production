@@ -479,9 +479,7 @@ public class GalleryPanel {
     private void updateSelectionState() {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
 
-        for (int stripeIndex = 0; stripeIndex < stripes.size(); stripeIndex++) {
-            GalleryStripe stripe = stripes.get(stripeIndex);
-
+        for (GalleryStripe stripe : stripes) {
             for (GalleryMediaContent media : stripe.getMedias()) {
                 PhysicalDivision physicalDivision =
                     media.getView().getPhysicalDivision();
@@ -626,16 +624,11 @@ public class GalleryPanel {
         int processId = dataEditor.getProcess().getId();
         String sessionId = cachingUUID;
 
-        return new GalleryMediaContent(
-            mediaContentType,
-            view,
-            canonical,
+        return new GalleryMediaContent(mediaContentType, view, canonical,
             Objects.nonNull(previewMediaVariant) ? previewMediaVariant.getMimeType() : null,
             resourceListUri,
             Objects.nonNull(mediaViewMediaVariant) ? mediaViewMediaVariant.getMimeType() : null,
-            resourceMediaViewUri,
-            treeNodeId,
-            () -> buildPreviewUrl(mediaId, processId, sessionId));
+            resourceMediaViewUri, treeNodeId, () -> buildPreviewUrl(mediaId, processId, sessionId));
     }
 
     private String getTreeNodeId(String stripeTreeNodeId, Integer index) {

@@ -19,11 +19,13 @@
 
     <p:outputPanel styleClass="thumbnail-parent">
 
+        <!--@elvariable id="stripe" type="org.kitodo.production.forms.dataeditor.GalleryStripe"-->
         <div class="thumbnail #{DataEditorForm.galleryPanel.selectionDiscontinuous ? 'discontinuous' : ''}
             #{stripe.isMediaSelected(media.id) ? 'selected' : ''}
             #{stripe.isMediaLastSelected(media.id) ? 'last-selection' : ''}">
         </div>
-
+        <!--@elvariable id="media" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
+        <!--@elvariable id="uiParamStripeIndex" type="java.lang.Integer"-->
         <div class="thumbnail-container
              #{media.type eq 'VIDEO' ? 'media-type-video' : ''}
              #{media.type eq 'AUDIO' ? 'media-type-audio' : ''}"
@@ -79,13 +81,13 @@
             <ui:fragment rendered="#{not mediaProvider.hasPreviewVariant(media)}">
                 <div class="mediaListIconItem">
                     <ui:fragment rendered="#{media.type eq 'VIDEO'}">
-                        <i class="fa fa-file-video-o"></i>
+                        <i class="fa fa-file-video-o"/>
                     </ui:fragment>
                     <ui:fragment rendered="#{media.type eq 'AUDIO'}">
-                        <i class="fa fa-file-audio-o"></i>
+                        <i class="fa fa-file-audio-o"/>
                     </ui:fragment>
                     <ui:fragment rendered="#{media.type eq 'IMAGE'}">
-                        <i class="fa fa-file-image-o"></i>
+                        <i class="fa fa-file-image-o"/>
                     </ui:fragment>
                 </div>
             </ui:fragment>
