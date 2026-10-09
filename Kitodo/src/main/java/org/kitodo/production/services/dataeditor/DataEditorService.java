@@ -579,4 +579,24 @@ public class DataEditorService {
         String value = entry.getValue();
         return Objects.nonNull(value) && value.isBlank();
     }
+
+    /**
+     * Removes all references to the given media division from the workpiece.
+     *
+     * @param workpiece workpiece from which media references are removed
+     * @param mediaDivision physical division whose media references are removed
+     */
+    public static void removeMediaReferencesFromWorkpiece(Workpiece workpiece, PhysicalDivision mediaDivision) {
+        workpiece.getAllLogicalDivisions().forEach(logicalDivision ->
+            logicalDivision.getViews()
+                .removeIf(view -> containsMedia(view.getPhysicalDivision(), mediaDivision)));
+
+        workpiece.getPhysicalStructure().getChildren()
+            .removeIf(physicalDivision -> containsMedia(physicalDivision, mediaDivision));
+    }
+
+    private static boolean containsMedia(PhysicalDivision physicalDivision, PhysicalDivision mediaDivision) {
+        return physicalDivision.getMediaFiles().values().stream()
+            .anyMatch(mediaDivision.getMediaFiles().values()::contains);
+    }
 }

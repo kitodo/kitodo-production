@@ -56,6 +56,7 @@ import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
@@ -432,6 +433,9 @@ public class UploadFileDialog {
 
     private void addMediaToWorkpiece() throws InvalidImagesException, MediaNotFoundException {
         ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+        for (PhysicalDivision deleted : dataEditor.getUnsavedDeletedMedia()) {
+            DataEditorService.removeMediaReferencesFromWorkpiece(dataEditor.getWorkpiece(), deleted);
+        }
 
         List<View> views = selectedMedia.stream()
                 .map(v -> MetadataEditor.createUnrestrictedViewOn(v.getKey()))
