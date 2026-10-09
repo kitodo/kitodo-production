@@ -80,7 +80,7 @@ public class CommentTooltipView {
         if (comments.isEmpty()) {
             return "";
         }
-        return comments.get(comments.size() - 1).getMessage();
+        return comments.getLast().getMessage();
     }
 
     /**
