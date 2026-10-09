@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -992,21 +993,24 @@ public class StructurePanel implements Serializable {
      * @return the media tree
      */
     private DefaultTreeNode<Object> buildMediaTree(PhysicalDivision mediaRoot) {
+        Map<String, StructuralElementViewInterface> divisionViewsByType = new HashMap<>();
         DefaultTreeNode<Object> rootTreeNode = new DefaultTreeNode<>();
         rootTreeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);
         }
-        buildMediaTreeRecursively(mediaRoot, rootTreeNode);
+        buildMediaTreeRecursively(mediaRoot, rootTreeNode, divisionViewsByType);
         return rootTreeNode;
     }
 
-    private void buildMediaTreeRecursively(PhysicalDivision physicalDivision, DefaultTreeNode<Object> parentTreeNode) {
-        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                physicalDivision.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+    private void buildMediaTreeRecursively(PhysicalDivision physicalDivision, DefaultTreeNode<Object> parentTreeNode,
+                                           Map<String, StructuralElementViewInterface> divisionViewsByType) {
+        StructuralElementViewInterface divisionView = divisionViewsByType.computeIfAbsent(physicalDivision.getType(),
+            type -> dataEditor.getRulesetManagement().getStructuralElementView(
+                type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()));
         DefaultTreeNode<Object> treeNode = addTreeNode(Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)
-                        ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
-                false, false, physicalDivision, parentTreeNode);
+                ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
+            false, false, physicalDivision, parentTreeNode);
 
         if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType())) {
             treeNode.setType(MEDIA_PARTIAL_NODE_TYPE);
@@ -1021,7 +1025,7 @@ public class StructurePanel implements Serializable {
         }
         if (Objects.nonNull(physicalDivision.getChildren())) {
             for (PhysicalDivision child : physicalDivision.getChildren()) {
-                buildMediaTreeRecursively(child, treeNode);
+                buildMediaTreeRecursively(child, treeNode, divisionViewsByType);
             }
         }
     }
@@ -1706,11 +1710,16 @@ public class StructurePanel implements Serializable {
                 physicalDivision.getLogicalDivisions().clear();
             }
             dataEditor.getWorkpiece().getPhysicalStructure().getChildren().clear();
-            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
+            // Use identity semantics because PhysicalDivision has mutable structural equality/hash state.
+            Set<PhysicalDivision> addedPhysicalDivisions = Collections.newSetFromMap(new IdentityHashMap<>());
+            preserveLogicalAndPhysicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1),
+                addedPhysicalDivisions);
         }
     }
 
-    private LogicalDivision preserveLogicalAndPhysicalRecursive(TreeNode<Object> treeNode) throws UnknownTreeNodeDataException {
+    private LogicalDivision preserveLogicalAndPhysicalRecursive(TreeNode<Object> treeNode,
+            Set<PhysicalDivision> addedPhysicalDivisions)
+            throws UnknownTreeNodeDataException {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
         if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof LogicalDivision)) {
             return null;
@@ -1724,14 +1733,14 @@ public class StructurePanel implements Serializable {
                 throw new UnknownTreeNodeDataException(child.getData().getClass().getCanonicalName());
             }
             if (((StructureTreeNode) child.getData()).getDataObject() instanceof LogicalDivision) {
-                LogicalDivision possibleChildStructure = preserveLogicalAndPhysicalRecursive(child);
+                LogicalDivision possibleChildStructure = preserveLogicalAndPhysicalRecursive(child, addedPhysicalDivisions);
                 if (Objects.nonNull(possibleChildStructure)) {
                     structure.getChildren().add(possibleChildStructure);
                 }
             } else if (((StructureTreeNode) child.getData()).getDataObject() instanceof View) {
                 View view = (View) ((StructureTreeNode) child.getData()).getDataObject();
                 structure.getViews().add(view);
-                if (!dataEditor.getWorkpiece().getAllPhysicalDivisions().contains(view.getPhysicalDivision())) {
+                if (addedPhysicalDivisions.add(view.getPhysicalDivision())) {
                     view.getPhysicalDivision().setOrder(order);
                     dataEditor.getWorkpiece().getPhysicalStructure().getChildren().add(view.getPhysicalDivision());
                     order++;
@@ -1795,7 +1804,7 @@ public class StructurePanel implements Serializable {
             if (Objects.nonNull(structureData)) {
                 expansionStates.put(structureData, treeNode.isExpanded());
                 for (TreeNode<Object> childNode : treeNode.getChildren()) {
-                    expansionStates.putAll(getLogicalTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+                    getLogicalTreeNodeExpansionStatesRecursively(childNode, expansionStates);
                 }
             }
         }
@@ -1820,7 +1829,7 @@ public class StructurePanel implements Serializable {
             if (Objects.nonNull(physicalDivision)) {
                 expansionStates.put(physicalDivision, treeNode.isExpanded());
                 for (TreeNode<Object> childNode : treeNode.getChildren()) {
-                    expansionStates.putAll(getPhysicalTreeNodeExpansionStatesRecursively(childNode, expansionStates));
+                    getPhysicalTreeNodeExpansionStatesRecursively(childNode, expansionStates);
                 }
             }
         }
