@@ -22,6 +22,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.kitodo.config.ConfigCore;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -142,8 +143,9 @@ public class LegalTexts implements Serializable {
     }
 
     private static String getDefaultText(String legalText, String language) {
-        return "<p>" + Helper.getString(Locale.forLanguageTag(language), legalText + "DefaultText") + "</p><br/>"
-                + "<p>" + Helper.getString(Locale.forLanguageTag(language), "adjustSettingText") + "</p>";
+        Locale locale = LocaleUtils.toLocale(language);
+        return "<p>" + Helper.getString(locale, legalText + "DefaultText") + "</p><br/>"
+                + "<p>" + Helper.getString(locale, "adjustSettingText") + "</p>";
 
     }
 }

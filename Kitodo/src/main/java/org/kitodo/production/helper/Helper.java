@@ -364,10 +364,18 @@ public class Helper {
         messages.add(commonMessages);
         messages.add(errorMessages);
         for (Map<Locale, ResourceBundle> message : messages) {
-            // support locale with and without country to load message
+            // prefer an exact match (e.g. de_CH) over a locale with only the
+            // language (e.g. de); the exact match still falls back to the
+            // language bundle for keys it does not define
             Optional<Locale> optionalLocale = message.keySet().stream()
-                    .filter(messageKeyLocale -> messageKeyLocale.getLanguage().equals(locale.getLanguage()))
+                    .filter(messageKeyLocale -> messageKeyLocale.equals(locale))
                     .findFirst();
+            if (optionalLocale.isEmpty()) {
+                // support locale with and without country to load message
+                optionalLocale = message.keySet().stream()
+                        .filter(messageKeyLocale -> messageKeyLocale.getLanguage().equals(locale.getLanguage()))
+                        .findFirst();
+            }
             if (optionalLocale.isPresent()) {
                 String foundMessage = getTranslatedMessage(message, optionalLocale.get(), key);
                 if (StringUtils.isNotBlank(foundMessage)) {
