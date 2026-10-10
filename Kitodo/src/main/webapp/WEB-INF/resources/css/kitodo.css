@@ -4615,6 +4615,34 @@ Error page
 }
 
 /*----------------------------------------------------------------------
+Page not found page
+----------------------------------------------------------------------*/
+
+#pageNotFoundContainer {
+    background: white;
+    height: 100%;
+    margin: auto var(--default-full-size);
+    overflow-y: hidden;
+}
+
+#pageNotFoundImageContainer {
+    height: 90%;
+}
+
+#pageNotFoundImage {
+    display: block;
+    height: inherit;
+    margin: 0 auto;
+    width: 75%;
+}
+
+#pageNotFoundContainer .page-not-found-header {
+    font-size: xx-large;
+    margin-top: var(--default-double-size);
+    text-align: center;
+}
+
+/*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
 
