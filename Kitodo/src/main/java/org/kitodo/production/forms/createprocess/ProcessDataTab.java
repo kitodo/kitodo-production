@@ -91,8 +91,7 @@ public class ProcessDataTab {
         if (StringUtils.isNotBlank(currentProcess.getAtstsl())) {
             for (ProcessDetail processDetail : currentProcess.getProcessMetadata().getProcessDetailsElements()) {
                 if (TitleGenerator.TSL_ATS.equals(processDetail.getMetadataID())
-                        && processDetail instanceof ProcessTextMetadata) {
-                    ProcessTextMetadata processTextMetadata = (ProcessTextMetadata) processDetail;
+                        && processDetail instanceof ProcessTextMetadata processTextMetadata) {
                     if (StringUtils.isBlank(processTextMetadata.getValue())) {
                         processTextMetadata.setValue(currentProcess.getAtstsl());
                         processTextMetadata.preserve();

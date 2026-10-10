@@ -99,8 +99,7 @@ public class ListColumn extends BaseBean {
             return true;
         }
 
-        if (object instanceof ListColumn) {
-            ListColumn column = (ListColumn) object;
+        if (object instanceof ListColumn column) {
             return Objects.equals(this.getId(), column.getId());
         }
         return false;

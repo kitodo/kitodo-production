@@ -61,8 +61,7 @@ public class EmptyTask extends Thread {
      * exceptions might get lost or even bring the runtime to crash.
      */
     public static final Thread.UncaughtExceptionHandler CATCH_ALL = (origin, exception) -> {
-        if (origin instanceof EmptyTask) {
-            EmptyTask task = (EmptyTask) origin;
+        if (origin instanceof EmptyTask task) {
             task.setException(exception);
         }
     };

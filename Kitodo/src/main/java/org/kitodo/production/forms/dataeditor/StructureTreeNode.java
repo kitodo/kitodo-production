@@ -120,8 +120,7 @@ public class StructureTreeNode implements Serializable {
      */
     public boolean isAssignedSeveralTimes() {
         if (Objects.nonNull(this.dataObject)) {
-            if (this.dataObject instanceof View) {
-                View view = (View) this.dataObject;
+            if (this.dataObject instanceof View view) {
                 return Objects.nonNull(view.getPhysicalDivision()) && view.getPhysicalDivision().getLogicalDivisions().size() > 1;
             } else if (this.dataObject instanceof PhysicalDivision) {
                 return ((PhysicalDivision) this.dataObject).getLogicalDivisions().size() > 1;

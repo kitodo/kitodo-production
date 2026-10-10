@@ -159,8 +159,7 @@ public class ProcessingNote {
             return true;
         }
 
-        if (obj instanceof ProcessingNote) {
-            ProcessingNote other = (ProcessingNote) obj;
+        if (obj instanceof ProcessingNote other) {
 
             if (Objects.isNull(name)) {
                 if (Objects.nonNull(other.name)) {

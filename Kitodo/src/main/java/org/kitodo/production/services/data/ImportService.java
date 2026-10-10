@@ -315,8 +315,7 @@ public class ImportService {
         String signatureXPath = importConfiguration.getItemFieldSignatureSubPath();
 
         if (!StringUtils.isBlank(exemplarXPath) && !StringUtils.isBlank(ownerXPath)
-                && !StringUtils.isBlank(signatureXPath) && record.getOriginalData() instanceof String) {
-            String xmlString = (String) record.getOriginalData();
+                && !StringUtils.isBlank(signatureXPath) && record.getOriginalData() instanceof String xmlString) {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(new KitodoNamespaceContext());
             Document doc = XMLUtils.parseXMLString(xmlString);
@@ -1105,9 +1104,8 @@ public class ImportService {
     public static String getListOfCreators(List<ProcessDetail> processDetailsList) {
         String listofAuthors = "";
         for (ProcessDetail detail : processDetailsList) {
-            if (detail instanceof ProcessFieldedMetadata
+            if (detail instanceof ProcessFieldedMetadata tableRow
                     && PERSON.equals(detail.getMetadataID())) {
-                ProcessFieldedMetadata tableRow = (ProcessFieldedMetadata) detail;
                 for (ProcessDetail detailsTableRow : tableRow.getRows()) {
                     if (ROLE.equals(detailsTableRow.getMetadataID())
                             && AUTHOR.equals(getProcessDetailValue(detailsTableRow))) {
@@ -1370,9 +1368,8 @@ public class ImportService {
         try {
             for (ProcessDetail processDetail : processDetailList) {
                 Collection<Metadata> processMetadata = processDetail.getMetadataWithFilledValues();
-                if (!processMetadata.isEmpty() && processMetadata.toArray()[0] instanceof Metadata) {
+                if (!processMetadata.isEmpty() && processMetadata.toArray()[0] instanceof Metadata metadata) {
                     String metadataValue = ImportService.getProcessDetailValue(processDetail);
-                    Metadata metadata = (Metadata) processMetadata.toArray()[0];
                     if (Objects.nonNull(metadata.getDomain())) {
                         switch (metadata.getDomain()) {
                             case DMD_SEC:

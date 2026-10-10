@@ -331,10 +331,9 @@ public class ProcessHelper {
         if (Objects.nonNull(nodes)) {
             for (int index = 0; index < nodes.getLength(); index++) {
                 Node node = nodes.item(index);
-                if (!(node instanceof Element)) {
+                if (!(node instanceof Element element)) {
                     continue;
                 }
-                Element element = (Element) node;
                 Metadata metadata;
                 switch (element.getLocalName()) {
                     case "metadata":

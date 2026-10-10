@@ -317,8 +317,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 break;
             case 1:
                 Metadata nextMetadata = values.iterator().next();
-                if (nextMetadata instanceof MetadataGroup) {
-                    MetadataGroup metadataGroup = (MetadataGroup) nextMetadata;
+                if (nextMetadata instanceof MetadataGroup metadataGroup) {
                     value = metadataGroup.getMetadata();
                 } else {
                     throw new IllegalStateException("Got simple metadata entry with key \"" + nextMetadata.getKey()
@@ -691,8 +690,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
             if (Objects.nonNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
                 for (Metadata hidden : hiddenMetadata) {
-                    if (hidden instanceof MetadataEntry) {
-                        MetadataEntry entry = (MetadataEntry) hidden;
+                    if (hidden instanceof MetadataEntry entry) {
                         if (specialFields.contains(entry.getKey())) {
                             updateDivision(entry.getKey(), entry.getValue());
                         }

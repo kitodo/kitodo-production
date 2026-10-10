@@ -117,8 +117,7 @@ public class CommandResult {
             return true;
         }
 
-        if (object instanceof CommandResult) {
-            CommandResult that = (CommandResult) object;
+        if (object instanceof CommandResult that) {
 
             return this.exitCode == that.exitCode
                     && this.successful == that.successful

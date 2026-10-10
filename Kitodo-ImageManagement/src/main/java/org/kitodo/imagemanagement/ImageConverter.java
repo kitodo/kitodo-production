@@ -143,8 +143,7 @@ class ImageConverter {
         Iterator<?> keys = KitodoConfig.getConfig().getKeys(configOptionsPrefix);
         while (keys.hasNext()) {
             Object keyObject = keys.next();
-            if (keyObject instanceof String) {
-                String key = (String) keyObject;
+            if (keyObject instanceof String key) {
                 String option = key.substring(configOptionsPrefix.length());
                 if (!(option.startsWith("+") || option.startsWith("-"))) {
                     option = "-".concat(option);

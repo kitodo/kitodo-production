@@ -182,8 +182,7 @@ public class LtpValidationConfiguration extends BaseBean {
             return true;
         }
 
-        if (object instanceof LtpValidationConfiguration) {
-            LtpValidationConfiguration configuration = (LtpValidationConfiguration) object;
+        if (object instanceof LtpValidationConfiguration configuration) {
             return Objects.equals(this.getId(), configuration.getId());
         }
 

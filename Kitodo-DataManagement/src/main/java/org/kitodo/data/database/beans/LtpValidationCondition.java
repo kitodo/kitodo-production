@@ -179,8 +179,7 @@ public class LtpValidationCondition extends BaseBean implements LtpValidationCon
             return true;
         }
 
-        if (object instanceof LtpValidationCondition) {
-            LtpValidationCondition condition = (LtpValidationCondition) object;
+        if (object instanceof LtpValidationCondition condition) {
             return Objects.nonNull(this.getId()) && Objects.nonNull(condition.getId())
                     && Objects.equals(this.getId(), condition.getId());
         }

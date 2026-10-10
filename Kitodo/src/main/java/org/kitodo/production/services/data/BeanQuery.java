@@ -360,8 +360,7 @@ public class BeanQuery {
             for (UserSpecifiedFilter searchFilter : groupFilter.getValue()) {
                 userFilterCount++;
                 String parameterName = "userFilter".concat(Integer.toString(userFilterCount));
-                if (searchFilter instanceof DatabaseQueryPart) {
-                    DatabaseQueryPart databaseSearchQueryPart = (DatabaseQueryPart) searchFilter;
+                if (searchFilter instanceof DatabaseQueryPart databaseSearchQueryPart) {
                     String query = databaseSearchQueryPart.getDatabaseQuery(className, varName, parameterName);
                     if (query.contains(" AS ")) {
                         innerJoins.add(query);

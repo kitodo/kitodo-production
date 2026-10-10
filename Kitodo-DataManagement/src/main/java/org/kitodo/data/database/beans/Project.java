@@ -790,8 +790,7 @@ public class Project extends BaseBean implements Comparable<Project> {
             return true;
         }
 
-        if (object instanceof Project) {
-            Project project = (Project) object;
+        if (object instanceof Project project) {
             return Objects.equals(this.getId(), project.getId());
         }
 

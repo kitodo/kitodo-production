@@ -180,8 +180,7 @@ public class Workflow extends BaseBean {
             return true;
         }
 
-        if (object instanceof Workflow) {
-            Workflow workflow = (Workflow) object;
+        if (object instanceof Workflow workflow) {
             return Objects.equals(this.getId(), workflow.getId());
         }
 

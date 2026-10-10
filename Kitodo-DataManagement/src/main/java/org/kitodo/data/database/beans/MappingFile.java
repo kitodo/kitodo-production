@@ -156,8 +156,7 @@ public class MappingFile extends BaseBean {
         if (this == object) {
             return true;
         }
-        if (object instanceof MappingFile) {
-            MappingFile mappingFile = (MappingFile) object;
+        if (object instanceof MappingFile mappingFile) {
             return mappingFile.getId().equals(this.getId());
         }
         return false;

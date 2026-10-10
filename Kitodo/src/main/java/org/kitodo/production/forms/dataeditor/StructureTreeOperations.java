@@ -111,12 +111,10 @@ public class StructureTreeOperations {
      * @return the physical division or null
      */
     public static PhysicalDivision getPhysicalDivisionFromTreeNode(TreeNode<Object> node) {
-        if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) node.getData();
+        if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode structureTreeNode) {
 
-            if (structureTreeNode.getDataObject() instanceof View) {
+            if (structureTreeNode.getDataObject() instanceof View view) {
                 // tree node is a physical node
-                View view = (View) structureTreeNode.getDataObject();
                 return view.getPhysicalDivision();
             }
 
@@ -136,19 +134,15 @@ public class StructureTreeOperations {
      * @return the pair of physical division and its parent logical division or null
      */
     public static ImmutablePair<PhysicalDivision, LogicalDivision> getPhysicalDivisionPairFromTreeNode(TreeNode<Object> node) {
-        if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) node.getData();
+        if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode structureTreeNode) {
 
-            if (structureTreeNode.getDataObject() instanceof View) {
+            if (structureTreeNode.getDataObject() instanceof View view) {
                 // tree node is a view on physical node (as implemented in logical structure tree)
-                View view = (View) structureTreeNode.getDataObject();
 
                 // find logical division from tree node parent
                 TreeNode<Object> parent = node.getParent();
-                if (Objects.nonNull(parent) && parent.getData() instanceof StructureTreeNode) {
-                    StructureTreeNode parentStructureTreeNode = (StructureTreeNode) parent.getData();
-                    if (parentStructureTreeNode.getDataObject() instanceof LogicalDivision) {
-                        LogicalDivision logicalDivision = (LogicalDivision) parentStructureTreeNode.getDataObject();
+                if (Objects.nonNull(parent) && parent.getData() instanceof StructureTreeNode parentStructureTreeNode) {
+                    if (parentStructureTreeNode.getDataObject() instanceof LogicalDivision logicalDivision) {
                         return new ImmutablePair<>(view.getPhysicalDivision(), logicalDivision);
                     }
                 } else {
@@ -156,9 +150,8 @@ public class StructureTreeOperations {
                 }
             }
 
-            if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
+            if (structureTreeNode.getDataObject() instanceof PhysicalDivision physicalDivision) {
                 // tree node is physical division (as implemented in physical structure tree)
-                PhysicalDivision physicalDivision = (PhysicalDivision) structureTreeNode.getDataObject();
 
                 if (!physicalDivision.getLogicalDivisions().isEmpty()) {
                     return new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().getFirst());
@@ -177,8 +170,7 @@ public class StructureTreeOperations {
      * @return the logical division or null
      */
     public static LogicalDivision getLogicalDivisionFromTreeNode(TreeNode<Object> node) {
-        if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) node.getData();
+        if (Objects.nonNull(node) && node.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
                 return (LogicalDivision) structureTreeNode.getDataObject();
             }
@@ -247,8 +239,7 @@ public class StructureTreeOperations {
         if (Objects.isNull(node)) {
             return null;
         }
-        if (node.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) node.getData();
+        if (node.getData() instanceof StructureTreeNode structureTreeNode) {
             if (structureTreeNode.getDataObject() instanceof View) {
                 // node is a physical division, try to find its parent logical division
                 if (Objects.nonNull(getLogicalDivisionFromTreeNode(node.getParent()))) {

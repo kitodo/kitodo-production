@@ -75,8 +75,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
      */
     public static String getOriginalRequest(Object savedRequest) {
         String redirect = DESKTOP_LANDING_PAGE;
-        if (savedRequest instanceof DefaultSavedRequest) {
-            DefaultSavedRequest request = (DefaultSavedRequest) savedRequest;
+        if (savedRequest instanceof DefaultSavedRequest request) {
             if (Objects.nonNull(request.getServletPath()) && !request.getServletPath().isEmpty()
                     && (!request.getParameterMap().containsKey(OMNIFACES_EVENT)
                     || Arrays.stream(request.getParameterMap().get(OMNIFACES_EVENT)).noneMatch("unload"::equals))) {

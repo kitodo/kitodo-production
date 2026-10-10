@@ -172,8 +172,7 @@ public class LoginTask extends BaseBean {
             return true;
         }
 
-        if (object instanceof LoginTask) {
-            LoginTask loginTask = (LoginTask) object;
+        if (object instanceof LoginTask loginTask) {
             return Objects.nonNull(this.getId()) && Objects.nonNull(loginTask.getId())
                     && Objects.equals(this.getId(), loginTask.getId());
         }

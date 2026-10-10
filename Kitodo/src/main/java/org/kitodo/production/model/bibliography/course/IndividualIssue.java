@@ -399,8 +399,7 @@ public class IndividualIssue {
             return true;
         }
 
-        if (obj instanceof IndividualIssue) {
-            IndividualIssue other = (IndividualIssue) obj;
+        if (obj instanceof IndividualIssue other) {
             if (Objects.isNull(date)) {
                 if (Objects.nonNull(other.date)) {
                     return false;

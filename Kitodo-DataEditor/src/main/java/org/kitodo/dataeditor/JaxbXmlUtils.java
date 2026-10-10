@@ -99,8 +99,7 @@ public class JaxbXmlUtils {
      */
     static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
         for (Object object : objects) {
-            if (object instanceof JAXBElement) {
-                JAXBElement jaxbElement = (JAXBElement) object;
+            if (object instanceof JAXBElement jaxbElement) {
                 if (type.isInstance(jaxbElement.getValue())) {
                     return true;
                 }
@@ -122,8 +121,7 @@ public class JaxbXmlUtils {
     static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
         if (JaxbXmlUtils.objectListContainsType(objects, type)) {
             for (Object object : objects) {
-                if (object instanceof JAXBElement) {
-                    JAXBElement jaxbElement = (JAXBElement) object;
+                if (object instanceof JAXBElement jaxbElement) {
                     if (type.isInstance(jaxbElement.getValue())) {
                         return type.cast(jaxbElement.getValue());
                     }

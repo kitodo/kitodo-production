@@ -723,8 +723,7 @@ public class User extends BaseBean {
             return true;
         }
 
-        if (object instanceof User) {
-            User user = (User) object;
+        if (object instanceof User user) {
             return Objects.equals(this.getId(), user.getId());
         }
 

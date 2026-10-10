@@ -101,8 +101,7 @@ public class Filter extends BaseBean {
             return true;
         }
 
-        if (object instanceof Filter) {
-            Filter filter = (Filter) object;
+        if (object instanceof Filter filter) {
             return Objects.equals(this.getId(), filter.getId());
         }
 

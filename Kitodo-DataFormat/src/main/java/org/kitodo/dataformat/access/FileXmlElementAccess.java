@@ -74,8 +74,7 @@ public class FileXmlElementAccess {
                         new MediaPartial(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
                 fileId = fptr.getArea().getFILEID();
             }
-            if (fileId instanceof FileType) {
-                FileType file = (FileType) fileId;
+            if (fileId instanceof FileType file) {
                 String fileUse = fileUseByFileCache.getOrDefault(file, null);
                 if (Objects.isNull(fileUse)) {
                     throw new IllegalArgumentException(

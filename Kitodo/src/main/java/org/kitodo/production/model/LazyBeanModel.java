@@ -94,8 +94,7 @@ public class LazyBeanModel extends LazyDataModel<Object> {
     @Override
     public String getRowKey(Object inObject) {
         Stopwatch stopwatch = new Stopwatch(this, "getRowKey");
-        if (inObject instanceof BaseBean) {
-            BaseBean bean = (BaseBean) inObject;
+        if (inObject instanceof BaseBean bean) {
             return String.valueOf(stopwatch.stop(bean.getId()));
         }
         return String.valueOf(stopwatch.stop(0));

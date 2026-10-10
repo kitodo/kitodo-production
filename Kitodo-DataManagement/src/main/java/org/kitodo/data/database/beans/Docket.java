@@ -132,8 +132,7 @@ public class Docket extends BaseBean {
             return true;
         }
 
-        if (object instanceof Docket) {
-            Docket docket = (Docket) object;
+        if (object instanceof Docket docket) {
             return Objects.equals(this.getId(), docket.getId());
         }
 

@@ -133,8 +133,7 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
         Object securityContextObject = se.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        if (securityContextObject instanceof SecurityContextImpl) {
-            SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
+        if (securityContextObject instanceof SecurityContextImpl securityContext) {
             Object principal = securityContext.getAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
                 ServiceManager.getSessionService().expireSessionsOfUser((SecurityUserDetails) principal);

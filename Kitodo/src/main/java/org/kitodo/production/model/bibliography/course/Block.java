@@ -716,8 +716,7 @@ public class Block {
             return true;
         }
 
-        if (obj instanceof Block) {
-            Block other = (Block) obj;
+        if (obj instanceof Block other) {
 
             if (Objects.isNull(firstAppearance)) {
                 if (Objects.nonNull(other.firstAppearance)) {

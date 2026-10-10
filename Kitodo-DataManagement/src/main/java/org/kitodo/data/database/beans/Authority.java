@@ -117,8 +117,7 @@ public class Authority extends BaseBean {
             return true;
         }
 
-        if (object instanceof Authority) {
-            Authority authority = (Authority) object;
+        if (object instanceof Authority authority) {
             return Objects.equals(this.getId(), authority.getId());
         }
 
