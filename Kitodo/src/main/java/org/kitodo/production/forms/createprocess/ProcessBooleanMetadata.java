@@ -44,11 +44,8 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
      */
     ProcessBooleanMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry data) {
         super(container, settings, settings.getLabel());
-        if (Objects.isNull(data)) {
-            this.active = settings.getBooleanDefaultValue();
-        } else {
-            this.active = StringUtils.isNotBlank(data.getValue());
-        }
+        this.active = Objects.nonNull(data)
+            && StringUtils.isNotBlank(data.getValue());
     }
 
     private ProcessBooleanMetadata(ProcessBooleanMetadata template) {

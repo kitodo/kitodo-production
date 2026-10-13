@@ -143,4 +143,17 @@ public class ProcessMetadata {
             initializeProcessDetails(logicalDivision, form);
         }
     }
+
+    /**
+     * Applies configured boolean presets to unchecked metadata fields during process creation.
+     */
+    public void applyBooleanPresets() {
+        for (ProcessDetail detail : processDetails.getRows()) {
+            if (detail instanceof ProcessBooleanMetadata booleanMetadata
+                && !booleanMetadata.isActive()) {
+                booleanMetadata.setActive(
+                    booleanMetadata.getSettings().getBooleanDefaultValue());
+            }
+        }
+    }
 }
