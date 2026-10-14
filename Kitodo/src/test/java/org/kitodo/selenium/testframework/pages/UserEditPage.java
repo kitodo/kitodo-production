@@ -193,7 +193,12 @@ public class UserEditPage extends EditPage<UserEditPage> {
         tableSizeInput.clear();
         tableSizeInput.sendKeys("50");
         clickElement(languageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(languageSelect.getAttribute("id") + "_1")));
+        // Select English by label rather than by positional index: the locale list order
+        // comes from faces-config.xml, so a fixed index breaks when a locale is inserted
+        // or reordered. "English" is the stable self-name for the en locale regardless of the
+        // current UI language.
+        clickElement(Browser.getDriver().findElement(
+                By.cssSelector("#editForm\\:userTabView\\:languages_items [data-label=\"English\"]")));
         switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
         clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_1")));

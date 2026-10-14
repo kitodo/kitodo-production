@@ -99,7 +99,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-            if (Objects.nonNull(desiredLanguage) && desiredLanguage.equals(Locale.GERMAN)) {
+            if (Objects.nonNull(desiredLanguage) && desiredLanguage.getLanguage().equals(Locale.GERMAN.getLanguage())) {
                 messageFile = "password_de.properties";
             }
         }
