@@ -3,6 +3,7 @@ name: Task for the development fund
 about: A working package which may be sponsored by the Kitodo e.V. development fund.
 title: ''
 labels: development fund 2026
+type: task
 assignees: ''
 
 ---
