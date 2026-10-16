@@ -24,7 +24,6 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
  * The main security configuration class for the application. The configure
@@ -110,15 +109,6 @@ public class SecurityConfig {
             this.sessionRegistry = new SessionRegistryImpl();
         }
         return this.sessionRegistry;
-    }
-
-    /**
-     * Registers Spring Security's default HandlerMappingIntrospector required for request url matching, see:
-     * https://docs.spring.io/spring-security/reference/6.4/servlet/integrations/mvc.html
-     */
-    @Bean(name = "mvcHandlerMappingIntrospector")
-    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
-        return new HandlerMappingIntrospector();
     }
 
     /**
