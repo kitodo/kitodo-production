@@ -926,6 +926,8 @@ public class CreateProcessForm extends ValidatableForm implements MetadataTreeTa
                 tempProcess.verifyDocType();
                 processDataTab.setDocType(tempProcess.getWorkpiece().getLogicalStructure().getType());
                 processDataTab.updateProcessMetadata();
+                tempProcess.getProcessMetadata().applyBooleanPresets();
+                tempProcess.getProcessMetadata().preserve();
             }
         }
     }
