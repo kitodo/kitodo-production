@@ -302,7 +302,7 @@ public class MetadataPathSelector extends MetadataSelector {
             throw new RuntimeException(
                     "Could not resolve metadata path: In this regard, index \"" + index + "\" is not allowed.");
         } else if (index.equals(Integer.MAX_VALUE)) {
-            return children.get(children.size() - 1);
+            return children.getLast();
         } else if (children.size() >= (Integer) index) {
             return children.get((Integer) index);
         }
