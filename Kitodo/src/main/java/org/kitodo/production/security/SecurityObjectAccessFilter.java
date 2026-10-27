@@ -12,8 +12,6 @@
 package org.kitodo.production.security;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import jakarta.servlet.FilterChain;
@@ -23,6 +21,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
 import org.omnifaces.cdi.viewscope.ViewScopeManager;
@@ -46,11 +45,11 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        String id = httpServletRequest.getParameter("id");
-
-        if (Objects.nonNull(id)) {
+        String idString = httpServletRequest.getParameter("id");
+        if (Objects.nonNull(idString)) {
+            int id;
             try {
-                Integer.parseInt(id);
+                id = Integer.parseInt(idString);
             } catch (NumberFormatException e) {
                 if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")
                         && securityAccessService.hasAuthorityToViewWorkflow()) {
@@ -62,26 +61,7 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 }
                 return;
             }
-
-            Map<String, Boolean> requested = new HashMap<>();
-            requested.put("processEdit", securityAccessService.hasAuthorityToViewProcess());
-            requested.put("projectEdit", securityAccessService.hasAuthorityToViewProject());
-            requested.put("templateEdit", securityAccessService.hasAuthorityToViewTemplate());
-            requested.put("workflowEdit", securityAccessService.hasAuthorityToViewWorkflow());
-            requested.put("docketEdit", securityAccessService.hasAuthorityToViewDocket());
-            requested.put("rulesetEdit", securityAccessService.hasAuthorityToViewRuleset());
-            requested.put("roleEdit", securityAccessService.hasAuthorityToViewRole());
-            requested.put("clientEdit", securityAccessService.hasAuthorityToViewClient());
-
-            for (Map.Entry<String, Boolean> entry : requested.entrySet()) {
-                if (isAccessDenied(httpServletRequest, httpServletResponse, entry.getKey(), entry.getValue())) {
-                    return;
-                }
-            }
-
-            if (httpServletRequest.getRequestURI().contains("pages/userEdit")
-                    && !securityAccessService.hasAuthorityToViewUser()
-                    && !securityAccessService.hasAuthorityToConfigUser(Integer.parseInt(id))) {
+            if (!isAccessAllowed(httpServletRequest.getRequestURI(), id)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
@@ -89,13 +69,50 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
         chain.doFilter(request, response);
     }
 
-    private boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response, String page,
-            boolean hasAuthority) throws IOException, ServletException {
-        if (request.getRequestURI().contains("pages/" + page) && !hasAuthority) {
-            denyAccess(request, response);
-            return true;
+    private boolean isAccessAllowed(String requestUri, int id) {
+        boolean allowed = true;
+        String objectType = "unknown object type";
+
+        try {
+            if (requestUri.contains("pages/processEdit")) {
+                objectType = "process";
+                allowed = securityAccessService.hasAuthorityToViewProcess(id);
+            } else if (requestUri.contains("pages/taskEdit")) {
+                objectType = "task";
+                allowed = securityAccessService.hasAuthorityToEditTask(id);
+            } else if (requestUri.contains("pages/projectEdit")) {
+                objectType = "project";
+                allowed = securityAccessService.hasAuthorityToViewProject(id);
+            } else if (requestUri.contains("pages/templateEdit")) {
+                objectType = "template";
+                allowed = securityAccessService.hasAuthorityToViewTemplate(id);
+            } else if (requestUri.contains("pages/workflowEdit")) {
+                objectType = "workflow";
+                allowed = securityAccessService.hasAuthorityToViewWorkflow(id);
+            } else if (requestUri.contains("pages/docketEdit")) {
+                objectType = "docket";
+                allowed = securityAccessService.hasAuthorityToViewDocket(id);
+            } else if (requestUri.contains("pages/rulesetEdit")) {
+                objectType = "ruleset";
+                allowed = securityAccessService.hasAuthorityToViewRuleset(id);
+            } else if (requestUri.contains("pages/roleEdit")) {
+                objectType = "role";
+                allowed = securityAccessService.hasAuthorityToViewRole(id);
+            } else if (requestUri.contains("pages/clientEdit")) {
+                objectType = "client";
+                allowed = securityAccessService.hasAuthorityToViewClient(id);
+            } else if (requestUri.contains("pages/userEdit")) {
+                objectType = "user";
+                allowed = securityAccessService.hasAuthorityToViewUser() || securityAccessService.hasAuthorityToConfigUser(id);
+            } else if (requestUri.contains("pages/importConfigurationEdit")) {
+                objectType = "importConfiguration";
+                allowed = securityAccessService.hasAuthorityToViewImportConfiguration(id);
+            }
+        } catch (DAOException e) {
+            logger.error(String.format("Error loading %s with ID %d for access permission check", objectType, id), e);
+            allowed = false;
         }
-        return false;
+        return allowed;
     }
 
     private void denyAccess(HttpServletRequest request, HttpServletResponse response)

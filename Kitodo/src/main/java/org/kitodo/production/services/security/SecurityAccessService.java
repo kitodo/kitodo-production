@@ -15,7 +15,14 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
@@ -647,6 +654,18 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view the template with the given ID.
+     * Add and edit authorities include also view.
+     *
+     * @param templateId ID of the template
+     * @return whether the current user has the authority to view the template with the given ID
+     * @throws DAOException when the template with the given ID could not be loaded from the database
+     */
+    public boolean hasAuthorityToViewTemplate(int templateId) throws DAOException {
+        return hasAuthorityToViewTemplate() && hasAuthorityForTemplate(templateId);
+    }
+
+    /**
      * Check if the current user has the authority to view the workflow. Add and
      * edit authorities include also view.
      *
@@ -654,6 +673,18 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewWorkflow() {
         return hasAnyAuthorityForClient("viewWorkflow, addWorkflow, editWorkflow");
+    }
+
+    /**
+     * Check if the current user has the authority to view the workflow with the given ID.
+     * Add and edit authorities include also view.
+     *
+     * @param workflowId ID of the workflow
+     * @return whether the current user has the authority to view the workflow with the given ID
+     * @throws DAOException when the workflow with the given ID could not be loaded from the database
+     */
+    public boolean hasAuthorityToViewWorkflow(int workflowId) throws DAOException {
+        return hasAuthorityToViewWorkflow() && hasAuthorityForWorkflow(workflowId);
     }
 
     /**
@@ -667,6 +698,18 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view the docket with the given ID.
+     * Add and edit authorities include also view.
+     *
+     * @param docketId ID of the docket
+     * @return whether the current user has the authority to view the docket with the given ID
+     * @throws DAOException when the docket with the given ID could not be loaded from the database
+     */
+    public boolean hasAuthorityToViewDocket(int docketId) throws DAOException {
+        return hasAuthorityToViewDocket() && hasAuthorityForDocket(docketId);
+    }
+
+    /**
      * Check if the current user has the authority to view the ruleset. Add and edit
      * authorities include also view.
      *
@@ -677,6 +720,18 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view the ruleset with the given ID.
+     * Add and edit authorities include also view.
+     *
+     * @param rulesetId ID of the ruleset
+     * @return whether the current user has the authority to view the ruleset with the given ID
+     * @throws DAOException when the ruleset with the given ID could not be loaded from the database
+     */
+    public boolean hasAuthorityToViewRuleset(int rulesetId) throws DAOException {
+        return hasAuthorityToViewRuleset() && hasAuthorityForRuleset(rulesetId);
+    }
+
+    /**
      * Check if the current user has the authority to view import configuration. Add and edit
      * authorities include also view.
      *
@@ -684,6 +739,18 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewImportConfiguration() {
         return hasAnyAuthorityForClient("viewImportConfiguration, editImportConfiguration, addImportConfiguration");
+    }
+
+    /**
+     * Check if the current user has the authority to view the import configuration with the given ID.
+     * Add and edit authorities include also view.
+     *
+     * @param importConfigurationId ID of the import configuration
+     * @return whether the current user has the authority to view the import configuration with the given ID
+     * @throws DAOException when the import configuration with the given ID could not be loaded from the database
+     */
+    public boolean hasAuthorityToViewImportConfiguration(int importConfigurationId) throws DAOException {
+        return hasAuthorityToViewImportConfiguration() && hasAuthorityForImportConfiguration(importConfigurationId);
     }
 
     /**
@@ -737,6 +804,20 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view the role with the given ID.
+     * Add and edit authorities include also view.
+     * If the user has the global authority to view roles, a check for the role specified by the ID is skipped.
+     *
+     * @param roleId ID of the role
+     * @return whether the current user has the authority to view the role with the given ID
+     * @throws DAOException when the role with the given ID could not be loaded from the database
+     */
+    public boolean hasAuthorityToViewRole(int roleId) throws DAOException {
+        String authorities = "viewRole, addRole, editRole";
+        return hasAnyAuthorityGlobal(authorities) || (hasAnyAuthorityForClient(authorities) && hasAuthorityForRole(roleId));
+    }
+
+    /**
      * Check if the current user has the authority to view the client. Add and edit
      * authorities include also view.
      *
@@ -744,6 +825,19 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewClient() {
         return hasAnyAuthorityGlobalOrForClient("viewClient, addClient, editClient");
+    }
+
+    /**
+     * Check if the current user has the authority to view the client with the given ID.
+     * Add and edit authorities include also view.
+     * If the user has the global authority to view clients, a check for the client specified by the ID is skipped.
+     *
+     * @param clientId ID of the client
+     * @return whether the current user has the authority to view the client with the given ID
+     */
+    public boolean hasAuthorityToViewClient(int clientId) {
+        String authorities = "viewClient, addClient, editClient";
+        return hasAnyAuthorityGlobal(authorities) || (hasAnyAuthorityForClient(authorities) && isCurrentSessionClientOrNew(clientId));
     }
 
     /**
@@ -1121,6 +1215,58 @@ public class SecurityAccessService extends SecurityAccess {
         return hasAuthorityForProject(projectId);
     }
 
+    private boolean hasAuthorityForTemplate(int templateId) throws DAOException {
+        if (templateId == 0) {
+            return true;
+        }
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        return matchesClient(template.getClient());
+    }
+
+    private boolean hasAuthorityForDocket(int docketId) throws DAOException {
+        if (docketId == 0) {
+            return true;
+        }
+        Docket docket = ServiceManager.getDocketService().getById(docketId);
+        return matchesClient(docket.getClient());
+    }
+
+    private boolean hasAuthorityForWorkflow(int workflowId) throws DAOException {
+        if (workflowId == 0) {
+            return true;
+        }
+        Workflow workflow = ServiceManager.getWorkflowService().getById(workflowId);
+        return matchesClient(workflow.getClient());
+    }
+
+    private boolean hasAuthorityForRuleset(int rulesetId) throws DAOException {
+        if (rulesetId == 0) {
+            return true;
+        }
+        Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+        return matchesClient(ruleset.getClient());
+    }
+
+    private boolean hasAuthorityForImportConfiguration(int importConfigurationId) throws DAOException {
+        if (importConfigurationId == 0) {
+            return true;
+        }
+        ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(importConfigurationId);
+        return importConfiguration.getClients().stream().anyMatch(client -> client.getId() == getClientId());
+    }
+
+    private boolean hasAuthorityForRole(int roleId) throws DAOException {
+        if (roleId == 0) {
+            return true;
+        }
+        Role role = ServiceManager.getRoleService().getById(roleId);
+        return matchesClient(role.getClient());
+    }
+
+    private boolean isCurrentSessionClientOrNew(int clientId) {
+        return clientId == 0 || clientId == getClientId();
+    }
+
     private boolean hasAuthorityForProject(Integer projectId) {
         if (Objects.equals(projectId, 0)) {
             return true;
@@ -1204,5 +1350,9 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToReimportMetadata() {
         return hasAuthorityForClient("reimportMetadata");
+    }
+
+    private boolean matchesClient(Client client) {
+        return Objects.nonNull(client) && Objects.equals(client.getId(), getClientId());
     }
 }
