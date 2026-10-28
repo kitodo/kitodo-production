@@ -148,8 +148,7 @@ public class SessionClientController {
     }
 
     /**
-     * Gets all clients to which the user directly assigned and also those from user
-     * assigned projects.
+     * Gets all clients to which the user directly assigned.
      *
      * @return The list of clients.
      */

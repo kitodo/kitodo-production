@@ -23,6 +23,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -108,6 +109,30 @@ public class UserEditPage extends EditPage<UserEditPage> {
     @SuppressWarnings(UNUSED)
     @FindBy(id = "addClientDialog")
     private WebElement addToClientDialog;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = USER_TAB_VIEW + ":clientDatatable_data")
+    private WebElement userClientsTable;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = USER_TAB_VIEW + ":projectDatatable_data")
+    private WebElement userProjectsTable;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = USER_TAB_VIEW + ":roleDatatable_data")
+    private WebElement userRolesTable;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = "removeClientDialog")
+    private WebElement removeClientDialog;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = "removeFromProjectsForm:confirm")
+    private WebElement confirmRemoveClientButton;
+
+    @SuppressWarnings(UNUSED)
+    @FindBy(id = "removeFromProjectsForm:cancelButton")
+    private WebElement cancelRemoveClientButton;
 
     @SuppressWarnings(UNUSED)
     @FindBy(id = "user-menu")
@@ -245,6 +270,134 @@ public class UserEditPage extends EditPage<UserEditPage> {
         clickElement(defaultPaginationType.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.cssSelector("#editForm\\:userTabView\\:defaultPaginationType_items [data-label=\"Freitext\"]")));
         save();
+    }
+
+    /**
+     * Open the edit page of the user with the given ID.
+     *
+     * @param userId ID of the user to edit
+     * @return this user edit page
+     */
+    public UserEditPage goTo(int userId) {
+        Browser.goTo(getUrl() + "?id=" + userId);
+        await("Wait for user edit page to be loaded").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
+                .atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isAt() && userEditTabView.isDisplayed());
+        return this;
+    }
+
+    /**
+     * Get the names of all clients listed in the client tab of the user edit page.
+     *
+     * @return list of client names
+     */
+    public List<String> getClientNames() throws Exception {
+        switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
+        return Browser.getTableDataByColumn(userClientsTable, 0);
+    }
+
+    /**
+     * Get the titles of all projects listed in the project tab of the user edit page.
+     *
+     * @return list of project titles
+     */
+    public List<String> getProjectTitles() throws Exception {
+        switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
+        return Browser.getTableDataByColumn(userProjectsTable, 0);
+    }
+
+    /**
+     * Get the client names of all roles listed in the role tab of the user edit page.
+     *
+     * @return list of client names of the user's roles
+     */
+    public List<String> getRoleClientNames() throws Exception {
+        switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
+        return Browser.getTableDataByColumn(userRolesTable, 1);
+    }
+
+    /**
+     * Click the 'remove' link of the client with the given name in the client tab of the user edit page.
+     *
+     * @param clientName name of the client to remove from the user
+     */
+    public void clickRemoveClient(String clientName) throws Exception {
+        switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
+        for (WebElement tableRow : Browser.getRowsOfTable(userClientsTable)) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(clientName)) {
+                WebElement removeLink = tableRow.findElement(By.cssSelector("a[id$=':deleteFromClient']"));
+                new WebDriverWait(Browser.getDriver(), Duration.ofSeconds(5))
+                        .until(ExpectedConditions.elementToBeClickable(removeLink));
+                removeLink.click();
+                return;
+            }
+        }
+        throw new NoSuchElementException("No client with name '" + clientName + "' assigned to user");
+    }
+
+    /**
+     * Wait until the dialog for confirming the removal of client projects from the user is displayed.
+     */
+    public void waitForRemoveClientDialog() {
+        await("Wait for remove client dialog to be displayed").atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> removeClientDialog.isDisplayed());
+    }
+
+    /**
+     * Check whether the dialog for confirming the removal of client projects from the user is displayed.
+     *
+     * @return true if the dialog is displayed
+     */
+    public boolean isRemoveClientDialogDisplayed() {
+        try {
+            return removeClientDialog.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get the confirmation message displayed in the remove client dialog.
+     *
+     * @return confirmation message
+     */
+    public String getRemoveClientDialogMessage() {
+        return removeClientDialog.findElement(By.className("select-note")).getText();
+    }
+
+    /**
+     * Get the titles of the projects listed in the remove client dialog.
+     *
+     * @return list of project titles
+     */
+    public List<String> getRemoveClientDialogProjectTitles() {
+        WebElement projectsTableBody = removeClientDialog.findElement(By.cssSelector(".client-projects tbody"));
+        return Browser.getTableDataByColumn(projectsTableBody, 0);
+    }
+
+    /**
+     * Confirm the removal of the client and its projects from the user in the remove client dialog.
+     */
+    public void confirmRemoveClient() {
+        confirmRemoveClientButton.click();
+        waitForRemoveClientDialogToClose();
+        await("Wait for loading screen to disappear").pollDelay(500, TimeUnit.MILLISECONDS)
+                .atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> Browser.getDriver().findElements(By.id("loadingScreen")).stream()
+                        .noneMatch(WebElement::isDisplayed));
+    }
+
+    /**
+     * Cancel the removal of the client from the user in the remove client dialog.
+     */
+    public void cancelRemoveClient() {
+        cancelRemoveClientButton.click();
+        waitForRemoveClientDialogToClose();
+    }
+
+    private void waitForRemoveClientDialogToClose() {
+        await("Wait for remove client dialog to close").atMost(10, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> !isRemoveClientDialogDisplayed());
     }
 
     private void openUserConfig() {

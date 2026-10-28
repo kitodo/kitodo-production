@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.DataException;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
@@ -341,6 +342,20 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
                 "status", TaskStatus.INWORK
         );
         return dao.getByQuery(hql, params);
+    }
+
+    /**
+     * Retrieve and return list of tasks that are assigned to the user, have TaskStatus "INWORK" and belong to processes
+     * of the client with the given ID 'clientId'.
+     *
+     * @param user User whose tasks are reset
+     * @param clientId ID of client by which tasks are filtered.
+     * @return list of tasks
+     */
+    private List<Task> getTasksInProgress(User user, int clientId) {
+        List<Task> tasks = ServiceManager.getTaskService().getTasksInProgress(user);
+        return tasks.stream().filter(task -> task.getProcess().getProject().getClient().getId().equals(clientId))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -959,5 +974,26 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     public void save(Task taskBean) throws DAOException {
         super.save(taskBean);
         taskBean.getRoles().parallelStream().forEach(role -> role.setUsedInWorkflow(true));
+    }
+
+    /**
+     * Reset given list of tasks to TaskStatus 'OPEN'.
+     *
+     * @param user User objects whose tasks are reset to status 'OPEN'
+     * @param removeClientId ID of client whose tasks are reset to status 'OPEN'; if null, all tasks of the user are reset
+     * @throws DataException when saving tasks after status reset fails
+     */
+    public void resetTasksToOpen(User user, Integer removeClientId) throws DataException, DAOException {
+        List<Task> tasks;
+        if (Objects.isNull(removeClientId)) {
+            tasks = getTasksInProgress(user);
+        } else {
+            tasks = getTasksInProgress(user, removeClientId);
+        }
+        for (Task taskInProgress : tasks) {
+            ServiceManager.getTaskService().replaceProcessingUser(taskInProgress, null);
+            taskInProgress.setProcessingStatus(TaskStatus.OPEN);
+            ServiceManager.getTaskService().save(taskInProgress);
+        }
     }
 }
