@@ -136,8 +136,25 @@ public class UserEditView extends BaseEditView {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
-        
-        return UserListView.VIEW_PATH  + "&" + getReferrerListOptions();
+
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return UserListView.VIEW_PATH + "&" + referrerListOptions;
+        }
+        return DEFAULT_LINK;
+    }
+
+    /**
+     * Returns the path to which the application navigates when the user leaves the "userEdit" page by clicking "cancel".
+     * If the user has access to the "userList" page, he is redirected there.
+     * Otherwise, he is redirected to the default "desktop" page.
+     *
+     * @return the path for the user when he leaves the "userEdit" page.
+     */
+    public String getOutcomePath() {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return "users?tab=usersTab" + (Objects.nonNull(referrerListOptions) ? "&" + referrerListOptions : "");
+        }
+        return DEFAULT_LINK;
     }
 
 }
