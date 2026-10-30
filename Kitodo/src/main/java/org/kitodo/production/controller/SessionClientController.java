@@ -142,7 +142,7 @@ public class SessionClientController {
     public String setSessionClient(Client sessionClient) {
         ServiceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            return FacesContext.getCurrentInstance().getViewRoot().getViewId();
+            return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true";
         }
         return null;
     }
