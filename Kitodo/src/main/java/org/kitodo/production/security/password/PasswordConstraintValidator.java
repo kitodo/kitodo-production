@@ -13,6 +13,8 @@ package org.kitodo.production.security.password;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -95,24 +97,40 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
     }
 
     private MessageResolver getLocalizedMessages() {
-        String messageFile = "password_en.properties";
-
-        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-            if (Objects.nonNull(desiredLanguage) && desiredLanguage.equals(Locale.GERMAN)) {
-                messageFile = "password_de.properties";
-            }
+        String messageFile = "password_" + resolveLanguage() + ".properties";
+        InputStream messageStream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream("messages/" + messageFile);
+        if (Objects.isNull(messageStream)) {
+            // fall back to English if the translated file does not exist
+            messageFile = "password_en.properties";
+            messageStream = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("messages/" + messageFile);
         }
 
-        Properties properties = new Properties();
-
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream inputStream = classloader.getResourceAsStream("messages/" + messageFile)) {
-            properties.load(inputStream);
+        try (InputStreamReader reader = new InputStreamReader(messageStream, StandardCharsets.UTF_8)) {
+            Properties properties = new Properties();
+            properties.load(reader);
             return new PropertiesMessageResolver(properties);
         } catch (IOException e) {
             Helper.setErrorMessage("Problem with messages loading!", logger, e);
             return null;
         }
+    }
+
+    /**
+     * Returns the language code (e.g. "de", "es") of the message bundle to use,
+     * falling back to English when no Faces context is available or the UI
+     * language has no dedicated bundle.
+     *
+     * @return the language code of the message bundle to load
+     */
+    private String resolveLanguage() {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+            Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+            if (Objects.nonNull(desiredLanguage)) {
+                return desiredLanguage.getLanguage();
+            }
+        }
+        return "en";
     }
 }
