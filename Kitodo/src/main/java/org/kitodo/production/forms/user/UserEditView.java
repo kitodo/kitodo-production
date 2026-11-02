@@ -140,7 +140,7 @@ public class UserEditView extends BaseEditView {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             return UserListView.VIEW_PATH + "&" + referrerListOptions;
         }
-        return DEFAULT_LINK;
+        return MessageFormat.format(REDIRECT_PATH, DEFAULT_LINK);
     }
 
     /**
