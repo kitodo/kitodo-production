@@ -50,7 +50,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
     private User userObject;
 
     private List<Client> clients;
-    private Integer removeClientId = null;
+    private Integer clientIdPendingRemoval = null;
     private final Set<Integer> removeClientIds = new HashSet<>();
 
 
@@ -107,10 +107,10 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
      * @return null (to stay one the same page)
      */
     public String deleteFromClient() {
-        if (Objects.nonNull(removeClientId)) {
+        if (Objects.nonNull(clientIdPendingRemoval)) {
             try {
                 for (Client client : this.userObject.getClients()) {
-                    if (client.getId().equals(removeClientId)) {
+                    if (client.getId().equals(clientIdPendingRemoval)) {
                         this.userObject.getClients().remove(client);
                         if (Objects.nonNull(this.clients) && !this.clients.contains(client)) {
                             this.clients.add(client);
@@ -119,11 +119,11 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
                         if (client.equals(this.userObject.getDefaultClient())) {
                             this.userObject.setDefaultClient(null);
                         }
-                        removeClientIds.add(removeClientId);
+                        removeClientIds.add(clientIdPendingRemoval);
                         break;
                     }
                 }
-                removeClientId = null;
+                clientIdPendingRemoval = null;
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
@@ -175,7 +175,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
     public void checkClientProjects(Integer clientId) {
         List<Project> assignedClientProjects = this.userObject.getProjects().stream()
                 .filter(p -> p.getClient().getId().equals(clientId)).toList();
-        removeClientId = clientId;
+        clientIdPendingRemoval = clientId;
         if (assignedClientProjects.isEmpty()) {
             deleteFromClient();
         } else {
@@ -186,34 +186,34 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
 
     /**
      * Remove all projects and roles from User 'userObject' that are associated with the client identified by ID
-     * 'removeClientId'.
+     * 'clientIdPendingRemoval'.
      */
     public void removeUserFromClientProjects() {
-        if (Objects.nonNull(this.removeClientId)) {
+        if (Objects.nonNull(this.clientIdPendingRemoval)) {
             this.userObject.getRoles().removeAll(this.userObject.getRoles().stream()
-                    .filter(r -> r.getClient().getId().equals(this.removeClientId)).toList());
+                    .filter(r -> r.getClient().getId().equals(this.clientIdPendingRemoval)).toList());
             this.userObject.getProjects().removeAll(this.userObject.getProjects().stream()
-                    .filter(p -> p.getClient().getId().equals(this.removeClientId)).toList());
+                    .filter(p -> p.getClient().getId().equals(this.clientIdPendingRemoval)).toList());
         }
     }
 
     /**
-     * Cancel the removal of the client with ID 'removeClientId' from User 'userObject'. Resets 'removeClientId' so
+     * Cancel the removal of the client with ID 'clientIdPendingRemoval' from User 'userObject'. Resets 'clientIdPendingRemoval' so
      * that tasks in progress of that client are not reset to 'open' when the user is saved.
      */
     public void cancelRemoveClient() {
-        this.removeClientId = null;
+        this.clientIdPendingRemoval = null;
     }
 
     /**
-     * Return list of project titles that are associated with the client with ID 'removeClientId' and
+     * Return list of project titles that are associated with the client with ID 'clientIdPendingRemoval' and
      * assigned to User 'userObject'.
      * @return list of process titles
      */
     public List<String> getClientProjects() {
-        if (Objects.nonNull(this.removeClientId)) {
+        if (Objects.nonNull(this.clientIdPendingRemoval)) {
             return this.userObject.getProjects().stream()
-                    .filter(project -> project.getClient().getId().equals(this.removeClientId))
+                    .filter(project -> project.getClient().getId().equals(this.clientIdPendingRemoval))
                     .map(Project::getTitle).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
@@ -232,15 +232,15 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
 
     /**
      * Return confirmation message for removing all projects from User 'userObject' that are associated with the client
-     * identified by ID 'removeClientId'.
+     * identified by ID 'clientIdPendingRemoval'.
      *
      * @return confirmation message for removing all projects from User 'userObject' that are associated with the client
-     *      identified by ID 'removeClientId'
+     *      identified by ID 'clientIdPendingRemoval'
      */
     public String getRemoveClientProjectsMessage() {
-        if (Objects.nonNull(removeClientId)) {
+        if (Objects.nonNull(clientIdPendingRemoval)) {
             try {
-                Client removeClient = ServiceManager.getClientService().getById(removeClientId);
+                Client removeClient = ServiceManager.getClientService().getById(clientIdPendingRemoval);
                 return Helper.getTranslation("removeClientProjectsFromUserConfirmMessage", removeClient.getName(),
                         userObject.getFullName());
             } catch (DAOException e) {
