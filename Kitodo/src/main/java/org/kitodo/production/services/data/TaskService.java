@@ -977,7 +977,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
     }
 
     /**
-     * Reset given list of tasks to TaskStatus 'OPEN'.
+     * Reset the given user's tasks in progress to TaskStatus 'OPEN'.
      *
      * @param user User objects whose tasks are reset to status 'OPEN'
      * @param removeClientId ID of client whose tasks are reset to status 'OPEN'; if null, all tasks of the user are reset

@@ -169,7 +169,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
 
     /**
      * Check whether User 'userObject' is currently assigned to any projects associated with or has any roles of the client
-     * identified by given ID 'clientId'. If true, the user is prompted to confirm his removal from those projects and roles
+     * identified by the given ID 'clientId'. If true, the user is prompted to confirm his removal from those projects and roles
      * before removing the client from the user. If false, the client is removed from the user directly.
      *
      * @param clientId ID of client that is removed from the user
@@ -212,7 +212,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
     /**
      * Return list of project titles that are associated with the client with ID 'clientIdPendingRemoval' and
      * assigned to User 'userObject'.
-     * @return list of process titles
+     * @return list of project titles
      */
     public List<String> getClientProjects() {
         if (Objects.nonNull(this.clientIdPendingRemoval)) {
