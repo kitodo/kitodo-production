@@ -353,7 +353,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * @return list of tasks
      */
     private List<Task> getTasksInProgress(User user, int clientId) {
-        List<Task> tasks = ServiceManager.getTaskService().getTasksInProgress(user);
+        List<Task> tasks = getTasksInProgress(user);
         return tasks.stream().filter(task -> task.getProcess().getProject().getClient().getId().equals(clientId))
                 .collect(Collectors.toList());
     }
