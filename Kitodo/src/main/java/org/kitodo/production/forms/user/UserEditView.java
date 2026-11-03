@@ -131,7 +131,11 @@ public class UserEditView extends BaseEditView {
             if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                 loginForm.setLoggedUser(this.userObject);
                 ServiceManager.getSecurityAccessService().updateAuthentication(this.userObject);
-            }            
+            }
+            // check if user was removed from any clients and reset tasks in progress for projects that belonged to these clients
+            for (Integer clientId : clientsTab.getRemoveClientIds()) {
+                ServiceManager.getTaskService().resetTasksToOpen(userObject, clientId);
+            }
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;

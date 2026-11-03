@@ -25,9 +25,8 @@ import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Task;
+import org.hibernate.exception.DataException;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
@@ -85,31 +84,15 @@ public class UserListView extends BaseListView {
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user and
-     * that are "INWORK" and belong to process, not template.
-     *
-     * @return list of tasks that are currently assigned to the user and that
-     *         are "INWORK" and belong to process, not template
-     */
-    public static List<Task> getTasksInProgress(User user) {
-        return ServiceManager.getTaskService().getTasksInProgress(user);
-    }
-
-    /**
      * Unassign all tasks in work from user and set their status back to open.
      *
      * @param userObject user
      */
     public static void resetTasksToOpen(User userObject) {
-        List<Task> tasksInProgress = getTasksInProgress(userObject);
-        for (Task taskInProgress : tasksInProgress) {
-            ServiceManager.getTaskService().replaceProcessingUser(taskInProgress, null);
-            taskInProgress.setProcessingStatus(TaskStatus.OPEN);
-            try {
-                ServiceManager.getTaskService().save(taskInProgress);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TASK.getTranslationSingular()}, logger, e);
-            }
+        try {
+            ServiceManager.getTaskService().resetTasksToOpen(userObject, null);
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.TASK.getTranslationSingular()}, logger, e);
         }
     }
 

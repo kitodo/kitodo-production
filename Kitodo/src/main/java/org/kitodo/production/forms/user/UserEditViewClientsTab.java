@@ -11,25 +11,32 @@
 
 package org.kitodo.production.forms.user;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseTabEditView;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
@@ -45,6 +52,8 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
     private User userObject;
 
     private List<Client> clients;
+    private Integer clientIdPendingRemoval = null;
+    private final Set<Integer> removeClientIds = new HashSet<>();
 
 
     /**
@@ -100,12 +109,10 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
      * @return null (to stay one the same page)
      */
     public String deleteFromClient() {
-        String idParameter = Helper.getRequestParameter(ID_PARAMETER);
-        if (Objects.nonNull(idParameter)) {
+        if (Objects.nonNull(clientIdPendingRemoval)) {
             try {
-                int clientId = Integer.parseInt(idParameter);
                 for (Client client : this.userObject.getClients()) {
-                    if (client.getId().equals(clientId)) {
+                    if (client.getId().equals(clientIdPendingRemoval)) {
                         this.userObject.getClients().remove(client);
                         if (Objects.nonNull(this.clients) && !this.clients.contains(client)) {
                             this.clients.add(client);
@@ -114,9 +121,11 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
                         if (client.equals(this.userObject.getDefaultClient())) {
                             this.userObject.setDefaultClient(null);
                         }
+                        removeClientIds.add(clientIdPendingRemoval);
                         break;
                     }
                 }
+                clientIdPendingRemoval = null;
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
@@ -141,6 +150,7 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
 
                 if (!this.userObject.getClients().contains(client)) {
                     this.userObject.getClients().add(client);
+                    removeClientIds.remove(clientId);
                     if (Objects.nonNull(this.clients)) {
                         this.clients.remove(client);
                     }
@@ -157,4 +167,104 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
         return this.stayOnCurrentPage;
     }
 
+    /**
+     * Check whether User 'userObject' is currently assigned to any projects associated with or has any roles of the client
+     * identified by the given ID 'clientId'. If true, the user is prompted to confirm his removal from those projects and roles
+     * before removing the client from the user. If false, the client is removed from the user directly.
+     *
+     * @param clientId ID of client that is removed from the user
+     */
+    public void checkClientProjectsAndRoles(Integer clientId) {
+        List<Project> assignedClientProjects = this.userObject.getProjects().stream()
+                .filter(p -> p.getClient().getId().equals(clientId)).toList();
+        List<Role> assignedRoles = this.userObject.getRoles().stream()
+                .filter(r -> r.getClient().getId().equals(clientId)).toList();
+        clientIdPendingRemoval = clientId;
+        if (assignedClientProjects.isEmpty() && assignedRoles.isEmpty()) {
+            deleteFromClient();
+        } else {
+            PrimeFaces.current().ajax().update("removeClientDialog");
+            PrimeFaces.current().executeScript("PF('removeClientDialog').show();");
+        }
+    }
+
+    /**
+     * Remove all projects and roles from User 'userObject' that are associated with the client identified by ID
+     * 'clientIdPendingRemoval'.
+     */
+    public void removeUserFromClientProjects() {
+        if (Objects.nonNull(this.clientIdPendingRemoval)) {
+            this.userObject.getRoles().removeAll(this.userObject.getRoles().stream()
+                    .filter(r -> r.getClient().getId().equals(this.clientIdPendingRemoval)).toList());
+            this.userObject.getProjects().removeAll(this.userObject.getProjects().stream()
+                    .filter(p -> p.getClient().getId().equals(this.clientIdPendingRemoval)).toList());
+        }
+    }
+
+    /**
+     * Cancel the removal of the client with ID 'clientIdPendingRemoval' from User 'userObject'. Resets 'clientIdPendingRemoval' so
+     * that tasks in progress of that client are not reset to 'open' when the user is saved.
+     */
+    public void cancelRemoveClient() {
+        this.clientIdPendingRemoval = null;
+    }
+
+    /**
+     * Return list of project titles that are associated with the client with ID 'clientIdPendingRemoval' and
+     * assigned to User 'userObject'.
+     * @return list of project titles
+     */
+    public List<String> getClientProjects() {
+        if (Objects.nonNull(this.clientIdPendingRemoval)) {
+            return this.userObject.getProjects().stream()
+                    .filter(project -> project.getClient().getId().equals(this.clientIdPendingRemoval))
+                    .map(Project::getTitle).toList();
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Return list of role titles that are associated with the client with ID 'clientIdPendingRemoval' and
+     * assigned to user 'userObject'.
+     * @return list of role titles
+     */
+    public List<String> getClientRoles() {
+        if (Objects.nonNull(this.clientIdPendingRemoval)) {
+            return this.userObject.getRoles().stream()
+                    .filter(role -> role.getClient().getId().equals(this.clientIdPendingRemoval))
+                    .map(Role::getTitle).toList();
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get 'removeClientIds'. IDs of all clients that have been removed from User 'userObject' and whose tasks are reset
+     * to 'OPEN'.
+     *
+     * @return removeClientIds
+     */
+    public Set<Integer> getRemoveClientIds() {
+        return removeClientIds;
+    }
+
+    /**
+     * Return confirmation message for removing all projects from User 'userObject' that are associated with the client
+     * identified by ID 'clientIdPendingRemoval'.
+     *
+     * @return confirmation message for removing all projects from User 'userObject' that are associated with the client
+     *      identified by ID 'clientIdPendingRemoval'
+     */
+    public String getRemoveClientProjectsMessage() {
+        if (Objects.nonNull(clientIdPendingRemoval)) {
+            try {
+                Client removeClient = ServiceManager.getClientService().getById(clientIdPendingRemoval);
+                return Helper.getTranslation("removeClientProjectsFromUserConfirmMessage",
+                        StringEscapeUtils.escapeHtml4(removeClient.getName()),
+                        StringEscapeUtils.escapeHtml4(userObject.getFullName()));
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e);
+            }
+        }
+        return null;
+    }
 }
