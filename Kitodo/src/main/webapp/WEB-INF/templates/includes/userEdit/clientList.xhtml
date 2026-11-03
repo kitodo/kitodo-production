@@ -26,7 +26,7 @@
         </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromClient"
-                           action="#{UserEditViewClientsTab.checkClientProjects(client.id)}"
+                           action="#{UserEditViewClientsTab.checkClientProjectsAndRoles(client.id)}"
                            styleClass="action"
                            title="#{msgs.clientDeleteFrom}"
                            rendered="#{isEditMode || isCreateMode}"

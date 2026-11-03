@@ -29,6 +29,7 @@
         <h:form id="removeFromProjectsForm">
             <div class="select-note ui-messages-info">#{UserEditViewClientsTab.getRemoveClientProjectsMessage()}</div>
             <div class="select-selector">
+                <h4>#{msgs.projects}</h4>
                 <p>
                     <p:dataTable styleClass="client-projects"
                                  value="#{UserEditViewClientsTab.clientProjects}"
@@ -36,6 +37,18 @@
                         <p:column id="projectTitle">
                             <h:outputText value="#{project}"
                                           title="#{project}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p>
+                <br/>
+                <h4>#{msgs.roles}</h4>
+                <p>
+                    <p:dataTable styleClass="client-projects"
+                                 value="#{UserEditViewClientsTab.clientRoles}"
+                                 var="role">
+                        <p:column id="projectRole">
+                            <h:outputText value="#{role}"
+                                          title="#{role}"/>
                         </p:column>
                     </p:dataTable>
                 </p>

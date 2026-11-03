@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
@@ -166,17 +167,19 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
     }
 
     /**
-     * Check whether User 'userObject' is currently assigned to any projects associated with the client
-     * identified by given ID 'clientId'. If true, the user is prompted to confirm his removal from those projects
+     * Check whether User 'userObject' is currently assigned to any projects associated with or has any roles of the client
+     * identified by given ID 'clientId'. If true, the user is prompted to confirm his removal from those projects and roles
      * before removing the client from the user. If false, the client is removed from the user directly.
      *
      * @param clientId ID of client that is removed from the user
      */
-    public void checkClientProjects(Integer clientId) {
+    public void checkClientProjectsAndRoles(Integer clientId) {
         List<Project> assignedClientProjects = this.userObject.getProjects().stream()
                 .filter(p -> p.getClient().getId().equals(clientId)).toList();
+        List<Role> assignedRoles = this.userObject.getRoles().stream()
+                .filter(r -> r.getClient().getId().equals(clientId)).toList();
         clientIdPendingRemoval = clientId;
-        if (assignedClientProjects.isEmpty()) {
+        if (assignedClientProjects.isEmpty() && assignedRoles.isEmpty()) {
             deleteFromClient();
         } else {
             PrimeFaces.current().ajax().update("removeClientDialog");
@@ -214,10 +217,23 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
         if (Objects.nonNull(this.clientIdPendingRemoval)) {
             return this.userObject.getProjects().stream()
                     .filter(project -> project.getClient().getId().equals(this.clientIdPendingRemoval))
-                    .map(Project::getTitle).collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
+                    .map(Project::getTitle).toList();
         }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Return list of role titles that are associated with the client with ID 'clientIdPendingRemoval' and
+     * assigned to user 'userObject'.
+     * @return list of role titles
+     */
+    public List<String> getClientRoles() {
+        if (Objects.nonNull(this.clientIdPendingRemoval)) {
+            return this.userObject.getRoles().stream()
+                    .filter(role -> role.getClient().getId().equals(this.clientIdPendingRemoval))
+                    .map(Role::getTitle).toList();
+        }
+        return Collections.emptyList();
     }
 
     /**
