@@ -1615,15 +1615,22 @@ body .statusColumn .ui-button {
     display: inline-block;
 }
 
-.client-projects {
+.client-elements {
     border: 1px solid var(--blue);
     border-radius: 3px;
     max-height: 100px;
     overflow-y: auto;
 }
 
-.client-projects thead {
+.client-elements thead {
     display: none;
+}
+
+.remove-client-dialog .highlighted-value {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    margin: 0.5em 0;
 }
 
 /*----------------------------------------------------------------------

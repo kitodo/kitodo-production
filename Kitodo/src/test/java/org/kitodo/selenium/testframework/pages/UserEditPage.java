@@ -371,7 +371,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
      * @return list of project titles
      */
     public List<String> getRemoveClientDialogProjectTitles() {
-        WebElement projectsTableBody = removeClientDialog.findElement(By.cssSelector(".client-projects tbody"));
+        WebElement projectsTableBody = removeClientDialog.findElement(By.id("removeFromProjectsForm:clientProjectTable_data"));
         return Browser.getTableDataByColumn(projectsTableBody, 0);
     }
 

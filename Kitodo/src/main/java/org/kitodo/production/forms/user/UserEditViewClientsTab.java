@@ -24,6 +24,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
@@ -257,8 +258,9 @@ public class UserEditViewClientsTab extends BaseTabEditView<User> {
         if (Objects.nonNull(clientIdPendingRemoval)) {
             try {
                 Client removeClient = ServiceManager.getClientService().getById(clientIdPendingRemoval);
-                return Helper.getTranslation("removeClientProjectsFromUserConfirmMessage", removeClient.getName(),
-                        userObject.getFullName());
+                return Helper.getTranslation("removeClientProjectsFromUserConfirmMessage",
+                        StringEscapeUtils.escapeHtml4(removeClient.getName()),
+                        StringEscapeUtils.escapeHtml4(userObject.getFullName()));
             } catch (DAOException e) {
                 Helper.setErrorMessage(e);
             }

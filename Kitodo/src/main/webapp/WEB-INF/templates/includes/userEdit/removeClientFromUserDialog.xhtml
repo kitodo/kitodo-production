@@ -21,17 +21,20 @@
               widgetVar="removeClientDialog"
               showHeader="false"
               modal="true"
-              width="500px"
+              width="640px"
               appendTo="@(body)"
               resizable="false"
               closable="false">
         <h3>#{msgs.removeClientProjectsFromUser}</h3>
         <h:form id="removeFromProjectsForm">
-            <div class="select-note ui-messages-info">#{UserEditViewClientsTab.getRemoveClientProjectsMessage()}</div>
+            <div class="select-note ui-messages-info">
+                <h:outputText value="#{UserEditViewClientsTab.getRemoveClientProjectsMessage()}" escape="false"/>
+            </div>
             <div class="select-selector">
                 <h4>#{msgs.projects}</h4>
                 <p>
-                    <p:dataTable styleClass="client-projects"
+                    <p:dataTable styleClass="client-elements"
+                                 id="clientProjectTable"
                                  value="#{UserEditViewClientsTab.clientProjects}"
                                  var="project">
                         <p:column id="projectTitle">
@@ -43,10 +46,11 @@
                 <br/>
                 <h4>#{msgs.roles}</h4>
                 <p>
-                    <p:dataTable styleClass="client-projects"
+                    <p:dataTable styleClass="client-elements"
+                                 id="clientRoleTable"
                                  value="#{UserEditViewClientsTab.clientRoles}"
                                  var="role">
-                        <p:column id="projectRole">
+                        <p:column id="roleTitle">
                             <h:outputText value="#{role}"
                                           title="#{role}"/>
                         </p:column>
