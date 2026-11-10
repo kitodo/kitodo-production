@@ -79,6 +79,16 @@ public class LazyBeanModel extends LazyDataModel<Object> {
         return 0;
     }
 
+    @Override
+    public Object getRowData() {
+        Stopwatch stopwatch = new Stopwatch(this, "getRowData");
+        List<Object> data = getWrappedData();
+        if (isRowAvailable()) {
+            return stopwatch.stop(data.get(getRowIndex()));
+        } else {
+            return stopwatch.stop(null);
+        }
+    }
 
     @Override
     public Object getRowData(String rowKey) {
