@@ -31,8 +31,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page" listener="#{AuthorityListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{AuthorityListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{AuthorityListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{AuthorityListView.onSortChange}"/>
         <p:column headerText="#{msgs.authority}" sortBy="#{item.title}">
             <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"
                           title="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>

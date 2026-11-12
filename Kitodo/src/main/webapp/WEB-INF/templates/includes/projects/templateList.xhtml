@@ -34,9 +34,9 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page" listener="#{TemplateListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{TemplateListView.onSortChange}"/>
-        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+        <p:ajax event="page" form="ajaxForm" listener="#{TemplateListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{TemplateListView.onSortChange}"/>
+        <p:ajax event="rowToggle" form="ajaxForm" oncomplete="registerRowToggleEvents();" />
 
         <p:column styleClass="rowTogglerColumn"
                   resizable="false"

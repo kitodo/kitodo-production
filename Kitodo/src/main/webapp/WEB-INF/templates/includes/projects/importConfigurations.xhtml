@@ -33,8 +33,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page" listener="#{ImportConfigurationListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{ImportConfigurationListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{ImportConfigurationListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{ImportConfigurationListView.onSortChange}"/>
 
         <p:column id="idColumn"
                   width="70"

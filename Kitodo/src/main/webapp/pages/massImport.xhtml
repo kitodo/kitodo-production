@@ -61,7 +61,7 @@
                    prependId="false"
                    id="projectsTabView"
                    widgetVar="projectsTabView">
-            <p:ajax event="tabChange" listener="#{MassImportForm.onTabChange}"/>
+            <p:ajax event="tabChange" form="ajaxForm" listener="#{MassImportForm.onTabChange}"/>
             <p:tab title="#{msgs.massImport}"
                    id="massImportTab"
                    rendered="#{SecurityAccessController.hasAuthorityToMassImportProcesses()}">

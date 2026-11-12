@@ -34,8 +34,9 @@
                           oncomplete="$('html').removeClass('progressCursor')" />
             <p:growl id="notifications" widgetVar="notifications" severity="info" escape="false"/>
             <p:growl id="sticky-notifications" widgetVar="sticky-notifications" sticky="true" severity="info"/>
+            <h:form id="ajaxForm"/>
             <h:panelGroup id="indexErrorPanel" layout="block" rendered="#{empty indexingForm.serverInformation}">
-               <p:ajax event="click" onclick="PF('sticky-notifications').renderMessage({'summary':'The elastic search server is not running.','detail':'Elastic Search','severity':'info'});"/>
+               <p:ajax event="click" form="ajaxForm" onclick="PF('sticky-notifications').renderMessage({'summary':'The elastic search server is not running.','detail':'Elastic Search','severity':'info'});"/>
             </h:panelGroup>
             <div id="loadingScreen">
                 <div>

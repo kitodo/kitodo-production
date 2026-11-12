@@ -29,8 +29,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page" listener="#{ClientListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{ClientListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{ClientListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{ClientListView.onSortChange}"/>
         <p:column headerText="#{msgs.client}"
                   sortBy="#{item.name}"
                   rendered="#{ClientListView.showColumn('client.client')}">
