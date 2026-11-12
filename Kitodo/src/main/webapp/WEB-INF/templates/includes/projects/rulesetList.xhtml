@@ -32,8 +32,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page" listener="#{RulesetListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{RulesetListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{RulesetListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{RulesetListView.onSortChange}"/>
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"

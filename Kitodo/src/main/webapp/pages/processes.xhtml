@@ -95,6 +95,7 @@
                    dynamic="true"
                    activeIndex="#{ProcessesTabView.derivedActiveTabIndex}">
             <p:ajax event="tabChange"
+                    form="ajaxForm"
                     listener="#{ProcessesTabView.onTabChange}"
                     update="filterMenuWrapper"/>
             <p:tab title="#{msgs.processes}" id="processTab"

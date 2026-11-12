@@ -75,8 +75,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page" listener="#{UserListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{UserListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{UserListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{UserListView.onSortChange}"/>
         <p:column headerText="#{msgs.username}"
                   sortBy="#{item.surname}"
                   rendered="#{UserListView.showColumn('user.username')}">
