@@ -33,8 +33,8 @@
                 currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                 paginatorPosition="bottom">
 
-      <p:ajax event="page" listener="#{LtpValidationConfigurationListView.onPageChange}"/>
-      <p:ajax event="sort" listener="#{LtpValidationConfigurationListView.onSortChange}"/>
+      <p:ajax event="page" form="ajaxForm" listener="#{LtpValidationConfigurationListView.onPageChange}"/>
+      <p:ajax event="sort" form="ajaxForm" listener="#{LtpValidationConfigurationListView.onSortChange}"/>
 
       <p:column headerText="#{msgs.title}"
                 sortBy="#{item.title}">

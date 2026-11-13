@@ -34,7 +34,7 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{MigrationForm.activeTabIndex}" id="systemTabView"
                    widgetVar="systemTabView" dynamic="true">
-            <p:ajax event="tabChange" listener="#{MigrationForm.onTabChange}"/>
+            <p:ajax event="tabChange" form="ajaxForm" listener="#{MigrationForm.onTabChange}"/>
             <p:tab id="taskManagerTab" title="#{msgs.taskManager}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewTaskManagerPage()}">
                 <ui:include src="/WEB-INF/templates/includes/system/taskmanager.xhtml" />

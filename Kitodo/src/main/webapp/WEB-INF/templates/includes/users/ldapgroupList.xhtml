@@ -31,8 +31,8 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
-        <p:ajax event="page" listener="#{LdapGroupListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{LdapGroupListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{LdapGroupListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{LdapGroupListView.onSortChange}"/>
         <p:column headerText="#{msgs.ldapGroup}"
                   sortBy="#{item.title}"
                   rendered="#{LdapGroupListView.showColumn('ldapgroup.ldapgroup')}">

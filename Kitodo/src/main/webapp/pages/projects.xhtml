@@ -141,6 +141,7 @@
         <p:tabView activeIndex="#{ProjectsTabView.derivedActiveTabIndex}" prependId="false"
                    id="projectsTabView" widgetVar="projectsTabView" dynamic="true">
             <p:ajax event="tabChange"
+                    form="ajaxForm"
                     listener="#{ProjectsTabView.onTabChange}"
                     update="convertButtonWrapper configureColumnsForm"/>
             <p:tab title="#{msgs.projects}" id="projectTab"
