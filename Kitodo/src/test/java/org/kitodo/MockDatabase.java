@@ -222,6 +222,37 @@ public class MockDatabase {
     }
 
     /**
+     * Insert a role of the second client with client specific authorities to view roles, clients and import
+     * configurations, and a user who is assigned to the second client only and holds this role. This allows testing
+     * access checks for users without global authorities.
+     *
+     * @throws DAOException when inserting the role or the user fails
+     */
+    public static void insertClientSpecificAdministrator() throws DAOException {
+        Client secondClient = ServiceManager.getClientService().getById(2);
+
+        Role clientSpecificRole = new Role();
+        clientSpecificRole.setTitle("Client specific administration for second client");
+        clientSpecificRole.setClient(secondClient);
+        List<Authority> clientSpecificAuthorities = new ArrayList<>();
+        clientSpecificAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewRole" + CLIENT_ASSIGNABLE));
+        clientSpecificAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewClient" + CLIENT_ASSIGNABLE));
+        clientSpecificAuthorities.add(ServiceManager.getAuthorityService()
+                .getByTitle("viewImportConfiguration" + CLIENT_ASSIGNABLE));
+        clientSpecificRole.setAuthorities(clientSpecificAuthorities);
+        ServiceManager.getRoleService().save(clientSpecificRole);
+
+        User clientSpecificAdministrator = new User();
+        clientSpecificAdministrator.setName("Client");
+        clientSpecificAdministrator.setSurname("Administrator");
+        clientSpecificAdministrator.setLogin("clientadmin");
+        clientSpecificAdministrator.setPassword(new KitodoDelegatingPasswordEncoder().encode(DEFAULT_USER_PASSWORD));
+        clientSpecificAdministrator.getClients().add(secondClient);
+        clientSpecificAdministrator.getRoles().add(clientSpecificRole);
+        ServiceManager.getUserService().save(clientSpecificAdministrator);
+    }
+
+    /**
      * Prepare database for tests.
      * @throws Exception when preparation fails
      */
@@ -816,7 +847,7 @@ public class MockDatabase {
         return ruleset.getId();
     }
 
-    private static void insertTemplates() throws DAOException {
+    public static void insertTemplates() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
 
         Template firstTemplate = new Template();
