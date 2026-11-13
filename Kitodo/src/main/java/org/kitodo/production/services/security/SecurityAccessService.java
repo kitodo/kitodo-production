@@ -1252,7 +1252,7 @@ public class SecurityAccessService extends SecurityAccess {
             return true;
         }
         ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(importConfigurationId);
-        return importConfiguration.getClients().stream().anyMatch(client -> client.getId() == getClientId());
+        return importConfiguration.getClients().stream().anyMatch(this::matchesClient);
     }
 
     private boolean hasAuthorityForRole(int roleId) throws DAOException {
