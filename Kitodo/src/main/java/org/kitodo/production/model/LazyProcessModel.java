@@ -184,17 +184,6 @@ public class LazyProcessModel extends LazyBeanModel {
                 .findProcessIdsWithVisibleTasks(processIds, userRoleIds);
     }
 
-    @Override
-    public Object getRowData() {
-        Stopwatch stopwatch = new Stopwatch(this, "getRowData");
-        List<Object> data = getWrappedData();
-        if (isRowAvailable()) {
-            return stopwatch.stop(data.get(getRowIndex()));
-        } else {
-            return stopwatch.stop(null);
-        }
-    }
-
     /**
      * Returns the cached task titles grouped by process ID and task status.
      *
