@@ -12,8 +12,10 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
@@ -84,6 +86,10 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     private WebElement sessionClientLabel;
 
     @SuppressWarnings(UNUSED)
+    @FindBy(id = "clientList")
+    private WebElement clientList;
+
+    @SuppressWarnings(UNUSED)
     @FindBy(className = "ui-selectonemenu-trigger")
     private WebElement clientSelectTrigger;
 
@@ -149,6 +155,44 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
 
     public void cancelClientSelection() {
         cancelClientSelectionButton.click();
+    }
+
+    /**
+     * Switch to another client by selecting the client from the user menu.
+     * 
+     * @param idx the row index of the client to be switched to
+     */
+    public void switchSessionClient(int idx) {
+        // in case the page is still loading
+        await("Wait for visible user menu button").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> userMenuButton.isDisplayed());
+
+        // open user menu
+        userMenuButton.click();
+
+        // make sure overlay is shown
+        await("Wait for user menu overlay").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> sessionClientLabel.isDisplayed());
+
+        // toggle client list
+        Browser.getDriver().findElement(By.cssSelector("#sessionClient .toggle-trigger")).click();
+
+        // make sure client list is shown
+        await("Wait for client list to be expanded").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> clientList.isDisplayed());
+        
+        // extract available client links
+        List<WebElement> switchLinks = clientList.findElements(By.tagName("a"));
+
+        // check client with idx is available
+        assertTrue(switchLinks.size() > idx, "not enough clients to select client in row " + idx);
+
+        // click on client link
+        switchLinks.get(idx).click();
+
+        // wait for user menu to disappear
+        await("Wait for user menu to disappear").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> !sessionClientLabel.isDisplayed());
     }
 
     /**
