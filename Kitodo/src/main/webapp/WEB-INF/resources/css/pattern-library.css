@@ -1161,7 +1161,8 @@ body .ui-panelgrid .ui-widget-content label {
     color: var(--carbon-blue);
 }
 
-.ui-panelgrid .ui-widget-content .ui-datatable-empty-message {
+.ui-panelgrid .ui-widget-content .ui-datatable-empty-message,
+.ui-datatable-tablewrapper .ui-widget-content .ui-datatable-empty-message {
     color: var(--medium-gray);
 }
 

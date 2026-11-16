@@ -58,7 +58,7 @@
         </h3>
         <p:button id="cancel" 
                   value="#{msgs.cancel}" 
-                  outcome="users?tab=usersTab&amp;#{UserEditView.referrerListOptions}"
+                  outcome="#{UserEditView.outcomePath}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" 
                   iconPos="right" 
@@ -141,6 +141,7 @@
         <ui:include src="/WEB-INF/templates/includes/userEdit/changePasswordPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/resetPasswordPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/changeShortcutsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/removeClientFromUserDialog.xhtml"/>
     </ui:define>
 
     <ui:define name="page-scripts">

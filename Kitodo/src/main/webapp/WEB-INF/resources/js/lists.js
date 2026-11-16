@@ -67,3 +67,10 @@ $(window).on("load", function () {
         }
     });
 });
+
+$(document).on('keydown', '.ui-paginator-jtp-input', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault(); // prevent whole form submit
+        this.blur(); // triggers 'change' event for AJAX pagination
+    }
+});
