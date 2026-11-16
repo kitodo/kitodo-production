@@ -105,9 +105,6 @@ public class ListingSessionClientST extends BaseTestSelenium {
      */
     @Test
     public void clientSwitchRedirectsToDesktopTest() throws Exception {
-        // login as nowak
-        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("nowak"), MockDatabase.DEFAULT_USER_PASSWORD);
-
         // confirm login for first client
         Pages.getTopNavigation().acceptClientSelection();
 
