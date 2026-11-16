@@ -31,6 +31,7 @@ import org.primefaces.PrimeFaces;
 @RequestScoped
 public class SessionClientController {
 
+    private static final String DESKTOP_PAGE = "/pages/desktop";
     private Client selectedClient;
 
     /**
@@ -142,7 +143,7 @@ public class SessionClientController {
     public String setSessionClient(Client sessionClient) {
         ServiceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true";
+            return DESKTOP_PAGE + "?faces-redirect=true";
         }
         return null;
     }

@@ -98,4 +98,26 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
         SecurityTestUtils.cleanSecurityContext();
     }
+
+    /**
+     * Switch to a different client should redirect to the desktop page.
+     */
+    @Test
+    public void clientSwitchRedirectsToDesktopTest() throws Exception {
+        // login as nowak
+        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("nowak"), MockDatabase.DEFAULT_USER_PASSWORD);
+
+        // confirm login for first client
+        Pages.getTopNavigation().acceptClientSelection();
+
+        // go to projects page
+        projectsPage.goTo();
+        pollAssertTrue(() -> projectsPage.isAt());
+
+        // switch to second client
+        Pages.getTopNavigation().switchSessionClient(1);
+
+        // check redirection to desktop page
+        pollAssertTrue(() -> Pages.getDesktopPage().isAt());
+    }
 }
