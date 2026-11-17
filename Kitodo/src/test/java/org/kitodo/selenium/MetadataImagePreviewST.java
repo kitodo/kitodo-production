@@ -176,6 +176,7 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
 
         // rotate left and zoom in
         findElementsByCSS(OPEN_LAYERS_ROTATE_LEFT_SELECTOR).getFirst().click();
+        pollAssertTrue(() -> !isOpenLayersAnimating());
         findElementsByCSS(OPEN_LAYERS_ZOOM_IN_SELECTOR).getFirst().click();
         pollAssertTrue(() -> !isOpenLayersAnimating());
 
