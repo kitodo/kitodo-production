@@ -13,11 +13,11 @@ package org.kitodo.production.services.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
-import java.util.Objects;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -63,11 +63,10 @@ public class SecurityAccessServiceIT {
         User user = ServiceManager.getUserService().getByLogin("kowal");
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.nonNull(authentication)) {
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            assertEquals(189, authorities.size(),
-                    "Security context holder does not hold the corresponding authorities");
-        }
+        assertNotNull(authentication, "Authentication should not be null");
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        assertEquals(189, authorities.size(),
+                "Security context holder does not hold the corresponding authorities");
     }
 
     @Test
