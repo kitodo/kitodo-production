@@ -254,4 +254,21 @@ public class SecurityAccessServiceIT {
         assertFalse(ServiceManager.getSecurityAccessService().hasAuthorityToViewClient(1),
                 "User 'nowak' should NOT have the permission to view clients while logged in with session client 1");
     }
+
+    @Test
+    public void hasAuthorityToViewLdapGroupAndLdapServerTest() throws DAOException {
+        // User "kowal" has the global authority "viewLdapGroup" (the test data contains no LDAP server authorities)
+        User kowal = ServiceManager.getUserService().getByLogin("kowal");
+        SecurityTestUtils.addUserDataToSecurityContext(kowal, 1);
+        assertTrue(ServiceManager.getSecurityAccessService().hasAuthorityToViewLdapGroup(),
+                "User 'kowal' should have the permission to view LDAP groups due to his global authority");
+
+        // User "nowak" has neither LDAP group nor LDAP server authorities
+        User nowak = ServiceManager.getUserService().getByLogin("nowak");
+        SecurityTestUtils.addUserDataToSecurityContext(nowak, 1);
+        assertFalse(ServiceManager.getSecurityAccessService().hasAuthorityToViewLdapGroup(),
+                "User 'nowak' should NOT have the permission to view LDAP groups");
+        assertFalse(ServiceManager.getSecurityAccessService().hasAuthorityToViewLdapServer(),
+                "User 'nowak' should NOT have the permission to view LDAP servers");
+    }
 }

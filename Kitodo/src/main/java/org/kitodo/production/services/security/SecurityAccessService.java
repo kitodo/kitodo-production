@@ -1021,6 +1021,28 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to view LDAP groups. It returns true if the user has the authority
+     * "viewLdapGroup" or "editLdapGroup" globally. LDAP groups are not related to clients, so client specific
+     * authorities are not considered.
+     *
+     * @return true if the current user has the authority to view LDAP groups
+     */
+    public boolean hasAuthorityToViewLdapGroup() {
+        return hasAnyAuthorityGlobal("viewLdapGroup, editLdapGroup");
+    }
+
+    /**
+     * Check if the current user has the authority to view LDAP servers. It returns true if the user has the authority
+     * "viewLdapServer" or "editLdapServer" globally. LDAP servers are not related to clients, so client specific
+     * authorities are not considered.
+     *
+     * @return true if the current user has the authority to view LDAP servers
+     */
+    public boolean hasAuthorityToViewLdapServer() {
+        return hasAnyAuthorityGlobal("viewLdapServer, editLdapServer");
+    }
+
+    /**
      * Checks if current user has global authority for add or edit role. If yes,
      * current client is not assigned to created or edited role.
      *
