@@ -33,8 +33,8 @@
                 currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                 paginatorPosition="bottom">
 
-      <p:ajax event="page" listener="#{MappingFileListView.onPageChange}"/>
-      <p:ajax event="sort" listener="#{MappingFileListView.onSortChange}"/>
+      <p:ajax event="page" form="ajaxForm" listener="#{MappingFileListView.onPageChange}"/>
+      <p:ajax event="sort" form="ajaxForm" listener="#{MappingFileListView.onSortChange}"/>
 
       <p:column headerText="#{msgs.title}"
                 sortBy="#{item.title}">

@@ -32,8 +32,8 @@
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="page" listener="#{WorkflowListView.onPageChange}"/>
-        <p:ajax event="sort" listener="#{WorkflowListView.onSortChange}"/>
+        <p:ajax event="page" form="ajaxForm" listener="#{WorkflowListView.onPageChange}"/>
+        <p:ajax event="sort" form="ajaxForm" listener="#{WorkflowListView.onSortChange}"/>
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"

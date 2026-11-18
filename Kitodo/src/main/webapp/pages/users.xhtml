@@ -124,6 +124,7 @@
     <ui:define name="pageTabView">
         <p:tabView id="usersTabView" activeIndex="#{UsersTabView.derivedActiveTabIndex}" dynamic="true">
             <p:ajax event="tabChange"
+                    form="ajaxForm"
                     listener="#{UsersTabView.onTabChange}"
                     update="filterMenuWrapper configureColumnsForm"/>
             <p:tab id="usersTab" title="#{msgs.users}"
