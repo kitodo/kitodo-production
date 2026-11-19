@@ -52,7 +52,6 @@ import org.kitodo.production.helper.cache.RequestScopeCacheHelper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.KitodoDelegatingPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -144,8 +143,7 @@ public class UserService extends BaseBeanService<User, UserDAO> implements UserD
         try {
             filterMap = getFilterMap(filters);
         } catch (FilterException e) {
-            PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
-                    + e.getLocalizedMessage() + "','severity':'error'})");
+            logger.info(e.getMessage());
             return new ArrayList<>();
         }
         String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
