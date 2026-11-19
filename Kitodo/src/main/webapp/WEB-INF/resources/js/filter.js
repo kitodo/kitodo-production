@@ -176,7 +176,9 @@ $(document).ready(function () {
             if (target.parents(FILTER_INPUT_PARSED_FILTERS_AND_OPTIONS_FORMS).length === 0) {
                 // User clicked outside input or filter options/suggestions menu. Menu should be closed and filter should be submitted.
                 closeFilterOptionsMenu();
-                submitInput();
+                if ($(FILTER_INPUT).val().length > 0) {
+                    submitInput();
+                }
                 return;
             } else if (target.hasClass("suggestion") || target.parents(".suggestion").length) {
                 // User clicked on suggestion. Suggestion should be selected and copied to input.
