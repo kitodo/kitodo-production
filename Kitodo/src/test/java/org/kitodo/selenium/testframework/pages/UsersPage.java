@@ -35,6 +35,7 @@ public class UsersPage extends Page<UsersPage> {
     private static final String ROLES_TABLE = USERS_TAB_VIEW + ":rolesTable";
     private static final String CLIENTS_TABLE = USERS_TAB_VIEW + ":clientsTable";
     private static final String LDAP_GROUPS_TABLE = USERS_TAB_VIEW + ":ldapGroupsTable";
+    public static final String FILTER_ROLES_SWITCH_SELECTOR = "#allClientsRolesForm\\:showAllClientsRoles > .ui-chkbox-box";
 
     @SuppressWarnings(UNUSED)
     @FindBy(id = USERS_TAB_VIEW)
@@ -391,5 +392,15 @@ public class UsersPage extends Page<UsersPage> {
                 MockDatabase.getRemovableObjectIDs().get(ObjectType.CLIENT.name()),
                 TabIndex.CLIENTS.getIndex(),
                 usersTabView);
+    }
+
+    /**
+     * Click button/switch UI element on roles tab to filter roles by current session client.
+     *
+     * @throws InterruptedException when thread is interrupted while waiting for UI to update
+     */
+    public void clickButtonToFilterRolesByCurrentClient() throws InterruptedException {
+        Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR)).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
     }
 }

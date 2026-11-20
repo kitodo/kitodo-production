@@ -45,6 +45,7 @@ public class ListingST extends BaseTestSelenium {
     private static ProjectsPage projectsPage;
     private static TasksPage tasksPage;
     private static UsersPage usersPage;
+    private static final int numberOfCurrentClientRoles = 9;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -262,8 +263,16 @@ public class ListingST extends BaseTestSelenium {
         int usersDisplayed = usersPage.countListedUsers();
         assertEquals(usersInDatabase, usersDisplayed, "Displayed wrong number of users");
 
-        int rolesInDatabase = ServiceManager.getRoleService().getAll().size();
+        // number of roles filtered by current client
         int rolesDisplayed = usersPage.countListedRoles();
+        assertEquals(numberOfCurrentClientRoles, rolesDisplayed, "Displayed wrong number of roles");
+
+        // deactivate filter by client
+        usersPage.clickButtonToFilterRolesByCurrentClient();
+
+        // number of all roles, not filtered by current client
+        int rolesInDatabase = ServiceManager.getRoleService().getAll().size();
+        rolesDisplayed = usersPage.countListedRoles();
         assertEquals(rolesInDatabase, rolesDisplayed, "Displayed wrong number of roles");
 
         int clientsInDatabase = ServiceManager.getClientService().getAll().size();

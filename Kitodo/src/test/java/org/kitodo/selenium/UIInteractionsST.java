@@ -14,7 +14,9 @@ package org.kitodo.selenium;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.kitodo.selenium.testframework.pages.UsersPage.FILTER_ROLES_SWITCH_SELECTOR;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +42,6 @@ public class UIInteractionsST extends BaseTestSelenium {
     private static ProjectsPage projectsPage;
     private static ImportConfigurationEditPage importConfigurationEditPage;
     private static UsersPage usersPage;
-    private static final String FILTER_ROLES_SWITCH_SELECTOR = "#allClientsRolesForm\\:showAllClientsRoles > .ui-chkbox-box";
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -92,22 +93,25 @@ public class UIInteractionsST extends BaseTestSelenium {
 
         usersPage.switchToTabByIndex(TabIndex.ROLES.getIndex());
 
-        // verify that switch to show other clients roles is on initially
+        // verify that switch to show other clients roles is deactivated initially
         WebElement roleSwitch = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
-        assertTrue(roleSwitch.getAttribute("class").contains("ui-state-active"));
+        String classAttribute = roleSwitch.getAttribute("class");
+        assertNotNull(classAttribute);
+        assertFalse(classAttribute.contains("ui-state-active"));
 
         int rolesDisplayedFiltered = usersPage.countListedRoles();
-        assertEquals(rolesInDatabase, rolesDisplayedFiltered, "Displayed wrong number of roles filtered");
+        assertEquals(9, rolesDisplayedFiltered, "Displayed wrong number of roles filtered by current client");
 
-        Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR)).click();
-        Thread.sleep(Browser.getDelayAfterPickListClick());
+        usersPage.clickButtonToFilterRolesByCurrentClient();
 
-        // verify that switch to show other clients roles is off after clicking
+        // verify that switch to show other clients roles is activated after clicking
         WebElement roleSwitchClicked = Browser.getDriver().findElement(By.cssSelector(FILTER_ROLES_SWITCH_SELECTOR));
-        pollAssertTrue(() -> !roleSwitchClicked.getAttribute("class").contains("ui-state-active"));
+        String classAttributeClicked = roleSwitchClicked.getAttribute("class");
+        assertNotNull(classAttributeClicked);
+        pollAssertTrue(() -> classAttributeClicked.contains("ui-state-active"));
 
         int rolesDisplayedUnfiltered = usersPage.countListedRoles();
-        assertEquals(9, rolesDisplayedUnfiltered, "Displayed wrong number of roles unfiltered");
+        assertEquals(rolesInDatabase, rolesDisplayedUnfiltered, "Displayed wrong number of roles unfiltered by current client");
     }
 
     /**
