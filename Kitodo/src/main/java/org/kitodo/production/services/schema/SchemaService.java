@@ -95,6 +95,7 @@ public class SchemaService {
         set(workpiece, MdSec.TECH_MD, "contentIDs", vp.replace(process.getProject().getMetsContentIDs()));
 
         convertChildrenLinksForExportRecursive(workpiece.getLogicalStructure());
+        enrichCalendarIssueForExport(workpiece, process);
         assignViewsFromChildrenRecursive(workpiece.getLogicalStructure());
         enumerateLogicalDivisions(workpiece.getLogicalStructure(), 0, 1, false);
         addLinksToParents(process, workpiece);
@@ -118,6 +119,69 @@ public class SchemaService {
                 MetadataEditor.assignViewsFromChildren(logicalDivision);
             }
         }
+    }
+
+    /**
+     * Enriches the exported structure of a calendar-generated issue with the
+     * corresponding month and day information from its parent year process.
+     */
+    private void enrichCalendarIssueForExport(Workpiece workpiece, Process process)
+        throws DAOException, IOException, SAXException, FileStructureValidationException {
+
+        Process yearProcess = getCalendarParentProcess(process);
+        if (Objects.isNull(yearProcess)) {
+            return;
+        }
+
+        LogicalDivision issueRoot = workpiece.getLogicalStructure();
+        LogicalDivision issueDay = issueRoot.getChildren().getFirst();
+
+        LogicalDivision year = metsService.loadWorkpiece(
+            processService.getMetadataFileUri(yearProcess)).getLogicalStructure();
+
+        for (LogicalDivision month : year.getChildren()) {
+            for (LogicalDivision day : month.getChildren()) {
+                for (LogicalDivision linkedIssue : day.getChildren()) {
+                    LinkedMetsResource link = linkedIssue.getLink();
+                    if (Objects.nonNull(link)
+                        && processService.processIdFromUri(link.getUri()) == process.getId()) {
+                        issueRoot.setType(month.getType());
+                        issueRoot.setOrderlabel(month.getOrderlabel());
+                        issueDay.setType(day.getType());
+                        issueDay.setOrderlabel(day.getOrderlabel());
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the parent process containing the calendar structure if the process
+     * belongs to a hierarchy created with the calendar function.
+     *
+     @return the parent year process, or null otherwise
+     */
+    private Process getCalendarParentProcess(Process process)
+        throws DAOException, IOException, SAXException, FileStructureValidationException {
+
+        Process parentProcess = process.getParent();
+        if (Objects.isNull(parentProcess)) {
+            return null;
+        }
+        Process calendarProcess = parentProcess.getParent();
+        if (Objects.isNull(calendarProcess)) {
+            return null;
+        }
+        if (Objects.isNull(calendarProcess.getBaseType())) {
+            // Base type is a runtime value and may not be initialized for loaded processes.
+            Workpiece calendarWorkpiece = metsService.loadWorkpiece(
+                processService.getMetadataFileUri(calendarProcess));
+            calendarProcess.setBaseType(processService.getBaseType(calendarWorkpiece));
+        }
+        return ProcessService.canCreateProcessWithCalendar(calendarProcess)
+            ? parentProcess
+            : null;
     }
 
     private void set(Workpiece workpiece, MdSec domain, String key, String value) {
