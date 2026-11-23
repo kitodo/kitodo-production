@@ -47,9 +47,7 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      * @return the default value
      */
     default boolean getBooleanDefaultValue() {
-        return convertBoolean(true)
-            .map(getDefaultItems()::contains)
-            .orElse(false);
+        return !getDefaultItems().isEmpty();
     }
 
     /**
