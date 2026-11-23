@@ -439,19 +439,19 @@ body .ui-datatable thead th .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s
     content: "\f15e";
 }
 
-body .ui-datatable thead th .numeric .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-n::before {
+body .ui-datatable thead th.numeric .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-n::before {
     content: "\f162";
 }
 
-body .ui-datatable thead th .numeric .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-s::before {
+body .ui-datatable thead th.numeric .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-s::before {
     content: "\f163";
 }
 
-body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-n::before {
+body .ui-datatable thead th.genericSortIcon .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-n::before {
     content: "\f161";
 }
 
-body .ui-datatable thead th .genericSortIcon .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-s::before {
+body .ui-datatable thead th.genericSortIcon .ui-sortable-column-icon.ui-icon.ui-icon-carat-2-n-s.ui-icon-triangle-1-s::before {
     content: "\f160";
 }
 
