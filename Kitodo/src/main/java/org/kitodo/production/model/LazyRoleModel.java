@@ -65,11 +65,7 @@ public class LazyRoleModel extends LazyBeanModel {
             sortOrder = sortMeta.getOrder();
         }
         try {
-            User currentUser = ServiceManager.getUserService().getCurrentUser();
-            Map<String, Boolean> filterMap = Collections.emptyMap();
-            if (Objects.nonNull(currentUser)) {
-                filterMap = Collections.singletonMap("allClients", currentUser.isShowAllClientsRoles());
-            }
+            Map<String, Boolean> filterMap = getFilterMap();
             setRowCount(toIntExact(searchService.countResults(filterMap)));
             entities = ((RoleService) searchService).loadData(first, pageSize, sortField, sortOrder, filterMap);
             return entities;
@@ -82,16 +78,21 @@ public class LazyRoleModel extends LazyBeanModel {
 
     @Override
     public int count(Map<String, FilterMeta> filterBy) {
-        User currentUser = ServiceManager.getUserService().getCurrentUser();
-        Map<String, Boolean> filterMap = Collections.emptyMap();
-        if (Objects.nonNull(currentUser)) {
-            filterMap = Collections.singletonMap("allClients", currentUser.isShowAllClientsRoles());
-        }
+        Map<String, Boolean> filterMap = getFilterMap();
         try {
             return toIntExact(searchService.countResults(filterMap));
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
         }
         return 0;
+    }
+
+    private Map<String, Boolean> getFilterMap() {
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        Map<String, Boolean> filterMap = Collections.emptyMap();
+        if (Objects.nonNull(currentUser)) {
+            filterMap = Collections.singletonMap("allClients", currentUser.isShowAllClientsRoles());
+        }
+        return filterMap;
     }
 }

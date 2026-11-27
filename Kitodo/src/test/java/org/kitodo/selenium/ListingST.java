@@ -45,7 +45,6 @@ public class ListingST extends BaseTestSelenium {
     private static ProjectsPage projectsPage;
     private static TasksPage tasksPage;
     private static UsersPage usersPage;
-    private static final int numberOfCurrentClientRoles = 9;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -265,7 +264,7 @@ public class ListingST extends BaseTestSelenium {
 
         // number of roles filtered by current client
         int rolesDisplayed = usersPage.countListedRoles();
-        assertEquals(numberOfCurrentClientRoles, rolesDisplayed, "Displayed wrong number of roles");
+        assertEquals(NUMBER_OF_FIRST_CLIENT_ROLES, rolesDisplayed, "Displayed wrong number of roles");
 
         // deactivate filter by client
         usersPage.clickButtonToFilterRolesByCurrentClient();

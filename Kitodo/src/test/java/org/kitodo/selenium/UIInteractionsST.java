@@ -100,7 +100,7 @@ public class UIInteractionsST extends BaseTestSelenium {
         assertFalse(classAttribute.contains("ui-state-active"));
 
         int rolesDisplayedFiltered = usersPage.countListedRoles();
-        assertEquals(9, rolesDisplayedFiltered, "Displayed wrong number of roles filtered by current client");
+        assertEquals(NUMBER_OF_FIRST_CLIENT_ROLES, rolesDisplayedFiltered, "Displayed wrong number of roles filtered by current client");
 
         usersPage.clickButtonToFilterRolesByCurrentClient();
 
