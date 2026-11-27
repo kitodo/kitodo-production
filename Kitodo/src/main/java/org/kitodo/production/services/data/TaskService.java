@@ -260,6 +260,11 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        if ("process.id".equals(sortField)) {
+            query.addSorting("ordering", SortOrder.ASCENDING);
+            query.addSorting("title", SortOrder.ASCENDING);
+            query.addSorting("id", SortOrder.ASCENDING);
+        }
         query.applyIndexRestriction(FIELD_PROCESS_ID);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
