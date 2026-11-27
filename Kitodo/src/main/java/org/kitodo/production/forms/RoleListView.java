@@ -132,7 +132,11 @@ public class RoleListView extends BaseListView {
      * @param showRolesOfAllAvailableClients value of 'showRolesOfAllAvailableClients' as boolean
      */
     public void setShowRolesOfAllAvailableClients(boolean showRolesOfAllAvailableClients) {
-        ((LazyRoleModel)this.lazyBeanModel).setShowRolesOfAllAvailableClients(showRolesOfAllAvailableClients);
+        try {
+            ((LazyRoleModel)this.lazyBeanModel).setShowRolesOfAllAvailableClients(showRolesOfAllAvailableClients);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+        }
     }
 
     /**

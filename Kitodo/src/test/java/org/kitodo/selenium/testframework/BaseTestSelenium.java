@@ -44,6 +44,7 @@ public class BaseTestSelenium {
     private static final Logger logger = LogManager.getLogger(BaseTestSelenium.class);
     private static final File usersDirectory = new File("src/test/resources/users");
     protected static final String KOWAL_USER = "kowal";
+    protected static final int NUMBER_OF_FIRST_CLIENT_ROLES = 9;
 
     @BeforeAll
     public static void setUp() throws Exception {

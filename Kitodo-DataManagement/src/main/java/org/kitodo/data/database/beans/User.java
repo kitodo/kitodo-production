@@ -127,6 +127,9 @@ public class User extends BaseBean {
     @JoinColumn(name = "default_client_id", foreignKey = @ForeignKey(name = "FK_user_default_client_id"))
     private Client defaultClient;
 
+    @Column(name = "show_all_clients_roles")
+    private boolean showAllClientsRoles;
+
     /**
      * Constructor for User Entity.
      */
@@ -167,6 +170,7 @@ public class User extends BaseBean {
         this.showLogicalPageNumberBelowThumbnail = user.showLogicalPageNumberBelowThumbnail;
         this.showPhysicalPageNumberBelowThumbnail = user.showPhysicalPageNumberBelowThumbnail;
         this.defaultPaginationType = user.defaultPaginationType;
+        this.showAllClientsRoles = user.isShowAllClientsRoles();
 
         this.roles = Objects.isNull(user.roles) ? new ArrayList<>() : user.roles;
         this.projects = Objects.isNull(user.projects) ? new ArrayList<>() : user.projects;
@@ -735,4 +739,21 @@ public class User extends BaseBean {
         return Objects.hash(login, name, surname);
     }
 
+    /**
+     * Get showAllClientsRoles.
+     *
+     * @return value of showAllClientsRoles
+     */
+    public boolean isShowAllClientsRoles() {
+        return showAllClientsRoles;
+    }
+
+    /**
+     * Set showAllClientsRoles.
+     *
+     * @param showAllClientsRoles as boolean
+     */
+    public void setShowAllClientsRoles(boolean showAllClientsRoles) {
+        this.showAllClientsRoles = showAllClientsRoles;
+    }
 }
