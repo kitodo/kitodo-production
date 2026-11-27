@@ -129,9 +129,9 @@ public class TaskListView extends BaseListView {
         selectedTaskStatus.add(TaskStatus.OPEN);
         selectedTaskStatus.add(TaskStatus.INWORK);
 
-        if (selectedColumns.stream().anyMatch(column -> "task.title".equals(column.getTitle()))) {
-            // if title column is visible, sort by title by default
-            sortBy = SortMeta.builder().field("title").order(SortOrder.ASCENDING).build();
+        if (selectedColumns.stream().anyMatch(column -> "task.processId".equals(column.getTitle()))) {
+            // if process ID column is visible, sort by process ID by default
+            sortBy = SortMeta.builder().field("process.id").order(SortOrder.DESCENDING).build();
         }
         stopwatch.stop();
     }

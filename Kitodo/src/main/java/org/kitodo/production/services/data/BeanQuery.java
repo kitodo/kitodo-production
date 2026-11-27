@@ -532,4 +532,17 @@ public class BeanQuery {
         }
         return result.toString();
     }
+
+    /**
+     * Add additional parameter to the sorting.
+     *
+     * @param field field name to sort by
+     * @param sortOrder sort order to apply
+     */
+    public void addSorting(String field, SortOrder sortOrder) {
+        if (Objects.nonNull(sorting)) {
+            sorting = Pair.of(sorting.getKey(), sorting.getValue() + ", " + varName + '.' + field
+                    + (SortOrder.DESCENDING.equals(sortOrder) ? " DESC" : " ASC"));
+        }
+    }
 }

@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
-    private static final String SORT_TITLE = "title.keyword";
+    private static final String SORT_PROCESS_ID = "process.id";
     private static final String SORT_ID = "id";
     private List<Task> taskList = new ArrayList<>();
     private List<Process> processList = new ArrayList<>();
@@ -114,7 +114,7 @@ public class DesktopForm extends BaseForm {
     public List<Task> getTasks() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList() && taskList.isEmpty()) {
-                taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap<>());
+                taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_PROCESS_ID, SortOrder.DESCENDING, new HashMap<>());
             }
         } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,

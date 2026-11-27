@@ -116,7 +116,7 @@ public class ListingQueryParameterST extends BaseTestSelenium {
         URI tasksURI = new URI(Browser.getDriver().getCurrentUrl());
 
         // check that four tasks are listed by default
-        assertEquals("Next Open", tasksPage.getFirstRowTaskTitle());
+        assertEquals("Progress", tasksPage.getFirstRowTaskTitle());
         assertEquals(4, tasksPage.countListedTasks());
 
         // check that sorting by title in descending order works
@@ -132,7 +132,7 @@ public class ListingQueryParameterST extends BaseTestSelenium {
         URIBuilder processFilterBuilder = new URIBuilder(tasksURI);
         processFilterBuilder.addParameter("filter", "process:First process");
         Browser.getDriver().get(processFilterBuilder.build().toString());
-        pollAssertTrue(() -> "Open".equals(tasksPage.getFirstRowTaskTitle()));
+        pollAssertTrue(() -> "Progress".equals(tasksPage.getFirstRowTaskTitle()));
         assertEquals(2, tasksPage.countListedTasks());
 
         // check that hiding tasks of other users work
@@ -148,14 +148,14 @@ public class ListingQueryParameterST extends BaseTestSelenium {
         taskStatusBuilder.addParameter("filter", "");
         taskStatusBuilder.addParameter("taskStatus", "");
         Browser.getDriver().get(taskStatusBuilder.build().toString());
-        pollAssertTrue(() -> "Additional".equals(tasksPage.getFirstRowTaskTitle()));
+        pollAssertTrue(() -> "Finished".equals(tasksPage.getFirstRowTaskTitle()));
         assertEquals(8, tasksPage.countListedTasks());
 
         // check that navigating to a task and returning to the list view preserves list settings
         tasksPage.takeOpenTask("Open", "First process");
         pollAssertTrue(() -> currentTaskEditPage.isAt());
         currentTaskEditPage.releaseTask();
-        pollAssertTrue(() -> "Additional".equals(tasksPage.getFirstRowTaskTitle()));
+        pollAssertTrue(() -> "Finished".equals(tasksPage.getFirstRowTaskTitle()));
         assertEquals(8, tasksPage.countListedTasks());
     }
 }

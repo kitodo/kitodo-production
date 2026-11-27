@@ -57,12 +57,12 @@ public class TasksSortingST extends BaseTestSelenium {
     public void sortByTaskTitle() throws Exception {
         tasksPage.goTo();
 
-        // default first task title is "Next Open"
-        assertEquals("Next Open", tasksPage.getFirstRowTaskTitle(), "Default task sort should be ascending by title");
+        // default first task title is "Progress"
+        assertEquals("Progress", tasksPage.getFirstRowTaskTitle(), "Default task sort should be ascending by title");
 
-        // first click on title column triggers reverse order such that top task is "Progress"
+        // first click on title column triggers reverse order such that top task is "Next Open"
         tasksPage.clickTaskTableColumnHeaderForSorting(2);
-        assertEquals("Progress", tasksPage.getFirstRowTaskTitle(), "Reverse order by task title not correct");
+        assertEquals("Next Open", tasksPage.getFirstRowTaskTitle(), "Reverse order by task title not correct");
     }
 
     /**
