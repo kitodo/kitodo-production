@@ -114,7 +114,6 @@ public class Browser {
         }
 
         FirefoxProfile profile = new FirefoxProfile();
-        profile.setAssumeUntrustedCertificateIssuer(false);
         profile.setPreference("browser.helperApps.alwaysAsk.force", false);
         profile.setPreference("browser.download.dir", DOWNLOAD_DIR);
 
